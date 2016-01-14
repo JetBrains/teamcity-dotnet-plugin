@@ -11,7 +11,7 @@ package jetbrains.buildServer.dnx;
  * DNX runner constants.
  */
 public interface DnxConstants {
-    String RUNNER_TYPE = "DNX";
-    String RUNNER_DISPLAY_NAME = "Simple Build Tool (Scala)";
-    String RUNNER_DESCRIPTION = "Runs SBT builds";
+    String RUNNER_TYPE = "dnx";
+    String RUNNER_DISPLAY_NAME = "DNX Utility (dnu)";
+    String RUNNER_DESCRIPTION = "Provides DNX package management";
 }

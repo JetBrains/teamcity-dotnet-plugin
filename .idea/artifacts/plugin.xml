@@ -22,6 +22,7 @@
         </element>
         <element id="archive" name="plugin-dnx-server.jar">
           <element id="module-output" name="teamcity-dnx-plugin-server" />
+          <element id="dir-copy" path="$PROJECT_DIR$/teamcity-dnx-plugin-server/resources" />
         </element>
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/teamcity-plugin.xml" />

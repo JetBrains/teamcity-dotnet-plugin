@@ -11,6 +11,7 @@ import jetbrains.buildServer.requirements.Requirement;
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
+import jetbrains.buildServer.serverSide.RunTypeRegistry;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,8 +24,10 @@ public class DnxRunnerRunType extends RunType {
 
     private final PluginDescriptor myPluginDescriptor;
 
-    public DnxRunnerRunType(@NotNull final PluginDescriptor pluginDescriptor) {
+    public DnxRunnerRunType(@NotNull final PluginDescriptor pluginDescriptor,
+                            @NotNull final RunTypeRegistry runTypeRegistry) {
         myPluginDescriptor = pluginDescriptor;
+        runTypeRegistry.registerRunType(this);
     }
 
     @NotNull
