@@ -1,0 +1,30 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="plugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/dnx</output-path>
+    <root id="root">
+      <element id="directory" name="agent">
+        <element id="archive" name="dnx-agent.zip">
+          <element id="directory" name="dnx-agent">
+            <element id="directory" name="lib">
+              <element id="archive" name="plugin-dnx-agent.jar">
+                <element id="module-output" name="teamcity-dnx-plugin-agent" />
+              </element>
+              <element id="archive" name="plugin-dnx-common.jar">
+                <element id="module-output" name="teamcity-dnx-plugin-common" />
+              </element>
+            </element>
+          </element>
+        </element>
+      </element>
+      <element id="directory" name="server">
+        <element id="archive" name="plugin-dnx-common.jar">
+          <element id="module-output" name="teamcity-dnx-plugin-common" />
+        </element>
+        <element id="archive" name="plugin-dnx-server.jar">
+          <element id="module-output" name="teamcity-dnx-plugin-server" />
+        </element>
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/teamcity-plugin.xml" />
+    </root>
+  </artifact>
+</component>

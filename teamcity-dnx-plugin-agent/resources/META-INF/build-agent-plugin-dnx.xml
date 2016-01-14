@@ -2,4 +2,6 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans default-autowire="constructor">
     <bean class="jetbrains.buildServer.dnx.DnxRunnerBuildServiceFactory"/>
+    <bean class="jetbrains.buildServer.dnx.DnxRuntimeDetector"/>
+    <bean class="jetbrains.buildServer.dnx.DnxPropertiesExtension"/>
 </beans>

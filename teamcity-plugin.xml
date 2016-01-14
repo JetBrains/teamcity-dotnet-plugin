@@ -2,9 +2,9 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
   <info>
     <name>dnx</name>
-    <display-name>DNX runner</display-name>
-    <version>@Version@</version>
-    <description>Provides DNX runner</description>
+    <display-name>DNX Support</display-name>
+    <version>@Plugin_Version@</version>
+    <description>Provides DNX runtime management and build facilities</description>
     <download-url>https://github.com/dtretyakov/teamcity-dnx-plugin</download-url>
     <email>Plugin author e-mail</email>
     <vendor>
