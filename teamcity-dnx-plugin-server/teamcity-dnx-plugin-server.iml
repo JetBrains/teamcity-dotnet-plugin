@@ -4,7 +4,7 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="Spring Application Context" removed="false">
-          <file>file://$MODULE_DIR$/resources/META-INF/build-server-plugin-dnx.xml</file>
+          <file>file://$MODULE_DIR$/src/META-INF/build-server-plugin-dnx.xml</file>
         </fileset>
       </configuration>
     </facet>
@@ -15,7 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="teamcity-dnx-plugin-common" />
     <orderEntry type="library" name="server-libs" level="project" />

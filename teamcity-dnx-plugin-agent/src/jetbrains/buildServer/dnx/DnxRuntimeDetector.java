@@ -38,7 +38,7 @@ public class DnxRuntimeDetector {
             return Collections.emptyMap();
         }
 
-        final Map<String, String> runtimes = new HashMap<>(files.length);
+        final Map<String, String> runtimes = new HashMap<String, String>(files.length);
         for (File runtime : files) {
             if (!runtime.isDirectory()) {
                 LOG.debug("Ignoring file %s" + runtime.getName());

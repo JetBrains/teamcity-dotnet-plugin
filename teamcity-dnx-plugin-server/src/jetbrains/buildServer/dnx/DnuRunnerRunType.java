@@ -18,13 +18,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * DNX runner definition.
+ * DNX utility runner definition.
  */
-public class DnxRunnerRunType extends RunType {
+public class DnuRunnerRunType extends RunType {
 
     private final PluginDescriptor myPluginDescriptor;
 
-    public DnxRunnerRunType(@NotNull final PluginDescriptor pluginDescriptor,
+    public DnuRunnerRunType(@NotNull final PluginDescriptor pluginDescriptor,
                             @NotNull final RunTypeRegistry runTypeRegistry) {
         myPluginDescriptor = pluginDescriptor;
         runTypeRegistry.registerRunType(this);
@@ -33,19 +33,19 @@ public class DnxRunnerRunType extends RunType {
     @NotNull
     @Override
     public String getType() {
-        return DnxConstants.RUNNER_TYPE;
+        return DnuConstants.DNU_RUNNER_TYPE;
     }
 
     @NotNull
     @Override
     public String getDisplayName() {
-        return DnxConstants.RUNNER_DISPLAY_NAME;
+        return DnuConstants.DNU_RUNNER_DISPLAY_NAME;
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return DnxConstants.RUNNER_DESCRIPTION;
+        return DnuConstants.DNU_RUNNER_DESCRIPTION;
     }
 
     @Override
@@ -60,12 +60,12 @@ public class DnxRunnerRunType extends RunType {
 
     @Override
     public String getEditRunnerParamsJspFilePath() {
-        return myPluginDescriptor.getPluginResourcesPath("editDnxRunParams.jsp");
+        return myPluginDescriptor.getPluginResourcesPath("editDnuRunParams.jsp");
     }
 
     @Override
     public String getViewRunnerParamsJspFilePath() {
-        return myPluginDescriptor.getPluginResourcesPath("editDnxRunParams.jsp");
+        return myPluginDescriptor.getPluginResourcesPath("viewDnuRunParams.jsp");
     }
 
     @Override

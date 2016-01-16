@@ -14,14 +14,14 @@ import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * DNX runner service factory.
+ * DNX utility runner service factory.
  */
-public class DnxRunnerBuildServiceFactory implements CommandLineBuildServiceFactory {
+public class DnuRunnerBuildServiceFactory implements CommandLineBuildServiceFactory {
 
     @NotNull
     @Override
     public CommandLineBuildService createService() {
-        return new DnxRunnerBuildService();
+        return new DnuRunnerBuildService();
     }
 
     @NotNull
@@ -31,11 +31,11 @@ public class DnxRunnerBuildServiceFactory implements CommandLineBuildServiceFact
             @NotNull
             @Override
             public String getType() {
-                return DnxConstants.RUNNER_TYPE;
+                return DnuConstants.DNU_RUNNER_TYPE;
             }
 
             @Override
-            public boolean canRun(@NotNull final BuildAgentConfiguration buildAgentConfiguration) {
+            public boolean canRun(@NotNull final BuildAgentConfiguration config) {
                 return true;
             }
         };
