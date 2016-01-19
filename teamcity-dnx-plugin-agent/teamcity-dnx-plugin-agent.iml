@@ -20,6 +20,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="teamcity-dnx-plugin-common" />
     <orderEntry type="library" name="agent-libs" level="project" />
-    <orderEntry type="library" scope="TEST" name="testng-6.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="test-libs" level="project" />
   </component>
 </module>
