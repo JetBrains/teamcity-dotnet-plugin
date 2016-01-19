@@ -60,12 +60,12 @@ public class DnuRunnerRunType extends RunType {
 
     @Override
     public String getEditRunnerParamsJspFilePath() {
-        return myPluginDescriptor.getPluginResourcesPath("editDnuRunParams.jsp");
+        return myPluginDescriptor.getPluginResourcesPath("editDnuParameters.jsp");
     }
 
     @Override
     public String getViewRunnerParamsJspFilePath() {
-        return myPluginDescriptor.getPluginResourcesPath("viewDnuRunParams.jsp");
+        return myPluginDescriptor.getPluginResourcesPath("viewDnuParameters.jsp");
     }
 
     @Override

@@ -13,7 +13,7 @@ import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,33 +22,30 @@ import java.util.Map;
  */
 public class DnuRunnerBuildService extends BuildServiceAdapter {
 
+    private final Map<String, ArgumentsProvider> myArgumentsProviders;
+
+    public DnuRunnerBuildService(){
+        myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
+        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_BUILD, new DnuBuildArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
+    }
+
     @NotNull
     @Override
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
         final Map<String, String> parameters = getRunnerParameters();
-        final List<String> arguments = new ArrayList<String>();
 
-        arguments.add(parameters.get(DnuConstants.DNU_PARAM_COMMAND));
-
-        final String projectsValue = parameters.get(DnuConstants.DNU_PARAM_PROJECTS);
-        if (!StringUtil.isEmptyOrSpaces(projectsValue)) {
-            arguments.add(projectsValue.trim());
+        final String commandName = parameters.get(DnuConstants.DNU_PARAM_COMMAND);
+        if (StringUtil.isEmpty(commandName)){
+            throw new RunBuildException("DNU command name is empty");
         }
 
-        final String packagesValue = parameters.get(DnuConstants.DNU_PARAM_PACKAGES);
-        if (!StringUtil.isEmptyOrSpaces(packagesValue)){
-            arguments.add("--packages " + packagesValue.trim());
+        final ArgumentsProvider argumentsProvider = myArgumentsProviders.get(commandName);
+        if (argumentsProvider == null){
+            throw new RunBuildException("Unable to construct arguments for DNU command " + commandName);
         }
 
-        final String parallelValue = parameters.get(DnuConstants.DNU_PARAM_PARALLEL);
-        if ("true".equalsIgnoreCase(parallelValue)){
-            arguments.add("--parallel");
-        }
-
-        final String argumentsValue = parameters.get(DnuConstants.DNU_PARAM_ARGUMENTS);
-        if (!StringUtil.isEmptyOrSpaces(argumentsValue)){
-            arguments.add(argumentsValue.trim());
-        }
+        final List<String> arguments = argumentsProvider.getArguments(parameters);
 
         return createProgramCommandline(getToolPath(DnxToolProvider.DNU_TOOL), arguments);
     }

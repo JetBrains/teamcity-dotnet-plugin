@@ -3,13 +3,9 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 
-<div class="parameter">
-    Command: <props:displayValue name="${params.commandKey}"/>
-</div>
-
-<c:if test="${not empty propertiesBean.properties[params.projectPathsKey]}">
+<c:if test="${not empty propertiesBean.properties[params.restorePathsKey]}">
     <div class="parameter">
-        Projects: <props:displayValue name="${params.projectPathsKey}"/>
+        Projects: <props:displayValue name="${params.restorePathsKey}"/>
     </div>
 </c:if>
 
@@ -23,9 +19,3 @@
     Parallel execution for multiple discovered projects:
     <strong>${propertiesBean.properties[params.parallelExecutionKey] ? 'ON' : 'OFF'}</strong>
 </div>
-
-<c:if test="${not empty propertiesBean.properties[params.argumentsKey]}">
-    <div class="parameter">
-        Command line parameters: <props:displayValue name="${params.argumentsKey}"/>
-    </div>
-</c:if>
