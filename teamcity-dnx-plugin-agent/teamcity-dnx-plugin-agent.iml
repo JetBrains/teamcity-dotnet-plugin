@@ -20,15 +20,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="teamcity-dnx-plugin-common" />
     <orderEntry type="library" name="agent-libs" level="project" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="testng">
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/plugins/testng/lib/testng.jar!/" />
-          <root url="jar://$APPLICATION_HOME_DIR$/plugins/testng/lib/jcommander.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" scope="TEST" name="testng-6.8" level="project" />
   </component>
 </module>

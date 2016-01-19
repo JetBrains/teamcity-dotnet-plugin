@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="testng-6.8">
+    <CLASSES>
+      <root url="jar://$TeamCityDistribution$/devPackage/tests/testng-6.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
