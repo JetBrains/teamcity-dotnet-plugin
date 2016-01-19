@@ -70,7 +70,7 @@ public class DnuRunnerRunType extends RunType {
 
     @Override
     public Map<String, String> getDefaultRunnerProperties() {
-        return new HashMap<>();
+        return new HashMap<String, String>();
     }
 
     @NotNull
