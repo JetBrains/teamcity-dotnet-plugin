@@ -1,6 +1,7 @@
 # Overview
 
 <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDnxPluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDnxPluginBuild)/statusIcon" alt=""/></a>
+
 TeamCity .NET Execution Environment (DNX) plugin brings .NET Core projects support.
 
 # Features
