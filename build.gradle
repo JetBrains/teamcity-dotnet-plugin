@@ -1,4 +1,4 @@
-def versionNumber = "$System.env.versionNumber" == null ? "$System.env.versionNumber" : 'SNAPSHOT'
+def versionNumber = "$System.env.versionNumber" != null ? "$System.env.versionNumber" : 'SNAPSHOT'
 ext.projectIds = ['group': 'teamcity-dnx-plugin', 'version': versionNumber ]
 
 group = projectIds.group
@@ -31,7 +31,7 @@ project(':plugin-dnx-agent') {
         compile 'org.jetbrains.teamcity:agent-api:9.0'
         compile 'org.jetbrains.teamcity.internal:agent:9.0'
         runtime 'javax.servlet:jstl:1.1.2'
-        testCompile 'org.testng:testng:6.9.10'
+        testCompile 'org.testng:testng:6.8'
     }
     
     task distrib(type: Zip, dependsOn: jar) {
@@ -62,7 +62,7 @@ project(':plugin-dnx-server') {
     }
     
     task distrib(type: Zip, dependsOn: [':plugin-dnx-agent:assemble', jar]) {
-        version = null
+        archiveName = 'dnx-plugin.zip'
     
         from (libsDir) {
             into 'server'
