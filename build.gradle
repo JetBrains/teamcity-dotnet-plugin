@@ -1,0 +1,91 @@
+def versionNumber = "$System.env.versionNumber" == null ? "$System.env.versionNumber" : 'SNAPSHOT'
+ext.projectIds = ['group': 'teamcity-dnx-plugin', 'version': versionNumber ]
+
+group = projectIds.group
+version = projectIds.version
+
+allprojects {
+    group = projectIds.group
+    version = projectIds.version
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.6
+
+    repositories {
+        mavenCentral()
+        maven {
+            name 'JetBrains Maven Repository'
+            url 'http://repository.jetbrains.com/all'
+        }
+    }
+
+    test.useTestNG()
+    jar.version = null
+}
+
+project(':plugin-dnx-agent') {
+    dependencies {
+        compile project(':plugin-dnx-common')
+        compile 'org.jetbrains.teamcity:agent-api:9.0'
+        compile 'org.jetbrains.teamcity.internal:agent:9.0'
+        runtime 'javax.servlet:jstl:1.1.2'
+        testCompile 'org.testng:testng:6.9.10'
+    }
+    
+    task distrib(type: Zip, dependsOn: jar) {
+        version = null
+    
+        from libsDir
+        
+        from configurations.compile {
+            include 'plugin-dnx-*.jar'
+        }
+
+        into 'libs'
+    }
+    
+    artifacts {
+        archives distrib
+    }
+}
+
+project(':plugin-dnx-common') {
+}
+
+project(':plugin-dnx-server') {
+    dependencies {
+        compile project(':plugin-dnx-common')
+        compile 'org.jetbrains.teamcity:server-api:9.0'
+        runtime 'javax.servlet:jstl:1.1.2'
+    }
+    
+    task distrib(type: Zip, dependsOn: [':plugin-dnx-agent:assemble', jar]) {
+        version = null
+    
+        from (libsDir) {
+            into 'server'
+        }
+        
+        from (configurations.compile) {
+            include 'plugin-dnx-*.jar'
+            into 'server'
+        }
+        
+        from (project(':plugin-dnx-agent').file('build/distributions')) {
+            include 'plugin-dnx-agent.zip'
+            into 'agent'
+        }
+        
+        from ('teamcity-plugin.xml') {
+            filter {
+                it.replaceAll('@Plugin_Version@', projectIds.version)
+            }
+        }        
+    }
+    
+    artifacts {
+        archives distrib
+    }
+}

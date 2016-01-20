@@ -1,0 +1,1 @@
+include 'plugin-dnx-agent', 'plugin-dnx-common', 'plugin-dnx-server'
