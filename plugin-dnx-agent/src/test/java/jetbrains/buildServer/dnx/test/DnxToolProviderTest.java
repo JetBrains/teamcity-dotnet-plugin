@@ -7,11 +7,14 @@
 
 package jetbrains.buildServer.dnx.test;
 
+import jetbrains.buildServer.agent.ToolCannotBeFoundException;
 import jetbrains.buildServer.agent.ToolProvider;
 import jetbrains.buildServer.agent.impl.ToolProvidersRegistryImpl;
 import jetbrains.buildServer.dnx.DnxToolProvider;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 /**
  * @author Dmitry.Tretyakov
@@ -21,13 +24,26 @@ import org.testng.annotations.Test;
 public class DnxToolProviderTest {
 
     @Test
-    public void testGetPath() throws Exception {
+    public void testGetPath() {
         final ToolProvider toolProvider = new DnxToolProvider(new ToolProvidersRegistryImpl());
-        final String dnuPath = toolProvider.getPath("dnu");
+        String dnuPath = null;
+        ToolCannotBeFoundException exception = null;
 
-        System.out.print(dnuPath);
+        try {
+            dnuPath = toolProvider.getPath("dnu");
+        } catch (ToolCannotBeFoundException e) {
+            exception = e;
+        }
 
-        Assert.assertNotNull(dnuPath);
+        final String userHome = System.getProperty("user.home");
+        final File dnxDirectory = new File(userHome, ".dnx");
+
+        if (dnxDirectory.exists()){
+            Assert.assertNotNull(dnuPath, "DNU path should not be null");
+            Assert.assertTrue(new File(dnuPath).exists(), "DNU should exists");
+        } else {
+            Assert.assertNotNull(exception, "Should be thrown dnu not found exception");
+        }
     }
 
     @Test
