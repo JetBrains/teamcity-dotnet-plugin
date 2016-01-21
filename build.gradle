@@ -1,5 +1,5 @@
-def versionNumber = "$System.env.versionNumber" != null ? "$System.env.versionNumber" : 'SNAPSHOT'
-ext.projectIds = ['group': 'teamcity-dnx-plugin', 'version': versionNumber ]
+def versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
+ext.projectIds = ['group': 'teamcity-dnx-plugin', 'version': versionNumber, 'artifact': 'dnx-plugin.zip']
 
 group = projectIds.group
 version = projectIds.version
@@ -35,15 +35,20 @@ project(':plugin-dnx-agent') {
     }
     
     task distrib(type: Zip, dependsOn: jar) {
-        version = null
+        archiveName = projectIds.artifact
     
-        from libsDir
-        
-        from configurations.compile {
-            include 'plugin-dnx-*.jar'
+        from (libsDir) {
+            into 'libs'
         }
+        
+        from (configurations.compile) {
+            include 'plugin-dnx-*.jar'
+            into 'libs'
+        }
+        
+        from 'teamcity-plugin.xml'
 
-        into 'libs'
+        into 'dnx-plugin'
     }
     
     artifacts {
@@ -62,7 +67,7 @@ project(':plugin-dnx-server') {
     }
     
     task distrib(type: Zip, dependsOn: [':plugin-dnx-agent:assemble', jar]) {
-        archiveName = 'dnx-plugin.zip'
+        archiveName = projectIds.artifact
     
         from (libsDir) {
             into 'server'
@@ -74,7 +79,7 @@ project(':plugin-dnx-server') {
         }
         
         from (project(':plugin-dnx-agent').file('build/distributions')) {
-            include 'plugin-dnx-agent.zip'
+            include projectIds.artifact
             into 'agent'
         }
         
