@@ -6,19 +6,36 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 
+<script type="text/javascript">
+    BS.DnuRestoreParametersForm = {
+        selectProjectFile: function (chosenFile) {
+            var $paths = $j(BS.Util.escapeId('${params.restorePathsKey}'));
+            var value = BS.Util.trimSpaces($paths.val());
+            chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
+            $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
+        }
+    };
+</script>
+
 <tr class="advancedSetting">
     <th><label for="${params.restorePathsKey}">Projects:</label></th>
     <td>
-        <props:textProperty name="${params.restorePathsKey}" className="longField" expandable="true"/>
+        <div class="completionIconWrapper clearfix">
+            <div class="dnx left">
+                <props:textProperty name="${params.restorePathsKey}" className="longField" expandable="true"/>
+            </div>
+            <bs:vcsTree treeId="${params.restorePathsKey}" callback="BS.DnuRestoreParametersForm.selectProjectFile"/>
+        </div>
         <span class="error" id="error_${params.restorePathsKey}"></span>
-        <span class="smallNote">Newline-separated list of projects and project folders to restore.</span>
+        <span class="smallNote">Space-separated list of project files or folders.</span>
     </td>
 </tr>
 
 <tr class="advancedSetting">
     <th><label for="${params.packagePathsKey}">Packages path:</label></th>
     <td>
-        <props:textProperty name="${params.packagePathsKey}" className="longField" expandable="true"/>
+        <props:textProperty name="${params.packagePathsKey}" className="longField"/>
+        <bs:vcsTree fieldId="${params.packagePathsKey}" dirsOnly="true"/>
         <span class="error" id="error_${params.packagePathsKey}"></span>
         <span class="smallNote">Path to restore packages.</span>
     </td>

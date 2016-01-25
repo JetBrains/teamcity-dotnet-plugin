@@ -27,7 +27,7 @@ public class DnuRestoreArgumentsProvider implements ArgumentsProvider {
 
         final String projectsValue = parameters.get(DnuConstants.DNU_PARAM_RESTORE_PATHS);
         if (!StringUtil.isEmptyOrSpaces(projectsValue)) {
-            arguments.add(projectsValue.trim());
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(projectsValue));
         }
 
         final String packagesValue = parameters.get(DnuConstants.DNU_PARAM_PACKAGES_PATH);
@@ -43,7 +43,7 @@ public class DnuRestoreArgumentsProvider implements ArgumentsProvider {
 
         final String argumentsValue = parameters.get(DnuConstants.DNU_PARAM_ARGUMENTS);
         if (!StringUtil.isEmptyOrSpaces(argumentsValue)) {
-            arguments.add(argumentsValue.trim());
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue));
         }
 
         return arguments;

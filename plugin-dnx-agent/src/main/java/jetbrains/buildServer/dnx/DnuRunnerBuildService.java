@@ -24,7 +24,7 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
 
     private final Map<String, ArgumentsProvider> myArgumentsProviders;
 
-    public DnuRunnerBuildService(){
+    public DnuRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_BUILD, new DnuBuildArgumentsProvider());
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
@@ -36,12 +36,12 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
         final Map<String, String> parameters = getRunnerParameters();
 
         final String commandName = parameters.get(DnuConstants.DNU_PARAM_COMMAND);
-        if (StringUtil.isEmpty(commandName)){
+        if (StringUtil.isEmpty(commandName)) {
             throw new RunBuildException("DNU command name is empty");
         }
 
         final ArgumentsProvider argumentsProvider = myArgumentsProviders.get(commandName);
-        if (argumentsProvider == null){
+        if (argumentsProvider == null) {
             throw new RunBuildException("Unable to construct arguments for DNU command " + commandName);
         }
 

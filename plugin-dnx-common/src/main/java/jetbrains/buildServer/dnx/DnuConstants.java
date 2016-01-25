@@ -23,7 +23,7 @@ public interface DnuConstants {
     String DNU_PARAM_RESTORE_PATHS = "dnu-restore-paths";
     String DNU_PARAM_PARALLEL = "dnu-parallel";
     String DNU_PARAM_PACKAGES_PATH = "dnu-packages-path";
-    String DNU_PARAM_BUILD_PATHS = "dnu-restore-paths";
+    String DNU_PARAM_BUILD_PATHS = "dnu-build-paths";
     String DNU_PARAM_BUILD_FRAMEWORK = "dnu-build-framework";
     String DNU_PARAM_BUILD_CONFIG = "dnu-build-config";
     String DNU_PARAM_BUILD_OUTPUT = "dnu-build-output";

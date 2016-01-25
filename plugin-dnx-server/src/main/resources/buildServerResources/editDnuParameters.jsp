@@ -1,4 +1,3 @@
-<%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 <%@ taglib prefix="l" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -7,7 +6,9 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<forms:workingDirectory/>
+<script type="text/javascript">
+    BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dnx-settings.css'/>");
+</script>
 
 <props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
     <c:forEach items="${params.types}" var="type">

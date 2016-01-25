@@ -38,12 +38,12 @@ project(':plugin-dnx-agent') {
         archiveName = projectIds.artifact
     
         from (libsDir) {
-            into 'libs'
+            into 'lib'
         }
         
         from (configurations.compile) {
             include 'plugin-dnx-*.jar'
-            into 'libs'
+            into 'lib'
         }
         
         from 'teamcity-plugin.xml'
@@ -63,6 +63,7 @@ project(':plugin-dnx-server') {
     dependencies {
         compile project(':plugin-dnx-common')
         compile 'org.jetbrains.teamcity:server-api:9.0'
+        compile 'com.google.code.gson:gson:2.5'
         runtime 'javax.servlet:jstl:1.1.2'
     }
     
@@ -74,6 +75,7 @@ project(':plugin-dnx-server') {
         }
         
         from (configurations.compile) {
+            include 'gson-*.jar'
             include 'plugin-dnx-*.jar'
             into 'server'
         }

@@ -27,19 +27,25 @@ public class DnuBuildArgumentsProvider implements ArgumentsProvider {
 
         final String projectsValue = parameters.get(DnuConstants.DNU_PARAM_BUILD_PATHS);
         if (!StringUtil.isEmptyOrSpaces(projectsValue)) {
-            arguments.add(projectsValue.trim());
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(projectsValue));
         }
 
         final String frameworkValue = parameters.get(DnuConstants.DNU_PARAM_BUILD_FRAMEWORK);
         if (!StringUtil.isEmptyOrSpaces(frameworkValue)) {
-            arguments.add("--framework");
-            arguments.add(frameworkValue.trim());
+            final List<String> frameworks = StringUtil.splitCommandArgumentsAndUnquote(frameworkValue);
+            for (String framework : frameworks) {
+                arguments.add("--framework");
+                arguments.add(framework);
+            }
         }
 
         final String configValue = parameters.get(DnuConstants.DNU_PARAM_BUILD_CONFIG);
         if (!StringUtil.isEmptyOrSpaces(configValue)) {
-            arguments.add("--configuration");
-            arguments.add(configValue.trim());
+            final List<String> configurations = StringUtil.splitCommandArgumentsAndUnquote(configValue);
+            for (String configuration : configurations) {
+                arguments.add("--configuration");
+                arguments.add(configuration);
+            }
         }
 
         final String outputValue = parameters.get(DnuConstants.DNU_PARAM_BUILD_OUTPUT);
@@ -50,7 +56,7 @@ public class DnuBuildArgumentsProvider implements ArgumentsProvider {
 
         final String argumentsValue = parameters.get(DnuConstants.DNU_PARAM_ARGUMENTS);
         if (!StringUtil.isEmptyOrSpaces(argumentsValue)) {
-            arguments.add(argumentsValue.trim());
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue));
         }
 
         return arguments;

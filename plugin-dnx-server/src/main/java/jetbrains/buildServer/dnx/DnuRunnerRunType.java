@@ -76,7 +76,7 @@ public class DnuRunnerRunType extends RunType {
     @NotNull
     @Override
     public String describeParameters(@NotNull Map<String, String> parameters) {
-        return super.describeParameters(parameters);
+        return String.format("dnu %s command", parameters.get(DnuConstants.DNU_PARAM_COMMAND));
     }
 
     @NotNull
