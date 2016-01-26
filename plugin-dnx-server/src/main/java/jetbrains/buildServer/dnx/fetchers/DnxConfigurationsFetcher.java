@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.fetchers;
 
 import jetbrains.buildServer.dnx.models.Project;
 import org.jetbrains.annotations.NotNull;

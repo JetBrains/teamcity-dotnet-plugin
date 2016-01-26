@@ -12,7 +12,7 @@
             Command: <strong><c:out value="${type.name}"/></strong>
         </div>
 
-        <jsp:include page="${teamcityPluginResourcesPath}/${type.viewPage}"/>
+        <jsp:include page="${teamcityPluginResourcesPath}/dnu/${type.viewPage}"/>
     </c:if>
 </c:forEach>
 

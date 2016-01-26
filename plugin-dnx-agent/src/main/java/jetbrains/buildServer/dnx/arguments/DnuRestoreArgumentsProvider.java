@@ -5,8 +5,9 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.arguments;
 
+import jetbrains.buildServer.dnx.DnuConstants;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 

@@ -9,16 +9,20 @@
     </div>
 </c:if>
 
-<div class="parameter">
-    Framework: <props:displayValue name="${params.buildFrameworkKey}"/>
-</div>
+<c:if test="${not empty propertiesBean.properties[params.buildFrameworkKey]}">
+    <div class="parameter">
+        Framework: <props:displayValue name="${params.buildFrameworkKey}"/>
+    </div>
+</c:if>
 
-<div class="parameter">
-    Configuration: <props:displayValue name="${params.buildConfigKey}"/>
-</div>
+<c:if test="${not empty propertiesBean.properties[params.buildConfigKey]}">
+    <div class="parameter">
+        Configuration: <props:displayValue name="${params.buildConfigKey}"/>
+    </div>
+</c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.buildOutputKey]}">
     <div class="parameter">
-        Packages path: <props:displayValue name="${params.buildOutputKey}"/>
+        Output directory: <props:displayValue name="${params.buildOutputKey}"/>
     </div>
 </c:if>

@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.commands;
 
 import jetbrains.buildServer.requirements.Requirement;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
@@ -27,13 +27,4 @@ public interface CommandType {
 
     @NotNull
     String getViewPage();
-
-    @NotNull
-    Map<String, String> getDefaultParameters();
-
-    @NotNull
-    List<Requirement> getRunnerSpecificRequirements(@NotNull Map<String, String> runParameters);
-
-    @Nullable
-    PropertiesProcessor getPropertiesProcessor();
 }

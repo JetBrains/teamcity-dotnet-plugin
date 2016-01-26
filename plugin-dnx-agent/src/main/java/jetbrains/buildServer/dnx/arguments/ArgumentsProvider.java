@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.arguments;
 
 import java.util.List;
 import java.util.Map;

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * DNX utility runner definition.
+ * Dnu runner definition.
  */
 public class DnuRunnerRunType extends RunType {
 

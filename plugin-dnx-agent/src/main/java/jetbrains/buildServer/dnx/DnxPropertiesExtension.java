@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dnx;
 
+import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.buildServer.agent.AgentLifeCycleAdapter;
 import jetbrains.buildServer.agent.AgentLifeCycleListener;
 import jetbrains.buildServer.agent.BuildAgent;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 public class DnxPropertiesExtension extends AgentLifeCycleAdapter {
 
+    private static final Logger LOG = Logger.getInstance(DnxRuntimeDetector.class.getName());
     private final DnxRuntimeDetector runtimeDetector;
 
     public DnxPropertiesExtension(@NotNull final EventDispatcher<AgentLifeCycleListener> events,
@@ -33,8 +35,10 @@ public class DnxPropertiesExtension extends AgentLifeCycleAdapter {
     public void beforeAgentConfigurationLoaded(@NotNull BuildAgent agent) {
         final BuildAgentConfiguration config = agent.getConfiguration();
 
+        LOG.info("Observing DNX runtimes");
         final Map<String, String> runtimes = runtimeDetector.getRuntimes();
         for (String name : runtimes.keySet()) {
+            LOG.info(String.format("Found DNX runtime %s at %s", name, runtimes.get(name)));
             config.addConfigurationParameter(name, runtimes.get(name));
         }
     }

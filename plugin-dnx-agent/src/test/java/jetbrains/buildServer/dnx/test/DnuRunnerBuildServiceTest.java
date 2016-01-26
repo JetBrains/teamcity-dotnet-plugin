@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dnx.test;
 
 import jetbrains.buildServer.dnx.*;
+import jetbrains.buildServer.dnx.arguments.*;
 import jetbrains.buildServer.util.CollectionsUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -35,6 +36,14 @@ public class DnuRunnerBuildServiceTest {
     @Test(dataProvider = "testRestoreArgumentsData")
     public void testRestoreArguments(final Map<String, String> parameters, final List<String> arguments) {
         final ArgumentsProvider argumentsProvider = new DnuRestoreArgumentsProvider();
+        final List<String> result = argumentsProvider.getArguments(parameters);
+
+        Assert.assertEquals(result, arguments);
+    }
+
+    @Test(dataProvider = "testPublishArgumentsData")
+    public void testPublishArguments(final Map<String, String> parameters, final List<String> arguments) {
+        final ArgumentsProvider argumentsProvider = new DnuPublishArgumentsProvider();
         final List<String> result = argumentsProvider.getArguments(parameters);
 
         Assert.assertEquals(result, arguments);
@@ -71,6 +80,25 @@ public class DnuRunnerBuildServiceTest {
 
                 {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PARALLEL, "true"),
                         Arrays.asList("restore", "--parallel")},
+        };
+    }
+
+    @DataProvider(name = "testPublishArgumentsData")
+    public Object[][] testPublishArgumentsData() {
+        return new Object[][]{
+                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PUBLISH_PATHS, "path/"),
+                        Arrays.asList("publish", "path/")},
+
+                {CollectionsUtil.asMap(
+                        DnuConstants.DNU_PARAM_PUBLISH_FRAMEWORK, "dotcore",
+                        DnuConstants.DNU_PARAM_PUBLISH_CONFIG, "Release"),
+                        Arrays.asList("publish", "--framework", "dotcore", "--configuration", "Release")},
+
+                {CollectionsUtil.asMap(
+                        DnuConstants.DNU_PARAM_PUBLISH_RUNTIME, "active",
+                        DnuConstants.DNU_PARAM_PUBLISH_NATIVE, "true",
+                        DnuConstants.DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS, "true"),
+                        Arrays.asList("publish", "--runtime", "active", "--native", "--include-symbols")},
         };
     }
 }

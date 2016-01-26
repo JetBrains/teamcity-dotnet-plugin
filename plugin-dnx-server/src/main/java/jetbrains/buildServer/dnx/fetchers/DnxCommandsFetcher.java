@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.fetchers;
 
 import jetbrains.buildServer.dnx.models.Project;
 import org.jetbrains.annotations.NotNull;
@@ -15,22 +15,22 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Provides frameworks fetcher for dnx project model.
+ * Provides commands fetcher for dnx project model.
  */
-public class DnxFrameworksFetcher extends DnxProjectsDataFetcher {
+public class DnxCommandsFetcher extends DnxProjectsDataFetcher {
     @NotNull
     @Override
     protected Collection<String> getDataItems(@Nullable final Project project) {
-        if (project == null || project.frameworks == null) {
+        if (project == null || project.commands == null){
             return Collections.emptySet();
         }
 
-        return project.frameworks.keySet();
+        return project.commands.keySet();
     }
 
     @NotNull
     @Override
     public String getType() {
-        return "DnxFrameworks";
+        return "DnxCommands";
     }
 }

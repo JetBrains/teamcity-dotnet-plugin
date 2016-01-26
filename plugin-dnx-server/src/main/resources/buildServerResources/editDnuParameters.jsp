@@ -13,7 +13,7 @@
 <props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
     <c:forEach items="${params.types}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">
-            <jsp:include page="${teamcityPluginResourcesPath}/${type.editPage}" />
+            <jsp:include page="${teamcityPluginResourcesPath}/dnu/${type.editPage}" />
         </props:selectSectionPropertyContent>
     </c:forEach>
 </props:selectSectionProperty>
@@ -23,6 +23,6 @@
     <td>
         <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.argumentsKey}"></span>
-        <span class="smallNote">Enter additional command line parameters to DNX Utility.</span>
+        <span class="smallNote">Enter additional command line parameters to dnu.</span>
     </td>
 </tr>

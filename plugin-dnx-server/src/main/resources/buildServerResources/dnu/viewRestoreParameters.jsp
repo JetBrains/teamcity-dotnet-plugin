@@ -15,7 +15,8 @@
     </div>
 </c:if>
 
-<div class="parameter">
-    Parallel execution for multiple discovered projects:
-    <strong>${propertiesBean.properties[params.parallelExecutionKey] ? 'ON' : 'OFF'}</strong>
-</div>
+<c:if test="${not empty propertiesBean.properties[params.parallelExecutionKey]}">
+    <div class="parameter">
+        Parallel execution for multiple discovered projects: <strong>ON</strong>
+    </div>
+</c:if>

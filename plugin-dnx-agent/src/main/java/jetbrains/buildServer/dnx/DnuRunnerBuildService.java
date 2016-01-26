@@ -10,6 +10,7 @@ package jetbrains.buildServer.dnx;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
+import jetbrains.buildServer.dnx.arguments.*;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * DNX utility runner service.
+ * Dnu runner service.
  */
 public class DnuRunnerBuildService extends BuildServiceAdapter {
 
@@ -27,6 +28,7 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
     public DnuRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_BUILD, new DnuBuildArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_PUBLISH, new DnuPublishArgumentsProvider());
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
     }
 

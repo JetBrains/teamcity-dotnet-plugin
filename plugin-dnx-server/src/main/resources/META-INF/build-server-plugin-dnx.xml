@@ -5,7 +5,8 @@
        default-autowire="constructor">
     <!--<bean class="jetbrains.buildServer.dnx.DnxRunnerDiscoveryExtension"/>-->
     <bean class="jetbrains.buildServer.dnx.DnuRunnerRunType"/>
-    <bean class="jetbrains.buildServer.dnx.DnxCommandsFetcher"/>
-    <bean class="jetbrains.buildServer.dnx.DnxConfigurationsFetcher"/>
-    <bean class="jetbrains.buildServer.dnx.DnxFrameworksFetcher"/>
+    <bean class="jetbrains.buildServer.dnx.fetchers.DnxCommandsFetcher"/>
+    <bean class="jetbrains.buildServer.dnx.fetchers.DnxConfigurationsFetcher"/>
+    <bean class="jetbrains.buildServer.dnx.fetchers.DnxFrameworksFetcher"/>
+    <bean class="jetbrains.buildServer.dnx.fetchers.DnxRuntimeFetcher"/>
 </beans>

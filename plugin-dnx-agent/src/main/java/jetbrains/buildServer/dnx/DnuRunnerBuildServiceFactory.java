@@ -14,7 +14,7 @@ import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * DNX utility runner service factory.
+ * Dnu runner service factory.
  */
 public class DnuRunnerBuildServiceFactory implements CommandLineBuildServiceFactory {
 

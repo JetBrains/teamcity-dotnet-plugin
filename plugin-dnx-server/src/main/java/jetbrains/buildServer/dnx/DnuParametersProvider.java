@@ -7,20 +7,32 @@
 
 package jetbrains.buildServer.dnx;
 
+import jetbrains.buildServer.dnx.commands.CommandType;
+import jetbrains.buildServer.dnx.commands.DnuBuildCommandType;
+import jetbrains.buildServer.dnx.commands.DnuPublishCommandType;
+import jetbrains.buildServer.dnx.commands.DnuRestoreCommandType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Provides parameters for DNX utility runner.
+ * Provides parameters for dnu runner.
  */
 public class DnuParametersProvider {
 
     private final List<CommandType> myTypes;
 
     public DnuParametersProvider() {
-        myTypes = Arrays.asList(new DnuBuildCommandType(), new DnuRestoreCommandType());
+        myTypes = Arrays.asList(
+                new DnuBuildCommandType(),
+                new DnuPublishCommandType(),
+                new DnuRestoreCommandType());
+    }
+
+    @NotNull
+    public List<CommandType> getTypes() {
+        return myTypes;
     }
 
     @NotNull
@@ -69,7 +81,42 @@ public class DnuParametersProvider {
     }
 
     @NotNull
-    public List<CommandType> getTypes() {
-        return myTypes;
+    public String getPublishPathsKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_PATHS;
+    }
+
+    @NotNull
+    public String getPublishFrameworkKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_FRAMEWORK;
+    }
+
+    @NotNull
+    public String getPublishConfigKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_CONFIG;
+    }
+
+    @NotNull
+    public String getPublishNativeKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_NATIVE;
+    }
+
+    @NotNull
+    public String getPublishCompileSourcesKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_COMPILE_SOURCE;
+    }
+
+    @NotNull
+    public String getPublishIncludeSymbolsKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS;
+    }
+
+    @NotNull
+    public String getPublishOutputKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_OUTPUT;
+    }
+
+    @NotNull
+    public String getPublishRuntimeKey() {
+        return DnuConstants.DNU_PARAM_PUBLISH_RUNTIME;
     }
 }

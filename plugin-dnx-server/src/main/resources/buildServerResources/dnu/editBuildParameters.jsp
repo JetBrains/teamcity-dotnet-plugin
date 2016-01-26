@@ -31,7 +31,7 @@
     </td>
 </tr>
 
-<tr>
+<tr class="advancedSetting">
     <th><label for="${params.buildFrameworkKey}">Framework:</label></th>
     <td>
         <div class="completionIconWrapper">
@@ -43,7 +43,7 @@
     </td>
 </tr>
 
-<tr>
+<tr class="advancedSetting">
     <th class="noBorder"><label for="${params.buildConfigKey}">Configuration:</label></th>
     <td>
         <div class="completionIconWrapper">

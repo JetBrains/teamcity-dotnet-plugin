@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dnx;
+package jetbrains.buildServer.dnx.fetchers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -69,7 +69,7 @@ public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
             return Collections.emptyList();
         }
 
-        final ArrayList<DataItem> dataItems = new ArrayList<DataItem>(items.size());
+        final List<DataItem> dataItems = new ArrayList<DataItem>(items.size());
         for (String item : items) {
             dataItems.add(new DataItem(item, null));
         }
