@@ -7,10 +7,7 @@
 
 package jetbrains.buildServer.dnx;
 
-import jetbrains.buildServer.dnx.commands.CommandType;
-import jetbrains.buildServer.dnx.commands.DnuBuildCommandType;
-import jetbrains.buildServer.dnx.commands.DnuPublishCommandType;
-import jetbrains.buildServer.dnx.commands.DnuRestoreCommandType;
+import jetbrains.buildServer.dnx.commands.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -26,6 +23,7 @@ public class DnuParametersProvider {
     public DnuParametersProvider() {
         myTypes = Arrays.asList(
                 new DnuBuildCommandType(),
+                new DnuPackCommandType(),
                 new DnuPublishCommandType(),
                 new DnuRestoreCommandType());
     }
@@ -118,5 +116,25 @@ public class DnuParametersProvider {
     @NotNull
     public String getPublishRuntimeKey() {
         return DnuConstants.DNU_PARAM_PUBLISH_RUNTIME;
+    }
+
+    @NotNull
+    public String getPackPathsKey() {
+        return DnuConstants.DNU_PARAM_PACK_PATHS;
+    }
+
+    @NotNull
+    public String getPackFrameworkKey() {
+        return DnuConstants.DNU_PARAM_PACK_FRAMEWORK;
+    }
+
+    @NotNull
+    public String getPackConfigKey() {
+        return DnuConstants.DNU_PARAM_PACK_CONFIG;
+    }
+
+    @NotNull
+    public String getPackOutputKey() {
+        return DnuConstants.DNU_PARAM_PACK_OUTPUT;
     }
 }

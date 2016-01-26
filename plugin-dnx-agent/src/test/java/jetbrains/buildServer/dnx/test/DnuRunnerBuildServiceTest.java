@@ -49,6 +49,14 @@ public class DnuRunnerBuildServiceTest {
         Assert.assertEquals(result, arguments);
     }
 
+    @Test(dataProvider = "testPackArgumentsData")
+    public void testPackArguments(final Map<String, String> parameters, final List<String> arguments) {
+        final ArgumentsProvider argumentsProvider = new DnuPackArgumentsProvider();
+        final List<String> result = argumentsProvider.getArguments(parameters);
+
+        Assert.assertEquals(result, arguments);
+    }
+
     @DataProvider(name = "testBuildArgumentsData")
     public Object[][] testBuildArgumentsData() {
         return new Object[][]{
@@ -99,6 +107,24 @@ public class DnuRunnerBuildServiceTest {
                         DnuConstants.DNU_PARAM_PUBLISH_NATIVE, "true",
                         DnuConstants.DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS, "true"),
                         Arrays.asList("publish", "--runtime", "active", "--native", "--include-symbols")},
+        };
+    }
+
+    @DataProvider(name = "testPackArgumentsData")
+    public Object[][] testPackArgumentsData() {
+        return new Object[][]{
+                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PACK_PATHS, "path/"),
+                        Arrays.asList("pack", "path/")},
+
+                {CollectionsUtil.asMap(
+                        DnuConstants.DNU_PARAM_PACK_FRAMEWORK, "dnxcore50",
+                        DnuConstants.DNU_PARAM_PACK_CONFIG, "Release"),
+                        Arrays.asList("pack", "--framework", "dnxcore50", "--configuration", "Release")},
+
+                {CollectionsUtil.asMap(
+                        DnuConstants.DNU_PARAM_PACK_OUTPUT, "output/",
+                        DnuConstants.DNU_PARAM_ARGUMENTS, "--quiet"),
+                        Arrays.asList("pack", "--out", "output/", "--quiet")},
         };
     }
 }

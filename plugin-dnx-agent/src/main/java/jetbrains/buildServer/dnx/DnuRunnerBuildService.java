@@ -28,6 +28,7 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
     public DnuRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_BUILD, new DnuBuildArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_PACK, new DnuPackArgumentsProvider());
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_PUBLISH, new DnuPublishArgumentsProvider());
         myArgumentsProviders.put(DnuConstants.DNU_COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
     }

@@ -16,6 +16,7 @@ public interface DnuConstants {
     String DNU_RUNNER_DESCRIPTION = "Provides DNX package management";
 
     String DNU_COMMAND_BUILD = "build";
+    String DNU_COMMAND_PACK = "pack";
     String DNU_COMMAND_PUBLISH = "publish";
     String DNU_COMMAND_RESTORE = "restore";
 
@@ -38,4 +39,9 @@ public interface DnuConstants {
     String DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS = "dnu-publish-include-symbols";
     String DNU_PARAM_PUBLISH_OUTPUT = "dnu-publish-output";
     String DNU_PARAM_PUBLISH_RUNTIME = "dnu-publish-runtime";
+
+    String DNU_PARAM_PACK_PATHS = "dnu-pack-paths";
+    String DNU_PARAM_PACK_FRAMEWORK = "dnu-pack-framework";
+    String DNU_PARAM_PACK_CONFIG = "dnu-pack-config";
+    String DNU_PARAM_PACK_OUTPUT = "dnu-pack-output";
 }
