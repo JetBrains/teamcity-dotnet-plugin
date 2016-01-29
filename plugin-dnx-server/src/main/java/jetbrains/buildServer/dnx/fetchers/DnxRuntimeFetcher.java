@@ -24,8 +24,8 @@ public class DnxRuntimeFetcher implements ProjectDataFetcher {
 
     private final DnxRuntimeDetector myRuntimeDetector;
 
-    public DnxRuntimeFetcher() {
-        myRuntimeDetector = new DnxRuntimeDetector();
+    public DnxRuntimeFetcher(@NotNull final DnxRuntimeDetector runtimeDetector) {
+        myRuntimeDetector = runtimeDetector;
     }
 
     @NotNull

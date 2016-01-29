@@ -24,7 +24,7 @@ import java.io.File;
 public class DnxToolProviderTest {
 
     @Test
-    public void testGetPath() {
+    public void testGetPathForDnu() {
         final ToolProvider toolProvider = new DnxToolProvider(new ToolProvidersRegistryImpl());
         String dnuPath = null;
         ToolCannotBeFoundException exception = null;
@@ -47,8 +47,14 @@ public class DnxToolProviderTest {
     }
 
     @Test
-    public void testSupport() throws Exception {
+    public void testDnuSupport() throws Exception {
         final ToolProvider toolProvider = new DnxToolProvider(new ToolProvidersRegistryImpl());
-        Assert.assertTrue(toolProvider.supports("dnu"));
+        Assert.assertTrue(toolProvider.supports("dNu"));
+    }
+
+    @Test
+    public void testDnxSupport() throws Exception {
+        final ToolProvider toolProvider = new DnxToolProvider(new ToolProvidersRegistryImpl());
+        Assert.assertTrue(toolProvider.supports("dnX"));
     }
 }

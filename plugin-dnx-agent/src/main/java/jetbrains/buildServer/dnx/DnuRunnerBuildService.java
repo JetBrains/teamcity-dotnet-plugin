@@ -49,7 +49,8 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
         }
 
         final List<String> arguments = argumentsProvider.getArguments(parameters);
+        final String toolPath = getToolPath(DnuConstants.DNU_RUNNER_TYPE);
 
-        return createProgramCommandline(getToolPath(DnxToolProvider.DNU_TOOL), arguments);
+        return createProgramCommandline(toolPath, arguments);
     }
 }

@@ -4,8 +4,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<props:viewWorkingDirectory/>
-
 <c:forEach items="${params.types}" var="type">
     <c:if test="${propertiesBean.properties[params.commandKey] eq type.name}">
         <div class="parameter">

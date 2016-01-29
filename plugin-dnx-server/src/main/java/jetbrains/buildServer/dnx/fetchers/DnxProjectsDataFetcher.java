@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -29,6 +30,8 @@ import java.util.*;
  * Provides an abstract fetcher for dnx project model.
  */
 public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
+
+    private static final String PROJECT_JSON = "project.json";
 
     @NotNull
     @Override
@@ -43,7 +46,15 @@ public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
         final Gson gson = builder.create();
 
         for (String projectPath : projectsPaths) {
-            final String projectFile = StringUtil.isEmptyOrSpaces(projectPath) ? "project.json" : projectPath.trim();
+            final String projectFile;
+            if (StringUtil.isEmptyOrSpaces(projectPath)) {
+                projectFile = PROJECT_JSON;
+            } else if (StringUtil.isEmpty(FileUtil.getExtension(projectPath))) {
+                projectFile = new File(projectPath, PROJECT_JSON).getPath();
+            } else {
+                projectFile = projectPath;
+            }
+
             InputStream inputStream = null;
 
             try {
@@ -69,8 +80,11 @@ public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
             return Collections.emptyList();
         }
 
-        final List<DataItem> dataItems = new ArrayList<DataItem>(items.size());
-        for (String item : items) {
+        final List<String> data = new ArrayList<String>(items);
+        Collections.sort(data);
+
+        final List<DataItem> dataItems = new ArrayList<DataItem>(data.size());
+        for (String item : data) {
             dataItems.add(new DataItem(item, null));
         }
 

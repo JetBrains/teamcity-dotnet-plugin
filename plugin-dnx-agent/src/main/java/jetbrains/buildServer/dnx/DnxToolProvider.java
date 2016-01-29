@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 /**
@@ -21,9 +23,8 @@ import java.util.regex.Pattern;
  */
 public class DnxToolProvider implements ToolProvider {
 
-    public static final String DNU_TOOL = "dnu";
+    private static final Map<String, Pattern> DNX_TOOLS;
     private static final Logger LOG = Logger.getInstance(DnxToolProvider.class.getName());
-    private static final Pattern DNU_TOOL_PATH = Pattern.compile("^.*dnu(\\.(cmd|bat))?$");
 
     public DnxToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
         toolProvidersRegistry.registerToolProvider(this);
@@ -31,12 +32,17 @@ public class DnxToolProvider implements ToolProvider {
 
     @Override
     public boolean supports(@NotNull String toolName) {
-        return DNU_TOOL.equals(toolName);
+        return DNX_TOOLS.containsKey(toolName);
     }
 
     @NotNull
     @Override
     public String getPath(@NotNull String toolName) throws ToolCannotBeFoundException {
+        if (!DNX_TOOLS.containsKey(toolName)) {
+            throw new ToolCannotBeFoundException(String.format("Tool %s is not supported", toolName));
+        }
+
+        final Pattern pattern = DNX_TOOLS.get(toolName);
         final String pathVariable = System.getenv("PATH");
 
         LOG.debug(String.format("Looking for tool %s in path %s", toolName, pathVariable));
@@ -57,7 +63,7 @@ public class DnxToolProvider implements ToolProvider {
 
             for (File file : files) {
                 final String absolutePath = file.getAbsolutePath();
-                if (DNU_TOOL_PATH.matcher(absolutePath).find()) {
+                if (pattern.matcher(absolutePath).find()) {
                     return absolutePath;
                 }
             }
@@ -72,5 +78,11 @@ public class DnxToolProvider implements ToolProvider {
                           @NotNull AgentRunningBuild build,
                           @NotNull BuildRunnerContext runner) throws ToolCannotBeFoundException {
         return getPath(toolName);
+    }
+
+    static {
+        DNX_TOOLS = new TreeMap<String, Pattern>(String.CASE_INSENSITIVE_ORDER);
+        DNX_TOOLS.put("dnu", Pattern.compile("^.*dnu(\\.(cmd|bat))?$"));
+        DNX_TOOLS.put("dnx", Pattern.compile("^.*dnx(\\.(exe))?$"));
     }
 }
