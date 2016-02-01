@@ -24,14 +24,14 @@ public class DnuPackArgumentsProvider implements ArgumentsProvider {
     @Override
     public List<String> getArguments(@NotNull final Map<String, String> parameters) {
         final List<String> arguments = new ArrayList<String>();
-        arguments.add(DnuConstants.DNU_COMMAND_PACK);
+        arguments.add(DnuConstants.COMMAND_PACK);
 
-        final String projectsValue = parameters.get(DnuConstants.DNU_PARAM_PACK_PATHS);
+        final String projectsValue = parameters.get(DnuConstants.PARAM_PATHS);
         if (!StringUtil.isEmptyOrSpaces(projectsValue)) {
             arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(projectsValue));
         }
 
-        final String frameworkValue = parameters.get(DnuConstants.DNU_PARAM_PACK_FRAMEWORK);
+        final String frameworkValue = parameters.get(DnuConstants.PARAM_PACK_FRAMEWORK);
         if (!StringUtil.isEmptyOrSpaces(frameworkValue)) {
             final List<String> frameworks = StringUtil.splitCommandArgumentsAndUnquote(frameworkValue);
             for (String framework : frameworks) {
@@ -40,7 +40,7 @@ public class DnuPackArgumentsProvider implements ArgumentsProvider {
             }
         }
 
-        final String configValue = parameters.get(DnuConstants.DNU_PARAM_PACK_CONFIG);
+        final String configValue = parameters.get(DnuConstants.PARAM_PACK_CONFIG);
         if (!StringUtil.isEmptyOrSpaces(configValue)) {
             final List<String> configurations = StringUtil.splitCommandArgumentsAndUnquote(configValue);
             for (String configuration : configurations) {
@@ -49,13 +49,13 @@ public class DnuPackArgumentsProvider implements ArgumentsProvider {
             }
         }
 
-        final String outputValue = parameters.get(DnuConstants.DNU_PARAM_PACK_OUTPUT);
+        final String outputValue = parameters.get(DnuConstants.PARAM_PACK_OUTPUT);
         if (!StringUtil.isEmptyOrSpaces(outputValue)) {
             arguments.add("--out");
             arguments.add(outputValue.trim());
         }
 
-        final String argumentsValue = parameters.get(DnuConstants.DNU_PARAM_ARGUMENTS);
+        final String argumentsValue = parameters.get(DnuConstants.PARAM_ARGUMENTS);
         if (!StringUtil.isEmptyOrSpaces(argumentsValue)) {
             arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue));
         }

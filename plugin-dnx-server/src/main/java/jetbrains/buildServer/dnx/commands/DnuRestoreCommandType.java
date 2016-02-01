@@ -17,7 +17,7 @@ public class DnuRestoreCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
-        return DnuConstants.DNU_COMMAND_RESTORE;
+        return DnuConstants.COMMAND_RESTORE;
     }
 
     @NotNull

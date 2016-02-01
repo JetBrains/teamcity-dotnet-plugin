@@ -17,7 +17,7 @@ public class DnuPackCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
-        return DnuConstants.DNU_COMMAND_PACK;
+        return DnuConstants.COMMAND_PACK;
     }
 
     @NotNull

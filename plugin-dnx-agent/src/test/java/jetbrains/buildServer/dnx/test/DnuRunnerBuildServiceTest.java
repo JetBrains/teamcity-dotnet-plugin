@@ -60,17 +60,17 @@ public class DnuRunnerBuildServiceTest {
     @DataProvider(name = "testBuildArgumentsData")
     public Object[][] testBuildArgumentsData() {
         return new Object[][]{
-                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_BUILD_PATHS, "path/"),
+                {CollectionsUtil.asMap(DnuConstants.PARAM_PATHS, "path/"),
                         Arrays.asList("build", "path/")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_BUILD_FRAMEWORK, "dnxcore50",
-                        DnuConstants.DNU_PARAM_BUILD_CONFIG, "Release"),
+                        DnuConstants.PARAM_BUILD_FRAMEWORK, "dnxcore50",
+                        DnuConstants.PARAM_BUILD_CONFIG, "Release"),
                         Arrays.asList("build", "--framework", "dnxcore50", "--configuration", "Release")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_BUILD_OUTPUT, "output/",
-                        DnuConstants.DNU_PARAM_ARGUMENTS, "--quiet"),
+                        DnuConstants.PARAM_BUILD_OUTPUT, "output/",
+                        DnuConstants.PARAM_ARGUMENTS, "--quiet"),
                         Arrays.asList("build", "--out", "output/", "--quiet")},
         };
     }
@@ -78,15 +78,15 @@ public class DnuRunnerBuildServiceTest {
     @DataProvider(name = "testRestoreArgumentsData")
     public Object[][] testRestoreArgumentsData() {
         return new Object[][]{
-                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_RESTORE_PATHS, "path/"),
+                {CollectionsUtil.asMap(DnuConstants.PARAM_PATHS, "path/"),
                         Arrays.asList("restore", "path/")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_PACKAGES_PATH, "packages/",
-                        DnuConstants.DNU_PARAM_PARALLEL, "false"),
+                        DnuConstants.PARAM_RESTORE_PACKAGES, "packages/",
+                        DnuConstants.PARAM_RESTORE_PARALLEL, "false"),
                         Arrays.asList("restore", "--packages", "packages/")},
 
-                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PARALLEL, "true"),
+                {CollectionsUtil.asMap(DnuConstants.PARAM_RESTORE_PARALLEL, "true"),
                         Arrays.asList("restore", "--parallel")},
         };
     }
@@ -94,18 +94,18 @@ public class DnuRunnerBuildServiceTest {
     @DataProvider(name = "testPublishArgumentsData")
     public Object[][] testPublishArgumentsData() {
         return new Object[][]{
-                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PUBLISH_PATHS, "path/"),
+                {CollectionsUtil.asMap(DnuConstants.PARAM_PATHS, "path/"),
                         Arrays.asList("publish", "path/")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_PUBLISH_FRAMEWORK, "dotcore",
-                        DnuConstants.DNU_PARAM_PUBLISH_CONFIG, "Release"),
+                        DnuConstants.PARAM_PUBLISH_FRAMEWORK, "dotcore",
+                        DnuConstants.PARAM_PUBLISH_CONFIG, "Release"),
                         Arrays.asList("publish", "--framework", "dotcore", "--configuration", "Release")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_PUBLISH_RUNTIME, "active",
-                        DnuConstants.DNU_PARAM_PUBLISH_NATIVE, "true",
-                        DnuConstants.DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS, "true"),
+                        DnuConstants.PARAM_PUBLISH_RUNTIME, "active",
+                        DnuConstants.PARAM_PUBLISH_NATIVE, "true",
+                        DnuConstants.PARAM_PUBLISH_INCLUDE_SYMBOLS, "true"),
                         Arrays.asList("publish", "--runtime", "active", "--native", "--include-symbols")},
         };
     }
@@ -113,17 +113,17 @@ public class DnuRunnerBuildServiceTest {
     @DataProvider(name = "testPackArgumentsData")
     public Object[][] testPackArgumentsData() {
         return new Object[][]{
-                {CollectionsUtil.asMap(DnuConstants.DNU_PARAM_PACK_PATHS, "path/"),
+                {CollectionsUtil.asMap(DnuConstants.PARAM_PATHS, "path/"),
                         Arrays.asList("pack", "path/")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_PACK_FRAMEWORK, "dnxcore50",
-                        DnuConstants.DNU_PARAM_PACK_CONFIG, "Release"),
+                        DnuConstants.PARAM_PACK_FRAMEWORK, "dnxcore50",
+                        DnuConstants.PARAM_PACK_CONFIG, "Release"),
                         Arrays.asList("pack", "--framework", "dnxcore50", "--configuration", "Release")},
 
                 {CollectionsUtil.asMap(
-                        DnuConstants.DNU_PARAM_PACK_OUTPUT, "output/",
-                        DnuConstants.DNU_PARAM_ARGUMENTS, "--quiet"),
+                        DnuConstants.PARAM_PACK_OUTPUT, "output/",
+                        DnuConstants.PARAM_ARGUMENTS, "--quiet"),
                         Arrays.asList("pack", "--out", "output/", "--quiet")},
         };
     }

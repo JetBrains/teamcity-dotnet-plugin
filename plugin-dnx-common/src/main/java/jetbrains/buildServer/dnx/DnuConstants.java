@@ -11,37 +11,35 @@ package jetbrains.buildServer.dnx;
  * Dnu runner constants.
  */
 public interface DnuConstants {
-    String DNU_RUNNER_TYPE = "dnu";
-    String DNU_RUNNER_DISPLAY_NAME = "dnu";
-    String DNU_RUNNER_DESCRIPTION = "Provides DNX package management";
+    String RUNNER_TYPE = "dnu";
+    String RUNNER_DISPLAY_NAME = "dnu";
+    String RUNNER_DESCRIPTION = "Provides DNX package management";
 
-    String DNU_COMMAND_BUILD = "build";
-    String DNU_COMMAND_PACK = "pack";
-    String DNU_COMMAND_PUBLISH = "publish";
-    String DNU_COMMAND_RESTORE = "restore";
+    String COMMAND_BUILD = "build";
+    String COMMAND_PACK = "pack";
+    String COMMAND_PUBLISH = "publish";
+    String COMMAND_RESTORE = "restore";
 
-    String DNU_PARAM_COMMAND = "dnu-command";
-    String DNU_PARAM_ARGUMENTS = "dnu-args";
-    String DNU_PARAM_RESTORE_PATHS = "dnu-restore-paths";
-    String DNU_PARAM_PARALLEL = "dnu-parallel";
-    String DNU_PARAM_PACKAGES_PATH = "dnu-packages-path";
+    String PARAM_COMMAND = "dnu-command";
+    String PARAM_ARGUMENTS = "dnu-args";
+    String PARAM_PATHS = "dnu-paths";
 
-    String DNU_PARAM_BUILD_PATHS = "dnu-build-paths";
-    String DNU_PARAM_BUILD_FRAMEWORK = "dnu-build-framework";
-    String DNU_PARAM_BUILD_CONFIG = "dnu-build-config";
-    String DNU_PARAM_BUILD_OUTPUT = "dnu-build-output";
+    String PARAM_RESTORE_PARALLEL = "dnu-restore-parallel";
+    String PARAM_RESTORE_PACKAGES = "dnu-restore-packages";
 
-    String DNU_PARAM_PUBLISH_PATHS = "dnu-publish-paths";
-    String DNU_PARAM_PUBLISH_FRAMEWORK = "dnu-publish-framework";
-    String DNU_PARAM_PUBLISH_CONFIG = "dnu-publish-config";
-    String DNU_PARAM_PUBLISH_NATIVE = "dnu-publish-native";
-    String DNU_PARAM_PUBLISH_COMPILE_SOURCE = "dnu-publish-compile-sources";
-    String DNU_PARAM_PUBLISH_INCLUDE_SYMBOLS = "dnu-publish-include-symbols";
-    String DNU_PARAM_PUBLISH_OUTPUT = "dnu-publish-output";
-    String DNU_PARAM_PUBLISH_RUNTIME = "dnu-publish-runtime";
+    String PARAM_BUILD_FRAMEWORK = "dnu-build-framework";
+    String PARAM_BUILD_CONFIG = "dnu-build-config";
+    String PARAM_BUILD_OUTPUT = "dnu-build-output";
 
-    String DNU_PARAM_PACK_PATHS = "dnu-pack-paths";
-    String DNU_PARAM_PACK_FRAMEWORK = "dnu-pack-framework";
-    String DNU_PARAM_PACK_CONFIG = "dnu-pack-config";
-    String DNU_PARAM_PACK_OUTPUT = "dnu-pack-output";
+    String PARAM_PUBLISH_FRAMEWORK = "dnu-publish-framework";
+    String PARAM_PUBLISH_CONFIG = "dnu-publish-config";
+    String PARAM_PUBLISH_NATIVE = "dnu-publish-native";
+    String PARAM_PUBLISH_COMPILE_SOURCE = "dnu-publish-compile-sources";
+    String PARAM_PUBLISH_INCLUDE_SYMBOLS = "dnu-publish-include-symbols";
+    String PARAM_PUBLISH_OUTPUT = "dnu-publish-output";
+    String PARAM_PUBLISH_RUNTIME = "dnu-publish-runtime";
+
+    String PARAM_PACK_FRAMEWORK = "dnu-pack-framework";
+    String PARAM_PACK_CONFIG = "dnu-pack-config";
+    String PARAM_PACK_OUTPUT = "dnu-pack-output";
 }

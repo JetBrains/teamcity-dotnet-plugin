@@ -17,7 +17,7 @@ public class DnuBuildCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
-        return DnuConstants.DNU_COMMAND_BUILD;
+        return DnuConstants.COMMAND_BUILD;
     }
 
     @NotNull

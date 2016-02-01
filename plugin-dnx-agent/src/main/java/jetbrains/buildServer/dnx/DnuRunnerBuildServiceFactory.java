@@ -31,7 +31,7 @@ public class DnuRunnerBuildServiceFactory implements CommandLineBuildServiceFact
             @NotNull
             @Override
             public String getType() {
-                return DnuConstants.DNU_RUNNER_TYPE;
+                return DnuConstants.RUNNER_TYPE;
             }
 
             @Override

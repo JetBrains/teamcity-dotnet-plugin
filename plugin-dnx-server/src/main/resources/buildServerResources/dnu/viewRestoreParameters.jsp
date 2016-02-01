@@ -3,19 +3,13 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.restorePathsKey]}">
+<c:if test="${not empty propertiesBean.properties[params.restorePackagesKey]}">
     <div class="parameter">
-        Projects: <props:displayValue name="${params.restorePathsKey}"/>
+        Packages path: <props:displayValue name="${params.restorePackagesKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.packagePathsKey]}">
-    <div class="parameter">
-        Packages path: <props:displayValue name="${params.packagePathsKey}"/>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.parallelExecutionKey]}">
+<c:if test="${not empty propertiesBean.properties[params.restoreParallelKey]}">
     <div class="parameter">
         Parallel execution for multiple discovered projects: <strong>ON</strong>
     </div>

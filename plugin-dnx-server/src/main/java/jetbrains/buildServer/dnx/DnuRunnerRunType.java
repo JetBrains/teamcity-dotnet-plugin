@@ -33,19 +33,19 @@ public class DnuRunnerRunType extends RunType {
     @NotNull
     @Override
     public String getType() {
-        return DnuConstants.DNU_RUNNER_TYPE;
+        return DnuConstants.RUNNER_TYPE;
     }
 
     @NotNull
     @Override
     public String getDisplayName() {
-        return DnuConstants.DNU_RUNNER_DISPLAY_NAME;
+        return DnuConstants.RUNNER_DISPLAY_NAME;
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return DnuConstants.DNU_RUNNER_DESCRIPTION;
+        return DnuConstants.RUNNER_DESCRIPTION;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DnuRunnerRunType extends RunType {
     @NotNull
     @Override
     public String describeParameters(@NotNull Map<String, String> parameters) {
-        return String.format("dnu %s command", parameters.get(DnuConstants.DNU_PARAM_COMMAND));
+        return String.format("dnu %s command", parameters.get(DnuConstants.PARAM_COMMAND));
     }
 
     @NotNull

@@ -17,7 +17,7 @@ public class DnuPublishCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
-        return DnuConstants.DNU_COMMAND_PUBLISH;
+        return DnuConstants.COMMAND_PUBLISH;
     }
 
     @NotNull

@@ -27,10 +27,10 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
 
     public DnuRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
-        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_BUILD, new DnuBuildArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_PACK, new DnuPackArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_PUBLISH, new DnuPublishArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.DNU_COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.COMMAND_BUILD, new DnuBuildArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.COMMAND_PACK, new DnuPackArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.COMMAND_PUBLISH, new DnuPublishArgumentsProvider());
+        myArgumentsProviders.put(DnuConstants.COMMAND_RESTORE, new DnuRestoreArgumentsProvider());
     }
 
     @NotNull
@@ -38,7 +38,7 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
         final Map<String, String> parameters = getRunnerParameters();
 
-        final String commandName = parameters.get(DnuConstants.DNU_PARAM_COMMAND);
+        final String commandName = parameters.get(DnuConstants.PARAM_COMMAND);
         if (StringUtil.isEmpty(commandName)) {
             throw new RunBuildException("DNU command name is empty");
         }
@@ -49,7 +49,7 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
         }
 
         final List<String> arguments = argumentsProvider.getArguments(parameters);
-        final String toolPath = getToolPath(DnuConstants.DNU_RUNNER_TYPE);
+        final String toolPath = getToolPath(DnuConstants.RUNNER_TYPE);
 
         return createProgramCommandline(toolPath, arguments);
     }

@@ -8,12 +8,34 @@
 
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dnx-settings.css'/>");
+    BS.DnuParametersForm = {
+        selectProjectFile: function (chosenFile) {
+            var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
+            var value = BS.Util.trimSpaces($paths.val());
+            chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
+            $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
+        }
+    };
 </script>
 
 <props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
+    <tr class="advancedSetting">
+        <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
+        <td>
+            <div class="completionIconWrapper clearfix">
+                <div class="dnx left">
+                    <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
+                </div>
+                <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DnuParametersForm.selectProjectFile"/>
+            </div>
+            <span class="error" id="error_${params.pathsKey}"></span>
+            <span class="smallNote">Space-separated list of project files or folders.</span>
+        </td>
+    </tr>
+
     <c:forEach items="${params.types}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">
-            <jsp:include page="${teamcityPluginResourcesPath}/dnu/${type.editPage}" />
+            <jsp:include page="${teamcityPluginResourcesPath}/dnu/${type.editPage}"/>
         </props:selectSectionPropertyContent>
     </c:forEach>
 </props:selectSectionProperty>

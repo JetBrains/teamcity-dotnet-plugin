@@ -3,12 +3,6 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dnx.DnuParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.buildPathsKey]}">
-    <div class="parameter">
-        Projects: <props:displayValue name="${params.buildPathsKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.buildFrameworkKey]}">
     <div class="parameter">
         Framework: <props:displayValue name="${params.buildFrameworkKey}"/>
