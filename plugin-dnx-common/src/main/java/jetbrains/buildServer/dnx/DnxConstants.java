@@ -23,4 +23,6 @@ public interface DnxConstants {
     String PARAM_LIBS = "dnx-lib";
     String PARAM_PACKAGES = "dnx-packages";
     String PARAM_ARGUMENTS = "dnx-args";
+
+    String PROJECT_JSON = "project.json";
 }

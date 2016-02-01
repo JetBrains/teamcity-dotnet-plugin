@@ -6,6 +6,8 @@
     <bean class="jetbrains.buildServer.dnx.DnuRunnerRunType"/>
     <bean class="jetbrains.buildServer.dnx.DnxRunnerRunType"/>
     <bean class="jetbrains.buildServer.dnx.DnxRuntimeDetector"/>
+    <bean class="jetbrains.buildServer.dnx.DnxModelParser"/>
+    <bean class="jetbrains.buildServer.dnx.DnxRunnerDiscoveryExtension"/>
     <bean class="jetbrains.buildServer.dnx.fetchers.DnxCommandsFetcher"/>
     <bean class="jetbrains.buildServer.dnx.fetchers.DnxConfigurationsFetcher"/>
     <bean class="jetbrains.buildServer.dnx.fetchers.DnxFrameworksFetcher"/>

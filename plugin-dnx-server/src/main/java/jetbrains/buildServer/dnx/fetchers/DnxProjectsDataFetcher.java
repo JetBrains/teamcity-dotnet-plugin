@@ -7,23 +7,18 @@
 
 package jetbrains.buildServer.dnx.fetchers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import jetbrains.buildServer.dnx.DnxConstants;
+import jetbrains.buildServer.dnx.DnxModelParser;
 import jetbrains.buildServer.dnx.models.Project;
-import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.DataItem;
 import jetbrains.buildServer.serverSide.ProjectDataFetcher;
 import jetbrains.buildServer.util.FileUtil;
 import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.util.browser.Browser;
-import jetbrains.buildServer.util.browser.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -31,7 +26,11 @@ import java.util.*;
  */
 public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
 
-    private static final String PROJECT_JSON = "project.json";
+    private final DnxModelParser myModelParser;
+
+    public DnxProjectsDataFetcher(@NotNull DnxModelParser modelParser) {
+        myModelParser = modelParser;
+    }
 
     @NotNull
     @Override
@@ -42,38 +41,22 @@ public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
             projectsPaths.add(StringUtil.EMPTY);
         }
 
-        final GsonBuilder builder = new GsonBuilder();
-        final Gson gson = builder.create();
-
         for (String projectPath : projectsPaths) {
             final String projectFile;
             if (StringUtil.isEmptyOrSpaces(projectPath)) {
-                projectFile = PROJECT_JSON;
+                projectFile = DnxConstants.PROJECT_JSON;
             } else if (StringUtil.isEmpty(FileUtil.getExtension(projectPath))) {
-                projectFile = new File(projectPath, PROJECT_JSON).getPath();
+                projectFile = new File(projectPath, DnxConstants.PROJECT_JSON).getPath();
             } else {
                 projectFile = projectPath;
             }
 
-            InputStream inputStream = null;
-
-            try {
-                final Element projectElement = browser.getElement(projectFile);
-                if (projectElement == null || !projectElement.isContentAvailable()) {
-                    continue;
-                }
-
-                inputStream = projectElement.getInputStream();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                final Project project = gson.fromJson(reader, Project.class);
-
-                items.addAll(getDataItems(project));
-            } catch (Exception e) {
-                String message = "Failed to retrieve file for given path " + projectFile + ": " + e.toString();
-                Loggers.SERVER.infoAndDebugDetails(message, e);
-            } finally {
-                FileUtil.close(inputStream);
+            final Project project = myModelParser.getProjectModel(browser.getElement(projectFile));
+            if (project == null) {
+                continue;
             }
+
+            items.addAll(getDataItems(project));
         }
 
         if (items.size() == 0) {

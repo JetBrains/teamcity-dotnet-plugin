@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dnx.fetchers;
 
+import jetbrains.buildServer.dnx.DnxModelParser;
 import jetbrains.buildServer.dnx.models.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +20,11 @@ import java.util.TreeSet;
  * Provides configurations fetcher for dnx project model.
  */
 public class DnxConfigurationsFetcher extends DnxProjectsDataFetcher {
+
+    public DnxConfigurationsFetcher(@NotNull DnxModelParser modelParser) {
+        super(modelParser);
+    }
+
     @NotNull
     @Override
     protected Collection<String> getDataItems(@Nullable final Project project) {
