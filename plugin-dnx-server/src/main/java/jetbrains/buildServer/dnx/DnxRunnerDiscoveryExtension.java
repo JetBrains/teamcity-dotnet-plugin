@@ -8,17 +8,16 @@
 package jetbrains.buildServer.dnx;
 
 import jetbrains.buildServer.dnx.models.Project;
+import jetbrains.buildServer.serverSide.BuildTypeSettings;
 import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExtension;
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject;
 import jetbrains.buildServer.util.CollectionsUtil;
+import jetbrains.buildServer.util.browser.Browser;
 import jetbrains.buildServer.util.browser.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -38,7 +37,8 @@ public class DnxRunnerDiscoveryExtension extends BreadthFirstRunnerDiscoveryExte
 
     @NotNull
     @Override
-    protected List<DiscoveredObject> discoverRunnersInDirectory(@NotNull final Element dir, @NotNull final List<Element> filesAndDirs) {
+    protected List<DiscoveredObject> discoverRunnersInDirectory(@NotNull final Element dir,
+                                                                @NotNull final List<Element> filesAndDirs) {
         final List<DiscoveredObject> result = new ArrayList<DiscoveredObject>();
         for (Element item : filesAndDirs) {
             if (item.isLeaf() && item.getName().endsWith(DnxConstants.PROJECT_JSON) && item.isContentAvailable()) {
@@ -86,5 +86,29 @@ public class DnxRunnerDiscoveryExtension extends BreadthFirstRunnerDiscoveryExte
         }
 
         return null;
+    }
+
+    @NotNull
+    @Override
+    protected List<DiscoveredObject> postProcessDiscoveredObjects(@NotNull BuildTypeSettings settings,
+                                                                  @NotNull Browser browser,
+                                                                  @NotNull List<DiscoveredObject> discovered) {
+        if (discovered.size() == 0) {
+            return discovered;
+        }
+
+        // Order steps
+        Collections.sort(discovered, new Comparator<DiscoveredObject>() {
+            @Override
+            public int compare(DiscoveredObject o1, DiscoveredObject o2) {
+                return o1.getType().compareTo(o2.getType()) * -1;
+            }
+        });
+
+        // Restore nuget packages
+        discovered.add(0, new DiscoveredObject(DnuConstants.RUNNER_TYPE, CollectionsUtil.asMap(
+                DnuConstants.PARAM_COMMAND, DnuConstants.COMMAND_RESTORE)));
+
+        return discovered;
     }
 }

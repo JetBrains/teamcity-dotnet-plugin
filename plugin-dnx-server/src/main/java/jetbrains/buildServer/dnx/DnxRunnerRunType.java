@@ -12,6 +12,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
 import jetbrains.buildServer.serverSide.RunTypeRegistry;
+import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +77,10 @@ public class DnxRunnerRunType extends RunType {
     @NotNull
     @Override
     public String describeParameters(@NotNull Map<String, String> parameters) {
-        return String.format("dnx %s command", parameters.get(DnxConstants.PARAM_COMMAND));
+        final String paths = parameters.get(DnxConstants.PARAM_PATHS);
+        return String.format("dnx %s %s",
+                parameters.get(DnxConstants.PARAM_COMMAND),
+                StringUtil.isEmpty(paths) ? StringUtil.EMPTY : paths);
     }
 
     @NotNull
