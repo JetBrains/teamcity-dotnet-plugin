@@ -1,5 +1,5 @@
 def versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
-ext.projectIds = ['group': 'teamcity-dnx-plugin', 'version': versionNumber, 'artifact': 'dnx-plugin.zip']
+ext.projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-plugin.zip']
 
 group = projectIds.group
 version = projectIds.version
@@ -25,9 +25,9 @@ subprojects {
     jar.version = null
 }
 
-project(':plugin-dnx-agent') {
+project(':plugin-dotnet-agent') {
     dependencies {
-        compile project(':plugin-dnx-common')
+        compile project(':plugin-dotnet-common')
         compile 'org.jetbrains.teamcity:agent-api:9.0'
         compile 'org.jetbrains.teamcity.internal:agent:9.0'
         runtime 'javax.servlet:jstl:1.1.2'
@@ -42,13 +42,13 @@ project(':plugin-dnx-agent') {
         }
         
         from (configurations.compile) {
-            include 'plugin-dnx-*.jar'
+            include 'plugin-dotnet-*.jar'
             into 'lib'
         }
         
         from 'teamcity-plugin.xml'
 
-        into 'dnx-plugin'
+        into 'dotnet-plugin'
     }
     
     artifacts {
@@ -56,18 +56,18 @@ project(':plugin-dnx-agent') {
     }
 }
 
-project(':plugin-dnx-common') {
+project(':plugin-dotnet-common') {
 }
 
-project(':plugin-dnx-server') {
+project(':plugin-dotnet-server') {
     dependencies {
-        compile project(':plugin-dnx-common')
+        compile project(':plugin-dotnet-common')
         compile 'org.jetbrains.teamcity:server-api:9.0'
         compile 'com.google.code.gson:gson:2.5'
         runtime 'javax.servlet:jstl:1.1.2'
     }
     
-    task distrib(type: Zip, dependsOn: [':plugin-dnx-agent:assemble', jar]) {
+    task distrib(type: Zip, dependsOn: [':plugin-dotnet-agent:assemble', jar]) {
         archiveName = projectIds.artifact
     
         from (libsDir) {
@@ -76,11 +76,11 @@ project(':plugin-dnx-server') {
         
         from (configurations.compile) {
             include 'gson-*.jar'
-            include 'plugin-dnx-*.jar'
+            include 'plugin-dotnet-*.jar'
             into 'server'
         }
         
-        from (project(':plugin-dnx-agent').file('build/distributions')) {
+        from (project(':plugin-dotnet-agent').file('build/distributions')) {
             include projectIds.artifact
             into 'agent'
         }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
+    <info>
+        <name>dotnetcore</name>
+        <display-name>.NET Core Support</display-name>
+        <version>@Plugin_Version@</version>
+        <description>Provides build facilities for .NET Core projects</description>
+        <download-url>https://github.com/JetBrains/teamcity-dotnet-plugin</download-url>
+        <vendor>
+            <name>JetBrains, s.r.o.</name>
+            <url>http://www.jetbrains.com/</url>
+        </vendor>
+    </info>
+    <deployment use-separate-classloader="true"/>
+</teamcity-plugin>

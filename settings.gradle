@@ -1,1 +1,1 @@
-include 'plugin-dnx-agent', 'plugin-dnx-common', 'plugin-dnx-server'
+include 'plugin-dotnet-agent', 'plugin-dotnet-common', 'plugin-dotnet-server'
