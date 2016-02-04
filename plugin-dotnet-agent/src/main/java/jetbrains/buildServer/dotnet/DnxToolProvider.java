@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.FileUtil;
 import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,16 @@ public class DnxToolProvider implements ToolProvider {
         LOG.debug(String.format("Looking for tool %s in path %s", toolName, pathVariable));
 
         final List<String> paths = StringUtil.splitHonorQuotes(pathVariable, File.pathSeparatorChar);
+
+        // Try to use DNX_PATH variable
+        final String dnxPathVariable = System.getenv("DNX_PATH");
+        if (!StringUtil.isEmpty(dnxPathVariable)) {
+            final String parentDirectory = new File(dnxPathVariable).getParent();
+            if (!StringUtil.isEmpty(parentDirectory)) {
+                paths.add(0, parentDirectory);
+            }
+        }
+
         for (String path : paths) {
             final File directory = new File(path);
             if (!directory.exists()) {
