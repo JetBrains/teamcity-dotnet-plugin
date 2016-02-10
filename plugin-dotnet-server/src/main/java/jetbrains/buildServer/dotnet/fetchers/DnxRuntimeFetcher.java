@@ -46,6 +46,6 @@ public class DnxRuntimeFetcher implements ProjectDataFetcher {
     @NotNull
     @Override
     public String getType() {
-        return "DnxRuntimes";
+        return "DnxRuntime";
     }
 }

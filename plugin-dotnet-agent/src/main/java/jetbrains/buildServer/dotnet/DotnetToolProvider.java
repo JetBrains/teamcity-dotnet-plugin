@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 public class DotnetToolProvider implements ToolProvider {
 
     private static final String TOOL_NAME = "dotnet";
-    private static final String TOOL_HOME = "DOTNET_HOME";
     private static final Pattern TOOL_PATTERN = Pattern.compile("^.*" + TOOL_NAME + "(\\.(exe))?$");
     private static final String INVALID_TOOL_DISTRIB = "Invalid tool %s distribution at %s";
 
@@ -36,9 +35,9 @@ public class DotnetToolProvider implements ToolProvider {
     @NotNull
     @Override
     public String getPath(@NotNull String toolName) throws ToolCannotBeFoundException {
-        final String dotnetHome = System.getenv(TOOL_HOME);
+        final String dotnetHome = System.getenv(DotnetConstants.TOOL_HOME);
         if (StringUtil.isEmpty(dotnetHome)) {
-            throw new ToolCannotBeFoundException(String.format("Environment variable '%s' not defined.", TOOL_HOME));
+            throw new ToolCannotBeFoundException(String.format("Environment variable '%s' not defined.", DotnetConstants.TOOL_HOME));
         }
 
         final File directory = new File(dotnetHome, "bin");

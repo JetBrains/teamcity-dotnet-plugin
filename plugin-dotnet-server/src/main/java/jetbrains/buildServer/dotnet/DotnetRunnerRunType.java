@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet;
 
 import jetbrains.buildServer.requirements.Requirement;
+import jetbrains.buildServer.requirements.RequirementType;
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
@@ -86,6 +87,6 @@ public class DotnetRunnerRunType extends RunType {
     @NotNull
     @Override
     public List<Requirement> getRunnerSpecificRequirements(@NotNull Map<String, String> runParameters) {
-        return Collections.emptyList();
+        return Collections.singletonList(new Requirement("env." + DotnetConstants.TOOL_HOME, null, RequirementType.EXISTS));
     }
 }

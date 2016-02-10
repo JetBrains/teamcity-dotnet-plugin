@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet;
 
 import jetbrains.buildServer.dotnet.commands.CommandType;
 import jetbrains.buildServer.dotnet.commands.Dotnet.BuildCommandType;
+import jetbrains.buildServer.dotnet.commands.Dotnet.PublishCommandType;
 import jetbrains.buildServer.dotnet.commands.Dotnet.RestoreCommandType;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,7 @@ public class DotnetParametersProvider {
     public DotnetParametersProvider() {
         myTypes = Arrays.asList(
                 new BuildCommandType(),
+                new PublishCommandType(),
                 new RestoreCommandType());
     }
 
@@ -126,16 +128,6 @@ public class DotnetParametersProvider {
     @NotNull
     public String getPublishNativeKey() {
         return DotnetConstants.PARAM_PUBLISH_NATIVE;
-    }
-
-    @NotNull
-    public String getPublishCompileSourcesKey() {
-        return DotnetConstants.PARAM_PUBLISH_COMPILE_SOURCE;
-    }
-
-    @NotNull
-    public String getPublishIncludeSymbolsKey() {
-        return DotnetConstants.PARAM_PUBLISH_INCLUDE_SYMBOLS;
     }
 
     @NotNull

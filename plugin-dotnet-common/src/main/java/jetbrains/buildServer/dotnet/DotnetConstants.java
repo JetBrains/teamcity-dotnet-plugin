@@ -15,6 +15,8 @@ public interface DotnetConstants {
     String RUNNER_DISPLAY_NAME = ".NET Core (dotnet)";
     String RUNNER_DESCRIPTION = "Provides build tools for .NET Core projects";
 
+    String TOOL_HOME = "DOTNET_HOME";
+
     String COMMAND_BUILD = "build";
     String COMMAND_PACK = "pack";
     String COMMAND_PUBLISH = "publish";
@@ -44,8 +46,6 @@ public interface DotnetConstants {
     String PARAM_PUBLISH_FRAMEWORK = "dotnet-publish-framework";
     String PARAM_PUBLISH_CONFIG = "dotnet-publish-config";
     String PARAM_PUBLISH_NATIVE = "dotnet-publish-native";
-    String PARAM_PUBLISH_COMPILE_SOURCE = "dotnet-publish-compile-sources";
-    String PARAM_PUBLISH_INCLUDE_SYMBOLS = "dotnet-publish-include-symbols";
     String PARAM_PUBLISH_OUTPUT = "dotnet-publish-output";
     String PARAM_PUBLISH_RUNTIME = "dotnet-publish-runtime";
 

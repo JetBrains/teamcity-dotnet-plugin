@@ -34,11 +34,8 @@ public class BuildArgumentsProvider implements ArgumentsProvider {
 
         final String frameworkValue = parameters.get(DotnetConstants.PARAM_BUILD_FRAMEWORK);
         if (!StringUtil.isEmptyOrSpaces(frameworkValue)) {
-            final List<String> frameworks = StringUtil.splitCommandArgumentsAndUnquote(frameworkValue);
-            for (String framework : frameworks) {
-                arguments.add("--framework");
-                arguments.add(framework);
-            }
+            arguments.add("--framework");
+            arguments.add(frameworkValue.trim());
         }
 
         final String configValue = parameters.get(DotnetConstants.PARAM_BUILD_CONFIG);
