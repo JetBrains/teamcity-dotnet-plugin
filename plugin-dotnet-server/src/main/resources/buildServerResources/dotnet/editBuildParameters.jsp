@@ -7,27 +7,13 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.pathsKey}">Project:</label></th>
-    <td>
-        <div class="completionIconWrapper clearfix">
-            <div class="dnx left">
-                <props:textProperty name="${params.pathsKey}" id="${params.pathsKey}-build" className="longField"
-                                    expandable="true"/>
-            </div>
-            <bs:vcsTree fieldId="${params.pathsKey}-build"/>
-        </div>
-        <span class="error" id="error_${params.pathsKey}-build"></span>
-        <span class="smallNote">The project path to compile, defaults to the current directory.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th><label for="${params.buildFrameworkKey}">Framework:</label></th>
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildFrameworkKey}" className="longField"/>
-            <bs:projectData type="DnxFrameworks" sourceFieldId="${params.pathsKey}-build"
-                            targetFieldId="${params.buildFrameworkKey}" popupTitle="Select frameworks"/>
+            <bs:projectData type="DnxFrameworks" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.buildFrameworkKey}" popupTitle="Select frameworks"
+                            selectionMode="single"/>
         </div>
         <span class="error" id="error_${params.buildFrameworkKey}"></span>
         <span class="smallNote">Compile a specific framework.</span>
@@ -39,7 +25,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildConfigKey}" className="longField"/>
-            <bs:projectData type="DnxConfigurations" sourceFieldId="${params.pathsKey}-build"
+            <bs:projectData type="DnxConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildConfigKey}" popupTitle="Select configuration"
                             selectionMode="single"/>
         </div>
@@ -53,7 +39,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildRuntimeKey}" className="longField"/>
-            <bs:projectData type="DnxRuntimes" sourceFieldId="${params.pathsKey}-build"
+            <bs:projectData type="DnxRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildRuntimeKey}" popupTitle="Select runtime"
                             selectionMode="single"/>
         </div>
@@ -63,7 +49,7 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th><label for="${params.buildArchKey}">Architecture:</label></th>
+    <th class="noBorder"><label for="${params.buildArchKey}">Architecture:</label></th>
     <td>
         <props:selectProperty name="${params.buildArchKey}" enableFilter="true" className="mediumField">
             <props:option value="">&lt;Default&gt;</props:option>

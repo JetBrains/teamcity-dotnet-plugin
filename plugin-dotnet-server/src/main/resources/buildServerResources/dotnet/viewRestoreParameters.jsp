@@ -3,12 +3,6 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.pathsKey]}">
-    <div class="parameter">
-        Projects: <props:displayValue name="${params.pathsKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.restoreSourceKey]}">
     <div class="parameter">
         NuGet package source: <props:displayValue name="${params.restoreSourceKey}"/>

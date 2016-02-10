@@ -10,6 +10,12 @@
             Command: <strong><c:out value="${type.name}"/></strong>
         </div>
 
+        <c:if test="${not empty propertiesBean.properties[params.pathsKey]}">
+            <div class="parameter">
+                Projects: <props:displayValue name="${params.pathsKey}"/>
+            </div>
+        </c:if>
+
         <jsp:include page="${teamcityPluginResourcesPath}/dotnet/${type.viewPage}"/>
     </c:if>
 </c:forEach>

@@ -7,31 +7,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<script type="text/javascript">
-    BS.DotnetRestoreParametersForm = {
-        selectProjectFile: function (chosenFile) {
-            var $paths = $j(BS.Util.escapeId('${params.pathsKey}-restore'));
-            var value = BS.Util.trimSpaces($paths.val());
-            chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
-            $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
-        }
-    };
-</script>
-
-<tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
-    <td>
-        <div class="completionIconWrapper clearfix">
-            <div class="dnx left">
-                <props:textProperty name="${params.pathsKey}" id="${params.pathsKey}-restore" className="longField" expandable="true"/>
-            </div>
-            <bs:vcsTree callback="BS.DotnetRestoreParametersForm.selectProjectFile"/>
-        </div>
-        <span class="error" id="error_${params.pathsKey}"></span>
-        <span class="smallNote">Space-separated list of project files or folders.</span>
-    </td>
-</tr>
-
 <tr class="advancedSetting">
     <th><label for="${params.restoreSourceKey}">NuGet package source:</label></th>
     <td>

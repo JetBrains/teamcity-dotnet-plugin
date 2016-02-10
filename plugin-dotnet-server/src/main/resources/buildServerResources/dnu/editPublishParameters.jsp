@@ -37,7 +37,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.publishRuntimeKey}" className="longField"/>
-            <bs:projectData type="DnxRuntimes" sourceFieldId="${params.publishRuntimeKey}"
+            <bs:projectData type="DnxRuntime" sourceFieldId="${params.publishRuntimeKey}"
                             targetFieldId="${params.publishRuntimeKey}" popupTitle="Select runtime"/>
         </div>
         <span class="error" id="error_${params.publishRuntimeKey}"></span>
