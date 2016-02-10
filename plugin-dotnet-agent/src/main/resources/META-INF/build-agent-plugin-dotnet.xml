@@ -5,7 +5,9 @@
        default-autowire="constructor">
     <bean class="jetbrains.buildServer.dotnet.DnuRunnerBuildServiceFactory"/>
     <bean class="jetbrains.buildServer.dotnet.DnxRunnerBuildServiceFactory"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetRunnerBuildServiceFactory"/>
     <bean class="jetbrains.buildServer.dotnet.DnxRuntimeDetector"/>
     <bean class="jetbrains.buildServer.dotnet.DnxPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DnxToolProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
 </beans>

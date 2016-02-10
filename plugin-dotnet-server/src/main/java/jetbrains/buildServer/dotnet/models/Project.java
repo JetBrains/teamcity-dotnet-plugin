@@ -16,4 +16,5 @@ public class Project {
     public Map<String, String> commands;
     public Map<String, Object> configurations;
     public Map<String, Object> frameworks;
+    public Map<String, Object> runtimes;
 }
