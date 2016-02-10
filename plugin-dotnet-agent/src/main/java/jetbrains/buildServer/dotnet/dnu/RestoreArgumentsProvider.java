@@ -5,9 +5,10 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments;
+package jetbrains.buildServer.dotnet.dnu;
 
 import jetbrains.buildServer.dotnet.DnuConstants;
+import jetbrains.buildServer.dotnet.ArgumentsProvider;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Provides arguments to dnu restore command.
  */
-public class DnuRestoreArgumentsProvider implements ArgumentsProvider {
+public class RestoreArgumentsProvider implements ArgumentsProvider {
 
     @NotNull
     @Override

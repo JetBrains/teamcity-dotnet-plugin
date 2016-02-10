@@ -5,7 +5,7 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments;
+package jetbrains.buildServer.dotnet;
 
 import java.util.List;
 import java.util.Map;

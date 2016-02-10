@@ -7,7 +7,8 @@
 
 package jetbrains.buildServer.dotnet;
 
-import jetbrains.buildServer.dotnet.commands.*;
+import jetbrains.buildServer.dotnet.commands.CommandType;
+import jetbrains.buildServer.dotnet.commands.Dnu.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,10 +23,10 @@ public class DnuParametersProvider {
 
     public DnuParametersProvider() {
         myTypes = Arrays.asList(
-                new DnuBuildCommandType(),
-                new DnuPackCommandType(),
-                new DnuPublishCommandType(),
-                new DnuRestoreCommandType());
+                new BuildCommandType(),
+                new PackCommandType(),
+                new PublishCommandType(),
+                new RestoreCommandType());
     }
 
     @NotNull

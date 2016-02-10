@@ -5,30 +5,31 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands;
+package jetbrains.buildServer.dotnet.commands.Dnu;
 
 import jetbrains.buildServer.dotnet.DnuConstants;
+import jetbrains.buildServer.dotnet.commands.CommandType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Provides parameters for dnu build command.
+ * Provides parameters for dnu restore command.
  */
-public class DnuBuildCommandType implements CommandType {
+public class RestoreCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
-        return DnuConstants.COMMAND_BUILD;
+        return DnuConstants.COMMAND_RESTORE;
     }
 
     @NotNull
     @Override
     public String getEditPage() {
-        return "editBuildParameters.jsp";
+        return "editRestoreParameters.jsp";
     }
 
     @NotNull
     @Override
     public String getViewPage() {
-        return "viewBuildParameters.jsp";
+        return "viewRestoreParameters.jsp";
     }
 }

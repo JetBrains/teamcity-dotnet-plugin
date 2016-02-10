@@ -5,8 +5,9 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments;
+package jetbrains.buildServer.dotnet.dnx;
 
+import jetbrains.buildServer.dotnet.ArgumentsProvider;
 import jetbrains.buildServer.dotnet.DnxConstants;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;

@@ -7,13 +7,7 @@
 
 package jetbrains.buildServer.dotnet.commands;
 
-import jetbrains.buildServer.requirements.Requirement;
-import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Provides command-specific resources.

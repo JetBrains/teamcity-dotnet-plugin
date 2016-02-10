@@ -8,7 +8,10 @@
 package jetbrains.buildServer.dotnet.test;
 
 import jetbrains.buildServer.dotnet.*;
-import jetbrains.buildServer.dotnet.arguments.*;
+import jetbrains.buildServer.dotnet.dnu.BuildArgumentsProvider;
+import jetbrains.buildServer.dotnet.dnu.PackArgumentsProvider;
+import jetbrains.buildServer.dotnet.dnu.PublishArgumentsProvider;
+import jetbrains.buildServer.dotnet.dnu.RestoreArgumentsProvider;
 import jetbrains.buildServer.util.CollectionsUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -27,7 +30,7 @@ public class DnuRunnerBuildServiceTest {
 
     @Test(dataProvider = "testBuildArgumentsData")
     public void testBuildArguments(final Map<String, String> parameters, final List<String> arguments) {
-        final ArgumentsProvider argumentsProvider = new DnuBuildArgumentsProvider();
+        final ArgumentsProvider argumentsProvider = new BuildArgumentsProvider();
         final List<String> result = argumentsProvider.getArguments(parameters);
 
         Assert.assertEquals(result, arguments);
@@ -35,7 +38,7 @@ public class DnuRunnerBuildServiceTest {
 
     @Test(dataProvider = "testRestoreArgumentsData")
     public void testRestoreArguments(final Map<String, String> parameters, final List<String> arguments) {
-        final ArgumentsProvider argumentsProvider = new DnuRestoreArgumentsProvider();
+        final ArgumentsProvider argumentsProvider = new RestoreArgumentsProvider();
         final List<String> result = argumentsProvider.getArguments(parameters);
 
         Assert.assertEquals(result, arguments);
@@ -43,7 +46,7 @@ public class DnuRunnerBuildServiceTest {
 
     @Test(dataProvider = "testPublishArgumentsData")
     public void testPublishArguments(final Map<String, String> parameters, final List<String> arguments) {
-        final ArgumentsProvider argumentsProvider = new DnuPublishArgumentsProvider();
+        final ArgumentsProvider argumentsProvider = new PublishArgumentsProvider();
         final List<String> result = argumentsProvider.getArguments(parameters);
 
         Assert.assertEquals(result, arguments);
@@ -51,7 +54,7 @@ public class DnuRunnerBuildServiceTest {
 
     @Test(dataProvider = "testPackArgumentsData")
     public void testPackArguments(final Map<String, String> parameters, final List<String> arguments) {
-        final ArgumentsProvider argumentsProvider = new DnuPackArgumentsProvider();
+        final ArgumentsProvider argumentsProvider = new PackArgumentsProvider();
         final List<String> result = argumentsProvider.getArguments(parameters);
 
         Assert.assertEquals(result, arguments);

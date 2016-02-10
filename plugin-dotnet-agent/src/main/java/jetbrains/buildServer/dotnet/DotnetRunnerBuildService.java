@@ -10,10 +10,7 @@ package jetbrains.buildServer.dotnet;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
-import jetbrains.buildServer.dotnet.dnu.BuildArgumentsProvider;
-import jetbrains.buildServer.dotnet.dnu.PackArgumentsProvider;
-import jetbrains.buildServer.dotnet.dnu.PublishArgumentsProvider;
-import jetbrains.buildServer.dotnet.dnu.RestoreArgumentsProvider;
+import jetbrains.buildServer.dotnet.dotnet.RestoreArgumentsProvider;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,17 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Dnu runner service.
+ * Dotnet runner service.
  */
-public class DnuRunnerBuildService extends BuildServiceAdapter {
+public class DotnetRunnerBuildService extends BuildServiceAdapter {
 
     private final Map<String, ArgumentsProvider> myArgumentsProviders;
 
-    public DnuRunnerBuildService() {
+    public DotnetRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
-        myArgumentsProviders.put(DnuConstants.COMMAND_BUILD, new BuildArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.COMMAND_PACK, new PackArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.COMMAND_PUBLISH, new PublishArgumentsProvider());
         myArgumentsProviders.put(DnuConstants.COMMAND_RESTORE, new RestoreArgumentsProvider());
     }
 
@@ -41,18 +35,18 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
     public ProgramCommandLine makeProgramCommandLine() throws RunBuildException {
         final Map<String, String> parameters = getRunnerParameters();
 
-        final String commandName = parameters.get(DnuConstants.PARAM_COMMAND);
+        final String commandName = parameters.get(DotnetConstants.PARAM_COMMAND);
         if (StringUtil.isEmpty(commandName)) {
-            throw new RunBuildException("DNU command name is empty");
+            throw new RunBuildException("Dotnet command name is empty");
         }
 
         final ArgumentsProvider argumentsProvider = myArgumentsProviders.get(commandName);
         if (argumentsProvider == null) {
-            throw new RunBuildException("Unable to construct arguments for DNU command " + commandName);
+            throw new RunBuildException("Unable to construct arguments for dotnet command " + commandName);
         }
 
         final List<String> arguments = argumentsProvider.getArguments(parameters);
-        final String toolPath = getToolPath(DnuConstants.RUNNER_TYPE);
+        final String toolPath = getToolPath(DotnetConstants.RUNNER_TYPE);
 
         return createProgramCommandline(toolPath, arguments);
     }

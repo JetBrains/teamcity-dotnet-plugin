@@ -10,8 +10,7 @@ package jetbrains.buildServer.dotnet;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
-import jetbrains.buildServer.dotnet.arguments.ArgumentsProvider;
-import jetbrains.buildServer.dotnet.arguments.DnxArgumentsProvider;
+import jetbrains.buildServer.dotnet.dnx.DnxArgumentsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

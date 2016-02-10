@@ -5,15 +5,16 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands;
+package jetbrains.buildServer.dotnet.commands.Dnu;
 
 import jetbrains.buildServer.dotnet.DnuConstants;
+import jetbrains.buildServer.dotnet.commands.CommandType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Provides parameters for dnu pack command.
  */
-public class DnuPackCommandType implements CommandType {
+public class PackCommandType implements CommandType {
     @NotNull
     @Override
     public String getName() {
