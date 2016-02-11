@@ -9,6 +9,7 @@
     <bean class="jetbrains.buildServer.dotnet.DnxRuntimeDetector"/>
     <bean class="jetbrains.buildServer.dotnet.DnxModelParser"/>
     <bean class="jetbrains.buildServer.dotnet.DnxRunnerDiscoveryExtension"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetRunnerDiscoveryExtension"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxCommandsFetcher"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxConfigurationsFetcher"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxFrameworksFetcher"/>

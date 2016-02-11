@@ -9,7 +9,6 @@ package jetbrains.buildServer.dotnet;
 
 import jetbrains.buildServer.dotnet.models.Project;
 import jetbrains.buildServer.serverSide.BuildTypeSettings;
-import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExtension;
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject;
 import jetbrains.buildServer.util.CollectionsUtil;
 import jetbrains.buildServer.util.browser.Browser;
@@ -21,47 +20,19 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Performs .net core projects discovery.
+ * Performs .net core projects discovery for DNX tools.
  */
-public class DnxRunnerDiscoveryExtension extends BreadthFirstRunnerDiscoveryExtension {
+public class DnxRunnerDiscoveryExtension extends DotnetDiscoveryExtensionBase {
 
     private static final Pattern TEST_COMMAND = Pattern.compile(".*(test|xunit|nunit).*");
     private static final Pattern WEB_COMMAND = Pattern.compile(".*(web|kestrel).*");
 
-    private final DnxModelParser myModelParser;
-
     public DnxRunnerDiscoveryExtension(@NotNull final DnxModelParser modelParser) {
-        super(3);
-        myModelParser = modelParser;
-    }
-
-    @NotNull
-    @Override
-    protected List<DiscoveredObject> discoverRunnersInDirectory(@NotNull final Element dir,
-                                                                @NotNull final List<Element> filesAndDirs) {
-        final List<DiscoveredObject> result = new ArrayList<DiscoveredObject>();
-        for (Element item : filesAndDirs) {
-            if (item.isLeaf() && item.getName().endsWith(DnxConstants.PROJECT_JSON) && item.isContentAvailable()) {
-                final DiscoveredObject runner = discover(item);
-                if (runner != null) result.add(runner);
-            }
-        }
-
-        return result;
+        super(modelParser);
     }
 
     @Nullable
-    private DiscoveredObject discover(final Element element) {
-        final Project project = myModelParser.getProjectModel(element);
-        if (project == null) {
-            return null;
-        }
-
-        String fullName = element.getFullName();
-        if (fullName.contains(" ")) {
-            fullName = "\"" + fullName + "\"";
-        }
-
+    protected DiscoveredObject discover(final Project project, final String fullName) {
         if (project.commands == null || project.commands.size() == 0) {
             return new DiscoveredObject(DnuConstants.RUNNER_TYPE, CollectionsUtil.asMap(
                     DnuConstants.PARAM_COMMAND, DnuConstants.COMMAND_BUILD,
@@ -80,7 +51,7 @@ public class DnxRunnerDiscoveryExtension extends BreadthFirstRunnerDiscoveryExte
         for (String command : commands) {
             if (WEB_COMMAND.matcher(command).find()) {
                 return new DiscoveredObject(DnuConstants.RUNNER_TYPE, CollectionsUtil.asMap(
-                        DnuConstants.PARAM_COMMAND, DnuConstants.COMMAND_PACK,
+                        DnuConstants.PARAM_COMMAND, DnuConstants.COMMAND_PUBLISH,
                         DnuConstants.PARAM_PATHS, fullName));
             }
         }

@@ -13,6 +13,7 @@ import java.util.Map;
  * Represents dnx project model.
  */
 public class Project {
+    public String testRunner;
     public Map<String, String> commands;
     public Map<String, Object> configurations;
     public Map<String, Object> frameworks;
