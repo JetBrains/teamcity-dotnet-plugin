@@ -49,7 +49,9 @@ public interface DotnetConstants {
     String PARAM_PUBLISH_OUTPUT = "dotnet-publish-output";
     String PARAM_PUBLISH_RUNTIME = "dotnet-publish-runtime";
 
-    String PARAM_PACK_FRAMEWORK = "dotnet-pack-framework";
+    String PARAM_PACK_BASE = "dotnet-pack-base";
     String PARAM_PACK_CONFIG = "dotnet-pack-config";
     String PARAM_PACK_OUTPUT = "dotnet-pack-output";
+    String PARAM_PACK_TEMP = "dotnet-pack-temp";
+    String PARAM_PACK_VERSION_SUFFIX = "dotnet-pack-version-suffix";
 }

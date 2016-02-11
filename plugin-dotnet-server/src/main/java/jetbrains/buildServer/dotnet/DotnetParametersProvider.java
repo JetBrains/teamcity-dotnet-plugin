@@ -8,9 +8,7 @@
 package jetbrains.buildServer.dotnet;
 
 import jetbrains.buildServer.dotnet.commands.CommandType;
-import jetbrains.buildServer.dotnet.commands.Dotnet.BuildCommandType;
-import jetbrains.buildServer.dotnet.commands.Dotnet.PublishCommandType;
-import jetbrains.buildServer.dotnet.commands.Dotnet.RestoreCommandType;
+import jetbrains.buildServer.dotnet.commands.Dotnet.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -26,6 +24,7 @@ public class DotnetParametersProvider {
     public DotnetParametersProvider() {
         myTypes = Arrays.asList(
                 new BuildCommandType(),
+                new PackCommandType(),
                 new PublishCommandType(),
                 new RestoreCommandType());
     }
@@ -101,6 +100,11 @@ public class DotnetParametersProvider {
     }
 
     @NotNull
+    public String getBuildProfileKey() {
+        return DotnetConstants.PARAM_BUILD_PROFILE;
+    }
+
+    @NotNull
     public String getBuildNonIncrementalKey() {
         return DotnetConstants.PARAM_BUILD_NON_INCREMENTAL;
     }
@@ -141,8 +145,8 @@ public class DotnetParametersProvider {
     }
 
     @NotNull
-    public String getPackFrameworkKey() {
-        return DotnetConstants.PARAM_PACK_FRAMEWORK;
+    public String getPackBaseKey() {
+        return DotnetConstants.PARAM_PACK_BASE;
     }
 
     @NotNull
@@ -156,12 +160,17 @@ public class DotnetParametersProvider {
     }
 
     @NotNull
-    public List<String> getVerbosity() {
-        return Arrays.asList("Debug", "Verbose", "Information", "Warning", "Error");
+    public String getPackTempKey() {
+        return DotnetConstants.PARAM_PACK_TEMP;
     }
 
     @NotNull
-    public String getBuildProfileKey() {
-        return DotnetConstants.PARAM_BUILD_PROFILE;
+    public String getPackVersionSuffixKey() {
+        return DotnetConstants.PARAM_PACK_VERSION_SUFFIX;
+    }
+
+    @NotNull
+    public List<String> getVerbosity() {
+        return Arrays.asList("Debug", "Verbose", "Information", "Warning", "Error");
     }
 }
