@@ -8,9 +8,10 @@ It simplifies build of cross-platform applications which use frameworks and libr
 
 # Features
 
-It provides following features for DNX project building:
-* DNX Utility runner (dnu)
-* DNX runner (dnx)
+It provides following features for .NET Core project building:
+* `dnu` command build runner
+* `dnx` command build runner
+* `dotnet` command build runner
 * DNX runtime detection at the build agent
 * Auto-discovery of the build steps.
  
