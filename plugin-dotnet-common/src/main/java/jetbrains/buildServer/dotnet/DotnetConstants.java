@@ -21,7 +21,7 @@ public interface DotnetConstants {
     String COMMAND_PACK = "pack";
     String COMMAND_PUBLISH = "publish";
     String COMMAND_RESTORE = "restore";
-    String COMMAND_RUN = "run";
+    String COMMAND_TEST = "test";
 
     String PARAM_COMMAND = "dotnet-command";
     String PARAM_PATHS = "dotnet-paths";

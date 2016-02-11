@@ -26,7 +26,8 @@ public class DotnetParametersProvider {
                 new BuildCommandType(),
                 new PackCommandType(),
                 new PublishCommandType(),
-                new RestoreCommandType());
+                new RestoreCommandType(),
+                new TestCommandType());
     }
 
     @NotNull

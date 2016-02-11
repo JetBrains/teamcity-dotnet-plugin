@@ -10,10 +10,7 @@ package jetbrains.buildServer.dotnet;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
-import jetbrains.buildServer.dotnet.dotnet.BuildArgumentsProvider;
-import jetbrains.buildServer.dotnet.dotnet.PackArgumentsProvider;
-import jetbrains.buildServer.dotnet.dotnet.PublishArgumentsProvider;
-import jetbrains.buildServer.dotnet.dotnet.RestoreArgumentsProvider;
+import jetbrains.buildServer.dotnet.dotnet.*;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +27,11 @@ public class DotnetRunnerBuildService extends BuildServiceAdapter {
 
     public DotnetRunnerBuildService() {
         myArgumentsProviders = new HashMap<String, ArgumentsProvider>();
-        myArgumentsProviders.put(DnuConstants.COMMAND_BUILD, new BuildArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.COMMAND_PACK, new PackArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.COMMAND_PUBLISH, new PublishArgumentsProvider());
-        myArgumentsProviders.put(DnuConstants.COMMAND_RESTORE, new RestoreArgumentsProvider());
+        myArgumentsProviders.put(DotnetConstants.COMMAND_BUILD, new BuildArgumentsProvider());
+        myArgumentsProviders.put(DotnetConstants.COMMAND_PACK, new PackArgumentsProvider());
+        myArgumentsProviders.put(DotnetConstants.COMMAND_PUBLISH, new PublishArgumentsProvider());
+        myArgumentsProviders.put(DotnetConstants.COMMAND_RESTORE, new RestoreArgumentsProvider());
+        myArgumentsProviders.put(DotnetConstants.COMMAND_TEST, new TestArgumentsProvider());
     }
 
     @NotNull
