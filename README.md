@@ -19,6 +19,20 @@ It provides following features for .NET Core project building:
 
 You can download plugin from the [last successful build](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-plugin.zip) and install it as [additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
 
+# Compatibility
+
+Plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 9.1.x and greater.
+
+# Configuration
+
+## DNX tools
+
+To use `dnu` and `dnx` build runners you should install DNX tools under your TeamCity build agent user according to the [Getting Started guide](https://docs.asp.net/en/latest/getting-started/index.html).
+
+## .NET CLI toolkit
+
+To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and configure environment variable `DOTNET_HOME` for your TeamCity build agent user.
+
 # Build
 
 This project uses gradle as a build system. You can easily open it in [IntelliJ IDEA](https://www.jetbrains.com/idea/help/importing-project-from-gradle-model.html) or [Eclipse](http://gradle.org/eclipse/).
