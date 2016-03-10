@@ -27,11 +27,21 @@ Plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download
 
 ## DNX tools
 
-To use `dnu` and `dnx` build runners you should install DNX tools under your TeamCity build agent user according to the [Getting Started guide](https://docs.asp.net/en/latest/getting-started/index.html).
+To use `dnu` and `dnx` build runners you should install DNX tools according to the [Getting Started guide](https://docs.asp.net/en/latest/getting-started/index.html) and add DNX runtime directory to the `PATH` environment variable. 
+
+Also, you can use `DNX_PATH` environment variable to specify required DNX tools, for instance:
+
+```
+DNX_PATH=%username%\.dnx\runtimes\dnx-coreclr-win-x64.1.0.0-rc2-16357\bin\dnx.exe
+```
 
 ## .NET CLI toolkit
 
-To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and configure environment variable `DOTNET_HOME` for your TeamCity build agent user.
+To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and configure environment variable `DOTNET_HOME` for your TeamCity build agent user, for instance:
+
+```
+DOTNET_HOME=C:\Program Files\dotnet\
+```
 
 # Build
 
