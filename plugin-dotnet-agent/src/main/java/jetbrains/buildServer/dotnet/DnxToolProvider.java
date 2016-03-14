@@ -7,8 +7,6 @@
 
 package jetbrains.buildServer.dotnet;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.FileUtil;
 import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +23,7 @@ import java.util.regex.Pattern;
 public class DnxToolProvider implements ToolProvider {
 
     private static final Map<String, Pattern> DNX_TOOLS;
-    private static final Logger LOG = Logger.getInstance(DnxToolProvider.class.getName());
+
 
     public DnxToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
         toolProvidersRegistry.registerToolProvider(this);
@@ -43,15 +41,11 @@ public class DnxToolProvider implements ToolProvider {
             throw new ToolCannotBeFoundException(String.format("Tool %s is not supported", toolName));
         }
 
-        final Pattern pattern = DNX_TOOLS.get(toolName);
         final String pathVariable = System.getenv("PATH");
-
-        LOG.debug(String.format("Looking for tool %s in path %s", toolName, pathVariable));
-
         final List<String> paths = StringUtil.splitHonorQuotes(pathVariable, File.pathSeparatorChar);
 
         // Try to use DNX_PATH variable
-        final String dnxPathVariable = System.getenv("DNX_PATH");
+        final String dnxPathVariable = System.getenv(DnxConstants.DNX_PATH);
         if (!StringUtil.isEmpty(dnxPathVariable)) {
             final String parentDirectory = new File(dnxPathVariable).getParent();
             if (!StringUtil.isEmpty(parentDirectory)) {
@@ -59,28 +53,12 @@ public class DnxToolProvider implements ToolProvider {
             }
         }
 
-        for (String path : paths) {
-            final File directory = new File(path);
-            if (!directory.exists()) {
-                LOG.debug("Ignoring non existing directory " + path);
-                continue;
-            }
-
-            final File[] files = directory.listFiles();
-            if (files == null) {
-                LOG.debug("Ignoring empty directory " + path);
-                continue;
-            }
-
-            for (File file : files) {
-                final String absolutePath = file.getAbsolutePath();
-                if (pattern.matcher(absolutePath).find()) {
-                    return absolutePath;
-                }
-            }
+        final String toolPath = FileUtils.findToolPath(paths, DNX_TOOLS.get(toolName));
+        if (StringUtil.isEmpty(toolPath)){
+            throw new ToolCannotBeFoundException(String.format("Unable to locate tool %s in system", toolName));
         }
 
-        throw new ToolCannotBeFoundException(String.format("Unable to locate tool %s in system", toolName));
+        return toolPath;
     }
 
     @NotNull

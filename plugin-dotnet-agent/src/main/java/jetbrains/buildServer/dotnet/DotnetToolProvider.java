@@ -12,6 +12,7 @@ import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -21,7 +22,6 @@ public class DotnetToolProvider implements ToolProvider {
 
     private static final String TOOL_NAME = "dotnet";
     private static final Pattern TOOL_PATTERN = Pattern.compile("^.*" + TOOL_NAME + "(\\.(exe))?$");
-    private static final String INVALID_TOOL_DISTRIB = "Invalid tool %s distribution at %s";
 
     public DotnetToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
         toolProvidersRegistry.registerToolProvider(this);
@@ -35,29 +35,22 @@ public class DotnetToolProvider implements ToolProvider {
     @NotNull
     @Override
     public String getPath(@NotNull String toolName) throws ToolCannotBeFoundException {
-        final String dotnetHome = System.getenv(DotnetConstants.TOOL_HOME);
-        if (StringUtil.isEmpty(dotnetHome)) {
-            throw new ToolCannotBeFoundException(String.format("Environment variable '%s' not defined.", DotnetConstants.TOOL_HOME));
+        final String pathVariable = System.getenv("PATH");
+        final List<String> paths = StringUtil.splitHonorQuotes(pathVariable, File.pathSeparatorChar);
+
+        // Try to use DOTNET_HOME variable
+        final String dotnetHomeVariable = System.getenv(DotnetConstants.TOOL_HOME);
+        if (!StringUtil.isEmpty(dotnetHomeVariable)) {
+            final File binDirectory = new File(dotnetHomeVariable, "bin");
+            paths.add(0, binDirectory.getAbsolutePath());
         }
 
-        final File directory = new File(dotnetHome, "bin");
-        if (!directory.exists()) {
-            throw new ToolCannotBeFoundException(String.format(INVALID_TOOL_DISTRIB, toolName, dotnetHome));
+        final String toolPath = FileUtils.findToolPath(paths, TOOL_PATTERN);
+        if (StringUtil.isEmpty(toolPath)){
+            throw new ToolCannotBeFoundException(String.format("Unable to locate tool %s in system", toolName));
         }
 
-        final File[] files = directory.listFiles();
-        if (files == null) {
-            throw new ToolCannotBeFoundException(String.format(INVALID_TOOL_DISTRIB, toolName, dotnetHome));
-        }
-
-        for (File file : files) {
-            final String absolutePath = file.getAbsolutePath();
-            if (TOOL_PATTERN.matcher(absolutePath).find()) {
-                return absolutePath;
-            }
-        }
-
-        throw new ToolCannotBeFoundException(String.format(INVALID_TOOL_DISTRIB, toolName, dotnetHome));
+        return toolPath;
     }
 
     @NotNull
