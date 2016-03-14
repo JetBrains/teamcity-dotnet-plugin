@@ -37,7 +37,9 @@ DNX_PATH=%username%\.dnx\runtimes\dnx-coreclr-win-x64.1.0.0-rc2-16357\bin\dnx.ex
 
 ## .NET CLI toolkit
 
-To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and configure environment variable `DOTNET_HOME` for your TeamCity build agent user, for instance:
+To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and add bin directory of .NET CLI tools to the `PATH` environment variable.
+
+Also you configure environment variable `DOTNET_HOME` for your TeamCity build agent user, for instance:
 
 ```
 DOTNET_HOME=C:\Program Files\dotnet\
