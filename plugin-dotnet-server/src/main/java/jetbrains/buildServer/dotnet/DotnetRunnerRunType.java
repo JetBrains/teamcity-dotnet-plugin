@@ -87,6 +87,6 @@ public class DotnetRunnerRunType extends RunType {
     @NotNull
     @Override
     public List<Requirement> getRunnerSpecificRequirements(@NotNull Map<String, String> runParameters) {
-        return Collections.singletonList(new Requirement("env." + DotnetConstants.TOOL_HOME, null, RequirementType.EXISTS));
+        return Collections.singletonList(new Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS));
     }
 }

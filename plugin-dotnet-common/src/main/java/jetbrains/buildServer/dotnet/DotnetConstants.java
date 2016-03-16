@@ -16,6 +16,7 @@ public interface DotnetConstants {
     String RUNNER_DESCRIPTION = "Provides build tools for .NET Core projects";
 
     String TOOL_HOME = "DOTNET_HOME";
+    String CONFIG_PATH = RUNNER_TYPE + "_Path";
 
     String COMMAND_BUILD = "build";
     String COMMAND_PACK = "pack";

@@ -10,4 +10,5 @@
     <bean class="jetbrains.buildServer.dotnet.DnxPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DnxToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension"/>
 </beans>

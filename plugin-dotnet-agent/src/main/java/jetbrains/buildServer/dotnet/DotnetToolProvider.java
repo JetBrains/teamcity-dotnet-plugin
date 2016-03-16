@@ -20,8 +20,7 @@ import java.util.regex.Pattern;
  */
 public class DotnetToolProvider implements ToolProvider {
 
-    private static final String TOOL_NAME = "dotnet";
-    private static final Pattern TOOL_PATTERN = Pattern.compile("^.*" + TOOL_NAME + "(\\.(exe))?$");
+    private static final Pattern TOOL_PATTERN = Pattern.compile("^.*" + DotnetConstants.RUNNER_TYPE + "(\\.(exe))?$");
 
     public DotnetToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
         toolProvidersRegistry.registerToolProvider(this);
@@ -29,7 +28,7 @@ public class DotnetToolProvider implements ToolProvider {
 
     @Override
     public boolean supports(@NotNull String toolName) {
-        return TOOL_NAME.equalsIgnoreCase(toolName);
+        return DotnetConstants.RUNNER_TYPE.equalsIgnoreCase(toolName);
     }
 
     @NotNull

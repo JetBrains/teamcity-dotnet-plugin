@@ -15,6 +15,9 @@ public interface DnxConstants {
     String RUNNER_DISPLAY_NAME = ".NET Core (dnx)";
     String RUNNER_DESCRIPTION = "Provides DNX project execution";
 
+    String DNX_PATH = "DNX_PATH";
+    String CONFIG_PATH = RUNNER_TYPE + "_Path";
+
     String PARAM_COMMAND = "dnx-command";
     String PARAM_PATHS = "dnx-paths";
     String PARAM_FRAMEWORK = "dnx-framework";
@@ -22,8 +25,7 @@ public interface DnxConstants {
     String PARAM_APPBASE = "dnx-appbase";
     String PARAM_LIBS = "dnx-lib";
     String PARAM_PACKAGES = "dnx-packages";
-    String PARAM_ARGUMENTS = "dnx-args";
 
+    String PARAM_ARGUMENTS = "dnx-args";
     String PROJECT_JSON = "project.json";
-    String DNX_PATH = "DNX_PATH";
 }
