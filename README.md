@@ -17,7 +17,7 @@ It provides following features for .NET Core project building:
  
 # Download
 
-You can download plugin from the [last successful build](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-plugin.zip) and install it as [additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
+You can download plugin from the [last successful build](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-plugin.zip?guest=1) and install it as [additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
 
 # Compatibility
 
