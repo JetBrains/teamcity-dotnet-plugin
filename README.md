@@ -1,4 +1,4 @@
-# Overview
+# TeamCity .NET Core Plugin
 
 <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon" alt=""/></a>
 
