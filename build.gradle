@@ -17,7 +17,7 @@ subprojects {
         mavenCentral()
         maven {
             name 'JetBrains Maven Repository'
-            url 'http://repository.jetbrains.com/all'
+            url 'http://download.jetbrains.com/teamcity-repository'
         }
     }
 
