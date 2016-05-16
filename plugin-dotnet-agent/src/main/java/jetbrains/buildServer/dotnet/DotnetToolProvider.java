@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 public class DotnetToolProvider implements ToolProvider {
 
     private static final Pattern TOOL_PATTERN = Pattern.compile("^.*" + DotnetConstants.RUNNER_TYPE + "(\\.(exe))?$");
+    private static final String PATH_VARIABLE = "PATH";
+    private static final String UNABLE_TO_LOCATE_TOOL = "Unable to locate tool %s in the system. " +
+            "Please make sure that `%s` variable contains .NET CLI toolchain directory or " +
+            "defined `%s` variable.";
 
     public DotnetToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
         toolProvidersRegistry.registerToolProvider(this);
@@ -34,7 +38,7 @@ public class DotnetToolProvider implements ToolProvider {
     @NotNull
     @Override
     public String getPath(@NotNull String toolName) throws ToolCannotBeFoundException {
-        final String pathVariable = System.getenv("PATH");
+        final String pathVariable = System.getenv(PATH_VARIABLE);
         final List<String> paths = StringUtil.splitHonorQuotes(pathVariable, File.pathSeparatorChar);
 
         // Try to use DOTNET_HOME variable
@@ -45,8 +49,9 @@ public class DotnetToolProvider implements ToolProvider {
         }
 
         final String toolPath = FileUtils.findToolPath(paths, TOOL_PATTERN);
-        if (StringUtil.isEmpty(toolPath)){
-            throw new ToolCannotBeFoundException(String.format("Unable to locate tool %s in system", toolName));
+        if (StringUtil.isEmpty(toolPath)) {
+            final String message = String.format(UNABLE_TO_LOCATE_TOOL, toolName, PATH_VARIABLE, DotnetConstants.TOOL_HOME);
+            throw new ToolCannotBeFoundException(message);
         }
 
         return toolPath;

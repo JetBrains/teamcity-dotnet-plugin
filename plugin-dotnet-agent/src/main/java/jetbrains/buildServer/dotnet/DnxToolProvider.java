@@ -23,6 +23,10 @@ import java.util.regex.Pattern;
 public class DnxToolProvider implements ToolProvider {
 
     private static final Map<String, Pattern> DNX_TOOLS;
+    private static final String PATH_VARIABLE = "PATH";
+    private static final String UNABLE_TO_LOCATE_TOOL = "Unable to locate tool %s in the system. " +
+            "Please make sure that `%s` variable contains DNX toolkit directory or " +
+            "defined `%s` variable.";
 
 
     public DnxToolProvider(@NotNull final ToolProvidersRegistry toolProvidersRegistry) {
@@ -41,7 +45,7 @@ public class DnxToolProvider implements ToolProvider {
             throw new ToolCannotBeFoundException(String.format("Tool %s is not supported", toolName));
         }
 
-        final String pathVariable = System.getenv("PATH");
+        final String pathVariable = System.getenv(PATH_VARIABLE);
         final List<String> paths = StringUtil.splitHonorQuotes(pathVariable, File.pathSeparatorChar);
 
         // Try to use DNX_PATH variable
@@ -54,8 +58,9 @@ public class DnxToolProvider implements ToolProvider {
         }
 
         final String toolPath = FileUtils.findToolPath(paths, DNX_TOOLS.get(toolName));
-        if (StringUtil.isEmpty(toolPath)){
-            throw new ToolCannotBeFoundException(String.format("Unable to locate tool %s in system", toolName));
+        if (StringUtil.isEmpty(toolPath)) {
+            final String message = String.format(UNABLE_TO_LOCATE_TOOL, toolName, PATH_VARIABLE, DnxConstants.DNX_PATH);
+            throw new ToolCannotBeFoundException(message);
         }
 
         return toolPath;

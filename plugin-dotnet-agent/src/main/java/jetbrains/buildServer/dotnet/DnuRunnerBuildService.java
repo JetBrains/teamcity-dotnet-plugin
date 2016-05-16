@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet;
 
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.ToolCannotBeFoundException;
 import jetbrains.buildServer.agent.runner.BuildServiceAdapter;
 import jetbrains.buildServer.agent.runner.ProgramCommandLine;
 import jetbrains.buildServer.dotnet.dnu.BuildArgumentsProvider;
@@ -52,7 +53,14 @@ public class DnuRunnerBuildService extends BuildServiceAdapter {
         }
 
         final List<String> arguments = argumentsProvider.getArguments(parameters);
-        final String toolPath = getToolPath(DnuConstants.RUNNER_TYPE);
+        final String toolPath;
+        try {
+            toolPath = getToolPath(DnuConstants.RUNNER_TYPE);
+        } catch (ToolCannotBeFoundException e) {
+            final RunBuildException exception = new RunBuildException(e);
+            exception.setLogStacktrace(false);
+            throw exception;
+        }
 
         return createProgramCommandline(toolPath, arguments);
     }
