@@ -12,7 +12,7 @@ package jetbrains.buildServer.dotnet;
  */
 public interface DnuConstants {
     String RUNNER_TYPE = "dnu";
-    String RUNNER_DISPLAY_NAME = ".NET Core (dnu)";
+    String RUNNER_DISPLAY_NAME = ".NET Core (dnu) (retired)";
     String RUNNER_DESCRIPTION = "Provides DNX package management";
 
     String COMMAND_BUILD = "build";

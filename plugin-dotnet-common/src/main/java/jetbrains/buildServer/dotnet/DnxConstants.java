@@ -12,7 +12,7 @@ package jetbrains.buildServer.dotnet;
  */
 public interface DnxConstants {
     String RUNNER_TYPE = "dnx";
-    String RUNNER_DISPLAY_NAME = ".NET Core (dnx)";
+    String RUNNER_DISPLAY_NAME = ".NET Core (dnx) (retired)";
     String RUNNER_DESCRIPTION = "Provides DNX project execution";
 
     String DNX_PATH = "DNX_PATH";

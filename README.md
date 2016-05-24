@@ -2,7 +2,7 @@
 
 <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon" alt=""/></a>
 
-TeamCity .NET Core plugin brings support of [ASP.NET DNX](http://docs.asp.net/en/latest/dnx/overview.html) and [.NET CLI](https://github.com/dotnet/cli) tools.
+TeamCity .NET Core plugin brings support of [ASP.NET DNX](http://docs.asp.net/en/latest/dnx/overview.html) (retired) and [.NET CLI](https://github.com/dotnet/cli) tools.
 
 It simplifies build of cross-platform applications which use frameworks and libraries like ASP.NET Core and EF Core.
 
@@ -25,7 +25,7 @@ Plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download
 
 # Configuration
 
-## DNX tools
+## DNX tools (retired)
 
 To use `dnu` and `dnx` build runners you should install DNX tools according to the [Getting Started guide](https://docs.asp.net/en/latest/getting-started/index.html) and add DNX runtime directory to the `PATH` environment variable. 
 
