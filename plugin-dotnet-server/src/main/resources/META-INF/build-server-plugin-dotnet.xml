@@ -3,16 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-    <bean class="jetbrains.buildServer.dotnet.DnuRunnerRunType"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxRunnerRunType"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxRuntimeDetector"/>
     <bean class="jetbrains.buildServer.dotnet.DnxModelParser"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxRunnerDiscoveryExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetRunnerDiscoveryExtension"/>
-    <bean class="jetbrains.buildServer.dotnet.fetchers.DnxCommandsFetcher"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxConfigurationsFetcher"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxFrameworksFetcher"/>
-    <bean class="jetbrains.buildServer.dotnet.fetchers.DnxRuntimeFetcher"/>
     <bean class="jetbrains.buildServer.dotnet.fetchers.DnxRuntimesFetcher"/>
 </beans>

@@ -17,6 +17,7 @@ public interface DotnetConstants {
 
     String TOOL_HOME = "DOTNET_HOME";
     String CONFIG_PATH = RUNNER_TYPE + "_Path";
+    String PROJECT_JSON = "project.json";
 
     String COMMAND_BUILD = "build";
     String COMMAND_PACK = "pack";

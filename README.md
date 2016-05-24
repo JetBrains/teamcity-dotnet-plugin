@@ -2,28 +2,39 @@
 
 <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon" alt=""/></a>
 
-TeamCity .NET Core plugin brings support of [ASP.NET DNX](http://docs.asp.net/en/latest/dnx/overview.html) (retired) and [.NET CLI](https://github.com/dotnet/cli) tools.
+TeamCity .NET Core plugin brings support of [.NET CLI](https://github.com/dotnet/cli) and [ASP.NET DNX](http://docs.asp.net/en/latest/dnx/overview.html) (retired) tools.
 
-It simplifies build of cross-platform applications which use frameworks and libraries like ASP.NET Core and EF Core.
+It simplifies build of cross-platform applications which use frameworks and libraries like [ASP.NET Core](https://github.com/aspnet/Home) and [EF Core](https://github.com/aspnet/EntityFramework).
 
 # Features
 
 It provides following features for .NET Core project building:
-* `dnu` command build runner
-* `dnx` command build runner
 * `dotnet` command build runner
-* DNX runtime detection at the build agent
-* Auto-discovery of the build steps.
+* `dnu`/`dnx` command build runner (retired)
+* .NET Core tools detection at build agents
+* auto-discovery of build steps
  
 # Download
 
-You can download plugin from the [last successful build](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-plugin.zip?guest=1) and install it as [additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
+You can download plugin from the [last successful build](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-core-plugin.zip?guest=1) and install it as [additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
+
+**Note**: if you need a plugin with _DNX support_, please, download the [latest snapshot](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/dnx.tcbuildtag/dotnet-plugin.zip).
 
 # Compatibility
 
 Plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 9.1.x and greater.
 
 # Configuration
+
+## .NET CLI toolkit
+
+To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and add bin directory of .NET CLI tools to the `PATH` environment variable.
+
+Also, you can configure environment variable `DOTNET_HOME` for your TeamCity build agent user, for instance:
+
+```
+DOTNET_HOME=C:\Program Files\dotnet\
+```
 
 ## DNX tools (retired)
 
@@ -33,16 +44,6 @@ Also, you can use `DNX_PATH` environment variable to specify required DNX tools,
 
 ```
 DNX_PATH=%username%\.dnx\runtimes\dnx-coreclr-win-x64.1.0.0-rc2-16357\bin\dnx.exe
-```
-
-## .NET CLI toolkit
-
-To use `dotnet` build runner [install .NET CLI](http://dotnet.github.io/getting-started/) and add bin directory of .NET CLI tools to the `PATH` environment variable.
-
-Also you configure environment variable `DOTNET_HOME` for your TeamCity build agent user, for instance:
-
-```
-DOTNET_HOME=C:\Program Files\dotnet\
 ```
 
 # Build

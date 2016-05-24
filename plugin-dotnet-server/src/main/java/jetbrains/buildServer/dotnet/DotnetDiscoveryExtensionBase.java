@@ -34,7 +34,7 @@ public abstract class DotnetDiscoveryExtensionBase extends BreadthFirstRunnerDis
                                                                 @NotNull final List<Element> filesAndDirs) {
         final List<DiscoveredObject> result = new ArrayList<DiscoveredObject>();
         for (Element item : filesAndDirs) {
-            if (item.isLeaf() && item.getName().endsWith(DnxConstants.PROJECT_JSON) && item.isContentAvailable()) {
+            if (item.isLeaf() && item.getName().endsWith(DotnetConstants.PROJECT_JSON) && item.isContentAvailable()) {
                 final Project project = myModelParser.getProjectModel(item);
                 if (project == null) {
                     continue;

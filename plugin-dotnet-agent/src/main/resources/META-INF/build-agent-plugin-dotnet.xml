@@ -3,12 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-    <bean class="jetbrains.buildServer.dotnet.DnuRunnerBuildServiceFactory"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxRunnerBuildServiceFactory"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetRunnerBuildServiceFactory"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxRuntimeDetector"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxPropertiesExtension"/>
-    <bean class="jetbrains.buildServer.dotnet.DnxToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension"/>
 </beans>

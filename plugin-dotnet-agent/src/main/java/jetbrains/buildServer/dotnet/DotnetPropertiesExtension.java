@@ -12,14 +12,12 @@ import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * Provides a list of available dotnet cli runtimes.
  */
 public class DotnetPropertiesExtension extends AgentLifeCycleAdapter {
 
-    private static final Logger LOG = Logger.getInstance(DnxRuntimeDetector.class.getName());
+    private static final Logger LOG = Logger.getInstance(DotnetPropertiesExtension.class.getName());
     private final DotnetToolProvider myToolProvider;
 
     public DotnetPropertiesExtension(@NotNull final EventDispatcher<AgentLifeCycleListener> events,

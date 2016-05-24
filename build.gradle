@@ -1,5 +1,5 @@
 def versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
-ext.projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-plugin.zip']
+ext.projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
 
 group = projectIds.group
 version = projectIds.version
@@ -35,7 +35,7 @@ project(':plugin-dotnet-agent') {
     }
     
     task distrib(type: Zip, dependsOn: jar) {
-        archiveName = projectIds.artifact
+        archiveName = projectIds.artifact + ".zip"
     
         from (libsDir) {
             into 'lib'
@@ -48,7 +48,7 @@ project(':plugin-dotnet-agent') {
         
         from 'teamcity-plugin.xml'
 
-        into 'dotnet-plugin'
+        into projectIds.artifact
     }
     
     artifacts {
@@ -68,7 +68,7 @@ project(':plugin-dotnet-server') {
     }
     
     task distrib(type: Zip, dependsOn: [':plugin-dotnet-agent:assemble', jar]) {
-        archiveName = projectIds.artifact
+        archiveName = projectIds.artifact + ".zip"
     
         from (libsDir) {
             into 'server'
@@ -81,7 +81,7 @@ project(':plugin-dotnet-server') {
         }
         
         from (project(':plugin-dotnet-agent').file('build/distributions')) {
-            include projectIds.artifact
+            include archiveName
             into 'agent'
         }
         

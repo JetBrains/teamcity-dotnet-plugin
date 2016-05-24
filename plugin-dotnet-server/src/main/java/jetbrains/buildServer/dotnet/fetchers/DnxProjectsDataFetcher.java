@@ -7,8 +7,8 @@
 
 package jetbrains.buildServer.dotnet.fetchers;
 
-import jetbrains.buildServer.dotnet.DnxConstants;
 import jetbrains.buildServer.dotnet.DnxModelParser;
+import jetbrains.buildServer.dotnet.DotnetConstants;
 import jetbrains.buildServer.dotnet.models.Project;
 import jetbrains.buildServer.serverSide.DataItem;
 import jetbrains.buildServer.serverSide.ProjectDataFetcher;
@@ -44,9 +44,9 @@ public abstract class DnxProjectsDataFetcher implements ProjectDataFetcher {
         for (String projectPath : projectsPaths) {
             final String projectFile;
             if (StringUtil.isEmptyOrSpaces(projectPath)) {
-                projectFile = DnxConstants.PROJECT_JSON;
+                projectFile = DotnetConstants.PROJECT_JSON;
             } else if (StringUtil.isEmpty(FileUtil.getExtension(projectPath))) {
-                projectFile = new File(projectPath, DnxConstants.PROJECT_JSON).getPath();
+                projectFile = new File(projectPath, DotnetConstants.PROJECT_JSON).getPath();
             } else {
                 projectFile = projectPath;
             }

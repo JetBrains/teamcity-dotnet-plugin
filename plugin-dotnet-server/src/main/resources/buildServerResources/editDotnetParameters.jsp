@@ -7,7 +7,7 @@
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <script type="text/javascript">
-    BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dnx-settings.css'/>");
+    BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
     BS.DotnetParametersForm = {
         selectProjectFile: function (chosenFile) {
