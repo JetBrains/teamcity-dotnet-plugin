@@ -44,8 +44,7 @@ public class DotnetToolProvider implements ToolProvider {
         // Try to use DOTNET_HOME variable
         final String dotnetHomeVariable = System.getenv(DotnetConstants.TOOL_HOME);
         if (!StringUtil.isEmpty(dotnetHomeVariable)) {
-            final File binDirectory = new File(dotnetHomeVariable, "bin");
-            paths.add(0, binDirectory.getAbsolutePath());
+            paths.add(0, dotnetHomeVariable);
         }
 
         final String toolPath = FileUtils.findToolPath(paths, TOOL_PATTERN);
