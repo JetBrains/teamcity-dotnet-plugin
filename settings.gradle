@@ -1,1 +1,3 @@
+rootProject.name='teamcity-dotnet-plugin'
+
 include 'plugin-dotnet-agent', 'plugin-dotnet-common', 'plugin-dotnet-server'

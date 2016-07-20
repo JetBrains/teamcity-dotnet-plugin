@@ -1,5 +1,25 @@
-def versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
-ext.projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.9.1'
+    }
+}
+
+ext {
+    versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
+    projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
+
+    teamcityVersion = project.hasProperty('teamcityVersion') ? project.getProperty('teamcityVersion') : '9.0'
+
+    teamcityDir = project.hasProperty('teamcityDir') ? project.getProperty('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
+
+    teamcityJavaHome = System.properties['java.home']
+}
 
 group = projectIds.group
 version = projectIds.version
@@ -12,87 +32,88 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     sourceCompatibility = 1.6
-
-    repositories {
-        mavenCentral()
-        maven {
-            name 'JetBrains Maven Repository'
-            url 'http://download.jetbrains.com/teamcity-repository'
-        }
-    }
+    targetCompatibility = 1.6
 
     test.useTestNG()
     jar.version = null
 }
 
 project(':plugin-dotnet-agent') {
+    apply plugin: 'com.github.rodm.teamcity-agent'
+
+    teamcity {
+        version = teamcityVersion
+        descriptor {
+            pluginDeployment {
+                useSeparateClassloader = true
+            }
+        }
+    }
+
     dependencies {
         compile project(':plugin-dotnet-common')
-        compile 'org.jetbrains.teamcity:agent-api:9.0'
-        compile 'org.jetbrains.teamcity.internal:agent:9.0'
-        runtime 'javax.servlet:jstl:1.1.2'
+        provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
         testCompile 'org.testng:testng:6.8'
     }
-    
-    task distrib(type: Zip, dependsOn: jar) {
-        archiveName = projectIds.artifact + ".zip"
-    
-        from (libsDir) {
-            into 'lib'
-        }
-        
-        from (configurations.compile) {
-            include 'plugin-dotnet-*.jar'
-            into 'lib'
-        }
-        
-        from 'teamcity-plugin.xml'
 
-        into projectIds.artifact
-    }
-    
-    artifacts {
-        archives distrib
-    }
+    agentPlugin.version = null
+    agentPlugin.baseName = projectIds.artifact
 }
 
 project(':plugin-dotnet-common') {
+    apply plugin: 'com.github.rodm.teamcity-common'
+
+    teamcity {
+        version = teamcityVersion
+    }
 }
 
 project(':plugin-dotnet-server') {
+    apply plugin: 'com.github.rodm.teamcity-server'
+
+    teamcity {
+        version = teamcityVersion
+
+        server {
+            descriptor = project.file('teamcity-plugin.xml')
+            tokens = [Plugin_Version: project.version]
+
+            environments {
+                teamcity9 {
+                    version = teamcityVersion
+                    homeDir = file(teamcityDir)
+                    dataDir = file(teamcityDataDir)
+                    javaHome = file(teamcityJavaHome)
+                    serverOptions = '-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5500 ' +
+                            '-Dteamcity.oauthConnections.enabled=true ' +
+                            '-Dteamcity.development.mode=true ' +
+                            '-Dteamcity.development.shadowCopyClasses=true'
+                }
+            }
+        }
+    }
+
     dependencies {
         compile project(':plugin-dotnet-common')
-        compile 'org.jetbrains.teamcity:server-api:9.0'
         compile 'com.google.code.gson:gson:2.5'
-        runtime 'javax.servlet:jstl:1.1.2'
+        provided 'javax.servlet:jstl:1.1.2'
+
+        agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
     }
-    
-    task distrib(type: Zip, dependsOn: [':plugin-dotnet-agent:assemble', jar]) {
-        archiveName = projectIds.artifact + ".zip"
-    
-        from (libsDir) {
-            into 'server'
-        }
-        
-        from (configurations.compile) {
-            include 'gson-*.jar'
-            include 'plugin-dotnet-*.jar'
-            into 'server'
-        }
-        
-        from (project(':plugin-dotnet-agent').file('build/distributions')) {
-            include archiveName
-            into 'agent'
-        }
-        
-        from ('teamcity-plugin.xml') {
-            filter {
-                it.replaceAll('@Plugin_Version@', projectIds.version)
-            }
-        }        
+
+    serverPlugin.version = null
+    serverPlugin.baseName = projectIds.artifact
+}
+
+apply plugin: 'idea'
+
+idea {
+    module {
+        downloadJavadoc = false
+        downloadSources = true
     }
-    
-    artifacts {
-        archives distrib
-    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
 }
