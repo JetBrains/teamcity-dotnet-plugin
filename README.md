@@ -1,6 +1,6 @@
 # TeamCity .NET Core Plugin
 
-<a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon" alt=""/></a>
+<a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon.svg" alt=""/></a>
 
 TeamCity .NET Core plugin brings support of [.NET CLI](https://github.com/dotnet/cli) and [ASP.NET DNX](http://docs.asp.net/en/latest/dnx/overview.html) (retired) tools.
 
