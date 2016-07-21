@@ -7,15 +7,13 @@
 
 package jetbrains.buildServer.dotnet.fetchers
 
-import jetbrains.buildServer.dotnet.DotnetModelParser
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.DotnetModelParser
 import jetbrains.buildServer.dotnet.models.Project
 import jetbrains.buildServer.serverSide.DataItem
 import jetbrains.buildServer.serverSide.ProjectDataFetcher
-import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.browser.Browser
-
 import java.io.File
 import java.util.*
 
@@ -35,7 +33,7 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
             val projectFile: String
             if (projectPath.isNullOrBlank()) {
                 projectFile = DotnetConstants.PROJECT_JSON
-            } else if (FileUtil.getExtension(projectPath).isNullOrBlank()) {
+            } else if (!projectPath.endsWith(DotnetConstants.PROJECT_JSON, ignoreCase = true)) {
                 projectFile = File(projectPath, DotnetConstants.PROJECT_JSON).path
             } else {
                 projectFile = projectPath
