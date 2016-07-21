@@ -3,12 +3,6 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.packBaseKey]}">
-    <div class="parameter">
-        Base directory: <props:displayValue name="${params.packBaseKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.packConfigKey]}">
     <div class="parameter">
         Configuration: <props:displayValue name="${params.packConfigKey}"/>
@@ -30,5 +24,17 @@
 <c:if test="${not empty propertiesBean.properties[params.packVersionSuffixKey]}">
     <div class="parameter">
         Version suffix: <props:displayValue name="${params.packVersionSuffixKey}"/>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.packNoBuildKey]}">
+    <div class="parameter">
+        Do not build project before packing: <strong>ON</strong>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.packServiceableKey]}">
+    <div class="parameter">
+        Set the serviceable flag in the package: <strong>ON</strong>
     </div>
 </c:if>

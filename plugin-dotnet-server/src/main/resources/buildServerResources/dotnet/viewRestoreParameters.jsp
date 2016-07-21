@@ -15,6 +15,12 @@
     </div>
 </c:if>
 
+<c:if test="${not empty propertiesBean.properties[params.restoreConfigKey]}">
+    <div class="parameter">
+        Configuration file: <props:displayValue name="${params.restoreConfigKey}"/>
+    </div>
+</c:if>
+
 <c:if test="${not empty propertiesBean.properties[params.restoreParallelKey]}">
     <div class="parameter">
         Disable restoring multiple project packages in parallel: <strong>ON</strong>

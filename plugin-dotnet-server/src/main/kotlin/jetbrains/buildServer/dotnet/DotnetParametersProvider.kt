@@ -95,9 +95,6 @@ class DotnetParametersProvider {
     val publishRuntimeKey: String
         get() = DotnetConstants.PARAM_PUBLISH_RUNTIME
 
-    val packBaseKey: String
-        get() = DotnetConstants.PARAM_PACK_BASE
-
     val packConfigKey: String
         get() = DotnetConstants.PARAM_PACK_CONFIG
 
@@ -109,6 +106,12 @@ class DotnetParametersProvider {
 
     val packVersionSuffixKey: String
         get() = DotnetConstants.PARAM_PACK_VERSION_SUFFIX
+
+    val packNoBuildKey: String
+        get() = DotnetConstants.PARAM_PACK_NO_BUILD
+
+    val packServiceableKey: String
+        get() = DotnetConstants.PARAM_PACK_SERVICEABLE
 
     val verbosity: List<String>
         get() = listOf("Debug", "Verbose", "Information", "Minimal", "Warning", "Error")

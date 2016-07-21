@@ -27,12 +27,6 @@ class PackArgumentsProvider : ArgumentsProvider {
             arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(projectsValue!!))
         }
 
-        val basePathValue = parameters[DotnetConstants.PARAM_PACK_BASE]
-        if (!basePathValue.isNullOrBlank()) {
-            arguments.add("--basepath")
-            arguments.add(basePathValue!!.trim())
-        }
-
         val configValue = parameters[DotnetConstants.PARAM_PACK_CONFIG]
         if (!configValue.isNullOrBlank()) {
             arguments.add("--configuration")
@@ -47,7 +41,7 @@ class PackArgumentsProvider : ArgumentsProvider {
 
         val tempValue = parameters[DotnetConstants.PARAM_PACK_TEMP]
         if (!tempValue.isNullOrBlank()) {
-            arguments.add("--temp-output")
+            arguments.add("--build-base-path")
             arguments.add(tempValue!!.trim())
         }
 
@@ -55,6 +49,16 @@ class PackArgumentsProvider : ArgumentsProvider {
         if (!versionSuffixValue.isNullOrBlank()) {
             arguments.add("--version-suffix")
             arguments.add(versionSuffixValue!!.trim())
+        }
+
+        val noBuildValue = parameters[DotnetConstants.PARAM_PACK_NO_BUILD]
+        if ("true".equals(noBuildValue, ignoreCase = true)) {
+            arguments.add("--no-build")
+        }
+
+        val serviceableValue = parameters[DotnetConstants.PARAM_PACK_SERVICEABLE]
+        if ("true".equals(serviceableValue, ignoreCase = true)) {
+            arguments.add("--serviceable")
         }
 
         val argumentsValue = parameters[DotnetConstants.PARAM_ARGUMENTS]

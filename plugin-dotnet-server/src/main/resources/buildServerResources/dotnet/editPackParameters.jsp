@@ -7,18 +7,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr class="advancedSetting">
-    <th><label for="${params.packBaseKey}">Base Directory:</label></th>
-    <td>
-        <div class="completionIconWrapper">
-            <props:textProperty name="${params.packBaseKey}" className="longField"/>
-            <bs:vcsTree fieldId="${params.packBaseKey}" dirsOnly="true"/>
-        </div>
-        <span class="error" id="error_${params.packBaseKey}"></span>
-        <span class="smallNote">Directory from where the assets to be packaged are going to be picked up.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th class="noBorder"><label for="${params.packConfigKey}">Configuration:</label></th>
     <td>
         <div class="completionIconWrapper">
@@ -48,7 +36,7 @@
         <props:textProperty name="${params.packTempKey}" className="longField"/>
         <bs:vcsTree fieldId="${params.packTempKey}" dirsOnly="true"/>
         <span class="error" id="error_${params.packTempKey}"></span>
-        <span class="smallNote">Directory in which to place temporary outputs.</span>
+        <span class="smallNote">Directory in which to place temporary build outputs.</span>
     </td>
 </tr>
 
@@ -58,5 +46,15 @@
         <props:textProperty name="${params.packVersionSuffixKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.packVersionSuffixKey}"></span>
         <span class="smallNote">Defines what `*` should be replaced with in version field in project.json.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.packNoBuildKey}"/>
+        <label for="${params.publishNativeKey}">Do not build project before packing</label><br/>
+        <props:checkboxProperty name="${params.packServiceableKey}"/>
+        <label for="${params.publishNativeKey}">Set the serviceable flag in the package</label>
     </td>
 </tr>
