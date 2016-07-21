@@ -80,14 +80,20 @@ class DotnetParametersProvider {
     val publishConfigKey: String
         get() = DotnetConstants.PARAM_PUBLISH_CONFIG
 
-    val publishNativeKey: String
-        get() = DotnetConstants.PARAM_PUBLISH_NATIVE
-
     val publishOutputKey: String
         get() = DotnetConstants.PARAM_PUBLISH_OUTPUT
 
+    val publishTempKey: String
+        get() = DotnetConstants.PARAM_PUBLISH_TEMP
+
     val publishRuntimeKey: String
         get() = DotnetConstants.PARAM_PUBLISH_RUNTIME
+
+    val publishVersionSuffixKey: String
+        get() = DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX
+
+    val publishNoBuildKey: String
+        get() = DotnetConstants.PARAM_PUBLISH_NO_BUILD
 
     val packConfigKey: String
         get() = DotnetConstants.PARAM_PACK_CONFIG

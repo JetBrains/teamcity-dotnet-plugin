@@ -51,9 +51,21 @@ class PublishArgumentsProvider : ArgumentsProvider {
             arguments.add(outputValue!!.trim())
         }
 
-        val nativeValue = parameters[DotnetConstants.PARAM_PUBLISH_NATIVE]
-        if ("true".equals(nativeValue, ignoreCase = true)) {
-            arguments.add("--native-subdirectory")
+        val tempValue = parameters[DotnetConstants.PARAM_PUBLISH_TEMP]
+        if (!outputValue.isNullOrBlank()) {
+            arguments.add("--build-base-path")
+            arguments.add(tempValue!!.trim())
+        }
+
+        val noBuildValue = parameters[DotnetConstants.PARAM_PUBLISH_NO_BUILD]
+        if ("true".equals(noBuildValue, ignoreCase = true)) {
+            arguments.add("--no-build")
+        }
+
+        val versionSuffixValue = parameters[DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX]
+        if (!versionSuffixValue.isNullOrBlank()) {
+            arguments.add("--version-suffix")
+            arguments.add(versionSuffixValue!!.trim())
         }
 
         val argumentsValue = parameters[DotnetConstants.PARAM_ARGUMENTS]

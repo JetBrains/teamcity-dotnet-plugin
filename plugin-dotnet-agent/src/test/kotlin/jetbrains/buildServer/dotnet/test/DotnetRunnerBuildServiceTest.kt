@@ -90,8 +90,8 @@ class DotnetRunnerBuildServiceTest {
                         listOf("publish", "--framework", "dotcore", "--configuration", "Release")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_RUNTIME, "active"),
-                        Pair(DotnetConstants.PARAM_PUBLISH_NATIVE, "true")),
-                        listOf("publish", "--runtime", "active", "--native-subdirectory")))
+                        Pair(DotnetConstants.PARAM_PUBLISH_NO_BUILD, "true")),
+                        listOf("publish", "--runtime", "active", "--no-build")))
     }
 
     @DataProvider(name = "testPackArgumentsData")

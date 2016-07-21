@@ -27,8 +27,20 @@
     </div>
 </c:if>
 
-<c:if test="${propertiesBean.properties[params.publishNativeKey]}">
+<c:if test="${not empty propertiesBean.properties[params.publishTempKey]}">
     <div class="parameter">
-        Include subdirectories from native assets of dependency packages: <strong>ON</strong>
+        Temp directory: <props:displayValue name="${params.publishTempKey}"/>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.publishVersionSuffixKey]}">
+    <div class="parameter">
+        Version suffix: <props:displayValue name="${params.publishVersionSuffixKey}"/>
+    </div>
+</c:if>
+
+<c:if test="${propertiesBean.properties[params.publishNoBuildKey]}">
+    <div class="parameter">
+        Do not build projects before publishing: <strong>ON</strong>
     </div>
 </c:if>

@@ -53,8 +53,8 @@
     <th>Options:</th>
     <td>
         <props:checkboxProperty name="${params.packNoBuildKey}"/>
-        <label for="${params.publishNativeKey}">Do not build project before packing</label><br/>
+        <label for="${params.packNoBuildKey}">Do not build project before packing</label><br/>
         <props:checkboxProperty name="${params.packServiceableKey}"/>
-        <label for="${params.publishNativeKey}">Set the serviceable flag in the package</label>
+        <label for="${params.packServiceableKey}">Set the serviceable flag in the package</label>
     </td>
 </tr>

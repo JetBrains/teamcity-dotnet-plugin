@@ -59,9 +59,28 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"></th>
-    <td class="noBorder">
-        <props:checkboxProperty name="${params.publishNativeKey}"/>
-        <label for="${params.publishNativeKey}">Include subdirectories from native assets of dependency packages</label>
+    <th class="noBorder"><label for="${params.publishTempKey}">Temp directory:</label></th>
+    <td>
+        <props:textProperty name="${params.publishTempKey}" className="longField"/>
+        <bs:vcsTree fieldId="${params.publishTempKey}" dirsOnly="true"/>
+        <span class="error" id="error_${params.publishTempKey}"></span>
+        <span class="smallNote">Directory in which to place temporary outputs.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
+    <th><label for="${params.publishVersionSuffixKey}">Version suffix:</label></th>
+    <td>
+        <props:textProperty name="${params.publishVersionSuffixKey}" className="longField" expandable="true"/>
+        <span class="error" id="error_${params.publishVersionSuffixKey}"></span>
+        <span class="smallNote">Defines what `*` should be replaced with in version field in project.json.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.publishNoBuildKey}"/>
+        <label for="${params.publishNoBuildKey}">Do not build projects before publishing</label>
     </td>
 </tr>
