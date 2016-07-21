@@ -1,4 +1,5 @@
 buildscript {
+    ext.kotlinVersion = '1.0.3'
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -6,6 +7,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.9.1'
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$kotlinVersion"
     }
 }
 
@@ -21,6 +23,8 @@ ext {
     teamcityJavaHome = System.properties['java.home']
 }
 
+
+
 group = projectIds.group
 version = projectIds.version
 
@@ -30,7 +34,7 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: "kotlin"
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
 
@@ -52,6 +56,7 @@ project(':plugin-dotnet-agent') {
 
     dependencies {
         compile project(':plugin-dotnet-common')
+        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
         testCompile 'org.testng:testng:6.8'
     }
@@ -62,6 +67,10 @@ project(':plugin-dotnet-agent') {
 
 project(':plugin-dotnet-common') {
     apply plugin: 'com.github.rodm.teamcity-common'
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    }
 
     teamcity {
         version = teamcityVersion
@@ -96,6 +105,7 @@ project(':plugin-dotnet-server') {
     dependencies {
         compile project(':plugin-dotnet-common')
         compile 'com.google.code.gson:gson:2.5'
+        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
         provided 'javax.servlet:jstl:1.1.2'
 
         agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
@@ -106,6 +116,7 @@ project(':plugin-dotnet-server') {
 }
 
 apply plugin: 'idea'
+apply plugin: 'kotlin'
 
 idea {
     module {

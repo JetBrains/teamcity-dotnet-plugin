@@ -11,7 +11,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildFrameworkKey}" className="longField"/>
-            <bs:projectData type="DnxFrameworks" sourceFieldId="${params.pathsKey}"
+            <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildFrameworkKey}" popupTitle="Select frameworks"
                             selectionMode="single"/>
         </div>
@@ -25,7 +25,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildConfigKey}" className="longField"/>
-            <bs:projectData type="DnxConfigurations" sourceFieldId="${params.pathsKey}"
+            <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildConfigKey}" popupTitle="Select configuration"
                             selectionMode="single"/>
         </div>
@@ -39,7 +39,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.buildRuntimeKey}" className="longField"/>
-            <bs:projectData type="DnxRuntimes" sourceFieldId="${params.pathsKey}"
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildRuntimeKey}" popupTitle="Select runtime"
                             selectionMode="single"/>
         </div>

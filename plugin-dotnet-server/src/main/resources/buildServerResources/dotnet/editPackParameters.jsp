@@ -23,7 +23,7 @@
     <td>
         <div class="completionIconWrapper">
             <props:textProperty name="${params.packConfigKey}" className="longField"/>
-            <bs:projectData type="DnxConfigurations" sourceFieldId="${params.pathsKey}"
+            <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.packConfigKey}" popupTitle="Select configuration"
                             selectionMode="single"/>
         </div>

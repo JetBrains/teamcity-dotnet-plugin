@@ -43,3 +43,4 @@ fabric.properties
 # Build artifacts
 .gradle
 build
+/classes/
