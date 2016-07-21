@@ -8,10 +8,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.dotnet.BuildArgumentsProvider
-import jetbrains.buildServer.dotnet.dotnet.PackArgumentsProvider
-import jetbrains.buildServer.dotnet.dotnet.PublishArgumentsProvider
-import jetbrains.buildServer.dotnet.dotnet.RestoreArgumentsProvider
+import jetbrains.buildServer.dotnet.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -55,7 +52,15 @@ class DotnetRunnerBuildServiceTest {
         Assert.assertEquals(result, arguments)
     }
 
-    @DataProvider(name = "testBuildArgumentsData")
+    @Test(dataProvider = "testTestArgumentsData")
+    fun testTestArguments(parameters: Map<String, String>, arguments: List<String>) {
+        val argumentsProvider = TestArgumentsProvider()
+        val result = argumentsProvider.getArguments(parameters)
+
+        Assert.assertEquals(result, arguments)
+    }
+
+    @DataProvider
     fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("build", "path/")),
@@ -69,7 +74,7 @@ class DotnetRunnerBuildServiceTest {
                         listOf("build", "--output", "output/", "--quiet")))
     }
 
-    @DataProvider(name = "testRestoreArgumentsData")
+    @DataProvider
     fun testRestoreArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("restore", "path/")),
@@ -80,7 +85,7 @@ class DotnetRunnerBuildServiceTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "true")), listOf("restore", "--disable-parallel")))
     }
 
-    @DataProvider(name = "testPublishArgumentsData")
+    @DataProvider
     fun testPublishArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("publish", "path/")),
@@ -94,7 +99,7 @@ class DotnetRunnerBuildServiceTest {
                         listOf("publish", "--runtime", "active", "--no-build")))
     }
 
-    @DataProvider(name = "testPackArgumentsData")
+    @DataProvider
     fun testPackArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("pack", "path/")),
@@ -103,5 +108,19 @@ class DotnetRunnerBuildServiceTest {
                         Pair(DotnetConstants.PARAM_PACK_OUTPUT, "output/"),
                         Pair(DotnetConstants.PARAM_ARGUMENTS, "--quiet")),
                         listOf("pack", "--output", "output/", "--quiet")))
+    }
+
+    @DataProvider
+    fun testTestArgumentsData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("test", "path/")),
+                arrayOf(mapOf(
+                        Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
+                        Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
+                        listOf("test", "--framework", "dotcore", "--configuration", "Release")),
+                arrayOf(mapOf(
+                        Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
+                        Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
+                        listOf("test", "--runtime", "active", "--no-build")))
     }
 }

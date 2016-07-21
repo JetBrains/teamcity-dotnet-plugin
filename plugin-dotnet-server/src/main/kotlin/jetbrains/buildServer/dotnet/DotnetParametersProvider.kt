@@ -113,6 +113,24 @@ class DotnetParametersProvider {
     val packServiceableKey: String
         get() = DotnetConstants.PARAM_PACK_SERVICEABLE
 
+    val testFrameworkKey: String
+        get() = DotnetConstants.PARAM_TEST_FRAMEWORK
+
+    val testConfigKey: String
+        get() = DotnetConstants.PARAM_TEST_CONFIG
+
+    val testOutputKey: String
+        get() = DotnetConstants.PARAM_TEST_OUTPUT
+
+    val testTempKey: String
+        get() = DotnetConstants.PARAM_TEST_TEMP
+
+    val testRuntimeKey: String
+        get() = DotnetConstants.PARAM_TEST_RUNTIME
+
+    val testNoBuildKey: String
+        get() = DotnetConstants.PARAM_TEST_NO_BUILD
+
     val verbosity: List<String>
         get() = listOf("Debug", "Verbose", "Information", "Minimal", "Warning", "Error")
 }

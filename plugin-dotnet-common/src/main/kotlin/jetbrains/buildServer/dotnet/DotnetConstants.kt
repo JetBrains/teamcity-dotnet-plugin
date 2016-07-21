@@ -59,5 +59,12 @@ class DotnetConstants {
         val PARAM_PACK_VERSION_SUFFIX = "dotnet-pack-version-suffix"
         val PARAM_PACK_NO_BUILD = "dotnet-pack-no-build"
         val PARAM_PACK_SERVICEABLE = "dotnet-pack-serviceable"
+
+        val PARAM_TEST_FRAMEWORK = "dotnet-test-framework"
+        val PARAM_TEST_CONFIG = "dotnet-test-config"
+        val PARAM_TEST_OUTPUT = "dotnet-test-output"
+        val PARAM_TEST_TEMP = "dotnet-test-temp"
+        val PARAM_TEST_RUNTIME = "dotnet-test-runtime"
+        val PARAM_TEST_NO_BUILD = "dotnet-test-no-build"
     }
 }
