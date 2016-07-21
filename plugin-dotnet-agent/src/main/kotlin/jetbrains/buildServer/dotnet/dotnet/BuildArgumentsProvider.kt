@@ -45,22 +45,6 @@ class BuildArgumentsProvider : ArgumentsProvider {
             arguments.add(runtimeValue!!.trim())
         }
 
-        val archValue = parameters[DotnetConstants.PARAM_BUILD_ARCH]
-        if (!archValue.isNullOrBlank()) {
-            arguments.add("--arch")
-            arguments.add(archValue!!.trim())
-        }
-
-        val nativeValue = parameters[DotnetConstants.PARAM_BUILD_NATIVE]
-        if ("true".equals(nativeValue, ignoreCase = true)) {
-            arguments.add("--native")
-        }
-
-        val cppValue = parameters[DotnetConstants.PARAM_BUILD_CPP]
-        if ("true".equals(cppValue, ignoreCase = true)) {
-            arguments.add("--cpp")
-        }
-
         val buildProfileValue = parameters[DotnetConstants.PARAM_BUILD_PROFILE]
         if ("true".equals(buildProfileValue, ignoreCase = true)) {
             arguments.add("--build-profile")
@@ -68,7 +52,12 @@ class BuildArgumentsProvider : ArgumentsProvider {
 
         val nonIncrementalValue = parameters[DotnetConstants.PARAM_BUILD_NON_INCREMENTAL]
         if ("true".equals(nonIncrementalValue, ignoreCase = true)) {
-            arguments.add("--force-incremental-unsafe")
+            arguments.add("--no-incremental")
+        }
+
+        val noDependenciesValue = parameters[DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES]
+        if ("true".equals(noDependenciesValue, ignoreCase = true)) {
+            arguments.add("--no-dependencies")
         }
 
         val outputValue = parameters[DotnetConstants.PARAM_BUILD_OUTPUT]
@@ -79,7 +68,7 @@ class BuildArgumentsProvider : ArgumentsProvider {
 
         val tempValue = parameters[DotnetConstants.PARAM_BUILD_TEMP]
         if (!tempValue.isNullOrBlank()) {
-            arguments.add("--temp-output")
+            arguments.add("--build-base-path")
             arguments.add(tempValue!!.trim())
         }
 

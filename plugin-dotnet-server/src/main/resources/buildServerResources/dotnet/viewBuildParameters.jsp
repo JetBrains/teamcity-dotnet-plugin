@@ -21,33 +21,21 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildArchKey]}">
-    <div class="parameter">
-        Architecture: <props:displayValue name="${params.buildArchKey}"/>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.buildNativeKey]}">
-    <div class="parameter">
-        Compiles source to native machine code: <strong>ON</strong>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.buildCppKey]}">
-    <div class="parameter">
-        Make native compilation with C++ code generator: <strong>ON</strong>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.buildProfileKey]}">
     <div class="parameter">
-        Print the incremental safety checks to prevent incremental compilation: <strong>ON</strong>
+        Print the incremental safety checks that prevent incremental compilation: <strong>ON</strong>
     </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.buildNonIncrementalKey]}">
     <div class="parameter">
-        Mark the entire build as not safe for incrementality: <strong>ON</strong>
+        Turn off incremental build: <strong>ON</strong>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.buildNoDependenciesKey]}">
+    <div class="parameter">
+        Ignore project to project references and only build the root project: <strong>ON</strong>
     </div>
 </c:if>
 

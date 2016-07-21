@@ -49,31 +49,14 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.buildArchKey}">Architecture:</label></th>
+    <th>Options:</th>
     <td>
-        <props:selectProperty name="${params.buildArchKey}" enableFilter="true" className="mediumField">
-            <props:option value="">&lt;Default&gt;</props:option>
-            <props:option value="x64">x64</props:option>
-        </props:selectProperty>
-        <span class="error" id="error_${params.buildArchKey}"></span>
-        <span class="smallNote">The architecture for which to compile.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
-    <th>Compilation</th>
-    <td>
-        <props:checkboxProperty name="${params.buildNativeKey}"
-                                onclick="$('${params.buildCppKey}').disabled = this.checked ? '' : 'disabled'; BS.VisibilityHandlers.updateVisibility('mainContent');"/>
-        <label for="${params.buildNativeKey}">Compiles source to native machine code</label><br/>
-        <props:checkboxProperty name="${params.buildCppKey}"
-                                disabled="${empty propertiesBean.properties[params.buildNativeKey]}"/>
-        <label for="${params.buildCppKey}">Make native compilation with C++ code generator</label><br/>
         <props:checkboxProperty name="${params.buildProfileKey}"/>
-        <label for="${params.buildProfileKey}">Print the incremental safety checks to prevent incremental
-            compilation</label><br/>
+        <label for="${params.buildProfileKey}">Print the incremental safety checks that prevent incremental compilation</label><br/>
         <props:checkboxProperty name="${params.buildNonIncrementalKey}"/>
-        <label for="${params.buildNonIncrementalKey}">Mark the entire build as not safe for incrementality</label>
+        <label for="${params.buildNonIncrementalKey}">Turn off incremental build</label><br/>
+        <props:checkboxProperty name="${params.buildNoDependenciesKey}"/>
+        <label for="${params.buildNonIncrementalKey}">Ignore project to project references and only build the root project</label>
     </td>
 </tr>
 
