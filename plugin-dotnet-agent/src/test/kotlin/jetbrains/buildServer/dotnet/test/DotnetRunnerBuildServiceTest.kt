@@ -96,7 +96,12 @@ class DotnetRunnerBuildServiceTest {
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_RUNTIME, "active"),
                         Pair(DotnetConstants.PARAM_PUBLISH_NO_BUILD, "true")),
-                        listOf("publish", "--runtime", "active", "--no-build")))
+                        listOf("publish", "--runtime", "active", "--no-build")),
+
+                arrayOf(mapOf(
+                        Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
+                        Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
+                        listOf("publish", "--configuration", "Release", "--output", "out")))
     }
 
     @DataProvider

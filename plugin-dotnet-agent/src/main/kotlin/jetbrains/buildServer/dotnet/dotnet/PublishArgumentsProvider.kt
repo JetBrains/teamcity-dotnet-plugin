@@ -52,7 +52,7 @@ class PublishArgumentsProvider : ArgumentsProvider {
         }
 
         val tempValue = parameters[DotnetConstants.PARAM_PUBLISH_TEMP]
-        if (!outputValue.isNullOrBlank()) {
+        if (!tempValue.isNullOrBlank()) {
             arguments.add("--build-base-path")
             arguments.add(tempValue!!.trim())
         }
