@@ -44,6 +44,12 @@ class RestoreArgumentsProvider : ArgumentsProvider {
             arguments.add("--disable-parallel")
         }
 
+        val configValue = parameters[DotnetConstants.PARAM_RESTORE_CONFIG]
+        if (!configValue.isNullOrBlank()) {
+            arguments.add("--configfile")
+            arguments.add(configValue!!.trim())
+        }
+
         val verbosityValue = parameters[DotnetConstants.PARAM_VERBOSITY]
         if (!verbosityValue.isNullOrBlank()) {
             arguments.add("--verbosity")

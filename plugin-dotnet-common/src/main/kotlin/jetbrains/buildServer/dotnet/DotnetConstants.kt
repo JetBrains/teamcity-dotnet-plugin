@@ -45,6 +45,7 @@ class DotnetConstants {
         val PARAM_RESTORE_PARALLEL = "dotnet-restore-parallel"
         val PARAM_RESTORE_PACKAGES = "dotnet-restore-packages"
         val PARAM_RESTORE_SOURCE = "dotnet-restore-source"
+        val PARAM_RESTORE_CONFIG = "dotnet-restore-config"
 
         val PARAM_PUBLISH_FRAMEWORK = "dotnet-publish-framework"
         val PARAM_PUBLISH_CONFIG = "dotnet-publish-config"

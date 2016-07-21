@@ -44,6 +44,9 @@ class DotnetParametersProvider {
     val restoreParallelKey: String
         get() = DotnetConstants.PARAM_RESTORE_PARALLEL
 
+    val restoreConfigKey: String
+        get() = DotnetConstants.PARAM_RESTORE_CONFIG
+
     val restoreSourceKey: String
         get() = DotnetConstants.PARAM_RESTORE_SOURCE
 
@@ -108,5 +111,5 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_PACK_VERSION_SUFFIX
 
     val verbosity: List<String>
-        get() = listOf("Debug", "Verbose", "Information", "Warning", "Error")
+        get() = listOf("Debug", "Verbose", "Information", "Minimal", "Warning", "Error")
 }

@@ -35,6 +35,16 @@
 </tr>
 
 <tr class="advancedSetting">
+    <th><label for="${params.restoreConfigKey}">Configuration file:</label></th>
+    <td>
+        <props:textProperty name="${params.restoreConfigKey}" className="longField"/>
+        <bs:vcsTree fieldId="${params.restoreConfigKey}"/>
+        <span class="error" id="error_${params.restoreConfigKey}"></span>
+        <span class="smallNote">The NuGet configuration file to use.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
     <th><label for="${params.verbosityKey}">Logging verbosity:</label></th>
     <td>
         <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
