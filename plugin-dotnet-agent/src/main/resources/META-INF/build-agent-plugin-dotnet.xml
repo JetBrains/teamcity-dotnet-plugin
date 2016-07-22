@@ -6,4 +6,5 @@
     <bean class="jetbrains.buildServer.dotnet.DotnetRunnerBuildServiceFactory"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
 </beans>
