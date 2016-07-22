@@ -12,6 +12,7 @@ It provides following features for .NET Core project building:
 * `dotnet` command build runner
 * .NET Core tools detection at build agents
 * auto-discovery of build steps
+* cleanup of nuget caches to meet agent [free space requirement](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
  
 # Download
 
