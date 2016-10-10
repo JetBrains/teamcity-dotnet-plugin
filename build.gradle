@@ -12,7 +12,7 @@ buildscript {
 }
 
 ext {
-    versionNumber = project.hasProperty('versionNumber') ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
+    versionNumber = project.hasProperty('versionNumber') && property('versionNumber') != 'master' ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
 
     teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
