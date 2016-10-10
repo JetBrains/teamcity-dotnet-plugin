@@ -12,12 +12,12 @@ buildscript {
 }
 
 ext {
-    versionNumber = System.getenv('versionNumber') != null ? System.getenv('versionNumber') : 'SNAPSHOT'
+    versionNumber = project.hasProperty('versionNumber') ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
 
-    teamcityVersion = project.hasProperty('teamcityVersion') ? project.getProperty('teamcityVersion') : '9.0'
+    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
 
-    teamcityDir = project.hasProperty('teamcityDir') ? project.getProperty('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDir = project.hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
     teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
 
     teamcityJavaHome = System.properties['java.home']
