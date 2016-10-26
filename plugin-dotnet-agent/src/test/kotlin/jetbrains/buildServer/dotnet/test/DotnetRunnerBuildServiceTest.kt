@@ -82,7 +82,13 @@ class DotnetRunnerBuildServiceTest {
                         Pair(DotnetConstants.PARAM_RESTORE_PACKAGES, "packages/"),
                         Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "false")),
                         listOf("restore", "--packages", "packages/")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "true")), listOf("restore", "--disable-parallel")))
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "true")), listOf("restore", "--disable-parallel")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com")),
+                        listOf("restore", "--source", "http://jb.com")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com\nhttp://jb.ru")),
+                        listOf("restore", "--source", "http://jb.com", "--source", "http://jb.ru")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com http://jb.ru")),
+                        listOf("restore", "--source", "http://jb.com", "--source", "http://jb.ru")))
     }
 
     @DataProvider

@@ -35,8 +35,11 @@ class RestoreArgumentsProvider : ArgumentsProvider {
 
         val sourceValue = parameters[DotnetConstants.PARAM_RESTORE_SOURCE]
         if (!sourceValue.isNullOrBlank()) {
-            arguments.add("--source")
-            arguments.add(sourceValue!!.trim())
+            val sources = StringUtil.splitCommandArgumentsAndUnquote(sourceValue!!)
+            sources.forEach {
+                arguments.add("--source")
+                arguments.add(it)
+            }
         }
 
         val parallelValue = parameters[DotnetConstants.PARAM_RESTORE_PARALLEL]

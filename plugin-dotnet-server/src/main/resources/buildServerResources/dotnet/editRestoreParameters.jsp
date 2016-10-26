@@ -8,11 +8,11 @@
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <tr class="advancedSetting">
-    <th><label for="${params.restoreSourceKey}">NuGet package source:</label></th>
+    <th><label for="${params.restoreSourceKey}">NuGet package sources:</label></th>
     <td>
-        <props:textProperty name="${params.restoreSourceKey}" className="longField"/>
+        <props:textProperty name="${params.restoreSourceKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.restoreSourceKey}"></span>
-        <span class="smallNote">Specifies a NuGet package source to use during the restore.</span>
+        <span class="smallNote">Specifies a NuGet package sources to use during the restore.</span>
     </td>
 </tr>
 
