@@ -1,0 +1,20 @@
+apply plugin: 'com.github.rodm.teamcity-agent'
+
+teamcity {
+    version = teamcityVersion
+    descriptor {
+        pluginDeployment {
+            useSeparateClassloader = true
+        }
+    }
+}
+
+dependencies {
+    compile project(':plugin-dotnet-common')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+    testCompile 'org.testng:testng:6.8'
+}
+
+agentPlugin.version = null
+agentPlugin.baseName = projectIds.artifact

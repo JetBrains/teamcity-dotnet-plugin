@@ -12,18 +12,17 @@ buildscript {
 }
 
 ext {
-    versionNumber = project.hasProperty('versionNumber') && property('versionNumber') != 'master' ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
+    def correctVersion = hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
+    versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
 
-    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
+    teamcityVersion = hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
 
-    teamcityDir = project.hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDir = hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
     teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
 
     teamcityJavaHome = System.properties['java.home']
 }
-
-
 
 group = projectIds.group
 version = projectIds.version
@@ -40,79 +39,6 @@ subprojects {
 
     test.useTestNG()
     jar.version = null
-}
-
-project(':plugin-dotnet-agent') {
-    apply plugin: 'com.github.rodm.teamcity-agent'
-
-    teamcity {
-        version = teamcityVersion
-        descriptor {
-            pluginDeployment {
-                useSeparateClassloader = true
-            }
-        }
-    }
-
-    dependencies {
-        compile project(':plugin-dotnet-common')
-        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-        provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
-        testCompile 'org.testng:testng:6.8'
-    }
-
-    agentPlugin.version = null
-    agentPlugin.baseName = projectIds.artifact
-}
-
-project(':plugin-dotnet-common') {
-    apply plugin: 'com.github.rodm.teamcity-common'
-
-    dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    }
-
-    teamcity {
-        version = teamcityVersion
-    }
-}
-
-project(':plugin-dotnet-server') {
-    apply plugin: 'com.github.rodm.teamcity-server'
-
-    teamcity {
-        version = teamcityVersion
-
-        server {
-            descriptor = project.file('teamcity-plugin.xml')
-            tokens = [Plugin_Version: project.version]
-
-            environments {
-                teamcity9 {
-                    version = teamcityVersion
-                    homeDir = file(teamcityDir)
-                    dataDir = file(teamcityDataDir)
-                    javaHome = file(teamcityJavaHome)
-                    serverOptions = '-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5500 ' +
-                            '-Dteamcity.oauthConnections.enabled=true ' +
-                            '-Dteamcity.development.mode=true ' +
-                            '-Dteamcity.development.shadowCopyClasses=true'
-                }
-            }
-        }
-    }
-
-    dependencies {
-        compile project(':plugin-dotnet-common')
-        compile 'com.google.code.gson:gson:2.5'
-        compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-        provided 'javax.servlet:jstl:1.1.2'
-
-        agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
-    }
-
-    serverPlugin.version = null
-    serverPlugin.baseName = projectIds.artifact
 }
 
 apply plugin: 'idea'
