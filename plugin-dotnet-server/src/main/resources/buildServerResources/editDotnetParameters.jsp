@@ -36,6 +36,8 @@
         </td>
     </tr>
 
+    <props:workingDirectory />
+
     <c:forEach items="${params.types}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">
             <jsp:include page="${teamcityPluginResourcesPath}/dotnet/${type.editPage}"/>
