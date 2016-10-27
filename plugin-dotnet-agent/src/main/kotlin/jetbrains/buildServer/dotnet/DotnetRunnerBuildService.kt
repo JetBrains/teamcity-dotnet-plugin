@@ -9,10 +9,9 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.agent.runner.BuildServiceAdapter
-import jetbrains.buildServer.agent.runner.ProgramCommandLine
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.dotnet.*
-import jetbrains.buildServer.util.StringUtil
+import java.util.*
 
 /**
  * Dotnet runner service.
@@ -52,6 +51,10 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
             throw exception
         }
 
-        return createProgramCommandline(toolPath, arguments)
+        // disable telemetry data collection: https://aka.ms/dotnet-cli-telemetry
+        val environment = HashMap(environmentVariables)
+        environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "true"
+
+        return SimpleProgramCommandLine(environment, workingDirectory.absolutePath, toolPath, arguments)
     }
 }
