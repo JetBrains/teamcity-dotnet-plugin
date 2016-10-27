@@ -55,6 +55,12 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
         val environment = HashMap(environmentVariables)
         environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "true"
 
+        // disable showing eula and first time package caching
+        environment["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "true"
+
+        // skip xml docs download for restored packages
+        environment["NUGET_XMLDOC_MODE"] = "skip"
+
         return SimpleProgramCommandLine(environment, workingDirectory.absolutePath, toolPath, arguments)
     }
 }
