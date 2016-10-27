@@ -7,6 +7,10 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
+<script type="text/javascript">
+    BS.DotnetParametersForm.appendProjectFile.push("restore");
+</script>
+
 <tr class="advancedSetting">
     <th><label for="${params.restoreSourceKey}">NuGet package sources:</label></th>
     <td>

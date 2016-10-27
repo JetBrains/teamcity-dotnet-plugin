@@ -10,10 +10,12 @@
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
     BS.DotnetParametersForm = {
+        appendProjectFile: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
             var value = BS.Util.trimSpaces($paths.val());
-            var appendFile = $j(BS.Util.escapeId('${params.commandKey}')).val() == "restore";
+            var commandName = $j(BS.Util.escapeId('${params.commandKey}')).val();
+            var appendFile = BS.DotnetParametersForm.appendProjectFile.indexOf(commandName) >= 0;
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
         }
@@ -24,7 +26,7 @@
     <tr class="advancedSetting">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
-            <div class="completionIconWrapper clearfix">
+            <div class="posRel clearfix">
                 <div class="dnx left">
                     <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
                 </div>

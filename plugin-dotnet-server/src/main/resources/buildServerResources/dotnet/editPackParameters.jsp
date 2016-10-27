@@ -7,9 +7,9 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.packConfigKey}">Configuration:</label></th>
+    <th><label for="${params.packConfigKey}">Configuration:</label></th>
     <td>
-        <div class="completionIconWrapper">
+        <div class="posRel">
             <props:textProperty name="${params.packConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.packConfigKey}" popupTitle="Select configuration"

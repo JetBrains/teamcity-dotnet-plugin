@@ -9,7 +9,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.testFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="completionIconWrapper">
+        <div class="posRel">
             <props:textProperty name="${params.testFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testFrameworkKey}" popupTitle="Select frameworks"
@@ -23,7 +23,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.testConfigKey}">Configuration:</label></th>
     <td>
-        <div class="completionIconWrapper">
+        <div class="posRel">
             <props:textProperty name="${params.testConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testConfigKey}" popupTitle="Select configurations"
@@ -37,7 +37,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.testRuntimeKey}">Runtime:</label></th>
     <td>
-        <div class="completionIconWrapper">
+        <div class="posRel">
             <props:textProperty name="${params.testRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testRuntimeKey}" popupTitle="Select runtime"
