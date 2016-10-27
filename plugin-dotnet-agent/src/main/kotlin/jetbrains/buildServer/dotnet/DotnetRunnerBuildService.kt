@@ -11,6 +11,7 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.dotnet.*
+import jetbrains.buildServer.dotnet.logger.DotnetLogger
 
 /**
  * Dotnet runner service.
@@ -52,5 +53,9 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
 
         val environment = DotnetUtils.updateEnvironment(environmentVariables)
         return SimpleProgramCommandLine(environment, workingDirectory.absolutePath, toolPath, arguments)
+    }
+
+    override fun getListeners(): List<ProcessListener> {
+        return listOf<ProcessListener>(DotnetLogger(logger))
     }
 }
