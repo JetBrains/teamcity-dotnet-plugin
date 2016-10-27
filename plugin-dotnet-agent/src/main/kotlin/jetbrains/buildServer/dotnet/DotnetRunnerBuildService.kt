@@ -11,7 +11,6 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.dotnet.*
-import java.util.*
 
 /**
  * Dotnet runner service.
@@ -51,16 +50,7 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
             throw exception
         }
 
-        // disable telemetry data collection: https://aka.ms/dotnet-cli-telemetry
-        val environment = HashMap(environmentVariables)
-        environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "true"
-
-        // disable showing eula and first time package caching
-        environment["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "true"
-
-        // skip xml docs download for restored packages
-        environment["NUGET_XMLDOC_MODE"] = "skip"
-
+        val environment = DotnetUtils.updateEnvironment(environmentVariables)
         return SimpleProgramCommandLine(environment, workingDirectory.absolutePath, toolPath, arguments)
     }
 }

@@ -17,7 +17,8 @@ class DotnetConstants {
         val RUNNER_DESCRIPTION = "Provides build tools for .NET Core projects"
 
         val TOOL_HOME = "DOTNET_HOME"
-        val CONFIG_PATH = RUNNER_TYPE + "_Path"
+        val CONFIG_NAME = "DotNetCore"
+        val CONFIG_PATH = CONFIG_NAME + "_Path"
         val PROJECT_JSON = "project.json"
 
         val COMMAND_BUILD = "build"
