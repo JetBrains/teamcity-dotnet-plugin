@@ -12,13 +12,14 @@ buildscript {
 }
 
 ext {
-    def correctVersion = hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
+    def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
+    println property('versionNumber') + ' is correct version: ' + correctVersion
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
 
-    teamcityVersion = hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
+    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
 
-    teamcityDir = hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
+    teamcityDir = project.hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
     teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
 
     teamcityJavaHome = System.properties['java.home']
