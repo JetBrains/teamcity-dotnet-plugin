@@ -33,7 +33,7 @@ class DotnetPropertiesExtension(events: EventDispatcher<AgentLifeCycleListener>,
             toolPath = myToolProvider.getPath(DotnetConstants.RUNNER_TYPE)
             val commandLine = getVersionCommandLine(toolPath)
             val result = SimpleCommandLineProcessRunner.runCommand(commandLine, byteArrayOf())
-            version = result.stdout.trim()
+            version = DotnetUtils.getSdkVersion(result.stdout)
         } catch (e: ToolCannotBeFoundException) {
             LOG.debug(e)
             return
