@@ -28,7 +28,7 @@ The plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/down
 
 ## .NET CLI toolkit
 
-To use the `dotnet` build runner, [install .NET CLI](http://dotnet.github.io/getting-started/) and add the .NET CLI tools path to the `PATH` environment variable.
+To use the `dotnet` build runner, [install .NET CLI](https://www.microsoft.com/net/core) and add the .NET CLI tools path to the `PATH` environment variable.
 
 Also, you can configure the `DOTNET_HOME` environment variable for your TeamCity build agent user, for instance:
 
