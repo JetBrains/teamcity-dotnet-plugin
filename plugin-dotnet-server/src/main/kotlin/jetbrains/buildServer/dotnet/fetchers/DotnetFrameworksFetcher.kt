@@ -8,8 +8,8 @@
 package jetbrains.buildServer.dotnet.fetchers
 
 import jetbrains.buildServer.dotnet.DotnetModelParser
+import jetbrains.buildServer.dotnet.models.CsProject
 import jetbrains.buildServer.dotnet.models.Project
-import java.util.Collections
 
 /**
  * Provides frameworks fetcher for project model.
@@ -18,6 +18,25 @@ class DotnetFrameworksFetcher(modelParser: DotnetModelParser) : DotnetProjectsDa
 
     override fun getDataItems(project: Project?): Collection<String> {
         return project?.frameworks?.keys ?: emptySet()
+    }
+
+    override fun getDataItems(project: CsProject?): Collection<String> {
+        project?.let {
+            it.PropertyGroups?.let {
+                return it.fold(hashSetOf<String>(), {
+                    all, current ->
+                    current.TargetFramework?.let {
+                        all.add(it)
+                    }
+                    current.TargetFrameworks?.let {
+                        all.addAll(it.split(';'))
+                    }
+                    all
+                })
+            }
+        }
+
+        return emptyList()
     }
 
     override fun getType(): String {

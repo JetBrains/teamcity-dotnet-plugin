@@ -14,6 +14,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
     testCompile 'org.testng:testng:6.8'
+    testCompile 'org.jmock:jmock:2.5.1'
 }
 
 agentPlugin.version = null

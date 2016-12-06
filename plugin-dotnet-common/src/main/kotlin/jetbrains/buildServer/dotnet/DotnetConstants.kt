@@ -20,6 +20,7 @@ class DotnetConstants {
         val CONFIG_NAME = "DotNetCore"
         val CONFIG_PATH = CONFIG_NAME + "_Path"
         val PROJECT_JSON = "project.json"
+        val PROJECT_CSPROJ = ".csproj"
 
         val COMMAND_BUILD = "build"
         val COMMAND_PACK = "pack"

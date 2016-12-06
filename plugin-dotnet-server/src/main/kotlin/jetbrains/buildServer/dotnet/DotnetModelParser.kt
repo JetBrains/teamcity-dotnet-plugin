@@ -9,10 +9,12 @@ package jetbrains.buildServer.dotnet
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import jetbrains.buildServer.dotnet.models.CsProject
 import jetbrains.buildServer.dotnet.models.Project
 import jetbrains.buildServer.log.Loggers
 import jetbrains.buildServer.util.browser.Element
 import java.io.*
+import javax.xml.bind.JAXBContext
 
 /**
  * Provides serialization capabilities.
@@ -37,7 +39,27 @@ class DotnetModelParser {
                 return myGson.fromJson(it, Project::class.java)
             }
         } catch (e: Exception) {
-            val message = "Failed to retrieve file for given path ${element.fullName}: ${e.toString()}"
+            val message = "Failed to retrieve file for given path ${element.fullName}: $e"
+            Loggers.SERVER.infoAndDebugDetails(message, e)
+        }
+
+        return null
+    }
+
+    fun getCsProjectModel(element: Element?): CsProject? {
+        if (element == null || !element.isContentAvailable) {
+            return null
+        }
+
+        try {
+            val jaxbContext = JAXBContext.newInstance(CsProject::class.java)
+            val jaxbUnmarshaller = jaxbContext.createUnmarshaller()
+            val inputStream = getInputStreamReader(element.inputStream)
+            BufferedReader(inputStream).use {
+                return jaxbUnmarshaller.unmarshal(it) as CsProject
+            }
+        } catch (e: Exception) {
+            val message = "Failed to retrieve file for given path ${element.fullName}: $e"
             Loggers.SERVER.infoAndDebugDetails(message, e)
         }
 

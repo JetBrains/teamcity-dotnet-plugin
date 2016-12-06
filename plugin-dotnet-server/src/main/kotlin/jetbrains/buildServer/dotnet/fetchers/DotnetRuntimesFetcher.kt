@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet.fetchers
 
 import jetbrains.buildServer.dotnet.DotnetModelParser
+import jetbrains.buildServer.dotnet.models.CsProject
 import jetbrains.buildServer.dotnet.models.Project
 
 /**
@@ -17,6 +18,10 @@ class DotnetRuntimesFetcher(modelParser: DotnetModelParser) : DotnetProjectsData
 
     override fun getDataItems(project: Project?): Collection<String> {
         return project?.runtimes?.keys ?: emptySet()
+    }
+
+    override fun getDataItems(project: CsProject?): Collection<String> {
+        return emptyList()
     }
 
     override fun getType(): String {

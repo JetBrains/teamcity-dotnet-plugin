@@ -7,7 +7,6 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetUtils
 import org.testng.Assert
 import org.testng.annotations.DataProvider

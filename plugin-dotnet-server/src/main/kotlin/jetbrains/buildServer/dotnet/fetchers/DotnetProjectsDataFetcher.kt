@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet.fetchers
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetModelParser
+import jetbrains.buildServer.dotnet.models.CsProject
 import jetbrains.buildServer.dotnet.models.Project
 import jetbrains.buildServer.serverSide.DataItem
 import jetbrains.buildServer.serverSide.ProjectDataFetcher
@@ -25,23 +26,21 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
     override fun retrieveData(browser: Browser, projectFilePath: String): List<DataItem> {
         val items = TreeSet(String.CASE_INSENSITIVE_ORDER)
         val projectsPaths = StringUtil.splitCommandArgumentsAndUnquote(projectFilePath)
-        if (projectsPaths.size == 0) {
+        if (projectsPaths.isEmpty()) {
             projectsPaths.add(StringUtil.EMPTY)
         }
 
         for (projectPath in projectsPaths) {
-            val projectFile: String
-            if (projectPath.isNullOrBlank()) {
-                projectFile = DotnetConstants.PROJECT_JSON
-            } else if (!projectPath.endsWith(DotnetConstants.PROJECT_JSON, ignoreCase = true)) {
-                projectFile = File(projectPath, DotnetConstants.PROJECT_JSON).path
-            } else {
-                projectFile = projectPath
+            val path = projectPath.trimEnd('/')
+            val jsonProjectFile: String = getJsonProject(path)
+            myModelParser.getProjectModel(browser.getElement(jsonProjectFile))?.let {
+                items.addAll(getDataItems(it))
             }
 
-            val project = myModelParser.getProjectModel(browser.getElement(projectFile)) ?: continue
-
-            items.addAll(getDataItems(project))
+            val csProjectFile: String = getCsProject(path, browser)
+            myModelParser.getCsProjectModel(browser.getElement(csProjectFile))?.let {
+                items.addAll(getDataItems(it))
+            }
         }
 
         if (items.isEmpty()) {
@@ -54,5 +53,35 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
         return data.map { it -> DataItem(it, null) }
     }
 
+    private fun getJsonProject(projectPath: String): String {
+        val projectFile: String
+        if (projectPath.isNullOrBlank()) {
+            projectFile = DotnetConstants.PROJECT_JSON
+        } else if (!projectPath.endsWith(DotnetConstants.PROJECT_JSON, ignoreCase = true)) {
+            projectFile = File(projectPath, DotnetConstants.PROJECT_JSON).path
+        } else {
+            projectFile = projectPath
+        }
+        return projectFile
+    }
+
+    private fun getCsProject(projectPath: String, browser: Browser): String {
+        if (!projectPath.endsWith(DotnetConstants.PROJECT_CSPROJ, ignoreCase = true)) {
+            browser.getElement(projectPath)?.let {
+                it.children?.let {
+                    it.firstOrNull {
+                        it.fullName.endsWith(DotnetConstants.PROJECT_CSPROJ, ignoreCase = true)
+                    }?.let {
+                        return it.fullName
+                    }
+                }
+            }
+        }
+
+        return projectPath
+    }
+
     protected abstract fun getDataItems(project: Project?): Collection<String>
+
+    protected abstract fun getDataItems(project: CsProject?): Collection<String>
 }

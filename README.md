@@ -13,6 +13,7 @@ The plugin provides the following features for .NET Core project building:
 * .NET Core tools detection on build agents
 * auto-discovery of build steps
 * cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
+* supports both project.json and csproj-based projects
  
 # Download
 
