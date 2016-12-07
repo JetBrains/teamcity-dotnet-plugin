@@ -1,17 +1,11 @@
-buildscript {
-    ext.kotlinVersion = '1.0.4'
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath group: 'com.github.rodm', name: 'gradle-teamcity-plugin', version: '0.9.1'
-        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$kotlinVersion"
-    }
+plugins {
+    id "com.zoltu.kotlin" version "1.0.5"
+    id "com.github.rodm.teamcity-server" version "0.10"
 }
 
 ext {
+    kotlinVersion = '1.0.5-2'
+
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
@@ -39,16 +33,6 @@ subprojects {
 
     test.useTestNG()
     jar.version = null
-}
-
-apply plugin: 'idea'
-apply plugin: 'kotlin'
-
-idea {
-    module {
-        downloadJavadoc = false
-        downloadSources = true
-    }
 }
 
 task wrapper(type: Wrapper) {
