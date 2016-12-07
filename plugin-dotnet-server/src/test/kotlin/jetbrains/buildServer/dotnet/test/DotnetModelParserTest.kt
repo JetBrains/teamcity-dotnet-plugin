@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetModelParser
+import jetbrains.buildServer.dotnet.fetchers.DotnetConfigurationsFetcher
 import jetbrains.buildServer.util.browser.Element
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -62,5 +63,8 @@ class DotnetModelParserTest {
                 Assert.assertEquals(it[4].include, "xunit.runner.visualstudio")
             }
         }
+
+        val configurationsFetcher = DotnetConfigurationsFetcher(parser)
+        Assert.assertEquals(configurationsFetcher.getDataItems(project), setOf("Core", "Debug", "Release"))
     }
 }

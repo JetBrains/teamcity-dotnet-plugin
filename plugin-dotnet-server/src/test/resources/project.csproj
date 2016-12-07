@@ -11,7 +11,7 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Core|AnyCPU' ">
     <PackageReference Include="Microsoft.NETCore.App">
       <Version>1.0.1</Version>
     </PackageReference>

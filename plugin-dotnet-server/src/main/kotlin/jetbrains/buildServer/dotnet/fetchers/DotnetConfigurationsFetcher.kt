@@ -17,6 +17,7 @@ import java.util.TreeSet
  */
 class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjectsDataFetcher(modelParser) {
     private val DefaultConfigurations: Collection<String> = listOf("Release", "Debug")
+    private val ConditionPattern: Regex = Regex("'\\$\\(Configuration\\)([^']*)' == '([^|]*)([^']*)'")
 
     override fun getDataItems(project: Project?): Collection<String> {
         val configurations = TreeSet(String.CASE_INSENSITIVE_ORDER)
@@ -26,8 +27,28 @@ class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjec
         return configurations
     }
 
-    override fun getDataItems(project: CsProject?): Collection<String> {
-        return DefaultConfigurations
+    public override fun getDataItems(project: CsProject?): Collection<String> {
+        val configurations = TreeSet(String.CASE_INSENSITIVE_ORDER)
+        configurations.addAll(DefaultConfigurations)
+
+        project?.let {
+            val conditions = TreeSet(String.CASE_INSENSITIVE_ORDER)
+            it.propertyGroups?.let {
+                conditions.addAll(it.map { it.condition }.filterNotNull())
+            }
+
+            it.itemGroups?.let {
+                conditions.addAll(it.map { it.condition }.filterNotNull())
+            }
+
+            conditions.forEach {
+                ConditionPattern.find(it)?.let {
+                    configurations.add(it.groupValues[2])
+                }
+            }
+        }
+
+        return configurations
     }
 
     override fun getType(): String {
