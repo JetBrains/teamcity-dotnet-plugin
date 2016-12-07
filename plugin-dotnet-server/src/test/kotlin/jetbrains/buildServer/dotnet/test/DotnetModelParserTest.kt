@@ -17,7 +17,6 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 
-
 /**
  * @author Dmitry.Tretyakov
  *         Date: 06.12.2016
@@ -44,23 +43,23 @@ class DotnetModelParserTest {
         val project = parser.getCsProjectModel(element)
 
         Assert.assertNotNull(project)
-        Assert.assertEquals(project!!.ToolsVersion, "15.0")
+        Assert.assertEquals(project!!.toolsVersion, "15.0")
 
-        Assert.assertNotNull(project.PropertyGroups)
-        project.PropertyGroups?.let {
+        Assert.assertNotNull(project.propertyGroups)
+        project.propertyGroups?.let {
             Assert.assertEquals(it.size, 1)
-            Assert.assertEquals(it[0].TargetFramework, "netcoreapp1.0")
-            Assert.assertNull(it[0].TargetFrameworks)
+            Assert.assertEquals(it[0].targetFramework, "netcoreapp1.0")
+            Assert.assertNull(it[0].targetFrameworks)
         }
 
-        Assert.assertNotNull(project.ItemGroups)
-        project.ItemGroups?.let {
+        Assert.assertNotNull(project.itemGroups)
+        project.itemGroups?.let {
             Assert.assertEquals(it.size, 2)
-            Assert.assertNotNull(it[1].PackageReferences)
+            Assert.assertNotNull(it[1].packageReferences)
 
-            it[1].PackageReferences?.let {
+            it[1].packageReferences?.let {
                 Assert.assertEquals(it.size, 5)
-                Assert.assertEquals(it[4].Include, "xunit.runner.visualstudio")
+                Assert.assertEquals(it[4].include, "xunit.runner.visualstudio")
             }
         }
     }

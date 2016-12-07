@@ -42,16 +42,16 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
     }
 
     private fun discover(project: CsProject, fullName: String): ArrayList<Map<String, String>> {
-        if (project.ToolsVersion.isNullOrEmpty() || !MsBuildVersion.contains(project.ToolsVersion)) {
+        if (project.toolsVersion.isNullOrEmpty() || !MsBuildVersion.contains(project.toolsVersion)) {
             return arrayListOf()
         }
 
         val steps = arrayListOf<Map<String, String>>()
-        project.ItemGroups?.let {
+        project.itemGroups?.let {
             val packages = it.fold(hashSetOf<String>(), {
                 all, current ->
-                current.PackageReferences?.let {
-                    all.addAll(it.map { it.Include }.filterNotNull())
+                current.packageReferences?.let {
+                    all.addAll(it.map { it.include }.filterNotNull())
                 }
                 all
             })

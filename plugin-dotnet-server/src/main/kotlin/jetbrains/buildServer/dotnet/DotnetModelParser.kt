@@ -7,14 +7,19 @@
 
 package jetbrains.buildServer.dotnet
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import jetbrains.buildServer.dotnet.models.CsProject
 import jetbrains.buildServer.dotnet.models.Project
 import jetbrains.buildServer.log.Loggers
 import jetbrains.buildServer.util.browser.Element
-import java.io.*
-import javax.xml.bind.JAXBContext
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.Reader
 
 /**
  * Provides serialization capabilities.
@@ -22,10 +27,15 @@ import javax.xml.bind.JAXBContext
 class DotnetModelParser {
 
     private val myGson: Gson
+    private val myXmlMapper: ObjectMapper
 
     init {
         val builder = GsonBuilder()
         myGson = builder.create()
+        myXmlMapper = XmlMapper()
+        myXmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        myXmlMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+        myXmlMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false)
     }
 
     fun getProjectModel(element: Element?): Project? {
@@ -52,11 +62,9 @@ class DotnetModelParser {
         }
 
         try {
-            val jaxbContext = JAXBContext.newInstance(CsProject::class.java)
-            val jaxbUnmarshaller = jaxbContext.createUnmarshaller()
             val inputStream = getInputStreamReader(element.inputStream)
             BufferedReader(inputStream).use {
-                return jaxbUnmarshaller.unmarshal(it) as CsProject
+                return myXmlMapper.readValue(it, CsProject::class.java)
             }
         } catch (e: Exception) {
             val message = "Failed to retrieve file for given path ${element.fullName}: $e"
