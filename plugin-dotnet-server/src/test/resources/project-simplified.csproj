@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Core|AnyCPU' ">
+    <PackageReference Include="Microsoft.NETCore.App" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161024-02" />
+    <PackageReference Include="xunit" Version="2.2.0-beta3-build3402" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1188" />
+  </ItemGroup>
+</Project>
