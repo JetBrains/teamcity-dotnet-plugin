@@ -122,6 +122,13 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
         }
 
+        // If unable to determine project type just build it
+        if (packages.isNotEmpty() && steps.size == 0) {
+            steps.add(mapOf(
+                    Pair(DotnetConstants.PARAM_COMMAND, DotnetConstants.COMMAND_BUILD),
+                    Pair(DotnetConstants.PARAM_PATHS, fullName)))
+        }
+
         return steps
     }
 
