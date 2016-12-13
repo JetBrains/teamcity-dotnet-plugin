@@ -28,6 +28,7 @@ class DotnetModelParser {
 
     private val myGson: Gson
     private val myXmlMapper: ObjectMapper
+    private val ProjectPathPattern: Regex = Regex(""""([^\"]+\${DotnetConstants.PROJECT_CSPROJ})"""")
 
     init {
         val builder = GsonBuilder()
@@ -64,7 +65,9 @@ class DotnetModelParser {
         try {
             val inputStream = getInputStreamReader(element.inputStream)
             BufferedReader(inputStream).use {
-                return myXmlMapper.readValue(it, CsProject::class.java)
+                val project = myXmlMapper.readValue(it, CsProject::class.java)
+                project.path = element.fullName
+                return project
             }
         } catch (e: Exception) {
             val message = "Failed to retrieve file for given path ${element.fullName}: $e"
@@ -72,6 +75,38 @@ class DotnetModelParser {
         }
 
         return null
+    }
+
+    fun getCsProjectModels(element: Element): List<CsProject>? {
+        if (!element.isContentAvailable) {
+            return null
+        }
+
+        val projectPaths = arrayListOf<String>()
+        try {
+            val inputStream = getInputStreamReader(element.inputStream)
+            BufferedReader(inputStream).use {
+                inputStream.readLines().forEach {
+                    ProjectPathPattern.find(it)?.let {
+                        projectPaths.add(it.groupValues[1].replace('\\', '/'))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            val message = "Failed to retrieve file for given path ${element.fullName}: $e"
+            Loggers.SERVER.infoAndDebugDetails(message, e)
+        }
+
+        return projectPaths.map { getElement(element, it) }
+                .filterNotNull()
+                .map { getCsProjectModel(it) }
+                .filterNotNull()
+    }
+
+    private fun getElement(element: Element, it: String): Element? {
+        val fullName = element.fullName
+        val parent = fullName.substring(0, fullName.length - element.name.length)
+        return element.browser.getElement("$parent$it")
     }
 
     private fun getInputStreamReader(inputStream: InputStream): Reader {

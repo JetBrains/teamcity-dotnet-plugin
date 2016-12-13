@@ -29,7 +29,8 @@ class DotnetModelParserTest {
         val m = Mockery()
         val element = m.mock(Element::class.java)
         val parser = DotnetModelParser()
-        val csproj = File("src/test/resources/project.csproj")
+        val fullName = "src/test/resources/project.csproj"
+        val csproj = File(fullName)
 
         m.checking(object : Expectations() {
             init {
@@ -38,13 +39,15 @@ class DotnetModelParserTest {
 
                 one(element).inputStream
                 will(returnValue(BufferedInputStream(FileInputStream(csproj))))
+
+                one(element).fullName
+                will(returnValue(fullName))
             }
         })
 
         val project = parser.getCsProjectModel(element)
 
-        Assert.assertNotNull(project)
-        Assert.assertEquals(project!!.toolsVersion, "15.0")
+        Assert.assertEquals(project!!.path, fullName)
 
         Assert.assertNotNull(project.propertyGroups)
         project.propertyGroups?.let {

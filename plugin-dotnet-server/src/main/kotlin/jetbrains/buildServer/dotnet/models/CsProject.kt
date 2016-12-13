@@ -14,14 +14,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*
  */
 @JacksonXmlRootElement(localName = "Project", namespace = "http://schemas.microsoft.com/developer/msbuild/2003")
 data class CsProject(
-        @get:JacksonXmlProperty(localName = "ToolsVersion", isAttribute = true)
-        var toolsVersion: String? = null,
-
         @get:[JacksonXmlProperty(localName = "PropertyGroup") JacksonXmlElementWrapper(useWrapping = false)]
         var propertyGroups: List<CsPropertyGroup>? = null,
 
         @get:[JacksonXmlProperty(localName = "ItemGroup") JacksonXmlElementWrapper(useWrapping = false)]
-        var itemGroups: List<CsItemGroup>? = null
+        var itemGroups: List<CsItemGroup>? = null,
+
+        var path: String? = null
 )
 
 /**
