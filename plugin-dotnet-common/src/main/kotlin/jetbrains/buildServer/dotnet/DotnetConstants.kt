@@ -37,11 +37,10 @@ class DotnetConstants {
         val PARAM_BUILD_FRAMEWORK = "dotnet-build-framework"
         val PARAM_BUILD_CONFIG = "dotnet-build-config"
         val PARAM_BUILD_RUNTIME = "dotnet-build-runtime"
-        val PARAM_BUILD_PROFILE = "dotnet-build-profile"
         val PARAM_BUILD_NON_INCREMENTAL = "dotnet-build-not-incremental"
         val PARAM_BUILD_NO_DEPENDENCIES = "dotnet-build-no-deps"
         val PARAM_BUILD_OUTPUT = "dotnet-build-output"
-        val PARAM_BUILD_TEMP = "dotnet-build-temp"
+        val PARAM_BUILD_VERSION_SUFFIX = "dotnet-build-version-suffix"
 
         val PARAM_RESTORE_PARALLEL = "dotnet-restore-parallel"
         val PARAM_RESTORE_PACKAGES = "dotnet-restore-packages"

@@ -68,9 +68,6 @@ class DotnetParametersProvider {
     val buildRuntimeKey: String
         get() = DotnetConstants.PARAM_BUILD_RUNTIME
 
-    val buildProfileKey: String
-        get() = DotnetConstants.PARAM_BUILD_PROFILE
-
     val buildNonIncrementalKey: String
         get() = DotnetConstants.PARAM_BUILD_NON_INCREMENTAL
 
@@ -80,8 +77,8 @@ class DotnetParametersProvider {
     val buildOutputKey: String
         get() = DotnetConstants.PARAM_BUILD_OUTPUT
 
-    val buildTempKey: String
-        get() = DotnetConstants.PARAM_BUILD_TEMP
+    val buildVersionSuffixKey: String
+        get() = DotnetConstants.PARAM_BUILD_VERSION_SUFFIX
 
     val publishFrameworkKey: String
         get() = DotnetConstants.PARAM_PUBLISH_FRAMEWORK

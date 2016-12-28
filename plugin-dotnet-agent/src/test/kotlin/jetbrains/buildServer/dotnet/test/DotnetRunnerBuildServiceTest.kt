@@ -71,7 +71,15 @@ class DotnetRunnerBuildServiceTest {
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_BUILD_OUTPUT, "output/"),
                         Pair(DotnetConstants.PARAM_ARGUMENTS, "--quiet")),
-                        listOf("build", "--output", "output/", "--quiet")))
+                        listOf("build", "--output", "output/", "--quiet")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_BUILD_NON_INCREMENTAL to " true",
+                        DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES to "True "),
+                        listOf("build", "--no-incremental", "--no-dependencies")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_BUILD_VERSION_SUFFIX to " preview ",
+                        DotnetConstants.PARAM_VERBOSITY to "normal"),
+                        listOf("build", "--version-suffix", "preview", "--verbosity", "normal")))
     }
 
     @DataProvider
