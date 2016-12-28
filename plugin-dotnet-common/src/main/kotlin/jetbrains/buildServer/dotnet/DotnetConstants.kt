@@ -28,6 +28,7 @@ class DotnetConstants {
         val COMMAND_PUBLISH = "publish"
         val COMMAND_RESTORE = "restore"
         val COMMAND_TEST = "test"
+        val COMMAND_RUN = "run"
 
         val PARAM_COMMAND = "dotnet-command"
         val PARAM_PATHS = "dotnet-paths"
@@ -69,5 +70,9 @@ class DotnetConstants {
         val PARAM_TEST_TEMP = "dotnet-test-temp"
         val PARAM_TEST_RUNTIME = "dotnet-test-runtime"
         val PARAM_TEST_NO_BUILD = "dotnet-test-no-build"
+
+        val PARAM_RUN_FRAMEWORK = "dotnet-run-framework"
+        val PARAM_RUN_CONFIG = "dotnet-run-config"
+
     }
 }

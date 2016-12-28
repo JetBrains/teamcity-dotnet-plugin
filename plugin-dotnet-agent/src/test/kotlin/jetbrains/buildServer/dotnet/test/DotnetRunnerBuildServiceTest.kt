@@ -36,6 +36,14 @@ class DotnetRunnerBuildServiceTest {
         Assert.assertEquals(result, arguments)
     }
 
+    @Test(dataProvider = "testRunArgumentsData")
+    fun testRunArguments(parameters: Map<String, String>, arguments: List<String>) {
+        val argumentsProvider = RunArgumentsProvider()
+        val result = argumentsProvider.getArguments(parameters)
+
+        Assert.assertEquals(result, arguments)
+    }
+
     @Test(dataProvider = "testPublishArgumentsData")
     fun testPublishArguments(parameters: Map<String, String>, arguments: List<String>) {
         val argumentsProvider = PublishArgumentsProvider()
@@ -102,6 +110,19 @@ class DotnetRunnerBuildServiceTest {
                         DotnetConstants.PARAM_RESTORE_IGNORE_FAILED to "True ",
                         DotnetConstants.PARAM_RESTORE_ROOT_PROJECT to "true"),
                         listOf("restore", "--no-cache", "--ignore-failed-sources", "--no-dependencies")))
+    }
+
+    @DataProvider
+    fun testRunArgumentsData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_PATHS to "path/",
+                        DotnetConstants.PARAM_ARGUMENTS to "arg1 arg2"),
+                        listOf("run", "--project", "path/", "arg1", "arg2")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_RUN_FRAMEWORK to "dotcore",
+                        DotnetConstants.PARAM_RUN_CONFIG to "Release"),
+                        listOf("run", "--framework", "dotcore", "--configuration", "Release")))
     }
 
     @DataProvider
