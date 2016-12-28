@@ -26,3 +26,21 @@
         Disable restoring multiple project packages in parallel: <strong>ON</strong>
     </div>
 </c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.restoreRootProjectKey]}">
+    <div class="parameter">
+        Restore only root project packages: <strong>ON</strong>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.restoreNoCacheKey]}">
+    <div class="parameter">
+        Do not cache packages and http requests: <strong>ON</strong>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.restoreIgnoreFailedKey]}">
+    <div class="parameter">
+        Treat package source failures as warnings: <strong>ON</strong>
+    </div>
+</c:if>

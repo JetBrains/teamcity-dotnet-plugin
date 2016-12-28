@@ -50,6 +50,15 @@ class DotnetParametersProvider {
     val restoreSourceKey: String
         get() = DotnetConstants.PARAM_RESTORE_SOURCE
 
+    val restoreNoCacheKey: String
+        get() = DotnetConstants.PARAM_RESTORE_NO_CACHE
+
+    val restoreIgnoreFailedKey: String
+        get() = DotnetConstants.PARAM_RESTORE_IGNORE_FAILED
+
+    val restoreRootProjectKey: String
+        get() = DotnetConstants.PARAM_RESTORE_ROOT_PROJECT
+
     val buildFrameworkKey: String
         get() = DotnetConstants.PARAM_BUILD_FRAMEWORK
 
@@ -132,5 +141,5 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_TEST_NO_BUILD
 
     val verbosity: List<String>
-        get() = listOf("Debug", "Verbose", "Information", "Minimal", "Warning", "Error")
+        get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")
 }

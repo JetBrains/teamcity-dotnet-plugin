@@ -11,57 +11,60 @@ import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.StringUtil
 
-import java.util.ArrayList
-
 /**
  * Provides arguments to dotnet restore command.
  */
 class RestoreArgumentsProvider : ArgumentsProvider {
 
     override fun getArguments(parameters: Map<String, String>): List<String> {
-        val arguments = ArrayList<String>()
-        arguments.add(DotnetConstants.COMMAND_RESTORE)
+        val arguments = arrayListOf(DotnetConstants.COMMAND_RESTORE)
 
-        val projectsValue = parameters[DotnetConstants.PARAM_PATHS]
-        if (!projectsValue.isNullOrBlank()) {
-            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(projectsValue!!))
+        parameters[DotnetConstants.PARAM_PATHS]?.trim()?.let {
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))
         }
 
-        val packagesValue = parameters[DotnetConstants.PARAM_RESTORE_PACKAGES]
-        if (!packagesValue.isNullOrBlank()) {
-            arguments.add("--packages")
-            arguments.add(packagesValue!!.trim())
-        }
-
-        val sourceValue = parameters[DotnetConstants.PARAM_RESTORE_SOURCE]
-        if (!sourceValue.isNullOrBlank()) {
-            val sources = StringUtil.splitCommandArgumentsAndUnquote(sourceValue!!)
-            sources.forEach {
-                arguments.add("--source")
-                arguments.add(it)
+        parameters[DotnetConstants.PARAM_RESTORE_PACKAGES]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--packages", it))
             }
         }
 
-        val parallelValue = parameters[DotnetConstants.PARAM_RESTORE_PARALLEL]
-        if ("true".equals(parallelValue, ignoreCase = true)) {
+        parameters[DotnetConstants.PARAM_RESTORE_SOURCE]?.let {
+            StringUtil.splitCommandArgumentsAndUnquote(it).forEach {
+                arguments.addAll(listOf("--source", it))
+            }
+        }
+
+        if (parameters.getOrElse(DotnetConstants.PARAM_RESTORE_PARALLEL, { "" }).trim().toBoolean()) {
             arguments.add("--disable-parallel")
         }
 
-        val configValue = parameters[DotnetConstants.PARAM_RESTORE_CONFIG]
-        if (!configValue.isNullOrBlank()) {
-            arguments.add("--configfile")
-            arguments.add(configValue!!.trim())
+        if (parameters.getOrElse(DotnetConstants.PARAM_RESTORE_NO_CACHE, { "" }).trim().toBoolean()) {
+            arguments.add("--no-cache")
         }
 
-        val verbosityValue = parameters[DotnetConstants.PARAM_VERBOSITY]
-        if (!verbosityValue.isNullOrBlank()) {
-            arguments.add("--verbosity")
-            arguments.add(verbosityValue!!.trim())
+        if (parameters.getOrElse(DotnetConstants.PARAM_RESTORE_IGNORE_FAILED, { "" }).trim().toBoolean()) {
+            arguments.add("--ignore-failed-sources")
         }
 
-        val argumentsValue = parameters[DotnetConstants.PARAM_ARGUMENTS]
-        if (!argumentsValue.isNullOrBlank()) {
-            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue!!))
+        if (parameters.getOrElse(DotnetConstants.PARAM_RESTORE_ROOT_PROJECT, { "" }).trim().toBoolean()) {
+            arguments.add("--no-dependencies")
+        }
+
+        parameters[DotnetConstants.PARAM_RESTORE_CONFIG]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--configfile", it))
+            }
+        }
+
+        parameters[DotnetConstants.PARAM_VERBOSITY]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--verbosity", it))
+            }
+        }
+
+        parameters[DotnetConstants.PARAM_ARGUMENTS]?.trim()?.let {
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))
         }
 
         return arguments
