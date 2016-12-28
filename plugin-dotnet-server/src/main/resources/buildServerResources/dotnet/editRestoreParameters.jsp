@@ -34,7 +34,13 @@
     <th class="noBorder"></th>
     <td class="noBorder">
         <props:checkboxProperty name="${params.restoreParallelKey}"/>
-        <label for="${params.restoreParallelKey}">Disables restoring multiple project packages in parallel</label>
+        <label for="${params.restoreParallelKey}">Disables restoring multiple project packages in parallel</label><br/>
+        <props:checkboxProperty name="${params.restoreRootProjectKey}"/>
+        <label for="${params.restoreRootProjectKey}">Restore only root project packages</label><br/>
+        <props:checkboxProperty name="${params.restoreNoCacheKey}"/>
+        <label for="${params.restoreNoCacheKey}">Do not cache packages and http requests</label><br/>
+        <props:checkboxProperty name="${params.restoreIgnoreFailedKey}"/>
+        <label for="${params.restoreIgnoreFailedKey}">Treat package source failures as warnings</label>
     </td>
 </tr>
 

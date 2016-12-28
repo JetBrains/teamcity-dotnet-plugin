@@ -88,7 +88,12 @@ class DotnetRunnerBuildServiceTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com\nhttp://jb.ru")),
                         listOf("restore", "--source", "http://jb.com", "--source", "http://jb.ru")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com http://jb.ru")),
-                        listOf("restore", "--source", "http://jb.com", "--source", "http://jb.ru")))
+                        listOf("restore", "--source", "http://jb.com", "--source", "http://jb.ru")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_RESTORE_NO_CACHE to " tRue",
+                        DotnetConstants.PARAM_RESTORE_IGNORE_FAILED to "True ",
+                        DotnetConstants.PARAM_RESTORE_ROOT_PROJECT to "true"),
+                        listOf("restore", "--no-cache", "--ignore-failed-sources", "--no-dependencies")))
     }
 
     @DataProvider

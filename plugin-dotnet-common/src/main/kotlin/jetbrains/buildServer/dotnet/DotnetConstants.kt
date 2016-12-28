@@ -47,6 +47,9 @@ class DotnetConstants {
         val PARAM_RESTORE_PACKAGES = "dotnet-restore-packages"
         val PARAM_RESTORE_SOURCE = "dotnet-restore-source"
         val PARAM_RESTORE_CONFIG = "dotnet-restore-config"
+        val PARAM_RESTORE_NO_CACHE = "dotnet-restore-no-cache"
+        val PARAM_RESTORE_IGNORE_FAILED = "dotnet-restore-ignore-failed"
+        val PARAM_RESTORE_ROOT_PROJECT = "dotnet-restore-root-project"
 
         val PARAM_PUBLISH_FRAMEWORK = "dotnet-publish-framework"
         val PARAM_PUBLISH_CONFIG = "dotnet-publish-config"
