@@ -11,66 +11,56 @@ import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.StringUtil
 
-import java.util.ArrayList
-
 /**
  * Provides arguments to dotnet publish command.
  */
 class PublishArgumentsProvider : ArgumentsProvider {
 
     override fun getArguments(parameters: Map<String, String>): List<String> {
-        val arguments = ArrayList<String>()
-        arguments.add(DotnetConstants.COMMAND_PUBLISH)
+        val arguments = arrayListOf(DotnetConstants.COMMAND_PUBLISH)
 
-        val projectsValue = parameters[DotnetConstants.PARAM_PATHS]
-        if (!projectsValue.isNullOrBlank()) {
-            arguments.add(projectsValue!!.trim())
+        parameters[DotnetConstants.PARAM_PATHS]?.trim()?.let {
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))
         }
 
-        val frameworkValue = parameters[DotnetConstants.PARAM_PUBLISH_FRAMEWORK]
-        if (!frameworkValue.isNullOrBlank()) {
-            arguments.add("--framework")
-            arguments.add(frameworkValue!!.trim())
+        parameters[DotnetConstants.PARAM_PUBLISH_FRAMEWORK]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--framework", it))
+            }
         }
 
-        val configValue = parameters[DotnetConstants.PARAM_PUBLISH_CONFIG]
-        if (!configValue.isNullOrBlank()) {
-            arguments.add("--configuration")
-            arguments.add(configValue!!.trim())
+        parameters[DotnetConstants.PARAM_PUBLISH_CONFIG]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--configuration", it))
+            }
         }
 
-        val runtimeValue = parameters[DotnetConstants.PARAM_PUBLISH_RUNTIME]
-        if (!runtimeValue.isNullOrBlank()) {
-            arguments.add("--runtime")
-            arguments.add(runtimeValue!!.trim())
+        parameters[DotnetConstants.PARAM_PUBLISH_RUNTIME]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--runtime", it))
+            }
         }
 
-        val outputValue = parameters[DotnetConstants.PARAM_PUBLISH_OUTPUT]
-        if (!outputValue.isNullOrBlank()) {
-            arguments.add("--output")
-            arguments.add(outputValue!!.trim())
+        parameters[DotnetConstants.PARAM_PUBLISH_OUTPUT]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--output", it))
+            }
         }
 
-        val tempValue = parameters[DotnetConstants.PARAM_PUBLISH_TEMP]
-        if (!tempValue.isNullOrBlank()) {
-            arguments.add("--build-base-path")
-            arguments.add(tempValue!!.trim())
+        parameters[DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--version-suffix", it))
+            }
         }
 
-        val noBuildValue = parameters[DotnetConstants.PARAM_PUBLISH_NO_BUILD]
-        if ("true".equals(noBuildValue, ignoreCase = true)) {
-            arguments.add("--no-build")
+        parameters[DotnetConstants.PARAM_VERBOSITY]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--verbosity", it))
+            }
         }
 
-        val versionSuffixValue = parameters[DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX]
-        if (!versionSuffixValue.isNullOrBlank()) {
-            arguments.add("--version-suffix")
-            arguments.add(versionSuffixValue!!.trim())
-        }
-
-        val argumentsValue = parameters[DotnetConstants.PARAM_ARGUMENTS]
-        if (!argumentsValue.isNullOrBlank()) {
-            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue!!))
+        parameters[DotnetConstants.PARAM_ARGUMENTS]?.trim()?.let {
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))
         }
 
         return arguments

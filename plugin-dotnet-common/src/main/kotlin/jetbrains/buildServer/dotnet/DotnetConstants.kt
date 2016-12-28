@@ -53,10 +53,8 @@ class DotnetConstants {
         val PARAM_PUBLISH_FRAMEWORK = "dotnet-publish-framework"
         val PARAM_PUBLISH_CONFIG = "dotnet-publish-config"
         val PARAM_PUBLISH_OUTPUT = "dotnet-publish-output"
-        val PARAM_PUBLISH_TEMP = "dotnet-publish-temp"
         val PARAM_PUBLISH_RUNTIME = "dotnet-publish-runtime"
         val PARAM_PUBLISH_VERSION_SUFFIX = "dotnet-publish-version-suffix"
-        val PARAM_PUBLISH_NO_BUILD = "dotnet-publish-no-build"
 
         val PARAM_PACK_CONFIG = "dotnet-pack-config"
         val PARAM_PACK_OUTPUT = "dotnet-pack-output"
