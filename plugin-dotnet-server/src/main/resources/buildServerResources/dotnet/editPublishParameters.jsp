@@ -59,28 +59,23 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.publishTempKey}">Temp directory:</label></th>
-    <td>
-        <props:textProperty name="${params.publishTempKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.publishTempKey}" dirsOnly="true"/>
-        <span class="error" id="error_${params.publishTempKey}"></span>
-        <span class="smallNote">Directory in which to place temporary outputs.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th><label for="${params.publishVersionSuffixKey}">Version suffix:</label></th>
     <td>
         <props:textProperty name="${params.publishVersionSuffixKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.publishVersionSuffixKey}"></span>
-        <span class="smallNote">Defines what `*` should be replaced with in version field in project.json.</span>
+        <span class="smallNote">Defines the value for the $(VersionSuffix) property in the project.</span>
     </td>
 </tr>
 
 <tr class="advancedSetting">
-    <th>Options:</th>
+    <th><label for="${params.verbosityKey}">Logging verbosity:</label></th>
     <td>
-        <props:checkboxProperty name="${params.publishNoBuildKey}"/>
-        <label for="${params.publishNoBuildKey}">Do not build projects before publishing</label>
+        <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Default&gt;</props:option>
+            <c:forEach var="item" items="${params.verbosity}">
+                <props:option value="${item}"><c:out value="${item}"/></props:option>
+            </c:forEach>
+        </props:selectProperty>
+        <span class="error" id="error_${params.verbosityKey}"></span>
     </td>
 </tr>
