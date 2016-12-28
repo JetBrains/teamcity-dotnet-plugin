@@ -26,6 +26,7 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
                 Pair(DotnetConstants.COMMAND_PACK, PackArgumentsProvider()),
                 Pair(DotnetConstants.COMMAND_PUBLISH, PublishArgumentsProvider()),
                 Pair(DotnetConstants.COMMAND_RESTORE, RestoreArgumentsProvider()),
+                Pair(DotnetConstants.COMMAND_RUN, RunArgumentsProvider()),
                 Pair(DotnetConstants.COMMAND_TEST, TestArgumentsProvider()))
     }
 
