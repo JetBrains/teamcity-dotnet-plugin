@@ -21,12 +21,6 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildProfileKey]}">
-    <div class="parameter">
-        Print the incremental safety checks that prevent incremental compilation: <strong>ON</strong>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.buildNonIncrementalKey]}">
     <div class="parameter">
         Turn off incremental build: <strong>ON</strong>
@@ -45,8 +39,8 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildTempKey]}">
+<c:if test="${not empty propertiesBean.properties[params.buildVersionSuffixKey]}">
     <div class="parameter">
-        Temp directory: <props:displayValue name="${params.buildTempKey}"/>
+        Version suffix: <props:displayValue name="${params.buildVersionSuffixKey}"/>
     </div>
 </c:if>

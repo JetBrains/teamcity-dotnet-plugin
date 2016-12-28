@@ -55,8 +55,6 @@
 <tr class="advancedSetting">
     <th>Options:</th>
     <td>
-        <props:checkboxProperty name="${params.buildProfileKey}"/>
-        <label for="${params.buildProfileKey}">Print the incremental safety checks that prevent incremental compilation</label><br/>
         <props:checkboxProperty name="${params.buildNonIncrementalKey}"/>
         <label for="${params.buildNonIncrementalKey}">Turn off incremental build</label><br/>
         <props:checkboxProperty name="${params.buildNoDependenciesKey}"/>
@@ -75,11 +73,23 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.buildTempKey}">Temp directory:</label></th>
+    <th><label for="${params.buildVersionSuffixKey}">Version suffix:</label></th>
     <td>
-        <props:textProperty name="${params.buildTempKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.buildTempKey}" dirsOnly="true"/>
-        <span class="error" id="error_${params.buildTempKey}"></span>
-        <span class="smallNote">Directory in which to place temporary outputs.</span>
+        <props:textProperty name="${params.buildVersionSuffixKey}" className="longField" expandable="true"/>
+        <span class="error" id="error_${params.buildVersionSuffixKey}"></span>
+        <span class="smallNote">Defines the value for the $(VersionSuffix) property in the project.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
+    <th><label for="${params.verbosityKey}">Logging verbosity:</label></th>
+    <td>
+        <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Default&gt;</props:option>
+            <c:forEach var="item" items="${params.verbosity}">
+                <props:option value="${item}"><c:out value="${item}"/></props:option>
+            </c:forEach>
+        </props:selectProperty>
+        <span class="error" id="error_${params.verbosityKey}"></span>
     </td>
 </tr>
