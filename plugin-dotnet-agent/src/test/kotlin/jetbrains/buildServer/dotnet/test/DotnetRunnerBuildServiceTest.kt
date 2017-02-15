@@ -166,6 +166,8 @@ class DotnetRunnerBuildServiceTest {
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
                         Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
-                        listOf("test", "--runtime", "active", "--no-build")))
+                        listOf("test", "--runtime", "active", "--no-build")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
+                        listOf("test", "--output", "out")))
     }
 }

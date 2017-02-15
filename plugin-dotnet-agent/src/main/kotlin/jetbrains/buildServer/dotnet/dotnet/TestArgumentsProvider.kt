@@ -22,49 +22,48 @@ class TestArgumentsProvider : ArgumentsProvider {
         val arguments = ArrayList<String>()
         arguments.add(DotnetConstants.COMMAND_TEST)
 
-        val projectsValue = parameters[DotnetConstants.PARAM_PATHS]
-        if (!projectsValue.isNullOrBlank()) {
-            arguments.add(projectsValue!!.trim())
+        parameters[DotnetConstants.PARAM_PATHS]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.add(it)
+            }
         }
 
-        val frameworkValue = parameters[DotnetConstants.PARAM_TEST_FRAMEWORK]
-        if (!frameworkValue.isNullOrBlank()) {
-            arguments.add("--framework")
-            arguments.add(frameworkValue!!.trim())
+        parameters[DotnetConstants.PARAM_TEST_FRAMEWORK]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--framework", it))
+            }
         }
 
-        val configValue = parameters[DotnetConstants.PARAM_TEST_CONFIG]
-        if (!configValue.isNullOrBlank()) {
-            arguments.add("--configuration")
-            arguments.add(configValue!!.trim())
+        parameters[DotnetConstants.PARAM_TEST_CONFIG]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--configuration", it))
+            }
         }
 
-        val runtimeValue = parameters[DotnetConstants.PARAM_TEST_RUNTIME]
-        if (!runtimeValue.isNullOrBlank()) {
-            arguments.add("--runtime")
-            arguments.add(runtimeValue!!.trim())
+        parameters[DotnetConstants.PARAM_TEST_RUNTIME]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--runtime", it))
+            }
         }
 
-        val outputValue = parameters[DotnetConstants.PARAM_TEST_OUTPUT]
-        if (!outputValue.isNullOrBlank()) {
-            arguments.add("--output")
-            arguments.add(outputValue!!.trim())
+        parameters[DotnetConstants.PARAM_TEST_OUTPUT]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--output", it))
+            }
         }
 
-        val tempValue = parameters[DotnetConstants.PARAM_TEST_TEMP]
-        if (!outputValue.isNullOrBlank()) {
-            arguments.add("--build-base-path")
-            arguments.add(tempValue!!.trim())
+        parameters[DotnetConstants.PARAM_TEST_TEMP]?.trim()?.let {
+            if (it.isNotBlank()) {
+                arguments.addAll(listOf("--build-base-path", it))
+            }
         }
 
-        val noBuildValue = parameters[DotnetConstants.PARAM_TEST_NO_BUILD]
-        if ("true".equals(noBuildValue, ignoreCase = true)) {
+        if (parameters.getOrElse(DotnetConstants.PARAM_TEST_NO_BUILD, { "" }).trim().toBoolean()) {
             arguments.add("--no-build")
         }
 
-        val argumentsValue = parameters[DotnetConstants.PARAM_ARGUMENTS]
-        if (!argumentsValue.isNullOrBlank()) {
-            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(argumentsValue!!))
+        parameters[DotnetConstants.PARAM_ARGUMENTS]?.trim()?.let {
+            arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))
         }
 
         return arguments
