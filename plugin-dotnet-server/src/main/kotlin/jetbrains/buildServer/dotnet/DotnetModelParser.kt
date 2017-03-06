@@ -77,8 +77,8 @@ class DotnetModelParser {
         return null
     }
 
-    fun getCsProjectModels(element: Element): List<CsProject>? {
-        if (!element.isContentAvailable) {
+    fun getCsProjectModels(element: Element?): List<CsProject>? {
+        if (element == null || !element.isContentAvailable) {
             return null
         }
 

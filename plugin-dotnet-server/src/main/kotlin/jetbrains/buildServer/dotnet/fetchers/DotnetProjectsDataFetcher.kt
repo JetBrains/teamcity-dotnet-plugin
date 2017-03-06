@@ -32,14 +32,25 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
 
         for (projectPath in projectsPaths) {
             val path = projectPath.trimEnd('/')
-            val jsonProjectFile: String = getJsonProject(path)
-            myModelParser.getProjectModel(browser.getElement(jsonProjectFile))?.let {
-                items.addAll(getDataItems(it))
+
+            getJsonProject(path).let {
+                myModelParser.getProjectModel(browser.getElement(it))?.let {
+                    items.addAll(getDataItems(it))
+                }
             }
 
-            val csProjectFile: String = getCsProject(path, browser)
-            myModelParser.getCsProjectModel(browser.getElement(csProjectFile))?.let {
-                items.addAll(getDataItems(it))
+            getCsProject(path, browser)?.let {
+                myModelParser.getCsProjectModel(browser.getElement(it))?.let {
+                    items.addAll(getDataItems(it))
+                }
+            }
+
+            getCsProjects(path, browser)?.let {
+                myModelParser.getCsProjectModels(browser.getElement(it))?.let {
+                    it.forEach {
+                        items.addAll(getDataItems(it))
+                    }
+                }
             }
         }
 
@@ -65,8 +76,10 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
         return projectFile
     }
 
-    private fun getCsProject(projectPath: String, browser: Browser): String {
-        if (!projectPath.endsWith(DotnetConstants.PROJECT_CSPROJ, ignoreCase = true)) {
+    private fun getCsProject(projectPath: String, browser: Browser): String? {
+        if (projectPath.endsWith(DotnetConstants.PROJECT_CSPROJ, ignoreCase = true)) {
+            return projectPath
+        } else {
             browser.getElement(projectPath)?.let {
                 it.children?.let {
                     it.firstOrNull {
@@ -78,7 +91,25 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
             }
         }
 
-        return projectPath
+        return null
+    }
+
+    private fun getCsProjects(projectPath: String, browser: Browser): String? {
+        if (projectPath.endsWith(DotnetConstants.PROJECT_SLN, ignoreCase = true)) {
+            return projectPath
+        } else {
+            browser.getElement(projectPath)?.let {
+                it.children?.let {
+                    it.firstOrNull {
+                        it.fullName.endsWith(DotnetConstants.PROJECT_SLN, ignoreCase = true)
+                    }?.let {
+                        return it.fullName
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     protected abstract fun getDataItems(project: Project?): Collection<String>
