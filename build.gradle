@@ -1,21 +1,12 @@
 plugins {
-    id "com.zoltu.kotlin" version "1.0.5"
-    id "com.github.rodm.teamcity-server" version "0.10"
+    id "org.jetbrains.kotlin.jvm" version "1.1.1"
 }
 
 ext {
-    kotlinVersion = '1.0.5-2'
-
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
-
     teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
-
-    teamcityDir = project.hasProperty('teamcityDir') ? property('teamcityDir') : "$rootDir/servers/TeamCity-${teamcityVersion}"
-    teamcityDataDir = "$rootDir/data/" + (teamcityVersion =~ /(\d+\.\d+).*/)[0][1]
-
-    teamcityJavaHome = System.properties['java.home']
 }
 
 group = projectIds.group
