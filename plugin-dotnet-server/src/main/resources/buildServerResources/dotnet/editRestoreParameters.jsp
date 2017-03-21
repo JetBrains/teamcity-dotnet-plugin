@@ -9,6 +9,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("restore");
+    BS.DotnetParametersForm.paths["restore"] = "Projects";
 </script>
 
 <tr class="advancedSetting">

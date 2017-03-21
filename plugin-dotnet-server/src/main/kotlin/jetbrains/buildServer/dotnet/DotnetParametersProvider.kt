@@ -15,17 +15,7 @@ import jetbrains.buildServer.dotnet.commands.dotnet.*
  */
 class DotnetParametersProvider {
 
-    val types: List<CommandType>
-
-    init {
-        types = listOf(
-                BuildCommandType(),
-                PackCommandType(),
-                PublishCommandType(),
-                RestoreCommandType(),
-                RunCommandType(),
-                TestCommandType())
-    }
+    val types: Collection<CommandType> = commandTypes.values
 
     val commandKey: String
         get() = DotnetConstants.PARAM_COMMAND
@@ -138,6 +128,34 @@ class DotnetParametersProvider {
     val runConfigKey: String
         get() = DotnetConstants.PARAM_RUN_CONFIG
 
+    val nugetSourceKey: String
+        get() = DotnetConstants.PARAM_NUGET_SOURCE
+
+    val nugetApiKeyKey: String
+        get() = DotnetConstants.PARAM_NUGET_API_KEY
+
+    val nugetPushNoBufferKey: String
+        get() = DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER
+
+    val nugetPushNoSymbolsKey: String
+        get() = DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS
+
+    val nugetDeleteIdKey: String
+        get() = DotnetConstants.PARAM_NUGET_DELETE_ID
+
     val verbosity: List<String>
         get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")
+
+    companion object {
+        val commandTypes: Map<String, CommandType> = listOf(
+                BuildCommandType(),
+                PackCommandType(),
+                PublishCommandType(),
+                RestoreCommandType(),
+                RunCommandType(),
+                TestCommandType(),
+                NugetPushCommandType(),
+                NugetDeleteCommandType()
+        ).associateBy { it.name }
+    }
 }

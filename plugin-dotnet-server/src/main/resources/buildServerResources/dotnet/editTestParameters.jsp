@@ -6,6 +6,10 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
+<script type="text/javascript">
+    BS.DotnetParametersForm.paths["test"] = "Projects";
+</script>
+
 <tr class="advancedSetting">
     <th><label for="${params.testFrameworkKey}">Framework:</label></th>
     <td>

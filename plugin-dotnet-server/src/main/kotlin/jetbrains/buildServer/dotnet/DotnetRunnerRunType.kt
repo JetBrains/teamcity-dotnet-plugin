@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
+import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
@@ -38,7 +39,15 @@ class DotnetRunnerRunType(private val pluginDescriptor: PluginDescriptor,
     }
 
     override fun getRunnerPropertiesProcessor(): PropertiesProcessor? {
-        return PropertiesProcessor { emptyList() }
+        return PropertiesProcessor { properties ->
+            val command = properties?.get(DotnetConstants.PARAM_COMMAND)
+            if (command.isNullOrEmpty()) {
+                return@PropertiesProcessor arrayListOf(InvalidProperty(DotnetConstants.PARAM_COMMAND, "Command must be set"))
+            }
+
+            val commandType = DotnetParametersProvider.commandTypes[command]
+            commandType?.validateProperties(properties!!) ?: arrayListOf()
+        }
     }
 
     override fun getEditRunnerParamsJspFilePath(): String? {

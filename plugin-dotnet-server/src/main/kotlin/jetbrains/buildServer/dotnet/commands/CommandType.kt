@@ -7,13 +7,19 @@
 
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.serverSide.InvalidProperty
+
 /**
  * Provides command-specific resources.
  */
-interface CommandType {
-    val name: String
+abstract class CommandType {
+    abstract val name: String
 
-    val editPage: String
+    abstract val editPage: String
 
-    val viewPage: String
+    abstract val viewPage: String
+
+    open fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> {
+        return emptyList()
+    }
 }

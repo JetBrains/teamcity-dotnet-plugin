@@ -13,7 +13,7 @@ import jetbrains.buildServer.dotnet.commands.CommandType
 /**
  * Provides parameters for dotnet run command.
  */
-class RunCommandType : CommandType {
+class RunCommandType : CommandType() {
     override val name: String
         get() = DotnetConstants.COMMAND_RUN
 

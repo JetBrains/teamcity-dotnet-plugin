@@ -8,6 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("build");
+    BS.DotnetParametersForm.paths["build"] = "Projects";
 </script>
 
 <tr class="advancedSetting">

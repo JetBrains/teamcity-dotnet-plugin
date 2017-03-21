@@ -13,7 +13,7 @@ import jetbrains.buildServer.dotnet.commands.CommandType
 /**
  * Provides parameters for dotnet restore command.
  */
-class RestoreCommandType : CommandType {
+class RestoreCommandType : CommandType() {
     override val name: String
         get() = DotnetConstants.COMMAND_RESTORE
 

@@ -13,7 +13,7 @@ import jetbrains.buildServer.dotnet.commands.CommandType
 /**
  * Provides parameters for dotnet pack command.
  */
-class PackCommandType : CommandType {
+class PackCommandType : CommandType() {
     override val name: String
         get() = DotnetConstants.COMMAND_PACK
 

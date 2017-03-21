@@ -13,7 +13,7 @@ import jetbrains.buildServer.dotnet.commands.CommandType
 /**
  * Provides parameters for dotnet publish command.
  */
-class PublishCommandType : CommandType {
+class PublishCommandType : CommandType() {
     override val name: String
         get() = DotnetConstants.COMMAND_PUBLISH
 

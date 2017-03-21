@@ -68,6 +68,22 @@ class DotnetRunnerBuildServiceTest {
         Assert.assertEquals(result, arguments)
     }
 
+    @Test(dataProvider = "testNugetPushArgumentsData")
+    fun testNugetPushArguments(parameters: Map<String, String>, arguments: List<String>) {
+        val argumentsProvider = NugetPushArgumentsProvider()
+        val result = argumentsProvider.getArguments(parameters)
+
+        Assert.assertEquals(result, arguments)
+    }
+
+    @Test(dataProvider = "testNugetDeleteArgumentsData")
+    fun testNugetDeleteArguments(parameters: Map<String, String>, arguments: List<String>) {
+        val argumentsProvider = NugetDeleteArgumentsProvider()
+        val result = argumentsProvider.getArguments(parameters)
+
+        Assert.assertEquals(result, arguments)
+    }
+
     @DataProvider
     fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -137,11 +153,19 @@ class DotnetRunnerBuildServiceTest {
                         DotnetConstants.PARAM_PUBLISH_RUNTIME to " active",
                         DotnetConstants.PARAM_VERBOSITY to "normal "),
                         listOf("publish", "--runtime", "active", "--verbosity", "normal")),
-
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
-                        listOf("publish", "--configuration", "Release", "--output", "out")))
+                        listOf("publish", "--configuration", "Release", "--output", "out")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_PUBLISH_OUTPUT to "c:\\build\\out",
+                        DotnetConstants.PARAM_PATHS to "project.csproj",
+                        DotnetConstants.PARAM_PUBLISH_CONFIG to "Release",
+                        DotnetConstants.PARAM_ARGUMENTS to
+                                """/p:ExternalToolsPath="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Web\External""""),
+                        listOf("publish", "project.csproj", "--configuration", "Release", "--output", "c:\\build\\out",
+                                """/p:ExternalToolsPath="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Web\External""""))
+        )
     }
 
     @DataProvider
@@ -169,5 +193,33 @@ class DotnetRunnerBuildServiceTest {
                         listOf("test", "--runtime", "active", "--no-build")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
                         listOf("test", "--output", "out")))
+    }
+
+    @DataProvider
+    fun testNugetPushArgumentsData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_PATHS to "package.nupkg",
+                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_SOURCE to "http://jb.com"),
+                        listOf("nuget", "push", "package.nupkg", "--api-key", "key", "--source", "http://jb.com")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_PATHS to "package.nupkg",
+                        DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER to "true",
+                        DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS to "true"),
+                        listOf("nuget", "push", "package.nupkg", "--no-symbols", "true", "--disable-buffering", "true"))
+        )
+    }
+
+    @DataProvider
+    fun testNugetDeleteArgumentsData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_NUGET_DELETE_ID to "id version",
+                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_SOURCE to "http://jb.com"),
+                        listOf("nuget", "delete", "id", "version", "--api-key", "key",
+                                "--source", "http://jb.com", "--non-interactive"))
+        )
     }
 }

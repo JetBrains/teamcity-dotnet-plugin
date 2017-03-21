@@ -12,18 +12,33 @@
     BS.DotnetParametersForm = {
         appendProjectFile: [],
         selectProjectFile: function (chosenFile) {
-            var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
+            var $paths = $j('#${params.pathsKey}');
             var value = BS.Util.trimSpaces($paths.val());
-            var commandName = $j(BS.Util.escapeId('${params.commandKey}')).val();
+            var commandName = $j('#${params.commandKey}').val();
             var appendFile = BS.DotnetParametersForm.appendProjectFile.indexOf(commandName) >= 0;
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
-        }
+        },
+        paths: []
     };
+
+    $j(document).ready(function(){
+        $j('#${params.commandKey}').on('change', function () {
+            var command = $j(this).val();
+            var pathsName = BS.DotnetParametersForm.paths[command];
+            var pathsRow = $j("#${params.pathsKey}-row");
+            if (pathsName) {
+                pathsRow.show().find("label").text(pathsName + ':');
+            } else {
+                pathsRow.hide();
+            }
+        });
+        $j('#${params.commandKey}').change();
+    });
 </script>
 
 <props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
-    <tr class="advancedSetting">
+    <tr class="advancedSetting" id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
             <div class="posRel clearfix">

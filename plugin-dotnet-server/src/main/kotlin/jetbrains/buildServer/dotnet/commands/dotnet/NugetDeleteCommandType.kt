@@ -11,15 +11,15 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet build command.
+ * Provides parameters for dotnet nuget delete command.
  */
-class BuildCommandType : CommandType() {
+class NugetDeleteCommandType : CommandType() {
     override val name: String
-        get() = DotnetConstants.COMMAND_BUILD
+        get() = DotnetConstants.COMMAND_NUGET_DELETE
 
     override val editPage: String
-        get() = "editBuildParameters.jsp"
+        get() = "editNugetDeleteParameters.jsp"
 
     override val viewPage: String
-        get() = "viewBuildParameters.jsp"
+        get() = "viewNugetDeleteParameters.jsp"
 }

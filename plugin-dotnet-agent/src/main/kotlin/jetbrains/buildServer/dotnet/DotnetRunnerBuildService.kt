@@ -18,17 +18,15 @@ import jetbrains.buildServer.dotnet.logger.DotnetLogger
  */
 class DotnetRunnerBuildService : BuildServiceAdapter() {
 
-    private val myArgumentsProviders: Map<String, ArgumentsProvider>
-
-    init {
-        myArgumentsProviders = mapOf(
-                Pair(DotnetConstants.COMMAND_BUILD, BuildArgumentsProvider()),
-                Pair(DotnetConstants.COMMAND_PACK, PackArgumentsProvider()),
-                Pair(DotnetConstants.COMMAND_PUBLISH, PublishArgumentsProvider()),
-                Pair(DotnetConstants.COMMAND_RESTORE, RestoreArgumentsProvider()),
-                Pair(DotnetConstants.COMMAND_RUN, RunArgumentsProvider()),
-                Pair(DotnetConstants.COMMAND_TEST, TestArgumentsProvider()))
-    }
+    private val myArgumentsProviders: Map<String, ArgumentsProvider> = mapOf(
+            DotnetConstants.COMMAND_BUILD to BuildArgumentsProvider(),
+            DotnetConstants.COMMAND_PACK to PackArgumentsProvider(),
+            DotnetConstants.COMMAND_PUBLISH to PublishArgumentsProvider(),
+            DotnetConstants.COMMAND_RESTORE to RestoreArgumentsProvider(),
+            DotnetConstants.COMMAND_RUN to RunArgumentsProvider(),
+            DotnetConstants.COMMAND_TEST to TestArgumentsProvider(),
+            DotnetConstants.COMMAND_NUGET_PUSH to NugetPushArgumentsProvider(),
+            DotnetConstants.COMMAND_NUGET_DELETE to NugetDeleteArgumentsProvider())
 
     @Throws(RunBuildException::class)
     override fun makeProgramCommandLine(): ProgramCommandLine {
@@ -44,7 +42,6 @@ class DotnetRunnerBuildService : BuildServiceAdapter() {
         val arguments = argumentsProvider.getArguments(parameters)
         val toolPath: String
         try {
-
             toolPath = getToolPath(DotnetConstants.RUNNER_TYPE)
         } catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)

@@ -12,7 +12,7 @@
 
         <c:if test="${not empty propertiesBean.properties[params.pathsKey]}">
             <div class="parameter">
-                Projects: <props:displayValue name="${params.pathsKey}"/>
+                Paths: <props:displayValue name="${params.pathsKey}"/>
             </div>
         </c:if>
 

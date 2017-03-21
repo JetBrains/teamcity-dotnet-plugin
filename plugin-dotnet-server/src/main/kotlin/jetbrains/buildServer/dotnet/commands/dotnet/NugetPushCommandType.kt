@@ -11,15 +11,15 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet build command.
+ * Provides parameters for dotnet nuget push command.
  */
-class BuildCommandType : CommandType() {
+class NugetPushCommandType : CommandType() {
     override val name: String
-        get() = DotnetConstants.COMMAND_BUILD
+        get() = DotnetConstants.COMMAND_NUGET_PUSH
 
     override val editPage: String
-        get() = "editBuildParameters.jsp"
+        get() = "editNugetPushParameters.jsp"
 
     override val viewPage: String
-        get() = "viewBuildParameters.jsp"
+        get() = "viewNugetPushParameters.jsp"
 }
