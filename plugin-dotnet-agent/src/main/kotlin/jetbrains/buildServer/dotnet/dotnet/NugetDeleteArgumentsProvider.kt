@@ -28,19 +28,19 @@ class NugetDeleteArgumentsProvider : ArgumentsProvider {
             }
         }
 
-        parameters[DotnetConstants.PARAM_NUGET_API_KEY]?.trim()?.let {
+        parameters[DotnetConstants.PARAM_NUGET_DELETE_API_KEY]?.trim()?.let {
             if (it.isNotBlank()) {
                 arguments.addAll(listOf("--api-key", it))
             }
         }
 
-        parameters[DotnetConstants.PARAM_NUGET_SOURCE]?.trim()?.let {
+        parameters[DotnetConstants.PARAM_NUGET_DELETE_SOURCE]?.trim()?.let {
             if (it.isNotBlank()) {
                 arguments.addAll(listOf("--source", it))
             }
         }
 
-        arguments.addAll(listOf("--non-interactive"))
+        arguments.add("--non-interactive")
 
         parameters[DotnetConstants.PARAM_ARGUMENTS]?.trim()?.let {
             arguments.addAll(StringUtil.splitCommandArgumentsAndUnquote(it))

@@ -200,8 +200,8 @@ class DotnetRunnerBuildServiceTest {
         return arrayOf(
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
-                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
-                        DotnetConstants.PARAM_NUGET_SOURCE to "http://jb.com"),
+                        DotnetConstants.PARAM_NUGET_PUSH_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_PUSH_SOURCE to "http://jb.com"),
                         listOf("nuget", "push", "package.nupkg", "--api-key", "key", "--source", "http://jb.com")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
@@ -216,8 +216,8 @@ class DotnetRunnerBuildServiceTest {
         return arrayOf(
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_NUGET_DELETE_ID to "id version",
-                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
-                        DotnetConstants.PARAM_NUGET_SOURCE to "http://jb.com"),
+                        DotnetConstants.PARAM_NUGET_DELETE_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_DELETE_SOURCE to "http://jb.com"),
                         listOf("nuget", "delete", "id", "version", "--api-key", "key",
                                 "--source", "http://jb.com", "--non-interactive"))
         )

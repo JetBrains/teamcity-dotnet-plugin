@@ -22,18 +22,21 @@
         paths: []
     };
 
-    $j(document).ready(function(){
-        $j('#${params.commandKey}').on('change', function () {
-            var command = $j(this).val();
-            var pathsName = BS.DotnetParametersForm.paths[command];
-            var pathsRow = $j("#${params.pathsKey}-row");
-            if (pathsName) {
-                pathsRow.show().find("label").text(pathsName + ':');
-            } else {
-                pathsRow.hide();
-            }
-        });
-        $j('#${params.commandKey}').change();
+    $j(document).on('change', '#${params.commandKey}', function () {
+        var command = $j(this).val();
+        var pathsName = BS.DotnetParametersForm.paths[command];
+        var pathsRow = $j("#${params.pathsKey}-row");
+        if (pathsName) {
+            pathsRow.show().find("label").text(pathsName + ':');
+        } else {
+            pathsRow.hide();
+        }
+
+        $j(".runnerFormTable span.error").empty();
+    });
+
+    $j(document).on('ready', '#${params.commandKey}', function () {
+        $j(this).change();
     });
 </script>
 
@@ -51,7 +54,7 @@
         </td>
     </tr>
 
-    <props:workingDirectory />
+    <props:workingDirectory/>
 
     <c:forEach items="${params.types}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">

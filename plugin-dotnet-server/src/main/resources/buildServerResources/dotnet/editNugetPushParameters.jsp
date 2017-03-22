@@ -11,26 +11,25 @@
 </script>
 
 <tr>
-    <th class="noBorder"><label for="${params.nugetApiKeyKey}">API key:</label></th>
+    <th class="noBorder"><label for="${params.nugetPushApiKey}">API key: <l:star/></label></th>
     <td>
         <div class="posRel">
-            <props:textProperty name="${params.nugetApiKeyKey}" className="longField"/>
+            <props:passwordProperty name="${params.nugetPushApiKey}" className="longField"/>
         </div>
-        <span class="error" id="error_${params.nugetApiKeyKey}"></span>
+        <span class="error" id="error_${params.nugetPushApiKey}"></span>
         <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
-            For built-in TeamCity NuGet server, specify <em>%teamcity.nuget.feed.api.key%</em>.</span>
+            For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
     </td>
 </tr>
 
-<tr class="advancedSetting">
-    <th><label for="${params.nugetSourceKey}">Source:</label></th>
+<tr>
+    <th><label for="${params.nugetPushSourceKey}">Source: <l:star/></label></th>
     <td>
         <div class="posRel">
-            <props:textProperty name="${params.nugetSourceKey}" className="longField"/>
+            <props:textProperty name="${params.nugetPushSourceKey}" className="longField"/>
         </div>
-        <span class="error" id="error_${params.nugetSourceKey}"></span>
-        <span class="smallNote">Specifies the server URL. Leave blank to let NuGet decide what package repository to use.<br/>
-            For built-in TeamCity NuGet server, specify <em>%teamcity.nuget.feed.server%</em> for guest-visible package source.</span>
+        <span class="error" id="error_${params.nugetPushSourceKey}"></span>
+        <span class="smallNote">Specify the server URL. For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.</span>
     </td>
 </tr>
 
@@ -40,6 +39,7 @@
         <props:checkboxProperty name="${params.nugetPushNoSymbolsKey}"/>
         <label for="${params.nugetPushNoSymbolsKey}">Do not publish existing nuget symbols package</label><br/>
         <props:checkboxProperty name="${params.nugetPushNoBufferKey}"/>
-        <label for="${params.nugetPushNoBufferKey}">Disable buffering when pushing to server to decrease memory usage</label>
+        <label for="${params.nugetPushNoBufferKey}">Disable buffering when pushing to server to decrease memory
+            usage</label>
     </td>
 </tr>

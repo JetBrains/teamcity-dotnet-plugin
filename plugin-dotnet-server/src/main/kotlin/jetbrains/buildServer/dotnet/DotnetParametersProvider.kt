@@ -128,11 +128,11 @@ class DotnetParametersProvider {
     val runConfigKey: String
         get() = DotnetConstants.PARAM_RUN_CONFIG
 
-    val nugetSourceKey: String
-        get() = DotnetConstants.PARAM_NUGET_SOURCE
+    val nugetPushApiKey: String
+        get() = DotnetConstants.PARAM_NUGET_PUSH_API_KEY
 
-    val nugetApiKeyKey: String
-        get() = DotnetConstants.PARAM_NUGET_API_KEY
+    val nugetPushSourceKey: String
+        get() = DotnetConstants.PARAM_NUGET_PUSH_SOURCE
 
     val nugetPushNoBufferKey: String
         get() = DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER
@@ -142,6 +142,12 @@ class DotnetParametersProvider {
 
     val nugetDeleteIdKey: String
         get() = DotnetConstants.PARAM_NUGET_DELETE_ID
+
+    val nugetDeleteApiKey: String
+        get() = DotnetConstants.PARAM_NUGET_DELETE_API_KEY
+
+    val nugetDeleteSourceKey: String
+        get() = DotnetConstants.PARAM_NUGET_DELETE_SOURCE
 
     val verbosity: List<String>
         get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")

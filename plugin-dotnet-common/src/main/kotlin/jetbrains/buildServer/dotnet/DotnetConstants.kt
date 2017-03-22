@@ -7,6 +7,8 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.Constants
+
 /**
  * Dotnet runner constants.
  */
@@ -75,9 +77,13 @@ object DotnetConstants {
     const val PARAM_RUN_FRAMEWORK = "dotnet-run-framework"
     const val PARAM_RUN_CONFIG = "dotnet-run-config"
 
-    const val PARAM_NUGET_SOURCE = "dotnet-nuget-source"
-    const val PARAM_NUGET_API_KEY = "dotnet-nuget-api-key"
+    const val PARAM_NUGET_PUSH_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "dotnet-nuget-push-api-key"
+    const val PARAM_NUGET_PUSH_SOURCE = "dotnet-nuget-push-source"
     const val PARAM_NUGET_PUSH_NO_BUFFER = "dotnet-nuget-push-no-buffer"
     const val PARAM_NUGET_PUSH_NO_SYMBOLS = "dotnet-nuget-push-no-symbols"
     const val PARAM_NUGET_DELETE_ID = "dotnet-nuget-delete-id"
+    const val PARAM_NUGET_DELETE_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "dotnet-nuget-delete-api-key"
+    const val PARAM_NUGET_DELETE_SOURCE = "dotnet-nuget-push-source"
+
+    const val VALIDATION_EMPTY: String = "Should not be empty"
 }

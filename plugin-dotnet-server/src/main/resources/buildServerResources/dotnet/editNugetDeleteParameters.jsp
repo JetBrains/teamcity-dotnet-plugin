@@ -8,7 +8,7 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr>
-    <th class="noBorder"><label for="${params.nugetDeleteIdKey}">Package ID:</label></th>
+    <th class="noBorder"><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
     <td>
         <div class="posRel">
             <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
@@ -19,24 +19,24 @@
 </tr>
 
 <tr>
-    <th class="noBorder"><label for="${params.nugetApiKeyKey}">API key:</label></th>
+    <th class="noBorder"><label for="${params.nugetDeleteApiKey}">API key: <l:star/></label></th>
     <td>
         <div class="posRel">
-            <props:textProperty name="${params.nugetApiKeyKey}" className="longField"/>
+            <props:passwordProperty name="${params.nugetDeleteApiKey}" className="longField"/>
         </div>
-        <span class="error" id="error_${params.nugetApiKeyKey}"></span>
+        <span class="error" id="error_${params.nugetDeleteApiKey}"></span>
         <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
-            For built-in TeamCity NuGet server, specify <em>%teamcity.nuget.feed.api.key%</em>.</span>
+            For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
     </td>
 </tr>
 
-<tr class="advancedSetting">
-    <th><label for="${params.nugetSourceKey}">Source:</label></th>
+<tr>
+    <th><label for="${params.nugetDeleteSourceKey}">Source: <l:star/></label></th>
     <td>
         <div class="posRel">
-            <props:textProperty name="${params.nugetSourceKey}" className="longField"/>
+            <props:textProperty name="${params.nugetDeleteSourceKey}" className="longField"/>
         </div>
-        <span class="error" id="error_${params.nugetSourceKey}"></span>
-        <span class="smallNote">Specifies the server URL. Leave blank to let NuGet decide what package repository to use.</span>
+        <span class="error" id="error_${params.nugetDeleteSourceKey}"></span>
+        <span class="smallNote">Specify the server URL.</span>
     </td>
 </tr>

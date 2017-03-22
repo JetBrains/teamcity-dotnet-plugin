@@ -28,13 +28,13 @@ class NugetPushArgumentsProvider : ArgumentsProvider {
             }
         }
 
-        parameters[DotnetConstants.PARAM_NUGET_API_KEY]?.trim()?.let {
+        parameters[DotnetConstants.PARAM_NUGET_PUSH_API_KEY]?.trim()?.let {
             if (it.isNotBlank()) {
                 arguments.addAll(listOf("--api-key", it))
             }
         }
 
-        parameters[DotnetConstants.PARAM_NUGET_SOURCE]?.trim()?.let {
+        parameters[DotnetConstants.PARAM_NUGET_PUSH_SOURCE]?.trim()?.let {
             if (it.isNotBlank()) {
                 arguments.addAll(listOf("--source", it))
             }
