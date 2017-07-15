@@ -1,23 +1,12 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * See LICENSE in the project root for license information.
- */
-
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.dotnet.*
+import jetbrains.buildServer.dotnet.arguments.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-/**
- * @author Dmitry.Tretyakov
- * *         Date: 1/19/2016
- * *         Time: 4:01 PM
- */
 class DotnetRunnerBuildServiceTest {
 
     @Test(dataProvider = "testBuildArgumentsData")
@@ -223,3 +212,4 @@ class DotnetRunnerBuildServiceTest {
         )
     }
 }
+*/
