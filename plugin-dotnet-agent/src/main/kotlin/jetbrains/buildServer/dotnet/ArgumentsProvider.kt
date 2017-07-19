@@ -7,9 +7,11 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.runners.CommandLineArgument
+
 /**
  * Provides arguments to the utility.
  */
 interface ArgumentsProvider {
-    fun getArguments(parameters: Map<String, String>): List<String>
+    fun getArguments(): Sequence<CommandLineArgument>
 }
