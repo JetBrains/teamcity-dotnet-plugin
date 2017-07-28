@@ -1,87 +1,95 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * See LICENSE in the project root for license information.
- */
-
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.dotnet.*
+import jetbrains.buildServer.dotnet.arguments.*
+import jetbrains.buildServer.runners.ArgumentsService
+import jetbrains.buildServer.runners.ParameterType
+import jetbrains.buildServer.runners.ParametersService
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-/**
- * @author Dmitry.Tretyakov
- * *         Date: 1/19/2016
- * *         Time: 4:01 PM
- */
 class DotnetRunnerBuildServiceTest {
 
     @Test(dataProvider = "testBuildArgumentsData")
     fun testBuildArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = BuildArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = BuildArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testRestoreArgumentsData")
     fun testRestoreArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = RestoreArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = RestoreArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testRunArgumentsData")
     fun testRunArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = RunArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = RunArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testPublishArgumentsData")
     fun testPublishArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = PublishArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = PublishArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testPackArgumentsData")
     fun testPackArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = PackArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = PackArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testTestArgumentsData")
     fun testTestArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = TestArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = TestArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testNugetPushArgumentsData")
     fun testNugetPushArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = NugetPushArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = NugetPushArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
     }
 
     @Test(dataProvider = "testNugetDeleteArgumentsData")
     fun testNugetDeleteArguments(parameters: Map<String, String>, arguments: List<String>) {
-        val argumentsProvider = NugetDeleteArgumentsProvider()
-        val result = argumentsProvider.getArguments(parameters)
+        val argumentsProvider = NugetDeleteArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val result = argumentsProvider.getArguments().map { it.value }.toList()
 
         Assert.assertEquals(result, arguments)
+    }
+
+    private class ParametersServiceStub(
+            private val _parameters: Map<String, String>): ParametersService {
+        override fun tryGetParameter(parameterType: ParameterType, parameterName: String): String? {
+            return _parameters[parameterName];
+        }
+
+    }
+
+    private class ArgumentsServiceStub: ArgumentsService {
+        override fun parseToStrings(text: String): Sequence<String> {
+            return jetbrains.buildServer.util.StringUtil.splitCommandArgumentsAndUnquote(text)
+                    .asSequence()
+                    .filter { !it.isNullOrBlank() }
+        }
+
     }
 
     @DataProvider

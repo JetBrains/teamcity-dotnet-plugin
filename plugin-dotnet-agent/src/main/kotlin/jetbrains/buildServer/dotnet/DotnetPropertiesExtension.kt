@@ -16,8 +16,11 @@ import jetbrains.buildServer.util.EventDispatcher
 /**
  * Provides a list of available dotnet cli runtimes.
  */
-class DotnetPropertiesExtension(events: EventDispatcher<AgentLifeCycleListener>,
-                                private val myToolProvider: DotnetToolProvider) : AgentLifeCycleAdapter() {
+class DotnetPropertiesExtension(
+        events: EventDispatcher<AgentLifeCycleListener>,
+        private val _toolProvider: DotnetToolProvider,
+        private val _dotnetSdkVersionProvider: DotnetSdkVersionProvider,
+        private val _defaultEnvironmentVariables: EnvironmentVariables) : AgentLifeCycleAdapter() {
 
     init {
         events.addListener(this)
@@ -30,10 +33,10 @@ class DotnetPropertiesExtension(events: EventDispatcher<AgentLifeCycleListener>,
 
         LOG.info("Locating .NET CLI tools")
         try {
-            toolPath = myToolProvider.getPath(DotnetConstants.RUNNER_TYPE)
+            toolPath = _toolProvider.getPath(DotnetConstants.RUNNER_TYPE)
             val commandLine = getVersionCommandLine(toolPath)
             val result = SimpleCommandLineProcessRunner.runCommand(commandLine, byteArrayOf())
-            version = DotnetUtils.getSdkVersion(result.stdout)
+            version = _dotnetSdkVersionProvider.getSdkVersion(result.stdout)
         } catch (e: ToolCannotBeFoundException) {
             LOG.debug(e)
             return
@@ -48,12 +51,13 @@ class DotnetPropertiesExtension(events: EventDispatcher<AgentLifeCycleListener>,
         val commandLine = GeneralCommandLine()
         commandLine.exePath = toolPath
         commandLine.addParameter("--version")
-        commandLine.envParams = DotnetUtils.updateEnvironment(System.getenv())
+        var environmentVariables = System.getenv().toMutableMap()
+        _defaultEnvironmentVariables.variables.forEach { environmentVariables[it.name] = it.value }
+        commandLine.envParams = environmentVariables
         return commandLine
     }
 
     companion object {
-
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
     }
 }

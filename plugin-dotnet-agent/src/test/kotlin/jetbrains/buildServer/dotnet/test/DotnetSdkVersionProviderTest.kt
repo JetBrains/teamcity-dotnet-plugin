@@ -7,7 +7,7 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetUtils
+import jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -17,10 +17,10 @@ import org.testng.annotations.Test
  *         Date: 29.10.2016
  *         Time: 10:17
  */
-class DotnetUtilsTest {
+class DotnetSdkVersionProviderTest {
     @Test(dataProvider = "getSdkVersion")
     fun getSdkVersion(output: String, version: String) {
-        val result = DotnetUtils.getSdkVersion(output)
+        val result = DotnetSdkVersionProviderImpl().getSdkVersion(output)
 
         Assert.assertEquals(result, version)
     }

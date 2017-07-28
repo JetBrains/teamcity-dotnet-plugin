@@ -3,8 +3,36 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-    <bean class="jetbrains.buildServer.dotnet.DotnetRunnerBuildServiceFactory"/>
+
+    <!-- general services -->
+    <bean class="jetbrains.buildServer.runners.ArgumentsServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.ParametersServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.FileSystemServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.PathsServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.LoggerServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
+    <bean class="jetbrains.buildServer.runners.WorkflowSessionImpl" scope="prototype">
+        <constructor-arg ref="layeredWorkflowComposer"/>
+    </bean>
+
+    <!-- plugin -->
+    <bean class="jetbrains.buildServer.runners.WorkflowBuildServiceFactory">
+        <constructor-arg value="dotnet"/>
+    </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
+
+    <!-- dotnet workflow composer -->
+    <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.NugetDeleteArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.NugetPushArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.PackArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.PublishArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.RestoreArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.RunArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.arguments.TestArgumentsProvider"/>
 </beans>
