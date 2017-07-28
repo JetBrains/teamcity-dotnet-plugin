@@ -26,7 +26,7 @@
     <!-- dotnet workflow composer -->
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.DefaultEnvironmentVariablesImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetDeleteArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetPushArgumentsProvider"/>

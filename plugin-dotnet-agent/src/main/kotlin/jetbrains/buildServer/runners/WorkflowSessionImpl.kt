@@ -19,13 +19,13 @@ class WorkflowSessionImpl(
     : MultiCommandBuildSession, WorkflowContext {
 
     private val _commandLinesIterator = _workflowComposer.compose(this).commandLines.iterator()
-    private var _lastResult: CommandLineResult? = null;
+    private var _lastResult: CommandLineResult? = null
 
     override fun sessionStarted() = Unit
 
     override fun getNextCommand(): CommandExecution? {
         if(!_commandLinesIterator.hasNext()) {
-            return null;
+            return null
         }
 
         val exitCode = ArrayList<Int>()
@@ -39,13 +39,13 @@ class WorkflowSessionImpl(
                 standardOutput,
                 errorOutput,
                 _buildStepContext,
-                _loggerService);
+                _loggerService)
     }
 
     override fun sessionFinished(): BuildFinishedStatus? = BuildFinishedStatus.FINISHED_SUCCESS
 
     override val lastResult: CommandLineResult
-        get() = _lastResult ?: throw RunBuildException("There are no any results yet");
+        get() = _lastResult ?: throw RunBuildException("There are no any results yet")
 
     private class CommandExecutionAdapter(
             private val _commandLine: CommandLine,
@@ -66,7 +66,7 @@ class WorkflowSessionImpl(
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(_commandLine, _buildStepContext.runnerContext.getBuildParameters().getEnvironmentVariables())
 
         override fun onStandardOutput(text: String) {
-            _standardOutput.add(text);
+            _standardOutput.add(text)
             _loggerService.onStandardOutput(text)
         }
 

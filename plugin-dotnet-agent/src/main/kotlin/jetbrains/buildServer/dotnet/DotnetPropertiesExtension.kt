@@ -20,7 +20,7 @@ class DotnetPropertiesExtension(
         events: EventDispatcher<AgentLifeCycleListener>,
         private val _toolProvider: DotnetToolProvider,
         private val _dotnetSdkVersionProvider: DotnetSdkVersionProvider,
-        private val _defaultEnvironmentVariables: DefaultEnvironmentVariables) : AgentLifeCycleAdapter() {
+        private val _defaultEnvironmentVariables: EnvironmentVariables) : AgentLifeCycleAdapter() {
 
     init {
         events.addListener(this)
@@ -51,7 +51,7 @@ class DotnetPropertiesExtension(
         val commandLine = GeneralCommandLine()
         commandLine.exePath = toolPath
         commandLine.addParameter("--version")
-        var environmentVariables = System.getenv().toMutableMap();
+        var environmentVariables = System.getenv().toMutableMap()
         _defaultEnvironmentVariables.variables.forEach { environmentVariables[it.name] = it.value }
         commandLine.envParams = environmentVariables
         return commandLine

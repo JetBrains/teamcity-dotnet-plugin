@@ -10,7 +10,7 @@ import kotlin.coroutines.experimental.buildSequence
 class DotnetWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
-        private val _defaultEnvironmentVariables: DefaultEnvironmentVariables,
+        private val _defaultEnvironmentVariables: EnvironmentVariables,
         _buildArgumentsProvider: BuildArgumentsProvider,
         _packArgumentsProvider: PackArgumentsProvider,
         _publishArgumentsProvider: PublishArgumentsProvider,
@@ -35,10 +35,10 @@ class DotnetWorkflowComposer(
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         if(workflow.commandLines.any()) {
-            throw RunBuildException("This composer should be a root");
+            throw RunBuildException("This composer should be a root")
         }
 
-        val commandName = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND);
+        val commandName = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
         if (commandName.isNullOrBlank()) {
             throw RunBuildException("Dotnet command name is empty")
         }
@@ -66,13 +66,13 @@ class DotnetWorkflowComposer(
                                 _defaultEnvironmentVariables.variables))
 
                     if(!context.lastResult.isCompleted) {
-                        return@buildSequence;
+                        return@buildSequence
                     }
 
-                    // var exitCode = context.lastResult.exitCode;
-                    // var standardOutput = context.lastResult.standardOutput.toList();
-                    // var errorOutput = context.lastResult.errorOutput.toList();
+                    // var exitCode = context.lastResult.exitCode
+                    // var standardOutput = context.lastResult.standardOutput.toList()
+                    // var errorOutput = context.lastResult.errorOutput.toList()
                 }
-        );
+        )
     }
 }

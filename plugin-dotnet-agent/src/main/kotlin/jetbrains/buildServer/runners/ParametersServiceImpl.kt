@@ -1,6 +1,5 @@
 package jetbrains.buildServer.runners
 
-import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 
@@ -11,7 +10,7 @@ class ParametersServiceImpl(
         when(parameterType) {
             ParameterType.Runner -> return _buildStepContext.runnerContext.runnerParameters[parameterName]
             ParameterType.Configuration -> return _buildStepContext.runnerContext.configParameters[parameterName]
-            ParameterType.Environment -> return _buildStepContext.runnerContext.getBuildParameters().getEnvironmentVariables()[parameterName]
+            ParameterType.Environment -> return _buildStepContext.runnerContext.getBuildParameters().environmentVariables[parameterName]
             else -> throw UnsupportedOperationException("Unknown parameterType: $parameterType")
         }
     }

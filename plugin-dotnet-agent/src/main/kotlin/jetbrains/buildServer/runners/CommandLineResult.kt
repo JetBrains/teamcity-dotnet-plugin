@@ -1,7 +1,5 @@
 package jetbrains.buildServer.runners
 
-import org.apache.xpath.operations.Bool
-
 data class CommandLineResult(
         private val _exitCode: Sequence<Int>,
         val standardOutput: Sequence<String>,

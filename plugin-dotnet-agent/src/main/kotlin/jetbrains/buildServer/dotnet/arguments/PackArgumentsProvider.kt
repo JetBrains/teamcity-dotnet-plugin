@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet pack command.
@@ -19,7 +20,7 @@ class PackArgumentsProvider(
     : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
     protected override fun getArgumentStrings(): Sequence<String> {
-        return kotlin.coroutines.experimental.buildSequence {
+        return buildSequence {
             yield(DotnetConstants.COMMAND_PACK)
 
             parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {

@@ -2,6 +2,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.runners.CommandLineEnvironmentVariable
 
-interface DefaultEnvironmentVariables {
+interface EnvironmentVariables {
     val variables: Sequence<CommandLineEnvironmentVariable>
 }

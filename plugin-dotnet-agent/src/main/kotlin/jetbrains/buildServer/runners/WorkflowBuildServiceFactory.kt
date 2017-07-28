@@ -19,10 +19,10 @@ class WorkflowBuildServiceFactory(
         private val runnerType: String,
         private val beanFactory: BeanFactory)
     : MultiCommandBuildSessionFactory, BuildStepContext {
-    private var _runnerContext: BuildRunnerContext? = null;
+    private var _runnerContext: BuildRunnerContext? = null
 
     override fun createSession(runnerContext: BuildRunnerContext): MultiCommandBuildSession {
-        _runnerContext = runnerContext;
+        _runnerContext = runnerContext
         return beanFactory.getBean(WorkflowSessionImpl::class.java)
     }
 

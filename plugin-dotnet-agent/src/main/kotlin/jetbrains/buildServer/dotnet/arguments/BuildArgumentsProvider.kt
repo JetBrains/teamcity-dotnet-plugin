@@ -20,7 +20,7 @@ class BuildArgumentsProvider(
         private val _argumentsService: ArgumentsService)
     : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
-    protected override fun getArgumentStrings(): Sequence<String> = buildSequence {
+    override fun getArgumentStrings(): Sequence<String> = buildSequence {
         yield(DotnetConstants.COMMAND_BUILD)
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {

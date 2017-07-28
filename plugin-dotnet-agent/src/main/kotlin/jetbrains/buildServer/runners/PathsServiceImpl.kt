@@ -14,22 +14,22 @@ class PathsServiceImpl(
 
     override fun getPath(pathType: PathType): java.io.File {
         when(pathType) {
-            PathType.WorkingDirectory -> return _buildStepContext.runnerContext.getWorkingDirectory()
-            PathType.Checkout -> return _buildStepContext.runnerContext.getBuild().getCheckoutDirectory()
-            PathType.AgentTemp -> return _buildAgentConfigurablePaths.getAgentTempDirectory()
-            PathType.BuildTemp -> return _buildAgentConfigurablePaths.getBuildTempDirectory()
-            PathType.GlobalTemp -> return _buildAgentConfigurablePaths.getCacheDirectory()
-            PathType.Plugins -> return _buildAgentConfiguration.getAgentPluginsDirectory()
-            PathType.Tools -> return _buildAgentConfiguration.getAgentToolsDirectory()
-            PathType.Lib -> return _buildAgentConfiguration.getAgentLibDirectory()
-            PathType.Work -> return _buildAgentConfiguration.getWorkDirectory()
-            PathType.System -> return _buildAgentConfiguration.getSystemDirectory()
-            PathType.Bin -> return java.io.File(_buildAgentConfiguration.getAgentHomeDirectory(), "bin")
-            PathType.Config -> return _buildAgentConfigurablePaths.getAgentConfDirectory()
-            PathType.Log -> return _buildAgentConfigurablePaths.getAgentLogsDirectory()
+            PathType.WorkingDirectory -> return _buildStepContext.runnerContext.workingDirectory
+            PathType.Checkout -> return _buildStepContext.runnerContext.getBuild().checkoutDirectory
+            PathType.AgentTemp -> return _buildAgentConfigurablePaths.agentTempDirectory
+            PathType.BuildTemp -> return _buildAgentConfigurablePaths.buildTempDirectory
+            PathType.GlobalTemp -> return _buildAgentConfigurablePaths.cacheDirectory
+            PathType.Plugins -> return _buildAgentConfiguration.agentPluginsDirectory
+            PathType.Tools -> return _buildAgentConfiguration.agentToolsDirectory
+            PathType.Lib -> return _buildAgentConfiguration.agentLibDirectory
+            PathType.Work -> return _buildAgentConfiguration.workDirectory
+            PathType.System -> return _buildAgentConfiguration.systemDirectory
+            PathType.Bin -> return java.io.File(_buildAgentConfiguration.agentHomeDirectory, "bin")
+            PathType.Config -> return _buildAgentConfigurablePaths.agentConfDirectory
+            PathType.Log -> return _buildAgentConfigurablePaths.agentLogsDirectory
             else -> throw UnsupportedOperationException("Unknown parameterType: $pathType")
         }
     }
 
-    override fun getToolPath(toolName: String): java.io.File = java.io.File(_buildStepContext.runnerContext.getToolPath(toolName))
+    override fun getToolPath(toolName: String): File = File(_buildStepContext.runnerContext.getToolPath(toolName))
 }
