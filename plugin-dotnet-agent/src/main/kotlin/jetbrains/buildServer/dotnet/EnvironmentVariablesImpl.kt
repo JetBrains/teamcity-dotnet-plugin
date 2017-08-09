@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.runners.CommandLineEnvironmentVariable
 import kotlin.coroutines.experimental.buildSequence
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class EnvironmentVariablesImpl : EnvironmentVariables {
     override val variables: Sequence<CommandLineEnvironmentVariable>
         get() = buildSequence {

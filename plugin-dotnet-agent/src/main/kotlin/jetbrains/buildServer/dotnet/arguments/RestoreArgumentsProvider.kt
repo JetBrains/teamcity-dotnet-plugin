@@ -7,67 +7,77 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
+import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
+import jetbrains.buildServer.runners.CommandLineArgument
+import jetbrains.buildServer.runners.ParameterType
+import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet restore command.
  */
-class RestoreArgumentsProvider(
-        _parametersService: jetbrains.buildServer.runners.ParametersService,
-        private val _argumentsService: ArgumentsService)
-    : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
-    protected override fun getArgumentStrings(): Sequence<String> = buildSequence {
-        yield(DotnetConstants.COMMAND_RESTORE)
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
+class RestoreArgumentsProvider(
+        private val _parametersService: ParametersService,
+        private val _argumentsService: ArgumentsService)
+    : ArgumentsProvider {
+
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
+        yield(CommandLineArgument(DotnetConstants.COMMAND_RESTORE))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it))
+            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_RESTORE_PACKAGES)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--packages")
-                yield(it)
+                yield(CommandLineArgument("--packages"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_RESTORE_SOURCE)?.let {
             _argumentsService.parseToStrings(it).forEach {
-                yield("--source")
-                yield(it)
+                yield(CommandLineArgument("--source"))
+                yield(CommandLineArgument(it))
             }
         }
 
         if (parameters(DotnetConstants.PARAM_RESTORE_PARALLEL, "").trim().toBoolean()) {
-            yield("--disable-parallel")
+            yield(CommandLineArgument("--disable-parallel"))
         }
 
         if (parameters(DotnetConstants.PARAM_RESTORE_NO_CACHE, "").trim().toBoolean()) {
-            yield("--no-cache")
+            yield(CommandLineArgument("--no-cache"))
         }
 
         if (parameters(DotnetConstants.PARAM_RESTORE_IGNORE_FAILED, "").trim().toBoolean()) {
-            yield("--ignore-failed-sources")
+            yield(CommandLineArgument("--ignore-failed-sources"))
         }
 
         if (parameters(DotnetConstants.PARAM_RESTORE_ROOT_PROJECT, "").trim().toBoolean()) {
-            yield("--no-dependencies")
+            yield(CommandLineArgument("--no-dependencies"))
         }
 
         parameters(DotnetConstants.PARAM_RESTORE_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--configfile")
-                yield(it)
+                yield(CommandLineArgument("--configfile"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--verbosity")
-                yield(it)
+                yield(CommandLineArgument("--verbosity"))
+                yield(CommandLineArgument(it))
             }
         }
     }
+
+    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
+
+    private fun parameters(parameterName: String, defaultValue: String): String = _parametersService.tryGetParameter(ParameterType.Runner, parameterName) ?: defaultValue
 }

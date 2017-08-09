@@ -152,6 +152,12 @@ class DotnetParametersProvider {
     val verbosity: List<String>
         get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")
 
+    val integrationPackagePathKey: String
+        get() = DotnetConstants.INTEGRATION_PACKAGE_HOME
+
+    val integrationPackageToolTypeKey: String
+        get() = DotnetConstants.PACKAGE_TYPE
+
     companion object {
         val commandTypes: Map<String, CommandType> = listOf(
                 BuildCommandType(),

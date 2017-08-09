@@ -1,3 +1,9 @@
 package jetbrains.buildServer.runners
 
-class FileSystemServiceImpl : FileSystemService
+import java.io.File
+
+class FileSystemServiceImpl : FileSystemService {
+    override fun isExists(file: File): Boolean {
+        return file.exists()
+    }
+}
