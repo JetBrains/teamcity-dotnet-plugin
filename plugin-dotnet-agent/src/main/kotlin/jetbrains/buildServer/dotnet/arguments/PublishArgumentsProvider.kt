@@ -7,65 +7,74 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
+import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
+import jetbrains.buildServer.runners.CommandLineArgument
+import jetbrains.buildServer.runners.ParameterType
+import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet publish command.
  */
-class PublishArgumentsProvider(
-        _parametersService: jetbrains.buildServer.runners.ParametersService,
-        private val _argumentsService: ArgumentsService)
-    : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
-    protected override fun getArgumentStrings(): Sequence<String> = buildSequence {
-        yield(DotnetConstants.COMMAND_PUBLISH)
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
+class PublishArgumentsProvider(
+        private val _parametersService: ParametersService,
+        private val _argumentsService: ArgumentsService)
+    : ArgumentsProvider {
+
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
+        yield(CommandLineArgument(DotnetConstants.COMMAND_PUBLISH))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it))
+            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--framework")
-                yield(it)
+                yield(CommandLineArgument("--framework"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--configuration")
-                yield(it)
+                yield(CommandLineArgument("--configuration"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_RUNTIME)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--runtime")
-                yield(it)
+                yield(CommandLineArgument("--runtime"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_OUTPUT)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--output")
-                yield(it)
+                yield(CommandLineArgument("--output"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--version-suffix")
-                yield(it)
+                yield(CommandLineArgument("--version-suffix"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--verbosity")
-                yield(it)
+                yield(CommandLineArgument("--verbosity"))
+                yield(CommandLineArgument(it))
             }
         }
     }
+
+    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
+
 }

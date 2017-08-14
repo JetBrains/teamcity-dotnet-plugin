@@ -18,6 +18,7 @@ object DotnetConstants {
     const val RUNNER_DESCRIPTION = "Provides build tools for .NET Core projects"
 
     const val TOOL_HOME = "DOTNET_HOME"
+    const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
     const val CONFIG_NAME = "DotNetCore"
     const val CONFIG_PATH = CONFIG_NAME + "_Path"
     const val PROJECT_JSON = "project.json"
@@ -86,4 +87,13 @@ object DotnetConstants {
     const val PARAM_NUGET_DELETE_SOURCE = "dotnet-nuget-push-source"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
+
+    // Integration package
+    const val PACKAGE_FEED_URL = "http://packages.nuget.org/api/v2"
+    const val PACKAGE_NUGET_EXTENSION = ".nupkg"
+    const val PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
+    const val PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val PACKAGE_SHORT_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val PACKAGE_TARGET_FILE_DISPLAY_NAME = "Dotnet Integration Home Directory"
+    const val PACKAGE_BINARY_NUPKG_PATH = "build/_common"
 }

@@ -7,41 +7,49 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
+import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
+import jetbrains.buildServer.runners.CommandLineArgument
+import jetbrains.buildServer.runners.ParameterType
+import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet nuget delete command.
  */
-class NugetDeleteArgumentsProvider(
-        _parametersService: jetbrains.buildServer.runners.ParametersService,
-        _argumentsService: ArgumentsService)
-    : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
-    protected override fun getArgumentStrings(): Sequence<String> = buildSequence {
-        yieldAll(jetbrains.buildServer.util.StringUtil.split(DotnetConstants.COMMAND_NUGET_DELETE))
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
+class NugetDeleteArgumentsProvider(
+        private val _parametersService: ParametersService)
+    : ArgumentsProvider {
+
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
+        yieldAll(StringUtil.split(DotnetConstants.COMMAND_NUGET_DELETE).map{CommandLineArgument(it)})
 
         parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {
             if (it.isNotBlank()) {
-                yieldAll(jetbrains.buildServer.util.StringUtil.split(it))
+                yieldAll(jetbrains.buildServer.util.StringUtil.split(it).map{CommandLineArgument(it)})
             }
         }
 
         parameters(DotnetConstants.PARAM_NUGET_DELETE_API_KEY)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--api-key")
-                yield(it)
+                yield(CommandLineArgument("--api-key"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_NUGET_DELETE_SOURCE)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--source")
-                yield(it)
+                yield(CommandLineArgument("--source"))
+                yield(CommandLineArgument(it))
             }
         }
 
-        yield("--non-interactive")
+        yield(CommandLineArgument("--non-interactive"))
     }
+
+    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

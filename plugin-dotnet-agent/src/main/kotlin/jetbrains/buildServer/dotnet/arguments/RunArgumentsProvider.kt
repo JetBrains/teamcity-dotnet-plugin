@@ -7,38 +7,45 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
+import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
+import jetbrains.buildServer.runners.CommandLineArgument
+import jetbrains.buildServer.runners.ParameterType
+import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet run command.
  */
-class RunArgumentsProvider(
-        _parametersService: jetbrains.buildServer.runners.ParametersService,
-        _argumentsService: ArgumentsService)
-    : ArgumentsProviderBase(_parametersService, _argumentsService) {
 
-    protected override fun getArgumentStrings(): Sequence<String> = buildSequence {
-        yield(DotnetConstants.COMMAND_RUN)
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
+class RunArgumentsProvider(
+        private val _parametersService: ParametersService)
+    : ArgumentsProvider {
+
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
+        yield(CommandLineArgument(DotnetConstants.COMMAND_RUN))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yield("--project")
-            yield(it)
+            yield(CommandLineArgument("--project"))
+            yield(CommandLineArgument(it))
         }
 
         parameters(DotnetConstants.PARAM_RUN_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--framework")
-                yield(it)
+                yield(CommandLineArgument("--framework"))
+                yield(CommandLineArgument(it))
             }
         }
 
         parameters(DotnetConstants.PARAM_RUN_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield("--configuration")
-                yield(it)
+                yield(CommandLineArgument("--configuration"))
+                yield(CommandLineArgument(it))
             }
         }
     }
+
+    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }
