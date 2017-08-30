@@ -29,7 +29,7 @@ class PublishArgumentsProvider(
         yield(CommandLineArgument(DotnetConstants.COMMAND_PUBLISH))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_PUBLISH_FRAMEWORK)?.trim()?.let {

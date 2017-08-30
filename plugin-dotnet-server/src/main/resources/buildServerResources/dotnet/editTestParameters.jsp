@@ -8,6 +8,27 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["test"] = "Projects";
+    debugger;
+    BS.dotnet = {
+      updateDotCoverElements: function() {
+        if (document.getElementById('${params.dotCoverEnabled}').checked) {
+          document.getElementById('dotCoverHeader').rowSpan = 5;
+          $j('#dotCoverToolType').removeClass('hidden');
+          $j('#dotCoverFilters').removeClass('hidden');
+          $j('#dotCoverAttributeFilters').removeClass('hidden');
+          $j('#dotCoverArguments').removeClass('hidden');
+        }
+        else {
+          $j('#dotCoverToolType').addClass('hidden');
+          $j('#dotCoverFilters').addClass('hidden');
+          $j('#dotCoverAttributeFilters').addClass('hidden');
+          $j('#dotCoverArguments').addClass('hidden');
+          document.getElementById('dotCoverHeader').rowSpan = 1;
+        }
+        BS.MultilineProperties.updateVisible();
+      }
+    }
+
 </script>
 
 <tr class="advancedSetting">
@@ -79,3 +100,49 @@
         <label for="${params.testNoBuildKey}">Do not build project before testing</label>
     </td>
 </tr>
+
+<tr class="advancedSetting">
+    <th id="dotCoverHeader"><label for="${params.dotCoverToolType}">Code coverage:</label></th>
+    <td><props:checkboxProperty name="${params.dotCoverEnabled}" onclick="BS.dotnet.updateDotCoverElements();"/></td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverToolType">
+    <td>
+        <jsp:include page="/tools/selector.html?toolType=${params.dotCoverToolType}&versionParameterName=${params.dotCoverHome}&class=longField"/>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverFilters">
+    <label for="${params.dotCoverFilters}">Filters:</label>
+    <td>
+        <c:set var="note">
+            Specify a new-line separated list of filters for code coverage. Use the <i>+:myassemblyName</i> or <i>-:myassemblyName</i> syntax to
+            include or exclude an assembly (by name, without extension) from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+        </c:set>
+        <props:multilineProperty name="${params.dotCoverFilters}" className="longField" expanded="true" cols="60" rows="4" linkTitle="Assemblies Filters" note="${note}"/>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverAttributeFilters">
+    <label for="${cns.dotCoverAttributeFilters}">Attribute Filters:</label>
+    <td>
+        <c:set var="note">
+            Specify a new-line separated list of attribute filters for code coverage. Use the <i>-:attributeName</i> syntax to exclude a code marked with attributes from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+        </c:set>
+        <props:multilineProperty name="${params.dotCoverAttributeFilters}" className="longField" cols="60" rows="4" linkTitle="Attribute Filters" note="${note}"/>
+        <span class="smallNote"><strong>Supported only with dotCover 2.0 or newer</strong></span>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverArguments">
+    <label for="${params.dotCoverArguments}">Additional dotCover.exe arguments:</label>
+    <td>
+        <props:multilineProperty name="${params.dotCoverArguments}" linkTitle="Edit command line" cols="60" rows="5" />
+        <span class="smallNote">Additional commandline parameters to add to calling dotCover.exe separated by new lines.</span>
+        <span id="error_${params.dotCoverArguments}" class="error"></span>
+    </td>
+</tr>
+
+<script type="text/javascript">
+  BS.dotnet.updateDotCoverElements();
+</script>

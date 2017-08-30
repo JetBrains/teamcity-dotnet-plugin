@@ -6,6 +6,6 @@ data class CommandLine(
         val target: TargetType,
         val executableFile: File,
         val workingDirectory: File,
-        val arguments: Sequence<CommandLineArgument>,
-        val environmentVariables: Sequence<CommandLineEnvironmentVariable>) {
+        val arguments: List<CommandLineArgument>,
+        val environmentVariables: List<CommandLineEnvironmentVariable>) {
 }

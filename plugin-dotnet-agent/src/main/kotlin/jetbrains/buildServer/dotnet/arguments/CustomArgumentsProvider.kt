@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet.arguments
 
-import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
@@ -21,7 +20,7 @@ class CustomArgumentsProvider(
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
         parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
     }
 

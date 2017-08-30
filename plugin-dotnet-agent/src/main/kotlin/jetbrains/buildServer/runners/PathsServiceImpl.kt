@@ -5,12 +5,17 @@ import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.agent.impl.config.BuildAgentConfigurablePaths
 import jetbrains.buildServer.runners.PathType
 import jetbrains.buildServer.runners.PathsService
+import jetbrains.buildServer.util.FileUtil
 import java.io.File
+import java.util.*
 
 class PathsServiceImpl(
         private final val _buildStepContext: BuildStepContext,
         private final val _buildAgentConfiguration: BuildAgentConfiguration,
         private final val _buildAgentConfigurablePaths: BuildAgentConfigurablePaths) : PathsService {
+
+    override val uniqueName: String
+        get() = UUID.randomUUID().toString().replace("-", "")
 
     override fun getPath(pathType: PathType): java.io.File {
         when(pathType) {

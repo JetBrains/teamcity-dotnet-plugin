@@ -158,6 +158,24 @@ class DotnetParametersProvider {
     val integrationPackageToolTypeKey: String
         get() = DotnetConstants.PACKAGE_TYPE
 
+    val dotCoverToolType: String
+        get() = DotCoverConstants.PARAM_TOOL_TYPE_ID
+
+    val dotCoverEnabled: String
+        get() = DotCoverConstants.PARAM_ENABLED
+
+    val dotCoverHome: String
+        get() = DotCoverConstants.PARAM_HOME
+
+    val dotCoverFilters: String
+        get() = DotCoverConstants.PARAM_FILTERS
+
+    val dotCoverAttributeFilters: String
+        get() = DotCoverConstants.PARAM_ATTRIBUTE_FILTERS
+
+    val dotCoverArguments: String
+        get() = DotCoverConstants.PARAM_ARGUMENTS
+
     companion object {
         val commandTypes: Map<String, CommandType> = listOf(
                 BuildCommandType(),
