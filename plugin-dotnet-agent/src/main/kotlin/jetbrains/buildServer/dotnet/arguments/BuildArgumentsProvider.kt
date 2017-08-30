@@ -29,7 +29,7 @@ class BuildArgumentsProvider(
         yield(CommandLineArgument(DotnetConstants.COMMAND_BUILD))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_BUILD_FRAMEWORK)?.trim()?.let {

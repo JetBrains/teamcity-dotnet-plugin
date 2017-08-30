@@ -13,18 +13,21 @@ import jetbrains.buildServer.agent.runner.*
 import java.io.File
 
 class WorkflowSessionImpl(
-        _workflowComposer: WorkflowComposer,
+        private val _workflowComposer: WorkflowComposer,
         private val _buildStepContext: BuildStepContext,
         private val _loggerService: LoggerService)
     : MultiCommandBuildSession, WorkflowContext {
 
-    private val _commandLinesIterator = _workflowComposer.compose(this).commandLines.iterator()
+    private var _commandLinesIterator: Iterator<CommandLine>? = null;
     private var _lastResult: CommandLineResult? = null
 
     override fun sessionStarted() = Unit
 
     override fun getNextCommand(): CommandExecution? {
-        if(!_commandLinesIterator.hasNext()) {
+        var commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator();
+        _commandLinesIterator = commandLinesIterator;
+
+        if(!commandLinesIterator.hasNext()) {
             return null
         }
 
@@ -34,7 +37,7 @@ class WorkflowSessionImpl(
         _lastResult = CommandLineResult(exitCode.asSequence(), standardOutput.asSequence(), errorOutput.asSequence())
 
         return CommandExecutionAdapter(
-                _commandLinesIterator.next(),
+                commandLinesIterator.next(),
                 exitCode,
                 standardOutput,
                 errorOutput,

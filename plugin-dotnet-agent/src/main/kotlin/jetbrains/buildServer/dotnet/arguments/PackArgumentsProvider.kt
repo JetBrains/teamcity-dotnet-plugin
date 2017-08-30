@@ -29,7 +29,7 @@ class PackArgumentsProvider(
         yield(CommandLineArgument(DotnetConstants.COMMAND_PACK))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {

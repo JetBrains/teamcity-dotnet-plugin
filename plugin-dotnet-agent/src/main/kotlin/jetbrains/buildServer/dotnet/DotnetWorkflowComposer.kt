@@ -37,8 +37,8 @@ class DotnetWorkflowComposer(
                                 TargetType.Tool,
                                 toolPath,
                                 _pathsService.getPath(PathType.WorkingDirectory),
-                                    _dotnetArgumentsProvider.getArguments(),
-                                _defaultEnvironmentVariables.variables))
+                                    _dotnetArgumentsProvider.getArguments().toList(),
+                                _defaultEnvironmentVariables.variables.toList()))
 
                     if(!context.lastResult.isCompleted) {
                         return@buildSequence

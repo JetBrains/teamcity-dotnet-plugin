@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
 
 /**
@@ -19,7 +20,7 @@ abstract class CommandType {
 
     abstract val viewPage: String
 
-    open fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> {
-        return emptyList()
-    }
+    open fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> = emptyList()
+
+    open fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = emptySequence()
 }

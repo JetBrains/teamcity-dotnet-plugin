@@ -1,5 +1,7 @@
 package jetbrains.buildServer.runners
 
 interface ArgumentsService {
-    fun parseToStrings(text: String): Sequence<String>
+    fun split(text: String): Sequence<String>
+
+    fun combine(arguments: Sequence<String>): String
 }

@@ -68,6 +68,10 @@ class DotnetRunnerRunType(private val pluginDescriptor: PluginDescriptor,
     }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
-        return listOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
+        val command = runParameters.get(DotnetConstants.PARAM_COMMAND)
+        val commandType = DotnetParametersProvider.commandTypes[command]
+        return sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
+                .plus(commandType?.getRequirements(runParameters) ?: emptySequence())
+                .toList()
     }
 }

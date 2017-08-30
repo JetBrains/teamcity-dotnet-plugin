@@ -29,7 +29,7 @@ class RestoreArgumentsProvider(
         yield(CommandLineArgument(DotnetConstants.COMMAND_RESTORE))
 
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yieldAll(_argumentsService.parseToStrings(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
 
         parameters(DotnetConstants.PARAM_RESTORE_PACKAGES)?.trim()?.let {
@@ -40,7 +40,7 @@ class RestoreArgumentsProvider(
         }
 
         parameters(DotnetConstants.PARAM_RESTORE_SOURCE)?.let {
-            _argumentsService.parseToStrings(it).forEach {
+            _argumentsService.split(it).forEach {
                 yield(CommandLineArgument("--source"))
                 yield(CommandLineArgument(it))
             }
