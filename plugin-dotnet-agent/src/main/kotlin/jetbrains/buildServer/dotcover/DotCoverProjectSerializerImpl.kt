@@ -65,7 +65,6 @@ class DotCoverProjectSerializerImpl(
             coverageParamsElement.appendChild(attributeFiltersElement)
         }
 
-
         _xmlDocumentService.serialize(doc, outputStream);
     }
 

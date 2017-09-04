@@ -11,7 +11,14 @@ class ArgumentsServiceImpl : ArgumentsService {
 
     override fun combine(arguments: Sequence<String>): String =
             arguments
-                    .map { "${QUOTE_STR}${it}${QUOTE_STR}" }
+                    .map {
+                        if (it.contains(ARGS_SEPARATOR)) {
+                            "${QUOTE_STR}${it}${QUOTE_STR}"
+                        }
+                        else {
+                            it
+                        }
+                    }
                     .joinToString(ARGS_SEPARATOR);
 
     companion object {
