@@ -21,6 +21,10 @@ class ArgumentsServiceImpl : ArgumentsService {
                     }
                     .joinToString(ARGS_SEPARATOR);
 
+    override fun escape(text: String): String {
+        return StringUtil.escapeStringCharacters(text)
+    }
+
     companion object {
         private val ARGS_SEPARATOR = " "
         private val QUOTE_STR = "\""

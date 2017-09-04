@@ -35,10 +35,6 @@ Also, you can configure the `DOTNET_HOME` environment variable for your TeamCity
 DOTNET_HOME=C:\Program Files\dotnet\
 ```
 
-## Test Reporting
-
-To use tests reporting for all test frameworks you need to add a reference to the [`TeamCity.VSTest.TestAdapter`](https://www.nuget.org/packages/TeamCity.VSTest.TestAdapter) nuget package in your test projects. For more details see [TeamCity.VSTest.TestAdapter](https://github.com/JetBrains/TeamCity.VSTest.TestAdapter) repository.
-
 # Build
 
 This project uses gradle as a build system. You can easily open it in [IntelliJ IDEA](https://www.jetbrains.com/idea/help/importing-project-from-gradle-model.html) or [Eclipse](http://gradle.org/eclipse/).
