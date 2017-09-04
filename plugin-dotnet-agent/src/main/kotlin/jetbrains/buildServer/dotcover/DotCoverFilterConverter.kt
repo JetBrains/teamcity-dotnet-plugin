@@ -5,102 +5,106 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.runners.Converter
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverFilterConverter : Converter<String, Sequence<CoverageFilter>> {
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun convert(filterString: String): Sequence<CoverageFilter> {
-        if (StringUtil.isEmptyOrSpaces(filterString)) {
-            return emptySequence()
-        }
-
-        val filters = ArrayList<CoverageFilter>()
-        for (line in ourEndOfLinePattern.split(filterString)) {
-            if (StringUtil.isEmptyOrSpaces(line)) {
-                continue
+        @Suppress("EXPERIMENTAL_FEATURE_WARNING")
+        return buildSequence {
+            if (filterString.isBlank()) {
+                return@buildSequence
             }
 
-            val filterMatcher = ourFilterPattern.matcher(line)
-            if (!filterMatcher.find()) {
-                throwBuildException(line)
-            }
-
-            if (filterMatcher.groupCount() != 2) {
-                throwBuildException(filterMatcher.group())
-            }
-
-            val typeStr = filterMatcher.group(FILTER_TYPE_GROUP)
-            val filterPartsStr = filterMatcher.group(FILTER_BODY_GROUP)
-            if (StringUtil.isEmptyOrSpaces(typeStr) || StringUtil.isEmptyOrSpaces(filterPartsStr)) {
-                throwBuildException(line)
-            }
-
-            val filterPartMatcher = ourFilterPartPattern.matcher(filterPartsStr)
-            val partsValue = arrayOfNulls<String>(FUNCTION_VAR + 1)
-
-            while (filterPartMatcher.find()) {
-                if (filterPartMatcher.groupCount() != 3) {
-                    throwBuildException(line)
-                }
-
-                val partStr = filterPartMatcher.group(NAMED_PART_TYPE_GROUP)
-                var valStr: String? = filterPartMatcher.group(NAMED_PART_VALUE_GROUP)
-                if (valStr == null) {
-                    valStr = filterPartMatcher.group(VALUE_GROUP)
-                }
-
-                if (valStr == null) {
-                    throwBuildException(line)
-                }
-
-                if ("module".equals(partStr, ignoreCase = true) || "assembly".equals(partStr, ignoreCase = true)) {
-                    partsValue[MODULE_VAR] = valStr
+            for (line in ourEndOfLinePattern.split(filterString)) {
+                if (line.isNullOrBlank()) {
                     continue
                 }
 
-                if ("class".equals(partStr, ignoreCase = true)
-                        || "type".equals(partStr, ignoreCase = true)
-                        || "attribute".equals(partStr, ignoreCase = true)
-                        || "attributename".equals(partStr, ignoreCase = true)) {
-                    partsValue[CLASS_VAR] = valStr
-                    continue
+                val filterMatcher = ourFilterPattern.matcher(line)
+                if (!filterMatcher.find()) {
+                    throwRunBuildException(line)
                 }
 
-                if ("function".equals(partStr, ignoreCase = true) || "method".equals(partStr, ignoreCase = true)) {
-                    partsValue[FUNCTION_VAR] = valStr
-                    continue
+                if (filterMatcher.groupCount() != 2) {
+                    throwRunBuildException(filterMatcher.group())
                 }
 
-                if (partsValue[DEFAULT_VAR] != null) {
-                    throwBuildException(line)
+                val typeStr = filterMatcher.group(FILTER_TYPE_GROUP)
+                val filterPartsStr = filterMatcher.group(FILTER_BODY_GROUP)
+                if (typeStr.isNullOrBlank() || filterPartsStr.isNullOrBlank()) {
+                    throwRunBuildException(line)
                 }
 
-                partsValue[DEFAULT_VAR] = valStr
-            }
+                val filterPartMatcher = ourFilterPartPattern.matcher(filterPartsStr)
+                val partsValue = arrayOfNulls<String>(FUNCTION_VAR + 1)
 
-            if (partsValue[DEFAULT_VAR] == null && partsValue[MODULE_VAR] == null && partsValue[CLASS_VAR] == null && partsValue[FUNCTION_VAR] == null) {
-                throwBuildException(line)
-            }
+                while (filterPartMatcher.find()) {
+                    if (filterPartMatcher.groupCount() != 3) {
+                        throwRunBuildException(line)
+                    }
 
-            filters.add(
+                    val partStr = filterPartMatcher.group(NAMED_PART_TYPE_GROUP)
+                    var valStr: String? = filterPartMatcher.group(NAMED_PART_VALUE_GROUP)
+                    if (valStr == null) {
+                        valStr = filterPartMatcher.group(VALUE_GROUP)
+                    }
+
+                    if (valStr == null) {
+                        throwRunBuildException(line)
+                    }
+
+                    if ("module".equals(partStr, ignoreCase = true) || "assembly".equals(partStr, ignoreCase = true)) {
+                        partsValue[MODULE_VAR] = valStr
+                        continue
+                    }
+
+                    if ("class".equals(partStr, ignoreCase = true)
+                            || "type".equals(partStr, ignoreCase = true)
+                            || "attribute".equals(partStr, ignoreCase = true)
+                            || "attributename".equals(partStr, ignoreCase = true)) {
+                        partsValue[CLASS_VAR] = valStr
+                        continue
+                    }
+
+                    if ("function".equals(partStr, ignoreCase = true) || "method".equals(partStr, ignoreCase = true)) {
+                        partsValue[FUNCTION_VAR] = valStr
+                        continue
+                    }
+
+                    if (partsValue[DEFAULT_VAR] != null) {
+                        throwRunBuildException(line)
+                    }
+
+                    partsValue[DEFAULT_VAR] = valStr
+                }
+
+                if (partsValue[DEFAULT_VAR] == null && partsValue[MODULE_VAR] == null && partsValue[CLASS_VAR] == null && partsValue[FUNCTION_VAR] == null) {
+                    throwRunBuildException(line)
+                }
+
+                yield(
                     CoverageFilter(
-                            when (typeStr) {
-                                "-" -> CoverageFilter.CoverageFilterType.Exclude
-                                else -> CoverageFilter.CoverageFilterType.Include
-                            },
-                            partsValue[DEFAULT_VAR] ?: CoverageFilter.Any,
-                            partsValue[MODULE_VAR] ?: CoverageFilter.Any,
-                            partsValue[CLASS_VAR] ?: CoverageFilter.Any,
-                            partsValue[FUNCTION_VAR] ?: CoverageFilter.Any));
+                        when (typeStr) {
+                            "-" -> CoverageFilter.CoverageFilterType.Exclude
+                            else -> CoverageFilter.CoverageFilterType.Include
+                        },
+                        partsValue[DEFAULT_VAR] ?: CoverageFilter.Any,
+                        partsValue[MODULE_VAR] ?: CoverageFilter.Any,
+                        partsValue[CLASS_VAR] ?: CoverageFilter.Any,
+                        partsValue[FUNCTION_VAR] ?: CoverageFilter.Any))
+            }
         }
 
-        if (filters.size == 0) {
-            throwBuildException(filterString)
-        }
 
-        return filters.asSequence()
+        /* if (filters.size == 0) {
+             throwRunBuildException(filterString)
+         }
+
+         return filters.asSequence()*/
     }
 
-    private fun throwBuildException(filter: String) {
+    private fun throwRunBuildException(filter: String) {
         throw RunBuildException("Invalid statement for filter: \"${filter}\"")
     }
 
@@ -114,10 +118,8 @@ class DotCoverFilterConverter : Converter<String, Sequence<CoverageFilter>> {
         private val VALUE_GROUP = 3
         private val FILTER_TYPE_GROUP = 1
         private val FILTER_BODY_GROUP = 2
-
         private val ourFilterPattern = Pattern.compile("^\\s*([-|+]\\s*)\\s*:\\s*([^:\\s]+)\\s*\\z", Pattern.CASE_INSENSITIVE)
         private val ourFilterPartPattern = Pattern.compile("(module|assembly|class|type|attribute|attributename|function|method)[=]([^;=]+)|([^;=]+)", Pattern.CASE_INSENSITIVE)
         private val ourEndOfLinePattern = Pattern.compile("\\n")
-
     }
 }

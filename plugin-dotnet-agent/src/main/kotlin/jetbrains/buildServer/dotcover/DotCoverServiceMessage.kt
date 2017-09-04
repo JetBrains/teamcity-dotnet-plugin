@@ -7,8 +7,7 @@ class DotCoverServiceMessage(
         dotCoverPath: File)
     : ServiceMessage(
         "dotNetCoverage",
-        mapOf(
-                "dotcover_home" to dotCoverPath.path)) {
+        mapOf("dotcover_home" to dotCoverPath.path)) {
     override fun hashCode(): Int {
         return toString().hashCode()
     }

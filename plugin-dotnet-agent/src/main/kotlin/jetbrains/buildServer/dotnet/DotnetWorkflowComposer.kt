@@ -30,23 +30,16 @@ class DotnetWorkflowComposer(
             throw exception
         }
 
+        @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {
                     yield(
-                            CommandLine(
-                                TargetType.Tool,
-                                toolPath,
-                                _pathsService.getPath(PathType.WorkingDirectory),
-                                    _dotnetArgumentsProvider.getArguments().toList(),
-                                _defaultEnvironmentVariables.variables.toList()))
-
-                    if(!context.lastResult.isCompleted) {
-                        return@buildSequence
-                    }
-
-                    // var exitCode = context.lastResult.exitCode
-                    // var standardOutput = context.lastResult.standardOutput.toList()
-                    // var errorOutput = context.lastResult.errorOutput.toList()
+                        CommandLine(
+                            TargetType.Tool,
+                            toolPath,
+                            _pathsService.getPath(PathType.WorkingDirectory),
+                                _dotnetArgumentsProvider.getArguments().toList(),
+                            _defaultEnvironmentVariables.variables.toList()))
                 }
         )
     }
