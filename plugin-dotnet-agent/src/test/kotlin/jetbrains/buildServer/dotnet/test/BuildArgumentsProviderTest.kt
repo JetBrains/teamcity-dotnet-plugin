@@ -21,11 +21,7 @@ class BuildArgumentsProviderTest {
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_BUILD_NON_INCREMENTAL to " true",
                         DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES to "True "),
-                        listOf("build", "--no-incremental", "--no-dependencies")),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_BUILD_VERSION_SUFFIX to " preview ",
-                        DotnetConstants.PARAM_VERBOSITY to "normal"),
-                        listOf("build", "--version-suffix", "preview", "--verbosity", "normal")))
+                        listOf("build", "--no-incremental", "--no-dependencies")))
     }
 
     @Test(dataProvider = "testBuildArgumentsData")

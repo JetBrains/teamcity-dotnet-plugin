@@ -74,13 +74,6 @@ class BuildArgumentsProvider(
                 yield(CommandLineArgument(it))
             }
         }
-
-        parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--verbosity"))
-                yield(CommandLineArgument(it))
-            }
-        }
     }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
