@@ -16,9 +16,8 @@ class PublishArgumentsProviderTest {
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
                         listOf("publish", "--framework", "dotcore", "--configuration", "Release")),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_PUBLISH_RUNTIME to " active",
-                        DotnetConstants.PARAM_VERBOSITY to "normal "),
-                        listOf("publish", "--runtime", "active", "--verbosity", "normal")),
+                        DotnetConstants.PARAM_PUBLISH_RUNTIME to " active"),
+                        listOf("publish", "--runtime", "active")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),

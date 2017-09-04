@@ -19,6 +19,7 @@ class DotnetArgumentsProvider(
         private val _argumentsService: ArgumentsService,
         private val _MSBuildLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
+        private val _verbosityArgumentsProvider: ArgumentsProvider,
         _buildArgumentsProvider: ArgumentsProvider,
         _packArgumentsProvider: ArgumentsProvider,
         _publishArgumentsProvider: ArgumentsProvider,
@@ -49,6 +50,7 @@ class DotnetArgumentsProvider(
 
         return buildSequence {
             yieldAll(commandSpecificArgumentsProvider.getArguments())
+            yieldAll(_verbosityArgumentsProvider.getArguments())
             yieldAll(_customArgumentsProvider.getArguments())
             yieldAll(_MSBuildLoggerArgumentsProvider.getArguments())
         };

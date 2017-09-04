@@ -36,6 +36,7 @@
     <bean class="jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProvider" id="dotnetArgumentsProvider">
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+        <constructor-arg ref="verbosityArgumentsProvider"/>
         <constructor-arg ref="dotnetBuildArgumentsProvider"/>
         <constructor-arg ref="dotnetPackArgumentsProvider"/>
         <constructor-arg ref="dotnetPublishArgumentsProvider"/>
@@ -48,6 +49,7 @@
     <bean class="jetbrains.buildServer.dotnet.arguments.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.VSTestLoggerArgumentsProvider" id="vsTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.arguments.VerbosityArgumentsProvider" id="verbosityArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider" id="dotnetBuildArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetDeleteArgumentsProvider" id="dotnetNugetDeleteArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetPushArgumentsProvider" id="dotnetNugetPushArgumentsProvider"/>
