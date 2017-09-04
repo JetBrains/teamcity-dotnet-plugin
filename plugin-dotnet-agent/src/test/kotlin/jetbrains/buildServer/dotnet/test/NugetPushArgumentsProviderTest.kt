@@ -14,12 +14,12 @@ class NugetPushArgumentsProviderTest {
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_PUSH_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_PUSH_SOURCE to "http://jb.com"),
-                        listOf("nuget", "push", "package.nupkg", "--api-key", "key", "--source", "http://jb.com")),
+                        listOf("package.nupkg", "--api-key", "key", "--source", "http://jb.com")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER to "true",
                         DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS to "true"),
-                        listOf("nuget", "push", "package.nupkg", "--no-symbols", "true", "--disable-buffering", "true"))
+                        listOf("package.nupkg", "--no-symbols", "true", "--disable-buffering", "true"))
         )
     }
 

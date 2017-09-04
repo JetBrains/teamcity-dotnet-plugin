@@ -14,7 +14,7 @@ class NugetDeleteArgumentsProviderTest {
                         DotnetConstants.PARAM_NUGET_DELETE_ID to "id version",
                         DotnetConstants.PARAM_NUGET_DELETE_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_DELETE_SOURCE to "http://jb.com"),
-                        listOf("nuget", "delete", "id", "version", "--api-key", "key",
+                        listOf("id", "version", "--api-key", "key",
                                 "--source", "http://jb.com", "--non-interactive"))
         )
     }

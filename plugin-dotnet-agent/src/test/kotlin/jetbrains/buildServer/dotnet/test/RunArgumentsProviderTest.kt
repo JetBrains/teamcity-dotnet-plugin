@@ -12,11 +12,11 @@ class RunArgumentsProviderTest {
         return arrayOf(
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "path/"),
-                        listOf("run", "--project", "path/")),
+                        listOf("--project", "path/")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_RUN_FRAMEWORK to "dotcore",
                         DotnetConstants.PARAM_RUN_CONFIG to "Release"),
-                        listOf("run", "--framework", "dotcore", "--configuration", "Release")))
+                        listOf("--framework", "dotcore", "--configuration", "Release")))
     }
 
     @Test(dataProvider = "testRunArgumentsData")

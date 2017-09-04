@@ -8,8 +8,8 @@
 package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
@@ -23,11 +23,12 @@ import kotlin.coroutines.experimental.buildSequence
 class TestArgumentsProvider(
         private val _parametersService: ParametersService,
         private val _vsTestLoggerArgumentsProvider: ArgumentsProvider)
-    : ArgumentsProvider {
+    : DotnetCommandArgumentsProvider {
+
+    override val command: DotnetCommand
+        get() = DotnetCommand.Test
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        yield(CommandLineArgument(DotnetConstants.COMMAND_TEST))
-
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument(it))

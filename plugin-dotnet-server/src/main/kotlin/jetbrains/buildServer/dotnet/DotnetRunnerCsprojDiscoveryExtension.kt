@@ -111,21 +111,21 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
         // Check whether project contains test framework packages
         if (packages.any { TestPackages.matches(it) }) {
             steps.add(mapOf(
-                    Pair(DotnetConstants.PARAM_COMMAND, DotnetConstants.COMMAND_TEST),
+                    Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Test.command),
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
         }
 
         // Check whether project contains web application packages
         if (packages.any { it.startsWith("Microsoft.AspNet") }) {
             steps.add(mapOf(
-                    Pair(DotnetConstants.PARAM_COMMAND, DotnetConstants.COMMAND_PUBLISH),
+                    Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Publish.command),
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
         }
 
         // If unable to determine project type just build it
         if (packages.isNotEmpty() && steps.size == 0) {
             steps.add(mapOf(
-                    Pair(DotnetConstants.PARAM_COMMAND, DotnetConstants.COMMAND_BUILD),
+                    Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Build.command),
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
         }
 
@@ -136,7 +136,7 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
         if (packages.isEmpty()) return emptyList()
 
         return listOf(mapOf(
-                Pair(DotnetConstants.PARAM_COMMAND, DotnetConstants.COMMAND_RESTORE),
+                Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Restore.command),
                 Pair(DotnetConstants.PARAM_PATHS, fullName)))
     }
 }

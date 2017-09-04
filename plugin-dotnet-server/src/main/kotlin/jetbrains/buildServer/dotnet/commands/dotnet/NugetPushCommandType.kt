@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 import jetbrains.buildServer.serverSide.InvalidProperty
@@ -16,7 +17,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty
  */
 class NugetPushCommandType : CommandType() {
     override val name: String
-        get() = DotnetConstants.COMMAND_NUGET_PUSH
+        get() = DotnetCommand.NuGetPush.command
 
     override val editPage: String
         get() = "editNugetPushParameters.jsp"

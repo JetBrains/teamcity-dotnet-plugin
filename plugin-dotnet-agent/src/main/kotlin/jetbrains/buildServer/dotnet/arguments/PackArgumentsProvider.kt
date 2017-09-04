@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
@@ -23,11 +24,12 @@ import kotlin.coroutines.experimental.buildSequence
 class PackArgumentsProvider(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService)
-    : ArgumentsProvider {
+    : DotnetCommandArgumentsProvider {
+
+    override val command: DotnetCommand
+        get() = DotnetCommand.Pack
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        yield(CommandLineArgument(DotnetConstants.COMMAND_PACK))
-
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
             yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }

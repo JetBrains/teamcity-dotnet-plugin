@@ -25,15 +25,6 @@ object DotnetConstants {
     const val PROJECT_CSPROJ = ".csproj"
     const val PROJECT_SLN = ".sln"
 
-    const val COMMAND_BUILD = "build"
-    const val COMMAND_PACK = "pack"
-    const val COMMAND_PUBLISH = "publish"
-    const val COMMAND_RESTORE = "restore"
-    const val COMMAND_TEST = "test"
-    const val COMMAND_RUN = "run"
-    const val COMMAND_NUGET_PUSH = "nuget push"
-    const val COMMAND_NUGET_DELETE = "nuget delete"
-
     const val PARAM_COMMAND = "dotnet-command"
     const val PARAM_PATHS = "dotnet-paths"
     const val PARAM_ARGUMENTS = "dotnet-args"
@@ -85,6 +76,11 @@ object DotnetConstants {
     const val PARAM_NUGET_DELETE_ID = "dotnet-nuget-delete-id"
     const val PARAM_NUGET_DELETE_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "dotnet-nuget-delete-api-key"
     const val PARAM_NUGET_DELETE_SOURCE = "dotnet-nuget-push-source"
+
+    const val PARAM_CLEAN_FRAMEWORK = "dotnet-clean-framework"
+    const val PARAM_CLEAN_CONFIG = "dotnet-clean-config"
+    const val PARAM_CLEAN_RUNTIME = "dotnet-clean-runtime"
+    const val PARAM_CLEAN_OUTPUT = "dotnet-clean-output"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
 

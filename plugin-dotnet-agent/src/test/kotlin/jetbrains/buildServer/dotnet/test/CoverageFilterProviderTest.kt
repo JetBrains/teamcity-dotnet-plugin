@@ -75,6 +75,7 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
+        _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
             listOf(CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any)))
@@ -101,6 +102,7 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
+        _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
             listOf(
@@ -129,6 +131,7 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
+        _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
             listOf(
@@ -161,6 +164,7 @@ class CoverageFilterProviderTest {
         val filters = instance.attributeFilters.toList()
 
         // Then
+        _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
             listOf(
@@ -185,6 +189,7 @@ class CoverageFilterProviderTest {
         val filters = instance.attributeFilters.toList()
 
         // Then
+        _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
             listOf(CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute", CoverageFilter.Any)))

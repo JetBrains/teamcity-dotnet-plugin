@@ -2,11 +2,13 @@ package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -20,25 +22,10 @@ class DotnetArgumentsProvider(
         private val _MSBuildLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         private val _verbosityArgumentsProvider: ArgumentsProvider,
-        _buildArgumentsProvider: ArgumentsProvider,
-        _packArgumentsProvider: ArgumentsProvider,
-        _publishArgumentsProvider: ArgumentsProvider,
-        _restoreArgumentsProvider: ArgumentsProvider,
-        _runArgumentsProvider: ArgumentsProvider,
-        _testArgumentsProvider: ArgumentsProvider,
-        _nugetPushArgumentsProvider: ArgumentsProvider,
-        _nugetDeleteArgumentsProvider: ArgumentsProvider)
+        commandArgumentsProviders: List<DotnetCommandArgumentsProvider>)
     : ArgumentsProvider {
 
-    private val myArgumentsProviders: Map<String, ArgumentsProvider> = mapOf(
-            DotnetConstants.COMMAND_BUILD to _buildArgumentsProvider,
-            DotnetConstants.COMMAND_PACK to _packArgumentsProvider,
-            DotnetConstants.COMMAND_PUBLISH to _publishArgumentsProvider,
-            DotnetConstants.COMMAND_RESTORE to _restoreArgumentsProvider,
-            DotnetConstants.COMMAND_RUN to _runArgumentsProvider,
-            DotnetConstants.COMMAND_TEST to _testArgumentsProvider,
-            DotnetConstants.COMMAND_NUGET_PUSH to _nugetPushArgumentsProvider,
-            DotnetConstants.COMMAND_NUGET_DELETE to _nugetDeleteArgumentsProvider)
+    private val _argumentsProviders: Map<String, DotnetCommandArgumentsProvider> = commandArgumentsProviders.associateBy({ it.command.command }, { it })
 
     override fun getArguments(): Sequence<CommandLineArgument> {
         val commandName = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
@@ -46,12 +33,17 @@ class DotnetArgumentsProvider(
             throw RunBuildException("Dotnet command name is empty")
         }
 
-        val commandSpecificArgumentsProvider = myArgumentsProviders[commandName] ?: throw RunBuildException("Unable to construct arguments for dotnet command $commandName")
-
+        val commandSpecificArgumentsProvider = _argumentsProviders[commandName] ?: throw RunBuildException("Unknown dotnet command \"$commandName\"")
         return buildSequence {
+            // command
+            yieldAll(commandSpecificArgumentsProvider.command.args.map { CommandLineArgument(it) })
+            // command specific arguments
             yieldAll(commandSpecificArgumentsProvider.getArguments())
+            // verbosity level
             yieldAll(_verbosityArgumentsProvider.getArguments())
+            // custom arguments
             yieldAll(_customArgumentsProvider.getArguments())
+            // logger
             yieldAll(_MSBuildLoggerArgumentsProvider.getArguments())
         };
     }

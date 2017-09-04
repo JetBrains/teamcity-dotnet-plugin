@@ -12,17 +12,17 @@ class TestArgumentsProviderTest {
     @DataProvider
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("test", "path/")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("path/")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
-                        listOf("test", "--framework", "dotcore", "--configuration", "Release")),
+                        listOf("--framework", "dotcore", "--configuration", "Release")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
                         Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
-                        listOf("test", "--runtime", "active", "--no-build")),
+                        listOf("--runtime", "active", "--no-build")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
-                        listOf("test", "--output", "out")))
+                        listOf("--output", "out")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")

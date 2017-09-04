@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet.commands.dotnet
 
 import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 import jetbrains.buildServer.requirements.Requirement
@@ -20,7 +21,7 @@ import kotlin.coroutines.experimental.buildSequence
  */
 class TestCommandType : CommandType() {
     override val name: String
-        get() = DotnetConstants.COMMAND_TEST
+        get() = DotnetCommand.Test.command
 
     override val editPage: String
         get() = "editTestParameters.jsp"
@@ -39,6 +40,7 @@ class TestCommandType : CommandType() {
         return invalidProperties
     }
 
+    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
         if(isCoverageEnabled(runParameters)) {
             yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))

@@ -8,8 +8,8 @@
 package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
@@ -22,11 +22,12 @@ import kotlin.coroutines.experimental.buildSequence
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class RunArgumentsProvider(
         private val _parametersService: ParametersService)
-    : ArgumentsProvider {
+    : DotnetCommandArgumentsProvider {
+
+    override val command: DotnetCommand
+        get() = DotnetCommand.Run
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        yield(CommandLineArgument(DotnetConstants.COMMAND_RUN))
-
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
             yield(CommandLineArgument("--project"))
             yield(CommandLineArgument(it))

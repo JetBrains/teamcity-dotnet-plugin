@@ -10,11 +10,11 @@ class PackArgumentsProviderTest {
     @DataProvider
     fun testPackArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("pack", "path/")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PACK_CONFIG, "Release")), listOf("pack", "--configuration", "Release")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("path/")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PACK_CONFIG, "Release")), listOf("--configuration", "Release")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PACK_OUTPUT, "output/")),
-                        listOf("pack", "--output", "output/")))
+                        listOf("--output", "output/")))
     }
 
     @Test(dataProvider = "testPackArgumentsData")

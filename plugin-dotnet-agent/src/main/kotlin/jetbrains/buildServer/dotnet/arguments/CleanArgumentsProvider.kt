@@ -1,10 +1,3 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * See LICENSE in the project root for license information.
- */
-
 package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.ArgumentsProvider
@@ -17,54 +10,47 @@ import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
- * Provides arguments to dotnet publish command.
+ * Provides arguments to dotnet clean command.
  */
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class PublishArgumentsProvider(
+class CleanArgumentsProvider(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService)
     : DotnetCommandArgumentsProvider {
 
     override val command: DotnetCommand
-        get() = DotnetCommand.Publish
+        get() = DotnetCommand.Clean
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
         parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
             yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
 
-        parameters(DotnetConstants.PARAM_PUBLISH_FRAMEWORK)?.trim()?.let {
+        parameters(DotnetConstants.PARAM_CLEAN_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--framework"))
                 yield(CommandLineArgument(it))
             }
         }
 
-        parameters(DotnetConstants.PARAM_PUBLISH_CONFIG)?.trim()?.let {
+        parameters(DotnetConstants.PARAM_CLEAN_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--configuration"))
                 yield(CommandLineArgument(it))
             }
         }
 
-        parameters(DotnetConstants.PARAM_PUBLISH_RUNTIME)?.trim()?.let {
+        parameters(DotnetConstants.PARAM_CLEAN_RUNTIME)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--runtime"))
                 yield(CommandLineArgument(it))
             }
         }
 
-        parameters(DotnetConstants.PARAM_PUBLISH_OUTPUT)?.trim()?.let {
+        parameters(DotnetConstants.PARAM_CLEAN_OUTPUT)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--output"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        parameters(DotnetConstants.PARAM_PUBLISH_VERSION_SUFFIX)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--version-suffix"))
                 yield(CommandLineArgument(it))
             }
         }
@@ -72,4 +58,5 @@ class PublishArgumentsProvider(
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 
+    private fun parameters(parameterName: String, defaultValue: String): String = _parametersService.tryGetParameter(ParameterType.Runner, parameterName) ?: defaultValue
 }

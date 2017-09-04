@@ -149,6 +149,18 @@ class DotnetParametersProvider {
     val nugetDeleteSourceKey: String
         get() = DotnetConstants.PARAM_NUGET_DELETE_SOURCE
 
+    val cleanFrameworkKey: String
+        get() = DotnetConstants.PARAM_CLEAN_FRAMEWORK
+
+    val cleanConfigKey: String
+        get() = DotnetConstants.PARAM_CLEAN_CONFIG
+
+    val cleanRuntimeKey: String
+        get() = DotnetConstants.PARAM_CLEAN_RUNTIME
+
+    val cleanOutputKey: String
+        get() = DotnetConstants.PARAM_CLEAN_OUTPUT
+
     val verbosity: List<String>
         get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")
 
@@ -178,14 +190,15 @@ class DotnetParametersProvider {
 
     companion object {
         val commandTypes: Map<String, CommandType> = listOf(
-                BuildCommandType(),
-                PackCommandType(),
-                PublishCommandType(),
+                CleanCommandType(),
                 RestoreCommandType(),
-                RunCommandType(),
+                BuildCommandType(),
                 TestCommandType(),
+                PublishCommandType(),
+                PackCommandType(),
                 NugetPushCommandType(),
-                NugetDeleteCommandType()
+                NugetDeleteCommandType(),
+                RunCommandType()
         ).associateBy { it.name }
     }
 }

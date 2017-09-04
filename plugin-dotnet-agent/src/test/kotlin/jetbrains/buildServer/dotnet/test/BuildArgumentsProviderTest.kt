@@ -10,18 +10,18 @@ class BuildArgumentsProviderTest {
     @DataProvider
     fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("build", "path/")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("path/")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_BUILD_FRAMEWORK, "dnxcore50"),
                         Pair(DotnetConstants.PARAM_BUILD_CONFIG, "Release")),
-                        listOf("build", "--framework", "dnxcore50", "--configuration", "Release")),
+                        listOf("--framework", "dnxcore50", "--configuration", "Release")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_BUILD_OUTPUT, "output/")),
-                        listOf("build", "--output", "output/")),
+                        listOf("--output", "output/")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_BUILD_NON_INCREMENTAL to " true",
                         DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES to "True "),
-                        listOf("build", "--no-incremental", "--no-dependencies")))
+                        listOf("--no-incremental", "--no-dependencies")))
     }
 
     @Test(dataProvider = "testBuildArgumentsData")

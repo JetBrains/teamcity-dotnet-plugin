@@ -10,23 +10,23 @@ class PublishArgumentsProviderTest {
     @DataProvider
     fun testPublishArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("publish", "path/")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), listOf("path/")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
-                        listOf("publish", "--framework", "dotcore", "--configuration", "Release")),
+                        listOf("--framework", "dotcore", "--configuration", "Release")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PUBLISH_RUNTIME to " active"),
-                        listOf("publish", "--runtime", "active")),
+                        listOf("--runtime", "active")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
-                        listOf("publish", "--configuration", "Release", "--output", "out")),
+                        listOf("--configuration", "Release", "--output", "out")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PUBLISH_OUTPUT to "c:\\build\\out",
                         DotnetConstants.PARAM_PATHS to "project.csproj",
                         DotnetConstants.PARAM_PUBLISH_CONFIG to "Release"),
-                        listOf("publish", "project.csproj", "--configuration", "Release", "--output", "c:\\build\\out"))
+                        listOf("project.csproj", "--configuration", "Release", "--output", "c:\\build\\out"))
         )
     }
 

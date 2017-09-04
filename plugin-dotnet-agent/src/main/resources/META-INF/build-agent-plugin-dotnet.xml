@@ -36,20 +36,13 @@
     <bean class="jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProvider" id="dotnetArgumentsProvider">
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-        <constructor-arg ref="verbosityArgumentsProvider"/>
-        <constructor-arg ref="dotnetBuildArgumentsProvider"/>
-        <constructor-arg ref="dotnetPackArgumentsProvider"/>
-        <constructor-arg ref="dotnetPublishArgumentsProvider"/>
-        <constructor-arg ref="dotnetRestoreArgumentsProvider"/>
-        <constructor-arg ref="dotnetRunArgumentsProvider"/>
-        <constructor-arg ref="dotnetTestArgumentsProvider"/>
-        <constructor-arg ref="dotnetNugetPushArgumentsProvider"/>
-        <constructor-arg ref="dotnetNugetDeleteArgumentsProvider"/>
+        <constructor-arg ref="dotnetVerbosityArgumentsProvider"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.arguments.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.VSTestLoggerArgumentsProvider" id="vsTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.arguments.VerbosityArgumentsProvider" id="verbosityArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.arguments.VerbosityArgumentsProvider" id="dotnetVerbosityArgumentsProvider" />
+
     <bean class="jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider" id="dotnetBuildArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetDeleteArgumentsProvider" id="dotnetNugetDeleteArgumentsProvider"/>
     <bean class="jetbrains.buildServer.dotnet.arguments.NugetPushArgumentsProvider" id="dotnetNugetPushArgumentsProvider"/>
@@ -60,6 +53,7 @@
     <bean class="jetbrains.buildServer.dotnet.arguments.TestArgumentsProvider" id="dotnetTestArgumentsProvider">
         <constructor-arg ref="vsTestLoggerArgumentsProvider"/>
     </bean>
+    <bean class="jetbrains.buildServer.dotnet.arguments.CleanArgumentsProvider" id="dotnetCleanArgumentsProvider"/>
 
     <!-- dotCover workflow composer -->
     <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer" />
