@@ -62,6 +62,24 @@ class ArgumentsServiceTest {
         Assert.assertEquals(actualArgsStr, expectedArgsStr)
     }
 
+    @DataProvider(name = "escapeCases")
+    fun getEscapeCases(): Array<Array<String>> {
+        return arrayOf(
+                arrayOf("arg1", "arg1"))
+    }
+
+    @Test(dataProvider = "escapeCases")
+    fun shouldCombine(argsStr: String, expectedArgsStr: String) {
+        // Given
+        val argumentsService = createInstance()
+
+        // When
+        val actualArgsStr = argumentsService.escape(argsStr);
+
+        // Then
+        Assert.assertEquals(actualArgsStr, expectedArgsStr)
+    }
+
     private fun createInstance(): ArgumentsService {
         return ArgumentsServiceImpl()
     }

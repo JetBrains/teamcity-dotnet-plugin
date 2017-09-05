@@ -181,6 +181,10 @@ class DotCoverProjectSerializerTest {
     }
 
     private class ArgumentsServiceStub: ArgumentsService {
+        override fun escape(text: String): String {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
         override fun combine(arguments: Sequence<String>): String = arguments.joinToString(" ")
 
         override fun split(text: String): Sequence<String> = TODO("not implemented")
