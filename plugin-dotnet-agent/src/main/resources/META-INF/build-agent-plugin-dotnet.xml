@@ -26,18 +26,19 @@
 
     <!-- dotnet workflow composer -->
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-        <constructor-arg ref="dotnetArgumentsProvider"/>
+        <constructor-arg ref="dotnetArgumentsProviderSource"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
     <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetLoggerProviderImpl"/>
 
     <!--Dotnet arguments' providers-->
-    <bean class="jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProvider" id="dotnetArgumentsProvider">
+    <bean class="jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProviderSource" id="dotnetArgumentsProviderSource">
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
         <constructor-arg ref="dotnetVerbosityArgumentsProvider"/>
     </bean>
+    <bean class="jetbrains.buildServer.dotnet.arguments.TargetServiceImpl" />
     <bean class="jetbrains.buildServer.dotnet.arguments.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.VSTestLoggerArgumentsProvider" id="vsTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.arguments.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />

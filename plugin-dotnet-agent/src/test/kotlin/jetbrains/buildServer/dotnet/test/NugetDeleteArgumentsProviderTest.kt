@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test
 
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.arguments.*
 import org.testng.Assert
@@ -31,5 +32,17 @@ class NugetDeleteArgumentsProviderTest {
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
+    }
+
+    @Test
+    fun shouldProvideCommand() {
+        // Given
+        val argumentsProvider = NugetDeleteArgumentsProvider(ParametersServiceStub(emptyMap()))
+
+        // When
+        val actualCommand = argumentsProvider.command
+
+        // Then
+        Assert.assertEquals(actualCommand, DotnetCommand.NuGetDelete)
     }
 }

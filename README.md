@@ -21,7 +21,7 @@ You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity)
 
 # Compatibility
 
-The plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 9.1.x and greater.
+The plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 2017 and greater.
 
 # Configuration
 

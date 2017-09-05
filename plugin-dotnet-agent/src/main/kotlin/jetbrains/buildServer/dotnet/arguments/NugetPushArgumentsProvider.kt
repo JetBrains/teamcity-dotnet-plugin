@@ -7,13 +7,11 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
-import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
-import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -22,19 +20,17 @@ import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class NugetPushArgumentsProvider(
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _projectService: TargetService)
     : DotnetCommandArgumentsProvider {
 
     override val command: DotnetCommand
         get() = DotnetCommand.NuGetPush
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument(it))
-            }
-        }
+    override val targetArguments: Sequence<TargetArguments>
+        get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
         parameters(DotnetConstants.PARAM_NUGET_PUSH_API_KEY)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--api-key"))

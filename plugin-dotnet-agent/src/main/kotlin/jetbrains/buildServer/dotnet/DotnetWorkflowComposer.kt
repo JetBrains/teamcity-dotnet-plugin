@@ -10,7 +10,7 @@ import kotlin.coroutines.experimental.buildSequence
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
-        private val _dotnetArgumentsProvider: ArgumentsProvider) : WorkflowComposer {
+        private val _dotnetArgumentsProviderSource: ArgumentsProviderSource) : WorkflowComposer {
 
     override val target: TargetType
         get() = TargetType.Tool
@@ -33,13 +33,15 @@ class DotnetWorkflowComposer(
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {
-                    yield(
-                        CommandLine(
-                            TargetType.Tool,
-                            toolPath,
-                            _pathsService.getPath(PathType.WorkingDirectory),
-                                _dotnetArgumentsProvider.getArguments().toList(),
-                            _defaultEnvironmentVariables.variables.toList()))
+                    for (argumentProvider in _dotnetArgumentsProviderSource) {
+                        yield(
+                                CommandLine(
+                                        TargetType.Tool,
+                                        toolPath,
+                                        _pathsService.getPath(PathType.WorkingDirectory),
+                                        argumentProvider.getArguments().toList(),
+                                        _defaultEnvironmentVariables.variables.toList()))
+                    }
                 }
         )
     }

@@ -1,18 +1,13 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotnet.ArgumentsProvider
-import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider
-import jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProvider
+import jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProviderSource
 import jetbrains.buildServer.dotnet.arguments.DotnetCommandArgumentsProvider
+import jetbrains.buildServer.dotnet.arguments.TargetArguments
 import jetbrains.buildServer.runners.CommandLineArgument
-import jetbrains.buildServer.runners.Converter
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -20,7 +15,7 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class DotnetArgumentsProviderTest {
+class DotnetArgumentsProviderSourceTest {
     private var _ctx: Mockery? = null
     private var _MSBuildLoggerArgumentsProvider: ArgumentsProvider? = null
     private var _customArgumentsProvider: ArgumentsProvider? = null
@@ -42,7 +37,7 @@ class DotnetArgumentsProviderTest {
     fun argumentsData(): Array<Array<Any?>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2", "VerbosityArg1", "VerbosityArg2", "CustomArg1", "CustomArg2", "MSBuildArg1", "MSBuildArg2"), null),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("build", "BuildArg1", "BuildArg2", "VerbosityArg1", "VerbosityArg2", "CustomArg1", "CustomArg2", "MSBuildArg1", "MSBuildArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("build", "my.csprog", "BuildArg1", "BuildArg2", "VerbosityArg1", "VerbosityArg2", "CustomArg1", "CustomArg2", "MSBuildArg1", "MSBuildArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "send")), emptyList<String>() as Any?, Regex("Unknown dotnet command \"send\"")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, Regex("Dotnet command name is empty")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "")), emptyList<String>() as Any?, Regex("Dotnet command name is empty")),
@@ -72,15 +67,21 @@ class DotnetArgumentsProviderTest {
                 allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).getArguments()
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
+                allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).targetArguments
+                will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
+
                 allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).command
                 will(returnValue(DotnetCommand.Clean))
 
                 allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).getArguments()
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
+
+                allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).targetArguments
+                will(returnValue(emptySequence<TargetArguments>()))
             }
         })
 
-        val argumentsProvider = DotnetArgumentsProvider(
+        val argumentsProviderSource = DotnetArgumentsProviderSource(
                 ParametersServiceStub(parameters),
                 ArgumentsServiceStub(),
                 _MSBuildLoggerArgumentsProvider!!,
@@ -91,7 +92,7 @@ class DotnetArgumentsProviderTest {
         // When
         var actualArguments: List<String> = emptyList();
         try {
-            actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+            actualArguments = argumentsProviderSource.flatMap { it.getArguments() }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }

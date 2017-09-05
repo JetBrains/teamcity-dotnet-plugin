@@ -58,6 +58,7 @@
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </div>
             <span class="error" id="error_${params.pathsKey}"></span>
+            <span class="smallNote">Enter targets separated by space or new line.</span></td>
         </td>
     </tr>
 

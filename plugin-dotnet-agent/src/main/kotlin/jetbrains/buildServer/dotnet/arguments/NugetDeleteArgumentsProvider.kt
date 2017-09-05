@@ -7,13 +7,11 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
-import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
-import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -27,6 +25,9 @@ class NugetDeleteArgumentsProvider(
 
     override val command: DotnetCommand
         get() = DotnetCommand.NuGetDelete
+
+    override val targetArguments: Sequence<TargetArguments>
+        get() = emptySequence()
 
     override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
         parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {

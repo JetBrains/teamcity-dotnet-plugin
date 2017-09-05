@@ -7,7 +7,6 @@
 
 package jetbrains.buildServer.dotnet.arguments
 
-import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
@@ -21,18 +20,17 @@ import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class RunArgumentsProvider(
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _projectService: TargetService)
     : DotnetCommandArgumentsProvider {
 
     override val command: DotnetCommand
         get() = DotnetCommand.Run
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-            yield(CommandLineArgument("--project"))
-            yield(CommandLineArgument(it))
-        }
+    override val targetArguments: Sequence<TargetArguments>
+        get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path))) }
 
+    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
         parameters(DotnetConstants.PARAM_RUN_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--framework"))
