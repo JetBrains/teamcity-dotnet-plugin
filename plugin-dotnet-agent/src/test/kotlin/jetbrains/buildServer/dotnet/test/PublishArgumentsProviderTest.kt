@@ -41,7 +41,7 @@ class PublishArgumentsProviderTest {
         val argumentsProvider = PublishArgumentsProvider(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
 
         // When
-        val actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

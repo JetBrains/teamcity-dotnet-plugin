@@ -30,43 +30,44 @@ class PackArgumentsProvider(
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--configuration"))
-                yield(CommandLineArgument(it))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--configuration"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            parameters(DotnetConstants.PARAM_PACK_OUTPUT)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--output"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            parameters(DotnetConstants.PARAM_PACK_TEMP)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--build-base-path"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            parameters(DotnetConstants.PARAM_PACK_VERSION_SUFFIX)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--version-suffix"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            if (parameters(DotnetConstants.PARAM_PACK_NO_BUILD, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--no-build"))
+            }
+
+            if (parameters(DotnetConstants.PARAM_PACK_SERVICEABLE, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--serviceable"))
             }
         }
-
-        parameters(DotnetConstants.PARAM_PACK_OUTPUT)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--output"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        parameters(DotnetConstants.PARAM_PACK_TEMP)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--build-base-path"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        parameters(DotnetConstants.PARAM_PACK_VERSION_SUFFIX)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--version-suffix"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        if (parameters(DotnetConstants.PARAM_PACK_NO_BUILD, "").trim().toBoolean()) {
-            yield(CommandLineArgument("--no-build"))
-        }
-
-        if (parameters(DotnetConstants.PARAM_PACK_SERVICEABLE, "").trim().toBoolean()) {
-            yield(CommandLineArgument("--serviceable"))
-        }
-    }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

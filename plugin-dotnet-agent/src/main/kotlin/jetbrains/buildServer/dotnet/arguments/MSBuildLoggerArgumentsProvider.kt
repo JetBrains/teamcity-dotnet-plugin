@@ -21,11 +21,12 @@ class MSBuildLoggerArgumentsProvider(
         private val _dotnetLoggerProvider: DotnetLoggerProvider)
     : ArgumentsProvider {
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        val loggerPath =_dotnetLoggerProvider.tryGetToolPath(Logger.MSBuildLogger15);
-        if (loggerPath != null) {
-            yield(CommandLineArgument("/noconsolelogger"))
-            yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${loggerPath.absolutePath};TeamCity"))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            val loggerPath = _dotnetLoggerProvider.tryGetToolPath(Logger.MSBuildLogger15);
+            if (loggerPath != null) {
+                yield(CommandLineArgument("/noconsolelogger"))
+                yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${loggerPath.absolutePath};TeamCity"))
+            }
         }
-    }
 }

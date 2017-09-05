@@ -18,14 +18,15 @@ class VerbosityArgumentsProvider(
         private val _argumentsService: ArgumentsService)
     : ArgumentsProvider {
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--verbosity"))
-                yield(CommandLineArgument(it))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--verbosity"))
+                    yield(CommandLineArgument(it))
+                }
             }
         }
-    }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

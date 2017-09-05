@@ -52,19 +52,19 @@ class DotnetArgumentsProviderSourceTest {
         // Given
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ArgumentsProvider>(_MSBuildLoggerArgumentsProvider).getArguments()
+                oneOf<ArgumentsProvider>(_MSBuildLoggerArgumentsProvider).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("MSBuildArg1"), CommandLineArgument("MSBuildArg2"))))
 
-                oneOf<ArgumentsProvider>(_customArgumentsProvider).getArguments()
+                oneOf<ArgumentsProvider>(_customArgumentsProvider).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("CustomArg1"), CommandLineArgument("CustomArg2"))))
 
-                oneOf<ArgumentsProvider>(_verbosityArgumentsProvider).getArguments()
+                oneOf<ArgumentsProvider>(_verbosityArgumentsProvider).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("VerbosityArg1"), CommandLineArgument("VerbosityArg2"))))
 
                 allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).command
                 will(returnValue(DotnetCommand.Build))
 
-                allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).getArguments()
+                allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommandArgumentsProvider>(_buildArgumentsProvider).targetArguments
@@ -73,7 +73,7 @@ class DotnetArgumentsProviderSourceTest {
                 allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).command
                 will(returnValue(DotnetCommand.Clean))
 
-                allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).getArguments()
+                allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
 
                 allowing<DotnetCommandArgumentsProvider>(_cleanArgumentsProvider).targetArguments
@@ -92,7 +92,7 @@ class DotnetArgumentsProviderSourceTest {
         // When
         var actualArguments: List<String> = emptyList();
         try {
-            actualArguments = argumentsProviderSource.flatMap { it.getArguments() }.map { it.value }.toList()
+            actualArguments = argumentsProviderSource.flatMap { it.arguments }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }

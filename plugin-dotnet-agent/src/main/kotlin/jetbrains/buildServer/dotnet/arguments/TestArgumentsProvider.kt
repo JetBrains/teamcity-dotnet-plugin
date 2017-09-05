@@ -32,48 +32,49 @@ class TestArgumentsProvider(
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_TEST_FRAMEWORK)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--framework"))
-                yield(CommandLineArgument(it))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            parameters(DotnetConstants.PARAM_TEST_FRAMEWORK)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--framework"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_TEST_CONFIG)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--configuration"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_TEST_CONFIG)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--configuration"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_TEST_RUNTIME)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--runtime"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_TEST_RUNTIME)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--runtime"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_TEST_OUTPUT)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--output"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_TEST_OUTPUT)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--output"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_TEST_TEMP)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--build-base-path"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_TEST_TEMP)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--build-base-path"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        if (parameters(DotnetConstants.PARAM_TEST_NO_BUILD, "").trim().toBoolean()) {
-            yield(CommandLineArgument("--no-build"))
-        }
+            if (parameters(DotnetConstants.PARAM_TEST_NO_BUILD, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--no-build"))
+            }
 
-        yieldAll(_vsTestLoggerArgumentsProvider.getArguments())
-    }
+            yieldAll(_vsTestLoggerArgumentsProvider.arguments)
+        }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

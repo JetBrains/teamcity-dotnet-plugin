@@ -13,5 +13,5 @@ import jetbrains.buildServer.runners.CommandLineArgument
  * Provides arguments to the utility.
  */
 interface ArgumentsProvider {
-    fun getArguments(): Sequence<CommandLineArgument>
+    val arguments: Sequence<CommandLineArgument>
 }

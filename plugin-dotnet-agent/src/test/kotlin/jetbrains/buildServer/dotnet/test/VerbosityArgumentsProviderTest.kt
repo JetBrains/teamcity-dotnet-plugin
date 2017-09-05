@@ -29,7 +29,7 @@ class VerbosityArgumentsProviderTest {
         val argumentsProvider = VerbosityArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
 
         // When
-        val actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

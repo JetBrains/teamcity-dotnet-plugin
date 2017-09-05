@@ -30,31 +30,32 @@ class NugetPushArgumentsProvider(
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_NUGET_PUSH_API_KEY)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--api-key"))
-                yield(CommandLineArgument(it))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            parameters(DotnetConstants.PARAM_NUGET_PUSH_API_KEY)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--api-key"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            parameters(DotnetConstants.PARAM_NUGET_PUSH_SOURCE)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--source"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--no-symbols"))
+                yield(CommandLineArgument("true"))
+            }
+
+            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--disable-buffering"))
+                yield(CommandLineArgument("true"))
             }
         }
-
-        parameters(DotnetConstants.PARAM_NUGET_PUSH_SOURCE)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--source"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS, "").trim().toBoolean()) {
-            yield(CommandLineArgument("--no-symbols"))
-            yield(CommandLineArgument("true"))
-        }
-
-        if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER, "").trim().toBoolean()) {
-            yield(CommandLineArgument("--disable-buffering"))
-            yield(CommandLineArgument("true"))
-        }
-    }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

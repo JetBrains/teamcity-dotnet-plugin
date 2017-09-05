@@ -29,29 +29,30 @@ class NugetDeleteArgumentsProvider(
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yieldAll(jetbrains.buildServer.util.StringUtil.split(it).map{CommandLineArgument(it)})
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yieldAll(jetbrains.buildServer.util.StringUtil.split(it).map { CommandLineArgument(it) })
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_NUGET_DELETE_API_KEY)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--api-key"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_NUGET_DELETE_API_KEY)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--api-key"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        parameters(DotnetConstants.PARAM_NUGET_DELETE_SOURCE)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--source"))
-                yield(CommandLineArgument(it))
+            parameters(DotnetConstants.PARAM_NUGET_DELETE_SOURCE)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--source"))
+                    yield(CommandLineArgument(it))
+                }
             }
-        }
 
-        yield(CommandLineArgument("--non-interactive"))
-    }
+            yield(CommandLineArgument("--non-interactive"))
+        }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

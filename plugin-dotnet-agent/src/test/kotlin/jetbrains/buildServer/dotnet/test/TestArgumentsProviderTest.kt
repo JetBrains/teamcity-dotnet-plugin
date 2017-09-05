@@ -36,7 +36,7 @@ class TestArgumentsProviderTest {
         val argumentsProvider = TestArgumentsProvider(ParametersServiceStub(parameters), argumentsProvider, TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
 
         // When
-        val actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -76,6 +76,9 @@ class TestArgumentsProviderTest {
     }
 
     companion object {
-        val argumentsProvider = object: ArgumentsProvider { override fun getArguments(): Sequence<CommandLineArgument> = emptySequence() }
+        val argumentsProvider = object: ArgumentsProvider {
+            override val arguments: Sequence<CommandLineArgument>
+                get() = emptySequence()
+        }
     }
 }

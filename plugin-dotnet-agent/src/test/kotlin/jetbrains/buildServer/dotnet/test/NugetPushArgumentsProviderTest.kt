@@ -34,7 +34,7 @@ class NugetPushArgumentsProviderTest {
         val argumentsProvider = NugetPushArgumentsProvider(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.nupkg")))))
 
         // When
-        val actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

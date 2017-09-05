@@ -39,7 +39,7 @@ class DotnetWorkflowComposer(
                                         TargetType.Tool,
                                         toolPath,
                                         _pathsService.getPath(PathType.WorkingDirectory),
-                                        argumentProvider.getArguments().toList(),
+                                        argumentProvider.arguments.toList(),
                                         _defaultEnvironmentVariables.variables.toList()))
                     }
                 }

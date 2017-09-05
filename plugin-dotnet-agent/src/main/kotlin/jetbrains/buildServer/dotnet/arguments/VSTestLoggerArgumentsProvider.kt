@@ -21,11 +21,12 @@ class VSTestLoggerArgumentsProvider(
         private val _dotnetLoggerProvider: DotnetLoggerProvider)
     : ArgumentsProvider {
 
-    override fun getArguments(): Sequence<CommandLineArgument> = buildSequence {
-        val loggerPath =_dotnetLoggerProvider.tryGetToolPath(Logger.VSTestLogger15);
-        if (loggerPath != null) {
-            yield(CommandLineArgument("-l=TeamCity"))
-            yield(CommandLineArgument("-a=${loggerPath.parentFile.absolutePath}"))
+    override val arguments: Sequence<CommandLineArgument>
+        get() = buildSequence {
+            val loggerPath = _dotnetLoggerProvider.tryGetToolPath(Logger.VSTestLogger15);
+            if (loggerPath != null) {
+                yield(CommandLineArgument("-l=TeamCity"))
+                yield(CommandLineArgument("-a=${loggerPath.parentFile.absolutePath}"))
+            }
         }
-    }
 }

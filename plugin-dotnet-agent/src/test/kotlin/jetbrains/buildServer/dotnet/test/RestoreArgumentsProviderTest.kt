@@ -40,7 +40,7 @@ class RestoreArgumentsProviderTest {
         val argumentsProvider = RestoreArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub(), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
 
         // When
-        val actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

@@ -37,7 +37,7 @@ class MSBuildLoggerArgumentsProviderTest {
         })
 
         // When
-        var actualArguments = argumentsProvider.getArguments().map { it.value }.toList()
+        var actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

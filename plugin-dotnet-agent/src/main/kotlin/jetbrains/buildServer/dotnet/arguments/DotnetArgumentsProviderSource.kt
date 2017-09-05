@@ -60,17 +60,18 @@ class DotnetArgumentsProviderSource(
             // projects
             yieldAll(targetArguments.arguments)
             // command specific arguments
-            yieldAll(commandSpecificArgumentsProvider.getArguments())
+            yieldAll(commandSpecificArgumentsProvider.arguments)
             // verbosity level
-            yieldAll(_verbosityArgumentsProvider.getArguments())
+            yieldAll(_verbosityArgumentsProvider.arguments)
             // custom arguments
-            yieldAll(_customArgumentsProvider.getArguments())
+            yieldAll(_customArgumentsProvider.arguments)
             // logger
-            yieldAll(_MSBuildLoggerArgumentsProvider.getArguments())
+            yieldAll(_MSBuildLoggerArgumentsProvider.arguments)
         };
     }
 
     class CompositeArgumentsProvider(private val _arguments: Sequence<CommandLineArgument>): ArgumentsProvider{
-        override fun getArguments(): Sequence<CommandLineArgument> = _arguments;
+        override val arguments: Sequence<CommandLineArgument>
+            get() = _arguments
     }
 }
