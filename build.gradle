@@ -6,7 +6,7 @@ ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-core-plugin']
-    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '9.0'
+    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '10.0'
 }
 
 group = projectIds.group

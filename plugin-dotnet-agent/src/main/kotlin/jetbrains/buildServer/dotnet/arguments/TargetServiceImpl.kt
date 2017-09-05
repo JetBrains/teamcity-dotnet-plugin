@@ -1,21 +1,23 @@
 package jetbrains.buildServer.dotnet.arguments
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.runners.ArgumentsService
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.runners.*
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class TargetServiceImpl(
+        private val _pathsService: PathsService,
         private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService)
+        private val _argumentsService: ArgumentsService,
+        private val _pathMatcher: PathMatcher)
     : TargetService {
     override val targets: Sequence<CommandTarget>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
-                yieldAll(_argumentsService.split(it).map { CommandTarget(File(it)) });
+                val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
+                val includeRules = _argumentsService.split(it);
+                yieldAll(_pathMatcher.match(checkoutDirectory, includeRules, emptySequence()).map { CommandTarget(it)  })
             }
         }
 

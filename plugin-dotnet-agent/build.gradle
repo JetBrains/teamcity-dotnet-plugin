@@ -15,6 +15,7 @@ dependencies {
     compile project(':plugin-dotnet-common')
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+    provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
     testCompile 'org.testng:testng:6.8'
     testCompile 'org.jmock:jmock:2.5.1'
 }

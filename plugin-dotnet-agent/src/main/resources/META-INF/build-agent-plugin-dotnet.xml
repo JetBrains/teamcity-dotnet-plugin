@@ -10,6 +10,7 @@
     <bean class="jetbrains.buildServer.runners.FileSystemServiceImpl"/>
     <bean class="jetbrains.buildServer.runners.PathsServiceImpl"/>
     <bean class="jetbrains.buildServer.runners.LoggerServiceImpl"/>
+    <bean class="jetbrains.buildServer.runners.AntPathMatcher"/>
     <bean class="jetbrains.buildServer.runners.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
     <bean class="jetbrains.buildServer.runners.WorkflowSessionImpl" scope="prototype">
         <constructor-arg ref="layeredWorkflowComposer"/>
