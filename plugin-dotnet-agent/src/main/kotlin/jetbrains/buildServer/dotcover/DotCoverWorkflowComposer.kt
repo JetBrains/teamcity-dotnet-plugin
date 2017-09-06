@@ -91,7 +91,7 @@ class DotCoverWorkflowComposer(
     companion object {
         internal val DotCoverExecutableFile = "dotCover.exe"
         internal val DotCoverToolName = "dotcover"
-        internal val DotCoverProjectExtension = ".dot—over"
+        internal val DotCoverProjectExtension = ".dotCover"
         internal val DotCoverSnapshotExtension = ".dcvr"
     }
 }
