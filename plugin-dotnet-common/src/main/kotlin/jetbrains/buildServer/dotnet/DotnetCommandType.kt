@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
-enum class DotnetCommand(
-        val command: String,
+enum class DotnetCommandType(
+        val id: String,
         val args: Sequence<String>) {
     Build("build", sequenceOf("build")),
     Pack("pack", sequenceOf("pack")),

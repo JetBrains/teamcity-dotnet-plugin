@@ -5,26 +5,20 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet nuget delete command.
- */
-
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class NugetDeleteArgumentsProvider(
+class NugetDeleteCommand(
         private val _parametersService: ParametersService)
-    : DotnetCommandArgumentsProvider {
+    : DotnetCommand {
 
-    override val command: DotnetCommand
-        get() = DotnetCommand.NuGetDelete
+    override val commandType: DotnetCommandType
+        get() = DotnetCommandType.NuGetDelete
 
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
@@ -53,6 +47,8 @@ class NugetDeleteArgumentsProvider(
 
             yield(CommandLineArgument("--non-interactive"))
         }
+
+    override fun isSuccess(exitCode: Int): Boolean = exitCode == 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

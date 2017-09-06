@@ -44,12 +44,12 @@ class DotnetRunnerJsonDiscoveryExtension(private val myModelParser: DotnetModelP
     private fun discover(project: Project, fullName: String): DiscoveredObject? {
         if (!StringUtil.isEmpty(project.testRunner)) {
             return DiscoveredObject(DotnetConstants.RUNNER_TYPE, mapOf(
-                    Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Test.command),
+                    Pair(DotnetConstants.PARAM_COMMAND, DotnetCommandType.Test.id),
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
         }
 
         return DiscoveredObject(DotnetConstants.RUNNER_TYPE, mapOf(
-                Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Build.command),
+                Pair(DotnetConstants.PARAM_COMMAND, DotnetCommandType.Build.id),
                 Pair(DotnetConstants.PARAM_PATHS, fullName)))
     }
 
@@ -65,7 +65,7 @@ class DotnetRunnerJsonDiscoveryExtension(private val myModelParser: DotnetModelP
 
         // Restore nuget packages
         discovered.add(0, DiscoveredObject(DotnetConstants.RUNNER_TYPE, mapOf(
-                Pair(DotnetConstants.PARAM_COMMAND, DotnetCommand.Restore.command))))
+                Pair(DotnetConstants.PARAM_COMMAND, DotnetCommandType.Restore.id))))
 
         return discovered
     }

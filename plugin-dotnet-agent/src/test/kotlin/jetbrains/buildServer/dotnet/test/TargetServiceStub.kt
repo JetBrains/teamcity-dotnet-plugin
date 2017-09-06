@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.arguments.CommandTarget
-import jetbrains.buildServer.dotnet.arguments.TargetService
+import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.TargetService
 
 class TargetServiceStub(override val targets: Sequence<CommandTarget>) : TargetService {
 }

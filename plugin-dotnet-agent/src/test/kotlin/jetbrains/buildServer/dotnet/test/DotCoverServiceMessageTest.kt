@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotcover.DotCoverServiceMessage
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.arguments.RunArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

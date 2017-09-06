@@ -1,8 +1,6 @@
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.*
-import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -17,7 +15,7 @@ class TargetServiceImpl(
             parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
                 val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
                 val includeRules = _argumentsService.split(it);
-                yieldAll(_pathMatcher.match(checkoutDirectory, includeRules, emptySequence()).map { CommandTarget(it)  })
+                yieldAll(_pathMatcher.match(checkoutDirectory, includeRules, emptySequence()).map { CommandTarget(it) })
             }
         }
 

@@ -7,15 +7,15 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet publish command.
+ * Provides parameters for dotnet publish id.
  */
 class PublishCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Publish.command
+        get() = DotnetCommandType.Publish.id
 
     override val editPage: String
         get() = "editPublishParameters.jsp"

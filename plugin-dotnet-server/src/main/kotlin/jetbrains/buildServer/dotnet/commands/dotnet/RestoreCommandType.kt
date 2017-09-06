@@ -7,15 +7,15 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet restore command.
+ * Provides parameters for dotnet restore id.
  */
 class RestoreCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Restore.command
+        get() = DotnetCommandType.Restore.id
 
     override val editPage: String
         get() = "editRestoreParameters.jsp"

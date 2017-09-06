@@ -7,15 +7,15 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet pack command.
+ * Provides parameters for dotnet pack id.
  */
 class PackCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Pack.command
+        get() = DotnetCommandType.Pack.id
 
     override val editPage: String
         get() = "editPackParameters.jsp"

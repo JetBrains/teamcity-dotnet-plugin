@@ -8,7 +8,7 @@
 package jetbrains.buildServer.dotnet.commands.dotnet
 
 import jetbrains.buildServer.dotnet.DotCoverConstants
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 import jetbrains.buildServer.requirements.Requirement
@@ -17,11 +17,11 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 import kotlin.coroutines.experimental.buildSequence
 
 /**
- * Provides parameters for dotnet test command.
+ * Provides parameters for dotnet test id.
  */
 class TestCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Test.command
+        get() = DotnetCommandType.Test.id
 
     override val editPage: String
         get() = "editTestParameters.jsp"

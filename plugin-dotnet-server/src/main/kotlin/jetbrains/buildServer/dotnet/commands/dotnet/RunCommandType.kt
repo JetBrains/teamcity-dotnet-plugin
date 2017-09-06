@@ -7,15 +7,15 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet run command.
+ * Provides parameters for dotnet run id.
  */
 class RunCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Run.command
+        get() = DotnetCommandType.Run.id
 
     override val editPage: String
         get() = "editRunParameters.jsp"

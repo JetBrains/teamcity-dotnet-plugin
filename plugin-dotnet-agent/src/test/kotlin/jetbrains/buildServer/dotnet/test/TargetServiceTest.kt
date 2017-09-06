@@ -1,13 +1,9 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotcover.CoverageFilter
-import jetbrains.buildServer.dotcover.CoverageFilterProvider
-import jetbrains.buildServer.dotcover.CoverageFilterProviderImpl
-import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.arguments.CommandTarget
-import jetbrains.buildServer.dotnet.arguments.TargetService
-import jetbrains.buildServer.dotnet.arguments.TargetServiceImpl
+import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.TargetService
+import jetbrains.buildServer.dotnet.TargetServiceImpl
 import jetbrains.buildServer.runners.*
 import org.jmock.Expectations
 import org.jmock.Mockery

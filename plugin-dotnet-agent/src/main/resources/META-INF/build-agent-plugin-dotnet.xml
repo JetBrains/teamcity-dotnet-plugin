@@ -27,35 +27,35 @@
 
     <!-- dotnet workflow composer -->
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-        <constructor-arg ref="dotnetArgumentsProviderSource"/>
+        <constructor-arg ref="dotnetCommandSet"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
     <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetLoggerProviderImpl"/>
 
     <!--Dotnet arguments' providers-->
-    <bean class="jetbrains.buildServer.dotnet.arguments.DotnetArgumentsProviderSource" id="dotnetArgumentsProviderSource">
+    <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet">
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
         <constructor-arg ref="dotnetVerbosityArgumentsProvider"/>
     </bean>
-    <bean class="jetbrains.buildServer.dotnet.arguments.TargetServiceImpl" />
-    <bean class="jetbrains.buildServer.dotnet.arguments.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.arguments.VSTestLoggerArgumentsProvider" id="vsTestLoggerArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.arguments.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.arguments.VerbosityArgumentsProvider" id="dotnetVerbosityArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
+    <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vsTestLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.VerbosityArgumentsProvider" id="dotnetVerbosityArgumentsProvider" />
 
-    <bean class="jetbrains.buildServer.dotnet.arguments.BuildArgumentsProvider" id="dotnetBuildArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.NugetDeleteArgumentsProvider" id="dotnetNugetDeleteArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.NugetPushArgumentsProvider" id="dotnetNugetPushArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.PackArgumentsProvider" id="dotnetPackArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.PublishArgumentsProvider" id="dotnetPublishArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.RestoreArgumentsProvider" id="dotnetRestoreArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.RunArgumentsProvider" id="dotnetRunArgumentsProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.arguments.TestArgumentsProvider" id="dotnetTestArgumentsProvider">
+    <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
         <constructor-arg ref="vsTestLoggerArgumentsProvider"/>
     </bean>
-    <bean class="jetbrains.buildServer.dotnet.arguments.CleanArgumentsProvider" id="dotnetCleanArgumentsProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
     <!-- dotCover workflow composer -->
     <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer" />

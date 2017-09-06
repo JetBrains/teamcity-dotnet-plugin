@@ -1,8 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.arguments.CustomArgumentsProvider
-import jetbrains.buildServer.dotnet.arguments.VerbosityArgumentsProvider
+import jetbrains.buildServer.dotnet.CustomArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

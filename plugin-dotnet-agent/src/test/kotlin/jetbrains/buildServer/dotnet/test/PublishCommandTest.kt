@@ -1,15 +1,12 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.arguments.CommandTarget
-import jetbrains.buildServer.dotnet.arguments.PublishArgumentsProvider
+import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class PublishArgumentsProviderTest {
+class PublishCommandTest {
     @DataProvider
     fun testPublishArgumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -38,10 +35,10 @@ class PublishArgumentsProviderTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = PublishArgumentsProvider(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
+        val command = PublishCommand(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
 
         // When
-        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
+        val actualArguments = command.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -58,25 +55,47 @@ class PublishArgumentsProviderTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it )) }.asSequence()
-        val argumentsProvider = PublishArgumentsProvider(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
+        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
+        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
 
         // When
-        val actualArguments = argumentsProvider.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
+        val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 
     @Test
-    fun shouldProvideCommand() {
+    fun shouldProvideCommandType() {
         // Given
-        val argumentsProvider = PublishArgumentsProvider(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
 
         // When
-        val actualCommand = argumentsProvider.command
+        val actualCommand = command.commandType
 
         // Then
-        Assert.assertEquals(actualCommand, DotnetCommand.Publish)
+        Assert.assertEquals(actualCommand, DotnetCommandType.Publish)
+    }
+
+    @DataProvider
+    fun checkSuccessData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(0, true),
+                arrayOf(1, false),
+                arrayOf(99, false),
+                arrayOf(-1, false),
+                arrayOf(-99, false))
+    }
+
+    @Test(dataProvider = "checkSuccessData")
+    fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
+        // Given
+        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+
+        // When
+        val actualResult = command.isSuccess(exitCode)
+
+        // Then
+        Assert.assertEquals(actualResult, expectedResult)
     }
 }

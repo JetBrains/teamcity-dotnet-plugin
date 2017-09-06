@@ -7,17 +7,17 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.CommandType
 import jetbrains.buildServer.serverSide.InvalidProperty
 
 /**
- * Provides parameters for dotnet nuget delete command.
+ * Provides parameters for dotnet nuget delete id.
  */
 class NugetDeleteCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.NuGetDelete.command
+        get() = DotnetCommandType.NuGetDelete.id
 
     override val editPage: String
         get() = "editNugetDeleteParameters.jsp"

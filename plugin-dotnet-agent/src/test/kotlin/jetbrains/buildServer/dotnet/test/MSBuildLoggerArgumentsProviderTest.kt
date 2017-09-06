@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetLoggerProvider
 import jetbrains.buildServer.dotnet.Logger
-import jetbrains.buildServer.dotnet.arguments.MSBuildLoggerArgumentsProvider
+import jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

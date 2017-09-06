@@ -5,57 +5,65 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet nuget push command.
- */
-
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class NugetPushArgumentsProvider(
+class PackCommand(
         private val _parametersService: ParametersService,
         private val _projectService: TargetService)
-    : DotnetCommandArgumentsProvider {
+    : DotnetCommand {
 
-    override val command: DotnetCommand
-        get() = DotnetCommand.NuGetPush
+    override val commandType: DotnetCommandType
+        get() = DotnetCommandType.Pack
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_NUGET_PUSH_API_KEY)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--api-key"))
+                    yield(CommandLineArgument("--configuration"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_NUGET_PUSH_SOURCE)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_PACK_OUTPUT)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--source"))
+                    yield(CommandLineArgument("--output"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-symbols"))
-                yield(CommandLineArgument("true"))
+            parameters(DotnetConstants.PARAM_PACK_TEMP)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--build-base-path"))
+                    yield(CommandLineArgument(it))
+                }
             }
 
-            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--disable-buffering"))
-                yield(CommandLineArgument("true"))
+            parameters(DotnetConstants.PARAM_PACK_VERSION_SUFFIX)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--version-suffix"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            if (parameters(DotnetConstants.PARAM_PACK_NO_BUILD, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--no-build"))
+            }
+
+            if (parameters(DotnetConstants.PARAM_PACK_SERVICEABLE, "").trim().toBoolean()) {
+                yield(CommandLineArgument("--serviceable"))
             }
         }
+
+    override fun isSuccess(exitCode: Int): Boolean = exitCode == 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

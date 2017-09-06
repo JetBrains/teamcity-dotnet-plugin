@@ -21,6 +21,7 @@ class WorkflowSessionImpl(
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null;
     private var _lastResult: CommandLineResult? = null
+    private var _buildFinishedStatus: BuildFinishedStatus? = null
 
     override fun sessionStarted() = Unit
 
@@ -28,7 +29,7 @@ class WorkflowSessionImpl(
         var commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator();
         _commandLinesIterator = commandLinesIterator;
 
-        if(!commandLinesIterator.hasNext()) {
+        if (_buildFinishedStatus != null || !commandLinesIterator.hasNext()) {
             return null
         }
 
@@ -47,7 +48,11 @@ class WorkflowSessionImpl(
                 _argumentsService)
     }
 
-    override fun sessionFinished(): BuildFinishedStatus? = BuildFinishedStatus.FINISHED_SUCCESS
+    override fun abort(buildFinishedStatus: BuildFinishedStatus) {
+        _buildFinishedStatus = buildFinishedStatus
+    }
+
+    override fun sessionFinished(): BuildFinishedStatus? = _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
 
     override val lastResult: CommandLineResult
         get() = _lastResult ?: throw RunBuildException("There are no any results yet")

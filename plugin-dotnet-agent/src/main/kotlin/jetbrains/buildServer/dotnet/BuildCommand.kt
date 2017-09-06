@@ -5,27 +5,21 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet build command.
- */
-
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class BuildArgumentsProvider(
+class BuildCommand(
         private val _parametersService: ParametersService,
         private val _projectService: TargetService)
-    : DotnetCommandArgumentsProvider {
+    : DotnetCommand {
 
-    override val command: DotnetCommand
-        get() = DotnetCommand.Build
+    override val commandType: DotnetCommandType
+        get() = DotnetCommandType.Build
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
@@ -75,6 +69,9 @@ class BuildArgumentsProvider(
                 }
             }
         }
+
+
+    override fun isSuccess(exitCode: Int): Boolean = exitCode == 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

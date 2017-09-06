@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.runners.CommandLineArgument
 

@@ -1,7 +1,5 @@
-package jetbrains.buildServer.dotnet.arguments
+package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.ArgumentsProvider
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
@@ -13,18 +11,15 @@ import kotlin.coroutines.experimental.buildSequence
  */
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class VerbosityArgumentsProvider(
+class CustomArgumentsProvider(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService)
     : ArgumentsProvider {
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--verbosity"))
-                    yield(CommandLineArgument(it))
-                }
+            parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
+                yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
             }
         }
 

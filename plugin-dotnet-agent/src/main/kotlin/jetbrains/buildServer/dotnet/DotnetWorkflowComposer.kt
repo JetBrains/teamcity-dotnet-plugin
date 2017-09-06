@@ -1,8 +1,8 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.dotnet.arguments.*
 import jetbrains.buildServer.runners.*
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -10,7 +10,7 @@ import kotlin.coroutines.experimental.buildSequence
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
-        private val _dotnetArgumentsProviderSource: ArgumentsProviderSource) : WorkflowComposer {
+        private val _dotnetCommandSet: CommandSet) : WorkflowComposer {
 
     override val target: TargetType
         get() = TargetType.Tool
@@ -33,14 +33,18 @@ class DotnetWorkflowComposer(
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {
-                    for (argumentProvider in _dotnetArgumentsProviderSource) {
+                    for (command in _dotnetCommandSet.commands) {
                         yield(
                                 CommandLine(
                                         TargetType.Tool,
                                         toolPath,
                                         _pathsService.getPath(PathType.WorkingDirectory),
-                                        argumentProvider.arguments.toList(),
+                                        command.arguments.toList(),
                                         _defaultEnvironmentVariables.variables.toList()))
+
+                        if (context.lastResult.isCompleted && !command.isSuccess(context.lastResult.exitCode)) {
+                            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                        }
                     }
                 }
         )

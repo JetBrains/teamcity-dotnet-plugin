@@ -7,15 +7,15 @@
 
 package jetbrains.buildServer.dotnet.commands.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet build command.
+ * Provides parameters for dotnet build id.
  */
 class BuildCommandType : CommandType() {
     override val name: String
-        get() = DotnetCommand.Build.command
+        get() = DotnetCommandType.Build.id
 
     override val editPage: String
         get() = "editBuildParameters.jsp"
