@@ -15,9 +15,6 @@ import kotlin.coroutines.experimental.buildSequence
 class DotnetCommandSet(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
-        private val _MSBuildLoggerArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        private val _verbosityArgumentsProvider: ArgumentsProvider,
         commands: List<DotnetCommand>)
     : CommandSet {
 
@@ -58,14 +55,8 @@ class DotnetCommandSet(
             yieldAll(command.commandType.args.map { CommandLineArgument(it) })
             // projects
             yieldAll(targetArguments.arguments)
-            // id specific arguments
-            yieldAll(command.arguments)
-            // verbosity level
-            yieldAll(_verbosityArgumentsProvider.arguments)
-            // custom arguments
-            yieldAll(_customArgumentsProvider.arguments)
-            // logger
-            yieldAll(_MSBuildLoggerArgumentsProvider.arguments)
+            // command specific arguments
+            yieldAll(command.specificArguments)
         };
     }
 
@@ -77,7 +68,7 @@ class DotnetCommandSet(
         override val commandType: DotnetCommandType
             get() = _command.commandType
 
-        override val arguments: Sequence<CommandLineArgument>
+        override val specificArguments: Sequence<CommandLineArgument>
             get() = _arguments
 
         override val targetArguments: Sequence<TargetArguments>

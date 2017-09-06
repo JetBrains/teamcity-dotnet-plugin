@@ -1,12 +1,11 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.BuildCommand
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.NugetDeleteCommand
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.runners.CommandLineArgument
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class NugetDeleteCommandTest {
     @DataProvider
@@ -17,7 +16,7 @@ class NugetDeleteCommandTest {
                         DotnetConstants.PARAM_NUGET_DELETE_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_DELETE_SOURCE to "http://jb.com"),
                         listOf("id", "version", "--api-key", "key",
-                                "--source", "http://jb.com", "--non-interactive"))
+                                "--source", "http://jb.com", "--non-interactive", "customArg1"))
         )
     }
 
@@ -26,10 +25,10 @@ class NugetDeleteCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = NugetDeleteCommand(ParametersServiceStub(parameters))
+        val command = createCommand(parameters = parameters, arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -38,7 +37,7 @@ class NugetDeleteCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val command = NugetDeleteCommand(ParametersServiceStub(emptyMap()))
+        val command = createCommand()
 
         // When
         val actualCommand = command.commandType
@@ -60,7 +59,7 @@ class NugetDeleteCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = NugetDeleteCommand(ParametersServiceStub(emptyMap()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -68,4 +67,11 @@ class NugetDeleteCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            NugetDeleteCommand(
+                    ParametersServiceStub(parameters),
+                    DotnetCommonArgumentsProviderStub(arguments))
 }

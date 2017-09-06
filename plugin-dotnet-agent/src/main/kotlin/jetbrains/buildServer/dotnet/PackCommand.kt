@@ -15,7 +15,8 @@ import kotlin.coroutines.experimental.buildSequence
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class PackCommand(
         private val _parametersService: ParametersService,
-        private val _projectService: TargetService)
+        private val _projectService: TargetService,
+        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider)
     : DotnetCommand {
 
     override val commandType: DotnetCommandType
@@ -24,7 +25,7 @@ class PackCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val arguments: Sequence<CommandLineArgument>
+    override val specificArguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
@@ -61,6 +62,8 @@ class PackCommand(
             if (parameters(DotnetConstants.PARAM_PACK_SERVICEABLE, "").trim().toBoolean()) {
                 yield(CommandLineArgument("--serviceable"))
             }
+
+            yieldAll(_commonArgumentsProvider.arguments)
         }
 
     override fun isSuccess(exitCode: Int): Boolean = exitCode == 0

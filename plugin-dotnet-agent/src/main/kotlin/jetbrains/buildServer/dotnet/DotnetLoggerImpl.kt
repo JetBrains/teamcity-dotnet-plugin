@@ -6,10 +6,10 @@ import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 import java.io.File
 
-class DotnetLoggerProviderImpl(
+class DotnetLoggerImpl(
         private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService)
-    : DotnetLoggerProvider {
+    : DotnetLogger {
 
     override fun tryGetToolPath(logger: Logger): File? {
         val loggerHome =_parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)

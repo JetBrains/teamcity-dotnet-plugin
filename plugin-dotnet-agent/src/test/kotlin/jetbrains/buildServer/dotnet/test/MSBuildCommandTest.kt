@@ -7,32 +7,20 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class RestoreCommandTest {
+class MSBuildCommandTest {
     @DataProvider
-    fun testRestoreArgumentsData(): Array<Array<Any>> {
+    fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("customArg1")),
+                        listOf("msbuildlog", "customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_RESTORE_PACKAGES, "packages/"),
-                        Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "false")),
-                        listOf("--packages", "packages/", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "true")),
-                        listOf("--disable-parallel", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com")),
-                        listOf("--source", "http://jb.com", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com\nhttp://jb.ru")),
-                        listOf("--source", "http://jb.com", "--source", "http://jb.ru", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com http://jb.ru")),
-                        listOf("--source", "http://jb.com", "--source", "http://jb.ru", "customArg1")),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_RESTORE_NO_CACHE to " tRue",
-                        DotnetConstants.PARAM_RESTORE_IGNORE_FAILED to "True ",
-                        DotnetConstants.PARAM_RESTORE_ROOT_PROJECT to "true"),
-                        listOf("--no-cache", "--ignore-failed-sources", "--no-dependencies", "customArg1")))
+                        Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "restore;build"),
+                        Pair(DotnetConstants.PARAM_MSBUILD_PLATFORM, "x86"),
+                        Pair(DotnetConstants.PARAM_MSBUILD_CONFIG, "Release")),
+                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "msbuildlog", "customArg1")))
     }
 
-    @Test(dataProvider = "testRestoreArgumentsData")
+    @Test(dataProvider = "testBuildArgumentsData")
     fun shouldGetArguments(
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
@@ -75,7 +63,7 @@ class RestoreCommandTest {
         val actualCommand = command.commandType
 
         // Then
-        Assert.assertEquals(actualCommand, DotnetCommandType.Restore)
+        Assert.assertEquals(actualCommand, DotnetCommandType.MSBuild)
     }
 
     @DataProvider
@@ -104,9 +92,9 @@ class RestoreCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
-            RestoreCommand(
+            MSBuildCommand(
                     ParametersServiceStub(parameters),
-                    ArgumentsServiceStub(),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("msbuildlog"))),
                     DotnetCommonArgumentsProviderStub(arguments))
 }

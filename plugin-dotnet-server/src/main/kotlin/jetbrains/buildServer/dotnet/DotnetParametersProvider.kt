@@ -188,9 +188,17 @@ class DotnetParametersProvider {
     val dotCoverArguments: String
         get() = DotCoverConstants.PARAM_ARGUMENTS
 
+    val msbuildTargetsKey: String
+        get() = DotnetConstants.PARAM_MSBUILD_TARGETS
+
+    val msbuildConfigKey: String
+        get() = DotnetConstants.PARAM_MSBUILD_CONFIG
+
+    val msbuildPlatformKey: String
+        get() = DotnetConstants.PARAM_MSBUILD_PLATFORM
+
     companion object {
         val commandTypes: Map<String, CommandType> = listOf(
-                CleanCommandType(),
                 RestoreCommandType(),
                 BuildCommandType(),
                 TestCommandType(),
@@ -198,7 +206,9 @@ class DotnetParametersProvider {
                 PackCommandType(),
                 NugetPushCommandType(),
                 NugetDeleteCommandType(),
-                RunCommandType()
+                CleanCommandType(),
+                RunCommandType(),
+                MSBuildCommandType()
         ).associateBy { it.name }
     }
 }

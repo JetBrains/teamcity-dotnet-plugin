@@ -1,9 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.BuildCommand
-import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.runners.CommandLineArgument
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -13,18 +11,19 @@ class BuildCommandTest {
     @DataProvider
     fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), emptyList<String>()),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                        listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_BUILD_FRAMEWORK, "dnxcore50"),
                         Pair(DotnetConstants.PARAM_BUILD_CONFIG, "Release")),
-                        listOf("--framework", "dnxcore50", "--configuration", "Release")),
+                        listOf("--framework", "dnxcore50", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_BUILD_OUTPUT, "output/")),
-                        listOf("--output", "output/")),
+                        listOf("--output", "output/", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_BUILD_NON_INCREMENTAL to " true",
                         DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES to "True "),
-                        listOf("--no-incremental", "--no-dependencies")))
+                        listOf("--no-incremental", "--no-dependencies", "customArg1")))
     }
 
     @Test(dataProvider = "testBuildArgumentsData")
@@ -32,10 +31,10 @@ class BuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = BuildCommand(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -52,8 +51,7 @@ class BuildCommandTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
-        val command = BuildCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
+        val command = createCommand(targets = targets.asSequence())
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -65,10 +63,10 @@ class BuildCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val argumentsProvider = BuildCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
-        val actualCommand = argumentsProvider.commandType
+        val actualCommand = command.commandType
 
         // Then
         Assert.assertEquals(actualCommand, DotnetCommandType.Build)
@@ -87,7 +85,7 @@ class BuildCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = BuildCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -95,4 +93,13 @@ class BuildCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            targets: Sequence<String> = emptySequence(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            BuildCommand(
+                ParametersServiceStub(parameters),
+                TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                DotnetCommonArgumentsProviderStub(arguments))
 }

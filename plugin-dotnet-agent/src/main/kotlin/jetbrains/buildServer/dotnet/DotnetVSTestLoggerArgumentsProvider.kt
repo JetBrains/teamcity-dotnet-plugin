@@ -1,15 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.ArgumentsProvider
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetLoggerProvider
-import jetbrains.buildServer.dotnet.Logger
 import jetbrains.buildServer.runners.CommandLineArgument
-import jetbrains.buildServer.runners.FileSystemService
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
-import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -17,8 +8,8 @@ import kotlin.coroutines.experimental.buildSequence
  */
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class VSTestLoggerArgumentsProvider(
-        private val _dotnetLoggerProvider: DotnetLoggerProvider)
+class DotnetVSTestLoggerArgumentsProvider(
+        private val _dotnetLoggerProvider: DotnetLogger)
     : ArgumentsProvider {
 
     override val arguments: Sequence<CommandLineArgument>

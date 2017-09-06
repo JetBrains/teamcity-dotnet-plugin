@@ -1,12 +1,12 @@
 package jetbrains.buildServer.dotnet.test
 
+import jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.VerbosityArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class VerbosityArgumentsProviderTest {
+class DotnetCommonArgumentsProviderTest {
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -25,7 +25,7 @@ class VerbosityArgumentsProviderTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = VerbosityArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val argumentsProvider = DotnetCommonArgumentsProviderImpl(ParametersServiceStub(parameters), DotnetCommonArgumentsProviderStub(), DotnetCommonArgumentsProviderStub())
 
         // When
         val actualArguments = argumentsProvider.arguments.map { it.value }.toList()

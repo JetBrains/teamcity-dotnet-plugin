@@ -17,18 +17,12 @@ import org.testng.annotations.Test
 
 class DotnetCommandSetTest {
     private var _ctx: Mockery? = null
-    private var _MSBuildLoggerArgumentsProvider: ArgumentsProvider? = null
-    private var _customArgumentsProvider: ArgumentsProvider? = null
-    private var _verbosityArgumentsProvider: ArgumentsProvider? = null
     private var _buildCommand: DotnetCommand? = null
     private var _cleanCommand: DotnetCommand? = null
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _MSBuildLoggerArgumentsProvider = _ctx!!.mock<ArgumentsProvider>(ArgumentsProvider::class.java, "MSBuildLoggerArgumentsProvider")
-        _customArgumentsProvider = _ctx!!.mock<ArgumentsProvider>(ArgumentsProvider::class.java, "CustomArgumentsProvider")
-        _verbosityArgumentsProvider = _ctx!!.mock<ArgumentsProvider>(ArgumentsProvider::class.java, "VerbosityArgumentsProvider")
         _buildCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
         _cleanCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
     }
@@ -36,8 +30,8 @@ class DotnetCommandSetTest {
     @DataProvider
     fun argumentsData(): Array<Array<Any?>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2", "VerbosityArg1", "VerbosityArg2", "CustomArg1", "CustomArg2", "MSBuildArg1", "MSBuildArg2"), null),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("build", "my.csprog", "BuildArg1", "BuildArg2", "VerbosityArg1", "VerbosityArg2", "CustomArg1", "CustomArg2", "MSBuildArg1", "MSBuildArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("build", "my.csprog", "BuildArg1", "BuildArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "send")), emptyList<String>() as Any?, Regex("Unknown dotnet command type \"send\"")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, Regex("Dotnet id name is empty")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "")), emptyList<String>() as Any?, Regex("Dotnet id name is empty")),
@@ -52,19 +46,10 @@ class DotnetCommandSetTest {
         // Given
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ArgumentsProvider>(_MSBuildLoggerArgumentsProvider).arguments
-                will(returnValue(sequenceOf(CommandLineArgument("MSBuildArg1"), CommandLineArgument("MSBuildArg2"))))
-
-                oneOf<ArgumentsProvider>(_customArgumentsProvider).arguments
-                will(returnValue(sequenceOf(CommandLineArgument("CustomArg1"), CommandLineArgument("CustomArg2"))))
-
-                oneOf<ArgumentsProvider>(_verbosityArgumentsProvider).arguments
-                will(returnValue(sequenceOf(CommandLineArgument("VerbosityArg1"), CommandLineArgument("VerbosityArg2"))))
-
                 allowing<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
 
-                allowing<DotnetCommand>(_buildCommand).arguments
+                allowing<DotnetCommand>(_buildCommand).specificArguments
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
@@ -73,7 +58,7 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_cleanCommand).commandType
                 will(returnValue(DotnetCommandType.Clean))
 
-                allowing<DotnetCommand>(_cleanCommand).arguments
+                allowing<DotnetCommand>(_cleanCommand).specificArguments
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
 
                 allowing<DotnetCommand>(_cleanCommand).targetArguments
@@ -84,15 +69,12 @@ class DotnetCommandSetTest {
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
                 ArgumentsServiceStub(),
-                _MSBuildLoggerArgumentsProvider!!,
-                _customArgumentsProvider!!,
-                _verbosityArgumentsProvider!!,
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When
         var actualArguments: List<String> = emptyList();
         try {
-            actualArguments = dotnetCommandSet.commands.flatMap { it.arguments }.map { it.value }.toList()
+            actualArguments = dotnetCommandSet.commands.flatMap { it.specificArguments}.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
@@ -117,7 +99,7 @@ class DotnetCommandSetTest {
                 oneOf<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
 
-                allowing<DotnetCommand>(_buildCommand).arguments
+                allowing<DotnetCommand>(_buildCommand).specificArguments
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
@@ -134,9 +116,6 @@ class DotnetCommandSetTest {
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build"))),
                 ArgumentsServiceStub(),
-                _MSBuildLoggerArgumentsProvider!!,
-                _customArgumentsProvider!!,
-                _verbosityArgumentsProvider!!,
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When

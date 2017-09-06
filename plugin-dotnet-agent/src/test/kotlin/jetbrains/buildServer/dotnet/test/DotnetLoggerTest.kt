@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetLoggerProviderImpl
+import jetbrains.buildServer.dotnet.DotnetLoggerImpl
 import jetbrains.buildServer.dotnet.Logger
 import jetbrains.buildServer.runners.FileSystemService
 import org.testng.Assert
@@ -10,7 +10,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class DotnetLoggerProviderTest {
+class DotnetLoggerTest {
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
@@ -56,7 +56,7 @@ class DotnetLoggerProviderTest {
             expectedLogger: File?,
             expectedErrorPattern: String?) {
         // Given
-        val loggerProvider = DotnetLoggerProviderImpl(ParametersServiceStub(parameters), fileSystemService)
+        val loggerProvider = DotnetLoggerImpl(ParametersServiceStub(parameters), fileSystemService)
 
         // When
         var actualLogger: File? = null;

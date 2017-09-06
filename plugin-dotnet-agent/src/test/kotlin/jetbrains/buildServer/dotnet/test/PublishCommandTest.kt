@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.runners.CommandLineArgument
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -10,23 +11,24 @@ class PublishCommandTest {
     @DataProvider
     fun testPublishArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), emptyList<String>()),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                        listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
-                        listOf("--framework", "dotcore", "--configuration", "Release")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PUBLISH_RUNTIME to " active"),
-                        listOf("--runtime", "active")),
+                        listOf("--runtime", "active", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
                         Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
-                        listOf("--configuration", "Release", "--output", "out")),
+                        listOf("--configuration", "Release", "--output", "out", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PUBLISH_OUTPUT to "c:\\build\\out",
                         DotnetConstants.PARAM_PATHS to "project.csproj",
                         DotnetConstants.PARAM_PUBLISH_CONFIG to "Release"),
-                        listOf("--configuration", "Release", "--output", "c:\\build\\out"))
+                        listOf("--configuration", "Release", "--output", "c:\\build\\out", "customArg1"))
         )
     }
 
@@ -35,10 +37,10 @@ class PublishCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = PublishCommand(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -55,8 +57,7 @@ class PublishCommandTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
-        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
+        val command = createCommand(targets = targets.asSequence())
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -68,7 +69,7 @@ class PublishCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualCommand = command.commandType
@@ -90,7 +91,7 @@ class PublishCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = PublishCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -98,4 +99,13 @@ class PublishCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            targets: Sequence<String> = emptySequence(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            PublishCommand(
+                    ParametersServiceStub(parameters),
+                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    DotnetCommonArgumentsProviderStub(arguments))
 }

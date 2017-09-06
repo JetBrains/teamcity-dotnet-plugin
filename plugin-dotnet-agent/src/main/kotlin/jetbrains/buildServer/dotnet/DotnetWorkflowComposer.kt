@@ -39,7 +39,7 @@ class DotnetWorkflowComposer(
                                         TargetType.Tool,
                                         toolPath,
                                         _pathsService.getPath(PathType.WorkingDirectory),
-                                        command.arguments.toList(),
+                                        command.specificArguments.toList(),
                                         _defaultEnvironmentVariables.variables.toList()))
 
                         if (context.lastResult.isCompleted && !command.isSuccess(context.lastResult.exitCode)) {

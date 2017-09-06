@@ -14,7 +14,8 @@ import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class NugetDeleteCommand(
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider)
     : DotnetCommand {
 
     override val commandType: DotnetCommandType
@@ -23,7 +24,7 @@ class NugetDeleteCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override val arguments: Sequence<CommandLineArgument>
+    override val specificArguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {
                 if (it.isNotBlank()) {
@@ -46,6 +47,8 @@ class NugetDeleteCommand(
             }
 
             yield(CommandLineArgument("--non-interactive"))
+
+            yieldAll(_commonArgumentsProvider.arguments)
         }
 
     override fun isSuccess(exitCode: Int): Boolean = exitCode == 0

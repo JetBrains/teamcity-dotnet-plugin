@@ -1,21 +1,16 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet for custom arguments.
- */
-
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-class VerbosityArgumentsProvider(
+class DotnetCommonArgumentsProviderImpl(
         private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService)
-    : ArgumentsProvider {
-
+        private val _msbuildLoggerArgumentsProvider: ArgumentsProvider,
+        private val _customArgumentsProvider: ArgumentsProvider)
+    : DotnetCommonArgumentsProvider {
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
@@ -24,6 +19,9 @@ class VerbosityArgumentsProvider(
                     yield(CommandLineArgument(it))
                 }
             }
+
+            yieldAll(_msbuildLoggerArgumentsProvider.arguments)
+            yieldAll(_customArgumentsProvider.arguments)
         }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)

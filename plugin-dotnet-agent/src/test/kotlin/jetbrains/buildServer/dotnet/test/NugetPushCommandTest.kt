@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.runners.CommandLineArgument
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -14,12 +15,12 @@ class NugetPushCommandTest {
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_PUSH_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_PUSH_SOURCE to "http://jb.com"),
-                        listOf("--api-key", "key", "--source", "http://jb.com")),
+                        listOf("--api-key", "key", "--source", "http://jb.com", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER to "true",
                         DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS to "true"),
-                        listOf("--no-symbols", "true", "--disable-buffering", "true"))
+                        listOf("--no-symbols", "true", "--disable-buffering", "true", "customArg1"))
         )
     }
 
@@ -28,10 +29,10 @@ class NugetPushCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = NugetPushCommand(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.nupkg")))))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -48,8 +49,7 @@ class NugetPushCommandTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
-        val command = NugetPushCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
+        val command = createCommand(targets = targets.asSequence())
 
         // When
         val args = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -61,7 +61,7 @@ class NugetPushCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val command = NugetPushCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualCommand = command.commandType
@@ -83,7 +83,7 @@ class NugetPushCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = BuildCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -91,4 +91,13 @@ class NugetPushCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            targets: Sequence<String> = emptySequence(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            NugetPushCommand(
+                    ParametersServiceStub(parameters),
+                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    DotnetCommonArgumentsProviderStub(arguments))
 }

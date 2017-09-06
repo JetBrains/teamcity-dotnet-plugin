@@ -82,6 +82,10 @@ object DotnetConstants {
     const val PARAM_CLEAN_RUNTIME = "dotnet-clean-runtime"
     const val PARAM_CLEAN_OUTPUT = "dotnet-clean-output"
 
+    const val PARAM_MSBUILD_TARGETS = "dotnet-msbuild-targets"
+    const val PARAM_MSBUILD_CONFIG = "dotnet-msbuild-config"
+    const val PARAM_MSBUILD_PLATFORM = "dotnet-msbuild-platform"
+
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
     // Integration package

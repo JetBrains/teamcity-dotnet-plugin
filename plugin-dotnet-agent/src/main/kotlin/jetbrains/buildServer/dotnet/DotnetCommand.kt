@@ -1,9 +1,13 @@
 package jetbrains.buildServer.dotnet
 
-interface DotnetCommand : ArgumentsProvider {
+import jetbrains.buildServer.runners.CommandLineArgument
+
+interface DotnetCommand {
+    val commandType: DotnetCommandType
+
     val targetArguments: Sequence<TargetArguments>
 
-    val commandType: DotnetCommandType
+    val specificArguments: Sequence<CommandLineArgument>
 
     fun isSuccess(exitCode: Int): Boolean
 }

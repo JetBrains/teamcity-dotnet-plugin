@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetLoggerProvider
+import jetbrains.buildServer.dotnet.DotnetLogger
 import jetbrains.buildServer.dotnet.Logger
 import jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider
 import org.testng.Assert
@@ -29,7 +29,7 @@ class MSBuildLoggerArgumentsProviderTest {
             loggerPath: File?,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = MSBuildLoggerArgumentsProvider(object : DotnetLoggerProvider {
+        val argumentsProvider = MSBuildLoggerArgumentsProvider(object : DotnetLogger {
             override fun tryGetToolPath(logger: Logger): File? {
                 Assert.assertEquals(logger, Logger.MSBuildLogger15)
                 return loggerPath

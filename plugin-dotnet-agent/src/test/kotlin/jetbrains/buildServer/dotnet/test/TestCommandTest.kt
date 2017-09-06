@@ -11,17 +11,18 @@ class TestCommandTest {
     @DataProvider
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), emptyList<String>()),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                        listOf("vstestlog", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
-                        listOf("--framework", "dotcore", "--configuration", "Release")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", "vstestlog", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
                         Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
-                        listOf("--runtime", "active", "--no-build")),
+                        listOf("--runtime", "active", "--no-build", "vstestlog", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
-                        listOf("--output", "out")))
+                        listOf("--output", "out", "vstestlog", "customArg1")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")
@@ -29,10 +30,10 @@ class TestCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = TestCommand(ParametersServiceStub(parameters), argumentsProvider, TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -49,8 +50,7 @@ class TestCommandTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
-        val command = TestCommand(ParametersServiceStub(emptyMap()), argumentsProvider, TargetServiceStub(targetSeq))
+        val command = createCommand(targets = targets.asSequence())
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -62,7 +62,7 @@ class TestCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val command = TestCommand(ParametersServiceStub(emptyMap()), argumentsProvider, TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualCommand = command.commandType
@@ -84,7 +84,7 @@ class TestCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = TestCommand(ParametersServiceStub(emptyMap()), argumentsProvider, TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -92,6 +92,16 @@ class TestCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            targets: Sequence<String> = emptySequence(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            TestCommand(
+                    ParametersServiceStub(parameters),
+                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
+                    DotnetCommonArgumentsProviderStub(arguments))
 
     companion object {
         val argumentsProvider = object: ArgumentsProvider {

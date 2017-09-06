@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.runners.CommandLineArgument
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -10,11 +11,13 @@ class PackCommandTest {
     @DataProvider
     fun testPackArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), emptyList<String>()),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PACK_CONFIG, "Release")), listOf("--configuration", "Release")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                        listOf("customArg1")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PACK_CONFIG, "Release")),
+                        listOf("--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PACK_OUTPUT, "output/")),
-                        listOf("--output", "output/")))
+                        listOf("--output", "output/", "customArg1")))
     }
 
     @Test(dataProvider = "testPackArgumentsData")
@@ -22,10 +25,10 @@ class PackCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = PackCommand(ParametersServiceStub(parameters), TargetServiceStub(sequenceOf(CommandTarget(File("my.csproj")))))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.specificArguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -42,8 +45,7 @@ class PackCommandTest {
     @Test(dataProvider = "projectsArgumentsData")
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
-        val targetSeq = targets.map { CommandTarget(File(it)) }.asSequence()
-        val command = PackCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(targetSeq))
+        val command = createCommand(targets = targets.asSequence())
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -55,7 +57,7 @@ class PackCommandTest {
     @Test
     fun shouldProvideCommandType() {
         // Given
-        val command = PackCommand(ParametersServiceStub(emptyMap()), TargetServiceStub(emptySequence()))
+        val command = createCommand()
 
         // When
         val actualCommand = command.commandType
@@ -77,7 +79,7 @@ class PackCommandTest {
     @Test(dataProvider = "checkSuccessData")
     fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
         // Given
-        val command = NugetDeleteCommand(ParametersServiceStub(emptyMap()))
+        val command = createCommand()
 
         // When
         val actualResult = command.isSuccess(exitCode)
@@ -85,4 +87,13 @@ class PackCommandTest {
         // Then
         Assert.assertEquals(actualResult, expectedResult)
     }
+
+    fun createCommand(
+            parameters: Map<String, String> = emptyMap(),
+            targets: Sequence<String> = emptySequence(),
+            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            PackCommand(
+                    ParametersServiceStub(parameters),
+                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    DotnetCommonArgumentsProviderStub(arguments))
 }
