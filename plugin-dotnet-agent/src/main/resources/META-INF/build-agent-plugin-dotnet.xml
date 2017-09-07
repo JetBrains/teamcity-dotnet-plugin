@@ -39,6 +39,7 @@
     <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
 
     <bean class="jetbrains.buildServer.dotnet.DotnetVSTestLoggerArgumentsProvider" id="dotnetVSTestLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msbuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
         <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
@@ -58,6 +59,7 @@
     <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
     <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
         <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
+        <constructor-arg ref="msbuildVSTestLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     </bean>
 

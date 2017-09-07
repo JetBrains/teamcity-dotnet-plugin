@@ -19,10 +19,11 @@ import jetbrains.buildServer.web.openapi.PluginDescriptor
 /**
  * Dotnet runner definition.
  */
-class DotnetRunnerRunType(private val pluginDescriptor: PluginDescriptor,
+class DotnetRunnerRunType(private val _pluginDescriptor: PluginDescriptor,
                           runTypeRegistry: RunTypeRegistry) : RunType() {
 
     init {
+        _pluginDescriptor.pluginResourcesPath
         runTypeRegistry.registerRunType(this)
     }
 
@@ -51,11 +52,11 @@ class DotnetRunnerRunType(private val pluginDescriptor: PluginDescriptor,
     }
 
     override fun getEditRunnerParamsJspFilePath(): String? {
-        return pluginDescriptor.getPluginResourcesPath("editDotnetParameters.jsp")
+        return _pluginDescriptor.getPluginResourcesPath("editDotnetParameters.jsp")
     }
 
     override fun getViewRunnerParamsJspFilePath(): String? {
-        return pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
+        return _pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
     }
 
     override fun getDefaultRunnerProperties(): Map<String, String>? {

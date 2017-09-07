@@ -10,6 +10,7 @@ class MSBuildCommand(
         private val _parametersService: ParametersService,
         private val _projectService: TargetService,
         private val _msbuildLoggerArgumentsProvider: ArgumentsProvider,
+        private val _vsTestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider)
     : DotnetCommand {
 
@@ -46,10 +47,11 @@ class MSBuildCommand(
             }
 
             yieldAll(_msbuildLoggerArgumentsProvider.arguments)
+            yieldAll(_vsTestLoggerArgumentsProvider.arguments)
             yieldAll(_customArgumentsProvider.arguments)
         }
 
-    override fun isSuccess(exitCode: Int): Boolean = exitCode == 0
+    override fun isSuccess(exitCode: Int): Boolean = exitCode >= 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

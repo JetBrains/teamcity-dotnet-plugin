@@ -1,12 +1,14 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetLogger
+import jetbrains.buildServer.dotnet.Logger
+import jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class MSBuildLoggerArgumentsProviderTest {
+class MSBuildVSTestLoggerArgumentsProviderTest {
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
@@ -15,10 +17,10 @@ class MSBuildLoggerArgumentsProviderTest {
 
                 // Success scenario
                 arrayOf(
-                        File("logger.dll") as File?,
+                        File("loggerPath", "logger.dll") as File?,
                         listOf(
-                                "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity"))
+                                "/p:VSTestLogger=logger://teamcity",
+                                "/p:VSTestTestAdapterPath=${File("loggerPath").absolutePath}"))
         )
     }
 
@@ -27,7 +29,7 @@ class MSBuildLoggerArgumentsProviderTest {
             loggerFile: File?,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = MSBuildLoggerArgumentsProvider(DotnetLoggerStub(loggerFile))
+        val argumentsProvider = MSBuildVSTestLoggerArgumentsProvider(DotnetLoggerStub(loggerFile))
 
         // When
         var actualArguments = argumentsProvider.arguments.map { it.value }.toList()

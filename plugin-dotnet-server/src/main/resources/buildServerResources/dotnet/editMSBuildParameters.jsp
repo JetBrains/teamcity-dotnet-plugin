@@ -5,6 +5,7 @@
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
+<jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("msbuild");
@@ -49,3 +50,5 @@
         <span class="smallNote">Platform under which to build.</span>
     </td>
 </tr>
+
+<jsp:include page="${teamcityPluginResourcesPath}/dotnet/editDotCoverParameters.jsp"><jsp:param name="prefix" value="msbuild"/></jsp:include>

@@ -12,12 +12,12 @@ class MSBuildCommandTest {
     fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("msbuildlog", "customArg1")),
+                        listOf("msbuildlog", "vstestlog", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "restore;build"),
                         Pair(DotnetConstants.PARAM_MSBUILD_PLATFORM, "x86"),
                         Pair(DotnetConstants.PARAM_MSBUILD_CONFIG, "Release")),
-                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "msbuildlog", "customArg1")))
+                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "msbuildlog", "vstestlog", "customArg1")))
     }
 
     @Test(dataProvider = "testBuildArgumentsData")
@@ -70,8 +70,8 @@ class MSBuildCommandTest {
     fun checkSuccessData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(0, true),
-                arrayOf(1, false),
-                arrayOf(99, false),
+                arrayOf(1, true),
+                arrayOf(99, true),
                 arrayOf(-1, false),
                 arrayOf(-99, false))
     }
@@ -96,5 +96,6 @@ class MSBuildCommandTest {
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("msbuildlog"))),
+                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     DotnetCommonArgumentsProviderStub(arguments))
 }
