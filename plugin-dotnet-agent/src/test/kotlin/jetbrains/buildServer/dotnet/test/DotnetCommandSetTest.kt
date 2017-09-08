@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.ArgumentsProvider
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetCommandSet
@@ -14,6 +13,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class DotnetCommandSetTest {
     private var _ctx: Mockery? = null
@@ -31,11 +31,11 @@ class DotnetCommandSetTest {
     fun argumentsData(): Array<Array<Any?>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2"), null),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("build", "my.csprog", "BuildArg1", "BuildArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("my.csprog", "BuildArg1", "BuildArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "send")), emptyList<String>() as Any?, Regex("Unknown dotnet command type \"send\"")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, Regex("Dotnet id name is empty")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "")), emptyList<String>() as Any?, Regex("Dotnet id name is empty")),
-                arrayOf(emptyMap<String, String>(), emptyList<String>() as Any?, Regex("Dotnet id name is empty")))
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, Regex("Dotnet command name is empty")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "")), emptyList<String>() as Any?, Regex("Dotnet command name is empty")),
+                arrayOf(emptyMap<String, String>(), emptyList<String>() as Any?, Regex("Dotnet command name is empty")))
     }
 
     @Test(dataProvider = "argumentsData")
@@ -49,7 +49,10 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
 
-                allowing<DotnetCommand>(_buildCommand).specificArguments
+                allowing<DotnetCommand>(_buildCommand).toolResolver
+                will(returnValue(DotnetToolResolverStub(File("dotnet"), false)))
+
+                allowing<DotnetCommand>(_buildCommand).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
@@ -58,7 +61,10 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_cleanCommand).commandType
                 will(returnValue(DotnetCommandType.Clean))
 
-                allowing<DotnetCommand>(_cleanCommand).specificArguments
+                allowing<DotnetCommand>(_cleanCommand).toolResolver
+                will(returnValue(DotnetToolResolverStub(File("dotnet"), true)))
+
+                allowing<DotnetCommand>(_cleanCommand).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
 
                 allowing<DotnetCommand>(_cleanCommand).targetArguments
@@ -74,7 +80,7 @@ class DotnetCommandSetTest {
         // When
         var actualArguments: List<String> = emptyList();
         try {
-            actualArguments = dotnetCommandSet.commands.flatMap { it.specificArguments}.map { it.value }.toList()
+            actualArguments = dotnetCommandSet.commands.flatMap { it.arguments }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
@@ -99,13 +105,13 @@ class DotnetCommandSetTest {
                 oneOf<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
 
-                allowing<DotnetCommand>(_buildCommand).specificArguments
+                allowing<DotnetCommand>(_buildCommand).arguments
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
 
-                allowing<DotnetCommand>(_buildCommand).isSuccess(10)
+                allowing<DotnetCommand>(_buildCommand).isSuccessfulExitCode(10)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_cleanCommand).commandType
@@ -119,7 +125,7 @@ class DotnetCommandSetTest {
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When
-        var actualExitCodes = dotnetCommandSet.commands.map { it.isSuccess(10) }.toList()
+        var actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessfulExitCode(10) }.toList()
 
         // Then
         _ctx!!.assertIsSatisfied()

@@ -7,8 +7,7 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.dotnet.commands.CommandType
-import jetbrains.buildServer.dotnet.commands.dotnet.*
+import jetbrains.buildServer.dotnet.commands.*
 
 /**
  * Provides parameters for dotnet runner.
@@ -170,23 +169,29 @@ class DotnetParametersProvider {
     val integrationPackageToolTypeKey: String
         get() = DotnetConstants.PACKAGE_TYPE
 
-    val dotCoverToolType: String
+    val dotCoverToolTypeKey: String
         get() = DotCoverConstants.PARAM_TOOL_TYPE_ID
 
-    val dotCoverEnabled: String
+    val dotCoverEnabledKey: String
         get() = DotCoverConstants.PARAM_ENABLED
 
-    val dotCoverHome: String
+    val dotCoverHomeKey: String
         get() = DotCoverConstants.PARAM_HOME
 
-    val dotCoverFilters: String
+    val dotCoverFiltersKey: String
         get() = DotCoverConstants.PARAM_FILTERS
 
-    val dotCoverAttributeFilters: String
+    val dotCoverAttributeFiltersKey: String
         get() = DotCoverConstants.PARAM_ATTRIBUTE_FILTERS
 
-    val dotCoverArguments: String
+    val dotCoverArgumentsKey: String
         get() = DotCoverConstants.PARAM_ARGUMENTS
+
+    val msbuildVersionKey: String
+        get() = DotnetConstants.PARAM_MSBUILD_VERSION
+
+    val msbuildVersions: List<Tool>
+        get() = Tool.values().filter { it.type == ToolType.MSBuild }
 
     val msbuildTargetsKey: String
         get() = DotnetConstants.PARAM_MSBUILD_TARGETS
@@ -198,17 +203,18 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_MSBUILD_PLATFORM
 
     companion object {
+        val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
         val commandTypes: Map<String, CommandType> = listOf(
                 RestoreCommandType(),
                 BuildCommandType(),
-                TestCommandType(),
+                TestCommandType(dotCoverInfoProvider),
                 PublishCommandType(),
                 PackCommandType(),
                 NugetPushCommandType(),
                 NugetDeleteCommandType(),
                 CleanCommandType(),
                 RunCommandType(),
-                MSBuildCommandType()
+                MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
         ).associateBy { it.name }
     }
 }

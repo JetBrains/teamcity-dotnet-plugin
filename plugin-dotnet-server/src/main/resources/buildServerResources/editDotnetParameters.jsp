@@ -1,3 +1,4 @@
+<%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 <%@ taglib prefix="l" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -18,6 +19,7 @@
 
     BS.DotnetParametersForm = {
         appendProjectFile: [],
+        dotCoverEnabled: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j('#${params.pathsKey}');
             var value = BS.Util.trimSpaces($paths.val());
@@ -29,7 +31,46 @@
         paths: []
     };
 
+    BS.dotCover = {
+      showDotCoverElements: function() {
+        if ($j('.dotCoverCheckBox').prop('checked')) {
+          $j('#dotCoverHeader').prop('rowSpan', '5');
+          $j('#dotCoverToolType').removeClass('hidden');
+          $j('#dotCoverFilters').removeClass('hidden');
+          $j('#dotCoverAttributeFilters').removeClass('hidden');
+          $j('#dotCoverArguments').removeClass('hidden');
+        }
+        else {
+          $j('#dotCoverToolType').addClass('hidden');
+          $j('#dotCoverFilters').addClass('hidden');
+          $j('#dotCoverAttributeFilters').addClass('hidden');
+          $j('#dotCoverArguments').addClass('hidden');
+          $j('#dotCoverHeader').prop('rowSpan', '1');
+        }
+      },
+      updateDotCoverElements: function() {
+        BS.dotCover.showDotCoverElements();
+        BS.MultilineProperties.updateVisible();
+      },
+      showDotCoverSection: function() {
+        var commandName = $j('#${params.commandKey}').val();
+        var visible = BS.DotnetParametersForm.dotCoverEnabled[commandName];
+        if (visible == true)
+        {
+          $j('#dotCoverCheckBox').removeClass('hidden');
+        }
+        else
+        {
+          $j('.dotCoverCheckBox').prop('checked', false);
+          $j('#dotCoverCheckBox').addClass('hidden');
+        }
+
+        BS.dotCover.showDotCoverElements();
+      }
+    };
+
     $j(document).on('change', '#${params.commandKey}', function () {
+        debugger;
         var command = $j(this).val();
         var pathsName = BS.DotnetParametersForm.paths[command];
         var pathsRow = $j("#${params.pathsKey}-row");
@@ -40,9 +81,11 @@
         }
 
         $j(".runnerFormTable span.error").empty();
+        BS.dotCover.showDotCoverSection();
     });
 
     $j(document).on('ready', '#${params.commandKey}', function () {
+        debugger;
         $j(this).change();
     });
 </script>
@@ -92,3 +135,50 @@
         <span class="error" id="error_${params.verbosityKey}"></span>
     </td>
 </tr>
+
+<tr class="advancedSetting hidden" id="dotCoverCheckBox">
+    <th id="dotCoverHeader"><label for="${params.dotCoverToolTypeKey}">Code coverage:</label></th>
+    <td><props:checkboxProperty className="dotCoverCheckBox" name="${params.dotCoverEnabledKey}" onclick="BS.dotCover.updateDotCoverElements();"/></td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverToolType">
+    <td>
+        <jsp:include page="/tools/selector.html?toolType=${params.dotCoverToolTypeKey}&versionParameterName=${params.dotCoverHomeKey}&class=longField"/>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverFilters">
+    <label for="${params.dotCoverFiltersKey}">Filters:</label>
+    <td>
+        <c:set var="note">
+            Specify a new-line separated list of filters for code coverage. Use the <i>+:myassemblyName</i> or <i>-:myassemblyName</i> syntax to
+            include or exclude an assembly (by name, without extension) from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+        </c:set>
+        <props:multilineProperty name="${params.dotCoverFiltersKey}" className="longField" expanded="true" cols="60" rows="4" linkTitle="Assemblies Filters" note="${note}"/>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverAttributeFilters">
+    <label for="${cns.dotCoverAttributeFilters}">Attribute Filters:</label>
+    <td>
+        <c:set var="note">
+            Specify a new-line separated list of attribute filters for code coverage. Use the <i>-:attributeName</i> syntax to exclude a code marked with attributes from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+        </c:set>
+        <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}" className="longField" cols="60" rows="4" linkTitle="Attribute Filters" note="${note}"/>
+        <span class="smallNote"><strong>Supported only with dotCover 2.0 or newer</strong></span>
+    </td>
+</tr>
+
+<tr class="advancedSetting hidden" id="dotCoverArguments">
+    <label for="${params.dotCoverArgumentsKey}">Additional dotCover.exe arguments:</label>
+    <td>
+        <props:multilineProperty name="${params.dotCoverArgumentsKey}" linkTitle="Edit command line" cols="60" rows="5" />
+        <span class="smallNote">Additional commandline parameters to add to calling dotCover.exe separated by new lines.</span>
+        <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
+    </td>
+</tr>
+
+<script type="text/javascript">
+    debugger;
+    BS.dotCover.showDotCoverSection();
+</script>

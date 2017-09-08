@@ -1,13 +1,14 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.runners.CommandLineArgument
+import java.io.File
 
-interface DotnetCommand {
+interface DotnetCommand: ArgumentsProvider {
     val commandType: DotnetCommandType
+
+    val toolResolver: ToolResolver
 
     val targetArguments: Sequence<TargetArguments>
 
-    val specificArguments: Sequence<CommandLineArgument>
-
-    fun isSuccess(exitCode: Int): Boolean
+    fun isSuccessfulExitCode(exitCode: Int): Boolean
 }

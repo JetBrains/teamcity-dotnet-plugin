@@ -2,9 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.runners.*
-import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 class DotnetWorkflowComposer(
@@ -20,16 +18,6 @@ class DotnetWorkflowComposer(
             throw RunBuildException("This composer should be a root")
         }
 
-        val toolPath: File
-        try {
-            toolPath = _pathsService.getToolPath(DotnetConstants.RUNNER_TYPE)
-        }
-        catch (e: ToolCannotBeFoundException) {
-            val exception = RunBuildException(e)
-            exception.isLogStacktrace = false
-            throw exception
-        }
-
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {
@@ -37,12 +25,12 @@ class DotnetWorkflowComposer(
                         yield(
                                 CommandLine(
                                         TargetType.Tool,
-                                        toolPath,
+                                        command.toolResolver.executableFile,
                                         _pathsService.getPath(PathType.WorkingDirectory),
-                                        command.specificArguments.toList(),
+                                        command.arguments.toList(),
                                         _defaultEnvironmentVariables.variables.toList()))
 
-                        if (context.lastResult.isCompleted && !command.isSuccess(context.lastResult.exitCode)) {
+                        if (context.lastResult.isCompleted && !command.isSuccessfulExitCode(context.lastResult.exitCode)) {
                             context.abort(BuildFinishedStatus.FINISHED_FAILED)
                         }
                     }

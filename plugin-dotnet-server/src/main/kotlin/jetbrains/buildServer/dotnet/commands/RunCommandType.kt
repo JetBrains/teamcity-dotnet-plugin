@@ -5,15 +5,15 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands.dotnet
+package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet run id.
+ * Provides parameters for dotnet run command.
  */
-class RunCommandType : CommandType() {
+class RunCommandType : DotnetType() {
     override val name: String
         get() = DotnetCommandType.Run.id
 

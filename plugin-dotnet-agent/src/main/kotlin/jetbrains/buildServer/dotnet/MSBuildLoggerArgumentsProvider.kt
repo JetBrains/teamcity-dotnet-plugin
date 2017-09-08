@@ -9,12 +9,12 @@ import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class MSBuildLoggerArgumentsProvider(
-        private val _dotnetLoggerProvider: DotnetLogger)
+        private val _loggerResolver: LoggerResolver)
     : ArgumentsProvider {
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            val loggerPath = _dotnetLoggerProvider.tryGetToolPath(Logger.MSBuildLogger15);
+            val loggerPath = _loggerResolver.resolve(ToolType.MSBuild);
             if (loggerPath != null) {
                 yield(CommandLineArgument("/noconsolelogger"))
                 yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${loggerPath.absolutePath};TeamCity"))

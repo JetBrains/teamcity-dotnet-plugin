@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
-import jetbrains.buildServer.util.CollectionsUtil
 import jetbrains.buildServer.util.TimeService
 import java.io.File
 import java.io.FileFilter
@@ -16,7 +15,7 @@ class DotnetToolProviderAdapter(
         private val _nuGetService: NuGetService,
         private val _fileSystemService: FileSystemService): ServerToolProviderAdapter() {
 
-    override fun getType(): ToolType {
+    override fun getType(): jetbrains.buildServer.tools.ToolType {
         return DotnetToolTypeAdapter.Shared;
     }
 

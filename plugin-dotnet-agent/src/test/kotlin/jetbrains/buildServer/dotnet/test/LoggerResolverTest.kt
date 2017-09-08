@@ -2,21 +2,22 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetLoggerImpl
+import jetbrains.buildServer.dotnet.LoggerResolverImpl
 import jetbrains.buildServer.dotnet.Logger
+import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.runners.FileSystemService
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class DotnetLoggerTest {
+class LoggerResolverTest {
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
                 // INTEGRATION_PACKAGE_HOME runner parameter is not specified
                 arrayOf(
-                        Logger.MSBuildLogger15,
+                        Logger.V15Windows,
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
@@ -24,7 +25,7 @@ class DotnetLoggerTest {
 
                 // Success scenario
                 arrayOf(
-                        Logger.MSBuildLogger15,
+                        Logger.V15Windows,
                         VirtualFileSystemService().addFile(File(File("home", "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         File(File("home", "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
@@ -32,15 +33,15 @@ class DotnetLoggerTest {
 
                 // Has no assembly
                 arrayOf(
-                        Logger.MSBuildLogger15,
+                        Logger.V15Windows,
                         VirtualFileSystemService().addDirectory(File("home", "msbuild15")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         null,
-                        "Path \".+\" to logger was not found" as String?),
+                        "Path \".+\" to MSBuild logger was not found" as String?),
 
                 // Has no directory
                 arrayOf(
-                        Logger.MSBuildLogger15,
+                        Logger.V15Windows,
                         VirtualFileSystemService(),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         null,
@@ -56,12 +57,12 @@ class DotnetLoggerTest {
             expectedLogger: File?,
             expectedErrorPattern: String?) {
         // Given
-        val loggerProvider = DotnetLoggerImpl(ParametersServiceStub(parameters), fileSystemService)
+        val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService)
 
         // When
         var actualLogger: File? = null;
         try {
-            actualLogger = loggerProvider.tryGetToolPath(logger)
+            actualLogger = loggerProvider.resolve(ToolType.MSBuild)
         }
         catch (ex: RunBuildException) {
             if(expectedErrorPattern != null) {

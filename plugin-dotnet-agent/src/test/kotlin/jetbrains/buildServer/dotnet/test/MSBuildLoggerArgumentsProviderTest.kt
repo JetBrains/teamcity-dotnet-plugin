@@ -27,7 +27,7 @@ class MSBuildLoggerArgumentsProviderTest {
             loggerFile: File?,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = MSBuildLoggerArgumentsProvider(DotnetLoggerStub(loggerFile))
+        val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")))
 
         // When
         var actualArguments = argumentsProvider.arguments.map { it.value }.toList()

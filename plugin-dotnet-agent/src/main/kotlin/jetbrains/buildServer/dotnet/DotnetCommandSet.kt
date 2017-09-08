@@ -24,7 +24,7 @@ class DotnetCommandSet(
         get() {
             val commandName = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
             if (commandName.isNullOrBlank()) {
-                throw RunBuildException("Dotnet id name is empty")
+                throw RunBuildException("Dotnet command name is empty")
             }
 
             val command = _knownCommands[commandName] ?: throw RunBuildException("Unknown dotnet command type \"$commandName\"")
@@ -51,12 +51,15 @@ class DotnetCommandSet(
             command: DotnetCommand,
             targetArguments: TargetArguments): Sequence<CommandLineArgument> {
         return buildSequence {
-            // id
-            yieldAll(command.commandType.args.map { CommandLineArgument(it) })
+            if(command.toolResolver.isCommandRequired) {
+                // command
+                yieldAll(command.commandType.args.map { CommandLineArgument(it) })
+            }
+
             // projects
             yieldAll(targetArguments.arguments)
             // command specific arguments
-            yieldAll(command.specificArguments)
+            yieldAll(command.arguments)
         };
     }
 
@@ -68,12 +71,15 @@ class DotnetCommandSet(
         override val commandType: DotnetCommandType
             get() = _command.commandType
 
-        override val specificArguments: Sequence<CommandLineArgument>
+        override val toolResolver: ToolResolver
+            get() = _command.toolResolver
+
+        override val arguments: Sequence<CommandLineArgument>
             get() = _arguments
 
         override val targetArguments: Sequence<TargetArguments>
             get() = emptySequence<TargetArguments>()
 
-        override fun isSuccess(exitCode: Int) = _command.isSuccess(exitCode)
+        override fun isSuccessfulExitCode(exitCode: Int) = _command.isSuccessfulExitCode(exitCode)
     }
 }

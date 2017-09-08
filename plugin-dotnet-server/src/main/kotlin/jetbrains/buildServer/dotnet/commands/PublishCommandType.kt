@@ -5,21 +5,21 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands.dotnet
+package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet restore id.
+ * Provides parameters for dotnet publish command.
  */
-class RestoreCommandType : CommandType() {
+class PublishCommandType : DotnetType() {
     override val name: String
-        get() = DotnetCommandType.Restore.id
+        get() = DotnetCommandType.Publish.id
 
     override val editPage: String
-        get() = "editRestoreParameters.jsp"
+        get() = "editPublishParameters.jsp"
 
     override val viewPage: String
-        get() = "viewRestoreParameters.jsp"
+        get() = "viewPublishParameters.jsp"
 }

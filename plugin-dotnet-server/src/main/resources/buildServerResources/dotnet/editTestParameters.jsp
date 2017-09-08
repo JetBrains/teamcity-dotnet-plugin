@@ -4,10 +4,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
-<jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["test"] = "Projects";
+    BS.DotnetParametersForm.dotCoverEnabled["test"] = true;
 </script>
 
 <tr class="advancedSetting">
@@ -79,5 +79,3 @@
         <label for="${params.testNoBuildKey}">Do not build project before testing</label>
     </td>
 </tr>
-
-<jsp:include page="${teamcityPluginResourcesPath}/dotnet/editDotCoverParameters.jsp"><jsp:param name="prefix" value="test"/></jsp:include>

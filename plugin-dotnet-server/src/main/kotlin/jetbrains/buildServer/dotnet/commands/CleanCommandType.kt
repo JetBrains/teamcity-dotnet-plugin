@@ -1,12 +1,12 @@
-package jetbrains.buildServer.dotnet.commands.dotnet
+package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet clean id.
+ * Provides parameters for dotnet clean command.
  */
-class CleanCommandType : CommandType() {
+class CleanCommandType : DotnetType() {
     override val name: String
         get() = DotnetCommandType.Clean.id
 

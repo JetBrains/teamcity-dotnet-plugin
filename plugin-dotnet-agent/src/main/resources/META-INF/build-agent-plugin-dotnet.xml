@@ -31,12 +31,16 @@
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
     <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetLoggerImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
 
     <!--Dotnet arguments' providers-->
     <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
     <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
     <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver" />
+    <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
+        <constructor-arg ref="dotnetToolResolver"/>
+    </bean>
 
     <bean class="jetbrains.buildServer.dotnet.DotnetVSTestLoggerArgumentsProvider" id="dotnetVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
@@ -61,6 +65,7 @@
         <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
         <constructor-arg ref="msbuildVSTestLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+        <constructor-arg ref="msbuildToolResolver"/>
     </bean>
 
     <!-- dotCover workflow composer -->

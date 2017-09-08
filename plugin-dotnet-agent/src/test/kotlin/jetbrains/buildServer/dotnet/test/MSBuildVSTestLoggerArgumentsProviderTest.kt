@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetLogger
-import jetbrains.buildServer.dotnet.Logger
 import jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -29,7 +27,7 @@ class MSBuildVSTestLoggerArgumentsProviderTest {
             loggerFile: File?,
             expectedArguments: List<String>) {
         // Given
-        val argumentsProvider = MSBuildVSTestLoggerArgumentsProvider(DotnetLoggerStub(loggerFile))
+        val argumentsProvider = MSBuildVSTestLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")))
 
         // When
         var actualArguments = argumentsProvider.arguments.map { it.value }.toList()

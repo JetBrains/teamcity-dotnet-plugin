@@ -5,21 +5,21 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands.dotnet
+package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
- * Provides parameters for dotnet build id.
+ * Provides parameters for dotnet pack command.
  */
-class BuildCommandType : CommandType() {
+class PackCommandType : DotnetType() {
     override val name: String
-        get() = DotnetCommandType.Build.id
+        get() = DotnetCommandType.Pack.id
 
     override val editPage: String
-        get() = "editBuildParameters.jsp"
+        get() = "editPackParameters.jsp"
 
     override val viewPage: String
-        get() = "viewBuildParameters.jsp"
+        get() = "viewPackParameters.jsp"
 }

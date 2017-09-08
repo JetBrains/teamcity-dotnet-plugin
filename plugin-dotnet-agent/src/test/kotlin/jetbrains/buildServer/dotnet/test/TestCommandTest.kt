@@ -33,7 +33,7 @@ class TestCommandTest {
         val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.specificArguments.map { it.value }.toList()
+        val actualArguments = command.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -87,7 +87,7 @@ class TestCommandTest {
         val command = createCommand()
 
         // When
-        val actualResult = command.isSuccess(exitCode)
+        val actualResult = command.isSuccessfulExitCode(exitCode)
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)
@@ -101,7 +101,8 @@ class TestCommandTest {
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
-                    DotnetCommonArgumentsProviderStub(arguments))
+                    DotnetCommonArgumentsProviderStub(arguments),
+                    DotnetToolResolverStub(File("dotnet"), true))
 
     companion object {
         val argumentsProvider = object: ArgumentsProvider {

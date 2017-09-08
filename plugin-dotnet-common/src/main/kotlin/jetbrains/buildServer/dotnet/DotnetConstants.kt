@@ -14,8 +14,8 @@ import jetbrains.buildServer.agent.Constants
  */
 object DotnetConstants {
     const val RUNNER_TYPE = "dotnet"
-    const val RUNNER_DISPLAY_NAME = ".NET Core (dotnet)"
-    const val RUNNER_DESCRIPTION = "Provides build tools for .NET Core projects"
+    const val RUNNER_DISPLAY_NAME = ".NET"
+    const val RUNNER_DESCRIPTION = "Provides build tools for .NET projects"
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
@@ -82,6 +82,7 @@ object DotnetConstants {
     const val PARAM_CLEAN_RUNTIME = "dotnet-clean-runtime"
     const val PARAM_CLEAN_OUTPUT = "dotnet-clean-output"
 
+    const val PARAM_MSBUILD_VERSION = "dotnet-msbuild-version"
     const val PARAM_MSBUILD_TARGETS = "dotnet-msbuild-targets"
     const val PARAM_MSBUILD_CONFIG = "dotnet-msbuild-config"
     const val PARAM_MSBUILD_PLATFORM = "dotnet-msbuild-platform"

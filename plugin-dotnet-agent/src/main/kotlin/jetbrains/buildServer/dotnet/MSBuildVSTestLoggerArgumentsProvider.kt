@@ -9,12 +9,12 @@ import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class MSBuildVSTestLoggerArgumentsProvider(
-        private val _dotnetLoggerProvider: DotnetLogger)
+        private val _loggerResolver: LoggerResolver)
     : ArgumentsProvider {
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            val loggerPath = _dotnetLoggerProvider.tryGetToolPath(Logger.VSTestLogger15);
+            val loggerPath = _loggerResolver.resolve(ToolType.MSBuild);
             loggerPath?.parentFile?.let {
                 yield(CommandLineArgument("/p:VSTestLogger=logger://teamcity"))
                 yield(CommandLineArgument("/p:VSTestTestAdapterPath=${it.absolutePath}"))

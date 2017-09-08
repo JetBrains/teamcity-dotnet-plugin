@@ -22,5 +22,5 @@ abstract class CommandType {
 
     open fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> = emptyList()
 
-    open fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = emptySequence()
+    abstract fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement>
 }

@@ -3,7 +3,7 @@
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
         <name>dotnetcore</name>
-        <display-name>.NET Core Support</display-name>
+        <display-name>.NET Support</display-name>
         <version>@Plugin_Version@</version>
         <description>Provides build facilities for .NET Core projects</description>
         <download-url>https://github.com/JetBrains/teamcity-dotnet-plugin</download-url>

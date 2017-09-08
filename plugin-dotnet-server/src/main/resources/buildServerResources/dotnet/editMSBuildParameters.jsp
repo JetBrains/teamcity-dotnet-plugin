@@ -5,12 +5,25 @@
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
-<jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("msbuild");
     BS.DotnetParametersForm.paths["msbuild"] = "Projects";
+    BS.DotnetParametersForm.dotCoverEnabled["msbuild"] = true;
 </script>
+
+<tr class="advancedSetting">
+    <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
+    <td>
+        <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Default&gt;</props:option>
+            <c:forEach var="item" items="${params.msbuildVersions}">
+                <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+            </c:forEach>
+        </props:selectProperty>
+        <span class="error" id="error_${params.msbuildVersionKey}"></span>
+    </td>
+</tr>
 
 <tr>
     <th><label for="${params.msbuildTargetsKey}">Targets:</label></th>
@@ -50,5 +63,3 @@
         <span class="smallNote">Platform under which to build.</span>
     </td>
 </tr>
-
-<jsp:include page="${teamcityPluginResourcesPath}/dotnet/editDotCoverParameters.jsp"><jsp:param name="prefix" value="msbuild"/></jsp:include>

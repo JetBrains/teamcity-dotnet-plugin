@@ -28,7 +28,7 @@ class RunCommandTest {
         val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.specificArguments.map { it.value }.toList()
+        val actualArguments = command.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -82,10 +82,22 @@ class RunCommandTest {
         val command = createCommand()
 
         // When
-        val actualResult = command.isSuccess(exitCode)
+        val actualResult = command.isSuccessfulExitCode(exitCode)
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)
+    }
+
+    @Test
+    fun shouldProvideToolExecutableFile() {
+        // Given
+        val command = createCommand()
+
+        // When
+        val actualToolExecutableFile = command.toolResolver.executableFile
+
+        // Then
+        Assert.assertEquals(actualToolExecutableFile, File("dotnet"))
     }
 
     fun createCommand(
@@ -95,5 +107,6 @@ class RunCommandTest {
             RunCommand(
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(arguments))
+                    DotnetCommonArgumentsProviderStub(arguments),
+                    DotnetToolResolverStub(File("dotnet"), true))
 }

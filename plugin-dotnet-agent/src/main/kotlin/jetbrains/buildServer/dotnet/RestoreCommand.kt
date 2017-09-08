@@ -11,6 +11,7 @@ import jetbrains.buildServer.runners.ArgumentsService
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
+import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -18,16 +19,20 @@ class RestoreCommand(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
         private val _projectService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider)
+        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCommand {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Restore
 
+    override val toolResolver: ToolResolver
+        get() = _dotnetToolResolver
+
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val specificArguments: Sequence<CommandLineArgument>
+    override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_RESTORE_PACKAGES)?.trim()?.let {
                 if (it.isNotBlank()) {
@@ -69,7 +74,7 @@ class RestoreCommand(
             yieldAll(_commonArgumentsProvider.arguments)
         }
 
-    override fun isSuccess(exitCode: Int): Boolean = exitCode == 0
+    override fun isSuccessfulExitCode(exitCode: Int): Boolean = exitCode == 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 

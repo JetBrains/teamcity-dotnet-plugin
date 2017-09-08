@@ -5,17 +5,16 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.commands.dotnet
+package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.CommandType
 import jetbrains.buildServer.serverSide.InvalidProperty
 
 /**
- * Provides parameters for dotnet nuget push id.
+ * Provides parameters for dotnet nuget push command.
  */
-class NugetPushCommandType : CommandType() {
+class NugetPushCommandType : DotnetType() {
     override val name: String
         get() = DotnetCommandType.NuGetPush.id
 

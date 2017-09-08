@@ -1,19 +1,20 @@
-# TeamCity .NET Core Plugin
+# TeamCity .NET Plugin
 
 <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon.svg" alt=""/></a>
 
-The TeamCity .NET Core plugin provides support of the [.NET CLI](https://github.com/dotnet/cli) toolchain.
+The TeamCity .NET plugin provides support of the [.NET CLI](https://github.com/dotnet/cli) toolchain, MSBuild, VSTest.
 
-It simplifies building cross-platform applications that use frameworks and libraries like [ASP.NET Core](https://github.com/aspnet/Home) and [EF Core](https://github.com/aspnet/EntityFramework).
+It simplifies building windows and cross-platform applications that use frameworks and libraries like [ASP.NET Core](https://github.com/aspnet/Home) and [EF Core](https://github.com/aspnet/EntityFramework).
 
 # Features
 
-The plugin provides the following features for .NET Core project building:
-* the `dotnet` command build runner
-* .NET Core tools detection on build agents
+The plugin provides the following features for .NET project building:
+* `dotnet`, `MSBuild`, `VSTest` command build runner
+* .NET Core tools and MSBuild detection on build agents
 * auto-discovery of build steps
 * cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
 * supports both project.json and csproj-based projects
+* supports of code coverage
  
 # Download
 

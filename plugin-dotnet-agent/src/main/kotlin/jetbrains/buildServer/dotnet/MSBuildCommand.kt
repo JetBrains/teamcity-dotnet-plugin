@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.runners.CommandLineArgument
 import jetbrains.buildServer.runners.ParameterType
 import jetbrains.buildServer.runners.ParametersService
+import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
@@ -11,16 +12,20 @@ class MSBuildCommand(
         private val _projectService: TargetService,
         private val _msbuildLoggerArgumentsProvider: ArgumentsProvider,
         private val _vsTestLoggerArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider)
+        private val _customArgumentsProvider: ArgumentsProvider,
+        private val _msbuildToolResolver: ToolResolver)
     : DotnetCommand {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.MSBuild
 
+    override val toolResolver: ToolResolver
+        get() = _msbuildToolResolver
+
     override val targetArguments: Sequence<TargetArguments>
         get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val specificArguments: Sequence<CommandLineArgument>
+    override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_MSBUILD_TARGETS)?.trim()?.let {
                 if (it.isNotBlank()) {
@@ -51,7 +56,7 @@ class MSBuildCommand(
             yieldAll(_customArgumentsProvider.arguments)
         }
 
-    override fun isSuccess(exitCode: Int): Boolean = exitCode >= 0
+    override fun isSuccessfulExitCode(exitCode: Int): Boolean = exitCode >= 0
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 
