@@ -7,17 +7,20 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class MSBuildCommandTest {
+class VSTestCommandTest {
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("msbuildlog", "vstestlog", "customArg1")),
+                        listOf("vstestlog", "customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "restore;build"),
-                        Pair(DotnetConstants.PARAM_MSBUILD_PLATFORM, "x86"),
-                        Pair(DotnetConstants.PARAM_MSBUILD_CONFIG, "Release")),
-                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "msbuildlog", "vstestlog", "customArg1")))
+                        DotnetConstants.PARAM_VSTEST_CONFIG_FILE to "myconfig.txt",
+                        DotnetConstants.PARAM_VSTEST_TEST_NAMES to "abc,zxy",
+                        DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "TrUe",
+                        DotnetConstants.PARAM_VSTEST_PLATFORM to "x86",
+                        DotnetConstants.PARAM_VSTEST_FRAMEWORK to "net45",
+                        DotnetConstants.PARAM_VSTEST_TEST_CASE_FILTER to "myfilter"),
+                        listOf("/Settings:myconfig.txt", "/Tests:abc,zxy", "/InIsolation", "/Platform:x86", "/Framework:net45", "/TestCaseFilter:myfilter", "vstestlog", "customArg1")))
     }
 
     @Test(dataProvider = "argumentsData")
@@ -25,7 +28,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        val command = createCommand(parameters=parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
         val actualArguments = command.arguments.map { it.value }.toList()
@@ -37,9 +40,9 @@ class MSBuildCommandTest {
     @DataProvider
     fun projectsArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(listOf<String>("my.csproj") as Any, listOf<List<String>>(listOf<String>("my.csproj"))),
+                arrayOf(listOf<String>("my.dll") as Any, listOf<List<String>>(listOf<String>("my.dll"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf<String>("my.csproj", "my2.csproj") as Any, listOf<List<String>>(listOf<String>("my.csproj"), listOf<String>("my2.csproj"))))
+                arrayOf(listOf<String>("my.dll", "my2.dll") as Any, listOf<List<String>>(listOf<String>("my.dll"), listOf<String>("my2.dll"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")
@@ -63,7 +66,7 @@ class MSBuildCommandTest {
         val actualCommand = command.commandType
 
         // Then
-        Assert.assertEquals(actualCommand, DotnetCommandType.MSBuild)
+        Assert.assertEquals(actualCommand, DotnetCommandType.VSTest)
     }
 
     @DataProvider
@@ -97,18 +100,17 @@ class MSBuildCommandTest {
         val actualToolExecutableFile = command.toolResolver.executableFile
 
         // Then
-        Assert.assertEquals(actualToolExecutableFile, File("msbuild.exe"))
+        Assert.assertEquals(actualToolExecutableFile, File("vstest.console.exe"))
     }
 
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
-            MSBuildCommand(
+            VSTestCommand(
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("msbuildlog"))),
                     DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     DotnetCommonArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(File("msbuild.exe"), true))
+                    DotnetToolResolverStub(File("vstest.console.exe"), true))
 }

@@ -12,5 +12,6 @@ enum class DotnetCommandType(
     NuGetPush("nuget push", sequenceOf("nuget", "push")),
     NuGetDelete("nuget delete", sequenceOf("nuget", "delete")),
     Clean("clean", sequenceOf("clean")),
-    MSBuild("msbuild", sequenceOf("msbuild"))
+    MSBuild("msbuild", sequenceOf("msbuild")),
+    VSTest("vstest", sequenceOf("vstest"))
 }

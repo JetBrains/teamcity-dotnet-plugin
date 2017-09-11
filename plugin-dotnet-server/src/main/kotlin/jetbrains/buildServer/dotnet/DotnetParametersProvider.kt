@@ -202,9 +202,33 @@ class DotnetParametersProvider {
     val msbuildPlatformKey: String
         get() = DotnetConstants.PARAM_MSBUILD_PLATFORM
 
+    val vstestVersionKey: String
+        get() = DotnetConstants.PARAM_VSTEST_VERSION
+
+    val vstestVersions: List<Tool>
+        get() = Tool.values().filter { it.type == ToolType.VSTest }
+
+    val vstestConfigFileKey: String
+        get() = DotnetConstants.PARAM_VSTEST_CONFIG_FILE
+
+    val vstestPlatformKey: String
+        get() = DotnetConstants.PARAM_VSTEST_PLATFORM
+
+    val vstestFrameworkKey: String
+        get() = DotnetConstants.PARAM_VSTEST_FRAMEWORK
+
+    val vstestTestNamesKey: String
+        get() = DotnetConstants.PARAM_VSTEST_TEST_NAMES
+
+    val vstestTestCaseFilterKey: String
+        get() = DotnetConstants.PARAM_VSTEST_TEST_CASE_FILTER
+
+    val vstestInIsolationKey: String
+        get() = DotnetConstants.PARAM_VSTEST_IN_ISOLATION
+
     companion object {
         val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
-        val commandTypes: Map<String, CommandType> = listOf(
+        val commandTypes = listOf(
                 RestoreCommandType(),
                 BuildCommandType(),
                 TestCommandType(dotCoverInfoProvider),
@@ -214,7 +238,8 @@ class DotnetParametersProvider {
                 NugetDeleteCommandType(),
                 CleanCommandType(),
                 RunCommandType(),
-                MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
+                MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
+                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
         ).associateBy { it.name }
     }
 }

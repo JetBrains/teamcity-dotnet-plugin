@@ -10,7 +10,7 @@ It simplifies building windows and cross-platform applications that use framewor
 
 The plugin provides the following features for .NET project building:
 * `dotnet`, `MSBuild`, `VSTest` command build runner
-* .NET Core tools and MSBuild detection on build agents
+* .NET Core tools, MSBuild, vstest.console detection on build agents
 * auto-discovery of build steps
 * cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
 * supports both project.json and csproj-based projects

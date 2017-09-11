@@ -14,33 +14,37 @@ class LoggerResolverImpl(
     override fun resolve(toolType: ToolType): File? {
         loggerHome?.let {
             val home = it;
-            logger?.let {
-                var path: String
-                when(toolType) {
-                    ToolType.MSBuild -> {
-                        path = it.msbuildLogger.path
-                    }
-                    ToolType.VSTest -> {
-                        path = it.vstestLogger.path
-                    }
-                    else -> {
-                        throw RunBuildException("Unknown tool ${toolType}")
+            when(toolType) {
+                ToolType.MSBuild -> {
+                    getLogger(sequenceOf(DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION))?.let {
+                        return getLoggerAssembly(toolType, home, it.msbuildLogger.path)
                     }
                 }
-                val loggerAssemblyPath = File(home, path)
-                if(!_fileSystemService.isExists(loggerAssemblyPath)) {
-                    throw RunBuildException("Path \"${loggerAssemblyPath}\" to ${toolType} logger was not found")
+                ToolType.VSTest -> {
+                    getLogger(sequenceOf(DotnetConstants.PARAM_VSTEST_VERSION, DotnetConstants.PARAM_MSBUILD_VERSION))?.let {
+                        return getLoggerAssembly(toolType, home, it.vstestLogger.path)
+                    }
                 }
-
-                return loggerAssemblyPath
+                else -> {
+                    throw RunBuildException("Unknown tool ${toolType}")
+                }
             }
         }
 
         return null
     }
 
-    private val logger: Logger? get() {
-        val currentTool = currentTool ?: Tool.MSBuild15CrossPlatform
+    private fun getLoggerAssembly(toolType: ToolType, home:File, path:String): File {
+        val loggerAssemblyPath = File(home, path)
+        if(!_fileSystemService.isExists(loggerAssemblyPath)) {
+            throw RunBuildException("Path \"${loggerAssemblyPath}\" to ${toolType} logger was not found")
+        }
+
+        return loggerAssemblyPath
+    }
+
+    private fun getLogger(versionParameterNames: Sequence<String>): Logger? {
+        val currentTool = versionParameterNames.map { getCurrentTool(it) }.filter { it != null }.firstOrNull() ?: Tool.MSBuild15CrossPlatform
         return Logger.values().filter { it.msbuildTool == currentTool || it.vstestTool == currentTool }.firstOrNull()
     }
 
@@ -58,8 +62,8 @@ class LoggerResolverImpl(
         return loggerHomePath;
     }
 
-    private val currentTool: Tool? get() {
-        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_MSBUILD_VERSION)?.let {
+    private fun getCurrentTool(versionParameterName: String): Tool? {
+        _parametersService.tryGetParameter(ParameterType.Runner, versionParameterName)?.let {
             return Tool.tryParse(it)
         }
 

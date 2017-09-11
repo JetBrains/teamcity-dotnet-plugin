@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.LoggerResolverImpl
-import jetbrains.buildServer.dotnet.Logger
-import jetbrains.buildServer.dotnet.ToolType
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.runners.FileSystemService
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -17,23 +14,95 @@ class LoggerResolverTest {
         return arrayOf(
                 // INTEGRATION_PACKAGE_HOME runner parameter is not specified
                 arrayOf(
-                        Logger.V15Windows,
+                        ToolType.MSBuild,
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
                         null),
 
-                // Success scenario
+                // Success scenario for defaults
                 arrayOf(
-                        Logger.V15Windows,
+                        ToolType.MSBuild,
                         VirtualFileSystemService().addFile(File(File("home", "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         File(File("home", "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
                         null),
 
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                // Success scenario
+
+                arrayOf(
+                        ToolType.MSBuild,
+                        VirtualFileSystemService().addFile(File(File("home", "msbuild12"), "TeamCity.MSBuild.Logger.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest12Windows.id),
+                        File(File("home", "msbuild12"), "TeamCity.MSBuild.Logger.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.MSBuild,
+                        VirtualFileSystemService().addFile(File(File("home", "msbuild12"), "TeamCity.MSBuild.Logger.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest12Windows.id),
+                        File(File("home", "msbuild12"), "TeamCity.MSBuild.Logger.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest12"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest12Windows.id),
+                        File(File("home", "vstest12"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest12"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild12WindowsX64.id),
+                        File(File("home", "vstest12"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15CrossPlatform.id),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15CrossPlatform.id),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id),
+                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.VSTest,
+                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id, DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id),
+                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        null),
+
+                arrayOf(
+                        ToolType.MSBuild,
+                        VirtualFileSystemService().addFile(File(File("home", "msbuild14"), "TeamCity.MSBuild.Logger.dll")),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id, DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id),
+                        File(File("home", "msbuild14"), "TeamCity.MSBuild.Logger.dll"),
+                        null),
+
                 // Has no assembly
                 arrayOf(
-                        Logger.V15Windows,
+                        ToolType.MSBuild,
                         VirtualFileSystemService().addDirectory(File("home", "msbuild15")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         null,
@@ -41,7 +110,7 @@ class LoggerResolverTest {
 
                 // Has no directory
                 arrayOf(
-                        Logger.V15Windows,
+                        ToolType.MSBuild,
                         VirtualFileSystemService(),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
                         null,
@@ -51,7 +120,7 @@ class LoggerResolverTest {
 
     @Test(dataProvider = "testLoggerArgumentsData")
     fun shouldGetArguments(
-            logger: Logger,
+            toolType: ToolType,
             fileSystemService: FileSystemService,
             parameters: Map<String, String>,
             expectedLogger: File?,
@@ -62,7 +131,7 @@ class LoggerResolverTest {
         // When
         var actualLogger: File? = null;
         try {
-            actualLogger = loggerProvider.resolve(ToolType.MSBuild)
+            actualLogger = loggerProvider.resolve(toolType)
         }
         catch (ex: RunBuildException) {
             if(expectedErrorPattern != null) {

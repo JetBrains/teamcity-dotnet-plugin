@@ -41,10 +41,14 @@
     <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
         <constructor-arg ref="dotnetToolResolver"/>
     </bean>
+    <bean class="jetbrains.buildServer.dotnet.VSTestToolResolver" id="vstestToolResolver">
+        <constructor-arg ref="dotnetToolResolver"/>
+    </bean>
 
     <bean class="jetbrains.buildServer.dotnet.DotnetVSTestLoggerArgumentsProvider" id="dotnetVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msbuildLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
         <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
@@ -66,6 +70,11 @@
         <constructor-arg ref="msbuildVSTestLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
         <constructor-arg ref="msbuildToolResolver"/>
+    </bean>
+    <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
+        <constructor-arg ref="vstestLoggerArgumentsProvider"/>
+        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+        <constructor-arg ref="vstestToolResolver"/>
     </bean>
 
     <!-- dotCover workflow composer -->

@@ -16,14 +16,8 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     // VSTest
     VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.Any, ToolBitness.Any, "Cross-platform VSTest"),
     VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest v15"),
-    VSTest15WindowsX64(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x64, "VSTest v15 64-bit"),
-    VSTest15WindowsX86(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x86, "VSTest v15 32-bit"),
     VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest v14"),
-    VSTest14WindowsX64(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x64, "VSTest v14 64-bit"),
-    VSTest14WindowsX86(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x86, "VSTest v14 32-bit"),
-    VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest v12"),
-    VSTest12WindowsX64(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x64, "VSTest v12 64-bit"),
-    VSTest12WindowsX86(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.x86, "VSTest v12 32-bit");
+    VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest v12");
 
     public val id: String get() = "${type}_${version}_${platform}_${bitness}"
 

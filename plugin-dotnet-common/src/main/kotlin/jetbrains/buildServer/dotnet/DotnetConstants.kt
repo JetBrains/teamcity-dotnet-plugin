@@ -87,6 +87,14 @@ object DotnetConstants {
     const val PARAM_MSBUILD_CONFIG = "dotnet-msbuild-config"
     const val PARAM_MSBUILD_PLATFORM = "dotnet-msbuild-platform"
 
+    const val PARAM_VSTEST_VERSION = "dotnet-vstest-version"
+    const val PARAM_VSTEST_CONFIG_FILE = "dotnet-vstest-config-file"
+    const val PARAM_VSTEST_PLATFORM = "dotnet-vstest-platform"
+    const val PARAM_VSTEST_FRAMEWORK = "dotnet-vstest-framework"
+    const val PARAM_VSTEST_TEST_NAMES = "dotnet-vstest-test-names"
+    const val PARAM_VSTEST_TEST_CASE_FILTER = "dotnet-vstest-test-case-filter"
+    const val PARAM_VSTEST_IN_ISOLATION = "dotnet-vstest-is-isolation"
+
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
     // Integration package
