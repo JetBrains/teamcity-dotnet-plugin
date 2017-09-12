@@ -12,7 +12,6 @@ import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 class CoverageFilterProviderTest {
@@ -51,9 +50,10 @@ class CoverageFilterProviderTest {
         // Then
         Assert.assertEquals(
             filters,
-            listOf(
+            sequenceOf(
                 CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "aaa", CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "bbb", CoverageFilter.Any, CoverageFilter.Any)))
+                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "bbb", CoverageFilter.Any, CoverageFilter.Any))
+                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -78,7 +78,8 @@ class CoverageFilterProviderTest {
         _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
-            listOf(CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any)))
+            sequenceOf(CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any))
+                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -105,9 +106,10 @@ class CoverageFilterProviderTest {
         _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
-            listOf(
+            sequenceOf(
                 CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)))
+                CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
+                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -134,9 +136,10 @@ class CoverageFilterProviderTest {
         _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
-            listOf(
+            sequenceOf(
                 CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)))
+                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
+                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -167,10 +170,11 @@ class CoverageFilterProviderTest {
         _ctx!!.assertIsSatisfied()
         Assert.assertEquals(
             filters,
-            listOf(
+            sequenceOf(
                 CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "zzz", CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute", CoverageFilter.Any)))
+                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "zzz", CoverageFilter.Any))
+                    .plus(CoverageFilterProviderImpl.DefaultExcludeAttributeFilters)
+                    .toList())
     }
 
     @Test
@@ -190,9 +194,7 @@ class CoverageFilterProviderTest {
 
         // Then
         _ctx!!.assertIsSatisfied()
-        Assert.assertEquals(
-            filters,
-            listOf(CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute", CoverageFilter.Any)))
+        Assert.assertEquals(filters, CoverageFilterProviderImpl.DefaultExcludeAttributeFilters.toList())
     }
 
     private fun createInstance(): CoverageFilterProvider {
