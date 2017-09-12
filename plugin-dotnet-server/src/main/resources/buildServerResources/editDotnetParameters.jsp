@@ -129,7 +129,7 @@
         <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
             <props:option value="">&lt;Default&gt;</props:option>
             <c:forEach var="item" items="${params.verbosity}">
-                <props:option value="${item}"><c:out value="${item}"/></props:option>
+                <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
             </c:forEach>
         </props:selectProperty>
         <span class="error" id="error_${params.verbosityKey}"></span>

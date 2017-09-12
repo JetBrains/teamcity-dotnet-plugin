@@ -160,8 +160,8 @@ class DotnetParametersProvider {
     val cleanOutputKey: String
         get() = DotnetConstants.PARAM_CLEAN_OUTPUT
 
-    val verbosity: List<String>
-        get() = listOf("Quiet", "Minimal", "Normal", "Detailed", "Diagnostic")
+    val verbosity: List<Verbosity>
+        get() = Verbosity.values().toList()
 
     val integrationPackagePathKey: String
         get() = DotnetConstants.INTEGRATION_PACKAGE_HOME

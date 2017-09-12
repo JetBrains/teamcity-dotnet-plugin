@@ -45,8 +45,8 @@ class MSBuildCommand(
             }
 
             parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/v:$it"))
+                Verbosity.tryParse(it)?.let {
+                    yield(CommandLineArgument("/v:${it.id}"))
                 }
             }
 

@@ -3,6 +3,8 @@ package jetbrains.buildServer.dotcover
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.runners.*
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -13,7 +15,9 @@ class DotCoverWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService,
         private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
-        private val _loggerService: LoggerService)
+        private val _loggerService: LoggerService,
+        private val _argumentsService: ArgumentsService,
+        private val _coverageFilterProvider: CoverageFilterProvider)
     : WorkflowComposer {
 
     override val target: TargetType
@@ -49,6 +53,18 @@ class DotCoverWorkflowComposer(
             throw RunBuildException("dotCover was not found: ${dotCoverExecutableFile}")
         }
 
+        var showDiagnostics = false
+        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
+            Verbosity.tryParse(it)?.let {
+                @Suppress("NON_EXHAUSTIVE_WHEN")
+                when(it) {
+                    Verbosity.Normal, Verbosity.Detailed, Verbosity.Diagnostic -> {
+                        showDiagnostics = true
+                    }
+                }
+            }
+        }
+
         return Workflow(
                 buildSequence {
                     for (commandLineToGetCoverage in workflow.commandLines) {
@@ -60,6 +76,24 @@ class DotCoverWorkflowComposer(
 
                         _fileSystemService.write(dotCoverProject.configFile) {
                             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+                        }
+
+                        if (showDiagnostics) {
+                            _loggerService.onBlock( "dotCover settings").use {
+                                val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
+                                _loggerService.onStandardOutput("Command line:")
+                                _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
+
+                                _loggerService.onStandardOutput("Filters:")
+                                for (filter in _coverageFilterProvider.filters) {
+                                    _loggerService.onStandardOutput("  $filter", Color.Details)
+                                }
+
+                                _loggerService.onStandardOutput("Attribute Filters:")
+                                for (filter in _coverageFilterProvider.attributeFilters) {
+                                    _loggerService.onStandardOutput("  $filter", Color.Details)
+                                }
+                            }
                         }
 
                         yield(

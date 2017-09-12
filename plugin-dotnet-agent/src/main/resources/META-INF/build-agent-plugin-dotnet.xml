@@ -5,6 +5,7 @@
        default-autowire="constructor">
 
     <!-- general services -->
+    <bean class="jetbrains.buildServer.runners.DefaultColorTheme"/>
     <bean class="jetbrains.buildServer.runners.ArgumentsServiceImpl"/>
     <bean class="jetbrains.buildServer.runners.ParametersServiceImpl"/>
     <bean class="jetbrains.buildServer.runners.FileSystemServiceImpl"/>

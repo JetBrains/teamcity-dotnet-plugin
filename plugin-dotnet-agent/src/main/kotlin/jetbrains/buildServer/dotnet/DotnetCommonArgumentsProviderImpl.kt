@@ -14,9 +14,9 @@ class DotnetCommonArgumentsProviderImpl(
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-                if (it.isNotBlank()) {
+                Verbosity.tryParse(it)?.let {
                     yield(CommandLineArgument("--verbosity"))
-                    yield(CommandLineArgument(it))
+                    yield(CommandLineArgument(it.id))
                 }
             }
 

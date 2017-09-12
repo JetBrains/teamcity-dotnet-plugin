@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Verbosity
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -11,13 +12,13 @@ class DotnetCommonArgumentsProviderTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to "normal"),
-                        listOf("--verbosity", "normal")),
+                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id),
+                        listOf("--verbosity", Verbosity.Normal.id)),
                 arrayOf(emptyMap<String, String>(),
                         emptyList<String>()),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to "detailed"),
-                        listOf("--verbosity", "detailed")))
+                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Detailed.id),
+                        listOf("--verbosity", Verbosity.Detailed.id)))
     }
 
     @Test(dataProvider = "argumentsData")
