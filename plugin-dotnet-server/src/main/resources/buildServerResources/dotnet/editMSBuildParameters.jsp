@@ -33,7 +33,7 @@
             <bs:projectData type="MSBuildTargets" sourceFieldId="${params.msbuildTargetsKey}" targetFieldId="${params.msbuildTargetsKey}" popupTitle="Select targets to invoke"/>
         </div
         <span class="error" id="error_${params.msbuildTargetsKey}"></span>
-        <span class="smallNote">Enter targets separated by space or semicolon.</span></td>
+        <span class="smallNote">Enter targets separated by semicolon.</span></td>
 </tr>
 
 <tr class="advancedSetting">

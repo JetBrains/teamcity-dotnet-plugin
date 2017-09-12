@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.runners.CommandLineEnvironmentVariable
+import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")

@@ -1,11 +1,11 @@
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.ToolCannotBeFoundException
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
-import jetbrains.buildServer.runners.*
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
@@ -79,7 +79,7 @@ class DotCoverWorkflowComposer(
                         }
 
                         if (showDiagnostics) {
-                            _loggerService.onBlock( "dotCover settings").use {
+                            _loggerService.onBlock("dotCover settings").use {
                                 val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
                                 _loggerService.onStandardOutput("Command line:")
                                 _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)

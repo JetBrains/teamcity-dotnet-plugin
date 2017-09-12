@@ -2,7 +2,8 @@ package jetbrains.buildServer.dotnet
 
 enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String) {
     // MSBuild
-    MSBuild15CrossPlatform(15, ToolType.MSBuild, ToolPlatform.Any, ToolBitness.Any, "Cross-platform"),
+    MSBuild15DotnetCore(15, ToolType.MSBuild, ToolPlatform.DotnetCore, ToolBitness.Any, "for .NET Core"),
+    MSBuild15Mono(15, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "for Mono"),
     MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "15"),
     MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "15 64-bit"),
     MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "15 32-bit"),
@@ -14,7 +15,7 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "12 32-bit"),
 
     // VSTest
-    VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.Any, ToolBitness.Any, "Cross-platform"),
+    VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.DotnetCore, ToolBitness.Any, "Cross-platform"),
     VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "15"),
     VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "14"),
     VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "12");

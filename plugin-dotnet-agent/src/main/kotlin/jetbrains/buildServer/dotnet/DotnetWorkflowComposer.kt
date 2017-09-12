@@ -2,7 +2,9 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.runners.*
+import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.runner.*
 import kotlin.coroutines.experimental.buildSequence
 
 class DotnetWorkflowComposer(

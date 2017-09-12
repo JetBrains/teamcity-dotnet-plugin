@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.runners.PathsService
+import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
 class DotnetToolResolverImpl(

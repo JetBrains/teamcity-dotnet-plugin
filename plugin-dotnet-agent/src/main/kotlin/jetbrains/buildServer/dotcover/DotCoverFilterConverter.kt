@@ -1,9 +1,7 @@
 package jetbrains.buildServer.dotcover
 
-import com.intellij.openapi.util.text.StringUtil
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.runners.Converter
-import java.util.*
+import jetbrains.buildServer.agent.runner.Converter
 import java.util.regex.Pattern
 import kotlin.coroutines.experimental.buildSequence
 

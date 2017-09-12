@@ -10,7 +10,7 @@ It simplifies building windows and cross-platform applications that use framewor
 
 The plugin provides the following features for .NET project building:
 * `dotnet`, `MSBuild`, `VSTest` command build runner
-* .NET Core tools, MSBuild, vstest.console detection on build agents
+* .NET Core tools, Mono tools, MSBuild, VSTest.Console detection on build agents
 * auto-discovery of build steps
 * cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
 * supports both project.json and csproj-based projects
@@ -28,12 +28,22 @@ The plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/down
 
 ## .NET CLI toolkit
 
-To use the `dotnet` build runner, [install .NET CLI](https://www.microsoft.com/net/core) and add the .NET CLI tools path to the `PATH` environment variable.
+To use the `dotnet` build runner, install [.NET CLI](https://www.microsoft.com/net/core) and add the .NET CLI tools path to the `PATH` environment variable.
 
 Also, you can configure the `DOTNET_HOME` environment variable for your TeamCity build agent user, for instance:
 
 ```
 DOTNET_HOME=C:\Program Files\dotnet\
+```
+
+## Mono toolkit
+
+To use the `mono` specific build runners, install [Mono](http://www.mono-project.com/download/) 5.0 or later and add the Mono tools path to the `PATH` environment variable.
+
+Also, you can configure the `MONO_HOME` environment variable for your TeamCity build agent user, for instance:
+
+```
+MONO_HOME=C:\Program Files (x86)\Mono
 ```
 
 # Build

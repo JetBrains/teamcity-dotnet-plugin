@@ -4,33 +4,39 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
 
-    <!-- general services -->
-    <bean class="jetbrains.buildServer.runners.DefaultColorTheme"/>
-    <bean class="jetbrains.buildServer.runners.ArgumentsServiceImpl"/>
-    <bean class="jetbrains.buildServer.runners.ParametersServiceImpl"/>
-    <bean class="jetbrains.buildServer.runners.FileSystemServiceImpl"/>
-    <bean class="jetbrains.buildServer.runners.PathsServiceImpl"/>
-    <bean class="jetbrains.buildServer.runners.LoggerServiceImpl"/>
-    <bean class="jetbrains.buildServer.runners.AntPathMatcher"/>
-    <bean class="jetbrains.buildServer.runners.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
-    <bean class="jetbrains.buildServer.runners.WorkflowSessionImpl" scope="prototype">
+    <!-- common agent services -->
+    <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
+    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
+    <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.XmlDocumentServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
+
+    <!-- common agnet's runner services -->
+    <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
+    <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.runner.LoggerServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
+    <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
         <constructor-arg ref="layeredWorkflowComposer"/>
     </bean>
-    <bean class="jetbrains.buildServer.runners.XmlDocumentServiceImpl"/>
 
-    <!-- plugin -->
-    <bean class="jetbrains.buildServer.runners.WorkflowBuildServiceFactory">
+    <!-- dotnet -->
+    <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
         <constructor-arg value="dotnet"/>
     </bean>
-    <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
+        <constructor-arg ref="dotnetToolProvider"/>
+        <constructor-arg ref="dotnetVersionParser"/>
+    </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
-
-    <!-- dotnet workflow composer -->
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
         <constructor-arg ref="dotnetCommandSet"/>
     </bean>
-    <bean class="jetbrains.buildServer.dotnet.DotnetSdkVersionProviderImpl"/>
     <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
     <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
 
@@ -83,4 +89,12 @@
     <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
     <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
     <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverter"/>
+
+    <!-- Mono -->
+    <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider"/>
+    <bean class="jetbrains.buildServer.mono.MonoVersionParser" id="monoVersionParser"/>
+    <bean class="jetbrains.buildServer.mono.MonoPropertiesExtension">
+        <constructor-arg ref="monoToolProvider"/>
+        <constructor-arg ref="monoVersionParser"/>
+    </bean>
 </beans>

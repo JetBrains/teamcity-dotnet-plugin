@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.runners.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgument
 
 /**
  * Provides arguments to the utility.

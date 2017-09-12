@@ -1,6 +1,11 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.runners.*
+import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.agent.PathMatcher
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathsService
 import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")

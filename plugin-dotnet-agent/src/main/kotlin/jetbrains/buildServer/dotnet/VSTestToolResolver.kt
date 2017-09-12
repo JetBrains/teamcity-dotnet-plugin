@@ -2,8 +2,8 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
 class VSTestToolResolver(
@@ -29,7 +29,7 @@ class VSTestToolResolver(
     override val isCommandRequired: Boolean
         get() {
             CurrentTool?.let {
-                return it.platform == ToolPlatform.Any
+                return it.platform == ToolPlatform.DotnetCore
             }
 
             return true

@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.runners.Serializer
+import jetbrains.buildServer.agent.Serializer
 
 interface DotCoverProjectSerializer: Serializer<DotCoverProject> {
 }

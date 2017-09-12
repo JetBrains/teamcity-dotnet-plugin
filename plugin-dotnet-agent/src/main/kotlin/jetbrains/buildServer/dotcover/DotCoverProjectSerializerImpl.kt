@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.runners.*
+import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.agent.XmlDocumentService
+import jetbrains.buildServer.agent.runner.PathsService
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream

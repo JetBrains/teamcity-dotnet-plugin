@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.runners.CommandLine
+import jetbrains.buildServer.agent.CommandLine
 import java.io.File
 
 data class DotCoverProject(

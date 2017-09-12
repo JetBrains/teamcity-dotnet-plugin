@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.runners.FileSystemService
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
 class LoggerResolverImpl(
@@ -44,7 +44,7 @@ class LoggerResolverImpl(
     }
 
     private fun getLogger(versionParameterNames: Sequence<String>): Logger? {
-        val currentTool = versionParameterNames.map { getCurrentTool(it) }.filter { it != null }.firstOrNull() ?: Tool.MSBuild15CrossPlatform
+        val currentTool = versionParameterNames.map { getCurrentTool(it) }.filter { it != null }.firstOrNull() ?: Tool.MSBuild15DotnetCore
         return Logger.values().filter { it.msbuildTool == currentTool || it.vstestTool == currentTool }.firstOrNull()
     }
 

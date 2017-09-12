@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.runners.ArgumentsService
-import jetbrains.buildServer.runners.CommandLineArgument
-import jetbrains.buildServer.runners.ParameterType
-import jetbrains.buildServer.runners.ParametersService
+import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**

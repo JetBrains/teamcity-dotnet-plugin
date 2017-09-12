@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.DotCoverInfoProvider
@@ -12,7 +10,6 @@ import jetbrains.buildServer.requirements.RequirementType
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class MSBuildRequirementsProviderTest {
     @DataProvider
@@ -24,7 +21,7 @@ class MSBuildRequirementsProviderTest {
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX86.id), sequenceOf(Requirement("MSBuildTools15.0_x86_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15Windows.id), sequenceOf(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "MSBuildTools15\\.0_.+_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(emptyMap<String, String>(), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))),
-                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15CrossPlatform.id), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))))
+                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15DotnetCore.id), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))))
     }
 
     @Test(dataProvider = "testRequirementsData")

@@ -1,0 +1,46 @@
+package jetbrains.buildServer.mono
+
+import jetbrains.buildServer.util.EventDispatcher
+import com.intellij.openapi.diagnostic.Logger
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.dotnet.MonoConstants
+import java.io.File
+
+class MonoPropertiesExtension(
+        events: EventDispatcher<AgentLifeCycleListener>,
+        private val _toolProvider: ToolProvider,
+        private val _commandLineExecutor: CommandLineExecutor,
+        private val _versionParser: VersionParser)
+    : AgentLifeCycleAdapter() {
+
+    init {
+        events.addListener(this)
+    }
+
+    override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
+        LOG.info("Locating Mono tools")
+        val command = CommandLine(
+                TargetType.Tool,
+                File(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
+                File("."),
+                listOf(CommandLineArgument("--version")),
+                emptyList())
+
+        try {
+            _commandLineExecutor.tryExecute(command)?.let {
+                _versionParser.tryParse(it.standardOutput)?.let {
+                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_NAME, it)
+                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.absolutePath)
+                    LOG.info("Found Mono at ${command.executableFile.absolutePath}")
+                }
+            }
+        } catch (e: ToolCannotBeFoundException) {
+            LOG.debug(e)
+            return
+        }
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(MonoPropertiesExtension::class.java.name)
+    }
+}

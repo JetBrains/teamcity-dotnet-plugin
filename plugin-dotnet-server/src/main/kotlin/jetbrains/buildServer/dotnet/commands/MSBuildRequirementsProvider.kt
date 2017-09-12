@@ -33,6 +33,10 @@ class MSBuildRequirementsProvider(private val _dotCoverInfoProvider: DotCoverInf
                                 }
                             }
                         }
+                        ToolPlatform.Mono -> {
+                            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${MonoConstants.CONFIG_NAME}", null, RequirementType.EXISTS))
+                            hasRequirement = true
+                        }
                     }
                 }
             }
