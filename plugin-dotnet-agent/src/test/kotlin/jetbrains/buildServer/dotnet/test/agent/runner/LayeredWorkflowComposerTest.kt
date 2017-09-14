@@ -1,5 +1,7 @@
 package jetbrains.buildServer.dotnet.test.agent.runner
 
+import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
 import org.jmock.Expectations
@@ -7,10 +9,11 @@ import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class LayeredWorkflowComposerTest {
     private val _toolWorkflow: Workflow = Workflow(emptySequence())
-    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(emptySequence())
+    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(sequenceOf(CommandLine(TargetType.Tool, File("tool"), File("wd"), emptyList(), emptyList())))
     private val _baseWorkflow: Workflow = Workflow(emptySequence())
 
     @DataProvider(name = "composeCases")
@@ -44,17 +47,19 @@ class LayeredWorkflowComposerTest {
         })
 
         return arrayOf(
-                arrayOf(ctx, workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any),
-                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer, toolWorkflowComposer) as Any),
-                arrayOf(ctx, workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer) as Any),
-                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any))
+                arrayOf(ctx, workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer, toolWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(ctx, workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(ctx, workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow, _profilerOfCodeCoverageWorkflow)),
+                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)))
     }
 
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
             ctx: Mockery,
             workflowContext: WorkflowContext,
-            composers: List<WorkflowComposer>) {
+            composers: List<WorkflowComposer>,
+            expectedWorkflows: Sequence<Workflow>) {
         // Given
 
         val composer = createInstance(composers)
@@ -64,7 +69,7 @@ class LayeredWorkflowComposerTest {
 
         // Then
         ctx.assertIsSatisfied()
-        Assert.assertEquals(actualWorkflow, _profilerOfCodeCoverageWorkflow);
+        Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflows.flatMap { it.commandLines }.toList());
     }
 
     private fun createInstance(composers: List<WorkflowComposer>): WorkflowComposer {
