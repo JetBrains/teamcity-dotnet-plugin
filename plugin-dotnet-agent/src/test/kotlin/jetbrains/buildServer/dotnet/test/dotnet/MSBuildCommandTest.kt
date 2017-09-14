@@ -13,12 +13,12 @@ class MSBuildCommandTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("msbuildlog", "vstestlog", "customArg1")),
+                        listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "restore;build"),
                         Pair(DotnetConstants.PARAM_MSBUILD_PLATFORM, "x86"),
                         Pair(DotnetConstants.PARAM_MSBUILD_CONFIG, "Release")),
-                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "msbuildlog", "vstestlog", "customArg1")))
+                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:Platform=x86", "customArg1")))
     }
 
     @Test(dataProvider = "argumentsData")
@@ -108,8 +108,6 @@ class MSBuildCommandTest {
             MSBuildCommand(
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("msbuildlog"))),
-                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     DotnetCommonArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(File("msbuild.exe"), true))
 }

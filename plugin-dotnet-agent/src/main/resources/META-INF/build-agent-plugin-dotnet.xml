@@ -56,8 +56,16 @@
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msbuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
+        <constructor-arg>
+            <list>
+                <ref bean="msbuildLoggerArgumentsProvider" />
+                <ref bean="msbuildVSTestLoggerArgumentsProvider" />
+            </list>
+        </constructor-arg>
+    </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
-        <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
+        <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     </bean>
 
@@ -72,12 +80,22 @@
         <constructor-arg ref="dotnetVSTestLoggerArgumentsProvider"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
+
+    <!-- MSBuild command -->
+    <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
+        <constructor-arg>
+            <list>
+                <ref bean="msbuildLoggerArgumentsProvider" />
+                <ref bean="msbuildVSTestLoggerArgumentsProvider" />
+                <ref bean="dotnetCustomArgumentsProvider" />
+            </list>
+        </constructor-arg>
+    </bean>
     <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
-        <constructor-arg ref="msbuildLoggerArgumentsProvider"/>
-        <constructor-arg ref="msbuildVSTestLoggerArgumentsProvider"/>
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+        <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
         <constructor-arg ref="msbuildToolResolver"/>
     </bean>
+
     <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
         <constructor-arg ref="vstestLoggerArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>

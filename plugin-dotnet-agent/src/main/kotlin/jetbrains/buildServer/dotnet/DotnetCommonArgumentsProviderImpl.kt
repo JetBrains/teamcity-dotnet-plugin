@@ -8,7 +8,7 @@ import kotlin.coroutines.experimental.buildSequence
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetCommonArgumentsProviderImpl(
         private val _parametersService: ParametersService,
-        private val _msbuildLoggerArgumentsProvider: ArgumentsProvider,
+        private val _responseFileArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider)
     : DotnetCommonArgumentsProvider {
     override val arguments: Sequence<CommandLineArgument>
@@ -20,8 +20,8 @@ class DotnetCommonArgumentsProviderImpl(
                 }
             }
 
-            yieldAll(_msbuildLoggerArgumentsProvider.arguments)
             yieldAll(_customArgumentsProvider.arguments)
+            yieldAll(_responseFileArgumentsProvider.arguments)
         }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)

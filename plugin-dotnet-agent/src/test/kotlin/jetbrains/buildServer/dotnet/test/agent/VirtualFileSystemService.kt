@@ -15,7 +15,7 @@ class VirtualFileSystemService : FileSystemService {
     }
 
     override fun read(file: File, reader: (InputStream) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        reader(_files.get(file)!!.inputStream)
     }
 
     fun addDirectory(directory: File): VirtualFileSystemService

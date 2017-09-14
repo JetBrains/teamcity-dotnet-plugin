@@ -48,7 +48,7 @@ class MSBuildToolResolver(
     override val isCommandRequired: Boolean get() =
         CurrentTool?.let {
             return it.platform == ToolPlatform.DotnetCore
-        } ?: false
+        } ?: true
 
     private val CurrentTool: Tool? get() =
         _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_MSBUILD_VERSION)?.let {

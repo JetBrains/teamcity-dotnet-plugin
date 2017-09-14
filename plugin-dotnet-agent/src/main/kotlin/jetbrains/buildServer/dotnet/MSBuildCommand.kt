@@ -9,9 +9,7 @@ import kotlin.coroutines.experimental.buildSequence
 class MSBuildCommand(
         private val _parametersService: ParametersService,
         private val _targetService: TargetService,
-        private val _msbuildLoggerArgumentsProvider: ArgumentsProvider,
-        private val _vsTestLoggerArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
+        private val _msbuildResponseFileArgumentsProvider: ArgumentsProvider,
         private val _msbuildToolResolver: ToolResolver)
     : DotnetCommand {
 
@@ -50,9 +48,7 @@ class MSBuildCommand(
                 }
             }
 
-            yieldAll(_msbuildLoggerArgumentsProvider.arguments)
-            yieldAll(_vsTestLoggerArgumentsProvider.arguments)
-            yieldAll(_customArgumentsProvider.arguments)
+            yieldAll(_msbuildResponseFileArgumentsProvider.arguments)
         }
 
     override fun isSuccessfulExitCode(exitCode: Int): Boolean = exitCode >= 0

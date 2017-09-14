@@ -9,24 +9,23 @@ class ArgumentsServiceImpl : ArgumentsService {
                     .asSequence()
                     .filter { !it.isNullOrBlank() }
 
-    override fun combine(arguments: Sequence<String>): String =
+    override fun combine(arguments: Sequence<String>, argumentsSeparator: String): String =
             arguments
                     .map {
-                        if (it.contains(ARGS_SEPARATOR)) {
-                            "${QUOTE_STR}${it}${QUOTE_STR}"
+                        if (it.contains(ArgumentsService.ArgsSeparator)) {
+                            "${QuoteString}${it}${QuoteString}"
                         }
                         else {
                             it
                         }
                     }
-                    .joinToString(ARGS_SEPARATOR);
+                    .joinToString(argumentsSeparator);
 
     override fun escape(text: String): String {
         return StringUtil.escapeStringCharacters(text)
     }
 
     companion object {
-        private val ARGS_SEPARATOR = " "
-        private val QUOTE_STR = "\""
+        private val QuoteString = "\""
     }
 }

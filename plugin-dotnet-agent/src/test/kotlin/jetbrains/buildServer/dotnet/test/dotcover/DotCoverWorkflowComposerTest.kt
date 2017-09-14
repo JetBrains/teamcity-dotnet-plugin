@@ -186,7 +186,6 @@ class DotCoverWorkflowComposerTest {
     @DataProvider(name = "showDiagnosticCases")
     fun getShowDiagnosticCases(): Array<Array<Verbosity>> {
         return arrayOf(
-                arrayOf(Verbosity.Normal),
                 arrayOf(Verbosity.Detailed),
                 arrayOf(Verbosity.Diagnostic))
     }
@@ -259,7 +258,7 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
                 // Check diagnostics info
-                oneOf<LoggerService>(_loggerService).onBlock("dotCover settings")
+                oneOf<LoggerService>(_loggerService).onBlock("dotCover Settings")
                 oneOf<LoggerService>(_loggerService).onStandardOutput("Command line:")
                 oneOf<LoggerService>(_loggerService).onStandardOutput("  \"${File("sdk", "dotnet.exe").path}\" arg1", Color.Details)
                 oneOf<LoggerService>(_loggerService).onStandardOutput("Filters:")

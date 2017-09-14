@@ -11,5 +11,5 @@ class ArgumentsServiceStub : ArgumentsService {
                 .filter { !it.isNullOrBlank() }
     }
 
-    override fun combine(arguments: Sequence<String>): String = arguments.joinToString(" ")
+    override fun combine(arguments: Sequence<String>, argumentsSeparator: String): String = arguments.joinToString(argumentsSeparator)
 }

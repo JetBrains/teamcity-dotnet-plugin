@@ -16,10 +16,6 @@ class DotnetWorkflowComposer(
         get() = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
-        if(workflow.commandLines.any()) {
-            throw RunBuildException("This composer should be a root")
-        }
-
         @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {

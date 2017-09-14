@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
 import jetbrains.buildServer.dotcover.DotCoverProject
 import jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl
+import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.jmock.api.Invocation
@@ -180,15 +181,5 @@ class DotCoverProjectSerializerTest {
                 _xmlDocumentService!!,
                 _argumentsService,
                 _coverageFilterProvider!!)
-    }
-
-    private class ArgumentsServiceStub: ArgumentsService {
-        override fun escape(text: String): String {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun combine(arguments: Sequence<String>): String = arguments.joinToString(" ")
-
-        override fun split(text: String): Sequence<String> = TODO("not implemented")
     }
 }

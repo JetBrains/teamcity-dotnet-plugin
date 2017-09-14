@@ -24,10 +24,6 @@ class DotCoverWorkflowComposer(
         get() = TargetType.ProfilerOfCodeCoverage
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
-        if(!workflow.commandLines.any()) {
-            throw RunBuildException("This composer should not be a root")
-        }
-
         val dotCoverPath: String?
         val dotCoverExecutableFile: File
         try {
@@ -58,7 +54,7 @@ class DotCoverWorkflowComposer(
             Verbosity.tryParse(it)?.let {
                 @Suppress("NON_EXHAUSTIVE_WHEN")
                 when(it) {
-                    Verbosity.Normal, Verbosity.Detailed, Verbosity.Diagnostic -> {
+                    Verbosity.Detailed, Verbosity.Diagnostic -> {
                         showDiagnostics = true
                     }
                 }
@@ -79,7 +75,7 @@ class DotCoverWorkflowComposer(
                         }
 
                         if (showDiagnostics) {
-                            _loggerService.onBlock("dotCover settings").use {
+                            _loggerService.onBlock("dotCover Settings").use {
                                 val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
                                 _loggerService.onStandardOutput("Command line:")
                                 _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
