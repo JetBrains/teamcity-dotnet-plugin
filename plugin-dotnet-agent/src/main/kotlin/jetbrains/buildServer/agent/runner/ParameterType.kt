@@ -5,5 +5,7 @@ enum class ParameterType {
 
     Configuration,
 
-    Environment
+    Environment,
+
+    System
 }

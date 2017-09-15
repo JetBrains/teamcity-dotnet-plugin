@@ -43,6 +43,7 @@
     <!--Dotnet arguments' providers-->
     <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
     <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
+    <bean class="jetbrains.buildServer.dotnet.SystemParametersArgumentsProvider" id="systemParametersArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
@@ -61,6 +62,7 @@
             <list>
                 <ref bean="msbuildLoggerArgumentsProvider" />
                 <ref bean="msbuildVSTestLoggerArgumentsProvider" />
+                <ref bean="systemParametersArgumentsProvider" />
             </list>
         </constructor-arg>
     </bean>
@@ -88,6 +90,7 @@
                 <ref bean="msbuildLoggerArgumentsProvider" />
                 <ref bean="msbuildVSTestLoggerArgumentsProvider" />
                 <ref bean="dotnetCustomArgumentsProvider" />
+                <ref bean="systemParametersArgumentsProvider" />
             </list>
         </constructor-arg>
     </bean>

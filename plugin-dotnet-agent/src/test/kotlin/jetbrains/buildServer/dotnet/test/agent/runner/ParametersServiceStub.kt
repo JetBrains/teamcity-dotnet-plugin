@@ -5,8 +5,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 
 class ParametersServiceStub(
         private val _parameters: Map<String, String>): ParametersService {
-    override fun tryGetParameter(parameterType: ParameterType, parameterName: String): String? {
-        return _parameters[parameterName];
-    }
-
+    override fun tryGetParameter(parameterType: ParameterType, parameterName: String): String? = _parameters[parameterName]
+    
+    override fun getParameterNames(parameterType: ParameterType): Sequence<String> = _parameters.keys.asSequence()
 }
