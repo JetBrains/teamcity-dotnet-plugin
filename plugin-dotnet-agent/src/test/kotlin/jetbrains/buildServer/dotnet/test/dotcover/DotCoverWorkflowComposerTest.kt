@@ -88,7 +88,8 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover"),
                                         CommandLineArgument(dotCoverProject.configFile.absolutePath),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates")
+                                        CommandLineArgument("/NoCheckForUpdates"),
+                                        CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars)))
         val composer = createInstance(fileSystemService)
@@ -222,7 +223,8 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover"),
                                         CommandLineArgument(dotCoverProject.configFile.absolutePath),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates")
+                                        CommandLineArgument("/NoCheckForUpdates"),
+                                        CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars)))
         val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)

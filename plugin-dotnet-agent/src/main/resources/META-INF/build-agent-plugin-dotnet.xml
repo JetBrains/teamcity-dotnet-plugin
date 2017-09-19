@@ -118,4 +118,7 @@
         <constructor-arg ref="monoToolProvider"/>
         <constructor-arg ref="monoVersionParser"/>
     </bean>
+
+    <!-- Cmd -->
+    <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
 </beans>

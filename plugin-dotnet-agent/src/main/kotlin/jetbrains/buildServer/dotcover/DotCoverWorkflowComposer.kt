@@ -116,6 +116,7 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument(dotCoverProject.configFile.absolutePath))
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
+        yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
     }
 
     companion object {

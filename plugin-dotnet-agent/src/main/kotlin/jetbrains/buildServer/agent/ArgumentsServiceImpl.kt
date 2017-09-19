@@ -13,7 +13,7 @@ class ArgumentsServiceImpl : ArgumentsService {
             arguments
                     .map {
                         if (it.contains(ArgumentsService.ArgsSeparator)) {
-                            "${QuoteString}${it}${QuoteString}"
+                            StringUtil.doubleQuote(StringUtil.unquoteString(it))
                         }
                         else {
                             it
@@ -22,7 +22,9 @@ class ArgumentsServiceImpl : ArgumentsService {
                     .joinToString(argumentsSeparator);
 
     override fun escape(text: String): String {
-        return StringUtil.escapeStringCharacters(text)
+        val buffer = StringBuilder()
+        StringUtil.escapeStringCharacters(text.length, text, null, buffer)
+        return buffer.toString()
     }
 
     companion object {

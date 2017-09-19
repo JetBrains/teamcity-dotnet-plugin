@@ -26,7 +26,6 @@ class DotCoverProjectSerializerImpl(
         coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToGetCoverage.arguments.map { it.value }.asSequence())))
         val workingDirectory = project.commandLineToGetCoverage.workingDirectory
         coverageParamsElement.appendChild(createSimpleElement(doc, WORKING_DIR_ELEMENT, workingDirectory.absolutePath))
-
         coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, project.snapshotFile.absolutePath))
 
         val filtersElement = doc.createElement(FILTERS_ELEMENT)

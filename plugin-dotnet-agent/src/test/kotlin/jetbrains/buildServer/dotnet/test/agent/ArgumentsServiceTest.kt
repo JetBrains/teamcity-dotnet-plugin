@@ -40,6 +40,7 @@ class ArgumentsServiceTest {
     fun getCombineCases(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(listOf("arg1", "arg2"), "arg1 arg2"),
+                arrayOf(listOf("\"arg 1\"", "arg2"), "\"arg 1\" arg2"),
                 arrayOf(listOf("arg1"), "arg1"),
                 arrayOf(listOf("arg1", "arg 2"), "arg1 \"arg 2\""),
                 arrayOf(listOf("aRg1", "ArG 2"), "aRg1 \"ArG 2\""),
