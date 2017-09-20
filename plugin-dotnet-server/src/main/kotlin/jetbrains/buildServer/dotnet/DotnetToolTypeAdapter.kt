@@ -12,7 +12,7 @@ class DotnetToolTypeAdapter : ToolTypeAdapter() {
     }
 
     override fun getDescription(): String? {
-        return "Is used in the TeamCity NUnit build runner to run tests."
+        return "Is used in the .NET runner for CLI integration."
     }
 
     override fun getShortDisplayName(): String {

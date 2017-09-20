@@ -17,7 +17,7 @@ import kotlin.coroutines.experimental.buildSequence
 class RestoreCommand(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
-        private val _projectService: TargetService,
+        private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCommand {
@@ -29,7 +29,7 @@ class RestoreCommand(
         get() = _dotnetToolResolver
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _projectService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
