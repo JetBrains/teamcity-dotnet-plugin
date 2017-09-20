@@ -48,9 +48,9 @@ class DotnetCommandSet(
     }
 
     private fun getArguments(
-            command: DotnetCommand,
-            targetArguments: TargetArguments): Sequence<CommandLineArgument> {
-        return buildSequence {
+        command: DotnetCommand,
+        targetArguments: TargetArguments): Sequence<CommandLineArgument> =
+        buildSequence {
             if(command.toolResolver.isCommandRequired) {
                 // command
                 yieldAll(command.commandType.args.map { CommandLineArgument(it) })
@@ -60,8 +60,7 @@ class DotnetCommandSet(
             yieldAll(targetArguments.arguments)
             // command specific arguments
             yieldAll(command.arguments)
-        };
-    }
+        }
 
     class CompositeCommand(
             private val _command: DotnetCommand,

@@ -26,8 +26,4 @@ class ArgumentsServiceImpl : ArgumentsService {
         StringUtil.escapeStringCharacters(text.length, text, null, buffer)
         return buffer.toString()
     }
-
-    companion object {
-        private val QuoteString = "\""
-    }
 }

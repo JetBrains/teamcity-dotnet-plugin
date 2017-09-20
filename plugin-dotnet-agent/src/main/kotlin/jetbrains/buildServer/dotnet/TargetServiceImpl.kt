@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.PathMatcher
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -17,12 +18,23 @@ class TargetServiceImpl(
     : TargetService {
     override val targets: Sequence<CommandTarget>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_PATHS)?.trim()?.let {
+            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)?.trim()?.let {
                 val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
-                val includeRules = _argumentsService.split(it);
-                yieldAll(_pathMatcher.match(checkoutDirectory, includeRules, emptySequence()).map { CommandTarget(it) })
+                val includeRulesStr = it.trim()
+                if (includeRulesStr.isNullOrEmpty()) {
+                    return@buildSequence
+                }
+
+                val includeRules = _argumentsService.split(includeRulesStr)
+                var hasAnyTarget = false
+                for(target in _pathMatcher.match(checkoutDirectory, includeRules, emptySequence())) {
+                    yield(CommandTarget(target))
+                    hasAnyTarget = true
+                }
+
+                if (!hasAnyTarget) {
+                    throw RunBuildException("Target files were not found for \"$it\"")
+                }
             }
         }
-
-    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }
