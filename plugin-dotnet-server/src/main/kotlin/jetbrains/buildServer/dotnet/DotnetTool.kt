@@ -13,7 +13,7 @@ class DotnetTool(
 
     val destinationFileName: String
         get() {
-            return _package.packageId + "." + _package.packageVersion + DotnetConstants.PACKAGE_NUGET_EXTENSION
+            return "${_package.packageId}.${_package.packageVersion}.${DotnetConstants.PACKAGE_NUGET_EXTENSION}"
         }
 
     override fun getType(): ToolType {

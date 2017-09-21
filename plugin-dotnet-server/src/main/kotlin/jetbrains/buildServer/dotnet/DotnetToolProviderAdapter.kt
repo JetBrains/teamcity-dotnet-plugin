@@ -39,8 +39,7 @@ class DotnetToolProviderAdapter(
                 ?: throw ToolException("Failed to find package " + toolVersion)
 
         val downloadUrl = downloadableTool.downloadUrl
-        LOG.info("Start installing package \"${toolVersion.displayName}\"")
-        LOG.info("Downloading package from: \"$downloadUrl\"")
+        LOG.info("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
         val targetFile = File(targetDirectory, downloadableTool.destinationFileName)
         try {
             _fileSystemService.write(targetFile) {
@@ -57,16 +56,16 @@ class DotnetToolProviderAdapter(
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
         LOG.info("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
 
-        var pathPrefix = ""
         if (NUGET_PACKAGE_FILE_FILTER.accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
-            pathPrefix = DotnetConstants.PACKAGE_BINARY_NUPKG_PATH + "/"
-        }
+            if (!ArchiveUtil.unpackZip(toolPackage, DotnetConstants.PACKAGE_BINARY_NUPKG_PATH + "/", targetDirectory)) {
+                throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
+            }
 
-        if (!ArchiveUtil.unpackZip(toolPackage, pathPrefix, targetDirectory)) {
-            throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
+            LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
         }
-
-        LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
+        else {
+            LOG.info("Package ${toolPackage} is not acceptable")
+        }
     }
 
     private val tools: List<DotnetTool> get() {
@@ -82,9 +81,8 @@ class DotnetToolProviderAdapter(
 
     companion object {
         private val LOG: Logger = Logger.getInstance(DotnetToolProviderAdapter::class.java.name)
-        private val NUGET_PACKAGE_FILE_FILTER = FileFilter { pathname ->
-            val name = pathname.name
-            pathname.isFile && name.startsWith(DotnetConstants.PACKAGE_TYPE, true) && name.endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION, true)
+        private val NUGET_PACKAGE_FILE_FILTER = FileFilter { packageFile ->
+            packageFile.isFile && packageFile.nameWithoutExtension.startsWith(DotnetConstants.PACKAGE_TYPE, true) && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
         }
     }
 }
