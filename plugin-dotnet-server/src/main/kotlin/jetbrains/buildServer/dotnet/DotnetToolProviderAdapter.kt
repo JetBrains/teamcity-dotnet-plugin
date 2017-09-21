@@ -35,12 +35,9 @@ class DotnetToolProviderAdapter(
         LOG.info("Downloading package from: " + downloadUrl)
         val targetFile = File(targetDirectory, downloadableTool.destinationFileName)
         try {
-            _fileSystemService
-                    .createOutputFile(targetFile)
-                    .use {
-                        fileStream -> _httpDownloader.download(URL(downloadUrl), fileStream)
-                        fileStream.flush()
-                    }
+            _fileSystemService.write(targetFile) {
+                _httpDownloader.download(URL(downloadUrl), it)
+            }
 
             return targetFile
         } catch (e: Throwable) {
