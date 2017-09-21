@@ -1,13 +1,11 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.util.FileUtil
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
+import java.io.*
 
 class FileSystemServiceImpl : FileSystemService {
-    override fun createOutputFile(file: File): OutputStream {
+    override fun write(file: File, writer: (OutputStream) -> Unit) {
         FileUtil.createParentDirs(file)
-        return FileOutputStream(file)
+        FileOutputStream(file).use(writer)
     }
 }

@@ -43,7 +43,7 @@ To use the `mono` specific build runners, install [Mono](http://www.mono-project
 Also, you can configure the `MONO_HOME` environment variable for your TeamCity build agent user, for instance:
 
 ```
-MONO_HOME=C:\Program Files (x86)\Mono
+MONO_HOME=C:\Program Files\Mono\
 ```
 
 # Build
