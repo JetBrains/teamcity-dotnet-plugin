@@ -19,33 +19,44 @@ class DotnetToolProviderAdapter(
 
     override fun getAvailableToolVersions(): MutableCollection<out ToolVersion> = tools.toMutableList()
 
-    override fun tryGetPackageVersion(toolPackage: File): GetPackageVersionResult =
-        _packageVersionParser.tryParse(toolPackage.name)?.let {
+    override fun tryGetPackageVersion(toolPackage: File): GetPackageVersionResult {
+        LOG.info("Get package version for file \"$toolPackage\"")
+
+        val versionResult = _packageVersionParser.tryParse(toolPackage.name)?.let {
             GetPackageVersionResult.version(DotnetToolVersion(it.toString()))
         } ?: GetPackageVersionResult.error("Failed to get version of " + toolPackage)
 
+        LOG.info("Package version is \"${versionResult.toolVersion?.version ?: "null"}\"")
+        return versionResult
+    }
+
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File): File {
+        LOG.info("Fetch package for version \"${toolVersion.version ?: "null"}\" to directory \"$targetDirectory\"")
+
         val downloadableTool = tools
                 .filter { it.version == toolVersion.version }
                 .firstOrNull()
                 ?: throw ToolException("Failed to find package " + toolVersion)
 
         val downloadUrl = downloadableTool.downloadUrl
-        LOG.info("Start installing package " + toolVersion.displayName)
-        LOG.info("Downloading package from: " + downloadUrl)
+        LOG.info("Start installing package \"${toolVersion.displayName}\"")
+        LOG.info("Downloading package from: \"$downloadUrl\"")
         val targetFile = File(targetDirectory, downloadableTool.destinationFileName)
         try {
             _fileSystemService.write(targetFile) {
                 _httpDownloader.download(URL(downloadUrl), it)
             }
 
+            LOG.info("Package from: \"$downloadUrl\" was downloaded to \"$targetFile\"")
             return targetFile
         } catch (e: Throwable) {
-            throw ToolException("Failed to download package " + toolVersion + " to " + targetFile + e.message, e)
+            throw ToolException("Failed to download package \"$toolVersion\" to \"$targetFile\": \"${e.message}\"", e)
         }
     }
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
+        LOG.info("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
+
         var pathPrefix = ""
         if (NUGET_PACKAGE_FILE_FILTER.accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
             pathPrefix = DotnetConstants.PACKAGE_BINARY_NUPKG_PATH + "/"
@@ -54,6 +65,8 @@ class DotnetToolProviderAdapter(
         if (!ArchiveUtil.unpackZip(toolPackage, pathPrefix, targetDirectory)) {
             throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
         }
+
+        LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
     }
 
     private val tools: List<DotnetTool> get() {
