@@ -23,7 +23,7 @@ class CmdWorkflowComposer(
                     buildSequence {
                         val cmdExecutable = _environment.tryGetVariable(ComSpecEnvVarName) ?: throw RunBuildException("Environment variable \"$ComSpecEnvVarName\" was not found");
                         for (commandLine in workflow.commandLines) {
-                            when(commandLine.executableFile.extension.toLowerCase() ?: "") {
+                            when(commandLine.executableFile.extension.toLowerCase()) {
                                 "cmd", "bat" -> {
                                     yield(CommandLine(
                                             TargetType.Host,

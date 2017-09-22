@@ -7,10 +7,6 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet.
- */
-
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetCommandSet(
         private val _parametersService: ParametersService,
@@ -20,16 +16,13 @@ class DotnetCommandSet(
 
     private val _knownCommands: Map<String, DotnetCommand> = commands.associateBy({ it.commandType.id }, { it })
 
-    override val commands: Sequence<DotnetCommand>
-        get() {
-            val commandName = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
-            if (commandName.isNullOrBlank()) {
-                throw RunBuildException("Dotnet command name is empty")
-            }
-
-            val command = _knownCommands[commandName] ?: throw RunBuildException("Unknown dotnet command type \"$commandName\"")
-            return getTargetArguments(command).map { CompositeCommand(command, getArguments(command, it)) }
-        }
+    override val commands: Sequence<DotnetCommand> get() =
+            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
+                _knownCommands[it]?.let {
+                    val command = it
+                    getTargetArguments(command).map { CompositeCommand(command, getArguments(command, it)) }
+                }
+            }  ?: emptySequence()
 
     private fun getTargetArguments(command: DotnetCommand): Sequence<TargetArguments>
     {

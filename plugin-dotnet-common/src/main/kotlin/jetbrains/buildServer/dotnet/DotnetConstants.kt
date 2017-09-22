@@ -95,6 +95,11 @@ object DotnetConstants {
     const val PARAM_VSTEST_TEST_CASE_FILTER = "dotnet-vstest-test-case-filter"
     const val PARAM_VSTEST_IN_ISOLATION = "dotnet-vstest-is-isolation"
 
+    const val PARAM_VISUAL_STUDIO_ACTION = "visual-studio-action"
+    const val PARAM_VISUAL_STUDIO_VERSION = "visual-studio-version"
+    const val PARAM_VISUAL_STUDIO_CONFIG = "visual-studio-config"
+    const val PARAM_VISUAL_STUDIO_PLATFORM = "visual-studio-platform"
+
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
     // Integration package

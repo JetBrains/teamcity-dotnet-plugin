@@ -34,7 +34,7 @@ class DotnetToolProviderAdapter(
     }
 
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File): File {
-        LOG.info("Fetch package for version \"${toolVersion.version ?: "null"}\" to directory \"$targetDirectory\"")
+        LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
         val downloadableTool = tools
                 .filter { it.version == toolVersion.version }

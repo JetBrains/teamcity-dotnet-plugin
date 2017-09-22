@@ -226,8 +226,27 @@ class DotnetParametersProvider {
     val vstestInIsolationKey: String
         get() = DotnetConstants.PARAM_VSTEST_IN_ISOLATION
 
+    val visualStudioActionKey: String
+        get() = DotnetConstants.PARAM_VISUAL_STUDIO_ACTION
+
+    val visualStudioActions: List<VisualStudioAction>
+        get() = VisualStudioAction.values().asList()
+
+    val visualStudioVersionKey: String
+        get() = DotnetConstants.PARAM_VISUAL_STUDIO_VERSION
+
+    val visualStudioVersions: List<Tool>
+        get() = Tool.values().filter { it.type == ToolType.VisualStudio }
+
+    val visualStudioConfigKey: String
+        get() = DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG
+
+    val visualStudioPlatformKey: String
+        get() = DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM
+
     companion object {
-        val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
+        private val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
+        private val visualStudioRequirementsProvider: VisualStudioRequirementsProvider = VisualStudioRequirementsProvider()
         val commandTypes = listOf(
                 RestoreCommandType(),
                 BuildCommandType(),
@@ -239,7 +258,8 @@ class DotnetParametersProvider {
                 CleanCommandType(),
                 RunCommandType(),
                 MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
-                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
+                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
+                VisualStudioCommandType(visualStudioRequirementsProvider, dotCoverInfoProvider)
         ).associateBy { it.name }
     }
 }

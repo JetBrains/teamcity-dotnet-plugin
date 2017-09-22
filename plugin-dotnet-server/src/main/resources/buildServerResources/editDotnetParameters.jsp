@@ -20,6 +20,8 @@
     BS.DotnetParametersForm = {
         appendProjectFile: [],
         dotCoverEnabled: [],
+        hideLogging: [],
+        targetsAreRequired: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j('#${params.pathsKey}');
             var value = BS.Util.trimSpaces($paths.val());
@@ -28,7 +30,30 @@
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
         },
-        paths: []
+        paths: [],
+        updateElements: function() {
+          debugger;
+          var commandName = $j('#${params.commandKey}').val();
+
+          var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
+          if (hideLogging == true) {
+            $j('#logging').addClass('hidden');
+          }
+          else {
+            $j('#logging').removeClass('hidden');
+          }
+
+          var targetsAreRequired = BS.DotnetParametersForm.targetsAreRequired[commandName];
+          if (targetsAreRequired == true) {
+            $j('#${params.pathsKey}-row').removeClass('advancedSetting');
+
+          }
+          else {
+            $j('#${params.pathsKey}-row').addClass('advancedSetting');
+          }
+
+          BS.dotCover.showDotCoverSection();
+        }
     };
 
     BS.dotCover = {
@@ -48,10 +73,12 @@
           $j('#dotCoverHeader').prop('rowSpan', '1');
         }
       },
+
       updateDotCoverElements: function() {
         BS.dotCover.showDotCoverElements();
         BS.MultilineProperties.updateVisible();
       },
+
       showDotCoverSection: function() {
         var commandName = $j('#${params.commandKey}').val();
         var visible = BS.DotnetParametersForm.dotCoverEnabled[commandName];
@@ -81,7 +108,7 @@
         }
 
         $j(".runnerFormTable span.error").empty();
-        BS.dotCover.showDotCoverSection();
+        BS.DotnetParametersForm.updateElements();
     });
 
     $j(document).on('ready', '#${params.commandKey}', function () {
@@ -123,7 +150,7 @@
     </td>
 </tr>
 
-<tr class="advancedSetting">
+<tr class="advancedSetting" id="logging">
     <th><label for="${params.verbosityKey}">Logging verbosity:</label></th>
     <td>
         <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
@@ -179,6 +206,5 @@
 </tr>
 
 <script type="text/javascript">
-    debugger;
-    BS.dotCover.showDotCoverSection();
+  BS.DotnetParametersForm.updateElements();
 </script>

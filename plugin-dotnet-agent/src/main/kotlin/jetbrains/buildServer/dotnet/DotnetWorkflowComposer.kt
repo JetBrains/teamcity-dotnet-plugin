@@ -30,6 +30,7 @@ class DotnetWorkflowComposer(
 
                         if (context.lastResult.isCompleted && !command.isSuccessfulExitCode(context.lastResult.exitCode)) {
                             context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                            return@buildSequence
                         }
                     }
                 }

@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("msbuild");
-    BS.DotnetParametersForm.paths["msbuild"] = "Projects";
+    BS.DotnetParametersForm.paths["msbuild"] = "Solutions or Projects";
     BS.DotnetParametersForm.dotCoverEnabled["msbuild"] = true;
 </script>
 

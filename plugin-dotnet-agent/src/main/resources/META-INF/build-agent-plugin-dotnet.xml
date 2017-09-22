@@ -121,4 +121,8 @@
 
     <!-- Cmd -->
     <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
+
+    <!-- Visual Studio -->
+    <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer" />
+    <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
 </beans>
