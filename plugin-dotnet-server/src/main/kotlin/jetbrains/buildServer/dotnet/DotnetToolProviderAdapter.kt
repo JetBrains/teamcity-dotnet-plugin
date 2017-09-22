@@ -20,8 +20,11 @@ class DotnetToolProviderAdapter(
     override fun getAvailableToolVersions(): MutableCollection<out ToolVersion> = tools.toMutableList()
 
     override fun tryGetPackageVersion(toolPackage: File): GetPackageVersionResult {
-        LOG.info("Get package version for file \"$toolPackage\"")
+        if (!NUGET_PACKAGE_FILE_FILTER.accept(toolPackage)) {
+            return super.tryGetPackageVersion(toolPackage)
+        }
 
+        LOG.info("Get package version for file \"$toolPackage\"")
         val versionResult = _packageVersionParser.tryParse(toolPackage.name)?.let {
             GetPackageVersionResult.version(DotnetToolVersion(it.toString()))
         } ?: GetPackageVersionResult.error("Failed to get version of " + toolPackage)
