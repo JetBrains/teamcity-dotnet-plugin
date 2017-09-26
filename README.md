@@ -2,15 +2,15 @@
 
 [![official JetBrains project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub) <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon.svg" alt=""/></a>
 
-The TeamCity .NET plugin provides support of the [.NET CLI](https://github.com/dotnet/cli) toolchain, MSBuild, VSTest, Visual Studio.
+The TeamCity .NET plugin provides support of the [.NET CLI](https://github.com/dotnet/cli), MSBuild, VSTest, Visual Studio.
 
 It simplifies building windows and cross-platform applications that use .NET frameworks and libraries.
 
 # Features
 
 The plugin provides the following features for .NET project building:
-* `dotnet`, `MSBuild`, `VSTest`, `Visual Studio (devenv.com)` command build runner
-* .NET Core tools, Mono tools, MSBuild, VSTest.Console, Visual Studio detection on build agents
+* `dotnet`, `MSBuild`, `VSTest`, `Visual Studio` build runners
+* .NET Core tools, Mono, MSBuild, VSTest.Console, Visual Studio detection on build agents
 * auto-discovery of build steps
 * cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
 * supports both project.json and csproj-based projects
@@ -18,11 +18,12 @@ The plugin provides the following features for .NET project building:
  
 # Download
 
-You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
+* for [TeamCity 2017 and greater](https://www.jetbrains.com/teamcity/download/) you can download [plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins)
+* for TeamCity 9.1.x you can download [previous version of plugin](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/1179662:id/dotnet-core-plugin.zip)
 
 # Compatibility
 
-The plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 2017 and greater.
+The current version of plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 2017 and greater.
 
 # Configuration
 
@@ -36,7 +37,7 @@ Also, you can configure the `DOTNET_HOME` environment variable for your TeamCity
 DOTNET_HOME=C:\Program Files\dotnet\
 ```
 
-## Mono toolkit
+## Mono
 
 To use the `mono` specific build runners, install [Mono](http://www.mono-project.com/download/) 5.0 or later and add the Mono tools path to the `PATH` environment variable.
 
