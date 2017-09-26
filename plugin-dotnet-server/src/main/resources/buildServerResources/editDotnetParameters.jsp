@@ -32,7 +32,6 @@
         },
         paths: [],
         updateElements: function() {
-          debugger;
           var commandName = $j('#${params.commandKey}').val();
 
           var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
@@ -97,7 +96,6 @@
     };
 
     $j(document).on('change', '#${params.commandKey}', function () {
-        debugger;
         var command = $j(this).val();
         var pathsName = BS.DotnetParametersForm.paths[command];
         var pathsRow = $j("#${params.pathsKey}-row");
@@ -112,7 +110,6 @@
     });
 
     $j(document).on('ready', '#${params.commandKey}', function () {
-        debugger;
         $j(this).change();
     });
 </script>
@@ -121,12 +118,9 @@
     <tr class="advancedSetting" id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
-            <div class="posRel clearfix">
-                <div class="dnx left">
-                    <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
-                </div>
-                <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
-            </div>
+            <props:textProperty name="${params.pathsKey}" className="longField" expandable="true">
+                <jsp:attribute name="afterTextField"><bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/></jsp:attribute>
+            </props:textProperty>
             <span class="error" id="error_${params.pathsKey}"></span>
             <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span></td>
         </td>

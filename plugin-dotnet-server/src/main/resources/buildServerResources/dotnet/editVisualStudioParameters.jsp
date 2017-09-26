@@ -7,7 +7,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.appendProjectFile.push("devenv");
     BS.DotnetParametersForm.paths["devenv"] = "Solutions or Projects";
     BS.DotnetParametersForm.dotCoverEnabled["devenv"] = true;
     BS.DotnetParametersForm.hideLogging["devenv"] = true;

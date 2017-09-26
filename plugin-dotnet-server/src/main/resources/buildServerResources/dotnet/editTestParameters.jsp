@@ -4,10 +4,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
+<jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["test"] = "Projects";
-    BS.DotnetParametersForm.dotCoverEnabled["test"] = true;
+  BS.DotnetParametersForm.appendProjectFile.push("test");
+  BS.DotnetParametersForm.paths["test"] = "Projects";
+  BS.DotnetParametersForm.dotCoverEnabled["test"] = true;
 </script>
 
 <tr class="advancedSetting">

@@ -7,7 +7,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.appendProjectFile.push("vstest");
     BS.DotnetParametersForm.paths["vstest"] = "Test file names";
     BS.DotnetParametersForm.dotCoverEnabled["vstest"] = true;
 </script>
