@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.dotnet.commands.*
+import jetbrains.buildServer.web.functions.InternalProperties
 
 /**
  * Provides parameters for dotnet runner.
@@ -15,6 +16,8 @@ import jetbrains.buildServer.dotnet.commands.*
 class DotnetParametersProvider {
 
     val types: Collection<CommandType> = commandTypes.values
+
+    val experimentalMode get() = DotnetParametersProvider.experimentalMode
 
     val commandKey: String
         get() = DotnetConstants.PARAM_COMMAND
@@ -247,7 +250,15 @@ class DotnetParametersProvider {
     companion object {
         private val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
         private val visualStudioRequirementsProvider: VisualStudioRequirementsProvider = VisualStudioRequirementsProvider()
-        val commandTypes = listOf(
+        private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
+
+        private val experimentalCommandTypes: Sequence<CommandType> =
+                if(experimentalMode)
+                    sequenceOf(VisualStudioCommandType(visualStudioRequirementsProvider, dotCoverInfoProvider))
+                else
+                    emptySequence()
+
+        val commandTypes get() = sequenceOf(
                 RestoreCommandType(),
                 BuildCommandType(),
                 TestCommandType(dotCoverInfoProvider),
@@ -258,8 +269,7 @@ class DotnetParametersProvider {
                 CleanCommandType(),
                 RunCommandType(),
                 MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
-                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
-                VisualStudioCommandType(visualStudioRequirementsProvider, dotCoverInfoProvider)
-        ).associateBy { it.name }
+                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
+        ).plus(experimentalCommandTypes).associateBy { it.name }
     }
 }

@@ -11,18 +11,20 @@
     BS.DotnetParametersForm.dotCoverEnabled["vstest"] = true;
 </script>
 
-<tr class="advancedSetting">
-    <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
-    <td>
-        <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
-            <props:option value="">&lt;Default&gt;</props:option>
-            <c:forEach var="item" items="${params.vstestVersions}">
-                <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-            </c:forEach>
-        </props:selectProperty>
-        <span class="error" id="error_${params.vstestVersionKey}"></span>
-    </td>
-</tr>
+<c:if test="${params.experimentalMode}=true">
+    <tr class="advancedSetting">
+        <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
+        <td>
+            <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
+                <props:option value="">&lt;Default&gt;</props:option>
+                <c:forEach var="item" items="${params.vstestVersions}">
+                    <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+                </c:forEach>
+            </props:selectProperty>
+            <span class="error" id="error_${params.vstestVersionKey}"></span>
+        </td>
+    </tr>
+</c:if>
 
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
