@@ -119,7 +119,7 @@
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
             <props:textProperty name="${params.pathsKey}" className="longField" expandable="true">
-                <jsp:attribute name="afterTextField"><bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/></jsp:attribute>
+                <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </props:textProperty>
             <span class="error" id="error_${params.pathsKey}"></span>
             <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span></td>
