@@ -19,12 +19,11 @@ The plugin provides the following features for .NET project building:
  
 # Download
 
-* for [TeamCity 2017 and greater](https://www.jetbrains.com/teamcity/download/) you can download [plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins)
-* for TeamCity 9.1.x you can download [previous version of plugin](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/1179662:id/dotnet-core-plugin.zip)
+You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
 
 # Compatibility
 
-The current version of plugin is compatible with [TeamCity](https://www.jetbrains.com/teamcity/download/) 2017 and greater.
+The current version of plugin is compatible with [TeamCity 2017+](https://www.jetbrains.com/teamcity/download/).
 
 # Configuration
 
