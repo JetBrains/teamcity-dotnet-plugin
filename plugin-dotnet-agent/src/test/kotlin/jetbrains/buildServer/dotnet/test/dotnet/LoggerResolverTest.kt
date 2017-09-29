@@ -3,8 +3,13 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.agent.runner.WorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import org.jmock.Expectations
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -14,13 +19,22 @@ class LoggerResolverTest {
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
-                // INTEGRATION_PACKAGE_HOME runner parameter is not specified
+                // Get bundled when INTEGRATION_PACKAGE_HOME runner parameter is not specified
+                arrayOf(
+                        ToolType.MSBuild,
+                        VirtualFileSystemService()
+                                .addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
+                        emptyMap<String, String>(),
+                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        null),
+
+                // when bundled was not found
                 arrayOf(
                         ToolType.MSBuild,
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
-                        null),
+                        ".NET integration package was not found at .+" as String?),
 
                 // Success scenario for defaults
                 arrayOf(
@@ -110,13 +124,13 @@ class LoggerResolverTest {
                         null,
                         "Path \".+\" to MSBuild logger was not found" as String?),
 
-                // Has no directory
+                // Use bundled when has no directory
                 arrayOf(
                         ToolType.MSBuild,
-                        VirtualFileSystemService(),
+                        VirtualFileSystemService().addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
-                        null,
-                        "Path \".+\" to integration pack was not found" as String?)
+                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        null)
         )
     }
 
@@ -128,7 +142,17 @@ class LoggerResolverTest {
             expectedLogger: File?,
             expectedErrorPattern: String?) {
         // Given
-        val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService)
+        val pluginPath = File("plugin")
+        val ctx = Mockery()
+        val pathsService = ctx.mock(PathsService::class.java)
+        ctx.checking(object : Expectations() {
+            init {
+                allowing<PathsService>(pathsService).getPath(PathType.Plugin)
+                will(returnValue(pluginPath))
+            }
+        })
+
+        val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService, pathsService)
 
         // When
         var actualLogger: File? = null;
@@ -148,5 +172,10 @@ class LoggerResolverTest {
         if(actualLogger != null) {
             Assert.assertEquals(actualLogger, expectedLogger)
         }
+    }
+
+    companion object {
+        private val PluginPath = File("plugin")
+        private val ToolsPath = File(PluginPath, LoggerResolverImpl.ToolsDirectoryName)
     }
 }

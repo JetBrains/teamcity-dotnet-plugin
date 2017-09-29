@@ -11,7 +11,7 @@
     BS.DotnetParametersForm.dotCoverEnabled["msbuild"] = true;
 </script>
 
-<c:if test="${params.experimentalMode}=true">
+<c:if test="${params.experimentalMode == true}">
     <tr class="advancedSetting">
         <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
         <td>

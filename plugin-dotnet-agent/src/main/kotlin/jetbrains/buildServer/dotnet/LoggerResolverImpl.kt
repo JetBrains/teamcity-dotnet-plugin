@@ -4,14 +4,17 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
 class LoggerResolverImpl(
         private val _parametersService: ParametersService,
-        private val _fileSystemService: FileSystemService)
+        private val _fileSystemService: FileSystemService,
+        private val _pathsService: PathsService)
     : LoggerResolver {
 
-    override fun resolve(toolType: ToolType): File? {
+    override fun resolve(toolType: ToolType): File =
         loggerHome?.let {
             val home = it;
             when(toolType) {
@@ -29,10 +32,7 @@ class LoggerResolverImpl(
                     throw RunBuildException("Unknown tool ${toolType}")
                 }
             }
-        }
-
-        return null
-    }
+        } ?: bundledLoggerHome
 
     private fun getLoggerAssembly(toolType: ToolType, home:File, path:String): File {
         val loggerAssemblyPath = File(home, path)
@@ -50,16 +50,21 @@ class LoggerResolverImpl(
 
     private val loggerHome: File? get() {
         val loggerHome =_parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)
-        if(loggerHome.isNullOrBlank()) {
-            return null
+        if (loggerHome.isNullOrBlank()) {
+            return bundledLoggerHome
         }
 
         val loggerHomePath = File(loggerHome);
-        if(!_fileSystemService.isExists(loggerHomePath)) {
-            throw RunBuildException("Path \"${loggerHomePath}\" to integration pack was not found")
+        if (!_fileSystemService.isExists(loggerHomePath)) {
+            return bundledLoggerHome
         }
 
         return loggerHomePath;
+    }
+
+    private val bundledLoggerHome: File get() {
+        var toolsPath = File(_pathsService.getPath(PathType.Plugin), ToolsDirectoryName)
+        return _fileSystemService.list(toolsPath).firstOrNull() ?: throw RunBuildException(".NET integration package was not found at \"${toolsPath.absolutePath}\"")
     }
 
     private fun getCurrentTool(versionParameterName: String): Tool? {
@@ -68,5 +73,9 @@ class LoggerResolverImpl(
         }
 
         return null
+    }
+
+    companion object {
+        const val ToolsDirectoryName = "tools"
     }
 }

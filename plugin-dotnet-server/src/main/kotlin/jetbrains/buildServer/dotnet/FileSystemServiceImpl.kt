@@ -8,4 +8,8 @@ class FileSystemServiceImpl : FileSystemService {
         FileUtil.createParentDirs(file)
         FileOutputStream(file).use(writer)
     }
+
+    override fun list(file: File): Sequence<File> = file.listFiles()?.asSequence() ?: emptySequence<File>()
+
+    override fun isExists(file: File): Boolean = file.exists()
 }

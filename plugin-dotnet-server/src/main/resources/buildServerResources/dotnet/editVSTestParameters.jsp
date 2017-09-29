@@ -11,7 +11,7 @@
     BS.DotnetParametersForm.dotCoverEnabled["vstest"] = true;
 </script>
 
-<c:if test="${params.experimentalMode}=true">
+<c:if test="${params.experimentalMode == true}">
     <tr class="advancedSetting">
         <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
         <td>

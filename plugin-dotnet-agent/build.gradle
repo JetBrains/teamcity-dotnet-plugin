@@ -1,24 +1,72 @@
 plugins {
-    id 'com.github.rodm.teamcity-agent' version "0.11"
+  id 'com.github.rodm.teamcity-agent' version "0.11"
+  id 'com.ullink.nuget' version '2.15'
 }
 
 teamcity {
-    version = teamcityVersion
+  version = teamcityVersion
+  agent {
     descriptor {
-        pluginDeployment {
-            useSeparateClassloader = true
+      pluginDeployment {
+        useSeparateClassloader = true
+      }
+
+      files {
+        into('tools') {
+          from('./tools')
         }
+      }
     }
+  }
 }
 
 dependencies {
-    compile project(':plugin-dotnet-common')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
-    provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
-    testCompile 'org.testng:testng:6.8'
-    testCompile 'org.jmock:jmock:2.5.1'
+  compile project(':plugin-dotnet-common')
+  compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+  provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+  provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
+  provided 'org.jetbrains.teamcity:server-api:2017.2-SNAPSHOT'
+  testCompile 'org.testng:testng:6.8'
+  testCompile 'org.jmock:jmock:2.5.1'
 }
+
+nugetRestore {
+  packagesConfigFile = file('./../packages.config')
+  packagesDirectory = './packages'
+}
+
+task prepareTools(dependsOn: nugetRestore) {
+  doLast {
+    ant.delete(dir: './tools')
+
+    def path = ant.path {
+      dirset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*')
+    }
+
+    def nuGetPackageId = path.first().name
+
+    println 'Use .NET integration package: ' + nuGetPackageId
+
+    path = ant.path {
+      dirset (dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/build/_common/**')
+      fileset (dir: './packages', includes: 'TeamCity.Dotnet.Integration.nuspec')
+    }
+
+    def contentPath = path.list().first()
+
+    ant.move(todir: './tools/' + nuGetPackageId, overwrite: 'true', force: 'true'){
+      fileset (dir: contentPath, includes: '**/*')
+    }
+
+    path = ant.path {
+      fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/TeamCity.Dotnet.Integration.*.nupkg')
+    }
+
+    ant.delete(dir: './packages')
+  }
+}
+
+build.dependsOn(prepareTools)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact

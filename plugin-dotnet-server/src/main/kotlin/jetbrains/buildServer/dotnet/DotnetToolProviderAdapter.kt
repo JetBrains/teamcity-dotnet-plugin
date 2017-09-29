@@ -4,11 +4,13 @@ import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
 import jetbrains.buildServer.util.TimeService
+import jetbrains.buildServer.web.openapi.PluginDescriptor
 import java.io.File
 import java.io.FileFilter
 import java.net.URL
 
 class DotnetToolProviderAdapter(
+        private val _pluginDescriptor: PluginDescriptor,
         private val _timeService: TimeService,
         private val _packageVersionParser: NuGetPackageVersionParser,
         private val _httpDownloader: HttpDownloader,
@@ -71,6 +73,32 @@ class DotnetToolProviderAdapter(
         }
     }
 
+    override fun getDefaultBundledVersionId(): String? = null
+
+    override fun getBundledToolVersions(): MutableCollection<InstalledToolVersion> {
+        var pluginPath = File(_pluginDescriptor.pluginRoot, "server")
+
+        val toolPackage = _fileSystemService
+                .list(pluginPath)
+                .filter { NUGET_BUNDLED_FILTER.accept(it) }
+                .firstOrNull()
+
+        if (toolPackage == null) {
+            LOG.warn("Failed to find package spec on path ${pluginPath}")
+            return super.getBundledToolVersions()
+        }
+
+        val toolVersion = _packageVersionParser.tryParse(toolPackage.nameWithoutExtension)
+            ?.let { GetPackageVersionResult.version(DotnetToolVersion(it.toString())).toolVersion }
+
+        if (toolVersion == null) {
+            LOG.warn("Failed to parse version from \"${toolPackage.nameWithoutExtension}\"")
+            return super.getBundledToolVersions()
+        }
+
+        return mutableListOf(SimpleInstalledToolVersion.newBundledToAgentTool(DotnetToolVersion(toolVersion.version), toolPackage))
+    }
+
     private val tools: List<DotnetTool> get() {
         try {
             return _nuGetService.getPackagesById(type.type, true).filter { it.isListed == true }.map { DotnetTool(it) }.toList().reversed()
@@ -86,6 +114,10 @@ class DotnetToolProviderAdapter(
         private val LOG: Logger = Logger.getInstance(DotnetToolProviderAdapter::class.java.name)
         private val NUGET_PACKAGE_FILE_FILTER = FileFilter { packageFile ->
             packageFile.isFile && packageFile.nameWithoutExtension.startsWith(DotnetConstants.PACKAGE_TYPE, true) && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
+        }
+
+        private val NUGET_BUNDLED_FILTER = FileFilter { packageFile ->
+            packageFile.isFile && packageFile.nameWithoutExtension.startsWith(DotnetConstants.PACKAGE_TYPE, true) && "zip".equals(packageFile.extension, true)
         }
     }
 }

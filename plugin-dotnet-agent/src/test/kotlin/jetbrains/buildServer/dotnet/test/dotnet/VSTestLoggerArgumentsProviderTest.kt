@@ -10,9 +10,6 @@ class VSTestLoggerArgumentsProviderTest {
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
-                // Has no logger path
-                arrayOf(null as File?, emptyList<String>()),
-
                 // Success scenario
                 arrayOf(
                         File("loggerPath", "vstestlogger.dll") as File?,
@@ -24,7 +21,7 @@ class VSTestLoggerArgumentsProviderTest {
 
     @Test(dataProvider = "testLoggerArgumentsData")
     fun shouldGetArguments(
-            loggerFile: File?,
+            loggerFile: File,
             expectedArguments: List<String>) {
         // Given
         val argumentsProvider = VSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile))

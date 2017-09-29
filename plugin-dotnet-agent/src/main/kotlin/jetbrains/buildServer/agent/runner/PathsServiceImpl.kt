@@ -2,13 +2,15 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.BuildAgentConfiguration
 import jetbrains.buildServer.agent.impl.config.BuildAgentConfigurablePaths
+import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
 import java.io.File
 import java.util.*
 
 class PathsServiceImpl(
         private final val _buildStepContext: BuildStepContext,
         private final val _buildAgentConfiguration: BuildAgentConfiguration,
-        private final val _buildAgentConfigurablePaths: BuildAgentConfigurablePaths) : PathsService {
+        private final val _buildAgentConfigurablePaths: BuildAgentConfigurablePaths,
+        private final val _pluginDescriptor: PluginDescriptor) : PathsService {
 
     override val uniqueName: String
         get() = UUID.randomUUID().toString().replace("-", "")
@@ -21,6 +23,7 @@ class PathsServiceImpl(
             PathType.BuildTemp -> return _buildAgentConfigurablePaths.buildTempDirectory
             PathType.GlobalTemp -> return _buildAgentConfigurablePaths.cacheDirectory
             PathType.Plugins -> return _buildAgentConfiguration.agentPluginsDirectory
+            PathType.Plugin -> return _pluginDescriptor.pluginRoot
             PathType.Tools -> return _buildAgentConfiguration.agentToolsDirectory
             PathType.Lib -> return _buildAgentConfiguration.agentLibDirectory
             PathType.Work -> return _buildAgentConfiguration.workDirectory

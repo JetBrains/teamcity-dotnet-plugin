@@ -13,4 +13,6 @@ class FileSystemServiceImpl : FileSystemService {
     override fun copy(source: File, destination: File): Unit = FileUtils.copyDirectory(source, destination)
 
     override fun remove(file: File): Unit = FileUtils.deleteDirectory(file)
+
+    override fun list(file: File): Sequence<File> = file.listFiles()?.asSequence() ?: emptySequence<File>()
 }

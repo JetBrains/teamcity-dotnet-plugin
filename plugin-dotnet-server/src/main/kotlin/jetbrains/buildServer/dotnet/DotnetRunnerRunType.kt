@@ -19,8 +19,9 @@ import jetbrains.buildServer.web.openapi.PluginDescriptor
 /**
  * Dotnet runner definition.
  */
-class DotnetRunnerRunType(private val _pluginDescriptor: PluginDescriptor,
-                          runTypeRegistry: RunTypeRegistry) : RunType() {
+class DotnetRunnerRunType(
+        private val _pluginDescriptor: PluginDescriptor,
+        runTypeRegistry: RunTypeRegistry) : RunType() {
 
     init {
         _pluginDescriptor.pluginResourcesPath

@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
+import org.apache.xmlrpc.XmlRpc.version
 
 class DotnetTool(
         private val _package: NuGetPackage): ToolVersion {

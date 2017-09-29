@@ -197,46 +197,6 @@ class VSTestLoggerEnvironmentTest {
         _ctx!!.assertIsSatisfied()
     }
 
-    @Test
-    fun shouldNotCopyAndRemoveLoggerDirWhenLoggeriIsUndefined() {
-        // Given
-        val workingDirectory = File("wd")
-        val loggerFile = File("vstest15", "logger.dll")
-        val targetFile1 = File("proj", "my1.csproj")
-        val targetFile2 = File("my2.sln")
-        val uniqueName1 = "123"
-        val uniqueName2 = "abc"
-        val loggerEnvironment = createInstance()
-
-        // When
-        _ctx!!.checking(object : Expectations() {
-            init {
-                oneOf<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
-                will(returnValue(null))
-
-                never<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
-                will(returnValue(workingDirectory))
-
-                never<PathsService>(_pathService).uniqueName
-                will(returnValue(uniqueName1))
-
-                never<PathsService>(_pathService).uniqueName
-                will(returnValue(uniqueName2))
-
-                never<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile1.absoluteFile.parentFile, uniqueName1))
-                never<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile2.absoluteFile.parentFile, uniqueName2))
-
-                never<FileSystemService>(_fileSystemService).remove(File(targetFile1.absoluteFile.parentFile, uniqueName1))
-                never<FileSystemService>(_fileSystemService).remove(File(targetFile2.absoluteFile.parentFile, uniqueName2))
-            }
-        })
-
-        loggerEnvironment.configure(listOf(targetFile1, targetFile2)).close()
-
-        // Then
-        _ctx!!.assertIsSatisfied()
-    }
-
     private fun createInstance(): VSTestLoggerEnvironment {
         return VSTestLoggerEnvironmentImpl(
                 _pathService!!,

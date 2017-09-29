@@ -13,7 +13,7 @@ class VSTestLoggerEnvironmentImpl(
         private val _loggerResolver: LoggerResolver)
     : VSTestLoggerEnvironment {
     override fun configure(paths: List<File>): Closeable =
-        _loggerResolver.resolve(ToolType.VSTest)?.parentFile?.let {
+        _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             var loggerLocalPaths = mutableListOf<File>()
             val targets = paths.map { it.absoluteFile.parentFile }.toMutableSet()
             if (targets.size == 0) {

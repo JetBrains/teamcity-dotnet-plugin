@@ -15,6 +15,8 @@ enum class PathType {
 
     Plugins,
 
+    Plugin,
+
     Tools,
 
     Lib,

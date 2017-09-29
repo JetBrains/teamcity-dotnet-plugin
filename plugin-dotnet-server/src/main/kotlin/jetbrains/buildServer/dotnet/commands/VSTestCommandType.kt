@@ -8,7 +8,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 import kotlin.coroutines.experimental.buildSequence
 
 /**
- * Provides parameters for dotnet MSBuild command.
+ * Provides parameters for dotnet VSTest command.
  */
 class VSTestCommandType(
         private val _vstestRequirementsProvider: VSTestRequirementsProvider,

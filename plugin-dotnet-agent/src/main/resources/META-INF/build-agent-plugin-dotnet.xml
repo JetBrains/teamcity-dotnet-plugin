@@ -29,6 +29,7 @@
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
+    <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
         <constructor-arg ref="dotnetToolProvider"/>
         <constructor-arg ref="dotnetVersionParser"/>

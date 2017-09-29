@@ -16,8 +16,7 @@ class MSBuildVSTestLoggerArgumentsProvider(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            val loggerPath = _loggerResolver.resolve(ToolType.VSTest);
-            loggerPath?.parentFile?.let {
+            _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(CommandLineArgument("/p:VSTestLogger=logger://teamcity"))
                 yield(CommandLineArgument("/p:VSTestTestAdapterPath=."))
             }

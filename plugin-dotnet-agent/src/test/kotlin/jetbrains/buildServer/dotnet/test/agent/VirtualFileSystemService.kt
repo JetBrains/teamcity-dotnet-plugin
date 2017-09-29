@@ -55,8 +55,14 @@ class VirtualFileSystemService : FileSystemService {
     }
 
     override fun remove(file: File): Unit {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if(_files.containsKey(file)) {
+            _files.remove(file)
+        }
+
+        _directories.remove(file)
     }
+
+    override fun list(file: File): Sequence<File> = _directories.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
 
     class FileInfo {
         public val inputStream: InputStream

@@ -7,12 +7,14 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<tr>
-    <th><label for="${params.integrationPackagePathKey}">Integration package: </label></th>
-    <td>
-        <jsp:include page="/tools/selector.html?toolType=${params.integrationPackageToolTypeKey}&versionParameterName=${params.integrationPackagePathKey}&class=${clazz}"/>
-    </td>
-</tr>
+<c:if test="${params.experimentalMode == true}">
+    <tr class="advancedSetting">
+        <th><label for="${params.integrationPackagePathKey}">Integration package: </label></th>
+        <td>
+            <jsp:include page="/tools/selector.html?toolType=${params.integrationPackageToolTypeKey}&versionParameterName=${params.integrationPackagePathKey}&class=${clazz}"/>
+        </td>
+    </tr>
+</c:if>
 
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");

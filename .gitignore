@@ -44,3 +44,4 @@ fabric.properties
 .gradle
 build
 /classes/
+plugin-dotnet-server/tools/

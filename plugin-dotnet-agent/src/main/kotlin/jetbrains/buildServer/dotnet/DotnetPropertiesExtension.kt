@@ -41,7 +41,7 @@ class DotnetPropertiesExtension(
                 _versionParser.tryParse(it.standardOutput)?.let {
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, command.executableFile.absolutePath)
-                    LOG.info("Found .NET CLI at ${command.executableFile.absolutePath}")
+                    LOG.info("Found .NET CLI at \"${command.executableFile.absolutePath}\"")
                 }
             }
         } catch (e: ToolCannotBeFoundException) {
