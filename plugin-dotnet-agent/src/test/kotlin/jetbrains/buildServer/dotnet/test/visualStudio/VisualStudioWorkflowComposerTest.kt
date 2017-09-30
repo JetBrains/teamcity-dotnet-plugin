@@ -53,7 +53,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
-                                        File("checkout"),
+                                        File("wd"),
                                         listOf(
                                                 CommandLineArgument(File("my1.sln").absolutePath),
                                                 CommandLineArgument("/build"),
@@ -64,7 +64,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
-                                        File("checkout"),
+                                        File("wd"),
                                         listOf(
                                                 CommandLineArgument(File("my2.sln").absolutePath),
                                                 CommandLineArgument("/build"),
@@ -83,7 +83,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
-                                        File("checkout"),
+                                        File("wd"),
                                         listOf(
                                                 CommandLineArgument(File("my1.csproj").absolutePath),
                                                 CommandLineArgument("/rebuild"),
@@ -114,14 +114,14 @@ class VisualStudioWorkflowComposerTest {
             expectedCommandLines: List<CommandLine>) {
         // Given
 
-        val checkoutDirectory = File("checkout")
+        val workingDirectory = File("wd")
         val composer = createInstance(parameters)
 
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                allowing<PathsService>(_pathService).getPath(PathType.Checkout)
-                will(returnValue(checkoutDirectory))
+                allowing<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
+                will(returnValue(workingDirectory))
 
                 allowing<ToolResolver>(_toolResolver).executableFile
                 will(returnValue(File("tool")))
@@ -161,7 +161,7 @@ class VisualStudioWorkflowComposerTest {
                 CommandLine(
                         TargetType.Tool,
                         File("tool"),
-                        File("checkout"),
+                        File("wDir"),
                         listOf(
                                 CommandLineArgument(File("my1.sln").absolutePath),
                                 CommandLineArgument("/build"),
@@ -170,14 +170,14 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLineArgument("arg2")),
                         emptyList()))
 
-        val checkoutDirectory = File("checkout")
+        val workingDirectory = File("wDir")
         val composer = createInstance(parameters)
 
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                allowing<PathsService>(_pathService).getPath(PathType.Checkout)
-                will(returnValue(checkoutDirectory))
+                allowing<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
+                will(returnValue(workingDirectory))
 
                 allowing<ToolResolver>(_toolResolver).executableFile
                 will(returnValue(File("tool")))

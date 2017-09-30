@@ -41,6 +41,7 @@
     <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
 
     <!--Dotnet arguments' providers-->
+    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentImpl"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
     <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
     <bean class="jetbrains.buildServer.dotnet.SystemParametersArgumentsProvider" id="systemParametersArgumentsProvider" />
@@ -53,7 +54,6 @@
         <constructor-arg ref="dotnetToolResolver"/>
     </bean>
 
-    <bean class="jetbrains.buildServer.dotnet.DotnetVSTestLoggerArgumentsProvider" id="dotnetVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msbuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
@@ -78,9 +78,7 @@
     <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
     <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>
     <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
-        <constructor-arg ref="dotnetVSTestLoggerArgumentsProvider"/>
-    </bean>
+    <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand"/>
     <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
     <!-- MSBuild command -->

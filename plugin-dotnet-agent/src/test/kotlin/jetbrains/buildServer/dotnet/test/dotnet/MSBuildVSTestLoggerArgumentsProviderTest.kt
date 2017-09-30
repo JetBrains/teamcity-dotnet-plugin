@@ -18,7 +18,7 @@ class MSBuildVSTestLoggerArgumentsProviderTest {
                         File("loggerPath", "vstestlogger.dll") as File?,
                         listOf(
                                 "/p:VSTestLogger=logger://teamcity",
-                                "/p:VSTestTestAdapterPath=${File("loggerPath").absolutePath}"))
+                                "/p:VSTestTestAdapterPath=."))
         )
     }
 

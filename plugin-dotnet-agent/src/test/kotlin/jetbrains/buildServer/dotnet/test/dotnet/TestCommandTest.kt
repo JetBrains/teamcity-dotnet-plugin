@@ -13,17 +13,17 @@ class TestCommandTest {
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("vstestlog", "customArg1")),
+                        listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
-                        listOf("--framework", "dotcore", "--configuration", "Release", "vstestlog", "customArg1")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
                         Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
-                        listOf("--runtime", "active", "--no-build", "vstestlog", "customArg1")),
+                        listOf("--runtime", "active", "--no-build", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
-                        listOf("--output", "out", "vstestlog", "customArg1")))
+                        listOf("--output", "out", "customArg1")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")
@@ -101,7 +101,6 @@ class TestCommandTest {
             TestCommand(
                     ParametersServiceStub(parameters),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     DotnetCommonArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(File("dotnet"), true))
 

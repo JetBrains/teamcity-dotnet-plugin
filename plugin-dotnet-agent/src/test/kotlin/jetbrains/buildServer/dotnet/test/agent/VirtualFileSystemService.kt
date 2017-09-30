@@ -50,6 +50,14 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isExists(file: File): Boolean = _directories.contains(file) || _files.contains(file)
 
+    override fun copy(source: File, destination: File): Unit {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun remove(file: File): Unit {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     class FileInfo {
         public val inputStream: InputStream
         public val outputStream: OutputStream

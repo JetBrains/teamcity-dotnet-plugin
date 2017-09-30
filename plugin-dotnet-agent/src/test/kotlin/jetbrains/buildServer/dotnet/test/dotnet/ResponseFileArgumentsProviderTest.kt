@@ -24,9 +24,9 @@ class ResponseFileArgumentsProviderTest {
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock<PathsService>(PathsService::class.java)
-        _parametersService = _ctx!!.mock<ParametersService>(ParametersService::class.java)
-        _loggerService = _ctx!!.mock<LoggerService>(LoggerService::class.java)
+        _pathService = _ctx!!.mock(PathsService::class.java)
+        _parametersService = _ctx!!.mock(ParametersService::class.java)
+        _loggerService = _ctx!!.mock(LoggerService::class.java)
     }
 
     @Test

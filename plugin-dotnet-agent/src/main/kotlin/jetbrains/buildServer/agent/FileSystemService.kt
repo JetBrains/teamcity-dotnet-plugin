@@ -10,4 +10,8 @@ interface FileSystemService {
     fun write(file: File, writer: (OutputStream) -> Unit)
 
     fun read(file: File, reader: (InputStream) -> Unit)
+
+    fun copy(source: File, destination: File)
+
+    fun remove(file: File)
 }

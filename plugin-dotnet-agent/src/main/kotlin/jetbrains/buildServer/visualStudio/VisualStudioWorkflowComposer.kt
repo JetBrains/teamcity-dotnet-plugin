@@ -33,7 +33,7 @@ class VisualStudioWorkflowComposer(
                             }
                         } ?: return@buildSequence
 
-                        val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
+                        val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
                         val action = parameters(PARAM_VISUAL_STUDIO_ACTION) ?: throw RunBuildException("Parameter \"$PARAM_VISUAL_STUDIO_ACTION\" was not found")
 
                         val configItems = listOf(parameters(PARAM_VISUAL_STUDIO_CONFIG, ""), parameters(PARAM_VISUAL_STUDIO_PLATFORM, "")).filter { !it.isNullOrBlank() }
@@ -52,7 +52,7 @@ class VisualStudioWorkflowComposer(
                             yield(CommandLine(
                                     TargetType.Tool,
                                     executableFile,
-                                    checkoutDirectory,
+                                    workingDirectory,
                                     buildSequence {
                                         yield(CommandLineArgument(commandTarget.targetFile.absolutePath))
                                         yield(CommandLineArgument("/$action"))

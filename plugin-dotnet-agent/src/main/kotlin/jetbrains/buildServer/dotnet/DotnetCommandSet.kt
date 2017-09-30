@@ -20,7 +20,10 @@ class DotnetCommandSet(
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
                 _knownCommands[it]?.let {
                     val command = it
-                    getTargetArguments(command).map { CompositeCommand(command, getArguments(command, it)) }
+                    getTargetArguments(command).asSequence().map {
+                        val targetArguments = TargetArguments(it.arguments.toList().asSequence())
+                        CompositeCommand(command, getArguments(command, targetArguments), targetArguments)
+                    }
                 }
             }  ?: emptySequence()
 
@@ -57,7 +60,8 @@ class DotnetCommandSet(
 
     class CompositeCommand(
             private val _command: DotnetCommand,
-            private val _arguments: Sequence<CommandLineArgument>)
+            private val _arguments: Sequence<CommandLineArgument>,
+            private val _targetArguments: TargetArguments)
         : DotnetCommand {
 
         override val commandType: DotnetCommandType
@@ -70,7 +74,7 @@ class DotnetCommandSet(
             get() = _arguments
 
         override val targetArguments: Sequence<TargetArguments>
-            get() = emptySequence<TargetArguments>()
+            get() = sequenceOf(_targetArguments)
 
         override fun isSuccessfulExitCode(exitCode: Int) = _command.isSuccessfulExitCode(exitCode)
     }

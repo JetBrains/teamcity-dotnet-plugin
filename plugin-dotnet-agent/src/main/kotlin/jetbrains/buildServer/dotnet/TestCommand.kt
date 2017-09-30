@@ -16,7 +16,6 @@ import kotlin.coroutines.experimental.buildSequence
 class TestCommand(
         private val _parametersService: ParametersService,
         private val _targetService: TargetService,
-        private val _vsTestLoggerArgumentsProvider: ArgumentsProvider,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCommand {
@@ -71,7 +70,6 @@ class TestCommand(
                 yield(CommandLineArgument("--no-build"))
             }
 
-            yieldAll(_vsTestLoggerArgumentsProvider.arguments)
             yieldAll(_commonArgumentsProvider.arguments)
         }
 

@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.runner.PathsService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -17,7 +19,7 @@ class MSBuildVSTestLoggerArgumentsProvider(
             val loggerPath = _loggerResolver.resolve(ToolType.VSTest);
             loggerPath?.parentFile?.let {
                 yield(CommandLineArgument("/p:VSTestLogger=logger://teamcity"))
-                yield(CommandLineArgument("/p:VSTestTestAdapterPath=${it.absolutePath}"))
+                yield(CommandLineArgument("/p:VSTestTestAdapterPath=."))
             }
         }
 }
