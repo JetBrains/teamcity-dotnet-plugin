@@ -2,7 +2,7 @@
 
 [![official JetBrains project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub) <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild)/statusIcon.svg" alt=""/></a>
 
-The TeamCity .NET plugin provides support for [.NET CLI](https://github.com/dotnet/cli) in TeamCity.
+The TeamCity .NET plugin provides support for [.NET CLI](https://www.microsoft.com/net/download/core) in TeamCity.
 
 It simplifies building windows and cross-platform applications that use .NET frameworks and libraries.
 
@@ -23,7 +23,7 @@ You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity)
 
 # Compatibility
 
-The current version of plugin is compatible with [TeamCity 2017+](https://www.jetbrains.com/teamcity/download/).
+The current version of plugin is compatible with [TeamCity 2017+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI stable](https://www.microsoft.com/net/download/core).
 
 # Configuration
 
