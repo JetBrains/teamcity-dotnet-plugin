@@ -1,5 +1,5 @@
 plugins {
-  id 'com.github.rodm.teamcity-server' version "0.11"
+  id 'com.github.rodm.teamcity-server' version "1.0"
   id 'com.ullink.nuget' version '2.15'
 }
 
@@ -8,7 +8,6 @@ teamcity {
   server {
     descriptor = project.file('teamcity-plugin.xml')
     tokens = [Plugin_Version: project.version]
-
     files {
       into('server') {
         from('tools')
@@ -29,51 +28,51 @@ dependencies {
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }
 
-ant.delete(dir: './packages')
-
 nugetRestore {
   packagesConfigFile = file('./../packages.config')
   packagesDirectory = './packages'
 }
 
-task prepareTools(dependsOn: nugetRestore) {
-  doLast {
-    ant.delete(dir: './tools')
-
-    def path = ant.path {
-      fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/TeamCity.Dotnet.Integration.*.nupkg')
-    }
-
-    def nuSpecFile = path.list().first()
-    def nuSpecFileName = file(nuSpecFile).name
-
-    println 'Use .NET integration nuSpec file: ' + nuSpecFileName
-
-    nuSpecFileName = nuSpecFileName.replaceAll('.nupkg', '')
-
-    ant.unzip(src: nuSpecFile, dest: './packages', overwrite: 'true') {
-      patternset() {
-        include(name: 'TeamCity.Dotnet.Integration.nuspec')
-      }
-    }
-
-    ant.zip(baseDir: './packages', includesfile: 'packages/TeamCity.Dotnet.Integration.nuspec', destfile: './tools/' + nuSpecFileName + '.jar') {
-      patternset() {
-        include(name: 'TeamCity.Dotnet.Integration.nuspec')
-      }
-    }
-
-    path = ant.path {
-      fileset(dir: './tools', includes: '**/*')
-    }
-
-    path.list().each { println it }
-
-    ant.delete(dir: './packages')
-  }
+project.tasks.nugetRestore.doFirst {
+  println 'Clean .NET integration directories'
+  ant.delete(dir: './packages')
+  ant.delete(dir: './tools')
 }
 
-build.dependsOn(prepareTools)
+project.tasks.nugetRestore.doLast {
+  def path = ant.path {
+    fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/TeamCity.Dotnet.Integration.*.nupkg')
+  }
+
+  def nuSpecFile = path.list().first()
+  def nuSpecFileName = file(nuSpecFile).name
+
+  println 'Use .NET integration nuSpec file: ' + nuSpecFileName
+
+  nuSpecFileName = nuSpecFileName.replaceAll('.nupkg', '')
+
+  ant.unzip(src: nuSpecFile, dest: './packages', overwrite: 'true') {
+    patternset() {
+      include(name: 'TeamCity.Dotnet.Integration.nuspec')
+    }
+  }
+
+  ant.zip(baseDir: './packages', includesfile: 'packages/TeamCity.Dotnet.Integration.nuspec', destfile: './tools/' + nuSpecFileName + '.jar') {
+    patternset() {
+      include(name: 'TeamCity.Dotnet.Integration.nuspec')
+    }
+  }
+
+  path = ant.path {
+    fileset(dir: './tools', includes: '**/*')
+  }
+
+  path.list().each { println it }
+
+  ant.delete(dir: './packages')
+}
+
+serverPlugin.dependsOn(nugetRestore)
 
 serverPlugin.version = null
 serverPlugin.baseName = projectIds.artifact
