@@ -13,7 +13,7 @@ teamcity {
 
       files {
         into('tools') {
-          from('./tools')
+          from('tools')
         }
       }
     }
@@ -29,6 +29,8 @@ dependencies {
   testCompile 'org.testng:testng:6.8'
   testCompile 'org.jmock:jmock:2.5.1'
 }
+
+ant.delete(dir: './packages')
 
 nugetRestore {
   packagesConfigFile = file('./../packages.config')
@@ -48,20 +50,21 @@ task prepareTools(dependsOn: nugetRestore) {
     println 'Use .NET integration package: ' + nuGetPackageId
 
     path = ant.path {
-      dirset (dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/build/_common/**')
-      fileset (dir: './packages', includes: 'TeamCity.Dotnet.Integration.nuspec')
+      dirset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/build/_common/**')
+      fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.nuspec')
     }
 
     def contentPath = path.list().first()
 
-    ant.move(todir: './tools/' + nuGetPackageId, overwrite: 'true', force: 'true'){
-      fileset (dir: contentPath, includes: '**/*')
+    ant.move(todir: './tools/' + nuGetPackageId, overwrite: 'true', force: 'true') {
+      fileset(dir: contentPath, includes: '**/*')
     }
 
     path = ant.path {
-      fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/TeamCity.Dotnet.Integration.*.nupkg')
+      fileset(dir: './tools/' + nuGetPackageId, includes: '**/*')
     }
 
+    path.list().each { println it }
     ant.delete(dir: './packages')
   }
 }
