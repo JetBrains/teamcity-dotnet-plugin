@@ -11,7 +11,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 open class NuGetServiceImpl(
         private val _httpDownloader: HttpDownloader,
-        private val _versionParser: NuGetPackageVersionParser)
+        private val _versionParser: SemanticVersionParser)
     : NuGetService {
 
     @Cacheable("getPackagesById")

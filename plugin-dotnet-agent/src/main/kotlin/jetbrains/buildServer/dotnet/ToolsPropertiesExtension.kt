@@ -19,7 +19,7 @@ class ToolsPropertiesExtension(
     }
 
     override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
-        LOG.info("Locating .NET integration packages")
+        LOG.debug("Locating .NET integration packages")
 
         val toolsPath = File(_pluginDescriptor.pluginRoot, "tools")
         if( !_fileSystemService.isExists(toolsPath)) {

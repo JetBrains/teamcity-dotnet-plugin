@@ -10,7 +10,7 @@ import java.net.URL
 
 class DotnetToolProviderAdapter(
         private val _pluginDescriptor: PluginDescriptor,
-        private val _packageVersionParser: NuGetPackageVersionParser,
+        private val _packageVersionParser: SemanticVersionParser,
         private val _httpDownloader: HttpDownloader,
         private val _nuGetService: NuGetService,
         private val _fileSystemService: FileSystemService): ServerToolProviderAdapter() {

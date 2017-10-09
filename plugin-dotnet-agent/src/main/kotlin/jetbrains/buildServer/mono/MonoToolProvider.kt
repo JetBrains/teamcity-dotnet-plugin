@@ -18,18 +18,14 @@ class MonoToolProvider(
     override fun supports(toolName: String): Boolean = MonoConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-            _toolSearchService.find(MonoConstants.TOOL_HOME, Targets)
-            .plus(_toolSearchService.find(MonoConstants.TOOL_HOME, Targets) { File(it, "bin") })
+            _toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME)
+            .plus(_toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME) { File(it, "bin") })
                     .firstOrNull()
                     ?.absolutePath
                     ?: throw ToolCannotBeFoundException("""
                     Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
-                    Mono directory or defined `${MonoConstants.TOOL_HOME}` variable.""")
+                    Mono directory or defined `${MonoConstants.TOOL_HOME}` variable.""".trimIndent())
 
     @Throws(ToolCannotBeFoundException::class)
     override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String = getPath(toolName)
-
-    companion object {
-        internal val Targets = sequenceOf("mono.exe", "mono")
-    }
 }

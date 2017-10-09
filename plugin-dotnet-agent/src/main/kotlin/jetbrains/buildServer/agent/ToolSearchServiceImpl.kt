@@ -2,19 +2,20 @@ package jetbrains.buildServer.agent
 
 import java.io.File
 
-class ToolSearchServiceImpl(
-        private val _environment: Environment,
-        private val _pathMatcher: PathMatcher)
+class ToolSearchServiceImpl(private val _environment: Environment,
+                            private val _fileSystem: FileSystemService)
     : ToolSearchService {
-    override fun find(
-            homePathEnvironmentVariableName: String,
-            targets: Sequence<String>,
-            basePathResolver: (File) -> File): Sequence<File> {
-        val paths = _environment.tryGetVariable(homePathEnvironmentVariableName)?.let {
+
+    override fun find(toolName: String,
+                      environmentVariableName: String,
+                      basePathResolver: (File) -> File): Sequence<File> {
+        val paths = _environment.tryGetVariable(environmentVariableName)?.let {
             sequenceOf(File(it))
         } ?: emptySequence()
+
+        val pattern = Regex("^.*$toolName(\\.(exe))?$")
         return paths.plus(_environment.paths)
-                .map { _pathMatcher.match(basePathResolver(it), targets, emptySequence()) }
-                .flatMap { it }
+                .flatMap { _fileSystem.list(basePathResolver(it)) }
+                .filter { it.absolutePath.matches(pattern) }
     }
 }

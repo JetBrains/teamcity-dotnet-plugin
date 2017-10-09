@@ -43,7 +43,8 @@ class DotnetToolProviderTest {
                 arrayOf("abc", false),
                 arrayOf(" dotnet ", false),
                 arrayOf("   ", false),
-                arrayOf("", false))
+                arrayOf("", false),
+                arrayOf("dotnet.exe", false))
     }
 
     @Test(dataProvider = "supportToolCases")

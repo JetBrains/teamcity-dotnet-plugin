@@ -6,14 +6,14 @@
 
     <!-- common agent services -->
     <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
-    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl" id="fileSystemService"/>
     <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
     <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.XmlDocumentServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
 
-    <!-- common agnet's runner services -->
+    <!-- common agent's runner services -->
     <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
     <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
@@ -29,10 +29,13 @@
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
+    <bean class="jetbrains.buildServer.dotnet.SemanticVersionParserImpl" id="semanticVersionParser"/>
     <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
         <constructor-arg ref="dotnetToolProvider"/>
         <constructor-arg ref="dotnetVersionParser"/>
+        <constructor-arg ref="semanticVersionParser"/>
+        <constructor-arg ref="fileSystemService"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">

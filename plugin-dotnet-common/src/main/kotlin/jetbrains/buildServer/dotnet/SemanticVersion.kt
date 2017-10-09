@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet
 
-data class NuGetPackageVersion(
-        private val major: Int,
-        private val minor: Int,
+data class SemanticVersion(
+        val major: Int,
+        val minor: Int,
         val build: Int,
-        private val buildName: String = "") {
+        val buildName: String = "") {
 
     override fun toString(): String {
         return if(buildName.isEmpty()) {

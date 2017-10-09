@@ -4,6 +4,6 @@ import java.net.URL
 
 data class NuGetPackage(
         val packageId: String,
-        val packageVersion: NuGetPackageVersion,
+        val packageVersion: SemanticVersion,
         val downloadUrl: URL,
         val isListed: Boolean)

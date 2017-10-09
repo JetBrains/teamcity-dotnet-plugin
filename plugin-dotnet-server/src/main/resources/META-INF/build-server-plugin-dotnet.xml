@@ -16,6 +16,6 @@
   <!--Tools-->
   <bean class="jetbrains.buildServer.dotnet.HttpDownloaderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.NuGetServiceImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.NuGetPackageVersionParserImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.SemanticVersionParserImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FileSystemServiceImpl"/>
 </beans>

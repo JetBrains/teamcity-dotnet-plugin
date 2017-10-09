@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.util.TimeService
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import org.springframework.beans.factory.support.AbstractBeanFactory
 import org.springframework.cache.CacheManager
@@ -15,8 +14,7 @@ open class BeanConfig(
         beanFactory: AbstractBeanFactory,
         parameters: DotnetParametersProvider,
         pluginDescriptor: PluginDescriptor,
-        timeService: TimeService,
-        packageVersionParser: NuGetPackageVersionParser,
+        packageVersionParser: SemanticVersionParser,
         httpDownloader: HttpDownloader,
         nuGetService: NuGetService,
         _fileSystemService: FileSystemService) {

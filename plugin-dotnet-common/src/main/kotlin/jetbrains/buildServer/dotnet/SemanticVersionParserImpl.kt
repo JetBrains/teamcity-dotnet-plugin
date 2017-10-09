@@ -1,13 +1,13 @@
 package jetbrains.buildServer.dotnet
 
-class NuGetPackageVersionParserImpl : NuGetPackageVersionParser {
-    override fun tryParse(version: String): NuGetPackageVersion? {
+class SemanticVersionParserImpl : SemanticVersionParser {
+    override fun tryParse(version: String): SemanticVersion? {
         val matcher = VersionPattern.matcher(version)
         if(!matcher.find() || matcher.groupCount() < 5) {
             return null
         }
 
-        return NuGetPackageVersion(
+        return SemanticVersion(
                 matcher.group("major").toInt(),
                 matcher.group("minor").toInt(),
                 matcher.group("build").toInt(),
