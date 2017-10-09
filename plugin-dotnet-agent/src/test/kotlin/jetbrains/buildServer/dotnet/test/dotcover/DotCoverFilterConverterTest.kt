@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotcover
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotcover.CoverageFilter
-import jetbrains.buildServer.dotcover.DotCoverFilterConverter
+import jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl
 import jetbrains.buildServer.agent.runner.Converter
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -69,7 +69,7 @@ class DotCoverFilterConverterTest {
     }
 
     private fun createInstance(): Converter<String, Sequence<CoverageFilter>> {
-        return DotCoverFilterConverter()
+        return DotCoverFilterConverterImpl()
     }
 
     companion object {

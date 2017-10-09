@@ -48,7 +48,7 @@
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentImpl"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
     <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
-    <bean class="jetbrains.buildServer.dotnet.SystemParametersArgumentsProvider" id="systemParametersArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider" />
     <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
@@ -58,15 +58,19 @@
         <constructor-arg ref="dotnetToolResolver"/>
     </bean>
 
-    <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerArgumentsProvider" id="msbuildVSTestLoggerArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msbuildLoggerArgumentsProvider" />
+    <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider" />
+    <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
         <constructor-arg>
             <list>
-                <ref bean="msbuildLoggerArgumentsProvider" />
-                <ref bean="msbuildVSTestLoggerArgumentsProvider" />
-                <ref bean="systemParametersArgumentsProvider" />
+                <ref bean="msBuildLoggerArgumentsProvider" />
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="msbuildVSTestLoggerParametersProvider" />
+                <ref bean="systemParametersProvider" />
             </list>
         </constructor-arg>
     </bean>
@@ -86,13 +90,18 @@
     <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
     <!-- MSBuild command -->
+    <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
     <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
         <constructor-arg>
             <list>
-                <ref bean="msbuildLoggerArgumentsProvider" />
-                <ref bean="msbuildVSTestLoggerArgumentsProvider" />
+                <ref bean="msBuildLoggerArgumentsProvider" />
                 <ref bean="dotnetCustomArgumentsProvider" />
-                <ref bean="systemParametersArgumentsProvider" />
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="msbuildVSTestLoggerParametersProvider" />
+                <ref bean="systemParametersProvider" />
             </list>
         </constructor-arg>
     </bean>
@@ -110,8 +119,8 @@
     <!-- dotCover workflow composer -->
     <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer" />
     <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
+    <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
     <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
-    <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverter"/>
 
     <!-- Mono -->
     <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider"/>

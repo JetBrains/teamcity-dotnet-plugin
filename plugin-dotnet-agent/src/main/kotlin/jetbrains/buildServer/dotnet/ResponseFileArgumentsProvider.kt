@@ -8,20 +8,29 @@ import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.coroutines.experimental.buildSequence
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class ResponseFileArgumentsProvider(
         private val _pathsService: PathsService,
+        private val _argumentsService: ArgumentsService,
         private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService,
-        private val _argumentsService: ArgumentsService,
         private val _loggerService: LoggerService,
-        private val _argumentsProviders: List<ArgumentsProvider>)
+        private val _msBuildParameterConverter: MSBuildParameterConverter,
+        private val _argumentsProviders: List<ArgumentsProvider>,
+        private val _parametersProviders: List<MSBuildParametersProvider>)
     : ArgumentsProvider {
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            val args = _argumentsProviders.asSequence().flatMap { it.arguments }.map { it.value }.toList()
-            if (!args.any()) {
+            var args = _argumentsProviders.flatMap { it.arguments.toList() }
+            var params = _parametersProviders.flatMap { it.parameters.toList() }
+
+            if (args.size == 0 && params.size == 0) {
                 return@buildSequence
             }
+
+            val argLine = _argumentsService.combine(args.map { it.value }.asSequence(), "\n")
+            val paramLines = params.map { _msBuildParameterConverter.convert(it) }
+            val lines = listOf(argLine) + paramLines
 
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
                 Verbosity.tryParse(it)?.let {
@@ -30,7 +39,11 @@ class ResponseFileArgumentsProvider(
                         Verbosity.Detailed, Verbosity.Diagnostic -> {
                             _loggerService.onBlock(BlockName).use {
                                 for (arg in args) {
-                                    _loggerService.onStandardOutput(arg, Color.Details)
+                                    _loggerService.onStandardOutput(arg.value, Color.Details)
+                                }
+
+                                for (paramLine in paramLines) {
+                                    _loggerService.onStandardOutput(paramLine, Color.Details)
                                 }
                             }
                         }
@@ -39,15 +52,16 @@ class ResponseFileArgumentsProvider(
             }
 
             val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
-            val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
-            val rspContent = _argumentsService.combine(args.asSequence(), "\n")
-            _fileSystemService.write(msBuildResponseFile) {
+            val msbuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
+            _fileSystemService.write(msbuildResponseFile) {
                 OutputStreamWriter(it).use {
-                    it.write(rspContent)
+                    for(line in lines) {
+                        it.write("$line\n")
+                    }
                 }
             }
 
-            yield(CommandLineArgument("@${msBuildResponseFile.path}"))
+            yield(CommandLineArgument("@${msbuildResponseFile.path}"))
         }
 
     companion object {

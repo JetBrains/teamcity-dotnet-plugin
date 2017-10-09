@@ -9,7 +9,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class CoverageFilterProviderImpl(
         private val _parametersService: ParametersService,
-        private val _coverageFilterConverter: Converter<String, Sequence<CoverageFilter>>)
+        private val _coverageFilterConverter: DotCoverFilterConverter)
     : CoverageFilterProvider {
     override val filters: Sequence<CoverageFilter>
         get() {

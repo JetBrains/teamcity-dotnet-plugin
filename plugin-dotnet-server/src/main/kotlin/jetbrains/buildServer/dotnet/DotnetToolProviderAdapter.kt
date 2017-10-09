@@ -116,7 +116,7 @@ class DotnetToolProviderAdapter(
         }
 
         private val NUGET_BUNDLED_FILTER = FileFilter { packageFile ->
-            packageFile.isFile && packageFile.nameWithoutExtension.startsWith(DotnetConstants.PACKAGE_TYPE, true) && "zip".equals(packageFile.extension, true)
+            packageFile.isFile && packageFile.nameWithoutExtension.startsWith(DotnetConstants.PACKAGE_TYPE, true) && "jar".equals(packageFile.extension, true)
         }
     }
 }

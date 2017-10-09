@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.agent.runner.Converter
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotcover.DotCoverFilterConverter
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -16,13 +17,13 @@ import org.testng.annotations.Test
 @Suppress("UNCHECKED_CAST")
 class CoverageFilterProviderTest {
     private var _ctx: Mockery? = null
-    private var _coverageFilterConverter: Converter<String, Sequence<CoverageFilter>>? = null
+    private var _coverageFilterConverter: DotCoverFilterConverter? = null
     private var _parametersService: ParametersService? = null
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _coverageFilterConverter = _ctx!!.mock(Converter::class.java) as Converter<String, Sequence<CoverageFilter>>
+        _coverageFilterConverter = _ctx!!.mock(DotCoverFilterConverter::class.java)
         _parametersService = _ctx!!.mock(ParametersService::class.java)
     }
 
