@@ -1,16 +1,12 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetCommandSet(
         private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService,
         commands: List<DotnetCommand>)
     : CommandSet {
 
@@ -18,8 +14,7 @@ class DotnetCommandSet(
 
     override val commands: Sequence<DotnetCommand> get() =
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
-                _knownCommands[it]?.let {
-                    val command = it
+                _knownCommands[it]?.let { command ->
                     getTargetArguments(command).asSequence().map {
                         val targetArguments = TargetArguments(it.arguments.toList().asSequence())
                         CompositeCommand(command, getArguments(command, targetArguments), targetArguments)
@@ -30,7 +25,7 @@ class DotnetCommandSet(
     private fun getTargetArguments(command: DotnetCommand): Sequence<TargetArguments>
     {
         return buildSequence {
-            var hasTargets = false;
+            var hasTargets = false
             for(targetArguments in command.targetArguments)
             {
                 yield(targetArguments)

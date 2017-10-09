@@ -118,7 +118,7 @@ class DotCoverProjectSerializerTest {
 
         // Then
         _ctx!!.assertIsSatisfied()
-        Assert.assertEquals(actual, expected);
+        Assert.assertEquals(actual, expected)
     }
 
     @Test
@@ -172,12 +172,11 @@ class DotCoverProjectSerializerTest {
 
         // Then
         _ctx!!.assertIsSatisfied()
-        Assert.assertEquals(actual, expected);
+        Assert.assertEquals(actual, expected)
     }
 
     private fun createInstance(): Serializer<DotCoverProject> {
         return DotCoverProjectSerializerImpl(
-                _pathService!!,
                 _xmlDocumentService!!,
                 _argumentsService,
                 _coverageFilterProvider!!)

@@ -65,15 +65,13 @@ abstract class DotnetProjectsDataFetcher(private val myModelParser: DotnetModelP
     }
 
     private fun getJsonProject(projectPath: String): String {
-        val projectFile: String
-        if (projectPath.isNullOrBlank()) {
-            projectFile = DotnetConstants.PROJECT_JSON
+        return if (projectPath.isBlank()) {
+            DotnetConstants.PROJECT_JSON
         } else if (!projectPath.endsWith(DotnetConstants.PROJECT_JSON, ignoreCase = true)) {
-            projectFile = File(projectPath, DotnetConstants.PROJECT_JSON).path
+            File(projectPath, DotnetConstants.PROJECT_JSON).path
         } else {
-            projectFile = projectPath
+            projectPath
         }
-        return projectFile
     }
 
     private fun getCsProject(projectPath: String, browser: Browser): String? {

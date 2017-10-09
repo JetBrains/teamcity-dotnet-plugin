@@ -8,17 +8,15 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class RunCommand(
-        private val _parametersService: ParametersService,
+        parametersService: ParametersService,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommand {
+    : DotnetCommandBase(parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Run
@@ -27,7 +25,9 @@ class RunCommand(
         get() = _dotnetToolResolver
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path))) }
+        get() = _targetService.targets.map {
+            TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path)))
+        }
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
@@ -49,6 +49,4 @@ class RunCommand(
         }
 
     override fun isSuccessfulExitCode(exitCode: Int): Boolean = true
-
-    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

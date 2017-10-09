@@ -7,9 +7,8 @@ import jetbrains.buildServer.requirements.RequirementType
 import kotlin.coroutines.experimental.buildSequence
 
 class VisualStudioRequirementsProvider {
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    public fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
-        var hasRequirements = false;
+    fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+        var hasRequirements = false
         runParameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.VisualStudio) {

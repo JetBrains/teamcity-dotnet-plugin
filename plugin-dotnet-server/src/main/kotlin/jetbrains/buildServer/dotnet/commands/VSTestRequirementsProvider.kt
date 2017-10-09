@@ -6,10 +6,9 @@ import jetbrains.buildServer.requirements.RequirementType
 import kotlin.coroutines.experimental.buildSequence
 
 class VSTestRequirementsProvider(private val _dotCoverInfoProvider: DotCoverInfoProvider) {
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    public fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
-        var shouldBeWindows = false;
-        var hasRequirement = false;
+    fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+        var shouldBeWindows = false
+        var hasRequirement = false
         runParameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.VSTest) {

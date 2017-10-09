@@ -9,7 +9,6 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class TargetServiceImpl(
         private val _pathsService: PathsService,
         private val _parametersService: ParametersService,
@@ -21,7 +20,7 @@ class TargetServiceImpl(
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)?.trim()?.let {
                 val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
                 val includeRulesStr = it.trim()
-                if (includeRulesStr.isNullOrEmpty()) {
+                if (includeRulesStr.isEmpty()) {
                     return@buildSequence
                 }
 

@@ -13,6 +13,6 @@ class DotCoverServiceMessage(
     }
 
     override fun equals(other: Any?): Boolean {
-        return toString().equals(other.toString())
+        return toString() == other.toString()
     }
 }

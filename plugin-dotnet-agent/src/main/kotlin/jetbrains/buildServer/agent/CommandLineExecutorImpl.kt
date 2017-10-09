@@ -6,17 +6,17 @@ import com.intellij.openapi.diagnostic.Logger
 class CommandLineExecutorImpl : CommandLineExecutor {
     override fun tryExecute(commandLine: CommandLine, executionTimeoutSeconds: Int): CommandLineResult? {
         val cmd = GeneralCommandLine()
-        cmd.setExePath(commandLine.executableFile.path)
+        cmd.exePath = commandLine.executableFile.path
         cmd.setWorkingDirectory(cmd.workDirectory)
         cmd.addParameters(commandLine.arguments.map { it.value })
-        var currentEnvironment = System.getenv()
+        val currentEnvironment = System.getenv()
         for (overridingEnvVar in commandLine.environmentVariables) {
             currentEnvironment.put(overridingEnvVar.name, overridingEnvVar.value)
         }
 
-        cmd.setEnvParams(currentEnvironment)
+        cmd.envParams = currentEnvironment
 
-        LOG.info("Execute command line: ${cmd.commandLineString}");
+        LOG.info("Execute command line: ${cmd.commandLineString}")
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
         return executor.runProcess(executionTimeoutSeconds)?.let {
             val result = CommandLineResult(
@@ -24,12 +24,12 @@ class CommandLineExecutorImpl : CommandLineExecutor {
                 it.outLines.asSequence(),
                 it.stderr.split("\\r?\\n").asSequence())
 
-            if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled) {
                 val resultStr = StringBuilder()
-                resultStr.append("Exit code: ${it.exitCode}");
-                resultStr.append("Stdout:\n${it.stdout}");
-                resultStr.append("Stderr:\n${it.stderr}");
-                LOG.debug("Result:\n$resultStr");
+                resultStr.append("Exit code: ${it.exitCode}")
+                resultStr.append("Stdout:\n${it.stdout}")
+                resultStr.append("Stderr:\n${it.stderr}")
+                LOG.debug("Result:\n$resultStr")
             }
 
             return result

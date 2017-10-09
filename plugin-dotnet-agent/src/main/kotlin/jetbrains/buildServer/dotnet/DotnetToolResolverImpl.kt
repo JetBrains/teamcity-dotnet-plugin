@@ -5,8 +5,7 @@ import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
-class DotnetToolResolverImpl(
-        private val _pathsService: PathsService)
+class DotnetToolResolverImpl(private val _pathsService: PathsService)
     : DotnetToolResolver {
     override val executableFile: File
         get() {

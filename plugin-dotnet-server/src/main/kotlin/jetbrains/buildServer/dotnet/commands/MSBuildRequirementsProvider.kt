@@ -7,10 +7,9 @@ import jetbrains.buildServer.requirements.RequirementType
 import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildRequirementsProvider(private val _dotCoverInfoProvider: DotCoverInfoProvider) {
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    public fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
-        var shouldBeWindows = false;
-        var hasRequirement = false;
+    fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+        var shouldBeWindows = false
+        var hasRequirement = false
         runParameters[DotnetConstants.PARAM_MSBUILD_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.MSBuild) {
@@ -18,23 +17,23 @@ class MSBuildRequirementsProvider(private val _dotCoverInfoProvider: DotCoverInf
                     when (it.platform) {
                         ToolPlatform.Windows -> {
                             shouldBeWindows = true
-                            when(it.bitness) {
+                            hasRequirement = when(it.bitness) {
                                 ToolBitness.x64 -> {
                                     yield(Requirement("MSBuildTools${it.version}.0_x64_Path", null, RequirementType.EXISTS))
-                                    hasRequirement = true
+                                    true
                                 }
                                 ToolBitness.x86 -> {
                                     yield(Requirement("MSBuildTools${it.version}.0_x86_Path", null, RequirementType.EXISTS))
-                                    hasRequirement = true
+                                    true
                                 }
                                 else -> {
                                     yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "MSBuildTools${it.version}\\.0_.+_Path", null, RequirementType.EXISTS))
-                                    hasRequirement = true
+                                    true
                                 }
                             }
                         }
                         ToolPlatform.Mono -> {
-                            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${MonoConstants.CONFIG_NAME}", null, RequirementType.EXISTS))
+                            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + MonoConstants.CONFIG_NAME, null, RequirementType.EXISTS))
                             hasRequirement = true
                         }
                     }

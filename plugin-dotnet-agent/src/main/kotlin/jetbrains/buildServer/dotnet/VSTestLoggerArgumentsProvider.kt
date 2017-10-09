@@ -7,7 +7,6 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides arguments to dotnet related to TeamCity logger.
  */
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class VSTestLoggerArgumentsProvider(
         private val _loggerResolver: LoggerResolver)
     : ArgumentsProvider {

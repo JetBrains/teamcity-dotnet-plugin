@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
-import jetbrains.buildServer.util.TimeService
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import java.io.File
 import java.io.FileFilter
@@ -11,13 +10,12 @@ import java.net.URL
 
 class DotnetToolProviderAdapter(
         private val _pluginDescriptor: PluginDescriptor,
-        private val _timeService: TimeService,
         private val _packageVersionParser: NuGetPackageVersionParser,
         private val _httpDownloader: HttpDownloader,
         private val _nuGetService: NuGetService,
         private val _fileSystemService: FileSystemService): ServerToolProviderAdapter() {
 
-    override fun getType(): jetbrains.buildServer.tools.ToolType = DotnetToolTypeAdapter.Shared;
+    override fun getType(): jetbrains.buildServer.tools.ToolType = DotnetToolTypeAdapter.Shared
 
     override fun getAvailableToolVersions(): MutableCollection<out ToolVersion> = tools.toMutableList()
 
@@ -38,9 +36,7 @@ class DotnetToolProviderAdapter(
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File): File {
         LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val downloadableTool = tools
-                .filter { it.version == toolVersion.version }
-                .firstOrNull()
+        val downloadableTool = tools.firstOrNull { it.version == toolVersion.version }
                 ?: throw ToolException("Failed to find package " + toolVersion)
 
         val downloadUrl = downloadableTool.downloadUrl
@@ -69,14 +65,14 @@ class DotnetToolProviderAdapter(
             LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
         }
         else {
-            LOG.info("Package ${toolPackage} is not acceptable")
+            LOG.info("Package $toolPackage is not acceptable")
         }
     }
 
     override fun getDefaultBundledVersionId(): String? = null
 
     override fun getBundledToolVersions(): MutableCollection<InstalledToolVersion> {
-        var pluginPath = File(_pluginDescriptor.pluginRoot, "server")
+        val pluginPath = File(_pluginDescriptor.pluginRoot, "server")
 
         val toolPackage = _fileSystemService
                 .list(pluginPath)
@@ -84,7 +80,7 @@ class DotnetToolProviderAdapter(
                 .firstOrNull()
 
         if (toolPackage == null) {
-            LOG.warn("Failed to find package spec on path ${pluginPath}")
+            LOG.warn("Failed to find package spec on path $pluginPath")
             return super.getBundledToolVersions()
         }
 
@@ -101,7 +97,10 @@ class DotnetToolProviderAdapter(
 
     private val tools: List<DotnetTool> get() {
         try {
-            return _nuGetService.getPackagesById(type.type, true).filter { it.isListed == true }.map { DotnetTool(it) }.toList().reversed()
+            return _nuGetService.getPackagesById(type.type, true)
+                    .filter { it.isListed }
+                    .map { DotnetTool(it) }
+                    .toList().reversed()
         } catch (e: Throwable) {
             throw ToolException("Failed to download list of packages for ${type.type}: " + e.message, e)
         }

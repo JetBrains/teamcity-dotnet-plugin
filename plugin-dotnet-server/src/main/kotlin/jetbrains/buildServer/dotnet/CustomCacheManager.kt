@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import org.joda.time.DateTime
-import org.joda.time.ReadablePeriod
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import java.util.*

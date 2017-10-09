@@ -16,8 +16,6 @@ import java.util.TreeSet
  * Provides configurations fetcher for project model.
  */
 class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjectsDataFetcher(modelParser) {
-    private val DefaultConfigurations: Collection<String> = listOf("Release", "Debug")
-    private val ConditionPattern: Regex = Regex("'\\$\\(Configuration\\)([^']*)' == '([^|]*)([^']*)'")
 
     override fun getDataItems(project: Project?): Collection<String> {
         val configurations = TreeSet(String.CASE_INSENSITIVE_ORDER)
@@ -34,11 +32,11 @@ class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjec
         project?.let {
             val conditions = TreeSet(String.CASE_INSENSITIVE_ORDER)
             it.propertyGroups?.let {
-                conditions.addAll(it.map { it.condition }.filterNotNull())
+                conditions.addAll(it.mapNotNull { it.condition })
             }
 
             it.itemGroups?.let {
-                conditions.addAll(it.map { it.condition }.filterNotNull())
+                conditions.addAll(it.mapNotNull { it.condition })
             }
 
             conditions.forEach {
@@ -53,5 +51,10 @@ class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjec
 
     override fun getType(): String {
         return "DotnetConfigurations"
+    }
+
+    companion object {
+        private val DefaultConfigurations: Collection<String> = listOf("Release", "Debug")
+        private val ConditionPattern: Regex = Regex("'\\$\\(Configuration\\)([^']*)' == '([^|]*)([^']*)'")
     }
 }

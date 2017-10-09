@@ -16,17 +16,17 @@ class DotCoverFilterConverterTest {
                 arrayOf("+:aaa;module=bbb", "+:aaa;module=bbb;class=*;function=*", false),
                 arrayOf("-:bbb", "-:bbb;module=*;class=*;function=*", false),
                 arrayOf("", "", false),
-                arrayOf("+:aaa${ourLineSeparator}-:module=bbb", "+:aaa;module=*;class=*;function=*${ourLineSeparator}-:*;module=bbb;class=*;function=*", false),
-                arrayOf("+:module=aaa${ourLineSeparator}  ${ourLineSeparator}-:module=bbb", "+:*;module=aaa;class=*;function=*${ourLineSeparator}-:*;module=bbb;class=*;function=*", false),
-                arrayOf("+aaa${ourLineSeparator}-:bbb", "", true),
+                arrayOf("+:aaa$ourLineSeparator-:module=bbb", "+:aaa;module=*;class=*;function=*$ourLineSeparator-:*;module=bbb;class=*;function=*", false),
+                arrayOf("+:module=aaa$ourLineSeparator  $ourLineSeparator-:module=bbb", "+:*;module=aaa;class=*;function=*$ourLineSeparator-:*;module=bbb;class=*;function=*", false),
+                arrayOf("+aaa$ourLineSeparator-:bbb", "", true),
                 arrayOf("" + ourLineSeparator + "-:bbb", "-:bbb;module=*;class=*;function=*", false),
-                arrayOf("+:${ourLineSeparator}-:bbb", "", true),
-                arrayOf("+${ourLineSeparator}-:bbb", "", true),
-                arrayOf("?${ourLineSeparator}-:bbb", "", true),
+                arrayOf("+:$ourLineSeparator-:bbb", "", true),
+                arrayOf("+$ourLineSeparator-:bbb", "", true),
+                arrayOf("?$ourLineSeparator-:bbb", "", true),
                 arrayOf("+:aaa;-:bbb", "", true),
                 arrayOf("+:aaa,-:bbb", "", true),
-                arrayOf("+:aaa*${ourLineSeparator}-:b*bb", "+:aaa*;module=*;class=*;function=*${ourLineSeparator}-:b*bb;module=*;class=*;function=*", false),
-                arrayOf("+:aaa*.dll${ourLineSeparator}-:b*bb", "+:aaa*.dll;module=*;class=*;function=*${ourLineSeparator}-:b*bb;module=*;class=*;function=*", false),
+                arrayOf("+:aaa*$ourLineSeparator-:b*bb", "+:aaa*;module=*;class=*;function=*$ourLineSeparator-:b*bb;module=*;class=*;function=*", false),
+                arrayOf("+:aaa*.dll$ourLineSeparator-:b*bb", "+:aaa*.dll;module=*;class=*;function=*$ourLineSeparator-:b*bb;module=*;class=*;function=*", false),
                 arrayOf("-:module=aaa;bbb", "-:bbb;module=aaa;class=*;function=*", false),
                 arrayOf("-:module=aaa;class=bbb", "-:*;module=aaa;class=bbb;function=*", false),
                 arrayOf("-:module=aaa;class=bbb;ccc", "-:ccc;module=aaa;class=bbb;function=*", false),
@@ -44,7 +44,7 @@ class DotCoverFilterConverterTest {
                 arrayOf("-:function=ccc;bbb;aaa", "", true),
                 arrayOf("?:aaa", "", true),
                 arrayOf("aaa", "", true),
-                arrayOf("+:aaa${ourLineSeparator}-:bb:b", "", true))
+                arrayOf("+:aaa$ourLineSeparator-:bb:b", "", true))
     }
 
     @Test(dataProvider = "filterCases")

@@ -44,7 +44,7 @@ class NuGetPackageVersionParserTest {
     @Test(dataProvider = "getProjectFiles")
     fun shouldParsePackageVersion(versionString: String, expectedPackageVersion: NuGetPackageVersion?) {
         // Given
-        var parser = CreateInstance()
+        val parser = createInstance()
 
         // When
         val actualPackageVersion = parser.tryParse(versionString)
@@ -53,7 +53,7 @@ class NuGetPackageVersionParserTest {
         Assert.assertEquals(actualPackageVersion, expectedPackageVersion)
     }
 
-    fun CreateInstance() : NuGetPackageVersionParser {
+    private fun createInstance() : NuGetPackageVersionParser {
         return NuGetPackageVersionParserImpl()
     }
 }

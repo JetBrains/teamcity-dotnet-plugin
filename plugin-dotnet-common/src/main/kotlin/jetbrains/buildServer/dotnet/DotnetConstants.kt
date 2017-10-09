@@ -105,7 +105,6 @@ object DotnetConstants {
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
     // Integration package
-    const val PACKAGE_FEED_URL = "http://packages.nuget.org/api/v2"
     const val PACKAGE_NUGET_EXTENSION = "nupkg"
     const val PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
     const val PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"

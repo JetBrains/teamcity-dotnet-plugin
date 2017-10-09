@@ -1,6 +1,6 @@
 package jetbrains.buildServer.agent
 
-enum class TargetType(final val priority: Int) {
+enum class TargetType(val priority: Int) {
     NotApplicable(0),
 
     Tool(100), // dotnet, msbuild, nuget ...

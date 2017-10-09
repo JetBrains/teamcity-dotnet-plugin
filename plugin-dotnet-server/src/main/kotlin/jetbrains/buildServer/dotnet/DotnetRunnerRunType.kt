@@ -8,12 +8,10 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
-import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 /**
@@ -70,7 +68,7 @@ class DotnetRunnerRunType(
     }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
-        val command = runParameters.get(DotnetConstants.PARAM_COMMAND)
+        val command = runParameters[DotnetConstants.PARAM_COMMAND]
         command?.let {
             val commandType = DotnetParametersProvider.commandTypes[it]
             commandType?.let {

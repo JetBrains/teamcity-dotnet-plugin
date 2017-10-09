@@ -20,6 +20,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
+import java.util.regex.Pattern
 
 /**
  * Provides serialization capabilities.
@@ -28,7 +29,6 @@ class DotnetModelParser {
 
     private val myGson: Gson
     private val myXmlMapper: ObjectMapper
-    private val ProjectPathPattern: Regex = Regex(""""([^\"]+\${DotnetConstants.PROJECT_CSPROJ})"""")
 
     init {
         val builder = GsonBuilder()
@@ -87,8 +87,9 @@ class DotnetModelParser {
             val inputStream = getInputStreamReader(element.inputStream)
             BufferedReader(inputStream).use {
                 inputStream.readLines().forEach {
-                    ProjectPathPattern.find(it)?.let {
-                        projectPaths.add(it.groupValues[1].replace('\\', '/'))
+                    val matcher = ProjectPathPattern.matcher(it)
+                    if (matcher.find()) {
+                        projectPaths.add(matcher.group(1).replace('\\', '/'))
                     }
                 }
             }
@@ -97,10 +98,9 @@ class DotnetModelParser {
             Loggers.SERVER.infoAndDebugDetails(message, e)
         }
 
-        return projectPaths.map { getElement(element, it) }
-                .filterNotNull()
-                .map { getCsProjectModel(it) }
-                .filterNotNull()
+        return projectPaths
+                .mapNotNull { getElement(element, it) }
+                .mapNotNull { getCsProjectModel(it) }
     }
 
     private fun getElement(element: Element, it: String): Element? {
@@ -113,18 +113,22 @@ class DotnetModelParser {
         inputStream.mark(3)
         val byte1 = inputStream.read()
         val byte2 = inputStream.read()
-        if (byte1 == 0xFF && byte2 == 0xFE) {
-            return InputStreamReader(inputStream, "UTF-16LE")
+        return if (byte1 == 0xFF && byte2 == 0xFE) {
+            InputStreamReader(inputStream, "UTF-16LE")
         } else if (byte1 == 0xFF && byte2 == 0xFF) {
-            return InputStreamReader(inputStream, "UTF-16BE")
+            InputStreamReader(inputStream, "UTF-16BE")
         } else {
             val byte3 = inputStream.read()
             if (byte1 == 0xEF && byte2 == 0xBB && byte3 == 0xBF) {
-                return InputStreamReader(inputStream, "UTF-8")
+                InputStreamReader(inputStream, "UTF-8")
             } else {
                 inputStream.reset()
-                return InputStreamReader(inputStream)
+                InputStreamReader(inputStream)
             }
         }
+    }
+
+    private companion object {
+        private val ProjectPathPattern = Pattern.compile(""""([^\"]+\${DotnetConstants.PROJECT_CSPROJ})"""")
     }
 }

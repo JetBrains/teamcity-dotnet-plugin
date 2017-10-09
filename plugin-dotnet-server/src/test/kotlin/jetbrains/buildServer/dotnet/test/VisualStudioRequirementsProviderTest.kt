@@ -2,8 +2,6 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.commands.DotCoverInfoProvider
-import jetbrains.buildServer.dotnet.commands.VSTestRequirementsProvider
 import jetbrains.buildServer.dotnet.commands.VisualStudioRequirementsProvider
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier

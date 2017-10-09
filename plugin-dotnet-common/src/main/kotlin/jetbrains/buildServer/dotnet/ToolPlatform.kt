@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-enum class ToolPlatform() {
+enum class ToolPlatform {
     DotnetCore,
     Mono,
     Windows,

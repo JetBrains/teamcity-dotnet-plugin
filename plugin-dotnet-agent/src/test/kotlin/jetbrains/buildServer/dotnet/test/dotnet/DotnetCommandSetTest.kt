@@ -8,7 +8,6 @@ import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -76,11 +75,10 @@ class DotnetCommandSetTest {
 
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
-                ArgumentsServiceStub(),
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When
-        var actualArguments: List<String> = emptyList();
+        var actualArguments: List<String> = emptyList()
         try {
             actualArguments = dotnetCommandSet.commands.flatMap { it.arguments }.map { it.value }.toList()
             exceptionPattern?.let {
@@ -89,7 +87,7 @@ class DotnetCommandSetTest {
         }
         catch (ex: RunBuildException)
         {
-            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true);
+            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 
         // Then
@@ -123,11 +121,10 @@ class DotnetCommandSetTest {
 
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build"))),
-                ArgumentsServiceStub(),
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When
-        var actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessfulExitCode(10) }.toList()
+        val actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessfulExitCode(10) }.toList()
 
         // Then
         _ctx!!.assertIsSatisfied()

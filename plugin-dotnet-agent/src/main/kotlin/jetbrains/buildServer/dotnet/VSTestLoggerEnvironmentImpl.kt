@@ -5,7 +5,6 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.Closeable
 import java.io.File
-import java.util.TreeSet
 
 class VSTestLoggerEnvironmentImpl(
         private val _pathsService: PathsService,
@@ -14,7 +13,7 @@ class VSTestLoggerEnvironmentImpl(
     : VSTestLoggerEnvironment {
     override fun configure(paths: List<File>): Closeable =
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
-            var loggerLocalPaths = mutableListOf<File>()
+            val loggerLocalPaths = mutableListOf<File>()
             val targets = paths.map { it.absoluteFile.parentFile }.toMutableSet()
             if (targets.size == 0) {
                 targets.add(_pathsService.getPath(PathType.WorkingDirectory).absoluteFile)
@@ -26,17 +25,10 @@ class VSTestLoggerEnvironmentImpl(
                 loggerLocalPaths.add(localLoggerDirectory)
             }
 
-            return object: Closeable {
-                override fun close() {
-                    loggerLocalPaths.forEach() { _fileSystemService.remove(it) }
-                }
-            }
+            return Closeable { loggerLocalPaths.forEach { _fileSystemService.remove(it) } }
         } ?: EmptyClosable
 
     companion object {
-        private val EmptyClosable = object : Closeable {
-            override fun close() {
-            }
-        }
+        private val EmptyClosable = Closeable { }
     }
 }

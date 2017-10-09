@@ -17,7 +17,6 @@ class DotnetWorkflowComposer(
         get() = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
-        @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return Workflow(
                 buildSequence {
                     for (command in _commandSet.commands) {

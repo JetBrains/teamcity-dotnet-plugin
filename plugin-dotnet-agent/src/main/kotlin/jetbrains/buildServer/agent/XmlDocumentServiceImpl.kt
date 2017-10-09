@@ -14,7 +14,6 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class XmlDocumentServiceImpl : XmlDocumentService {
     override fun create(): Document {
         val docFactory = DocumentBuilderFactory.newInstance()
@@ -38,6 +37,7 @@ class XmlDocumentServiceImpl : XmlDocumentService {
         }
     }
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun serialize(document: Document, outputStream: OutputStream) {
         val writer = OutputStreamWriter(outputStream)
         val result = StreamResult(writer)

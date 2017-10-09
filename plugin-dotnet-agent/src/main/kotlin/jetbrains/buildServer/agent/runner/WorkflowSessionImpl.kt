@@ -21,15 +21,16 @@ class WorkflowSessionImpl(
         private val _argumentsService: ArgumentsService)
     : MultiCommandBuildSession, WorkflowContext {
 
-    private var _commandLinesIterator: Iterator<CommandLine>? = null;
+    private var _commandLinesIterator: Iterator<CommandLine>? = null
     private var _lastResult: CommandLineResult? = null
     private var _buildFinishedStatus: BuildFinishedStatus? = null
 
     override fun sessionStarted() = Unit
 
     override fun getNextCommand(): CommandExecution? {
-        var commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator();
-        _commandLinesIterator = commandLinesIterator;
+        val commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator
+                ?: _workflowComposer.compose(this).commandLines.iterator()
+        _commandLinesIterator = commandLinesIterator
 
         if (_buildFinishedStatus != null || !commandLinesIterator.hasNext()) {
             return null
@@ -66,7 +67,7 @@ class WorkflowSessionImpl(
             private val _errorOutput: MutableCollection<String>,
             private val _buildStepContext: BuildStepContext,
             private val _loggerService: LoggerService,
-            private val _argumentsService: ArgumentsService): CommandExecution {
+            private val _argumentsService: ArgumentsService) : CommandExecution {
 
         override fun beforeProcessStarted() = Unit
 
@@ -79,7 +80,7 @@ class WorkflowSessionImpl(
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(
                 _argumentsService,
                 _commandLine,
-                _buildStepContext.runnerContext.getBuildParameters().getEnvironmentVariables())
+                _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
         override fun onStandardOutput(text: String) {
             _standardOutput.add(text)
@@ -99,16 +100,18 @@ class WorkflowSessionImpl(
     private class ProgramCommandLineAdapter(
             private val _argumentsService: ArgumentsService,
             private val _commandLine: CommandLine,
-            private val _environmentVariables: Map<String, String>): ProgramCommandLine {
+            private val _environmentVariables: Map<String, String>) : ProgramCommandLine {
         override fun getExecutablePath(): String = _commandLine.executableFile.absolutePath
 
         override fun getWorkingDirectory(): String = _commandLine.workingDirectory.absolutePath
 
-        override fun getArguments(): MutableList<String> = _commandLine.arguments.map { _argumentsService.escape(it.value) }.toMutableList()
+        override fun getArguments(): MutableList<String> = _commandLine.arguments.map {
+            _argumentsService.escape(it.value)
+        }.toMutableList()
 
         override fun getEnvironment(): MutableMap<String, String> {
-            var environmentVariables = _environmentVariables.toMutableMap()
-            _commandLine.environmentVariables.forEach {  environmentVariables[it.name] = it.value }
+            val environmentVariables = _environmentVariables.toMutableMap()
+            _commandLine.environmentVariables.forEach { environmentVariables[it.name] = it.value }
             return environmentVariables
         }
     }

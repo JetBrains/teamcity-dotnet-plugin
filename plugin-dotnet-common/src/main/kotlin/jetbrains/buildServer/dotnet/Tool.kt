@@ -27,10 +27,10 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "14"),
     VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "12");
 
-    public val id: String get() = "${type}_${version}_${platform}_${bitness}"
+    val id: String get() = "${type}_${version}_${platform}_$bitness"
 
     companion object {
-        public fun tryParse(id: String): Tool? {
+        fun tryParse(id: String): Tool? {
             return Tool.values().filter { it.id.equals(id, true) }.singleOrNull()
         }
     }

@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.test.agent.runner
 
 import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
 import org.jmock.Expectations
@@ -65,11 +64,11 @@ class LayeredWorkflowComposerTest {
         val composer = createInstance(composers)
 
         // When
-        val actualWorkflow = composer.compose(workflowContext, _baseWorkflow);
+        val actualWorkflow = composer.compose(workflowContext, _baseWorkflow)
 
         // Then
         ctx.assertIsSatisfied()
-        Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflows.flatMap { it.commandLines }.toList());
+        Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflows.flatMap { it.commandLines }.toList())
     }
 
     private fun createInstance(composers: List<WorkflowComposer>): WorkflowComposer {

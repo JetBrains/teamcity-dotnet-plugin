@@ -2,13 +2,11 @@ package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.XmlDocumentService
-import jetbrains.buildServer.agent.runner.PathsService
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
 
 class DotCoverProjectSerializerImpl(
-        private val _pathService: PathsService,
         private val _xmlDocumentService: XmlDocumentService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider)
@@ -66,7 +64,7 @@ class DotCoverProjectSerializerImpl(
             coverageParamsElement.appendChild(attributeFiltersElement)
         }
 
-        _xmlDocumentService.serialize(doc, outputStream);
+        _xmlDocumentService.serialize(doc, outputStream)
     }
 
     private fun createSimpleElement(doc: Document, name: String, value: String): Element {

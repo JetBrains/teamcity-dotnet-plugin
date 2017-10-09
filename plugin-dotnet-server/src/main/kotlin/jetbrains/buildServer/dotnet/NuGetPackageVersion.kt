@@ -1,17 +1,17 @@
 package jetbrains.buildServer.dotnet
 
 data class NuGetPackageVersion(
-        public val major: Int,
-        public val minor: Int,
-        public val build: Int,
-        public val buildName: String = "") {
+        private val major: Int,
+        private val minor: Int,
+        val build: Int,
+        private val buildName: String = "") {
 
     override fun toString(): String {
-        if(buildName.isNullOrEmpty()) {
-            return "${major}.${minor}.${build}"
+        return if(buildName.isEmpty()) {
+            "$major.$minor.$build"
         }
         else {
-            return "${major}.${minor}.${build}-${buildName}"
+            "$major.$minor.$build-$buildName"
         }
     }
 }

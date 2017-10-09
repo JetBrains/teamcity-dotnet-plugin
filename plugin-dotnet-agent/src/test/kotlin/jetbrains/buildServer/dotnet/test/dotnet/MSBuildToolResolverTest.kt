@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
@@ -16,7 +15,6 @@ import java.io.File
 
 class MSBuildToolResolverTest {
     private var _ctx: Mockery? = null
-    private var _pathsService: PathsService? = null;
     private var _environment: Environment? = null
 
     @BeforeMethod
@@ -74,10 +72,8 @@ class MSBuildToolResolverTest {
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
-        }
-        catch (ex: RunBuildException)
-        {
-            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true);
+        } catch (ex: RunBuildException) {
+            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 
 

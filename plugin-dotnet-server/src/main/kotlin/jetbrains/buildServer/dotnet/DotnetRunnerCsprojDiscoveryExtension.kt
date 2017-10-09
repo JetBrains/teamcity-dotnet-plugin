@@ -12,13 +12,12 @@ import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExt
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
 import jetbrains.buildServer.util.browser.Element
 import java.util.*
+import java.util.regex.Pattern
 
 /**
  * Performs .net core projects discovery for .NET CLI tools.
  */
 class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetModelParser) : BreadthFirstRunnerDiscoveryExtension(3) {
-
-    private val TestPackages: Regex = Regex("xunit|nunit|test")
 
     override fun discoverRunnersInDirectory(dir: Element,
                                             filesAndDirs: List<Element>): List<DiscoveredObject> {
@@ -60,7 +59,7 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
             val packages = it.fold(hashSetOf<String>(), {
                 all, current ->
                 current.packageReferences?.let {
-                    all.addAll(it.map { it.include }.filterNotNull())
+                    all.addAll(it.mapNotNull { it.include })
                 }
                 all
             })
@@ -81,11 +80,9 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
 
         for (project in projects) {
             project.itemGroups?.let {
-                val projectPackages = it.filterNotNull()
-                        .map { it.packageReferences }
-                        .filterNotNull()
+                val projectPackages = it.mapNotNull { it.packageReferences }
                         .flatMap {
-                            it.map { it.include }.filterNotNull()
+                            it.mapNotNull { it.include }
                         }.toSet()
 
                 val projectPath = getEscapedPath(project.path!!)
@@ -109,7 +106,7 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
         val steps = arrayListOf<Map<String, String>>()
 
         // Check whether project contains test framework packages
-        if (packages.any { TestPackages.matches(it) }) {
+        if (packages.any { TestPackages.matcher(it).find() }) {
             steps.add(mapOf(
                     Pair(DotnetConstants.PARAM_COMMAND, DotnetCommandType.Test.id),
                     Pair(DotnetConstants.PARAM_PATHS, fullName)))
@@ -138,5 +135,9 @@ class DotnetRunnerCsprojDiscoveryExtension(private val myModelParser: DotnetMode
         return listOf(mapOf(
                 Pair(DotnetConstants.PARAM_COMMAND, DotnetCommandType.Restore.id),
                 Pair(DotnetConstants.PARAM_PATHS, fullName)))
+    }
+
+    private companion object {
+        val TestPackages: Pattern = Pattern.compile("xunit|nunit|test")
     }
 }

@@ -13,7 +13,7 @@ import java.io.File
 
 class DotnetToolResolverTest {
     private var _ctx: Mockery? = null
-    private var _pathsService: PathsService? = null;
+    private var _pathsService: PathsService? = null
 
     @BeforeMethod
     fun setUp() {

@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet
 
 class NuGetPackageVersionParserImpl : NuGetPackageVersionParser {
     override fun tryParse(version: String): NuGetPackageVersion? {
-        val matcher = _packageVersionPattern.matcher(version)
+        val matcher = VersionPattern.matcher(version)
         if(!matcher.find() || matcher.groupCount() < 5) {
             return null
         }
@@ -11,10 +11,10 @@ class NuGetPackageVersionParserImpl : NuGetPackageVersionParser {
                 matcher.group("major").toInt(),
                 matcher.group("minor").toInt(),
                 matcher.group("build").toInt(),
-                matcher.group("buildName") ?: "");
+                matcher.group("buildName") ?: "")
     }
 
     companion object {
-        val _packageVersionPattern= Regex("(^[a-z.]+\\.|^)(?<major>[\\d]+)\\.(?<minor>[\\d]+)\\.(?<build>[\\d]+)(-(?<buildName>\\w+)|)(.nupkg|)$", RegexOption.IGNORE_CASE).toPattern()
+        val VersionPattern = Regex("(^[a-z.]+\\.|^)(?<major>[\\d]+)\\.(?<minor>[\\d]+)\\.(?<build>[\\d]+)(-(?<buildName>\\w+)|)(.nupkg|)$", RegexOption.IGNORE_CASE).toPattern()
     }
 }

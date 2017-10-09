@@ -3,9 +3,7 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet VSTest command.
@@ -33,6 +31,5 @@ class VSTestCommandType(
         return invalidProperties
     }
 
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     override fun getRequirements(runParameters: Map<String, String>) = _vstestRequirementsProvider.getRequirements(runParameters)
 }

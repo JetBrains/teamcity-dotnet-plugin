@@ -7,5 +7,4 @@ data class CommandLine(
         val executableFile: File,
         val workingDirectory: File,
         val arguments: List<CommandLineArgument>,
-        val environmentVariables: List<CommandLineEnvironmentVariable>) {
-}
+        val environmentVariables: List<CommandLineEnvironmentVariable>)

@@ -8,7 +8,6 @@ import kotlin.coroutines.experimental.buildSequence
 class DotCoverFilterConverter : Converter<String, Sequence<CoverageFilter>> {
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun convert(filterString: String): Sequence<CoverageFilter> {
-        @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return buildSequence {
             if (filterString.isBlank()) {
                 return@buildSequence
@@ -103,7 +102,7 @@ class DotCoverFilterConverter : Converter<String, Sequence<CoverageFilter>> {
     }
 
     private fun throwRunBuildException(filter: String) {
-        throw RunBuildException("Invalid statement for filter: \"${filter}\"")
+        throw RunBuildException("Invalid statement for filter: \"$filter\"")
     }
 
     companion object {

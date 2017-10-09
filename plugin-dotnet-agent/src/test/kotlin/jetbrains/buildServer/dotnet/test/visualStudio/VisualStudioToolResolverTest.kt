@@ -82,10 +82,8 @@ class VisualStudioToolResolverTest {
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
-        }
-        catch (ex: RunBuildException)
-        {
-            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true);
+        } catch (ex: RunBuildException) {
+            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 
 

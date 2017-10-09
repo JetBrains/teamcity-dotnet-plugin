@@ -20,8 +20,7 @@ class DotnetPropertiesExtension(
         events: EventDispatcher<AgentLifeCycleListener>,
         private val _toolProvider: ToolProvider,
         private val _commandLineExecutor: CommandLineExecutor,
-        private val _versionParser: VersionParser,
-        private val _defaultEnvironmentVariables: EnvironmentVariables)
+        private val _versionParser: VersionParser)
     : AgentLifeCycleAdapter() {
     init {
         events.addListener(this)

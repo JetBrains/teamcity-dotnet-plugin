@@ -8,7 +8,6 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.commands.CommandType
 
 /**
  * Provides parameters for dotnet publish command.

@@ -12,7 +12,7 @@ class VSTestToolResolver(
     : ToolResolver {
     override val executableFile: File
         get() {
-            CurrentTool?.let {
+            _currentTool?.let {
                 when (it.platform) {
                     ToolPlatform.Windows -> {
                         val vstestTool = "teamcity.dotnet.vstest.${it.version}.0"
@@ -28,14 +28,14 @@ class VSTestToolResolver(
 
     override val isCommandRequired: Boolean
         get() {
-            CurrentTool?.let {
+            _currentTool?.let {
                 return it.platform == ToolPlatform.DotnetCore
             }
 
             return true
         }
 
-    private val CurrentTool: Tool? get() {
+    private val _currentTool: Tool? get() {
         _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VSTEST_VERSION)?.let {
             return Tool.tryParse(it)
         }

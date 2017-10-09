@@ -1,4 +1,3 @@
 package jetbrains.buildServer.dotnet
 
-interface DotnetToolResolver: ToolResolver {
-}
+interface DotnetToolResolver: ToolResolver

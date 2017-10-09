@@ -10,10 +10,8 @@ import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_ACTION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM
 import jetbrains.buildServer.dotnet.TargetService
-import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class VisualStudioWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
@@ -34,9 +32,13 @@ class VisualStudioWorkflowComposer(
                         } ?: return@buildSequence
 
                         val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-                        val action = parameters(PARAM_VISUAL_STUDIO_ACTION) ?: throw RunBuildException("Parameter \"$PARAM_VISUAL_STUDIO_ACTION\" was not found")
+                        val action = parameters(PARAM_VISUAL_STUDIO_ACTION)
+                                ?: throw RunBuildException("Parameter \"$PARAM_VISUAL_STUDIO_ACTION\" was not found")
 
-                        val configItems = listOf(parameters(PARAM_VISUAL_STUDIO_CONFIG, ""), parameters(PARAM_VISUAL_STUDIO_PLATFORM, "")).filter { !it.isNullOrBlank() }
+                        val configItems = listOf(
+                                parameters(PARAM_VISUAL_STUDIO_CONFIG, ""),
+                                parameters(PARAM_VISUAL_STUDIO_PLATFORM, ""))
+                                .filter { !it.isBlank() }
                         var configValue = configItems.joinToString("|")
                         if (configItems.size > 1) {
                             configValue = "\"$configValue\""
@@ -56,20 +58,20 @@ class VisualStudioWorkflowComposer(
                                     buildSequence {
                                         yield(CommandLineArgument(commandTarget.targetFile.absolutePath))
                                         yield(CommandLineArgument("/$action"))
-                                        if (!configValue.isNullOrBlank()) {
+                                        if (!configValue.isBlank()) {
                                             yield(CommandLineArgument(configValue))
                                         }
 
                                         yieldAll(args)
                                     }.toList(),
-                                    emptyList<CommandLineEnvironmentVariable>()))
+                                    emptyList()))
 
                             if (context.lastResult.isCompleted && context.lastResult.exitCode != 0) {
                                 context.abort(BuildFinishedStatus.FINISHED_FAILED)
                                 return@buildSequence
                             }
                         }
-                }
+                    }
             )
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)

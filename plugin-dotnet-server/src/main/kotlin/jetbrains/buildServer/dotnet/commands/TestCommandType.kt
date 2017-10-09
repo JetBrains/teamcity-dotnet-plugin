@@ -39,7 +39,6 @@ class TestCommandType(private val _dotCoverInfoProvider: DotCoverInfoProvider) :
         return invalidProperties
     }
 
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
         if (_dotCoverInfoProvider.isCoverageEnabled(runParameters)) {
             yieldAll(super.getRequirements(runParameters))

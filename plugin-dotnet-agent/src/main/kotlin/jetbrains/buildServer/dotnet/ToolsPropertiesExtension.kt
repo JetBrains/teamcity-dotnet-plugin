@@ -3,8 +3,6 @@ package jetbrains.buildServer.dotnet
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
 
@@ -13,7 +11,7 @@ import java.io.File
  */
 class ToolsPropertiesExtension(
         events: EventDispatcher<AgentLifeCycleListener>,
-        private final val _pluginDescriptor: PluginDescriptor,
+        private val _pluginDescriptor: PluginDescriptor,
         private val _fileSystemService: FileSystemService)
     : AgentLifeCycleAdapter() {
     init {

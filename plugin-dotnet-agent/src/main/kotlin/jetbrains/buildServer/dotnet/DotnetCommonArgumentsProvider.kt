@@ -1,4 +1,3 @@
 package jetbrains.buildServer.dotnet
 
-interface DotnetCommonArgumentsProvider: ArgumentsProvider {
-}
+interface DotnetCommonArgumentsProvider: ArgumentsProvider

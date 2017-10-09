@@ -10,7 +10,6 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides arguments to dotnet for custom arguments.
  */
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class CustomArgumentsProvider(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService)

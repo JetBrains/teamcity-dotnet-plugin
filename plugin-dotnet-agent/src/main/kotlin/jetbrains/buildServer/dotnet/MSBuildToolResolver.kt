@@ -14,7 +14,7 @@ class MSBuildToolResolver(
         private val _dotnetToolResolver: ToolResolver)
     : ToolResolver {
     override val executableFile: File get() =
-        CurrentTool?.let {
+        _currentTool?.let {
             when (it.platform) {
                 ToolPlatform.Windows -> {
                     val x86Tool = "MSBuildTools${it.version}.0_x86_Path"
@@ -46,11 +46,11 @@ class MSBuildToolResolver(
         } ?: _dotnetToolResolver.executableFile
 
     override val isCommandRequired: Boolean get() =
-        CurrentTool?.let {
+        _currentTool?.let {
             return it.platform == ToolPlatform.DotnetCore
         } ?: true
 
-    private val CurrentTool: Tool? get() =
+    private val _currentTool: Tool? get() =
         _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_MSBUILD_VERSION)?.let {
             return Tool.tryParse(it)
         }
@@ -64,9 +64,9 @@ class MSBuildToolResolver(
     private fun tryGetMonoTool(parameterName: String): File? =
         _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
             val baseDirectory = File(it).absoluteFile.parent
-            when(_environment.OS) {
-                OSType.WINDOWS -> return File(baseDirectory, MSBuildMonoWindowsToolName).absoluteFile
-                else -> return File(baseDirectory, MSBuildMonoToolName).absoluteFile
+            return when(_environment.OS) {
+                OSType.WINDOWS -> File(baseDirectory, MSBuildMonoWindowsToolName).absoluteFile
+                else -> File(baseDirectory, MSBuildMonoToolName).absoluteFile
             }
         }
 

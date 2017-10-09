@@ -1,16 +1,16 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import jetbrains.buildServer.dotnet.LoggerResolver
+import jetbrains.buildServer.dotnet.ToolType
+import jetbrains.buildServer.dotnet.VSTestLoggerEnvironment
+import jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentImpl
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -18,7 +18,6 @@ class VSTestLoggerEnvironmentTest {
     private var _ctx: Mockery? = null
     private var _pathService: PathsService? = null
     private var _parametersService: ParametersService? = null
-    private var _loggerService: LoggerService? = null
     private var _loggerResolver: LoggerResolver? = null
     private var _fileSystemService: FileSystemService? = null
 

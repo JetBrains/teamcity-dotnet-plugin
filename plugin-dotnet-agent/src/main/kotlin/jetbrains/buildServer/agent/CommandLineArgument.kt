@@ -1,5 +1,3 @@
 package jetbrains.buildServer.agent
 
-data class CommandLineArgument(
-        val value: String) {
-}
+data class CommandLineArgument(val value: String)

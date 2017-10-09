@@ -4,7 +4,7 @@ import jetbrains.buildServer.tools.ToolTypeAdapter
 
 class DotnetToolTypeAdapter : ToolTypeAdapter() {
     override fun getType(): String {
-        return DotnetConstants.PACKAGE_TYPE;
+        return DotnetConstants.PACKAGE_TYPE
     }
 
     override fun getDisplayName(): String {

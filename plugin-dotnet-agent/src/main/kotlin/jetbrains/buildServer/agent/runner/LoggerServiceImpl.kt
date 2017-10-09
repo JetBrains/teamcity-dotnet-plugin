@@ -16,7 +16,7 @@ class LoggerServiceImpl(
         get() = LoggingProcessListener(buildLogger)
 
     private val buildLogger: BuildProgressLogger
-        get() = _buildStepContext.runnerContext.getBuild().getBuildLogger()
+        get() = _buildStepContext.runnerContext.build.buildLogger
 
     override fun onMessage(serviceMessage: ServiceMessage) = buildLogger.message(serviceMessage.toString())
 
@@ -27,7 +27,7 @@ class LoggerServiceImpl(
             listener.onStandardOutput(text)
         }
         else {
-            listener.onStandardOutput("\u001B[${_colorTheme.getAnsiColor(color)}m${text}")
+            listener.onStandardOutput("\u001B[${_colorTheme.getAnsiColor(color)}m$text")
         }
     }
 
@@ -35,10 +35,6 @@ class LoggerServiceImpl(
 
     override fun onBlock(blockName: String, description: String): Closeable {
         buildLogger.message(BlockOpened(blockName, if(description.isBlank()) null else description).toString())
-        return object: Closeable{
-            override fun close() {
-                buildLogger.message(BlockClosed(blockName).toString())
-            }
-        }
+        return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
     }
 }

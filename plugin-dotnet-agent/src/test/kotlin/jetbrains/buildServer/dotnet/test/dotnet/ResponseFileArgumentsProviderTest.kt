@@ -1,16 +1,18 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.dotcover.*
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 import java.io.InputStreamReader
@@ -36,9 +38,9 @@ class ResponseFileArgumentsProviderTest {
         val rspFileName = "rspFile"
         val rspFile = File(tempDirectory, rspFileName + ResponseFileArgumentsProvider.ResponseFileExtension).absoluteFile
         val fileSystemService = VirtualFileSystemService()
-        var argsProvider1 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
-        var argsProvider2 = DotnetCommonArgumentsProviderStub(emptySequence())
-        var argsProvider3 = DotnetCommonArgumentsProviderStub(sequenceOf( CommandLineArgument("arg3")))
+        val argsProvider1 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
+        val argsProvider2 = DotnetCommonArgumentsProviderStub(emptySequence())
+        val argsProvider3 = DotnetCommonArgumentsProviderStub(sequenceOf( CommandLineArgument("arg3")))
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3))
 
         // When

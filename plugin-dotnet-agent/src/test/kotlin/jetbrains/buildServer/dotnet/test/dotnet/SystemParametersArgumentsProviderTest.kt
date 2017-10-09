@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.SystemParametersArgumentsProvider
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert

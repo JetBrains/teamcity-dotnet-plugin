@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotCoverConstants
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.DotCoverInfoProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider

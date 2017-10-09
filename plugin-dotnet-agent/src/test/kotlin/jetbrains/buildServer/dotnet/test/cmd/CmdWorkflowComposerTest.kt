@@ -30,6 +30,7 @@ class CmdWorkflowComposerTest {
         _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
     }
 
+    @Test
     fun shouldBeProfilerOfCodeCoverage() {
         // Given
         val composer = createInstance()
@@ -55,13 +56,13 @@ class CmdWorkflowComposerTest {
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
-                                            TargetType.Host,
-                                            File("win", "cmd.exe"),
+                                                TargetType.Host,
+                                                File("win", "cmd.exe"),
                                                 _workflowCmd.commandLines.single().workingDirectory,
-                                            listOf<CommandLineArgument>(
-                                                    CommandLineArgument("/D"),
-                                                    CommandLineArgument("/C"),
-                                                    CommandLineArgument("\"${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.map { it.value }.joinToString(" ")}\"")),
+                                                listOf(
+                                                        CommandLineArgument("/D"),
+                                                        CommandLineArgument("/C"),
+                                                        CommandLineArgument("\"${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
                                                 _workflowCmd.commandLines.single().environmentVariables
                                         )
                                 )
@@ -77,10 +78,10 @@ class CmdWorkflowComposerTest {
                                                 TargetType.Host,
                                                 File("win", "cmd.exe"),
                                                 _workflowBat.commandLines.single().workingDirectory,
-                                                listOf<CommandLineArgument>(
+                                                listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.map { it.value }.joinToString(" ")}\"")),
+                                                        CommandLineArgument("\"${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
                                                 _workflowBat.commandLines.single().environmentVariables
                                         )
                                 )
@@ -134,7 +135,7 @@ class CmdWorkflowComposerTest {
                     args,
                     envVars)
 
-            return Workflow(sequenceOf(commandLine));
+            return Workflow(sequenceOf(commandLine))
         }
     }
 }

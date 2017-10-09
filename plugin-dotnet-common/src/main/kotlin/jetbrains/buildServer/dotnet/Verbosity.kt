@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import org.springframework.context.annotation.Description
-
 enum class Verbosity(val id: String, val description: String) {
     Quiet("Quiet", "Quiet"),
     Minimal("Minimal", "Minimal"),
@@ -10,8 +8,8 @@ enum class Verbosity(val id: String, val description: String) {
     Diagnostic("Diagnostic", "Diagnostic");
 
     companion object {
-        public fun tryParse(id: String): Verbosity? {
-            return Verbosity.values().filter { it.id.equals(id, true) }.singleOrNull()
+        fun tryParse(id: String): Verbosity? {
+            return Verbosity.values().singleOrNull { it.id.equals(id, true) }
         }
     }
 }

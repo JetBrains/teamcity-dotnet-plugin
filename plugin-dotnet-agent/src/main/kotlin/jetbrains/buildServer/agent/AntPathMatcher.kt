@@ -5,10 +5,10 @@ import java.io.File
 
 class AntPathMatcher : PathMatcher {
     override fun match(path: File, includeRules: Sequence<String>, excludeRules: Sequence<String>): Sequence<File> {
-        return AntPatternFileCollector.scanDir(path, includeRules.toList().toTypedArray(), excludeRules.toList().toTypedArray(), _ourScanOptions).asSequence()
+        return AntPatternFileCollector.scanDir(path, includeRules.toList().toTypedArray(), excludeRules.toList().toTypedArray(), ScanOptions).asSequence()
     }
 
     companion object {
-        private val _ourScanOptions = arrayOf<AntPatternFileCollector.ScanOption>(AntPatternFileCollector.ScanOption.PRIORITIZE_EXCLUDES, AntPatternFileCollector.ScanOption.ALLOW_EXTERNAL_SCAN)
+        private val ScanOptions = arrayOf(AntPatternFileCollector.ScanOption.PRIORITIZE_EXCLUDES, AntPatternFileCollector.ScanOption.ALLOW_EXTERNAL_SCAN)
     }
 }

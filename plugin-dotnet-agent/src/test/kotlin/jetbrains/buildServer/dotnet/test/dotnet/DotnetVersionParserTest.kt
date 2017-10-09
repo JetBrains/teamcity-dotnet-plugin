@@ -12,11 +12,6 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-/**
- * @author Dmitry.Tretyakov
- *         Date: 29.10.2016
- *         Time: 10:17
- */
 class DotnetVersionParserTest {
     @DataProvider
     fun versionCases(): Array<Array<out Any?>> {

@@ -36,6 +36,7 @@ class DotCoverWorkflowComposerTest {
         _coverageFilterProvider = _ctx!!.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
     }
 
+    @Test
     fun shouldBeProfilerOfCodeCoverage() {
         // Given
         val composer = createInstance(VirtualFileSystemService())
@@ -72,7 +73,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile;
+        val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
         val dotCoverProject = DotCoverProject(
                 commandLine,
                 File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
@@ -164,7 +165,7 @@ class DotCoverWorkflowComposerTest {
                 envVars)
 
         val composer = createInstance(VirtualFileSystemService())
-        val baseWorkflow = Workflow(sequenceOf(commandLine));
+        val baseWorkflow = Workflow(sequenceOf(commandLine))
 
         // When
         _ctx!!.checking(object : Expectations() {
@@ -207,7 +208,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile;
+        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
         val dotCoverProject = DotCoverProject(
                 commandLine,
                 File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
@@ -268,13 +269,13 @@ class DotCoverWorkflowComposerTest {
                 val filter2 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "qwerty")
                 oneOf<CoverageFilterProvider>(_coverageFilterProvider).filters
                 will(returnValue(sequenceOf(filter1, filter2)))
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  ${filter1}", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  ${filter2}", Color.Details)
+                oneOf<LoggerService>(_loggerService).onStandardOutput("  $filter1", Color.Details)
+                oneOf<LoggerService>(_loggerService).onStandardOutput("  $filter2", Color.Details)
                 oneOf<LoggerService>(_loggerService).onStandardOutput("Attribute Filters:")
                 val attributeFilter = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "xyz")
                 oneOf<CoverageFilterProvider>(_coverageFilterProvider).attributeFilters
                 will(returnValue(sequenceOf(attributeFilter)))
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  ${attributeFilter}", Color.Details)
+                oneOf<LoggerService>(_loggerService).onStandardOutput("  $attributeFilter", Color.Details)
 
                 oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))

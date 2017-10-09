@@ -50,7 +50,7 @@ class MonoToolProviderTest {
         val toolProvider = createInstance(emptySequence())
 
         // When
-        val actualResult = toolProvider.supports(toolName);
+        val actualResult = toolProvider.supports(toolName)
 
         // Then
         _ctx!!.assertIsSatisfied()
@@ -87,12 +87,12 @@ class MonoToolProviderTest {
         })
         val toolProvider = createInstance(files)
 
-        var actualToolCannotBeFoundException = false;
+        var actualToolCannotBeFoundException = false
 
         // When
-        var actualPath: String = ""
+        var actualPath = ""
         try {
-            actualPath = toolProvider.getPath("tool");
+            actualPath = toolProvider.getPath("tool")
         }
         catch (ex: ToolCannotBeFoundException) {
             actualToolCannotBeFoundException = true

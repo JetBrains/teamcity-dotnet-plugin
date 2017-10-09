@@ -51,9 +51,9 @@ class RestoreCommandTest {
     @DataProvider
     fun projectsArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(listOf<String>("my.csproj") as Any, listOf<List<String>>(listOf<String>("my.csproj"))),
+                arrayOf(listOf("my.csproj") as Any, listOf(listOf("my.csproj"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf<String>("my.csproj", "my2.csproj") as Any, listOf<List<String>>(listOf<String>("my.csproj"), listOf<String>("my2.csproj"))))
+                arrayOf(listOf("my.csproj", "my2.csproj") as Any, listOf(listOf("my.csproj"), listOf("my2.csproj"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")

@@ -42,9 +42,9 @@ class NugetPushCommandTest {
     @DataProvider
     fun projectsArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(listOf<String>("my.nupkg") as Any, listOf<List<String>>(listOf<String>("my.nupkg"))),
+                arrayOf(listOf("my.nupkg") as Any, listOf(listOf("my.nupkg"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf<String>("my.nupkg", "my2.nupkg") as Any, listOf<List<String>>(listOf<String>("my.nupkg"), listOf<String>("my2.nupkg"))))
+                arrayOf(listOf("my.nupkg", "my2.nupkg") as Any, listOf(listOf("my.nupkg"), listOf("my2.nupkg"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")

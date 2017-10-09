@@ -15,7 +15,7 @@ class ArgumentsServiceTest {
                 arrayOf("   arg1    arg2   ", listOf("arg1", "arg2")),
                 arrayOf("arg1 \"arg 2\"", listOf("arg1", "arg 2")),
                 arrayOf("arg1${ourLineSeparator}arg2", listOf("arg1", "arg2")),
-                arrayOf(" ${ourLineSeparator}  arg1${ourLineSeparator} ${ourLineSeparator}   ${ourLineSeparator}arg2 ${ourLineSeparator}", listOf("arg1", "arg2")),
+                arrayOf(" $ourLineSeparator  arg1$ourLineSeparator $ourLineSeparator   ${ourLineSeparator}arg2 $ourLineSeparator", listOf("arg1", "arg2")),
                 arrayOf("arg1 \"arg${ourLineSeparator}2\"", listOf("arg1", "arg${ourLineSeparator}2")),
                 arrayOf("\"Arg 1\"${ourLineSeparator}arg2", listOf("Arg 1", "arg2")),
                 arrayOf("arg1", listOf("arg1")),
@@ -30,7 +30,7 @@ class ArgumentsServiceTest {
         val argumentsService = createInstance()
 
         // When
-        val actualArgs = argumentsService.split(argsStr).toList();
+        val actualArgs = argumentsService.split(argsStr).toList()
 
         // Then
         Assert.assertEquals(actualArgs, expectedArgs)
@@ -53,7 +53,7 @@ class ArgumentsServiceTest {
         val argumentsService = createInstance()
 
         // When
-        val actualArgsStr = argumentsService.combine(args.asSequence());
+        val actualArgsStr = argumentsService.combine(args.asSequence())
 
         // Then
         Assert.assertEquals(actualArgsStr, expectedArgsStr)
@@ -71,7 +71,7 @@ class ArgumentsServiceTest {
         val argumentsService = createInstance()
 
         // When
-        val actualArgsStr = argumentsService.escape(argsStr);
+        val actualArgsStr = argumentsService.escape(argsStr)
 
         // Then
         Assert.assertEquals(actualArgsStr, expectedArgsStr)

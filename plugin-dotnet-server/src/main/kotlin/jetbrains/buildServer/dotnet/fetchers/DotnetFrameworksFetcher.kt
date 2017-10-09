@@ -23,7 +23,7 @@ class DotnetFrameworksFetcher(modelParser: DotnetModelParser) : DotnetProjectsDa
     override fun getDataItems(project: CsProject?): Collection<String> {
         project?.let {
             it.propertyGroups?.let {
-                return it.fold(hashSetOf<String>(), {
+                return it.fold(hashSetOf(), {
                     all, current ->
                     current.targetFramework?.let {
                         all.add(it)

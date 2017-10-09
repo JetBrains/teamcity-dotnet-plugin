@@ -6,7 +6,7 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 
 class VirtualFileSystemService : FileSystemService {
-    private val _directories: HashSet<File> = HashSet<File>()
+    private val _directories: HashSet<File> = hashSetOf()
     private val _files: MutableMap<File, FileInfo> = mutableMapOf()
 
     override fun write(file: File, writer: (OutputStream) -> Unit) {
@@ -15,18 +15,18 @@ class VirtualFileSystemService : FileSystemService {
     }
 
     override fun read(file: File, reader: (InputStream) -> Unit) {
-        reader(_files.get(file)!!.inputStream)
+        reader(_files[file]!!.inputStream)
     }
 
     fun addDirectory(directory: File): VirtualFileSystemService
     {
-        _directories.add(directory);
-        var parent: File? = directory;
+        _directories.add(directory)
+        var parent: File? = directory
         while (parent != null){
-            parent = parent.parentFile;
+            parent = parent.parentFile
             if(parent != null) {
                 if(!_directories.contains(parent)) {
-                    _directories.add(parent);
+                    _directories.add(parent)
                 }
             }
         }
@@ -36,13 +36,13 @@ class VirtualFileSystemService : FileSystemService {
 
     fun addFile(file: File): VirtualFileSystemService
     {
-        val parent = file.parentFile;
+        val parent = file.parentFile
         if (parent != null) {
-            addDirectory(parent);
+            addDirectory(parent)
         }
 
         if (!_files.containsKey(file)) {
-            _files.put(file, FileInfo());
+            _files.put(file, FileInfo())
         }
 
         return this
@@ -50,11 +50,11 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isExists(file: File): Boolean = _directories.contains(file) || _files.contains(file)
 
-    override fun copy(source: File, destination: File): Unit {
+    override fun copy(source: File, destination: File) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun remove(file: File): Unit {
+    override fun remove(file: File) {
         if(_files.containsKey(file)) {
             _files.remove(file)
         }
@@ -65,8 +65,8 @@ class VirtualFileSystemService : FileSystemService {
     override fun list(file: File): Sequence<File> = _directories.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
 
     class FileInfo {
-        public val inputStream: InputStream
-        public val outputStream: OutputStream
+        val inputStream: InputStream
+        val outputStream: OutputStream
         init {
             outputStream = PipedOutputStream()
             inputStream = PipedInputStream(outputStream)

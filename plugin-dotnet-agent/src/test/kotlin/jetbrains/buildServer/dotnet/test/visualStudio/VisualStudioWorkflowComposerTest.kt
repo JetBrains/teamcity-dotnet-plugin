@@ -10,7 +10,6 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.visualStudio.ToolResolver
 import jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer
@@ -49,7 +48,7 @@ class VisualStudioWorkflowComposerTest {
                                 DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM to "x86",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1 arg2"),
                         sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln"))),
-                        listOf<CommandLine>(
+                        listOf(
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
@@ -79,7 +78,7 @@ class VisualStudioWorkflowComposerTest {
                                 DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "release",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1"),
                         sequenceOf(CommandTarget(File("my1.csproj"))),
-                        listOf<CommandLine>(
+                        listOf(
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
@@ -157,7 +156,7 @@ class VisualStudioWorkflowComposerTest {
                 DotnetConstants.PARAM_ARGUMENTS to "arg1 arg2")
 
         val targets = sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln")))
-        val expectedCommandLines = listOf<CommandLine>(
+        val expectedCommandLines = listOf(
                 CommandLine(
                         TargetType.Tool,
                         File("tool"),

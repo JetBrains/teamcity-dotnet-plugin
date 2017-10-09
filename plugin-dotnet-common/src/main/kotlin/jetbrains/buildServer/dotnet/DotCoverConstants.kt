@@ -7,8 +7,6 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.Constants
-
 /**
  * DotCover runner constants.
  */

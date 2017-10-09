@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -10,7 +9,6 @@ import org.testng.annotations.Test
 import java.io.File
 
 class VSTestToolResolverTest {
-    private var _pathsService: PathsService? = null;
 
     @DataProvider
     fun testData(): Array<Array<out Any?>> {
@@ -31,7 +29,7 @@ class VSTestToolResolverTest {
         val instance = createInstance(parameters, File("dotnet"))
 
         // When
-        var actualExecutableFile: File? = null;
+        var actualExecutableFile: File? = null
         try {
             actualExecutableFile = instance.executableFile
             exceptionPattern?.let {
@@ -40,7 +38,7 @@ class VSTestToolResolverTest {
         }
         catch (ex: RunBuildException)
         {
-            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true);
+            Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 
 

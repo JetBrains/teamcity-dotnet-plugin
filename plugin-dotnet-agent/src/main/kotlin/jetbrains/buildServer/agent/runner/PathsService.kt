@@ -3,7 +3,7 @@ package jetbrains.buildServer.agent.runner
 import java.io.File
 
 interface PathsService {
-    val uniqueName: String;
+    val uniqueName: String
 
     fun getPath(pathType : PathType): File
 

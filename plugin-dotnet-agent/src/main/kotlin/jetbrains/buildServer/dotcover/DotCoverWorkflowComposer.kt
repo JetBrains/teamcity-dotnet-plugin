@@ -9,7 +9,6 @@ import jetbrains.buildServer.dotnet.Verbosity
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotCoverWorkflowComposer(
         private val _pathsService: PathsService,
         private val _parametersService: ParametersService,
@@ -27,17 +26,19 @@ class DotCoverWorkflowComposer(
         val dotCoverPath: String?
         val dotCoverExecutableFile: File
         try {
-            var dotCoverEnabled = _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)?.equals("true", true) ?: false;
+            val dotCoverEnabled = _parametersService
+                    .tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)
+                    ?.equals("true", true) ?: false
             if (!dotCoverEnabled) {
-                return workflow;
+                return workflow
             }
 
-            dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME);
+            dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME)
             if (dotCoverPath.isNullOrBlank()) {
-                return workflow;
+                return workflow
             }
 
-            dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile).absoluteFile;
+            dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile).absoluteFile
         }
         catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)
@@ -46,7 +47,7 @@ class DotCoverWorkflowComposer(
         }
 
         if (!_fileSystemService.isExists(dotCoverExecutableFile)) {
-            throw RunBuildException("dotCover was not found: ${dotCoverExecutableFile}")
+            throw RunBuildException("dotCover was not found: $dotCoverExecutableFile")
         }
 
         var showDiagnostics = false
@@ -64,7 +65,7 @@ class DotCoverWorkflowComposer(
         return Workflow(
                 buildSequence {
                     for (commandLineToGetCoverage in workflow.commandLines) {
-                        val tempDirectory = _pathsService.getPath(PathType.BuildTemp);
+                        val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
                         val dotCoverProject = DotCoverProject(
                                 commandLineToGetCoverage,
                                 File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
@@ -111,7 +112,7 @@ class DotCoverWorkflowComposer(
         )
     }
 
-    fun createArguments(dotCoverProject: DotCoverProject): Sequence<CommandLineArgument> = buildSequence {
+    private fun createArguments(dotCoverProject: DotCoverProject): Sequence<CommandLineArgument> = buildSequence {
         yield(CommandLineArgument("cover"))
         yield(CommandLineArgument(dotCoverProject.configFile.absolutePath))
         yield(CommandLineArgument("/ReturnTargetExitCode"))

@@ -10,9 +10,9 @@ class FileSystemServiceImpl : FileSystemService {
 
     override fun isExists(file: File): Boolean = file.exists()
 
-    override fun copy(source: File, destination: File): Unit = FileUtils.copyDirectory(source, destination)
+    override fun copy(source: File, destination: File) = FileUtils.copyDirectory(source, destination)
 
-    override fun remove(file: File): Unit = FileUtils.deleteDirectory(file)
+    override fun remove(file: File) = FileUtils.deleteDirectory(file)
 
-    override fun list(file: File): Sequence<File> = file.listFiles()?.asSequence() ?: emptySequence<File>()
+    override fun list(file: File): Sequence<File> = file.listFiles()?.asSequence() ?: emptySequence()
 }

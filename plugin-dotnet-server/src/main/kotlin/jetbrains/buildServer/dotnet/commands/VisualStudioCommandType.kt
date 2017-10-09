@@ -37,6 +37,5 @@ class VisualStudioCommandType(
         return invalidProperties
     }
 
-    @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = _visualStudioRequirementsProvider.getRequirements(runParameters)
 }

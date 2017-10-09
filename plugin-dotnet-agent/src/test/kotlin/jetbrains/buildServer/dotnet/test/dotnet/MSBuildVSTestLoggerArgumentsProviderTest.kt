@@ -27,7 +27,7 @@ class MSBuildVSTestLoggerArgumentsProviderTest {
         val argumentsProvider = MSBuildVSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile))
 
         // When
-        var actualArguments = argumentsProvider.arguments.map { it.value }.toList()
+        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

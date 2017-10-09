@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
-import org.apache.xmlrpc.XmlRpc.version
 
 class DotnetTool(
         private val _package: NuGetPackage): ToolVersion {
@@ -26,10 +25,10 @@ class DotnetTool(
     }
 
     override fun getId(): String {
-        return DotnetToolTypeAdapter.Shared.getType() + "." + _package.packageVersion
+        return DotnetToolTypeAdapter.Shared.type + "." + _package.packageVersion
     }
 
     override fun getDisplayName(): String {
-        return DotnetToolTypeAdapter.Shared.getType() + version
+        return DotnetToolTypeAdapter.Shared.type + version
     }
 }

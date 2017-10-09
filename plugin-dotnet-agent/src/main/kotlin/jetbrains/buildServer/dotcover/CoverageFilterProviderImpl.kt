@@ -7,7 +7,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class CoverageFilterProviderImpl(
         private val _parametersService: ParametersService,
         private val _coverageFilterConverter: Converter<String, Sequence<CoverageFilter>>)

@@ -8,7 +8,6 @@ import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class ResponseFileArgumentsProvider(
         private val _pathsService: PathsService,
         private val _parametersService: ParametersService,
@@ -40,15 +39,15 @@ class ResponseFileArgumentsProvider(
             }
 
             val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
-            val msbuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
+            val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
             val rspContent = _argumentsService.combine(args.asSequence(), "\n")
-            _fileSystemService.write(msbuildResponseFile) {
+            _fileSystemService.write(msBuildResponseFile) {
                 OutputStreamWriter(it).use {
                     it.write(rspContent)
                 }
             }
 
-            yield(CommandLineArgument("@${msbuildResponseFile.path}"))
+            yield(CommandLineArgument("@${msBuildResponseFile.path}"))
         }
 
     companion object {

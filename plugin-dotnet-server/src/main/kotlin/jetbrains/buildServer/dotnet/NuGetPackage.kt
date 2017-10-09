@@ -6,5 +6,4 @@ data class NuGetPackage(
         val packageId: String,
         val packageVersion: NuGetPackageVersion,
         val downloadUrl: URL,
-        val isListed: Boolean) {
-}
+        val isListed: Boolean)
