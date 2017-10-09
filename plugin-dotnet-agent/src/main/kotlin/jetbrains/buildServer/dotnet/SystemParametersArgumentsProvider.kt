@@ -23,15 +23,12 @@ class SystemParametersArgumentsProvider(
                 String(normalizeCharSequence(paramName.asSequence()).toList().toCharArray())
 
         private fun normalizeCharSequence(charSequence: Sequence<Char>): Sequence<Char> = buildSequence {
-            var invalidChar = false
             for (char in charSequence) {
-                val useUpperCase = invalidChar
-                invalidChar = !(char.isLetterOrDigit() || char == '_');
-                if (!invalidChar) {
-                    when(useUpperCase) {
-                        true -> yield(char.toUpperCase())
-                        false -> yield(char)
-                    }
+                if (char.isLetterOrDigit() || char == '_') {
+                    yield(char)
+                }
+                else {
+                    yield('_')
                 }
             }
         }

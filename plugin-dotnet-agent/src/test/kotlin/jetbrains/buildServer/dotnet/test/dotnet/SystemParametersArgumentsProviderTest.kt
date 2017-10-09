@@ -12,15 +12,15 @@ class SystemParametersArgumentsProviderTest {
     @DataProvider
     fun normalizePropertyData(): Array<Array<String>> {
         return arrayOf(
-                arrayOf("build.number", "buildNumber"),
-                arrayOf("build.number.10_1", "buildNumber10_1"),
-                arrayOf("b.n", "bN"),
+                arrayOf("build.number", "build_number"),
+                arrayOf("build.number.10_1", "build_number_10_1"),
+                arrayOf("b.n", "b_n"),
                 arrayOf("b", "b"),
                 arrayOf("bUild", "bUild"),
                 arrayOf("build_number", "build_number"),
                 arrayOf("", ""),
-                arrayOf("   ", ""),
-                arrayOf(" . ++=", ""))
+                arrayOf("   ", "___"),
+                arrayOf(" . ++=", "______"))
     }
 
     @Test(dataProvider = "normalizePropertyData")
@@ -45,6 +45,6 @@ class SystemParametersArgumentsProviderTest {
         val actualArgs = argumentsProvider.arguments.map { it.value }.toList()
 
         // Then
-        Assert.assertEquals(actualArgs, listOf("/p:param1=value1", "/p:param2=value2", "/p:myParam3=value3"))
+        Assert.assertEquals(actualArgs, listOf("/p:param1=value1", "/p:param2=value2", "/p:my_param3=value3"))
     }
 }
