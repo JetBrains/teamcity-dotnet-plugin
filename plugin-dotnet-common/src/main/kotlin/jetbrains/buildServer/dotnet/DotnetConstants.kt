@@ -19,7 +19,7 @@ object DotnetConstants {
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
-    const val CONFIG_NAME = "DotNetCore"
+    const val CONFIG_NAME = "DotNetCli"
     const val CONFIG_PATH = CONFIG_NAME + "_Path"
     const val PROJECT_JSON = "project.json"
     const val PROJECT_CSPROJ = ".csproj"
