@@ -39,6 +39,7 @@ class VSTestLoggerEnvironmentTest {
         val targetFile2 = File("my2.sln")
         val uniqueName1 = "123"
         val uniqueName2 = "abc"
+        val uniqueNameWd = "xyz"
         val loggerEnvironment = createInstance()
 
         // When
@@ -47,7 +48,7 @@ class VSTestLoggerEnvironmentTest {
                 oneOf<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
                 will(returnValue(loggerFile))
 
-                never<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
+                oneOf<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
                 will(returnValue(workingDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName
@@ -56,8 +57,12 @@ class VSTestLoggerEnvironmentTest {
                 oneOf<PathsService>(_pathService).uniqueName
                 will(returnValue(uniqueName2))
 
+                oneOf<PathsService>(_pathService).uniqueName
+                will(returnValue(uniqueNameWd))
+
                 oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile1.absoluteFile.parentFile, uniqueName1))
                 oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile2.absoluteFile.parentFile, uniqueName2))
+                oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(workingDirectory.absoluteFile, uniqueNameWd))
             }
         })
 
@@ -70,11 +75,13 @@ class VSTestLoggerEnvironmentTest {
     @Test
     fun shouldRemoveLoggerDirFromParentDirOfTargetWhenFinish() {
         // Given
+        val workingDirectory = File("wd")
         val loggerFile = File("vstest15", "logger.dll")
         val targetFile1 = File("proj", "my1.csproj")
         val targetFile2 = File("my2.sln")
         val uniqueName1 = "123"
         val uniqueName2 = "abc"
+        val uniqueNameWd = "xyz"
         val loggerEnvironment = createInstance()
 
         // When
@@ -83,17 +90,25 @@ class VSTestLoggerEnvironmentTest {
                 allowing<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
                 will(returnValue(loggerFile))
 
+                oneOf<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
+                will(returnValue(workingDirectory))
+
                 oneOf<PathsService>(_pathService).uniqueName
                 will(returnValue(uniqueName1))
 
                 oneOf<PathsService>(_pathService).uniqueName
                 will(returnValue(uniqueName2))
 
+                oneOf<PathsService>(_pathService).uniqueName
+                will(returnValue(uniqueNameWd))
+
                 allowing<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile1.absoluteFile.parentFile, uniqueName1))
                 allowing<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile2.absoluteFile.parentFile, uniqueName2))
+                oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(workingDirectory.absoluteFile, uniqueNameWd))
 
                 oneOf<FileSystemService>(_fileSystemService).remove(File(targetFile1.absoluteFile.parentFile, uniqueName1))
                 oneOf<FileSystemService>(_fileSystemService).remove(File(targetFile2.absoluteFile.parentFile, uniqueName2))
+                oneOf<FileSystemService>(_fileSystemService).remove(File(workingDirectory.absoluteFile, uniqueNameWd))
             }
         })
 
@@ -111,6 +126,7 @@ class VSTestLoggerEnvironmentTest {
         val targetFile1 = File("proj", "my1.csproj")
         val targetFile2 = File("proj", "my2.sln")
         val uniqueName = "abc"
+        val uniqueNameWd = "xyz"
         val loggerEnvironment = createInstance()
 
         // When
@@ -119,13 +135,17 @@ class VSTestLoggerEnvironmentTest {
                 oneOf<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
                 will(returnValue(loggerFile))
 
-                never<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
+                oneOf<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
                 will(returnValue(workingDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName
                 will(returnValue(uniqueName))
 
+                oneOf<PathsService>(_pathService).uniqueName
+                will(returnValue(uniqueNameWd))
+
                 oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(targetFile1.absoluteFile.parentFile, uniqueName))
+                oneOf<FileSystemService>(_fileSystemService).copy(loggerFile.parentFile, File(workingDirectory.absoluteFile, uniqueNameWd))
             }
         })
 

@@ -1,12 +1,11 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathsService
 import kotlin.coroutines.experimental.buildSequence
 
-/**
- * Provides arguments to dotnet related to TeamCity logger.
- */
-
 class MSBuildVSTestLoggerParametersProvider(
+        private val _pathsService: PathsService,
         private val _loggerResolver: LoggerResolver)
     : MSBuildParametersProvider {
 
@@ -14,7 +13,7 @@ class MSBuildVSTestLoggerParametersProvider(
         get() = buildSequence {
             _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
-                yield(MSBuildParameter("VSTestTestAdapterPath", "."))
+                yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.WorkingDirectory).absolutePath))
             }
         }
 }

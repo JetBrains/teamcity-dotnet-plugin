@@ -4,5 +4,5 @@ import java.io.Closeable
 import java.io.File
 
 interface VSTestLoggerEnvironment {
-    fun configure(paths: List<File>): Closeable
+    fun configure(targets: List<File>): Closeable
 }
