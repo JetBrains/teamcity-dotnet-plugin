@@ -31,7 +31,7 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
 
     companion object {
         fun tryParse(id: String): Tool? {
-            return Tool.values().filter { it.id.equals(id, true) }.singleOrNull()
+            return Tool.values().singleOrNull { it.id.equals(id, true) }
         }
     }
 }
