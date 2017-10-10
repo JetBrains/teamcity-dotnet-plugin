@@ -107,5 +107,10 @@ object DotnetConstants {
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
     // Integration package
+    const val PACKAGE_NUGET_EXTENSION = "nupkg"
     const val PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
+    const val PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val PACKAGE_SHORT_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val PACKAGE_TARGET_FILE_DISPLAY_NAME = "Dotnet Integration Home Directory"
+    const val PACKAGE_BINARY_NUPKG_PATH = "build/_common"
 }
