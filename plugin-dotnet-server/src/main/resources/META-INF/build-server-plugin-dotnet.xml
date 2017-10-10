@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
 
-  <import resource="classpath:META-INF/build-common-plugin-dotnet.xml" />
+  <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml" />
 
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
