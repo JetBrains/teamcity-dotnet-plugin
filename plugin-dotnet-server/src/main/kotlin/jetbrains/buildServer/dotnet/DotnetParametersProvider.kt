@@ -253,23 +253,26 @@ class DotnetParametersProvider {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
 
         private val experimentalCommandTypes: Sequence<CommandType> =
-                if(experimentalMode)
+                if (experimentalMode)
                     sequenceOf(VisualStudioCommandType(visualStudioRequirementsProvider, dotCoverInfoProvider))
                 else
                     emptySequence()
 
-        val commandTypes get() = sequenceOf(
-                RestoreCommandType(),
-                BuildCommandType(),
-                TestCommandType(dotCoverInfoProvider),
-                PublishCommandType(),
-                PackCommandType(),
-                NugetPushCommandType(),
-                NugetDeleteCommandType(),
-                CleanCommandType(),
-                RunCommandType(),
-                MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
-                VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
-        ).plus(experimentalCommandTypes).associateBy { it.name }
+        val commandTypes
+            get() = sequenceOf(
+                    RestoreCommandType(),
+                    BuildCommandType(),
+                    TestCommandType(dotCoverInfoProvider),
+                    PublishCommandType(),
+                    PackCommandType(),
+                    NugetPushCommandType(),
+                    NugetDeleteCommandType(),
+                    CleanCommandType(),
+                    RunCommandType(),
+                    MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
+                    VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
+            ).plus(experimentalCommandTypes)
+                    .sortedBy { it.name }
+                    .associateBy { it.name }
     }
 }
