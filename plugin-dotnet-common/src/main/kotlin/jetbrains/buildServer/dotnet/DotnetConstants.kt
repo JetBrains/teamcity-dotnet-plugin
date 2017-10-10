@@ -27,7 +27,7 @@ object DotnetConstants {
     const val PROJECT_CSPROJ = ".csproj"
     const val PROJECT_SLN = ".sln"
 
-    const val PARAM_EXPERIMENTAL = "dotnet-experimental"
+    const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
 
     const val PARAM_COMMAND = "dotnet-command"
     const val PARAM_PATHS = "dotnet-paths"

@@ -6,6 +6,7 @@
 
   <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml" />
 
+  <bean class="jetbrains.buildServer.dotnet.BeanConfig"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetModelParser"/>
