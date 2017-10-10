@@ -22,10 +22,9 @@ teamcity {
 
 dependencies {
   compile project(':plugin-dotnet-common')
-  compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+  compile "org.jetbrains.kotlin:kotlin-stdlib"
   provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
-  provided 'org.jetbrains.teamcity:server-api:2017.2-SNAPSHOT'
   testCompile 'org.testng:testng:6.8'
   testCompile 'org.jmock:jmock:2.5.1'
 }

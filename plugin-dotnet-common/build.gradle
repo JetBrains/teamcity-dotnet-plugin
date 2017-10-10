@@ -3,7 +3,7 @@ plugins{
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
     testCompile 'org.testng:testng:6.8'
 }
 
