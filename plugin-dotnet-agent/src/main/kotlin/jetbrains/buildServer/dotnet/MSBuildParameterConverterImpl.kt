@@ -1,9 +1,7 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.runner.Converter
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     override fun convert(source: MSBuildParameter): String = "/p:${toString(normalizeName(source.name))}=${toString(normalizeValue(source.value))}"
 

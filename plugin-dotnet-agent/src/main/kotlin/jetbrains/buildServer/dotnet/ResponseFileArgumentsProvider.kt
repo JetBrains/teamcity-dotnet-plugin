@@ -8,7 +8,6 @@ import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class ResponseFileArgumentsProvider(
         private val _pathsService: PathsService,
         private val _argumentsService: ArgumentsService,
@@ -21,10 +20,10 @@ class ResponseFileArgumentsProvider(
     : ArgumentsProvider {
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            var args = _argumentsProviders.flatMap { it.arguments.toList() }
-            var params = _parametersProviders.flatMap { it.parameters.toList() }
+            val args = _argumentsProviders.flatMap { it.arguments.toList() }
+            val params = _parametersProviders.flatMap { it.parameters.toList() }
 
-            if (args.size == 0 && params.size == 0) {
+            if (args.isEmpty() && params.isEmpty()) {
                 return@buildSequence
             }
 
@@ -52,8 +51,8 @@ class ResponseFileArgumentsProvider(
             }
 
             val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
-            val msbuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
-            _fileSystemService.write(msbuildResponseFile) {
+            val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
+            _fileSystemService.write(msBuildResponseFile) {
                 OutputStreamWriter(it).use {
                     for(line in lines) {
                         it.write("$line\n")
@@ -61,7 +60,7 @@ class ResponseFileArgumentsProvider(
                 }
             }
 
-            yield(CommandLineArgument("@${msbuildResponseFile.path}"))
+            yield(CommandLineArgument("@${msBuildResponseFile.path}"))
         }
 
     companion object {

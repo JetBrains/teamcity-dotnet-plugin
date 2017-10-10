@@ -4,7 +4,6 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class SystemParametersProvider(
         private val _parametersService: ParametersService)
     : MSBuildParametersProvider {

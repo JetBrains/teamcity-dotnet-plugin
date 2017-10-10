@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.dotnet.DotCoverConstants
-import jetbrains.buildServer.agent.runner.Converter
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.util.*

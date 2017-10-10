@@ -26,7 +26,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
         val argumentsProvider = MSBuildVSTestLoggerParametersProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile))
 
         // When
-        var actualParameters = argumentsProvider.parameters.toList()
+        val actualParameters = argumentsProvider.parameters.toList()
 
         // Then
         Assert.assertEquals(actualParameters, expectedParameters)

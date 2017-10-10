@@ -14,7 +14,6 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-@Suppress("UNCHECKED_CAST")
 class CoverageFilterProviderTest {
     private var _ctx: Mockery? = null
     private var _coverageFilterConverter: DotCoverFilterConverter? = null

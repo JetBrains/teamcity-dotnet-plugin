@@ -1,8 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.dotcover.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
@@ -10,12 +10,10 @@ import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 import java.io.InputStreamReader
 
-@Suppress("UNCHECKED_CAST")
 class ResponseFileArgumentsProviderTest {
     private var _ctx: Mockery? = null
     private var _pathService: PathsService? = null

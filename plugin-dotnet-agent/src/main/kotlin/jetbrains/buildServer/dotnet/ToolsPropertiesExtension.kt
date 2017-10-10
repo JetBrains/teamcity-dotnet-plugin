@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
-import jetbrains.buildServer.dotNet.DotNetConstants
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
 
@@ -29,7 +28,7 @@ class ToolsPropertiesExtension(
         }
 
         val packages = _fileSystemService.list(toolsPath).toList()
-        if (packages.size == 0) {
+        if (packages.isEmpty()) {
             LOG.info("\"$toolsPath\" has no any packages")
             return
         }

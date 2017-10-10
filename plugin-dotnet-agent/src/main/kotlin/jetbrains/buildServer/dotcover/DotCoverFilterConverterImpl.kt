@@ -1,14 +1,12 @@
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.runner.Converter
 import java.util.regex.Pattern
 import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverFilterConverterImpl : DotCoverFilterConverter {
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun convert(filterString: String): Sequence<CoverageFilter> {
-        @Suppress("EXPERIMENTAL_FEATURE_WARNING")
         return buildSequence {
             if (filterString.isBlank()) {
                 return@buildSequence
@@ -103,7 +101,7 @@ class DotCoverFilterConverterImpl : DotCoverFilterConverter {
     }
 
     private fun throwRunBuildException(filter: String) {
-        throw RunBuildException("Invalid statement for filter: \"${filter}\"")
+        throw RunBuildException("Invalid statement for filter: \"$filter\"")
     }
 
     companion object {

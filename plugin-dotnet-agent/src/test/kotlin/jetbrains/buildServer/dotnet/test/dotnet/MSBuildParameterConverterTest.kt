@@ -33,7 +33,7 @@ class MSBuildParameterConverterTest {
         val converter = MSBuildParameterConverterImpl()
 
         // When
-        var actualString = converter.convert(parameter)
+        val actualString = converter.convert(parameter)
 
         // Then
         Assert.assertEquals(actualString, expectedString)
