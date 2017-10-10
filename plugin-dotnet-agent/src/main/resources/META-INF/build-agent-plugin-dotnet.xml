@@ -4,9 +4,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
 
+    <import resource="classpath:META-INF/build-common-plugin-dotnet.xml" />
+
     <!-- common agent services -->
     <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
-    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl" id="fileSystemService"/>
+    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
     <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.XmlDocumentServiceImpl"/>
@@ -29,13 +31,10 @@
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
-    <bean class="jetbrains.buildServer.dotnet.SemanticVersionParserImpl" id="semanticVersionParser"/>
     <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
         <constructor-arg ref="dotnetToolProvider"/>
         <constructor-arg ref="dotnetVersionParser"/>
-        <constructor-arg ref="semanticVersionParser"/>
-        <constructor-arg ref="fileSystemService"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
