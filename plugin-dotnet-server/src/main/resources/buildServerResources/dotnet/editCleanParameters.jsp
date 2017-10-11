@@ -14,7 +14,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.cleanFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.cleanFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.cleanFrameworkKey}" popupTitle="Select frameworks"
@@ -28,7 +28,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.cleanConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.cleanConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.cleanConfigKey}" popupTitle="Select configuration"
@@ -42,7 +42,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.cleanRuntimeKey}">Runtime:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.cleanRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.cleanRuntimeKey}" popupTitle="Select runtime"
@@ -56,8 +56,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.cleanOutputKey}">Output directory:</label></th>
     <td>
-        <props:textProperty name="${params.cleanOutputKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.cleanOutputKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.cleanOutputKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.cleanOutputKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.cleanOutputKey}"></span>
         <span class="smallNote">Directory in which to place outputs.</span>
     </td>

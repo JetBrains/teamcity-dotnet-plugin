@@ -15,7 +15,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.testFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.testFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testFrameworkKey}" popupTitle="Select frameworks"
@@ -29,7 +29,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.testConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.testConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testConfigKey}" popupTitle="Select configurations"
@@ -43,7 +43,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.testRuntimeKey}">Runtime:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.testRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.testRuntimeKey}" popupTitle="Select runtime"
@@ -57,8 +57,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.testOutputKey}">Output directory:</label></th>
     <td>
-        <props:textProperty name="${params.testOutputKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.testOutputKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.testOutputKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.testOutputKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.testOutputKey}"></span>
         <span class="smallNote">Directory in which to find the binaries to be run.</span>
     </td>
@@ -67,8 +69,10 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.testTempKey}">Temp directory:</label></th>
     <td>
-        <props:textProperty name="${params.testTempKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.testTempKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.testTempKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.testTempKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.testTempKey}"></span>
         <span class="smallNote">Directory in which to find temporary outputs.</span>
     </td>

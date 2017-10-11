@@ -61,9 +61,10 @@
     <tr class="advancedSetting" id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
-            <props:textProperty name="${params.pathsKey}" className="longField" expandable="true">
+            <div class="position-relative">
+                <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
-            </props:textProperty>
+            </div>
             <span class="error" id="error_${params.pathsKey}"></span>
             <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span>
         </td>
@@ -99,23 +100,26 @@
         <span class="error" id="error_${params.verbosityKey}"></span>
     </td>
 </tr>
+</tbody>
 
-<div id="dotnet-coverage" class="hidden">
-<l:settingsGroup title=".NET Coverage">
-    <c:if test="${propertiesBean.properties['dotNetCoverage.dotCover.enabled'] == 'true'}">
-        <c:set target="${propertiesBean.properties}" property="${params.coverageTypeKey}" value="dotCover"/>
-    </c:if>
-    <c:set var="toolsTitle">.NET Code Coverage:<bs:help file="Configuring+.NET+Code+Coverage"/></c:set>
-    <props:selectSectionProperty name="${params.coverageTypeKey}" title="${toolsTitle}" note="">
-        <props:selectSectionPropertyContent value="" caption="<No .NET Coverage>"/>
-        <c:forEach items="${params.coverages}" var="type">
-            <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
-                <jsp:include page="${teamcityPluginResourcesPath}/coverage/${type.editPage}"/>
-            </props:selectSectionPropertyContent>
-        </c:forEach>
-    </props:selectSectionProperty>
-</l:settingsGroup>
-</div>
+<tbody id="dotnet-coverage" class="hidden">
+    <l:settingsGroup title=".NET Coverage">
+        <c:if test="${propertiesBean.properties['dotNetCoverage.dotCover.enabled'] == 'true'}">
+            <c:set target="${propertiesBean.properties}" property="${params.coverageTypeKey}" value="dotCover"/>
+        </c:if>
+        <c:set var="toolsTitle">.NET Code Coverage:<bs:help file="Configuring+.NET+Code+Coverage"/></c:set>
+        <props:selectSectionProperty name="${params.coverageTypeKey}" title="${toolsTitle}" note="">
+            <props:selectSectionPropertyContent value="" caption="<No .NET Coverage>"/>
+            <c:forEach items="${params.coverages}" var="type">
+                <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
+                    <jsp:include page="${teamcityPluginResourcesPath}/coverage/${type.editPage}"/>
+                </props:selectSectionPropertyContent>
+            </c:forEach>
+        </props:selectSectionProperty>
+    </l:settingsGroup>
+</tbody>
+
+<tbody>
 
 <c:if test="${params.experimentalMode == true}">
     <tr class="advancedSetting">

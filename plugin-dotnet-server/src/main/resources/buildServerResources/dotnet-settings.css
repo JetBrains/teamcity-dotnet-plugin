@@ -1,4 +1,4 @@
-.dnx.left {
-    float: left;
+.position-relative {
+    display: inline-block;
+    position: relative;
 }
-

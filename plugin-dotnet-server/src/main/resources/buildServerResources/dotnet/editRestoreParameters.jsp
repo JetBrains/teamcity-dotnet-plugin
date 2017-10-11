@@ -24,8 +24,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.restorePackagesKey}">Packages path:</label></th>
     <td>
-        <props:textProperty name="${params.restorePackagesKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.restorePackagesKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.restorePackagesKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.restorePackagesKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.restorePackagesKey}"></span>
         <span class="smallNote">Directory to install packages in.</span>
     </td>
@@ -48,8 +50,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.restoreConfigKey}">Configuration file:</label></th>
     <td>
-        <props:textProperty name="${params.restoreConfigKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.restoreConfigKey}"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.restoreConfigKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.restoreConfigKey}"/>
+        </div>
         <span class="error" id="error_${params.restoreConfigKey}"></span>
         <span class="smallNote">The NuGet configuration file to use.</span>
     </td>

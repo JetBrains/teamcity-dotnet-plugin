@@ -14,7 +14,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.publishFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.runFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.runFrameworkKey}" popupTitle="Select frameworks"
@@ -28,7 +28,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.runConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.runConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.runConfigKey}" popupTitle="Select configurations"

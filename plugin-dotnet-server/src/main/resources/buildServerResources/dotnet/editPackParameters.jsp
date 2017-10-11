@@ -13,7 +13,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.packConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.packConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.packConfigKey}" popupTitle="Select configuration"
@@ -27,8 +27,10 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.packOutputKey}">Output directory:</label></th>
     <td>
-        <props:textProperty name="${params.packOutputKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.packOutputKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.packOutputKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.packOutputKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.packOutputKey}"></span>
         <span class="smallNote">Directory in which to place outputs.</span>
     </td>
@@ -37,8 +39,10 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.packTempKey}">Temp directory:</label></th>
     <td>
-        <props:textProperty name="${params.packTempKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.packTempKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.packTempKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.packTempKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.packTempKey}"></span>
         <span class="smallNote">Directory in which to place temporary build outputs.</span>
     </td>

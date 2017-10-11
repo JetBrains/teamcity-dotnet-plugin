@@ -29,18 +29,19 @@
 <tr>
     <th><label for="${params.msbuildTargetsKey}">Targets:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.msbuildTargetsKey}" className="longField"/>
             <bs:projectData type="MSBuildTargets" sourceFieldId="${params.msbuildTargetsKey}" targetFieldId="${params.msbuildTargetsKey}" popupTitle="Select targets to invoke"/>
         </div
         <span class="error" id="error_${params.msbuildTargetsKey}"></span>
-        <span class="smallNote">Enter targets separated by semicolon.</span></td>
+        <span class="smallNote">Enter targets separated by semicolon.</span>
+    </td>
 </tr>
 
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.msbuildConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.msbuildConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.msbuildConfigKey}" popupTitle="Select configuration"
@@ -54,7 +55,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.msbuildPlatformKey}">Platform:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.msbuildPlatformKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.msbuildPlatformKey}" popupTitle="Select platform"

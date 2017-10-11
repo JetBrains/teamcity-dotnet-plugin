@@ -10,9 +10,7 @@
 <tr>
     <th class="noBorder"><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
-        </div>
+        <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteIdKey}"></span>
         <span class="smallNote">Specify the package id and version separated by space.</span>
     </td>
@@ -21,9 +19,7 @@
 <tr>
     <th class="noBorder"><label for="${params.nugetDeleteApiKey}">API key: <l:star/></label></th>
     <td>
-        <div class="posRel">
-            <props:passwordProperty name="${params.nugetDeleteApiKey}" className="longField"/>
-        </div>
+        <props:passwordProperty name="${params.nugetDeleteApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteApiKey}"></span>
         <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
             For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
@@ -33,9 +29,7 @@
 <tr>
     <th><label for="${params.nugetDeleteSourceKey}">Source: <l:star/></label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.nugetDeleteSourceKey}" className="longField"/>
-        </div>
+        <props:textProperty name="${params.nugetDeleteSourceKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteSourceKey}"></span>
         <span class="smallNote">Specify the server URL.</span>
     </td>

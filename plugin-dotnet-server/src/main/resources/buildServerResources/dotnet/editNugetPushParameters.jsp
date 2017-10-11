@@ -13,9 +13,7 @@
 <tr>
     <th class="noBorder"><label for="${params.nugetPushApiKey}">API key: <l:star/></label></th>
     <td>
-        <div class="posRel">
-            <props:passwordProperty name="${params.nugetPushApiKey}" className="longField"/>
-        </div>
+        <props:passwordProperty name="${params.nugetPushApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPushApiKey}"></span>
         <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
             For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
@@ -25,9 +23,7 @@
 <tr>
     <th><label for="${params.nugetPushSourceKey}">Source: <l:star/></label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.nugetPushSourceKey}" className="longField"/>
-        </div>
+        <props:textProperty name="${params.nugetPushSourceKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPushSourceKey}"></span>
         <span class="smallNote">Specify the server URL. For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.</span>
     </td>

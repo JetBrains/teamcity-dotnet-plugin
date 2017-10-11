@@ -13,7 +13,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.publishFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.publishFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.publishFrameworkKey}" popupTitle="Select frameworks"
@@ -27,7 +27,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.publishConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.publishConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.publishConfigKey}" popupTitle="Select configurations"
@@ -41,7 +41,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.publishRuntimeKey}">Runtime:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.publishRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.publishRuntimeKey}" popupTitle="Select runtime"
@@ -55,8 +55,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.publishOutputKey}">Output directory:</label></th>
     <td>
-        <props:textProperty name="${params.publishOutputKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.publishOutputKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.publishOutputKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.publishOutputKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.publishOutputKey}"></span>
         <span class="smallNote">Path in which to publish the app.</span>
     </td>

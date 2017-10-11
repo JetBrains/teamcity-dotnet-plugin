@@ -14,7 +14,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.buildFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.buildFrameworkKey}" className="longField"/>
             <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildFrameworkKey}" popupTitle="Select frameworks"
@@ -28,7 +28,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.buildConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.buildConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildConfigKey}" popupTitle="Select configuration"
@@ -42,7 +42,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.buildRuntimeKey}">Runtime:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.buildRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.buildRuntimeKey}" popupTitle="Select runtime"
@@ -66,8 +66,10 @@
 <tr class="advancedSetting">
     <th><label for="${params.buildOutputKey}">Output directory:</label></th>
     <td>
-        <props:textProperty name="${params.buildOutputKey}" className="longField"/>
-        <bs:vcsTree fieldId="${params.buildOutputKey}" dirsOnly="true"/>
+        <div class="position-relative">
+            <props:textProperty name="${params.buildOutputKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.buildOutputKey}" dirsOnly="true"/>
+        </div>
         <span class="error" id="error_${params.buildOutputKey}"></span>
         <span class="smallNote">Directory in which to place outputs.</span>
     </td>

@@ -41,7 +41,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.visualStudioConfigKey}">Configuration:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.visualStudioConfigKey}" className="longField"/>
             <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.visualStudioConfigKey}" popupTitle="Select configuration"
@@ -55,7 +55,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.visualStudioPlatformKey}">Platform:</label></th>
     <td>
-        <div class="posRel">
+        <div class="position-relative">
             <props:textProperty name="${params.visualStudioPlatformKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
                             targetFieldId="${params.visualStudioPlatformKey}" popupTitle="Select platform"

@@ -29,9 +29,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
-        </div>
+        <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
         <span class="error" id="error_${params.vstestConfigFileKey}"></span>
         <span class="smallNote">Path to run settings configuration file</span>
     </td>
@@ -40,9 +38,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.vstestPlatformKey}">Target platform:</label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
-        </div>
+        <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
         <span class="error" id="error_${params.vstestPlatformKey}"></span>
         <span class="smallNote">Target platform architecture to be used for test execution</span>
     </td>
@@ -51,9 +47,7 @@
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.vstestFrameworkKey}">Framework:</label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.vstestFrameworkKey}" className="longField" />
-        </div>
+        <props:textProperty name="${params.vstestFrameworkKey}" className="longField" />
         <span class="error" id="error_${params.vstestFrameworkKey}"></span>
         <span class="smallNote">Target .NET Framework version to be used for test execution</span>
     </td>
@@ -62,20 +56,16 @@
 <tr class="advancedSetting">
     <th><label for="${params.vstestTestNamesKey}">Test names:</label></th>
     <td>
-        <div class="posRel">
-            <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
-                                 note="Comma-separated list of test names."
-                                 rows="3" cols="49" linkTitle="Edit test names"/>
-        </div>
+        <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
+                             note="Comma-separated list of test names."
+                             rows="3" cols="49" linkTitle="Edit test names"/>
     </td>
 </tr>
 
 <tr class="advancedSetting">
     <th><label for="${params.vstestTestCaseFilterKey}">Test case filter:</label></th>
     <td>
-        <div class="posRel">
-            <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
-        </div>
+        <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
         <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>
     </td>
 </tr>
@@ -84,9 +74,7 @@
 <tr class="advancedSetting">
     <th><label for="${params.vstestInIsolationKey}">Run in isolation:</label></th>
     <td>
-        <div class="posRel">
-            <props:checkboxProperty name="${params.vstestInIsolationKey}"/>
-        </div>
+        <props:checkboxProperty name="${params.vstestInIsolationKey}"/>
         <label for="${inIsolation}">Runs the tests in an isolated process</label>
         <span class="error" id="error_${params.vstestInIsolationKey}"></span>
     </td>
