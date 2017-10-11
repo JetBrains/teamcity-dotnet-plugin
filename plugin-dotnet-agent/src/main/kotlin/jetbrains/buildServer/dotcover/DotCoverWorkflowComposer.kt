@@ -50,7 +50,7 @@ class DotCoverWorkflowComposer(
         _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
             Verbosity.tryParse(it)?.let {
                 @Suppress("NON_EXHAUSTIVE_WHEN")
-                when(it) {
+                when (it) {
                     Verbosity.Detailed, Verbosity.Diagnostic -> {
                         showDiagnostics = true
                     }
@@ -58,54 +58,51 @@ class DotCoverWorkflowComposer(
             }
         }
 
-        return Workflow(
-                buildSequence {
-                    for (commandLineToGetCoverage in workflow.commandLines) {
-                        val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
-                        val dotCoverProject = DotCoverProject(
-                                commandLineToGetCoverage,
-                                File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
-                                File(tempDirectory, _pathsService.uniqueName + DotCoverSnapshotExtension))
+        return Workflow(buildSequence {
+            for (commandLineToGetCoverage in workflow.commandLines) {
+                val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
+                val dotCoverProject = DotCoverProject(
+                        commandLineToGetCoverage,
+                        File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
+                        File(tempDirectory, _pathsService.uniqueName + DotCoverSnapshotExtension))
 
-                        _fileSystemService.write(dotCoverProject.configFile) {
-                            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+                _fileSystemService.write(dotCoverProject.configFile) {
+                    _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+                }
+
+                if (showDiagnostics) {
+                    _loggerService.onBlock("dotCover Settings").use {
+                        val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
+                        _loggerService.onStandardOutput("Command line:")
+                        _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
+
+                        _loggerService.onStandardOutput("Filters:")
+                        for (filter in _coverageFilterProvider.filters) {
+                            _loggerService.onStandardOutput("  $filter", Color.Details)
                         }
 
-                        if (showDiagnostics) {
-                            _loggerService.onBlock("dotCover Settings").use {
-                                val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
-                                _loggerService.onStandardOutput("Command line:")
-                                _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
-
-                                _loggerService.onStandardOutput("Filters:")
-                                for (filter in _coverageFilterProvider.filters) {
-                                    _loggerService.onStandardOutput("  $filter", Color.Details)
-                                }
-
-                                _loggerService.onStandardOutput("Attribute Filters:")
-                                for (filter in _coverageFilterProvider.attributeFilters) {
-                                    _loggerService.onStandardOutput("  $filter", Color.Details)
-                                }
-                            }
+                        _loggerService.onStandardOutput("Attribute Filters:")
+                        for (filter in _coverageFilterProvider.attributeFilters) {
+                            _loggerService.onStandardOutput("  $filter", Color.Details)
                         }
-
-                        yield(
-                                CommandLine(
-                                        TargetType.Tool,
-                                        dotCoverExecutableFile,
-                                        commandLineToGetCoverage.workingDirectory,
-                                        createArguments(dotCoverProject).toList(),
-                                        commandLineToGetCoverage.environmentVariables))
-
-                        if (!context.lastResult.isCompleted) {
-                            return@buildSequence
-                        }
-
-                        _loggerService.onMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
-                        _loggerService.onMessage(ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
                     }
                 }
-        )
+
+                yield(CommandLine(
+                        TargetType.Tool,
+                        dotCoverExecutableFile,
+                        commandLineToGetCoverage.workingDirectory,
+                        createArguments(dotCoverProject).toList(),
+                        commandLineToGetCoverage.environmentVariables))
+
+                if (!context.lastResult.isCompleted) {
+                    return@buildSequence
+                }
+
+                _loggerService.onMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
+                _loggerService.onMessage(ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+            }
+        })
     }
 
     private val dotCoverEnabled
@@ -121,7 +118,7 @@ class DotCoverWorkflowComposer(
             return false
         }
 
-    private fun createArguments(dotCoverProject: DotCoverProject): Sequence<CommandLineArgument> = buildSequence {
+    private fun createArguments(dotCoverProject: DotCoverProject) = buildSequence {
         yield(CommandLineArgument("cover"))
         yield(CommandLineArgument(dotCoverProject.configFile.absolutePath))
         yield(CommandLineArgument("/ReturnTargetExitCode"))

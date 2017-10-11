@@ -19,7 +19,7 @@ class MSBuildCommandType : CommandType() {
     override val viewPage: String
         get() = "viewMSBuildParameters.jsp"
 
-    override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+    override fun getRequirements(runParameters: Map<String, String>) = buildSequence {
         var shouldBeWindows = false
         var hasRequirement = false
 
@@ -30,7 +30,7 @@ class MSBuildCommandType : CommandType() {
                     when (it.platform) {
                         ToolPlatform.Windows -> {
                             shouldBeWindows = true
-                            hasRequirement = when(it.bitness) {
+                            hasRequirement = when (it.bitness) {
                                 ToolBitness.x64 -> {
                                     yield(Requirement("MSBuildTools${it.version}.0_x64_Path", null, RequirementType.EXISTS))
                                     true
@@ -54,7 +54,7 @@ class MSBuildCommandType : CommandType() {
             }
         }
 
-        if(!hasRequirement) {
+        if (!hasRequirement) {
             yield(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
         }
 

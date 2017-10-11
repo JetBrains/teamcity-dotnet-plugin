@@ -18,7 +18,7 @@ class VSTestCommandType : CommandType() {
     override val viewPage: String
         get() = "viewVSTestParameters.jsp"
 
-    override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+    override fun getRequirements(runParameters: Map<String, String>) = buildSequence {
         var shouldBeWindows = false
         var hasRequirement = false
         runParameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
@@ -36,7 +36,7 @@ class VSTestCommandType : CommandType() {
             }
         }
 
-        if(!hasRequirement) {
+        if (!hasRequirement) {
             yield(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
         }
 

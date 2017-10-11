@@ -10,6 +10,7 @@ class CoverageFilterProviderImpl(
         private val _parametersService: ParametersService,
         private val _coverageFilterConverter: DotCoverFilterConverter)
     : CoverageFilterProvider {
+
     override val filters: Sequence<CoverageFilter>
         get() {
             val filters = ArrayList<CoverageFilter>()
@@ -29,9 +30,10 @@ class CoverageFilterProviderImpl(
             return filters.asSequence()
         }
 
-    override val attributeFilters: Sequence<CoverageFilter> get() = buildSequence {
+    override val attributeFilters: Sequence<CoverageFilter>
+        get() = buildSequence {
             _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)?.let {
-                for (filter in _coverageFilterConverter.convert(it).map {  toAttributeFilter(it) }) {
+                for (filter in _coverageFilterConverter.convert(it).map { toAttributeFilter(it) }) {
                     if (filter.type == CoverageFilter.CoverageFilterType.Exclude && CoverageFilter.Any != filter.classMask) {
                         yield(filter)
                     }

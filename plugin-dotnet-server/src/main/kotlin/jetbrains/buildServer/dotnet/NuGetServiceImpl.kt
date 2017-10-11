@@ -19,7 +19,7 @@ open class NuGetServiceImpl(
         return enumeratePackagesById(packageId, allowPrerelease).toList().asSequence()
     }
 
-    private fun enumeratePackagesById(packageId: String, allowPrerelease: Boolean): Sequence<NuGetPackage> = buildSequence {
+    private fun enumeratePackagesById(packageId: String, allowPrerelease: Boolean) = buildSequence {
         LOG.info("Downloading list of packages for $packageId")
         var counter = 0
         val listOfPackagesStream = ByteArrayOutputStream()
