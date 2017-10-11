@@ -107,7 +107,7 @@
         <c:if test="${propertiesBean.properties['dotNetCoverage.dotCover.enabled'] == 'true'}">
             <c:set target="${propertiesBean.properties}" property="${params.coverageTypeKey}" value="dotCover"/>
         </c:if>
-        <c:set var="toolsTitle">.NET Code Coverage:<bs:help file="Configuring+.NET+Code+Coverage"/></c:set>
+        <c:set var="toolsTitle">Code Coverage:<bs:help file="Configuring+.NET+Code+Coverage"/></c:set>
         <props:selectSectionProperty name="${params.coverageTypeKey}" title="${toolsTitle}" note="">
             <props:selectSectionPropertyContent value="" caption="<No .NET Coverage>"/>
             <c:forEach items="${params.coverages}" var="type">

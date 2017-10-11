@@ -32,7 +32,7 @@
 <c:forEach items="${params.coverages}" var="type">
     <c:if test="${propertiesBean.properties[params.coverageTypeKey] eq type.name}">
         <div class="parameter">
-            .NET Code Coverage: <strong><c:out value="${type.name}"/></strong>
+            Code Coverage: <strong><c:out value="${type.name}"/></strong>
         </div>
 
         <jsp:include page="${teamcityPluginResourcesPath}/coverage/${type.viewPage}"/>
