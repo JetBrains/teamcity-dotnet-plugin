@@ -9,17 +9,17 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VisualStudio2010(2010, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2010"),
 
     // MSBuild
-    MSBuild15DotnetCore(15, ToolType.MSBuild, ToolPlatform.DotnetCore, ToolBitness.Any, "for .NET Core"),
-    MSBuild15Mono(15, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "for Mono"),
-    MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "15"),
-    MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "15 64-bit"),
-    MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "15 32-bit"),
-    MSBuild14Windows(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "14"),
-    MSBuild14WindowsX64(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "14 64-bit"),
-    MSBuild14WindowsX86(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "14 32-bit"),
-    MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "12"),
-    MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "12 64-bit"),
-    MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "12 32-bit"),
+    MSBuild15DotnetCore(15, ToolType.MSBuild, ToolPlatform.DotnetCore, ToolBitness.Any, ".NET Core"),
+    MSBuild15Mono(15, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "Mono"),
+    MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "15.0"),
+    MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "15.0 64-bit"),
+    MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "15.0 32-bit"),
+    MSBuild14Windows(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "14.0"),
+    MSBuild14WindowsX64(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "14.0 64-bit"),
+    MSBuild14WindowsX86(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "14.0 32-bit"),
+    MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "12.0"),
+    MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x64, "12.0 64-bit"),
+    MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.x86, "12.0 32-bit"),
 
     // VSTest
     VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.DotnetCore, ToolBitness.Any, "Cross-platform"),
