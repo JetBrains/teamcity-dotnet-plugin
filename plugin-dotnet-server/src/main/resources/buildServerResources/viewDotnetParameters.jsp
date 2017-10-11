@@ -26,6 +26,9 @@
     </div>
 </c:if>
 
+<c:if test="${propertiesBean.properties['dotNetCoverage.dotCover.enabled'] == 'true'}">
+    <c:set target="${propertiesBean.properties}" property="${params.coverageTypeKey}" value="dotCover"/>
+</c:if>
 <c:forEach items="${params.coverages}" var="type">
     <c:if test="${propertiesBean.properties[params.coverageTypeKey] eq type.name}">
         <div class="parameter">

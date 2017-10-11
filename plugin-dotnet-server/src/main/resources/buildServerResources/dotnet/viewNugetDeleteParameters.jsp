@@ -9,6 +9,6 @@
 </div>
 
 <div class="parameter">
-    Source: <strong><props:displayValue name="${params.nugetSourceKey}"
+    Source: <strong><props:displayValue name="${params.nugetDeleteSourceKey}"
                                         emptyValue="Use default source"/></strong>
 </div>
