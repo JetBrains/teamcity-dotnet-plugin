@@ -23,29 +23,22 @@ class ToolsPropertiesExtension(
 
         val toolsPath = File(_pluginDescriptor.pluginRoot, "tools")
         if (!_fileSystemService.isExists(toolsPath)) {
-            LOG.info("\"$toolsPath\" was not found")
+            LOG.warn("\"$toolsPath\" was not found")
             return
         }
 
         val packages = _fileSystemService.list(toolsPath).toList()
         if (packages.isEmpty()) {
-            LOG.info("\"$toolsPath\" has no any packages")
+            LOG.warn("\"$toolsPath\" has no any packages")
             return
         }
 
         for (integrationPackage in packages) {
-            agent.configuration.addConfigurationParameter("$ToolPrefix.${integrationPackage.name}", integrationPackage.absolutePath)
             LOG.info("Found .NET integration package at \"${integrationPackage.absolutePath}\"")
         }
-
-        val default = packages.first()
-        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.DEFAULT", default.absolutePath)
-        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.BUNDLED", default.absolutePath)
     }
 
     companion object {
         private val LOG = Logger.getInstance(ToolsPropertiesExtension::class.java.name)
-
-        private const val ToolPrefix = "teamcity.tool"
     }
 }
