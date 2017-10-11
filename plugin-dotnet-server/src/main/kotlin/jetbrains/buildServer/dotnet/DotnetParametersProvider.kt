@@ -15,7 +15,8 @@ import jetbrains.buildServer.web.functions.InternalProperties
  */
 class DotnetParametersProvider {
 
-    val types: Collection<CommandType> = commandTypes.values
+    val commands: Collection<CommandType> = commandTypes.values
+    val coverages: Collection<CommandType> = coverageTypes.values
 
     val experimentalMode get() = DotnetParametersProvider.experimentalMode
 
@@ -172,24 +173,6 @@ class DotnetParametersProvider {
     val integrationPackageToolTypeKey: String
         get() = DotnetConstants.PACKAGE_TYPE
 
-    val dotCoverToolTypeKey: String
-        get() = DotCoverConstants.PARAM_TOOL_TYPE_ID
-
-    val dotCoverEnabledKey: String
-        get() = DotCoverConstants.PARAM_ENABLED
-
-    val dotCoverHomeKey: String
-        get() = DotCoverConstants.PARAM_HOME
-
-    val dotCoverFiltersKey: String
-        get() = DotCoverConstants.PARAM_FILTERS
-
-    val dotCoverAttributeFiltersKey: String
-        get() = DotCoverConstants.PARAM_ATTRIBUTE_FILTERS
-
-    val dotCoverArgumentsKey: String
-        get() = DotCoverConstants.PARAM_ARGUMENTS
-
     val msbuildVersionKey: String
         get() = DotnetConstants.PARAM_MSBUILD_VERSION
 
@@ -247,14 +230,27 @@ class DotnetParametersProvider {
     val visualStudioPlatformKey: String
         get() = DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM
 
+    val coverageTypeKey: String
+        get() = CoverageConstants.PARAM_TYPE
+
+    val dotCoverHomeKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_HOME
+
+    val dotCoverFiltersKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_FILTERS
+
+    val dotCoverAttributeFiltersKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS
+
+    val dotCoverArgumentsKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_ARGUMENTS
+
     companion object {
-        private val dotCoverInfoProvider: DotCoverInfoProvider = DotCoverInfoProvider()
-        private val visualStudioRequirementsProvider: VisualStudioRequirementsProvider = VisualStudioRequirementsProvider()
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
 
         private val experimentalCommandTypes: Sequence<CommandType> =
                 if (experimentalMode)
-                    sequenceOf(VisualStudioCommandType(visualStudioRequirementsProvider, dotCoverInfoProvider))
+                    sequenceOf(VisualStudioCommandType())
                 else
                     emptySequence()
 
@@ -262,16 +258,21 @@ class DotnetParametersProvider {
             get() = sequenceOf(
                     RestoreCommandType(),
                     BuildCommandType(),
-                    TestCommandType(dotCoverInfoProvider),
+                    TestCommandType(),
                     PublishCommandType(),
                     PackCommandType(),
                     NugetPushCommandType(),
                     NugetDeleteCommandType(),
                     CleanCommandType(),
                     RunCommandType(),
-                    MSBuildCommandType(MSBuildRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider),
-                    VSTestCommandType(VSTestRequirementsProvider(dotCoverInfoProvider), dotCoverInfoProvider)
+                    MSBuildCommandType(),
+                    VSTestCommandType()
             ).plus(experimentalCommandTypes)
+                    .sortedBy { it.name }
+                    .associateBy { it.name }
+
+        val coverageTypes
+            get() = sequenceOf<CommandType>(DotCoverCoverageType())
                     .sortedBy { it.name }
                     .associateBy { it.name }
     }

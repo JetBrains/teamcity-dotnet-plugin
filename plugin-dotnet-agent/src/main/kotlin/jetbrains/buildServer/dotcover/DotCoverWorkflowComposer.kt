@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotcover
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import java.io.File
@@ -23,24 +23,20 @@ class DotCoverWorkflowComposer(
         get() = TargetType.ProfilerOfCodeCoverage
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
+        if (!dotCoverEnabled) {
+            return workflow
+        }
+
         val dotCoverPath: String?
         val dotCoverExecutableFile: File
         try {
-            val dotCoverEnabled = _parametersService
-                    .tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)
-                    ?.equals("true", true) ?: false
-            if (!dotCoverEnabled) {
-                return workflow
-            }
-
-            dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME)
+            dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             if (dotCoverPath.isNullOrBlank()) {
                 return workflow
             }
 
             dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile).absoluteFile
-        }
-        catch (e: ToolCannotBeFoundException) {
+        } catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)
             exception.isLogStacktrace = false
             throw exception
@@ -111,6 +107,19 @@ class DotCoverWorkflowComposer(
                 }
         )
     }
+
+    private val dotCoverEnabled
+        get(): Boolean {
+            _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)?.let {
+                if (it == CoverageConstants.PARAM_DOTCOVER) return true
+            }
+
+            _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled")?.let {
+                if (it.trim().toBoolean()) return true
+            }
+
+            return false
+        }
 
     private fun createArguments(dotCoverProject: DotCoverProject): Sequence<CommandLineArgument> = buildSequence {
         yield(CommandLineArgument("cover"))

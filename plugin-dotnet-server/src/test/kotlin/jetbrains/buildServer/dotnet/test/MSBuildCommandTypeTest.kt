@@ -2,8 +2,7 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.commands.DotCoverInfoProvider
-import jetbrains.buildServer.dotnet.commands.MSBuildRequirementsProvider
+import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -11,7 +10,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class MSBuildRequirementsProviderTest {
+class MSBuildCommandTypeTest {
     @DataProvider
     fun testRequirementsData(): Array<Array<out Any?>> {
         return arrayOf(
@@ -29,17 +28,13 @@ class MSBuildRequirementsProviderTest {
             parameters: Map<String, String>,
             expectedRequirements: Sequence<Requirement>) {
         // Given
-        val instance = createInstance()
+        val instance = MSBuildCommandType()
 
         // When
         val actualRequirements = instance.getRequirements(parameters)
 
         // Then
         Assert.assertEquals(actualRequirements.toList(), expectedRequirements.toList())
-    }
-
-    private fun createInstance(): MSBuildRequirementsProvider {
-        return MSBuildRequirementsProvider(DotCoverInfoProvider())
     }
 
     companion object {

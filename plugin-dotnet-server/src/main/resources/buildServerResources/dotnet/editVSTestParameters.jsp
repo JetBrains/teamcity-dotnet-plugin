@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["vstest"] = "Test file names";
-    BS.DotnetParametersForm.dotCoverEnabled["vstest"] = true;
+    BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
 </script>
 
 <c:if test="${params.experimentalMode == true}">

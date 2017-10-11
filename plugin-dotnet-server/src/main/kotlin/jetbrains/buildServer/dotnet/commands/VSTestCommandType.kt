@@ -1,16 +1,14 @@
 package jetbrains.buildServer.dotnet.commands
 
-import jetbrains.buildServer.dotnet.DotCoverConstants
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.serverSide.InvalidProperty
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.requirements.Requirement
+import jetbrains.buildServer.requirements.RequirementType
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet VSTest command.
  */
-class VSTestCommandType(
-        private val _vstestRequirementsProvider: VSTestRequirementsProvider,
-        private val _dotCoverInfoProvider: DotCoverInfoProvider) : CommandType() {
+class VSTestCommandType : CommandType() {
     override val name: String
         get() = DotnetCommandType.VSTest.id
 
@@ -20,16 +18,30 @@ class VSTestCommandType(
     override val viewPage: String
         get() = "viewVSTestParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> {
-        val invalidProperties = arrayListOf<InvalidProperty>()
-        if (_dotCoverInfoProvider.isCoverageEnabled(properties)) {
-            if (properties[DotCoverConstants.PARAM_HOME].isNullOrBlank()) {
-                invalidProperties.add(InvalidProperty(DotCoverConstants.PARAM_HOME, DotnetConstants.VALIDATION_EMPTY))
+    override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+        var shouldBeWindows = false
+        var hasRequirement = false
+        runParameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
+            Tool.tryParse(it)?.let {
+                if (it.type == ToolType.VSTest) {
+                    @Suppress("NON_EXHAUSTIVE_WHEN")
+                    when (it.platform) {
+                        ToolPlatform.Windows -> {
+                            yield(Requirement("teamcity.dotnet.vstest.${it.version}.0", null, RequirementType.EXISTS))
+                            shouldBeWindows = true
+                            hasRequirement = true
+                        }
+                    }
+                }
             }
         }
 
-        return invalidProperties
-    }
+        if(!hasRequirement) {
+            yield(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
+        }
 
-    override fun getRequirements(runParameters: Map<String, String>) = _vstestRequirementsProvider.getRequirements(runParameters)
+        if (shouldBeWindows) {
+            yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
+        }
+    }
 }

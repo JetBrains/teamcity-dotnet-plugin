@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotnet.test.dotcover
 import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
 import jetbrains.buildServer.dotcover.CoverageFilterProviderImpl
-import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.agent.runner.Converter
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -34,7 +34,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
@@ -64,7 +64,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
@@ -90,7 +90,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
@@ -120,7 +120,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
@@ -150,7 +150,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ATTRIBUTE_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
@@ -185,7 +185,7 @@ class CoverageFilterProviderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ATTRIBUTE_FILTERS)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)
                 will(returnValue(null))
             }
         })

@@ -9,7 +9,7 @@
 <script type="text/javascript">
   BS.DotnetParametersForm.appendProjectFile.push("test");
   BS.DotnetParametersForm.paths["test"] = "Projects";
-  BS.DotnetParametersForm.dotCoverEnabled["test"] = true;
+  BS.DotnetParametersForm.coverageEnabled["test"] = true;
 </script>
 
 <tr class="advancedSetting">

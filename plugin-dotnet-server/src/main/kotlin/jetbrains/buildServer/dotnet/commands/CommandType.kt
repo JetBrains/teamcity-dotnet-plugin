@@ -16,11 +16,13 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 abstract class CommandType {
     abstract val name: String
 
+    open val description: String = ""
+
     abstract val editPage: String
 
     abstract val viewPage: String
 
-    open fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> = emptyList()
+    open fun validateProperties(properties: Map<String, String>): Sequence<InvalidProperty> = emptySequence()
 
-    abstract fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement>
+    open fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = emptySequence()
 }

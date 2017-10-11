@@ -45,8 +45,18 @@ class DotnetRunnerRunType(
                 return@PropertiesProcessor arrayListOf(InvalidProperty(DotnetConstants.PARAM_COMMAND, "Command must be set"))
             }
 
-            val commandType = DotnetParametersProvider.commandTypes[command]
-            commandType?.validateProperties(properties!!) ?: arrayListOf()
+            val errors = arrayListOf<InvalidProperty>()
+            DotnetParametersProvider.commandTypes[command]?.let {
+                errors.addAll(it.validateProperties(properties!!))
+            }
+
+            properties?.get(CoverageConstants.PARAM_TYPE)?.let {
+                DotnetParametersProvider.coverageTypes[it]?.let {
+                    errors.addAll(it.validateProperties(properties))
+                }
+            }
+
+            errors
         }
     }
 
@@ -68,14 +78,19 @@ class DotnetRunnerRunType(
     }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
-        val command = runParameters[DotnetConstants.PARAM_COMMAND]
-        command?.let {
-            val commandType = DotnetParametersProvider.commandTypes[it]
-            commandType?.let {
-                return it.getRequirements(runParameters).toList()
+        val requirements = arrayListOf<Requirement>()
+        runParameters[DotnetConstants.PARAM_COMMAND]?.let {
+            DotnetParametersProvider.commandTypes[it]?.let {
+                requirements.addAll(it.getRequirements(runParameters))
             }
         }
 
-        return emptyList()
+        runParameters[CoverageConstants.PARAM_TYPE]?.let {
+            DotnetParametersProvider.coverageTypes[it]?.let {
+                requirements.addAll(it.getRequirements(runParameters))
+            }
+        }
+
+        return requirements
     }
 }

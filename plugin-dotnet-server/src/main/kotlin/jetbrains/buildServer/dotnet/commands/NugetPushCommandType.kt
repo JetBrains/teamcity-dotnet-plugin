@@ -10,6 +10,7 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.serverSide.InvalidProperty
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet nuget push command.
@@ -24,21 +25,17 @@ class NugetPushCommandType : DotnetType() {
     override val viewPage: String
         get() = "viewNugetPushParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> {
-        val invalidProperties = arrayListOf<InvalidProperty>()
-
+    override fun validateProperties(properties: Map<String, String>) = buildSequence {
         if (properties[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
-            invalidProperties.add(InvalidProperty(DotnetConstants.PARAM_PATHS, "Specify packages"))
+            yield(InvalidProperty(DotnetConstants.PARAM_PATHS, "Specify packages"))
         }
 
         if (properties[DotnetConstants.PARAM_NUGET_PUSH_SOURCE].isNullOrBlank()) {
-            invalidProperties.add(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_SOURCE, DotnetConstants.VALIDATION_EMPTY))
+            yield(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_SOURCE, DotnetConstants.VALIDATION_EMPTY))
         }
 
         if (properties[DotnetConstants.PARAM_NUGET_PUSH_API_KEY].isNullOrBlank()) {
-            invalidProperties.add(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_API_KEY, DotnetConstants.VALIDATION_EMPTY))
+            yield(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_API_KEY, DotnetConstants.VALIDATION_EMPTY))
         }
-
-        return invalidProperties
     }
 }

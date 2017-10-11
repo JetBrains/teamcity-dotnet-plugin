@@ -7,21 +7,12 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<c:if test="${params.experimentalMode == true}">
-    <tr class="advancedSetting">
-        <th><label for="${params.integrationPackagePathKey}">Integration package: </label></th>
-        <td>
-            <jsp:include page="/tools/selector.html?toolType=${params.integrationPackageToolTypeKey}&versionParameterName=${params.integrationPackagePathKey}&class=${clazz}"/>
-        </td>
-    </tr>
-</c:if>
-
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
     BS.DotnetParametersForm = {
         appendProjectFile: [],
-        dotCoverEnabled: [],
+        coverageEnabled: [],
         hideLogging: [],
         targetsAreRequired: [],
         selectProjectFile: function (chosenFile) {
@@ -33,68 +24,18 @@
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
         },
         paths: [],
-        updateElements: function() {
-          var commandName = $j('#${params.commandKey}').val();
+        updateElements: function () {
+            var commandName = $j('#${params.commandKey}').val();
 
-          var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
-          if (hideLogging == true) {
-            $j('#logging').addClass('hidden');
-          }
-          else {
-            $j('#logging').removeClass('hidden');
-          }
+            var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
+            $j('#logging').toggleClass('hidden', hideLogging);
 
-          var targetsAreRequired = BS.DotnetParametersForm.targetsAreRequired[commandName];
-          if (targetsAreRequired == true) {
-            $j('#${params.pathsKey}-row').removeClass('advancedSetting');
+            var targetsAreRequired = BS.DotnetParametersForm.targetsAreRequired[commandName];
+            $j('#${params.pathsKey}-row').toggleClass('advancedSetting', !targetsAreRequired);
 
-          }
-          else {
-            $j('#${params.pathsKey}-row').addClass('advancedSetting');
-          }
-
-          BS.dotCover.showDotCoverSection();
+            var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
+            $j('#dotnet-coverage').toggleClass('hidden', !coverageEnabled);
         }
-    };
-
-    BS.dotCover = {
-      showDotCoverElements: function() {
-        if ($j('.dotCoverCheckBox').prop('checked')) {
-          $j('#dotCoverHeader').prop('rowSpan', '5');
-          $j('#dotCoverToolType').removeClass('hidden');
-          $j('#dotCoverFilters').removeClass('hidden');
-          $j('#dotCoverAttributeFilters').removeClass('hidden');
-          $j('#dotCoverArguments').removeClass('hidden');
-        }
-        else {
-          $j('#dotCoverToolType').addClass('hidden');
-          $j('#dotCoverFilters').addClass('hidden');
-          $j('#dotCoverAttributeFilters').addClass('hidden');
-          $j('#dotCoverArguments').addClass('hidden');
-          $j('#dotCoverHeader').prop('rowSpan', '1');
-        }
-      },
-
-      updateDotCoverElements: function() {
-        BS.dotCover.showDotCoverElements();
-        BS.MultilineProperties.updateVisible();
-      },
-
-      showDotCoverSection: function() {
-        var commandName = $j('#${params.commandKey}').val();
-        var visible = BS.DotnetParametersForm.dotCoverEnabled[commandName];
-        if (visible == true)
-        {
-          $j('#dotCoverCheckBox').removeClass('hidden');
-        }
-        else
-        {
-          $j('.dotCoverCheckBox').prop('checked', false);
-          $j('#dotCoverCheckBox').addClass('hidden');
-        }
-
-        BS.dotCover.showDotCoverElements();
-      }
     };
 
     $j(document).on('change', '#${params.commandKey}', function () {
@@ -124,13 +65,13 @@
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </props:textProperty>
             <span class="error" id="error_${params.pathsKey}"></span>
-            <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span></td>
+            <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span>
         </td>
     </tr>
 
     <props:workingDirectory/>
 
-    <c:forEach items="${params.types}" var="type">
+    <c:forEach items="${params.commands}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">
             <jsp:include page="${teamcityPluginResourcesPath}/dotnet/${type.editPage}"/>
         </props:selectSectionPropertyContent>
@@ -159,47 +100,31 @@
     </td>
 </tr>
 
-<tr class="advancedSetting hidden" id="dotCoverCheckBox">
-    <th id="dotCoverHeader"><label for="${params.dotCoverToolTypeKey}">Code coverage:</label></th>
-    <td><props:checkboxProperty className="dotCoverCheckBox" name="${params.dotCoverEnabledKey}" onclick="BS.dotCover.updateDotCoverElements();"/></td>
-</tr>
+<div id="dotnet-coverage" class="hidden">
+<l:settingsGroup title=".NET Coverage">
+    <c:if test="${propertiesBean.properties['dotNetCoverage.dotCover.enabled'] == 'true'}">
+        <c:set target="${propertiesBean.properties}" property="${params.coverageTypeKey}" value="dotCover"/>
+    </c:if>
+    <c:set var="toolsTitle">.NET Code Coverage:<bs:help file="Configuring+.NET+Code+Coverage"/></c:set>
+    <props:selectSectionProperty name="${params.coverageTypeKey}" title="${toolsTitle}" note="">
+        <props:selectSectionPropertyContent value="" caption="<No .NET Coverage>"/>
+        <c:forEach items="${params.coverages}" var="type">
+            <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
+                <jsp:include page="${teamcityPluginResourcesPath}/coverage/${type.editPage}"/>
+            </props:selectSectionPropertyContent>
+        </c:forEach>
+    </props:selectSectionProperty>
+</l:settingsGroup>
+</div>
 
-<tr class="advancedSetting hidden" id="dotCoverToolType">
-    <td>
-        <jsp:include page="/tools/selector.html?toolType=${params.dotCoverToolTypeKey}&versionParameterName=${params.dotCoverHomeKey}&class=longField"/>
-    </td>
-</tr>
-
-<tr class="advancedSetting hidden" id="dotCoverFilters">
-    <label for="${params.dotCoverFiltersKey}">Filters:</label>
-    <td>
-        <c:set var="note">
-            Specify a new-line separated list of filters for code coverage. Use the <i>+:myassemblyName</i> or <i>-:myassemblyName</i> syntax to
-            include or exclude an assembly (by name, without extension) from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
-        </c:set>
-        <props:multilineProperty name="${params.dotCoverFiltersKey}" className="longField" expanded="true" cols="60" rows="4" linkTitle="Assemblies Filters" note="${note}"/>
-    </td>
-</tr>
-
-<tr class="advancedSetting hidden" id="dotCoverAttributeFilters">
-    <label for="${cns.dotCoverAttributeFilters}">Attribute Filters:</label>
-    <td>
-        <c:set var="note">
-            Specify a new-line separated list of attribute filters for code coverage. Use the <i>-:attributeName</i> syntax to exclude a code marked with attributes from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
-        </c:set>
-        <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}" className="longField" cols="60" rows="4" linkTitle="Attribute Filters" note="${note}"/>
-        <span class="smallNote"><strong>Supported only with dotCover 2.0 or newer</strong></span>
-    </td>
-</tr>
-
-<tr class="advancedSetting hidden" id="dotCoverArguments">
-    <label for="${params.dotCoverArgumentsKey}">Additional dotCover.exe arguments:</label>
-    <td>
-        <props:multilineProperty name="${params.dotCoverArgumentsKey}" linkTitle="Edit command line" cols="60" rows="5" />
-        <span class="smallNote">Additional commandline parameters to add to calling dotCover.exe separated by new lines.</span>
-        <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
-    </td>
-</tr>
+<c:if test="${params.experimentalMode == true}">
+    <tr class="advancedSetting">
+        <th><label for="${params.integrationPackagePathKey}">Integration package: </label></th>
+        <td>
+            <jsp:include page="/tools/selector.html?toolType=${params.integrationPackageToolTypeKey}&versionParameterName=${params.integrationPackagePathKey}&class=${clazz}"/>
+        </td>
+    </tr>
+</c:if>
 
 <script type="text/javascript">
   BS.DotnetParametersForm.updateElements();

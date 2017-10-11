@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.util.*
@@ -13,7 +13,7 @@ class CoverageFilterProviderImpl(
     override val filters: Sequence<CoverageFilter>
         get() {
             val filters = ArrayList<CoverageFilter>()
-            _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_FILTERS)?.let {
+            _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)?.let {
                 for (filter in _coverageFilterConverter.convert(it).map { toModuleFilter(it) }) {
                     filters.add(filter)
                 }
@@ -30,7 +30,7 @@ class CoverageFilterProviderImpl(
         }
 
     override val attributeFilters: Sequence<CoverageFilter> get() = buildSequence {
-            _parametersService.tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ATTRIBUTE_FILTERS)?.let {
+            _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)?.let {
                 for (filter in _coverageFilterConverter.convert(it).map {  toAttributeFilter(it) }) {
                     if (filter.type == CoverageFilter.CoverageFilterType.Exclude && CoverageFilter.Any != filter.classMask) {
                         yield(filter)

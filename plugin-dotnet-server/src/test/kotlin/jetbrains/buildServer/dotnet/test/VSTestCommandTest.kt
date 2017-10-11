@@ -2,15 +2,14 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.commands.DotCoverInfoProvider
-import jetbrains.buildServer.dotnet.commands.VSTestRequirementsProvider
+import jetbrains.buildServer.dotnet.commands.VSTestCommandType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class VSTestRequirementsProviderTest {
+class VSTestCommandTest {
     @DataProvider
     fun testRequirementsData(): Array<Array<out Any?>> {
         return arrayOf(
@@ -26,17 +25,13 @@ class VSTestRequirementsProviderTest {
             parameters: Map<String, String>,
             expectedRequirements: Sequence<Requirement>) {
         // Given
-        val instance = createInstance()
+        val instance = VSTestCommandType()
 
         // When
         val actualRequirements = instance.getRequirements(parameters)
 
         // Then
         Assert.assertEquals(actualRequirements.toList(), expectedRequirements.toList())
-    }
-
-    private fun createInstance(): VSTestRequirementsProvider {
-        return VSTestRequirementsProvider (DotCoverInfoProvider())
     }
 
     companion object {

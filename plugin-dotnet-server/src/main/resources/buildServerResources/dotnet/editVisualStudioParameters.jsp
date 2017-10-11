@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["devenv"] = "Solutions or Projects";
-    BS.DotnetParametersForm.dotCoverEnabled["devenv"] = true;
+    BS.DotnetParametersForm.coverageEnabled["devenv"] = true;
     BS.DotnetParametersForm.hideLogging["devenv"] = true;
     BS.DotnetParametersForm.targetsAreRequired["devenv"] = true;
 </script>

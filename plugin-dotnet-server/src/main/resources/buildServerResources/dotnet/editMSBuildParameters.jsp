@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["msbuild"] = "Solutions or Projects";
-    BS.DotnetParametersForm.dotCoverEnabled["msbuild"] = true;
+    BS.DotnetParametersForm.coverageEnabled["msbuild"] = true;
 </script>
 
 <c:if test="${params.experimentalMode == true}">

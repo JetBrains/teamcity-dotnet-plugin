@@ -1,17 +1,20 @@
 package jetbrains.buildServer.dotnet.commands
 
-import jetbrains.buildServer.dotnet.DotCoverConstants
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Tool
+import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.requirements.Requirement
+import jetbrains.buildServer.requirements.RequirementQualifier
+import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for devenv.com /build command.
  */
-class VisualStudioCommandType(
-        private val _visualStudioRequirementsProvider: VisualStudioRequirementsProvider,
-        private val _dotCoverInfoProvider: DotCoverInfoProvider) : CommandType() {
+class VisualStudioCommandType : CommandType() {
+
     override val name: String
         get() = DotnetCommandType.VisualStudio.id
 
@@ -21,21 +24,27 @@ class VisualStudioCommandType(
     override val viewPage: String
         get() = "viewVisualStudioParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>): Collection<InvalidProperty> {
-        val invalidProperties = arrayListOf<InvalidProperty>()
-
+    override fun validateProperties(properties: Map<String, String>) = buildSequence {
         if (properties[DotnetConstants.PARAM_VISUAL_STUDIO_ACTION].isNullOrBlank()) {
-            invalidProperties.add(InvalidProperty(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION, DotnetConstants.VALIDATION_EMPTY))
+            yield(InvalidProperty(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION, DotnetConstants.VALIDATION_EMPTY))
         }
+    }
 
-        if (_dotCoverInfoProvider.isCoverageEnabled(properties)) {
-            if (properties[DotCoverConstants.PARAM_HOME].isNullOrBlank()) {
-                invalidProperties.add(InvalidProperty(DotCoverConstants.PARAM_HOME, DotnetConstants.VALIDATION_EMPTY))
+    override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = buildSequence {
+        var hasRequirements = false
+        runParameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
+            Tool.tryParse(it)?.let {
+                if (it.type == ToolType.VisualStudio) {
+                    yield(Requirement("VS${it.version}_Path", null, RequirementType.EXISTS))
+                    hasRequirements = true
+                }
             }
         }
 
-        return invalidProperties
-    }
+        if (!hasRequirements) {
+            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "VS.+_Path", null, RequirementType.EXISTS))
+        }
 
-    override fun getRequirements(runParameters: Map<String, String>): Sequence<Requirement> = _visualStudioRequirementsProvider.getRequirements(runParameters)
+        yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
+    }
 }

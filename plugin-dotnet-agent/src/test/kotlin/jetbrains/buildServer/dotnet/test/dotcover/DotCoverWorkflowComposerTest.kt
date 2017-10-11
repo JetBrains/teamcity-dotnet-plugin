@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotnet.test.dotcover
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.*
-import jetbrains.buildServer.dotnet.DotCoverConstants
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
@@ -50,13 +50,13 @@ class DotCoverWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf("true", "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)),
-                arrayOf("True", "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)))
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)),
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)))
     }
 
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
-            paramEnabled: String?,
+            coverageType: String?,
             dotCoverPath: String?,
             fileSystemService: FileSystemService) {
         // Given
@@ -98,10 +98,10 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)
-                will(returnValue(paramEnabled))
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
+                will(returnValue(coverageType))
 
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
                 will(returnValue(dotCoverPath))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
@@ -139,18 +139,18 @@ class DotCoverWorkflowComposerTest {
     @DataProvider(name = "notComposeCases")
     fun getNotComposeCases(): Array<Array<Any?>> {
         return arrayOf(
-                arrayOf("false", "dotCover" as Any?),
+                arrayOf("other", "dotCover" as Any?),
                 arrayOf("", "dotCover" as Any?),
                 arrayOf("   ", "dotCover" as Any?),
                 arrayOf(null, "dotCover" as Any?),
-                arrayOf("true", null as Any?),
-                arrayOf("true", "" as Any?),
-                arrayOf("true", "   " as Any?))
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, null as Any?),
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "" as Any?),
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "   " as Any?))
     }
 
     @Test(dataProvider = "notComposeCases")
     fun shouldReturnsBaseWorkflowWhenCoverageDisabled(
-            paramEnabled: String?,
+            coverageType: String?,
             dotCoverPath: String?) {
         // Given
         val executableFile = File("sdk", "dotnet.exe")
@@ -170,10 +170,13 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)
-                will(returnValue(paramEnabled))
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
+                will(returnValue(coverageType))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled")
+                will(returnValue(null))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
                 will(returnValue(dotCoverPath))
             }
         })
@@ -234,10 +237,10 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_ENABLED)
-                will(returnValue("true"))
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
+                will(returnValue(CoverageConstants.PARAM_DOTCOVER))
 
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotCoverConstants.PARAM_HOME)
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
                 will(returnValue("dotCover"))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)

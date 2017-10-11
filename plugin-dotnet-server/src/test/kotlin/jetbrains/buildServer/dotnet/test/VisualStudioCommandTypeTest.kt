@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.commands.VisualStudioRequirementsProvider
+import jetbrains.buildServer.dotnet.commands.VisualStudioCommandType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -10,7 +10,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class VisualStudioRequirementsProviderTest {
+class VisualStudioCommandTypeTest {
     @DataProvider
     fun testRequirementsData(): Array<Array<out Any?>> {
         return arrayOf(
@@ -27,17 +27,13 @@ class VisualStudioRequirementsProviderTest {
             parameters: Map<String, String>,
             expectedRequirements: Sequence<Requirement>) {
         // Given
-        val instance = createInstance()
+        val instance = VisualStudioCommandType()
 
         // When
         val actualRequirements = instance.getRequirements(parameters)
 
         // Then
         Assert.assertEquals(actualRequirements.toList(), expectedRequirements.toList())
-    }
-
-    private fun createInstance(): VisualStudioRequirementsProvider {
-        return VisualStudioRequirementsProvider()
     }
 
     companion object {
