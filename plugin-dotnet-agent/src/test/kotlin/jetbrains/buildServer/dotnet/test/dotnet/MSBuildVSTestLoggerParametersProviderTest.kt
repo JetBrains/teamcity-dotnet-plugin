@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.MSBuildParameter
@@ -29,11 +28,11 @@ class MSBuildVSTestLoggerParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
-        val pathsService = ctx!!.mock(PathsService::class.java)
+        val pathsService = ctx.mock(PathsService::class.java)
         val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile))
 
         // When
-        ctx!!.checking(object : Expectations() {
+        ctx.checking(object : Expectations() {
             init {
                 oneOf<PathsService>(pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(File("wd")))
