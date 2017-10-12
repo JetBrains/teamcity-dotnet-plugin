@@ -41,8 +41,34 @@ class TargetServiceTest {
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
         val includeRules = sequenceOf("rule1", "rule2", "rule3")
-        val file1 = File("target1")
-        val file2 = File("target2")
+
+        // When
+        _ctx!!.checking(object : Expectations() {
+            init {
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
+                will(returnValue("some includeRules"))
+
+                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                will(returnValue(checkoutDirectory))
+
+                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
+                will(returnValue(includeRules))
+            }
+        })
+
+        val actualTargets = instance.targets.toList()
+
+        // Then
+        Assert.assertEquals(actualTargets, includeRules.map { CommandTarget(File(it)) }.toList())
+    }
+
+    @Test
+    fun shouldExecuteMatcherForWildcards() {
+        // Given
+        val instance = createInstance()
+        val checkoutDirectory = File("checkout")
+        val includeRules = sequenceOf("rule1", "rule/**/2", "rul?3")
+        val expectedRules = sequenceOf("rule1", "rule/a/2", "rule/b/c/2", "rule3")
 
         // When
         _ctx!!.checking(object : Expectations() {
@@ -56,17 +82,54 @@ class TargetServiceTest {
                 oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
                 will(returnValue(includeRules))
 
-                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, includeRules, emptySequence())
-                will(returnValue(sequenceOf(file1, file2)))
+                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rule/**/2"))
+                will(returnValue(listOf(File("rule/a/2"), File("rule/b/c/2"))))
+
+                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rul?3"))
+                will(returnValue(listOf(File("rule3"))))
             }
         })
 
         val actualTargets = instance.targets.toList()
 
         // Then
-        Assert.assertEquals(
-                actualTargets,
-                listOf(CommandTarget(file1), CommandTarget(file2)))
+        Assert.assertEquals(actualTargets, expectedRules.map { CommandTarget(File(it)) }.toList())
+    }
+
+    @Test
+    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched() {
+        // Given
+        val instance = createInstance()
+        val checkoutDirectory = File("checkout")
+        val includeRules = listOf("rule1", "rule/**/2", "rule3")
+
+        // When
+        _ctx!!.checking(object : Expectations() {
+            init {
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
+                will(returnValue("some includeRules"))
+
+                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                will(returnValue(checkoutDirectory))
+
+                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
+                will(returnValue(includeRules.asSequence()))
+
+                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rule/**/2"))
+                will(returnValue(emptyList<CommandTarget>()))
+            }
+        })
+
+        var actualExceptionWasThrown = false
+        try {
+            instance.targets.toList()
+        }
+        catch (ex: RunBuildException) {
+            actualExceptionWasThrown = true
+        }
+
+        // Then
+        Assert.assertEquals(actualExceptionWasThrown, true)
     }
 
     @DataProvider
@@ -98,42 +161,6 @@ class TargetServiceTest {
 
         // Then
         Assert.assertEquals(actualTargets, emptyList<CommandTarget>())
-    }
-
-    @Test
-    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched() {
-        // Given
-        val instance = createInstance()
-        val checkoutDirectory = File("checkout")
-        val includeRules = sequenceOf("rule1", "rule2", "rule3")
-
-        // When
-        _ctx!!.checking(object : Expectations() {
-            init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
-                will(returnValue("some includeRules"))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
-                will(returnValue(checkoutDirectory))
-
-                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
-                will(returnValue(includeRules))
-
-                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, includeRules, emptySequence())
-                will(returnValue(emptySequence<CommandTarget>()))
-            }
-        })
-
-        var actualExceptionWasThrown = false
-        try {
-            instance.targets.toList()
-        }
-        catch (ex: RunBuildException) {
-            actualExceptionWasThrown = true
-        }
-
-        // Then
-        Assert.assertEquals(actualExceptionWasThrown, true)
     }
 
     private fun createInstance(): TargetService {
