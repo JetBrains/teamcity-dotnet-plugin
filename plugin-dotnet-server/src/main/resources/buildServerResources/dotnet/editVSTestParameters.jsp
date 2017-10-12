@@ -7,7 +7,7 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["vstest"] = "Test file names";
+    BS.DotnetParametersForm.paths["vstest"] = "Test assemblies";
     BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
 </script>
 
@@ -27,7 +27,7 @@
 </c:if>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
+    <th><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
     <td>
         <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
         <span class="error" id="error_${params.vstestConfigFileKey}"></span>

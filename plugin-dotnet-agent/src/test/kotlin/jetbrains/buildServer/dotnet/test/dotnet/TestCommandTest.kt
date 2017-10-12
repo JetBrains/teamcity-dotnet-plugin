@@ -18,10 +18,8 @@ class TestCommandTest {
                         Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
-                arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_TEST_RUNTIME, "active"),
-                        Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
-                        listOf("--runtime", "active", "--no-build", "customArg1")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
+                        listOf("--no-build", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
                         listOf("--output", "out", "customArg1")))
     }

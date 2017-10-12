@@ -49,7 +49,7 @@
                             selectionMode="single"/>
         </div>
         <span class="error" id="error_${params.buildRuntimeKey}"></span>
-        <span class="smallNote">Target runtime to publish for.</span>
+        <span class="smallNote">Target runtime to build for.</span>
     </td>
 </tr>
 

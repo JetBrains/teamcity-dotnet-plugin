@@ -43,13 +43,6 @@ class PackCommand(
                 }
             }
 
-            parameters(DotnetConstants.PARAM_PACK_TEMP)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--build-base-path"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
             parameters(DotnetConstants.PARAM_PACK_VERSION_SUFFIX)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--version-suffix"))

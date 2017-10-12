@@ -8,7 +8,7 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr>
-    <th class="noBorder"><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
+    <th><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
     <td>
         <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteIdKey}"></span>

@@ -15,21 +15,9 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.testRuntimeKey]}">
-    <div class="parameter">
-        Runtime: <props:displayValue name="${params.testRuntimeKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.testOutputKey]}">
     <div class="parameter">
         Output directory: <props:displayValue name="${params.testOutputKey}"/>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.testTempKey]}">
-    <div class="parameter">
-        Temp directory: <props:displayValue name="${params.testTempKey}"/>
     </div>
 </c:if>
 

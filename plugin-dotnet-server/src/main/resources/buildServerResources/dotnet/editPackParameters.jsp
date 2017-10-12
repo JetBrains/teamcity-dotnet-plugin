@@ -37,23 +37,11 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.packTempKey}">Temp directory:</label></th>
-    <td>
-        <div class="position-relative">
-            <props:textProperty name="${params.packTempKey}" className="longField"/>
-            <bs:vcsTree fieldId="${params.packTempKey}" dirsOnly="true"/>
-        </div>
-        <span class="error" id="error_${params.packTempKey}"></span>
-        <span class="smallNote">Directory in which to place temporary build outputs.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th><label for="${params.packVersionSuffixKey}">Version suffix:</label></th>
     <td>
         <props:textProperty name="${params.packVersionSuffixKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.packVersionSuffixKey}"></span>
-        <span class="smallNote">Defines what `*` should be replaced with in version field in project.json.</span>
+        <span class="smallNote">Defines the value for the $(VersionSuffix) property in the project.</span>
     </td>
 </tr>
 

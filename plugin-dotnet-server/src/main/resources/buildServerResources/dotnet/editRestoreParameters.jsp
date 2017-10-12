@@ -22,6 +22,19 @@
 </tr>
 
 <tr class="advancedSetting">
+    <th class="noBorder"><label for="${params.restoreRuntimeKey}">Runtime:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.restoreRuntimeKey}" className="longField"/>
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.restoreRuntimeKey}" popupTitle="Select runtime"/>
+        </div>
+        <span class="error" id="error_${params.restoreRuntimeKey}"></span>
+        <span class="smallNote">Target runtime to restore packages.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
     <th><label for="${params.restorePackagesKey}">Packages path:</label></th>
     <td>
         <div class="position-relative">

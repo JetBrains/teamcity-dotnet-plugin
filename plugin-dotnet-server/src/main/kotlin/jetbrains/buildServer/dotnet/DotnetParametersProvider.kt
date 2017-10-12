@@ -35,6 +35,9 @@ class DotnetParametersProvider {
     val restorePackagesKey: String
         get() = DotnetConstants.PARAM_RESTORE_PACKAGES
 
+    val restoreRuntimeKey: String
+        get() = DotnetConstants.PARAM_RESTORE_RUNTIME
+
     val restoreParallelKey: String
         get() = DotnetConstants.PARAM_RESTORE_PARALLEL
 
@@ -95,9 +98,6 @@ class DotnetParametersProvider {
     val packOutputKey: String
         get() = DotnetConstants.PARAM_PACK_OUTPUT
 
-    val packTempKey: String
-        get() = DotnetConstants.PARAM_PACK_TEMP
-
     val packVersionSuffixKey: String
         get() = DotnetConstants.PARAM_PACK_VERSION_SUFFIX
 
@@ -115,12 +115,6 @@ class DotnetParametersProvider {
 
     val testOutputKey: String
         get() = DotnetConstants.PARAM_TEST_OUTPUT
-
-    val testTempKey: String
-        get() = DotnetConstants.PARAM_TEST_TEMP
-
-    val testRuntimeKey: String
-        get() = DotnetConstants.PARAM_TEST_RUNTIME
 
     val testNoBuildKey: String
         get() = DotnetConstants.PARAM_TEST_NO_BUILD

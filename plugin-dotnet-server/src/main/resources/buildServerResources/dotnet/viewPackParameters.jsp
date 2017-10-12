@@ -15,12 +15,6 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.packTempKey]}">
-    <div class="parameter">
-        Temp directory: <props:displayValue name="${params.packTempKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.packVersionSuffixKey]}">
     <div class="parameter">
         Version suffix: <props:displayValue name="${params.packVersionSuffixKey}"/>

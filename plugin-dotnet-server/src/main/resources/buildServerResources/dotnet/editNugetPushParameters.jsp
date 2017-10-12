@@ -7,11 +7,11 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["nuget push"] = "Packages";
+    BS.DotnetParametersForm.paths["nuget-push"] = "Packages";
 </script>
 
 <tr>
-    <th class="noBorder"><label for="${params.nugetPushApiKey}">API key: <l:star/></label></th>
+    <th><label for="${params.nugetPushApiKey}">API key: <l:star/></label></th>
     <td>
         <props:passwordProperty name="${params.nugetPushApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPushApiKey}"></span>

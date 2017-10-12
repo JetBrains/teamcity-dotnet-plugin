@@ -45,6 +45,13 @@ class RestoreCommand(
                 }
             }
 
+            parameters(DotnetConstants.PARAM_RESTORE_RUNTIME)?.let {
+                _argumentsService.split(it).forEach {
+                    yield(CommandLineArgument("--runtime"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
             if (parameters(DotnetConstants.PARAM_RESTORE_PARALLEL, "").trim().toBoolean()) {
                 yield(CommandLineArgument("--disable-parallel"))
             }

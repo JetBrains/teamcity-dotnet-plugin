@@ -9,6 +9,12 @@
     </div>
 </c:if>
 
+<c:if test="${not empty propertiesBean.properties[params.restoreRuntimeKey]}">
+    <div class="parameter">
+        Runtime: <props:displayValue name="${params.restoreRuntimeKey}"/>
+    </div>
+</c:if>
+
 <c:if test="${not empty propertiesBean.properties[params.restorePackagesKey]}">
     <div class="parameter">
         Packages path: <props:displayValue name="${params.restorePackagesKey}"/>

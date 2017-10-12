@@ -7,6 +7,7 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
+    BS.DotnetParametersForm.paths["msbuild"] = "Projects";
     BS.DotnetParametersForm.coverageEnabled["msbuild"] = true;
 </script>
 
@@ -25,7 +26,7 @@
     </tr>
 </c:if>
 
-<tr>
+<tr class="advancedSetting">
     <th><label for="${params.msbuildTargetsKey}">Targets:</label></th>
     <td>
         <div class="position-relative">

@@ -43,23 +43,9 @@ class TestCommand(
                 }
             }
 
-            parameters(DotnetConstants.PARAM_TEST_RUNTIME)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--runtime"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
             parameters(DotnetConstants.PARAM_TEST_OUTPUT)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--output"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_TEST_TEMP)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--build-base-path"))
                     yield(CommandLineArgument(it))
                 }
             }

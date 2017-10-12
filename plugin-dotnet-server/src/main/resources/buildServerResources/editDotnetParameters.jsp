@@ -30,9 +30,6 @@
             var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
             $j('#logging').toggleClass('hidden', hideLogging);
 
-            var targetsAreRequired = BS.DotnetParametersForm.targetsAreRequired[commandName];
-            $j('#${params.pathsKey}-row').toggleClass('advancedSetting', !targetsAreRequired);
-
             var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
             $j('#dotnet-coverage').toggleClass('hidden', !coverageEnabled);
         }
@@ -58,7 +55,7 @@
 </script>
 
 <props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
-    <tr class="advancedSetting" id="${params.pathsKey}-row">
+    <tr id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
             <div class="position-relative">
@@ -66,7 +63,7 @@
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </div>
             <span class="error" id="error_${params.pathsKey}"></span>
-            <span class="smallNote">Enter target files relative to the checkout directory separated by space or new line. Wildcards are supported.</span>
+            <span class="smallNote">Specify target files separated by space or new line. <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.</span>
         </td>
     </tr>
 

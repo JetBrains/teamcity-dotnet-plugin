@@ -44,6 +44,7 @@ object DotnetConstants {
 
     const val PARAM_RESTORE_PARALLEL = "dotnet-restore-parallel"
     const val PARAM_RESTORE_PACKAGES = "dotnet-restore-packages"
+    const val PARAM_RESTORE_RUNTIME = "dotnet-restore-runtime"
     const val PARAM_RESTORE_SOURCE = "dotnet-restore-source"
     const val PARAM_RESTORE_CONFIG = "dotnet-restore-config"
     const val PARAM_RESTORE_NO_CACHE = "dotnet-restore-no-cache"
@@ -58,7 +59,6 @@ object DotnetConstants {
 
     const val PARAM_PACK_CONFIG = "dotnet-pack-config"
     const val PARAM_PACK_OUTPUT = "dotnet-pack-output"
-    const val PARAM_PACK_TEMP = "dotnet-pack-temp"
     const val PARAM_PACK_VERSION_SUFFIX = "dotnet-pack-version-suffix"
     const val PARAM_PACK_NO_BUILD = "dotnet-pack-no-build"
     const val PARAM_PACK_SERVICEABLE = "dotnet-pack-serviceable"
@@ -66,8 +66,6 @@ object DotnetConstants {
     const val PARAM_TEST_FRAMEWORK = "dotnet-test-framework"
     const val PARAM_TEST_CONFIG = "dotnet-test-config"
     const val PARAM_TEST_OUTPUT = "dotnet-test-output"
-    const val PARAM_TEST_TEMP = "dotnet-test-temp"
-    const val PARAM_TEST_RUNTIME = "dotnet-test-runtime"
     const val PARAM_TEST_NO_BUILD = "dotnet-test-no-build"
 
     const val PARAM_RUN_FRAMEWORK = "dotnet-run-framework"

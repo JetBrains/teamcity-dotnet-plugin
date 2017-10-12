@@ -41,20 +41,6 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.testRuntimeKey}">Runtime:</label></th>
-    <td>
-        <div class="position-relative">
-            <props:textProperty name="${params.testRuntimeKey}" className="longField"/>
-            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
-                            targetFieldId="${params.testRuntimeKey}" popupTitle="Select runtime"
-                            selectionMode="single"/>
-        </div>
-        <span class="error" id="error_${params.testRuntimeKey}"></span>
-        <span class="smallNote">Target runtime to test for.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th><label for="${params.testOutputKey}">Output directory:</label></th>
     <td>
         <div class="position-relative">
@@ -63,18 +49,6 @@
         </div>
         <span class="error" id="error_${params.testOutputKey}"></span>
         <span class="smallNote">Directory in which to find the binaries to be run.</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.testTempKey}">Temp directory:</label></th>
-    <td>
-        <div class="position-relative">
-            <props:textProperty name="${params.testTempKey}" className="longField"/>
-            <bs:vcsTree fieldId="${params.testTempKey}" dirsOnly="true"/>
-        </div>
-        <span class="error" id="error_${params.testTempKey}"></span>
-        <span class="smallNote">Directory in which to find temporary outputs.</span>
     </td>
 </tr>
 
