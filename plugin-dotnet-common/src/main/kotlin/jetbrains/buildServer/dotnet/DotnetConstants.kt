@@ -89,7 +89,7 @@ object DotnetConstants {
     const val PARAM_MSBUILD_VERSION = "dotnet-msbuild-version"
     const val PARAM_MSBUILD_TARGETS = "dotnet-msbuild-targets"
     const val PARAM_MSBUILD_CONFIG = "dotnet-msbuild-config"
-    const val PARAM_MSBUILD_PLATFORM = "dotnet-msbuild-platform"
+    const val PARAM_MSBUILD_RUNTIME = "dotnet-msbuild-runtime"
 
     const val PARAM_VSTEST_VERSION = "dotnet-vstest-version"
     const val PARAM_VSTEST_CONFIG_FILE = "dotnet-vstest-config-file"

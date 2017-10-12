@@ -7,7 +7,6 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["msbuild"] = "Solutions or Projects";
     BS.DotnetParametersForm.coverageEnabled["msbuild"] = true;
 </script>
 
@@ -31,10 +30,11 @@
     <td>
         <div class="position-relative">
             <props:textProperty name="${params.msbuildTargetsKey}" className="longField"/>
-            <bs:projectData type="MSBuildTargets" sourceFieldId="${params.msbuildTargetsKey}" targetFieldId="${params.msbuildTargetsKey}" popupTitle="Select targets to invoke"/>
+            <bs:projectData type="DotnetTargets" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.msbuildTargetsKey}" popupTitle="Select targets"/>
         </div
         <span class="error" id="error_${params.msbuildTargetsKey}"></span>
-        <span class="smallNote">Enter targets separated by semicolon.</span>
+        <span class="smallNote">Enter list of build targets.</span>
     </td>
 </tr>
 
@@ -53,15 +53,15 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.msbuildPlatformKey}">Platform:</label></th>
+    <th class="noBorder"><label for="${params.msbuildRuntimeKey}">Runtime:</label></th>
     <td>
         <div class="position-relative">
-            <props:textProperty name="${params.msbuildPlatformKey}" className="longField"/>
+            <props:textProperty name="${params.msbuildRuntimeKey}" className="longField"/>
             <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
-                            targetFieldId="${params.msbuildPlatformKey}" popupTitle="Select platform"
+                            targetFieldId="${params.msbuildRuntimeKey}" popupTitle="Select runtime"
                             selectionMode="single"/>
         </div>
-        <span class="error" id="error_${params.msbuildPlatformKey}"></span>
-        <span class="smallNote">Platform under which to build.</span>
+        <span class="error" id="error_${params.msbuildRuntimeKey}"></span>
+        <span class="smallNote">Target runtime to build for.</span>
     </td>
 </tr>

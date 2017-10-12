@@ -15,6 +15,7 @@
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetConfigurationsFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetFrameworksFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetRuntimesFetcher"/>
+  <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetTargetsFetcher"/>
 
   <!--Tools-->
   <bean class="jetbrains.buildServer.dotnet.HttpDownloaderImpl"/>

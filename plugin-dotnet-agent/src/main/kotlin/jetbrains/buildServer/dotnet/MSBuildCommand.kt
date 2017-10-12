@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildCommand(
@@ -24,7 +25,7 @@ class MSBuildCommand(
         get() = buildSequence {
             parameters(DotnetConstants.PARAM_MSBUILD_TARGETS)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/t:$it"))
+                    yield(CommandLineArgument("/t:${StringUtil.split(it).joinToString(";")}"))
                 }
             }
 
@@ -34,9 +35,9 @@ class MSBuildCommand(
                 }
             }
 
-            parameters(DotnetConstants.PARAM_MSBUILD_PLATFORM)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_MSBUILD_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/p:Platform=$it"))
+                    yield(CommandLineArgument("/p:RuntimeIdentifiers=$it"))
                 }
             }
 

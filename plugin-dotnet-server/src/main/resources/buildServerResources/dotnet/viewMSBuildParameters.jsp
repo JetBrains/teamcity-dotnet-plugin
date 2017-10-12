@@ -15,8 +15,8 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.msbuildPlatformKey]}">
+<c:if test="${not empty propertiesBean.properties[params.msbuildRuntimeKey]}">
     <div class="parameter">
-        Platform: <props:displayValue name="${params.msbuildPlatformKey}"/>
+        Runtime: <props:displayValue name="${params.msbuildRuntimeKey}"/>
     </div>
 </c:if>
