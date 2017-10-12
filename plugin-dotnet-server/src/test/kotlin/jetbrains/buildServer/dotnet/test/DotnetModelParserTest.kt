@@ -68,6 +68,36 @@ class DotnetModelParserTest {
         Assert.assertEquals(configurationsFetcher.getDataItems(project), setOf("Core", "Debug", "Release"))
     }
 
+    @Test
+    fun getCsProjectRuntime() {
+        val m = Mockery()
+        val element = m.mock(Element::class.java)
+        val parser = DotnetModelParser()
+        val csproj = File("src/test/resources/project-runtime.csproj")
+
+        m.checking(object : Expectations() {
+            init {
+                one(element).isContentAvailable
+                will(returnValue(true))
+
+                one(element).inputStream
+                will(returnValue(BufferedInputStream(FileInputStream(csproj))))
+
+                one(element).fullName
+                will(returnValue(csproj.absolutePath))
+            }
+        })
+
+        val project = parser.getCsProjectModel(element)
+        Assert.assertNotNull(project)
+
+        project?.propertyGroups!!.let {
+            Assert.assertEquals(it.size, 1)
+            Assert.assertEquals(it[0].runtimeIdentifier, "win7-x64")
+            Assert.assertEquals(it[0].runtimeIdentifiers, "win7-x64;win-7x86;ubuntu.16.10-x64")
+        }
+    }
+
     @DataProvider
     fun getProjectFiles(): Array<Array<Any>> {
         return arrayOf(

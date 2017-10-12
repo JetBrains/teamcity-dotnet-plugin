@@ -34,7 +34,13 @@ data class CsPropertyGroup(
         var targetFrameworks: String? = null,
 
         @get:JacksonXmlProperty(localName = "Condition")
-        var condition: String? = null
+        var condition: String? = null,
+
+        @get:JacksonXmlProperty(localName = "RuntimeIdentifier")
+        var runtimeIdentifier: String? = null,
+
+        @get:JacksonXmlProperty(localName = "RuntimeIdentifiers")
+        var runtimeIdentifiers: String? = null
 )
 
 /**

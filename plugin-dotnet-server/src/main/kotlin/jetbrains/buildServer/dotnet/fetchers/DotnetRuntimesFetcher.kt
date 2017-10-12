@@ -21,6 +21,21 @@ class DotnetRuntimesFetcher(modelParser: DotnetModelParser) : DotnetProjectsData
     }
 
     override fun getDataItems(project: CsProject?): Collection<String> {
+        project?.let {
+            it.propertyGroups?.let {
+                return it.fold(hashSetOf(), {
+                    all, current ->
+                    current.runtimeIdentifier?.let {
+                        all.add(it)
+                    }
+                    current.runtimeIdentifiers?.let {
+                        all.addAll(it.split(';'))
+                    }
+                    all
+                })
+            }
+        }
+
         return emptyList()
     }
 

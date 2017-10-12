@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win7-x64;win-7x86;ubuntu.16.10-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+</Project>
