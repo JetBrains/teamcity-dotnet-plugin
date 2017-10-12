@@ -16,7 +16,8 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 abstract class CommandType {
     abstract val name: String
 
-    open val description: String = ""
+    open val description: String
+        get() = name
 
     abstract val editPage: String
 

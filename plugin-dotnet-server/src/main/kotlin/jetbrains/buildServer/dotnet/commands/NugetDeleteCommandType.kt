@@ -19,6 +19,9 @@ class NugetDeleteCommandType : DotnetType() {
     override val name: String
         get() = DotnetCommandType.NuGetDelete.id
 
+    override val description: String
+        get() = name.replace('-', ' ')
+
     override val editPage: String
         get() = "editNugetDeleteParameters.jsp"
 

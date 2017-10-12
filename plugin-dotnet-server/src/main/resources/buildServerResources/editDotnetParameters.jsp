@@ -73,7 +73,7 @@
     <props:workingDirectory/>
 
     <c:forEach items="${params.commands}" var="type">
-        <props:selectSectionPropertyContent value="${type.name}" caption="${type.name}">
+        <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
             <jsp:include page="${teamcityPluginResourcesPath}/dotnet/${type.editPage}"/>
         </props:selectSectionPropertyContent>
     </c:forEach>

@@ -7,7 +7,7 @@
 <c:forEach items="${params.commands}" var="type">
     <c:if test="${propertiesBean.properties[params.commandKey] eq type.name}">
         <div class="parameter">
-            Command: <strong><c:out value="${type.name}"/></strong>
+            Command: <strong><c:out value="${type.description}"/></strong>
         </div>
 
         <c:if test="${not empty propertiesBean.properties[params.pathsKey]}">
@@ -32,7 +32,7 @@
 <c:forEach items="${params.coverages}" var="type">
     <c:if test="${propertiesBean.properties[params.coverageTypeKey] eq type.name}">
         <div class="parameter">
-            Code Coverage: <strong><c:out value="${type.name}"/></strong>
+            Code Coverage: <strong><c:out value="${type.description}"/></strong>
         </div>
 
         <jsp:include page="${teamcityPluginResourcesPath}/coverage/${type.viewPage}"/>

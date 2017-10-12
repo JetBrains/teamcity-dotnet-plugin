@@ -1,18 +1,16 @@
 package jetbrains.buildServer.dotnet
 
-enum class DotnetCommandType(
-        val id: String,
-        val args: Sequence<String>) {
-    Build("build", sequenceOf("build")),
-    Pack("pack", sequenceOf("pack")),
-    Publish("publish", sequenceOf("publish")),
-    Restore("restore", sequenceOf("restore")),
-    Test("test", sequenceOf("test")),
-    Run("run", sequenceOf("run")),
-    NuGetPush("nuget push", sequenceOf("nuget", "push")),
-    NuGetDelete("nuget delete", sequenceOf("nuget", "delete")),
-    Clean("clean", sequenceOf("clean")),
-    MSBuild("msbuild", sequenceOf("msbuild")),
-    VSTest("vstest", sequenceOf("vstest")),
-    VisualStudio("devenv", sequenceOf("devenv"))
+enum class DotnetCommandType(val id: String) {
+    Build("build"),
+    Pack("pack"),
+    Publish("publish"),
+    Restore("restore"),
+    Test("test"),
+    Run("run"),
+    NuGetPush("nuget-push"),
+    NuGetDelete("nuget-delete"),
+    Clean("clean"),
+    MSBuild("msbuild"),
+    VSTest("vstest"),
+    VisualStudio("devenv")
 }

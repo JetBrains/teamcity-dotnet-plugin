@@ -19,6 +19,9 @@ class NugetPushCommandType : DotnetType() {
     override val name: String
         get() = DotnetCommandType.NuGetPush.id
 
+    override val description: String
+        get() = name.replace('-', ' ')
+
     override val editPage: String
         get() = "editNugetPushParameters.jsp"
 
