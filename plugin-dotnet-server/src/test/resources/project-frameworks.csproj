@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="App.config" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    </ItemGroup>
+
+</Project>

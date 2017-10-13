@@ -7,6 +7,8 @@
 
 package jetbrains.buildServer.dotnet.models
 
+import com.fasterxml.jackson.annotation.JsonMerge
+import com.fasterxml.jackson.annotation.OptBoolean
 import com.fasterxml.jackson.dataformat.xml.annotation.*
 
 /**
@@ -14,10 +16,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*
  */
 @JacksonXmlRootElement(localName = "Project", namespace = "http://schemas.microsoft.com/developer/msbuild/2003")
 data class CsProject(
-        @get:[JacksonXmlProperty(localName = "PropertyGroup") JacksonXmlElementWrapper(useWrapping = false)]
+        @get:[
+        JacksonXmlProperty(localName = "PropertyGroup")
+        JacksonXmlElementWrapper(useWrapping = false)
+        JsonMerge(OptBoolean.TRUE)]
         var propertyGroups: List<CsPropertyGroup>? = null,
 
-        @get:[JacksonXmlProperty(localName = "ItemGroup") JacksonXmlElementWrapper(useWrapping = false)]
+        @get:[
+        JacksonXmlProperty(localName = "ItemGroup")
+        JacksonXmlElementWrapper(useWrapping = false)
+        JsonMerge(OptBoolean.TRUE)]
         var itemGroups: List<CsItemGroup>? = null,
 
         var path: String? = null

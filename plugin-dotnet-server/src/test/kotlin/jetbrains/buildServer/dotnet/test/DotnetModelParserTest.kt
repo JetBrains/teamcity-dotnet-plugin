@@ -98,6 +98,40 @@ class DotnetModelParserTest {
         }
     }
 
+    @Test
+    fun getCsProjectFrameworks() {
+        val m = Mockery()
+        val element = m.mock(Element::class.java)
+        val parser = DotnetModelParser()
+        val csproj = File("src/test/resources/project-frameworks.csproj")
+
+        m.checking(object : Expectations() {
+            init {
+                one(element).isContentAvailable
+                will(returnValue(true))
+
+                one(element).inputStream
+                will(returnValue(BufferedInputStream(FileInputStream(csproj))))
+
+                one(element).fullName
+                will(returnValue(csproj.absolutePath))
+            }
+        })
+
+        val project = parser.getCsProjectModel(element)
+        Assert.assertNotNull(project)
+
+        project?.let {
+            it.propertyGroups!!.let {
+                Assert.assertEquals(it.size, 3)
+                Assert.assertEquals(it[0].targetFrameworks, "net45;netstandard1.3")
+            }
+            it.itemGroups!!.let {
+                Assert.assertEquals(it.size, 4)
+            }
+        }
+    }
+
     @DataProvider
     fun getProjectFiles(): Array<Array<Any>> {
         return arrayOf(
