@@ -12,7 +12,7 @@ class DotnetToolTypeAdapter : ToolTypeAdapter() {
     }
 
     override fun getDescription(): String? {
-        return "Is used in the .NET runner for CLI integration."
+        return "Is used in .NET CLI build steps."
     }
 
     override fun getShortDisplayName(): String {
@@ -33,10 +33,6 @@ class DotnetToolTypeAdapter : ToolTypeAdapter() {
 
     override fun getToolLicenseUrl(): String {
         return "https://github.com/JetBrains/TeamCity.MSBuild.Logger/blob/master/LICENSE"
-    }
-
-    override fun getTeamCityHelpFile(): String {
-        return "DotnetIntegration"
     }
 
     override fun getValidPackageDescription(): String? {
