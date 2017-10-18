@@ -10,12 +10,11 @@ It simplifies building windows and cross-platform applications that use .NET fra
 
 The plugin provides the following features for .NET project building:
 * `.NET CLI (dotnet)` build runner
-* .NET CLI detection on TeamCity build agent
-* auto-discovery of build steps
-* cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
-* supports both project.json and csproj-based projects
-* provide on-fly test reporting
-* supports code coverage
+* .NET CLI & .NET Core SDK detection on TeamCity build agents
+* Auto-discovery of build steps
+* On-fly test reporting
+* Supports code coverage tools
+* Cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
  
 # Download
 
@@ -23,7 +22,7 @@ You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity)
 
 # Compatibility
 
-The current version of plugin is compatible with [TeamCity 2017+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI stable](https://www.microsoft.com/net/download/core).
+The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://www.microsoft.com/net/download/core).
 
 # Configuration
 
