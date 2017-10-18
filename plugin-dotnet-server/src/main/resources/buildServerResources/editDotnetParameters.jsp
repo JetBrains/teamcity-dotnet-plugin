@@ -32,6 +32,8 @@
 
             var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
             $j('#dotnet-coverage').toggleClass('hidden', !coverageEnabled);
+
+            $j('#dotnet-help').attr('href', 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-' + commandName);
         }
     };
 
@@ -54,7 +56,8 @@
     });
 </script>
 
-<props:selectSectionProperty name="${params.commandKey}" title="Command:" note="">
+<c:set var="commandTitle">Command:<bs:help urlPrefix="https://docs.microsoft.com/en-us/dotnet/core/tools/" file=""/></c:set>
+<props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
     <tr id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
         <td>
@@ -81,7 +84,10 @@
     <td>
         <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.argumentsKey}"></span>
-        <span class="smallNote">Enter additional command line parameters to dotnet.</span>
+        <span class="smallNote">
+            Enter additional command line parameters to dotnet. <a
+            id="dotnet-help" target="_blank" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
+        </span>
     </td>
 </tr>
 
