@@ -18,7 +18,7 @@
     <td>
         <props:textProperty name="${params.restoreSourceKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.restoreSourceKey}"></span>
-        <span class="smallNote">Specifies a NuGet package sources to use during the restore.</span>
+        <span class="smallNote">Specifies NuGet package sources to use during the restore.</span>
     </td>
 </tr>
 

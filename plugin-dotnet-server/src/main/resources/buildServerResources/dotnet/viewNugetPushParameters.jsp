@@ -15,12 +15,12 @@
 
 <c:if test="${propertiesBean.properties[params.nugetPushNoSymbolsKey]}">
     <div class="parameter">
-        Do not publish existing nuget symbols package: <strong>ON</strong>
+        Do not publish an existing nuget symbols package: <strong>ON</strong>
     </div>
 </c:if>
 
 <c:if test="${propertiesBean.properties[params.nugetPushNoBufferKey]}">
     <div class="parameter">
-        Disable buffering when pushing to server to decrease memory usage: <strong>ON</strong>
+        Disable buffering when pushing to the server to decrease memory usage: <strong>ON</strong>
     </div>
 </c:if>

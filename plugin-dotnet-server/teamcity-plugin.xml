@@ -5,7 +5,7 @@
         <name>dotnetcore</name>
         <display-name>.NET CLI Support</display-name>
         <version>@Plugin_Version@</version>
-        <description>Allows to build projects via .NET CLI toolchain</description>
+        <description>Allows building projects via .NET CLI toolchain</description>
         <download-url>https://github.com/JetBrains/teamcity-dotnet-plugin</download-url>
         <vendor>
             <name>JetBrains, s.r.o.</name>

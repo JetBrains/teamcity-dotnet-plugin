@@ -23,7 +23,7 @@
 
 <c:if test="${not empty propertiesBean.properties[params.packNoBuildKey]}">
     <div class="parameter">
-        Do not build project before packing: <strong>ON</strong>
+        Do not build the project before packing: <strong>ON</strong>
     </div>
 </c:if>
 

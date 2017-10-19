@@ -31,7 +31,7 @@
     <td>
         <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
         <span class="error" id="error_${params.vstestPlatformKey}"></span>
-        <span class="smallNote">Target platform architecture to be used for test execution</span>
+        <span class="smallNote">The target platform architecture to be used for test execution</span>
     </td>
 </tr>
 
@@ -40,7 +40,7 @@
     <td>
         <props:textProperty name="${params.vstestFrameworkKey}" className="longField" />
         <span class="error" id="error_${params.vstestFrameworkKey}"></span>
-        <span class="smallNote">Target .NET Framework version to be used for test execution</span>
+        <span class="smallNote">The target .NET Framework version to be used for test execution</span>
     </td>
 </tr>
 
@@ -66,7 +66,7 @@
     <td>
         <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
         <span class="error" id="error_${params.vstestConfigFileKey}"></span>
-        <span class="smallNote">Path to run settings configuration file</span>
+        <span class="smallNote">The path to the run settings configuration file</span>
     </td>
 </tr>
 

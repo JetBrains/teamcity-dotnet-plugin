@@ -29,7 +29,7 @@
 
 <c:if test="${not empty propertiesBean.properties[params.buildNoDependenciesKey]}">
     <div class="parameter">
-        Ignore project to project references and only build the root project: <strong>ON</strong>
+        Ignore project-to-project references and only build the root project: <strong>ON</strong>
     </div>
 </c:if>
 

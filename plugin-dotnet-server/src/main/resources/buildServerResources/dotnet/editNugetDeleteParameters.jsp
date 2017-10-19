@@ -25,7 +25,7 @@
     <td>
         <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteIdKey}"></span>
-        <span class="smallNote">Specify the package id and version separated by space.</span>
+        <span class="smallNote">Specify the package id and version separated by a space.</span>
     </td>
 </tr>
 
@@ -34,6 +34,6 @@
     <td>
         <props:passwordProperty name="${params.nugetDeleteApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteApiKey}"></span>
-        <span class="smallNote">Specify the API key to access a NuGet packages feed.</span>
+        <span class="smallNote">Specify the API key to access the NuGet packages feed.</span>
     </td>
 </tr>

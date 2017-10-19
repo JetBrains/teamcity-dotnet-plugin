@@ -70,7 +70,7 @@
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </div>
             <span class="error" id="error_${params.pathsKey}"></span>
-            <span class="smallNote">Specify target files separated by space or new line. <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.</span>
+            <span class="smallNote">Specify target files separated by spaces or new lines. <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.</span>
         </td>
     </tr>
 
@@ -89,7 +89,7 @@
         <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
         <span class="error" id="error_${params.argumentsKey}"></span>
         <span class="smallNote">
-            Enter additional command line parameters to dotnet. <a
+            Enter additional command line parameters for dotnet. <a
             id="dotnet-help" target="_blank" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
         </span>
     </td>

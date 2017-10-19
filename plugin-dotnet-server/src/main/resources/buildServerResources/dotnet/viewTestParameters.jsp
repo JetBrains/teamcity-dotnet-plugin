@@ -23,6 +23,6 @@
 
 <c:if test="${propertiesBean.properties[params.testNoBuildKey]}">
     <div class="parameter">
-        Do not build project before testing: <strong>ON</strong>
+        Do not build the project before testing: <strong>ON</strong>
     </div>
 </c:if>

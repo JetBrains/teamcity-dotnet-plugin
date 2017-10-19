@@ -48,7 +48,7 @@
             <bs:vcsTree fieldId="${params.testOutputKey}" dirsOnly="true"/>
         </div>
         <span class="error" id="error_${params.testOutputKey}"></span>
-        <span class="smallNote">Directory in which to find the binaries to be run.</span>
+        <span class="smallNote">Directory where to find the binaries to be run.</span>
     </td>
 </tr>
 
@@ -57,7 +57,7 @@
         <th>Options:</th>
         <td>
             <props:checkboxProperty name="${params.testNoBuildKey}"/>
-            <label for="${params.testNoBuildKey}">Do not build project before testing</label>
+            <label for="${params.testNoBuildKey}">Do not build the project before testing</label>
         </td>
     </tr>
 </c:if>

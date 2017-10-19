@@ -16,7 +16,7 @@
     <td>
         <props:textProperty name="${params.nugetPushSourceKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPushSourceKey}"></span>
-        <span class="smallNote">Specify the server URL. For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.</span>
+        <span class="smallNote">Specify the server URL. For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.</span>
     </td>
 </tr>
 
@@ -25,8 +25,8 @@
     <td>
         <props:passwordProperty name="${params.nugetPushApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPushApiKey}"></span>
-        <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
-            For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
+        <span class="smallNote">Specify the API key to access the NuGet packages feed.<br/>
+            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
     </td>
 </tr>
 
@@ -36,9 +36,9 @@
         <th>Options:</th>
         <td>
             <props:checkboxProperty name="${params.nugetPushNoSymbolsKey}"/>
-            <label for="${params.nugetPushNoSymbolsKey}">Do not publish existing nuget symbols package</label><br/>
+            <label for="${params.nugetPushNoSymbolsKey}">Do not publish an existing nuget symbols package</label><br/>
             <props:checkboxProperty name="${params.nugetPushNoBufferKey}"/>
-            <label for="${params.nugetPushNoBufferKey}">Disable buffering when pushing to server to decrease memory
+            <label for="${params.nugetPushNoBufferKey}">Disable buffering when pushing to the server to decrease memory
                 usage</label>
         </td>
     </tr>

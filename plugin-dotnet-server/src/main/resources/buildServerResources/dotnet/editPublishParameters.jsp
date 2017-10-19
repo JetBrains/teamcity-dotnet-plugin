@@ -60,7 +60,7 @@
             <bs:vcsTree fieldId="${params.publishOutputKey}" dirsOnly="true"/>
         </div>
         <span class="error" id="error_${params.publishOutputKey}"></span>
-        <span class="smallNote">Path in which to publish the app.</span>
+        <span class="smallNote">Path where to publish the app.</span>
     </td>
 </tr>
 

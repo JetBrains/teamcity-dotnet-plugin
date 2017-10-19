@@ -32,7 +32,7 @@
             <bs:vcsTree fieldId="${params.packOutputKey}" dirsOnly="true"/>
         </div>
         <span class="error" id="error_${params.packOutputKey}"></span>
-        <span class="smallNote">Directory in which to place outputs.</span>
+        <span class="smallNote">Directory where to place outputs.</span>
     </td>
 </tr>
 
@@ -51,7 +51,7 @@
         <th>Options:</th>
         <td>
             <props:checkboxProperty name="${params.packNoBuildKey}"/>
-            <label for="${params.packNoBuildKey}">Do not build project before packing</label><br/>
+            <label for="${params.packNoBuildKey}">Do not the build project before packing</label><br/>
             <props:checkboxProperty name="${params.packServiceableKey}"/>
             <label for="${params.packServiceableKey}">Set the serviceable flag in the package</label>
         </td>

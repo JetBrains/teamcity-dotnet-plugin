@@ -61,6 +61,6 @@
             <bs:vcsTree fieldId="${params.cleanOutputKey}" dirsOnly="true"/>
         </div>
         <span class="error" id="error_${params.cleanOutputKey}"></span>
-        <span class="smallNote">Directory in which the build outputs are placed.</span>
+        <span class="smallNote">Directory where the build outputs are placed.</span>
     </td>
 </tr>

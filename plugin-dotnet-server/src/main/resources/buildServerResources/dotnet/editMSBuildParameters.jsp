@@ -36,7 +36,7 @@
                             targetFieldId="${params.msbuildTargetsKey}" popupTitle="Select targets"/>
         </div
         <span class="error" id="error_${params.msbuildTargetsKey}"></span>
-        <span class="smallNote">Enter list of build targets.</span>
+        <span class="smallNote">Enter the list of build targets.</span>
     </td>
 </tr>
 

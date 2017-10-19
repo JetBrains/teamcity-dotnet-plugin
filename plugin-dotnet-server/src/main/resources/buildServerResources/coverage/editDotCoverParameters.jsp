@@ -18,7 +18,7 @@
     <td>
         <c:set var="note">
             Specify a new-line separated list of filters for code coverage. Use the <i>+:myassemblyName</i> or <i>-:myassemblyName</i> syntax to
-            include or exclude an assembly (by name, without extension) from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+            include or exclude an assembly (by name, without extension) from code coverage. Use the asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
         </c:set>
         <props:multilineProperty name="${params.dotCoverFiltersKey}" className="longField" expanded="true" cols="60" rows="4" linkTitle="Assemblies filters" note="${note}"/>
     </td>
@@ -28,10 +28,10 @@
     <th><label for="${params.dotCoverAttributeFiltersKey}">Attribute filters:</label></th>
     <td>
         <c:set var="note">
-            Specify a new-line separated list of attribute filters for code coverage. Use the <i>-:attributeName</i> syntax to exclude a code marked with attributes from code coverage. Use asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
+            Specify a new-line separated list of attribute filters for code coverage. Use the <i>-:attributeName</i> syntax to exclude the code marked with attributes from code coverage. Use the asterisk (*) as a wildcard if needed.<bs:help file="JetBrains+dotCover"/>
         </c:set>
         <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}" className="longField" cols="60" rows="4" linkTitle="Attribute filters" note="${note}"/>
-        <span class="smallNote"><strong>Supported only with dotCover 2.0 or newer</strong></span>
+        <span class="smallNote"><strong>Supported only with dotCover 2.0 or later</strong></span>
     </td>
 </tr>
 
@@ -39,7 +39,7 @@
     <th><label for="${params.dotCoverArgumentsKey}">Additional arguments:</label></th>
     <td>
         <props:multilineProperty name="${params.dotCoverArgumentsKey}" linkTitle="Edit command line" cols="60" rows="5" />
-        <span class="smallNote">Additional commandline parameters to add to calling dotCover separated by new lines.</span>
+        <span class="smallNote">Enter additional new-line sepatated command line parameters for dotCover.</span>
         <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
     </td>
 </tr>

@@ -61,7 +61,7 @@
             <props:checkboxProperty name="${params.buildNonIncrementalKey}"/>
             <label for="${params.buildNonIncrementalKey}">Turn off incremental build</label><br/>
             <props:checkboxProperty name="${params.buildNoDependenciesKey}"/>
-            <label for="${params.buildNoDependenciesKey}">Ignore project to project references and only build the root project</label>
+            <label for="${params.buildNoDependenciesKey}">Ignore project-to-project references and only build the root project</label>
         </td>
     </tr>
 </c:if>
@@ -74,7 +74,7 @@
             <bs:vcsTree fieldId="${params.buildOutputKey}" dirsOnly="true"/>
         </div>
         <span class="error" id="error_${params.buildOutputKey}"></span>
-        <span class="smallNote">Directory in which to place outputs.</span>
+        <span class="smallNote">The directory where to place outputs.</span>
     </td>
 </tr>
 
