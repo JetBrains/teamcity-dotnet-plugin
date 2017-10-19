@@ -53,15 +53,18 @@
     </td>
 </tr>
 
-<tr class="advancedSetting">
-    <th>Options:</th>
-    <td>
-        <props:checkboxProperty name="${params.buildNonIncrementalKey}"/>
-        <label for="${params.buildNonIncrementalKey}">Turn off incremental build</label><br/>
-        <props:checkboxProperty name="${params.buildNoDependenciesKey}"/>
-        <label for="${params.buildNonIncrementalKey}">Ignore project to project references and only build the root project</label>
-    </td>
-</tr>
+<c:if test="${not empty propertiesBean.properties[params.buildNonIncrementalKey] or
+    not empty propertiesBean.properties[params.buildNoDependenciesKey]}">
+    <tr class="advancedSetting">
+        <th>Options:</th>
+        <td>
+            <props:checkboxProperty name="${params.buildNonIncrementalKey}"/>
+            <label for="${params.buildNonIncrementalKey}">Turn off incremental build</label><br/>
+            <props:checkboxProperty name="${params.buildNoDependenciesKey}"/>
+            <label for="${params.buildNoDependenciesKey}">Ignore project to project references and only build the root project</label>
+        </td>
+    </tr>
+</c:if>
 
 <tr class="advancedSetting">
     <th><label for="${params.buildOutputKey}">Output directory:</label></th>
