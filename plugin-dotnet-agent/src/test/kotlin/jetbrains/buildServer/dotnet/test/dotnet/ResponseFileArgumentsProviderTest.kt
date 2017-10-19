@@ -52,7 +52,7 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
                 will(returnValue(Verbosity.Detailed.id))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.BuildTemp)
+                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
                 oneOf<MSBuildParametersProvider>(parametersProvider1).parameters

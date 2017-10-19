@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -30,11 +27,15 @@ class DotnetWorkflowComposerTest {
     private var _toolResolver2: ToolResolver? = null
     private var _closeable1: Closeable? = null
     private var _closeable2: Closeable? = null
+    private var _loggerService: LoggerService? = null
+    private var _closeable3: Closeable? = null
+    private var _closeable4: Closeable? = null
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx!!.mock(PathsService::class.java)
+        _loggerService = _ctx!!.mock(LoggerService::class.java)
         _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
         _environmentVariables = _ctx!!.mock(EnvironmentVariables::class.java)
         _vstestLoggerEnvironment = _ctx!!.mock(VSTestLoggerEnvironment::class.java)
@@ -45,6 +46,8 @@ class DotnetWorkflowComposerTest {
         _dotnetCommand2 = _ctx!!.mock(DotnetCommand::class.java, "command2")
         _toolResolver2 = _ctx!!.mock(ToolResolver::class.java, "resolver2")
         _closeable2 = _ctx!!.mock(Closeable::class.java, "closeable2")
+        _closeable3 = _ctx!!.mock(Closeable::class.java, "closeable3")
+        _closeable4 = _ctx!!.mock(Closeable::class.java, "closeable4")
     }
 
     @Test
@@ -65,6 +68,9 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand1).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csproj"))))))
 
+                oneOf<DotnetCommand>(_dotnetCommand1).commandType
+                will(returnValue(DotnetCommandType.Build))
+
                 oneOf<DotnetCommand>(_dotnetCommand1).arguments
                 will(returnValue(args1.asSequence()))
 
@@ -79,6 +85,9 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<DotnetCommand>(_dotnetCommand2).targetArguments
                 will(returnValue(emptySequence<TargetArguments>()))
+
+                oneOf<DotnetCommand>(_dotnetCommand2).commandType
+                will(returnValue(DotnetCommandType.NuGetPush))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).arguments
                 will(returnValue(args2.asSequence()))
@@ -100,6 +109,20 @@ class DotnetWorkflowComposerTest {
 
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
+
+                oneOf<LoggerService>(_loggerService).onStandardOutput("dotnet.exe arg1 arg2")
+
+                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.Build.name)
+                will(returnValue(_closeable3))
+
+                oneOf<Closeable>(_closeable3).close()
+
+                oneOf<LoggerService>(_loggerService).onStandardOutput("msbuild.exe arg3")
+
+                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.NuGetPush.name)
+                will(returnValue(_closeable4))
+
+                oneOf<Closeable>(_closeable4).close()
 
                 oneOf<VSTestLoggerEnvironment>(_vstestLoggerEnvironment).configure(listOf(File("my.csproj")))
                 will(returnValue(_closeable1))
@@ -141,6 +164,8 @@ class DotnetWorkflowComposerTest {
     private fun createInstance(): WorkflowComposer {
         return DotnetWorkflowComposer(
                 _pathService!!,
+                _loggerService!!,
+                ArgumentsServiceStub(),
                 _environmentVariables!!,
                 _vstestLoggerEnvironment!!,
                 _commandSet!!)

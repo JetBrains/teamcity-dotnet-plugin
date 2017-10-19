@@ -42,7 +42,9 @@ class DotnetPropertiesExtension(
                 _versionParser.tryParse(it.standardOutput)?.let {
                     val dotnetPath = command.executableFile
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
+                    LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$it\"")
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
+                    LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
                     LOG.info(".NET CLI $it found at \"${dotnetPath.absolutePath}\"")
 
                     LOG.debug("Locating .NET Core SDKs")
@@ -52,6 +54,7 @@ class DotnetPropertiesExtension(
                             _semanticVersionParser.tryParse(file.name)?.let {
                                 val paramName = "${DotnetConstants.CONFIG_SDK_NAME}${it.major}.${it.minor}${DotnetConstants.PATH_SUFFIX}"
                                 agent.configuration.addConfigurationParameter(paramName, file.absolutePath)
+                                LOG.debug("Add configuration parameter \"$paramName\": \"${file.absolutePath}\"")
                                 LOG.info(".NET Core SDK $it found at \"${file.absolutePath}\"")
                             }
                         }
