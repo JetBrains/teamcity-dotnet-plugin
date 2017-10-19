@@ -200,6 +200,9 @@ class DotnetParametersProvider {
     val vstestFrameworkKey: String
         get() = DotnetConstants.PARAM_VSTEST_FRAMEWORK
 
+    val vstestFilterTypeKey: String
+        get() = DotnetConstants.PARAM_VSTEST_FILTER_TYPE
+
     val vstestTestNamesKey: String
         get() = DotnetConstants.PARAM_VSTEST_TEST_NAMES
 

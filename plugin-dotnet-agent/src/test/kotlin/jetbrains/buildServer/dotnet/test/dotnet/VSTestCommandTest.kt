@@ -21,7 +21,10 @@ class VSTestCommandTest {
                         DotnetConstants.PARAM_VSTEST_PLATFORM to "x86",
                         DotnetConstants.PARAM_VSTEST_FRAMEWORK to "net45",
                         DotnetConstants.PARAM_VSTEST_TEST_CASE_FILTER to "myfilter"),
-                        listOf("/Settings:myconfig.txt", "/Tests:abc,zxy", "/InIsolation", "/Platform:x86", "/Framework:net45", "/TestCaseFilter:myfilter", "vstestlog", "customArg1")))
+                        listOf("/Settings:myconfig.txt", "/Tests:abc,zxy", "/InIsolation", "/Platform:x86", "/Framework:net45", "/TestCaseFilter:myfilter", "vstestlog", "customArg1")),
+                arrayOf(mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
+                        DotnetConstants.PARAM_VSTEST_TEST_NAMES to "test1 test2; test3"),
+                        listOf("/Tests:test1,test2,test3", "vstestlog", "customArg1")))
     }
 
     @Test(dataProvider = "argumentsData")

@@ -94,6 +94,7 @@ object DotnetConstants {
     const val PARAM_VSTEST_CONFIG_FILE = "dotnet-vstest-config-file"
     const val PARAM_VSTEST_PLATFORM = "dotnet-vstest-platform"
     const val PARAM_VSTEST_FRAMEWORK = "dotnet-vstest-framework"
+    const val PARAM_VSTEST_FILTER_TYPE = "dotnet-vstest-filter-type"
     const val PARAM_VSTEST_TEST_NAMES = "dotnet-vstest-test-names"
     const val PARAM_VSTEST_TEST_CASE_FILTER = "dotnet-vstest-test-case-filter"
     const val PARAM_VSTEST_IN_ISOLATION = "dotnet-vstest-is-isolation"

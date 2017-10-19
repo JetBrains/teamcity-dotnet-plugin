@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
@@ -31,7 +32,7 @@ class VSTestCommand(
 
             parameters(DotnetConstants.PARAM_VSTEST_TEST_NAMES)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/Tests:$it"))
+                    yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
                 }
             }
 

@@ -9,6 +9,22 @@
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["vstest"] = "Test assemblies";
     BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
+
+    var testFilterSelector = 'input[type=radio][name="prop:${params.vstestFilterTypeKey}"]';
+    function updateElements(value) {
+        $j(BS.Util.escapeId('${params.vstestTestNamesKey}')).prop('disabled', value !== 'name');
+        $j(BS.Util.escapeId('${params.vstestTestCaseFilterKey}')).prop('disabled', value !== 'filter');
+    }
+    BS.DotnetParametersForm.initFunctions["vstest"] = function () {
+        var $testFilterSelector = $j(testFilterSelector);
+        var value = $testFilterSelector.filter(':checked').val() || 'name';
+
+        $testFilterSelector.filter('input[value=' + value + ']').prop('checked', true);
+        updateElements(value)
+    };
+    $j(document).on('change', testFilterSelector, function () {
+        updateElements(this.value);
+    });
 </script>
 
 <c:if test="${params.experimentalMode == true}">
@@ -45,16 +61,25 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th><label for="${params.vstestTestNamesKey}">Test names:</label></th>
+    <th>
+        <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="name"
+                                   checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'name' or
+                                   not empty propertiesBean.properties[params.vstestTestNamesKey]}"/>
+        <label for="${params.vstestTestNamesKey}">Test names:</label>
+    </th>
     <td>
         <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
-                             note="Comma-separated list of test names."
-                             rows="3" cols="49" linkTitle="Edit test names"/>
+                                 rows="3" cols="49" linkTitle="Edit test names"/>
     </td>
 </tr>
 
 <tr class="advancedSetting">
-    <th><label for="${params.vstestTestCaseFilterKey}">Test case filter:</label></th>
+    <th>
+        <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="filter"
+                                   checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'filter' or
+                                   not empty propertiesBean.properties[params.vstestTestCaseFilterKey]}"/>
+        <label for="${params.vstestTestCaseFilterKey}">Test case filter:</label>
+    </th>
     <td>
         <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
         <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>

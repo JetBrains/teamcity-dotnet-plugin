@@ -18,6 +18,7 @@
         hideLogging: [],
         hideWorkingDirectory: [],
         targetsAreRequired: [],
+        initFunctions: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
             var value = BS.Util.trimSpaces($paths.val());
@@ -51,6 +52,9 @@
 
             var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
             $j(BS.Util.escapeId('teamcity.build.workingDir')).closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
+
+            var init = BS.DotnetParametersForm.initFunctions[commandName];
+            if (init) init();
         }
     };
 
