@@ -10,6 +10,8 @@
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
+    var commandId = BS.Util.escapeId('${params.commandKey}');
+
     BS.DotnetParametersForm = {
         appendProjectFile: [],
         coverageEnabled: [],
@@ -17,19 +19,20 @@
         hideWorkingDirectory: [],
         targetsAreRequired: [],
         selectProjectFile: function (chosenFile) {
-            var $paths = $j('#${params.pathsKey}');
+            var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
             var value = BS.Util.trimSpaces($paths.val());
-            var commandName = $j('#${params.commandKey}').val();
+
+            var commandName = $j(commandId).val();
             var appendFile = BS.DotnetParametersForm.appendProjectFile.indexOf(commandName) >= 0;
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
         },
         paths: [],
         updateElements: function () {
-            var commandName = $j('#${params.commandKey}').val();
+            var commandName = $j(commandId).val();
 
             var pathsName = BS.DotnetParametersForm.paths[commandName];
-            var pathsRow = $j("#${params.pathsKey}-row");
+            var pathsRow = $j(BS.Util.escapeId('${params.pathsKey}-row'));
             if (pathsName) {
                 pathsRow.show().find("label").text(pathsName + ':');
             } else {
@@ -39,23 +42,23 @@
             $j(".runnerFormTable span.error").empty();
 
             var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
-            $j('#logging').toggleClass('hidden', !!hideLogging);
+            $j(BS.Util.escapeId('logging')).toggleClass('hidden', !!hideLogging);
 
             var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
-            $j('#dotnet-coverage').toggleClass('hidden', !coverageEnabled);
+            $j(BS.Util.escapeId('dotnet-coverage')).toggleClass('hidden', !coverageEnabled);
 
-            $j('#dotnet-help').attr('href', 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-' + commandName);
+            $j(BS.Util.escapeId('dotnet-help')).attr('href', 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-' + commandName);
 
             var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
-            $j('#teamcity\\.build\\.workingDir').closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
+            $j(BS.Util.escapeId('teamcity.build.workingDir')).closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
         }
     };
 
-    $j(document).on('change', '#${params.commandKey}', function () {
+    $j(document).on('change', commandId, function () {
         BS.DotnetParametersForm.updateElements();
     });
 
-    $j(document).on('ready', '#${params.commandKey}', function () {
+    $j(document).on('ready', commandId, function () {
         BS.DotnetParametersForm.updateElements();
     });
 </script>
