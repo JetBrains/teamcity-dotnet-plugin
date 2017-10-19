@@ -27,6 +27,16 @@
         updateElements: function () {
             var commandName = $j('#${params.commandKey}').val();
 
+            var pathsName = BS.DotnetParametersForm.paths[commandName];
+            var pathsRow = $j("#${params.pathsKey}-row");
+            if (pathsName) {
+                pathsRow.show().find("label").text(pathsName + ':');
+            } else {
+                pathsRow.hide();
+            }
+
+            $j(".runnerFormTable span.error").empty();
+
             var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
             $j('#logging').toggleClass('hidden', hideLogging);
 
@@ -38,21 +48,11 @@
     };
 
     $j(document).on('change', '#${params.commandKey}', function () {
-        var command = $j(this).val();
-        var pathsName = BS.DotnetParametersForm.paths[command];
-        var pathsRow = $j("#${params.pathsKey}-row");
-        if (pathsName) {
-            pathsRow.show().find("label").text(pathsName + ':');
-        } else {
-            pathsRow.hide();
-        }
-
-        $j(".runnerFormTable span.error").empty();
         BS.DotnetParametersForm.updateElements();
     });
 
     $j(document).on('ready', '#${params.commandKey}', function () {
-        $j(this).change();
+        BS.DotnetParametersForm.updateElements();
     });
 </script>
 
