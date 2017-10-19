@@ -53,6 +53,22 @@
     </td>
 </tr>
 
+<c:if test="${not empty propertiesBean.properties[params.msbuildPlatformKey]}">
+    <tr class="advancedSetting">
+        <th class="noBorder"><label for="${params.msbuildPlatformKey}">Platform:</label></th>
+        <td>
+            <div class="position-relative">
+                <props:textProperty name="${params.msbuildPlatformKey}" className="longField"/>
+                <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                                targetFieldId="${params.msbuildPlatformKey}" popupTitle="Select platform"
+                                selectionMode="single"/>
+            </div>
+            <span class="error" id="error_${params.msbuildPlatformKey}"></span>
+            <span class="smallNote">Platform under which to build.</span>
+        </td>
+    </tr>
+</c:if>
+
 <tr class="advancedSetting">
     <th class="noBorder"><label for="${params.msbuildRuntimeKey}">Runtime:</label></th>
     <td>

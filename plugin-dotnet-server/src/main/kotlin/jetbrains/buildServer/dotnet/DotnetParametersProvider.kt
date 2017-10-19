@@ -179,6 +179,9 @@ class DotnetParametersProvider {
     val msbuildConfigKey: String
         get() = DotnetConstants.PARAM_MSBUILD_CONFIG
 
+    val msbuildPlatformKey: String
+        get() = DotnetConstants.PARAM_MSBUILD_PLATFORM
+
     val msbuildRuntimeKey: String
         get() = DotnetConstants.PARAM_MSBUILD_RUNTIME
 

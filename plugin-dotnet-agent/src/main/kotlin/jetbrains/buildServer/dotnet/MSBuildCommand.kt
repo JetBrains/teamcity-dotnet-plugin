@@ -35,6 +35,12 @@ class MSBuildCommand(
                 }
             }
 
+            parameters(DotnetConstants.PARAM_MSBUILD_PLATFORM)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("/p:Platform=$it"))
+                }
+            }
+
             parameters(DotnetConstants.PARAM_MSBUILD_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/p:RuntimeIdentifiers=$it"))
