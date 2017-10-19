@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.TargetType
@@ -9,6 +10,8 @@ import kotlin.coroutines.experimental.buildSequence
 
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
+        private val _loggerService: LoggerService,
+        private val _argumentsService: ArgumentsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _vstestLoggerEnvironment: VSTestLoggerEnvironment,
         private val _commandSet: CommandSet) : WorkflowComposer {
@@ -21,12 +24,18 @@ class DotnetWorkflowComposer(
             for (command in _commandSet.commands) {
                 val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
                 _vstestLoggerEnvironment.configure(targets).use {
-                    yield(CommandLine(
-                            TargetType.Tool,
-                            command.toolResolver.executableFile,
-                            _pathsService.getPath(PathType.WorkingDirectory),
-                            command.arguments.toList(),
-                            _defaultEnvironmentVariables.variables.toList()))
+                    val executableFile = command.toolResolver.executableFile
+                    val args = command.arguments.toList()
+                    var commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
+                    _loggerService.onStandardOutput(commandHeader)
+                    _loggerService.onBlock(command.commandType.name).use {
+                        yield(CommandLine(
+                                TargetType.Tool,
+                                executableFile,
+                                _pathsService.getPath(PathType.WorkingDirectory),
+                                args,
+                                _defaultEnvironmentVariables.variables.toList()))
+                    }
                 }
 
                 if (context.lastResult.isCompleted && !command.isSuccessfulExitCode(context.lastResult.exitCode)) {
