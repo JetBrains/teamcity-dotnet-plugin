@@ -10,6 +10,7 @@
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("restore");
     BS.DotnetParametersForm.paths["restore"] = "Projects";
+    BS.DotnetParametersForm.hideWorkingDirectory["restore"] = true;
 </script>
 
 <tr class="advancedSetting">

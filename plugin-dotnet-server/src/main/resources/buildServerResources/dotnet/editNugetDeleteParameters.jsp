@@ -7,6 +7,10 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
+<script type="text/javascript">
+    BS.DotnetParametersForm.hideWorkingDirectory["nuget-delete"] = true;
+</script>
+
 <tr>
     <th><label for="${params.nugetDeleteSourceKey}">NuGet Server: <l:star/></label></th>
     <td>

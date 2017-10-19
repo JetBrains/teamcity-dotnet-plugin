@@ -14,6 +14,7 @@
         appendProjectFile: [],
         coverageEnabled: [],
         hideLogging: [],
+        hideWorkingDirectory: [],
         targetsAreRequired: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j('#${params.pathsKey}');
@@ -38,12 +39,15 @@
             $j(".runnerFormTable span.error").empty();
 
             var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
-            $j('#logging').toggleClass('hidden', hideLogging);
+            $j('#logging').toggleClass('hidden', !!hideLogging);
 
             var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
             $j('#dotnet-coverage').toggleClass('hidden', !coverageEnabled);
 
             $j('#dotnet-help').attr('href', 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-' + commandName);
+
+            var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
+            $j('#teamcity\\.build\\.workingDir').closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
         }
     };
 
