@@ -5,12 +5,12 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <div class="parameter">
-    Packages: <props:displayValue name="${params.pathsKey}"/>
+    Source: <strong><props:displayValue name="${params.nugetPushSourceKey}"
+                                        emptyValue="Use default source"/></strong>
 </div>
 
 <div class="parameter">
-    Source: <strong><props:displayValue name="${params.nugetPushSourceKey}"
-                                        emptyValue="Use default source"/></strong>
+    Packages: <props:displayValue name="${params.pathsKey}"/>
 </div>
 
 <c:if test="${propertiesBean.properties[params.nugetPushNoSymbolsKey]}">

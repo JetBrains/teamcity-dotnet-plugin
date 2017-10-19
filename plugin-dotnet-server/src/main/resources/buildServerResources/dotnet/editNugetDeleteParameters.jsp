@@ -8,7 +8,16 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <tr>
-    <th><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
+    <th><label for="${params.nugetDeleteSourceKey}">NuGet Server: <l:star/></label></th>
+    <td>
+        <props:textProperty name="${params.nugetDeleteSourceKey}" className="longField"/>
+        <span class="error" id="error_${params.nugetDeleteSourceKey}"></span>
+        <span class="smallNote">Specify the server URL.</span>
+    </td>
+</tr>
+
+<tr>
+    <th class="noBorder"><label for="${params.nugetDeleteIdKey}">Package ID: <l:star/></label></th>
     <td>
         <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteIdKey}"></span>
@@ -21,16 +30,6 @@
     <td>
         <props:passwordProperty name="${params.nugetDeleteApiKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteApiKey}"></span>
-        <span class="smallNote">Specify the API key to access a NuGet packages feed.<br/>
-            For built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.</span>
-    </td>
-</tr>
-
-<tr>
-    <th><label for="${params.nugetDeleteSourceKey}">Source: <l:star/></label></th>
-    <td>
-        <props:textProperty name="${params.nugetDeleteSourceKey}" className="longField"/>
-        <span class="error" id="error_${params.nugetDeleteSourceKey}"></span>
-        <span class="smallNote">Specify the server URL.</span>
+        <span class="smallNote">Specify the API key to access a NuGet packages feed.</span>
     </td>
 </tr>
