@@ -52,10 +52,12 @@
     </td>
 </tr>
 
-<tr class="advancedSetting">
-    <th>Options:</th>
-    <td>
-        <props:checkboxProperty name="${params.testNoBuildKey}"/>
-        <label for="${params.testNoBuildKey}">Do not build project before testing</label>
-    </td>
-</tr>
+<c:if test="${not empty propertiesBean.properties[params.testNoBuildKey]}">
+    <tr class="advancedSetting">
+        <th>Options:</th>
+        <td>
+            <props:checkboxProperty name="${params.testNoBuildKey}"/>
+            <label for="${params.testNoBuildKey}">Do not build project before testing</label>
+        </td>
+    </tr>
+</c:if>
