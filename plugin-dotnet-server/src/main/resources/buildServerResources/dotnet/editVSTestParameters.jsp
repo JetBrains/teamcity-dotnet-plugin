@@ -27,16 +27,7 @@
 </c:if>
 
 <tr class="advancedSetting">
-    <th><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
-    <td>
-        <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
-        <span class="error" id="error_${params.vstestConfigFileKey}"></span>
-        <span class="smallNote">Path to run settings configuration file</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.vstestPlatformKey}">Target platform:</label></th>
+    <th><label for="${params.vstestPlatformKey}">Target platform:</label></th>
     <td>
         <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
         <span class="error" id="error_${params.vstestPlatformKey}"></span>
@@ -70,12 +61,23 @@
     </td>
 </tr>
 
-
 <tr class="advancedSetting">
-    <th><label for="${params.vstestInIsolationKey}">Run in isolation:</label></th>
+    <th><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
     <td>
-        <props:checkboxProperty name="${params.vstestInIsolationKey}"/>
-        <label for="${inIsolation}">Runs the tests in an isolated process</label>
-        <span class="error" id="error_${params.vstestInIsolationKey}"></span>
+        <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
+        <span class="error" id="error_${params.vstestConfigFileKey}"></span>
+        <span class="smallNote">Path to run settings configuration file</span>
     </td>
 </tr>
+
+<c:if test="${params.experimentalMode == true or
+    not empty propertiesBean.properties[params.vstestInIsolationKey]}">
+    <tr class="advancedSetting">
+        <th><label for="${params.vstestInIsolationKey}">Run in isolation:</label></th>
+        <td>
+            <props:checkboxProperty name="${params.vstestInIsolationKey}"/>
+            <label for="${params.vstestInIsolationKey}">Runs the tests in an isolated process</label>
+            <span class="error" id="error_${params.vstestInIsolationKey}"></span>
+        </td>
+    </tr>
+</c:if>
