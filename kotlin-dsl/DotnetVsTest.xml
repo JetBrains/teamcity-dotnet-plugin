@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'vstest'">
+    <class name="DotnetVsTestStep">
+        <description>
+            A [dotnet vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetVsTest">
+        <description>
+            Adds a [dotnet vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetVsTestStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="vstest"/>
+    </init>
+    <params>
+        <param name="dotnet-paths" dslName="assemblies">
+            <description>Specify test assemblies. Wildcards are supported.</description>
+        </param>
+        <param name="teamcity.build.workingDir" dslName="workingDir">
+            <description>
+                [Build working directory](https://confluence.jetbrains.com/display/TCDL/Build+Working+Directory) for
+                script,
+                specify it if it is different from the [checkout
+                directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="dotnet-vstest-filter-type" dslName="filterType" type="compound">
+            <description>
+                The filter type used while test run
+            </description>
+            <option name="testName" value="name">
+                <param name="dotnet-vstest-test-names" dslName="names">
+                    <description>Specify the list of test names.</description>
+                </param>
+            </option>
+            <option name="testCaseFilter" value="filter">
+                <param name="dotnet-vstest-test-case-filter" dslName="filter">
+                    <description>Specify the test case filter.</description>
+                </param>
+            </option>
+        </param>
+        <param name="dotnet-vstest-framework" dslName="framework">
+            <description>The target .NET Framework version to be used for test execution.</description>
+        </param>
+        <param name="dotnet-vstest-config-file" dslName="runConfigFile">
+            <description>The path to the run settings configuration file.</description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet vstest.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>

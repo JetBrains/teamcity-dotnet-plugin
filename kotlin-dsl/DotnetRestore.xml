@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'restore'">
+    <class name="DotnetRestoreStep">
+        <description>
+            A [dotnet restore step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetRestore">
+        <description>
+            Adds a [dotnet restore step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetRestoreStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="restore"/>
+    </init>
+    <params>
+        <param name="dotnet-paths" dslName="projects">
+            <description>Specify project or solutions. Wildcards are supported.</description>
+        </param>
+        <param name="dotnet-restore-source" dslName="sources">
+            <description>Specifies NuGet package sources to use during the restore.</description>
+        </param>
+        <param name="dotnet-restore-runtime" dslName="runtime">
+            <description>Target runtime to restore packages.</description>
+        </param>
+        <param name="dotnet-restore-packages" dslName="packagesDir">
+            <description>The directory to restore packages.</description>
+        </param>
+        <param name="dotnet-restore-config" dslName="configFile">
+            <description>The NuGet configuration file to use.</description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet restore.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>

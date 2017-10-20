@@ -12,6 +12,10 @@ teamcity {
       into('server') {
         from('tools')
       }
+
+      into('kotlin-dsl') {
+        from("${rootProject.projectDir}/kotlin-dsl")
+      }
     }
   }
 }

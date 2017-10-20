@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'nuget-push'">
+    <class name="DotnetNugetPushStep">
+        <description>
+            A [dotnet nuget push step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetNugetPush">
+        <description>
+            Adds a [dotnet nuget push step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetNugetPushStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="nuget-push"/>
+    </init>
+    <params>
+        <param name="dotnet-paths" dslName="packages" mandatory="true">
+            <description>Specify target NuGet packages. Wildcards are supported.</description>
+        </param>
+        <param name="dotnet-nuget-push-source" dslName="serverUrl" mandatory="true">
+            <description>
+                Specify the server URL. For the built-in TeamCity NuGet server use %teamcity.nuget.feed.server%.
+            </description>
+        </param>
+        <param name="secure:dotnet-nuget-push-api-key" dslName="apiKey" mandatory="true">
+            <description>
+                Specify the API key to access the NuGet packages feed.
+                For the built-in TeamCity NuGet server use %teamcity.nuget.feed.api.key%.
+            </description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet nuget push.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>

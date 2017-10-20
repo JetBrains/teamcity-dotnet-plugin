@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'test'">
+    <class name="DotnetTestStep">
+        <description>
+            A [dotnet test step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetTest">
+        <description>
+            Adds a [dotnet test step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetTestStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="test"/>
+    </init>
+    <params>
+        <param name="dotnet-paths" dslName="projects">
+            <description>Specify project or solutions. Wildcards are supported.</description>
+        </param>
+        <param name="teamcity.build.workingDir" dslName="workingDir">
+            <description>
+                [Build working directory](https://confluence.jetbrains.com/display/TCDL/Build+Working+Directory) for
+                script,
+                specify it if it is different from the [checkout
+                directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="dotnet-test-framework" dslName="framework">
+            <description>Target framework to test for.</description>
+        </param>
+        <param name="dotnet-test-config" dslName="configuration">
+            <description>Target configuration to test for.</description>
+        </param>
+        <param name="dotnet-test-output" dslName="outputDir">
+            <description>The directory where to find the binaries to be run.</description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet test.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>

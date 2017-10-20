@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'nuget-delete'">
+    <class name="DotnetNugetDeleteStep">
+        <description>
+            A [dotnet nuget delete step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetNugetDelete">
+        <description>
+            Adds a [dotnet nuget delete step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetNugetDeleteStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="nuget-delete"/>
+    </init>
+    <params>
+        <param name="dotnet-nuget-delete-source" dslName="serverUrl" mandatory="true">
+            <description>Specify the server URL.</description>
+        </param>
+        <param name="dotnet-nuget-delete-id" dslName="packageId" mandatory="true">
+            <description>Specify the package id and version separated by a space.</description>
+        </param>
+        <param name="secure:dotnet-nuget-delete-api-key" dslName="apiKey" mandatory="true">
+            <description>Specify the API key to access the NuGet packages feed.</description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet nuget delete.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>

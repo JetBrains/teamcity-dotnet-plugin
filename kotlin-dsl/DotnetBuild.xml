@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License").
+  ~  See LICENSE in the project root for license information.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'build'">
+    <class name="DotnetBuildStep">
+        <description>
+            A [dotnet build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+        </description>
+    </class>
+    <function name="dotnetBuild">
+        <description>
+            Adds a [dotnet build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            @see DotnetBuildStep
+        </description>
+    </function>
+    <init>
+        <param name="dotnet-command" value="build"/>
+    </init>
+    <params>
+        <param name="dotnet-paths" dslName="projects">
+            <description>Specify project or solutions. Wildcards are supported.</description>
+        </param>
+        <param name="teamcity.build.workingDir" dslName="workingDir">
+            <description>
+                [Build working directory](https://confluence.jetbrains.com/display/TCDL/Build+Working+Directory) for
+                script,
+                specify it if it is different from the [checkout
+                directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="dotnet-build-framework" dslName="framework">
+            <description>Target framework to build for.</description>
+        </param>
+        <param name="dotnet-build-config" dslName="configuration">
+            <description>Target configuration to build for.</description>
+        </param>
+        <param name="dotnet-build-runtime" dslName="runtime">
+            <description>Target runtime to build for.</description>
+        </param>
+        <param name="dotnet-build-output" dslName="outputDir">
+            <description>The directory where to place outputs.</description>
+        </param>
+        <param name="dotnet-build-version-suffix" dslName="versionSuffix">
+            <description>Defines the value for the $(VersionSuffix) property in the project.</description>
+        </param>
+        <param name="dotnet-args" dslName="args">
+            <description>Enter additional command line parameters for dotnet build.</description>
+        </param>
+        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+            <description>
+                Specify logging verbosity
+                @see Verbosity
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Verbosity">
+            <description>
+                Logging verbosity
+            </description>
+            <option name="Quiet" value="Quiet"/>
+            <option name="Minimal" value="Minimal"/>
+            <option name="Normal" value="Normal"/>
+            <option name="Detailed" value="Detailed"/>
+            <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+    </types>
+</dsl-extension>
