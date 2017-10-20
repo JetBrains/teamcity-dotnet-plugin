@@ -4,7 +4,7 @@
 
 The TeamCity .NET plugin provides support for [.NET CLI](https://www.microsoft.com/net/download/core) in TeamCity.
 
-It simplifies building windows and cross-platform applications that use .NET frameworks and libraries.
+It simplifies building Windows and cross-platform applications that use .NET frameworks and libraries.
 
 # Features
 
@@ -12,13 +12,13 @@ The plugin provides the following features for .NET project building:
 * `.NET CLI (dotnet)` build runner
 * .NET CLI & .NET Core SDK detection on TeamCity build agents
 * Auto-discovery of build steps
-* On-fly test reporting
+* On-the-fly test reporting
 * Supports code coverage tools
-* Cleanup of nuget caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
+* Cleanup of NuGet caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
  
 # Download
 
-You can [download plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
+You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins).
 
 # Compatibility
 
@@ -30,7 +30,7 @@ The current version of plugin is compatible with [TeamCity 2017.1+](https://www.
 
 To use the `dotnet` build runner, install [.NET CLI](https://www.microsoft.com/net/core) and add the .NET CLI tools path to the `PATH` environment variable.
 
-Also, you can configure the `DOTNET_HOME` environment variable for your TeamCity build agent user, for instance:
+You can also configure the `DOTNET_HOME` environment variable for your TeamCity build agent user, for instance:
 
 ```
 DOTNET_HOME=C:\Program Files\dotnet\
