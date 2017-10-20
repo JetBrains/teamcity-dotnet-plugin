@@ -43,24 +43,6 @@
 </c:if>
 
 <tr class="advancedSetting">
-    <th><label for="${params.vstestPlatformKey}">Target platform:</label></th>
-    <td>
-        <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
-        <span class="error" id="error_${params.vstestPlatformKey}"></span>
-        <span class="smallNote">The target platform architecture to be used for test execution</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
-    <th class="noBorder"><label for="${params.vstestFrameworkKey}">Framework:</label></th>
-    <td>
-        <props:textProperty name="${params.vstestFrameworkKey}" className="longField" />
-        <span class="error" id="error_${params.vstestFrameworkKey}"></span>
-        <span class="smallNote">The target .NET Framework version to be used for test execution</span>
-    </td>
-</tr>
-
-<tr class="advancedSetting">
     <th>
         <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="name"
                                    checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'name' or
@@ -74,7 +56,7 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th>
+    <th class="noBorder">
         <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="filter"
                                    checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'filter' or
                                    not empty propertiesBean.properties[params.vstestTestCaseFilterKey]}"/>
@@ -83,6 +65,27 @@
     <td>
         <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
         <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>
+    </td>
+</tr>
+
+<c:if test="${params.experimentalMode == true or
+    not empty propertiesBean.properties[params.vstestPlatformKey]}">
+    <tr class="advancedSetting">
+        <th><label for="${params.vstestPlatformKey}">Target platform:</label></th>
+        <td>
+            <props:textProperty name="${params.vstestPlatformKey}" className="longField"/>
+            <span class="error" id="error_${params.vstestPlatformKey}"></span>
+            <span class="smallNote">The target platform architecture to be used for test execution</span>
+        </td>
+    </tr>
+</c:if>
+
+<tr class="advancedSetting">
+    <th><label for="${params.vstestFrameworkKey}">Framework:</label></th>
+    <td>
+        <props:textProperty name="${params.vstestFrameworkKey}" className="longField" />
+        <span class="error" id="error_${params.vstestFrameworkKey}"></span>
+        <span class="smallNote">The target .NET Framework version to be used for test execution</span>
     </td>
 </tr>
 

@@ -75,9 +75,10 @@ object DotnetConstants {
     const val PARAM_NUGET_PUSH_SOURCE = "dotnet-nuget-push-source"
     const val PARAM_NUGET_PUSH_NO_BUFFER = "dotnet-nuget-push-no-buffer"
     const val PARAM_NUGET_PUSH_NO_SYMBOLS = "dotnet-nuget-push-no-symbols"
+
     const val PARAM_NUGET_DELETE_ID = "dotnet-nuget-delete-id"
     const val PARAM_NUGET_DELETE_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "dotnet-nuget-delete-api-key"
-    const val PARAM_NUGET_DELETE_SOURCE = "dotnet-nuget-push-source"
+    const val PARAM_NUGET_DELETE_SOURCE = "dotnet-nuget-delete-source"
 
     const val PARAM_CLEAN_FRAMEWORK = "dotnet-clean-framework"
     const val PARAM_CLEAN_CONFIG = "dotnet-clean-config"
