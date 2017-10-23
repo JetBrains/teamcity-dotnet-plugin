@@ -15,7 +15,7 @@ class VSTestCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("vstestlog", "customArg1")),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_VSTEST_CONFIG_FILE to "myconfig.txt",
+                        DotnetConstants.PARAM_VSTEST_SETTINGS_FILE to "myconfig.txt",
                         DotnetConstants.PARAM_VSTEST_TEST_NAMES to "abc,zxy",
                         DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "TrUe",
                         DotnetConstants.PARAM_VSTEST_PLATFORM to "x86",

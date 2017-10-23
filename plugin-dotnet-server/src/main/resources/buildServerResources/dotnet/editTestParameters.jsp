@@ -13,6 +13,17 @@
 </script>
 
 <tr class="advancedSetting">
+    <th>
+        <label for="${params.testTestCaseFilterKey}">Test case filter:</label>
+    </th>
+    <td>
+        <props:textProperty name="${params.testTestCaseFilterKey}" className="longField" />
+        <span class="error" id="error_${params.testTestCaseFilterKey}"></span>
+        <span class="smallNote">Run tests that match the given expression.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
     <th><label for="${params.testFrameworkKey}">Framework:</label></th>
     <td>
         <div class="position-relative">
@@ -52,12 +63,22 @@
     </td>
 </tr>
 
-<c:if test="${not empty propertiesBean.properties[params.testNoBuildKey]}">
-    <tr class="advancedSetting">
-        <th>Options:</th>
-        <td>
-            <props:checkboxProperty name="${params.testNoBuildKey}"/>
-            <label for="${params.testNoBuildKey}">Do not build the project before testing</label>
-        </td>
-    </tr>
-</c:if>
+<tr class="advancedSetting">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.testNoBuildKey}"/>
+        <label for="${params.testNoBuildKey}">Do not build the project before testing</label>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
+    <th><label for="${params.testSettingsFileKey}">Settings file:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.testSettingsFileKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.testSettingsFileKey}"/>
+        </div>
+        <span class="error" id="error_${params.testSettingsFileKey}"></span>
+        <span class="smallNote">The path to the run settings configuration file.</span>
+    </td>
+</tr>

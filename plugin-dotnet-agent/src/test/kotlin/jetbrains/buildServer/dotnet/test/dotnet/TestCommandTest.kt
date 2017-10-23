@@ -21,7 +21,9 @@ class TestCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
                         listOf("--no-build", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
-                        listOf("--output", "out", "customArg1")))
+                        listOf("--output", "out", "customArg1")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_TEST_CASE_FILTER, "filter")),
+                        listOf("--filter", "filter", "customArg1")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")

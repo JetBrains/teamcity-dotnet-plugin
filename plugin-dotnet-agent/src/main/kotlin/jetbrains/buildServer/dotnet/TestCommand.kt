@@ -29,6 +29,13 @@ class TestCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
+            parameters(DotnetConstants.PARAM_TEST_TEST_CASE_FILTER)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--filter"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
             parameters(DotnetConstants.PARAM_TEST_FRAMEWORK)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--framework"))

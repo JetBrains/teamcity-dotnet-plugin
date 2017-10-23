@@ -3,9 +3,15 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.vstestConfigFileKey]}">
+<c:if test="${not empty propertiesBean.properties[params.vstestTestNamesKey]}">
     <div class="parameter">
-        Run configuration file: <props:displayValue name="${params.vstestConfigFileKey}"/>
+        Test names: <props:displayValue name="${params.vstestTestNamesKey}"/>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.vstestTestCaseFilterKey]}">
+    <div class="parameter">
+        Test case filter: <props:displayValue name="${params.vstestTestCaseFilterKey}"/>
     </div>
 </c:if>
 
@@ -21,20 +27,14 @@
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.vstestTestNamesKey]}">
-    <div class="parameter">
-        Test names: <props:displayValue name="${params.vstestTestNamesKey}"/>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.vstestTestCaseFilterKey]}">
-    <div class="parameter">
-        Test case filter: <props:displayValue name="${params.vstestTestCaseFilterKey}"/>
-    </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.vstestInIsolationKey]}">
     <div class="parameter">
-        Run in isolation: <props:displayValue name="${params.vstestInIsolationKey}"/>
+        Run in isolation: <strong>ON</strong>
+    </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.vstestSettingsFileKey]}">
+    <div class="parameter">
+        Settings file: <props:displayValue name="${params.vstestSettingsFileKey}"/>
     </div>
 </c:if>

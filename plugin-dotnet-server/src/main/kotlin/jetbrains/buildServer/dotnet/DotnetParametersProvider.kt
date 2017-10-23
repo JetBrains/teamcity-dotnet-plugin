@@ -107,6 +107,9 @@ class DotnetParametersProvider {
     val packServiceableKey: String
         get() = DotnetConstants.PARAM_PACK_SERVICEABLE
 
+    val testTestCaseFilterKey: String
+        get() = DotnetConstants.PARAM_TEST_TEST_CASE_FILTER
+
     val testFrameworkKey: String
         get() = DotnetConstants.PARAM_TEST_FRAMEWORK
 
@@ -118,6 +121,9 @@ class DotnetParametersProvider {
 
     val testNoBuildKey: String
         get() = DotnetConstants.PARAM_TEST_NO_BUILD
+
+    val testSettingsFileKey: String
+        get() = DotnetConstants.PARAM_TEST_SETTINGS_FILE
 
     val runFrameworkKey: String
         get() = DotnetConstants.PARAM_RUN_FRAMEWORK
@@ -191,8 +197,8 @@ class DotnetParametersProvider {
     val vstestVersions: List<Tool>
         get() = Tool.values().filter { it.type == ToolType.VSTest }
 
-    val vstestConfigFileKey: String
-        get() = DotnetConstants.PARAM_VSTEST_CONFIG_FILE
+    val vstestSettingsFileKey: String
+        get() = DotnetConstants.PARAM_VSTEST_SETTINGS_FILE
 
     val vstestPlatformKey: String
         get() = DotnetConstants.PARAM_VSTEST_PLATFORM

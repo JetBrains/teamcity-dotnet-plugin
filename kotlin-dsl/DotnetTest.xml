@@ -33,6 +33,9 @@
                 directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
             </description>
         </param>
+        <param name="dotnet-test-test-case-filter" dslName="filter">
+            <description>Specify the test case filter.</description>
+        </param>
         <param name="dotnet-test-framework" dslName="framework">
             <description>Target framework to test for.</description>
         </param>
@@ -41,6 +44,12 @@
         </param>
         <param name="dotnet-test-output" dslName="outputDir">
             <description>The directory where to find the binaries to be run.</description>
+        </param>
+        <param name="dotnet-test-no-build" dslName="noBuild" type="boolean" trueValue="true" falseValue="">
+            <description>Do not build the project before testing</description>
+        </param>
+        <param name="dotnet-test-settings-file" dslName="settingsFile">
+            <description>Run tests that match the given expression.</description>
         </param>
         <param name="dotnet-args" dslName="args">
             <description>Enter additional command line parameters for dotnet test.</description>

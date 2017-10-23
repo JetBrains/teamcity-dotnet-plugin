@@ -63,10 +63,12 @@ object DotnetConstants {
     const val PARAM_PACK_NO_BUILD = "dotnet-pack-no-build"
     const val PARAM_PACK_SERVICEABLE = "dotnet-pack-serviceable"
 
+    const val PARAM_TEST_TEST_CASE_FILTER = "dotnet-test-test-case-filter"
     const val PARAM_TEST_FRAMEWORK = "dotnet-test-framework"
     const val PARAM_TEST_CONFIG = "dotnet-test-config"
     const val PARAM_TEST_OUTPUT = "dotnet-test-output"
     const val PARAM_TEST_NO_BUILD = "dotnet-test-no-build"
+    const val PARAM_TEST_SETTINGS_FILE = "dotnet-test-settings-file"
 
     const val PARAM_RUN_FRAMEWORK = "dotnet-run-framework"
     const val PARAM_RUN_CONFIG = "dotnet-run-config"
@@ -92,7 +94,7 @@ object DotnetConstants {
     const val PARAM_MSBUILD_RUNTIME = "dotnet-msbuild-runtime"
 
     const val PARAM_VSTEST_VERSION = "dotnet-vstest-version"
-    const val PARAM_VSTEST_CONFIG_FILE = "dotnet-vstest-config-file"
+    const val PARAM_VSTEST_SETTINGS_FILE = "dotnet-vstest-config-file"
     const val PARAM_VSTEST_PLATFORM = "dotnet-vstest-platform"
     const val PARAM_VSTEST_FRAMEWORK = "dotnet-vstest-framework"
     const val PARAM_VSTEST_FILTER_TYPE = "dotnet-vstest-filter-type"

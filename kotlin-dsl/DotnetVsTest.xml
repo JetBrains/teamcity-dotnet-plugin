@@ -39,19 +39,19 @@
             </description>
             <option name="testName" value="name">
                 <param name="dotnet-vstest-test-names" dslName="names">
-                    <description>Specify the list of test names.</description>
+                    <description>Specify the list of test names to run.</description>
                 </param>
             </option>
             <option name="testCaseFilter" value="filter">
                 <param name="dotnet-vstest-test-case-filter" dslName="filter">
-                    <description>Specify the test case filter.</description>
+                    <description>Run tests that match the given expression.</description>
                 </param>
             </option>
         </param>
         <param name="dotnet-vstest-framework" dslName="framework">
             <description>The target .NET Framework version to be used for test execution.</description>
         </param>
-        <param name="dotnet-vstest-config-file" dslName="runConfigFile">
+        <param name="dotnet-vstest-config-file" dslName="settingsFile">
             <description>The path to the run settings configuration file.</description>
         </param>
         <param name="dotnet-args" dslName="args">

@@ -65,6 +65,7 @@
     <td>
         <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
         <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>
+        <span class="smallNote">Run tests that match the given expression.</span>
     </td>
 </tr>
 
@@ -90,10 +91,14 @@
 </tr>
 
 <tr class="advancedSetting">
-    <th><label for="${params.vstestConfigFileKey}">Run configuration file:</label></th>
+    <th><label for="${params.vstestSettingsFileKey}">Settings file:</label></th>
     <td>
-        <props:textProperty name="${params.vstestConfigFileKey}" className="longField"/>
-        <span class="error" id="error_${params.vstestConfigFileKey}"></span>
+        <div class="position-relative">
+            <props:textProperty name="${params.vstestSettingsFileKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.vstestSettingsFileKey}"/>
+        </div>
+
+        <span class="error" id="error_${params.vstestSettingsFileKey}"></span>
         <span class="smallNote">The path to the run settings configuration file</span>
     </td>
 </tr>

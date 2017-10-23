@@ -24,7 +24,7 @@ class VSTestCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_VSTEST_CONFIG_FILE)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_VSTEST_SETTINGS_FILE)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/Settings:$it"))
                 }
