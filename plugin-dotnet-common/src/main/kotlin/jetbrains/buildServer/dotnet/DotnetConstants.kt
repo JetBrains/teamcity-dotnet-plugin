@@ -15,7 +15,7 @@ import jetbrains.buildServer.agent.Constants
 object DotnetConstants {
     const val RUNNER_TYPE = "dotnet"
     const val RUNNER_DISPLAY_NAME = ".NET CLI (dotnet)"
-    const val RUNNER_DESCRIPTION = "Provides build tools for .NET CLI projects"
+    const val RUNNER_DESCRIPTION = "Provides .NET CLI toolchain support for .NET projects"
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
