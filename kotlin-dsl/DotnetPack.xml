@@ -42,6 +42,9 @@
         <param name="dotnet-pack-version-suffix" dslName="versionSuffix">
             <description>Defines the value for the $(VersionSuffix) property in the project.</description>
         </param>
+        <param name="dotnet-pack-no-build" dslName="noBuild" type="boolean" trueValue="true" falseValue="">
+            <description>Do not build the project before packing</description>
+        </param>
         <param name="dotnet-args" dslName="args">
             <description>Enter additional command line parameters for dotnet pack.</description>
         </param>

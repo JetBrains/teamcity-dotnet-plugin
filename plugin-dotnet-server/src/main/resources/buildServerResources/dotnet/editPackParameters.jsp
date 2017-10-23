@@ -45,15 +45,15 @@
     </td>
 </tr>
 
-<c:if test="${not empty propertiesBean.properties[params.packNoBuildKey] or
-    not empty propertiesBean.properties[params.packServiceableKey]}">
-    <tr class="advancedSetting">
-        <th>Options:</th>
-        <td>
-            <props:checkboxProperty name="${params.packNoBuildKey}"/>
-            <label for="${params.packNoBuildKey}">Do not the build project before packing</label><br/>
+<tr class="advancedSetting">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.packNoBuildKey}"/>
+        <label for="${params.packNoBuildKey}">Do not build the project before packing</label>
+        <c:if test="${not empty propertiesBean.properties[params.packServiceableKey]}">
+            <br/>
             <props:checkboxProperty name="${params.packServiceableKey}"/>
             <label for="${params.packServiceableKey}">Set the serviceable flag in the package</label>
-        </td>
-    </tr>
-</c:if>
+        </c:if>
+    </td>
+</tr>
