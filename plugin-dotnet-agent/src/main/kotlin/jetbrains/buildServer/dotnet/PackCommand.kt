@@ -36,6 +36,13 @@ class PackCommand(
                 }
             }
 
+            parameters(DotnetConstants.PARAM_PACK_RUNTIME)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--runtime"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
             parameters(DotnetConstants.PARAM_PACK_OUTPUT)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--output"))

@@ -95,6 +95,9 @@ class DotnetParametersProvider {
     val packConfigKey: String
         get() = DotnetConstants.PARAM_PACK_CONFIG
 
+    val packRuntimeKey: String
+        get() = DotnetConstants.PARAM_PACK_RUNTIME
+
     val packOutputKey: String
         get() = DotnetConstants.PARAM_PACK_OUTPUT
 

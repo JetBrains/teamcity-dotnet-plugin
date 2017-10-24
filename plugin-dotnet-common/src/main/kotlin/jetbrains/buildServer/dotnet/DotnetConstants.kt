@@ -58,6 +58,7 @@ object DotnetConstants {
     const val PARAM_PUBLISH_VERSION_SUFFIX = "dotnet-publish-version-suffix"
 
     const val PARAM_PACK_CONFIG = "dotnet-pack-config"
+    const val PARAM_PACK_RUNTIME = "dotnet-pack-runtime"
     const val PARAM_PACK_OUTPUT = "dotnet-pack-output"
     const val PARAM_PACK_VERSION_SUFFIX = "dotnet-pack-version-suffix"
     const val PARAM_PACK_NO_BUILD = "dotnet-pack-no-build"

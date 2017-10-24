@@ -18,7 +18,10 @@ class PackCommandTest {
                         listOf("--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_PACK_OUTPUT, "output/")),
-                        listOf("--output", "output/", "customArg1")))
+                        listOf("--output", "output/", "customArg1")),
+                arrayOf(mapOf(
+                        Pair(DotnetConstants.PARAM_PACK_RUNTIME, "win")),
+                        listOf("--runtime", "win", "customArg1")))
     }
 
     @Test(dataProvider = "testPackArgumentsData")

@@ -25,6 +25,20 @@
 </tr>
 
 <tr class="advancedSetting">
+    <th class="noBorder"><label for="${params.packRuntimeKey}">Runtime:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.packRuntimeKey}" className="longField"/>
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.packRuntimeKey}" popupTitle="Select runtime"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.packRuntimeKey}"></span>
+        <span class="smallNote">Target runtime to pack for.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting">
     <th class="noBorder"><label for="${params.packOutputKey}">Output directory:</label></th>
     <td>
         <div class="position-relative">
