@@ -28,8 +28,8 @@ class DotCoverCoverageType : CommandType() {
         }
     }
 
-    override fun getRequirements(runParameters: Map<String, String>) = buildSequence {
-        yieldAll(super.getRequirements(runParameters))
+    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+        yieldAll(super.getRequirements(parameters))
         yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
     }
 }

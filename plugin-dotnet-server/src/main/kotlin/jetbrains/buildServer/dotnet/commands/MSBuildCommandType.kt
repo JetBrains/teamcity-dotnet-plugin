@@ -19,11 +19,11 @@ class MSBuildCommandType : CommandType() {
     override val viewPage: String
         get() = "viewMSBuildParameters.jsp"
 
-    override fun getRequirements(runParameters: Map<String, String>) = buildSequence {
+    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         var shouldBeWindows = false
         var hasRequirement = false
 
-        runParameters[DotnetConstants.PARAM_MSBUILD_VERSION]?.let {
+        parameters[DotnetConstants.PARAM_MSBUILD_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.MSBuild) {
                     @Suppress("NON_EXHAUSTIVE_WHEN")

@@ -30,9 +30,9 @@ class VisualStudioCommandType : CommandType() {
         }
     }
 
-    override fun getRequirements(runParameters: Map<String, String>) = buildSequence {
+    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         var hasRequirements = false
-        runParameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
+        parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.VisualStudio) {
                     yield(Requirement("VS${it.version}_Path", null, RequirementType.EXISTS))
