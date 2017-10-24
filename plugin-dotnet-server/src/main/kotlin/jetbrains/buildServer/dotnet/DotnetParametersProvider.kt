@@ -131,6 +131,9 @@ class DotnetParametersProvider {
     val runFrameworkKey: String
         get() = DotnetConstants.PARAM_RUN_FRAMEWORK
 
+    val runRuntimeKey: String
+        get() = DotnetConstants.PARAM_RUN_RUNTIME
+
     val runConfigKey: String
         get() = DotnetConstants.PARAM_RUN_CONFIG
 

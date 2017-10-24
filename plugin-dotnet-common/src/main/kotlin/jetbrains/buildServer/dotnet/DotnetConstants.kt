@@ -73,6 +73,7 @@ object DotnetConstants {
 
     const val PARAM_RUN_FRAMEWORK = "dotnet-run-framework"
     const val PARAM_RUN_CONFIG = "dotnet-run-config"
+    const val PARAM_RUN_RUNTIME = "dotnet-run-runtime"
 
     const val PARAM_NUGET_PUSH_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "dotnet-nuget-push-api-key"
     const val PARAM_NUGET_PUSH_SOURCE = "dotnet-nuget-push-source"

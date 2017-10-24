@@ -45,6 +45,13 @@ class RunCommand(
                 }
             }
 
+            parameters(DotnetConstants.PARAM_RUN_RUNTIME)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--runtime"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
             yieldAll(_commonArgumentsProvider.arguments)
         }
 

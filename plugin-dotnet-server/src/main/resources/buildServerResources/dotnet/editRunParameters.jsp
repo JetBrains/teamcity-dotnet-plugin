@@ -38,3 +38,17 @@
         <span class="smallNote">Configuration under which to build.</span>
     </td>
 </tr>
+
+<tr class="advancedSetting">
+    <th class="noBorder"><label for="${params.runRuntimeKey}">Runtime:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.runRuntimeKey}" className="longField"/>
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.runRuntimeKey}" popupTitle="Select runtime"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.runRuntimeKey}"></span>
+        <span class="smallNote">Target runtime to run for.</span>
+    </td>
+</tr>

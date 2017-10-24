@@ -18,7 +18,10 @@ class RunCommandTest {
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_RUN_FRAMEWORK to "dotcore",
                         DotnetConstants.PARAM_RUN_CONFIG to "Release"),
-                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")))
+                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
+                arrayOf(mapOf(
+                        Pair(DotnetConstants.PARAM_RUN_RUNTIME, "win")),
+                        listOf("--runtime", "win", "customArg1")))
     }
 
     @Test(dataProvider = "testRunArgumentsData")
