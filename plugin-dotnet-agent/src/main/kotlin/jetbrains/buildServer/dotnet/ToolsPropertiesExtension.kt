@@ -34,7 +34,7 @@ class ToolsPropertiesExtension(
         }
 
         for (integrationPackage in packages) {
-            LOG.info("Found .NET integration package at \"${integrationPackage.absolutePath}\"")
+            LOG.debug("Found .NET integration package at \"${integrationPackage.absolutePath}\"")
         }
     }
 
