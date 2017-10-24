@@ -29,16 +29,22 @@ class NugetPushCommandType : DotnetType() {
         get() = "viewNugetPushParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
-        if (properties[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
-            yield(InvalidProperty(DotnetConstants.PARAM_PATHS, "Specify packages"))
+        DotnetConstants.PARAM_PATHS.let {
+            if (properties[it].isNullOrBlank()) {
+                yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+            }
         }
 
-        if (properties[DotnetConstants.PARAM_NUGET_PUSH_SOURCE].isNullOrBlank()) {
-            yield(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_SOURCE, DotnetConstants.VALIDATION_EMPTY))
+        DotnetConstants.PARAM_NUGET_PUSH_SOURCE.let {
+            if (properties[it].isNullOrBlank()) {
+                yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+            }
         }
 
-        if (properties[DotnetConstants.PARAM_NUGET_PUSH_API_KEY].isNullOrBlank()) {
-            yield(InvalidProperty(DotnetConstants.PARAM_NUGET_DELETE_API_KEY, DotnetConstants.VALIDATION_EMPTY))
+        DotnetConstants.PARAM_NUGET_PUSH_API_KEY.let {
+            if (properties[it].isNullOrBlank()) {
+                yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+            }
         }
     }
 }

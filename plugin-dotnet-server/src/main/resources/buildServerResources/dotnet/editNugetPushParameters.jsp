@@ -8,6 +8,7 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["nuget-push"] = "NuGet Packages";
+    BS.DotnetParametersForm.mandatoryPaths["nuget-push"] = true;
     BS.DotnetParametersForm.hideWorkingDirectory["nuget-push"] = true;
 </script>
 

@@ -7,7 +7,7 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<c:set var="asterisk"> <l:star/></c:set>
+<c:set var="asterisk"><l:star/></c:set>
 
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
@@ -40,7 +40,7 @@
                 var label = pathsRow.show().find("label");
                 label.text(pathsName + ':');
                 if (BS.DotnetParametersForm.mandatoryPaths[commandName]) {
-                    label.append('${asterisk}');
+                    label.append(' ').append('${asterisk}');
                 }
             } else {
                 pathsRow.hide();
