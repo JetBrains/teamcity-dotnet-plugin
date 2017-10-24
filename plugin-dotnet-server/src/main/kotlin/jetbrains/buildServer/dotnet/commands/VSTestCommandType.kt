@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
+import jetbrains.buildServer.serverSide.InvalidProperty
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -42,6 +43,15 @@ class VSTestCommandType : CommandType() {
 
         if (shouldBeWindows) {
             yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
+        }
+    }
+
+    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+        yieldAll(super.validateProperties(properties))
+        DotnetConstants.PARAM_PATHS.let {
+            if (properties[it].isNullOrBlank()) {
+                yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+            }
         }
     }
 }

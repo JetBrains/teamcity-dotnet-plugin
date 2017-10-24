@@ -3,28 +3,18 @@
 <%@ taglib prefix="l" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="util" uri="/WEB-INF/functions/util" %>
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
+<c:set var="filterBlockId" value="${util:forJSIdentifier(params.vstestFilterTypeKey)}_Block_js"/>
 
 <script type="text/javascript">
     BS.DotnetParametersForm.paths["vstest"] = "Test assemblies";
+    BS.DotnetParametersForm.mandatoryPaths["vstest"] = true;
     BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
-
-    var testFilterSelector = 'input[type=radio][name="prop:${params.vstestFilterTypeKey}"]';
-    function updateElements(value) {
-        $j(BS.Util.escapeId('${params.vstestTestNamesKey}')).prop('disabled', value !== 'name');
-        $j(BS.Util.escapeId('${params.vstestTestCaseFilterKey}')).prop('disabled', value !== 'filter');
-    }
     BS.DotnetParametersForm.initFunctions["vstest"] = function () {
-        var $testFilterSelector = $j(testFilterSelector);
-        var value = $testFilterSelector.filter(':checked').val() || 'name';
-
-        $testFilterSelector.filter('input[value=' + value + ']').prop('checked', true);
-        updateElements(value)
+        BS.SelectSectionProperty_${filterBlockId}.onRendered();
     };
-    $j(document).on('change', testFilterSelector, function () {
-        updateElements(this.value);
-    });
 </script>
 
 <c:if test="${params.experimentalMode == true}">
@@ -42,32 +32,36 @@
     </tr>
 </c:if>
 
-<tr class="advancedSetting">
-    <th>
-        <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="name"
-                                   checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'name' or
-                                   not empty propertiesBean.properties[params.vstestTestNamesKey]}"/>
-        <label for="${params.vstestTestNamesKey}">Test names:</label>
-    </th>
-    <td>
-        <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
-                                 rows="3" cols="49" linkTitle="Edit test names"/>
-    </td>
-</tr>
+<props:selectSectionProperty name="${params.vstestFilterTypeKey}" title="Tests filtration:">
+    <props:selectSectionPropertyContent value="" caption="<Disabled>">
+    </props:selectSectionPropertyContent>
 
-<tr class="advancedSetting">
-    <th class="noBorder">
-        <props:radioButtonProperty name="${params.vstestFilterTypeKey}" value="filter"
-                                   checked="${propertiesBean.properties[params.vstestFilterTypeKey] == 'filter' or
-                                   not empty propertiesBean.properties[params.vstestTestCaseFilterKey]}"/>
-        <label for="${params.vstestTestCaseFilterKey}">Test case filter:</label>
-    </th>
-    <td>
-        <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
-        <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>
-        <span class="smallNote">Run tests that match the given expression.</span>
-    </td>
-</tr>
+    <props:selectSectionPropertyContent value="name" caption="Test names">
+        <tr class="advancedSetting">
+            <th class="noBorder">
+                <label for="${params.vstestTestNamesKey}">Test names:</label>
+            </th>
+            <td>
+                <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
+                                         rows="3" cols="49" linkTitle="Edit test names"
+                                         note="Run tests with names that match the provided values." />
+            </td>
+        </tr>
+    </props:selectSectionPropertyContent>
+
+    <props:selectSectionPropertyContent value="filter" caption="Test case filter">
+        <tr class="advancedSetting">
+            <th class="noBorder">
+                <label for="${params.vstestTestCaseFilterKey}">Test case filter:</label>
+            </th>
+            <td>
+                <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />
+                <span class="error" id="error_${params.vstestTestCaseFilterKey}"></span>
+                <span class="smallNote">Run tests that match the given expression.</span>
+            </td>
+        </tr>
+    </props:selectSectionPropertyContent>
+</props:selectSectionProperty>
 
 <c:if test="${params.experimentalMode == true or
     not empty propertiesBean.properties[params.vstestPlatformKey]}">

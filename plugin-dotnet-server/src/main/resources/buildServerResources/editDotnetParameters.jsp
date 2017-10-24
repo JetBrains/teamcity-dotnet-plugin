@@ -7,6 +7,8 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
+<c:set var="asterisk"> <l:star/></c:set>
+
 <script type="text/javascript">
     BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
@@ -17,7 +19,7 @@
         coverageEnabled: [],
         hideLogging: [],
         hideWorkingDirectory: [],
-        targetsAreRequired: [],
+        mandatoryPaths: [],
         initFunctions: [],
         selectProjectFile: function (chosenFile) {
             var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
@@ -35,7 +37,11 @@
             var pathsName = BS.DotnetParametersForm.paths[commandName];
             var pathsRow = $j(BS.Util.escapeId('${params.pathsKey}-row'));
             if (pathsName) {
-                pathsRow.show().find("label").text(pathsName + ':');
+                var label = pathsRow.show().find("label");
+                label.text(pathsName + ':');
+                if (BS.DotnetParametersForm.mandatoryPaths[commandName]) {
+                    label.append('${asterisk}');
+                }
             } else {
                 pathsRow.hide();
             }
