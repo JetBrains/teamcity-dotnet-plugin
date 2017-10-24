@@ -25,7 +25,7 @@
     <td>
         <props:textProperty name="${params.nugetDeleteIdKey}" className="longField"/>
         <span class="error" id="error_${params.nugetDeleteIdKey}"></span>
-        <span class="smallNote">Specify the package id and version separated by a space.</span>
+        <span class="smallNote">Specify the package name and version separated by a space.</span>
     </td>
 </tr>
 

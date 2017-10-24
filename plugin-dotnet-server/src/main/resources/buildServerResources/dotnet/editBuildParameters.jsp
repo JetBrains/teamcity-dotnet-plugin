@@ -21,7 +21,7 @@
                             selectionMode="single"/>
         </div>
         <span class="error" id="error_${params.buildFrameworkKey}"></span>
-        <span class="smallNote">Compile a specific framework.</span>
+        <span class="smallNote">Compile for a specific framework.</span>
     </td>
 </tr>
 

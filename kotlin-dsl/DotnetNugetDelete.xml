@@ -26,7 +26,7 @@
             <description>Specify the server URL.</description>
         </param>
         <param name="dotnet-nuget-delete-id" dslName="packageId" mandatory="true">
-            <description>Specify the package id and version separated by a space.</description>
+            <description>Specify the package name and version separated by a space.</description>
         </param>
         <param name="secure:dotnet-nuget-delete-api-key" dslName="apiKey" mandatory="true">
             <description>Specify the API key to access the NuGet packages feed.</description>
