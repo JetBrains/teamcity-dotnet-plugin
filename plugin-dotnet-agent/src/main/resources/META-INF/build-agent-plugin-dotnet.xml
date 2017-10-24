@@ -11,7 +11,7 @@
     <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
     <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.XmlDocumentServiceImpl"/>
+    <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
 

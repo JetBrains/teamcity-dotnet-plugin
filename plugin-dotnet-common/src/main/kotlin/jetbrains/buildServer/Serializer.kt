@@ -1,4 +1,4 @@
-package jetbrains.buildServer.agent
+package jetbrains.buildServer
 
 import java.io.OutputStream
 

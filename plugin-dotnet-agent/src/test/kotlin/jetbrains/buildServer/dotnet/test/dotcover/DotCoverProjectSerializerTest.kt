@@ -1,5 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
+import jetbrains.buildServer.Serializer
+import jetbrains.buildServer.XmlDocumentService
+import jetbrains.buildServer.XmlDocumentServiceImpl
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.TargetType

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Utils.targets" />
+
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+        <PackagesDirectory>packages</PackagesDirectory>
+        <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+        <AssemblyVersion>1.0.$(BuildNumber)</AssemblyVersion>
+        <Version>$(AssemblyVersion)-beta</Version>
+    </PropertyGroup>
+
+    <Target Name="GetNuGet">
+        <DownloadFile Url="https://dist.nuget.org/win-x86-commandline/v4.0.0/NuGet.exe" LocalFilePath="packages\nuget.exe"/>
+    </Target>
+
+    <Target Name="Build" DependsOnTargets="GetNuGet">
+        <!--<MSBuild Projects="DevTeam.IoC.sln" Targets="Restore;Build" BuildInParallel="true" Properties="Configuration=$(Configuration);Version=$(Version);AssemblyVersion=$(AssemblyVersion)"/>-->
+        <Exec Command="packages\nuget.exe pack DevTeam.IoC.Bootstrap\package.nuspec -Version $(Version) -OutputDirectory $(PackagesDirectory)"/>
+        <Message Text="##teamcity[publishArtifacts 'DevTeam.IoC.Contracts\bin\$(Configuration)\*.nupkg=>$(PackagesDirectory)']" />
+        <Message Text="##teamcity[publishArtifacts 'DevTeam.IoC\bin\$(Configuration)\*.nupkg=>$(PackagesDirectory)']" />
+        <Message Text="##teamcity[publishArtifacts 'DevTeam.IoC.Configurations.CSharp\bin\$(Configuration)\*.nupkg=>$(PackagesDirectory)']" />
+        <Message Text="##teamcity[publishArtifacts 'DevTeam.IoC.Configurations.Json\bin\$(Configuration)\*.nupkg=>$(PackagesDirectory)']" />
+        <Message Text="##teamcity[publishArtifacts '$(PackagesDirectory)\DevTeam.IoC.Bootstrap.1.0.0-beta.nupkg=>$(PackagesDirectory)']" />
+    </Target>
+
+    <Target Name="Test" DependsOnTargets="GetNuGet">
+        <Exec Command="dotnet test DevTeam.IoC.Tests\DevTeam.IoC.Tests.csproj -c $(Configuration) /p:TargetFramework=net452"/>
+        <Exec Command="dotnet test DevTeam.IoC.Tests\DevTeam.IoC.Tests.csproj -c $(Configuration) /p:TargetFramework=net462"/>
+        <Exec Command="dotnet test DevTeam.IoC.Tests\DevTeam.IoC.Tests.csproj -c $(Configuration) /p:TargetFramework=netcoreapp1.0"/>
+        <Exec Command="dotnet test DevTeam.IoC.Tests\DevTeam.IoC.Tests.csproj -c $(Configuration) /p:TargetFramework=netcoreapp2.0"/>
+        <Exec Command="packages\nuget.exe install xunit.runner.console -version 2.2.0 -o packages"/>
+        <Exec Command="packages\xunit.runner.console.2.2.0\tools\xunit.console.exe DevTeam.IoC.Tests\bin\$(Configuration)\net35\DevTeam.IoC.Tests.dll"/>
+    </Target>
+
+</Project>

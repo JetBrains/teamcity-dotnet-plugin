@@ -23,9 +23,6 @@ object DotnetConstants {
     const val CONFIG_NAME = "DotNetCLI"
     const val CONFIG_PATH = CONFIG_NAME + PATH_SUFFIX
     const val CONFIG_SDK_NAME = "DotNetCoreSDK"
-    const val PROJECT_JSON = "project.json"
-    const val PROJECT_CSPROJ = ".csproj"
-    const val PROJECT_SLN = ".sln"
 
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
 

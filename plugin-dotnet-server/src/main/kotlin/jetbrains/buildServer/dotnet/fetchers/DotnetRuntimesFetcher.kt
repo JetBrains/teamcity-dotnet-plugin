@@ -7,37 +7,29 @@
 
 package jetbrains.buildServer.dotnet.fetchers
 
-import jetbrains.buildServer.dotnet.DotnetModelParser
-import jetbrains.buildServer.dotnet.models.CsProject
-import jetbrains.buildServer.dotnet.models.Project
+import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.serverSide.DataItem
+import jetbrains.buildServer.serverSide.ProjectDataFetcher
+import jetbrains.buildServer.util.StringUtil
+import jetbrains.buildServer.util.browser.Browser
 
 /**
  * Provides runtimes fetcher for project model.
  */
-class DotnetRuntimesFetcher(modelParser: DotnetModelParser) : DotnetProjectsDataFetcher(modelParser) {
+class DotnetRuntimesFetcher(private val _solutionDiscover: SolutionDiscover) : ProjectDataFetcher {
 
-    override fun getDataItems(project: Project?): Collection<String> {
-        return project?.runtimes?.keys ?: emptySet()
-    }
+    override fun retrieveData(fsBrowser: Browser, projectFilePath: String): MutableList<DataItem> =
+            getValues(StreamFactoryImpl(fsBrowser), StringUtil.splitCommandArgumentsAndUnquote(projectFilePath).asSequence())
+                    .map { DataItem(it, null) }
+                    .toMutableList()
 
-    override fun getDataItems(project: CsProject?): Collection<String> {
-        project?.let {
-            it.propertyGroups?.let {
-                return it.fold(hashSetOf(), {
-                    all, current ->
-                    current.runtimeIdentifier?.let {
-                        all.add(it)
-                    }
-                    current.runtimeIdentifiers?.let {
-                        all.addAll(it.split(';'))
-                    }
-                    all
-                })
-            }
-        }
-
-        return emptyList()
-    }
+    fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
+            _solutionDiscover.discover(streamFactory, paths)
+                    .flatMap { it.projects.asSequence() }
+                    .flatMap { it.runtimes.asSequence() }
+                    .map { it.name }
+                    .distinctBy() { it.toLowerCase() }
+                    .sorted()
 
     override fun getType(): String {
         return "DotnetRuntimes"

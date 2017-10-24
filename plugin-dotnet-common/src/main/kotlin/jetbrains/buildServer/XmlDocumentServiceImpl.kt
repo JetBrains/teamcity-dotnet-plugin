@@ -1,6 +1,5 @@
-package jetbrains.buildServer.agent
+package jetbrains.buildServer
 
-import jetbrains.buildServer.RunBuildException
 import org.w3c.dom.Document
 import java.io.InputStream
 import java.io.OutputStream

@@ -5,12 +5,12 @@
  * See LICENSE in the project root for license information.
  */
 
-package jetbrains.buildServer.dotnet.models
+package jetbrains.buildServer.dotnet.discovery
 
 /**
  * Represents dnx project model.
  */
-class Project {
+class JsonProjectDto {
     var testRunner: String? = null
     var configurations: Map<String, Any>? = null
     var frameworks: Map<String, Any>? = null
