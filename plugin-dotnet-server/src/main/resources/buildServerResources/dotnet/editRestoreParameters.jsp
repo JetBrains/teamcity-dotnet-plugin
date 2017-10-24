@@ -16,9 +16,13 @@
 <tr class="advancedSetting">
     <th><label for="${params.restoreSourceKey}">NuGet package sources:</label></th>
     <td>
-        <props:textProperty name="${params.restoreSourceKey}" className="longField" expandable="true"/>
+        <c:set var="note">
+            Specifies NuGet package sources to use during the restore.<br/>
+            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.
+        </c:set>
+        <props:multilineProperty name="${params.restoreSourceKey}" className="longField" expanded="true"
+                                 cols="60" rows="3" linkTitle="Sources" note="${note}"/>
         <span class="error" id="error_${params.restoreSourceKey}"></span>
-        <span class="smallNote">Specifies NuGet package sources to use during the restore.</span>
     </td>
 </tr>
 
