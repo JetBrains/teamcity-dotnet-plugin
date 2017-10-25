@@ -26,9 +26,9 @@ class DotnetWorkflowComposer(
                 _vstestLoggerEnvironment.configure(targets).use {
                     val executableFile = command.toolResolver.executableFile
                     val args = command.arguments.toList()
-                    var commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
+                    val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
                     _loggerService.onStandardOutput(commandHeader)
-                    _loggerService.onBlock(command.commandType.name).use {
+                    _loggerService.onBlock(command.commandType.id.replace('-', ' ')).use {
                         yield(CommandLine(
                                 TargetType.Tool,
                                 executableFile,

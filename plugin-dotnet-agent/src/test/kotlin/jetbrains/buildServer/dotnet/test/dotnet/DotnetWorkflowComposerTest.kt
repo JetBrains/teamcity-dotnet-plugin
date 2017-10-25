@@ -112,14 +112,14 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<LoggerService>(_loggerService).onStandardOutput("dotnet.exe arg1 arg2")
 
-                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.Build.name)
+                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.Build.id)
                 will(returnValue(_closeable3))
 
                 oneOf<Closeable>(_closeable3).close()
 
                 oneOf<LoggerService>(_loggerService).onStandardOutput("msbuild.exe arg3")
 
-                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.NuGetPush.name)
+                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.NuGetPush.id.replace('-', ' '))
                 will(returnValue(_closeable4))
 
                 oneOf<Closeable>(_closeable4).close()
