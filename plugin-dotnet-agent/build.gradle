@@ -6,15 +6,10 @@ plugins {
 teamcity {
   version = teamcityVersion
   agent {
-    descriptor {
-      pluginDeployment {
-        useSeparateClassloader = true
-      }
-
-      files {
-        into('tools') {
-          from('tools')
-        }
+    descriptor = project.file('teamcity-plugin.xml')
+    files {
+      into('tools') {
+        from('tools')
       }
     }
   }
