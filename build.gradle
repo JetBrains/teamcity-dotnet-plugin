@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+\.\d+\.\d+.*/
+    def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet-cli']
     teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '10.0'
