@@ -8,7 +8,8 @@
 
 <script type="text/javascript">
     BS.DotnetParametersForm.appendProjectFile.push("clean");
-    BS.DotnetParametersForm.paths["clean"] = "Projects";
+    BS.DotnetParametersForm.pathName["clean"] = "Projects";
+    BS.DotnetParametersForm.pathHint["clean"] = "Specify paths to projects and solutions";
 </script>
 
 <tr class="advancedSetting">

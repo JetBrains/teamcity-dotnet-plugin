@@ -23,7 +23,7 @@
     </init>
     <params>
         <param name="dotnet-paths" dslName="packages" mandatory="true">
-            <description>Specify target NuGet packages. Wildcards are supported.</description>
+            <description>Specify paths to nuget packages. Wildcards are supported.</description>
         </param>
         <param name="dotnet-nuget-push-source" dslName="serverUrl" mandatory="true">
             <description>

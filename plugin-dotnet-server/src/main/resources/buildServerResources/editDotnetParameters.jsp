@@ -30,11 +30,12 @@
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
             $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
         },
-        paths: [],
+        pathName: [],
+        pathHint: [],
         updateElements: function () {
             var commandName = $j(commandId).val();
 
-            var pathsName = BS.DotnetParametersForm.paths[commandName];
+            var pathsName = BS.DotnetParametersForm.pathName[commandName];
             var pathsRow = $j(BS.Util.escapeId('${params.pathsKey}-row'));
             if (pathsName) {
                 var label = pathsRow.show().find("label");
@@ -42,6 +43,9 @@
                 if (BS.DotnetParametersForm.mandatoryPaths[commandName]) {
                     label.append(' ').append('${asterisk}');
                 }
+
+                var hint = BS.DotnetParametersForm.pathHint[commandName];
+                $j(BS.Util.escapeId('${params.pathsKey}-hint')).text(hint);
             } else {
                 pathsRow.hide();
             }
@@ -83,7 +87,10 @@
                 <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
             </div>
             <span class="error" id="error_${params.pathsKey}"></span>
-            <span class="smallNote">Specify target files separated by spaces or new lines. <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.</span>
+            <span class="smallNote">
+                <span id="${params.pathsKey}-hint">Specify target files separated by spaces or new lines</span>.
+                <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.
+            </span>
         </td>
     </tr>
 

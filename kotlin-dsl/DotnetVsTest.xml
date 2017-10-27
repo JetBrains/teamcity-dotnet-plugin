@@ -23,7 +23,7 @@
     </init>
     <params>
         <param name="dotnet-paths" dslName="assemblies">
-            <description>Specify test assemblies. Wildcards are supported.</description>
+            <description>Specify paths to test assemblies. Wildcards are supported.</description>
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
             <description>

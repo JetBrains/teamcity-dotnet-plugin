@@ -7,7 +7,8 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["pack"] = "Projects";
+    BS.DotnetParametersForm.pathName["pack"] = "Projects";
+    BS.DotnetParametersForm.pathHint["pack"] = "Specify paths to projects and solutions";
 </script>
 
 <tr class="advancedSetting">

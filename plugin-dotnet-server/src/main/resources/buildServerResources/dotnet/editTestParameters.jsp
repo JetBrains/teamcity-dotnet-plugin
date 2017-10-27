@@ -8,7 +8,8 @@
 
 <script type="text/javascript">
   BS.DotnetParametersForm.appendProjectFile.push("test");
-  BS.DotnetParametersForm.paths["test"] = "Projects";
+  BS.DotnetParametersForm.pathName["test"] = "Projects";
+  BS.DotnetParametersForm.pathHint["test"] = "Specify paths to projects and solutions";
   BS.DotnetParametersForm.coverageEnabled["test"] = true;
 </script>
 

@@ -9,7 +9,8 @@
 <c:set var="filterBlockId" value="${util:forJSIdentifier(params.vstestFilterTypeKey)}_Block_js"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["vstest"] = "Test assemblies";
+    BS.DotnetParametersForm.pathName["vstest"] = "Test assemblies";
+    BS.DotnetParametersForm.pathHint["vstest"] = "Specify paths to test assemblies";
     BS.DotnetParametersForm.mandatoryPaths["vstest"] = true;
     BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
     BS.DotnetParametersForm.initFunctions["vstest"] = function () {

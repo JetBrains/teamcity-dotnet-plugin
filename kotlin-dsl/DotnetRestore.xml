@@ -23,7 +23,7 @@
     </init>
     <params>
         <param name="dotnet-paths" dslName="projects">
-            <description>Specify project or solutions. Wildcards are supported.</description>
+            <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
         <param name="dotnet-restore-source" dslName="sources">
             <description>Specifies NuGet package sources to use during the restore.</description>

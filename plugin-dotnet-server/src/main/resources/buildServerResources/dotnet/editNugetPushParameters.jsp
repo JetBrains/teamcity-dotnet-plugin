@@ -7,7 +7,8 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <script type="text/javascript">
-    BS.DotnetParametersForm.paths["nuget-push"] = "NuGet Packages";
+    BS.DotnetParametersForm.pathName["nuget-push"] = "NuGet Packages";
+    BS.DotnetParametersForm.pathHint["nuget-push"] = "Specify paths to nuget packages";
     BS.DotnetParametersForm.mandatoryPaths["nuget-push"] = true;
     BS.DotnetParametersForm.hideWorkingDirectory["nuget-push"] = true;
 </script>
