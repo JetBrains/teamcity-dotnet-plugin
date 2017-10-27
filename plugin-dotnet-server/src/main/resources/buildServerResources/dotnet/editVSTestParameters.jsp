@@ -39,7 +39,7 @@
     <props:selectSectionPropertyContent value="name" caption="Test names">
         <tr class="advancedSetting">
             <th class="noBorder">
-                <label for="${params.vstestTestNamesKey}">Test names:</label>
+                <label for="${params.vstestTestNamesKey}">Test names: <l:star/></label>
             </th>
             <td>
                 <props:multilineProperty expanded="true" name="${params.vstestTestNamesKey}" className="longField"
@@ -52,7 +52,7 @@
     <props:selectSectionPropertyContent value="filter" caption="Test case filter">
         <tr class="advancedSetting">
             <th class="noBorder">
-                <label for="${params.vstestTestCaseFilterKey}">Test case filter:</label>
+                <label for="${params.vstestTestCaseFilterKey}">Test case filter: <l:star/></label>
             </th>
             <td>
                 <props:textProperty name="${params.vstestTestCaseFilterKey}" className="longField" />

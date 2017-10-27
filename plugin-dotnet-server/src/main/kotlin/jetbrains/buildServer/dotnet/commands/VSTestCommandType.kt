@@ -53,5 +53,24 @@ class VSTestCommandType : CommandType() {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }
         }
+
+        properties[DotnetConstants.PARAM_VSTEST_FILTER_TYPE]?.let {
+            when (it) {
+                "name" -> {
+                    DotnetConstants.PARAM_VSTEST_TEST_NAMES.let {
+                        if (properties[it].isNullOrBlank()) {
+                            yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+                        }
+                    }
+                }
+                "filter" -> {
+                    DotnetConstants.PARAM_VSTEST_TEST_CASE_FILTER.let {
+                        if (properties[it].isNullOrBlank()) {
+                            yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
