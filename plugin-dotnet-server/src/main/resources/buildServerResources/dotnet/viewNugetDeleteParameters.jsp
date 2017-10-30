@@ -5,10 +5,10 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <div class="parameter">
-    Source: <strong><props:displayValue name="${params.nugetDeleteSourceKey}"
+    Source: <strong><props:displayValue name="${params.nugetPackageSourceKey}"
                                         emptyValue="Use default source"/></strong>
 </div>
 
 <div class="parameter">
-    Package: <props:displayValue name="${params.nugetDeleteIdKey}"/>
+    Package: <props:displayValue name="${params.nugetPackageIdKey}"/>
 </div>

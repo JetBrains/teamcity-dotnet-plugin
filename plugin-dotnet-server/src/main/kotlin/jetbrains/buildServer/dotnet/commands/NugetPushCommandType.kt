@@ -35,13 +35,13 @@ class NugetPushCommandType : DotnetType() {
             }
         }
 
-        DotnetConstants.PARAM_NUGET_PUSH_SOURCE.let {
+        DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }
         }
 
-        DotnetConstants.PARAM_NUGET_PUSH_API_KEY.let {
+        DotnetConstants.PARAM_NUGET_API_KEY.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }

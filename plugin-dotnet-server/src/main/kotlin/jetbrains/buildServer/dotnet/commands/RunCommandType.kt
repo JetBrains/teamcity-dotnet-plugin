@@ -28,7 +28,7 @@ class RunCommandType : DotnetType() {
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         yieldAll(super.getRequirements(parameters))
-        if (!parameters[DotnetConstants.PARAM_RUN_RUNTIME].isNullOrBlank()) {
+        if (!parameters[DotnetConstants.PARAM_RUNTIME].isNullOrBlank()) {
             yield(Requirement(DotnetConstants.CONFIG_NAME, "2.0.0", RequirementType.VER_NO_LESS_THAN))
         }
     }

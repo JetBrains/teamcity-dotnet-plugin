@@ -13,9 +13,9 @@ class NugetDeleteCommandTest {
     fun testNugetDeleteArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_NUGET_DELETE_ID to "id version",
-                        DotnetConstants.PARAM_NUGET_DELETE_API_KEY to "key",
-                        DotnetConstants.PARAM_NUGET_DELETE_SOURCE to "http://jb.com"),
+                        DotnetConstants.PARAM_NUGET_PACKAGE_ID to "id version",
+                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
                         listOf("id", "version", "--api-key", "key",
                                 "--source", "http://jb.com", "--non-interactive", "customArg1"))
         )

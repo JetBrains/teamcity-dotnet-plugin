@@ -15,14 +15,14 @@ class TestCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_TEST_FRAMEWORK, "dotcore"),
-                        Pair(DotnetConstants.PARAM_TEST_CONFIG, "Release")),
+                        Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
+                        Pair(DotnetConstants.PARAM_CONFIG, "Release")),
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_NO_BUILD, "true")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
                         listOf("--no-build", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_OUTPUT, "out")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
                         listOf("--output", "out", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_TEST_CASE_FILTER, "filter")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
                         listOf("--filter", "filter", "customArg1")))
     }
 

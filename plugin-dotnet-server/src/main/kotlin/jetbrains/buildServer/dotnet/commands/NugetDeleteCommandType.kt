@@ -29,19 +29,19 @@ class NugetDeleteCommandType : DotnetType() {
         get() = "viewNugetDeleteParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
-        DotnetConstants.PARAM_NUGET_DELETE_ID.let {
+        DotnetConstants.PARAM_NUGET_PACKAGE_ID.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }
         }
 
-        DotnetConstants.PARAM_NUGET_DELETE_SOURCE.let {
+        DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }
         }
 
-        DotnetConstants.PARAM_NUGET_DELETE_API_KEY.let {
+        DotnetConstants.PARAM_NUGET_API_KEY.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
             }

@@ -3,26 +3,26 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.msbuildTargetsKey]}">
+<c:if test="${not empty propertiesBean.properties[params.targetsKey]}">
     <div class="parameter">
-        Targets: <props:displayValue name="${params.msbuildTargetsKey}"/>
+        Targets: <props:displayValue name="${params.targetsKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.msbuildConfigKey]}">
+<c:if test="${not empty propertiesBean.properties[params.configKey]}">
     <div class="parameter">
-        Configuration: <props:displayValue name="${params.msbuildConfigKey}"/>
+        Configuration: <props:displayValue name="${params.configKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.msbuildPlatformKey]}">
+<c:if test="${not empty propertiesBean.properties[params.platformKey]}">
     <div class="parameter">
-        Platform: <props:displayValue name="${params.msbuildPlatformKey}"/>
+        Platform: <props:displayValue name="${params.platformKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.msbuildRuntimeKey]}">
+<c:if test="${not empty propertiesBean.properties[params.runtimeKey]}">
     <div class="parameter">
-        Runtime: <props:displayValue name="${params.msbuildRuntimeKey}"/>
+        Runtime: <props:displayValue name="${params.runtimeKey}"/>
     </div>
 </c:if>

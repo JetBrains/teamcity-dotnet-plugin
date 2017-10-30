@@ -29,43 +29,35 @@ class BuildCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_BUILD_FRAMEWORK)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--framework"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_BUILD_CONFIG)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--configuration"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_BUILD_RUNTIME)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--runtime"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            if (parameters(DotnetConstants.PARAM_BUILD_NON_INCREMENTAL, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-incremental"))
-            }
-
-            if (parameters(DotnetConstants.PARAM_BUILD_NO_DEPENDENCIES, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-dependencies"))
-            }
-
-            parameters(DotnetConstants.PARAM_BUILD_OUTPUT)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--output"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_BUILD_VERSION_SUFFIX)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_VERSION_SUFFIX)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--version-suffix"))
                     yield(CommandLineArgument(it))

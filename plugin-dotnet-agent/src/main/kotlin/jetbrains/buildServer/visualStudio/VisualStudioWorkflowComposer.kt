@@ -5,10 +5,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_ARGUMENTS
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_ACTION
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM
 import jetbrains.buildServer.dotnet.TargetService
 import kotlin.coroutines.experimental.buildSequence
 
@@ -31,19 +27,19 @@ class VisualStudioWorkflowComposer(
         } ?: return@buildSequence
 
         val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-        val action = parameters(PARAM_VISUAL_STUDIO_ACTION)
-                ?: throw RunBuildException("Parameter \"$PARAM_VISUAL_STUDIO_ACTION\" was not found")
+        val action = parameters(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION)
+                ?: throw RunBuildException("Parameter \"${DotnetConstants.PARAM_VISUAL_STUDIO_ACTION}\" was not found")
 
         val configItems = listOf(
-                parameters(PARAM_VISUAL_STUDIO_CONFIG, ""),
-                parameters(PARAM_VISUAL_STUDIO_PLATFORM, ""))
+                parameters(DotnetConstants.PARAM_CONFIG, ""),
+                parameters(DotnetConstants.PARAM_PLATFORM, ""))
                 .filter { !it.isBlank() }
         var configValue = configItems.joinToString("|")
         if (configItems.size > 1) {
             configValue = "\"$configValue\""
         }
 
-        val args = parameters(PARAM_ARGUMENTS)?.trim()?.let {
+        val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
             _argumentsService.split(it).map { CommandLineArgument(it) }.toList()
         } ?: emptyList()
 

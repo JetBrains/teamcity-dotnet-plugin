@@ -16,11 +16,11 @@ class RunCommandTest {
                         DotnetConstants.PARAM_PATHS to "path/"),
                         listOf("customArg1")),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_RUN_FRAMEWORK to "dotcore",
-                        DotnetConstants.PARAM_RUN_CONFIG to "Release"),
+                        DotnetConstants.PARAM_FRAMEWORK to "dotcore",
+                        DotnetConstants.PARAM_CONFIG to "Release"),
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_RUN_RUNTIME, "win")),
+                        Pair(DotnetConstants.PARAM_RUNTIME, "win")),
                         listOf("--runtime", "win", "customArg1")))
     }
 

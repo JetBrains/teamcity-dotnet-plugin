@@ -28,20 +28,20 @@ class NugetDeleteCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_NUGET_DELETE_ID)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_NUGET_PACKAGE_ID)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yieldAll(jetbrains.buildServer.util.StringUtil.split(it).map { CommandLineArgument(it) })
                 }
             }
 
-            parameters(DotnetConstants.PARAM_NUGET_DELETE_API_KEY)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--api-key"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_NUGET_DELETE_SOURCE)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--source"))
                     yield(CommandLineArgument(it))

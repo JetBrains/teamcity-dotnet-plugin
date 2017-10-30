@@ -31,21 +31,21 @@ class RunCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_RUN_FRAMEWORK)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--framework"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_RUN_CONFIG)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--configuration"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_RUN_RUNTIME)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--runtime"))
                     yield(CommandLineArgument(it))

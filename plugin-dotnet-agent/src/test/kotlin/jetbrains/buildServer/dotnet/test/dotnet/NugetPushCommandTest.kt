@@ -14,14 +14,13 @@ class NugetPushCommandTest {
         return arrayOf(
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
-                        DotnetConstants.PARAM_NUGET_PUSH_API_KEY to "key",
-                        DotnetConstants.PARAM_NUGET_PUSH_SOURCE to "http://jb.com"),
+                        DotnetConstants.PARAM_NUGET_API_KEY to "key",
+                        DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
                         listOf("--api-key", "key", "--source", "http://jb.com", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
-                        DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER to "true",
-                        DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS to "true"),
-                        listOf("--no-symbols", "true", "--disable-buffering", "true", "customArg1"))
+                        DotnetConstants.PARAM_NUGET_NO_SYMBOLS to "true"),
+                        listOf("--no-symbols", "true", "customArg1"))
         )
     }
 

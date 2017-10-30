@@ -3,44 +3,32 @@
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
-<c:if test="${not empty propertiesBean.properties[params.buildFrameworkKey]}">
+<c:if test="${not empty propertiesBean.properties[params.frameworkKey]}">
     <div class="parameter">
-        Framework: <props:displayValue name="${params.buildFrameworkKey}"/>
+        Framework: <props:displayValue name="${params.frameworkKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildConfigKey]}">
+<c:if test="${not empty propertiesBean.properties[params.configKey]}">
     <div class="parameter">
-        Configuration: <props:displayValue name="${params.buildConfigKey}"/>
+        Configuration: <props:displayValue name="${params.configKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildRuntimeKey]}">
+<c:if test="${not empty propertiesBean.properties[params.runtimeKey]}">
     <div class="parameter">
-        Runtime: <props:displayValue name="${params.buildRuntimeKey}"/>
+        Runtime: <props:displayValue name="${params.runtimeKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildNonIncrementalKey]}">
+<c:if test="${not empty propertiesBean.properties[params.outputDirKey]}">
     <div class="parameter">
-        Turn off incremental build: <strong>ON</strong>
+        Output directory: <props:displayValue name="${params.outputDirKey}"/>
     </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.buildNoDependenciesKey]}">
+<c:if test="${not empty propertiesBean.properties[params.versionSuffixKey]}">
     <div class="parameter">
-        Ignore project-to-project references and only build the root project: <strong>ON</strong>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.buildOutputKey]}">
-    <div class="parameter">
-        Output directory: <props:displayValue name="${params.buildOutputKey}"/>
-    </div>
-</c:if>
-
-<c:if test="${not empty propertiesBean.properties[params.buildVersionSuffixKey]}">
-    <div class="parameter">
-        Version suffix: <props:displayValue name="${params.buildVersionSuffixKey}"/>
+        Version suffix: <props:displayValue name="${params.versionSuffixKey}"/>
     </div>
 </c:if>

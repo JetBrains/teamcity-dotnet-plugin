@@ -50,6 +50,8 @@
                 pathsRow.hide();
             }
 
+            $j("tr.dotnet:not(." + commandName + ")").hide();
+            $j("tr.dotnet." + commandName).show();
             $j(".runnerFormTable span.error").empty();
 
             var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
@@ -65,6 +67,8 @@
 
             var init = BS.DotnetParametersForm.initFunctions[commandName];
             if (init) init();
+
+            BS.MultilineProperties.updateVisible();
         }
     };
 
@@ -79,29 +83,303 @@
 
 <c:set var="commandTitle">Command:<bs:help urlPrefix="https://docs.microsoft.com/en-us/dotnet/core/tools/" file=""/></c:set>
 <props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
-    <tr id="${params.pathsKey}-row">
-        <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
-        <td>
-            <div class="position-relative">
-                <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
-                <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
-            </div>
-            <span class="error" id="error_${params.pathsKey}"></span>
-            <span class="smallNote">
-                <span id="${params.pathsKey}-hint">Specify target files separated by spaces or new lines</span>.
-                <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.
-            </span>
-        </td>
-    </tr>
-
-    <props:workingDirectory/>
-
     <c:forEach items="${params.commands}" var="type">
         <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
             <jsp:include page="${teamcityPluginResourcesPath}/dotnet/${type.editPage}"/>
         </props:selectSectionPropertyContent>
     </c:forEach>
 </props:selectSectionProperty>
+
+<tr id="${params.pathsKey}-row" class="build clean">
+    <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
+            <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
+        </div>
+        <span class="error" id="error_${params.pathsKey}"></span>
+        <span class="smallNote">
+            <span id="${params.pathsKey}-hint">Specify target files separated by spaces or new lines</span>.
+            <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.
+        </span>
+    </td>
+</tr>
+
+<props:workingDirectory/>
+
+<c:if test="${params.experimentalMode == true}">
+    <tr class="advancedSetting dotnet msbuild">
+        <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
+        <td>
+            <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
+                <props:option value="">&lt;Default&gt;</props:option>
+                <c:forEach var="item" items="${params.msbuildVersions}">
+                    <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+                </c:forEach>
+            </props:selectProperty>
+            <span class="error" id="error_${params.msbuildVersionKey}"></span>
+        </td>
+    </tr>
+
+    <tr class="advancedSetting dotnet vstest">
+        <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
+        <td>
+            <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
+                <props:option value="">&lt;Default&gt;</props:option>
+                <c:forEach var="item" items="${params.vstestVersions}">
+                    <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+                </c:forEach>
+            </props:selectProperty>
+            <span class="error" id="error_${params.vstestVersionKey}"></span>
+        </td>
+    </tr>
+</c:if>
+
+<tr class="advancedSetting dotnet vstest">
+    <th><label for="${params.testFilterKey}">Tests filtration:</label></th>
+    <td>
+        <props:selectProperty name="${params.testFilterKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Default&gt;</props:option>
+            <props:option value="name">Test names</props:option>
+            <props:option value="filter">Test case filter</props:option>
+        </props:selectProperty>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet vstest">
+    <th class="noBorder">
+        <label for="${params.testNamesKey}">Test names: <l:star/></label>
+    </th>
+    <td>
+        <props:multilineProperty expanded="true" name="${params.testNamesKey}" className="longField"
+                                 rows="3" cols="49" linkTitle="Edit test names"
+                                 note="Run tests with names that match the provided values." />
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet test vstest">
+    <th>
+        <label for="${params.testCaseFilterKey}">Test case filter:</label>
+    </th>
+    <td>
+        <props:textProperty name="${params.testCaseFilterKey}" className="longField" />
+        <span class="error" id="error_${params.testCaseFilterKey}"></span>
+        <span class="smallNote">Run tests that match the given expression.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet build clean publish run test vstest">
+    <th><label for="${params.frameworkKey}">Framework:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.frameworkKey}" className="longField"/>
+            <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.frameworkKey}" popupTitle="Select frameworks"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.frameworkKey}"></span>
+        <span class="smallNote">Specify the target framework.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet msbuild">
+    <th><label for="${params.targetsKey}">Targets:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.targetsKey}" className="longField"/>
+            <bs:projectData type="DotnetTargets" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.targetsKey}" popupTitle="Select targets"/>
+        </div
+        <span class="error" id="error_${params.targetsKey}"></span>
+        <span class="smallNote">Enter the list of build targets.</span>
+    </td>
+</tr>
+
+<tr class="dotnet devenv">
+    <th><label for="${params.visualStudioActionKey}">Build Action: <l:star/></label></th>
+    <td>
+        <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Select&gt;</props:option>
+            <c:forEach var="item" items="${params.visualStudioActions}">
+                <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+            </c:forEach>
+        </props:selectProperty>
+        <span class="error" id="error_${params.visualStudioActionKey}"></span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet devenv">
+    <th><label for="${params.visualStudioVersionKey}">Visual Studio Version:</label></th>
+    <td>
+        <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
+            <props:option value="">&lt;Default&gt;</props:option>
+            <c:forEach var="item" items="${params.visualStudioVersions}">
+                <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+            </c:forEach>
+        </props:selectProperty>
+        <span class="error" id="error_${params.visualStudioVersionKey}"></span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet build clean msbuild pack publish run test devenv">
+    <th class="noBorder"><label for="${params.configKey}">Configuration:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.configKey}" className="longField"/>
+            <bs:projectData type="DotnetConfigurations" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.configKey}" popupTitle="Select configuration"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.configKey}"></span>
+        <span class="smallNote">Specify the target configuration.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet devenv">
+    <th class="noBorder"><label for="${params.platformKey}">Platform:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.platformKey}" className="longField"/>
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.platformKey}" popupTitle="Select platform"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.platformKey}"></span>
+        <span class="smallNote">Specify the target platform.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet restore">
+    <th><label for="${params.nugetPackageSourcesKey}">NuGet package sources:</label></th>
+    <td>
+        <c:set var="note">
+            Specifies NuGet package sources to use during the restore.<br/>
+            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.
+        </c:set>
+        <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
+                                 cols="60" rows="3" linkTitle="Sources" note="${note}"/>
+        <span class="error" id="error_${params.nugetPackageSourcesKey}"></span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet build clean msbuild pack publish restore run">
+    <th class="noBorder"><label for="${params.runtimeKey}">Runtime:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.runtimeKey}" className="longField"/>
+            <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
+                            targetFieldId="${params.runtimeKey}" popupTitle="Select runtime"
+                            selectionMode="single"/>
+        </div>
+        <span class="error" id="error_${params.runtimeKey}"></span>
+        <span class="smallNote">Specify the target runtime.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet build clean pack publish test">
+    <th><label for="${params.outputDirKey}">Output directory:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.outputDirKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.outputDirKey}" dirsOnly="true"/>
+        </div>
+        <span class="error" id="error_${params.outputDirKey}"></span>
+        <span class="smallNote">The directory where to place outputs.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet build pack publish">
+    <th><label for="${params.versionSuffixKey}">Version suffix:</label></th>
+    <td>
+        <props:textProperty name="${params.versionSuffixKey}" className="longField" expandable="true"/>
+        <span class="error" id="error_${params.versionSuffixKey}"></span>
+        <span class="smallNote">Defines the value for the $(VersionSuffix) property in the project.</span>
+    </td>
+</tr>
+
+<tr class="dotnet nuget-delete nuget-push">
+    <th><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
+    <td>
+        <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
+        <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
+        <span class="smallNote">
+            Specify the server URL. For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.
+        </span>
+    </td>
+</tr>
+
+<tr class="dotnet nuget-delete">
+    <th class="noBorder"><label for="${params.nugetPackageIdKey}">Package ID: <l:star/></label></th>
+    <td>
+        <props:textProperty name="${params.nugetPackageIdKey}" className="longField"/>
+        <span class="error" id="error_${params.nugetPackageIdKey}"></span>
+        <span class="smallNote">Specify the package name and version separated by a space.</span>
+    </td>
+</tr>
+
+<tr class="dotnet nuget-delete nuget-push">
+    <th class="noBorder"><label for="${params.nugetApiKey}">API key: <l:star/></label></th>
+    <td>
+        <props:passwordProperty name="${params.nugetApiKey}" className="longField"/>
+        <span class="error" id="error_${params.nugetApiKey}"></span>
+        <span class="smallNote">
+            Specify the API key to access the NuGet packages feed.<br/>
+            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.
+        </span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet restore">
+    <th><label for="${params.nugetPackagesDirKey}">Packages directory:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.nugetPackagesDirKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.nugetPackagesDirKey}" dirsOnly="true"/>
+        </div>
+        <span class="error" id="error_${params.nugetPackagesDirKey}"></span>
+        <span class="smallNote">Directory to install packages in.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet restore">
+    <th><label for="${params.nugetConfigFileKey}">Configuration file:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.nugetConfigFileKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.nugetConfigFileKey}"/>
+        </div>
+        <span class="error" id="error_${params.nugetConfigFileKey}"></span>
+        <span class="smallNote">The NuGet configuration file to use.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet nuget-push">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.nugetNoSymbolsKey}"/>
+        <label for="${params.nugetNoSymbolsKey}">Do not publish an existing nuget symbols package</label>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet test vstest">
+    <th><label for="${params.testSettingsFileKey}">Settings file:</label></th>
+    <td>
+        <div class="position-relative">
+            <props:textProperty name="${params.testSettingsFileKey}" className="longField"/>
+            <bs:vcsTree fieldId="${params.testSettingsFileKey}"/>
+        </div>
+        <span class="error" id="error_${params.testSettingsFileKey}"></span>
+        <span class="smallNote">The path to the run settings configuration file.</span>
+    </td>
+</tr>
+
+<tr class="advancedSetting dotnet pack test">
+    <th>Options:</th>
+    <td>
+        <props:checkboxProperty name="${params.skipBuildKey}"/>
+        <label for="${params.skipBuildKey}">Do not build the project before packing</label>
+    </td>
+</tr>
 
 <tr class="advancedSetting">
     <th><label for="${params.argumentsKey}">Command line parameters:</label></th>
@@ -120,7 +398,7 @@
     <td>
         <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
             <props:option value="">&lt;Default&gt;</props:option>
-            <c:forEach var="item" items="${params.verbosity}">
+            <c:forEach var="item" items="${params.verbosityValues}">
                 <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
             </c:forEach>
         </props:selectProperty>

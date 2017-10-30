@@ -29,40 +29,36 @@ class PackCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_PACK_CONFIG)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--configuration"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_PACK_RUNTIME)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--runtime"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_PACK_OUTPUT)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--output"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_PACK_VERSION_SUFFIX)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_VERSION_SUFFIX)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--version-suffix"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            if (parameters(DotnetConstants.PARAM_PACK_NO_BUILD, "").trim().toBoolean()) {
+            if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
                 yield(CommandLineArgument("--no-build"))
-            }
-
-            if (parameters(DotnetConstants.PARAM_PACK_SERVICEABLE, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--serviceable"))
             }
 
             yieldAll(_commonArgumentsProvider.arguments)

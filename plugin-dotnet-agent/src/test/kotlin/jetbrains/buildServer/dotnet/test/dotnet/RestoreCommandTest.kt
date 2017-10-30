@@ -16,22 +16,14 @@ class RestoreCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_RESTORE_PACKAGES, "packages/"),
-                        Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "false")),
+                        Pair(DotnetConstants.PARAM_NUGET_PACKAGES_DIR, "packages/")),
                         listOf("--packages", "packages/", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_PARALLEL, "true")),
-                        listOf("--disable-parallel", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCES, "http://jb.com")),
                         listOf("--source", "http://jb.com", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com\nhttp://jb.ru")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCES, "http://jb.com\nhttp://jb.ru")),
                         listOf("--source", "http://jb.com", "--source", "http://jb.ru", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_RESTORE_SOURCE, "http://jb.com http://jb.ru")),
-                        listOf("--source", "http://jb.com", "--source", "http://jb.ru", "customArg1")),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_RESTORE_NO_CACHE to " tRue",
-                        DotnetConstants.PARAM_RESTORE_IGNORE_FAILED to "True ",
-                        DotnetConstants.PARAM_RESTORE_ROOT_PROJECT to "true"),
-                        listOf("--no-cache", "--ignore-failed-sources", "--no-dependencies", "customArg1")))
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCES, "http://jb.com http://jb.ru")),
+                        listOf("--source", "http://jb.com", "--source", "http://jb.ru", "customArg1")))
     }
 
     @Test(dataProvider = "testRestoreArgumentsData")

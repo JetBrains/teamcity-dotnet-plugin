@@ -15,20 +15,20 @@ class PublishCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_PUBLISH_FRAMEWORK, "dotcore"),
-                        Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
+                        Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
+                        Pair(DotnetConstants.PARAM_CONFIG, "Release")),
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_PUBLISH_RUNTIME to " active"),
+                        DotnetConstants.PARAM_RUNTIME to " active"),
                         listOf("--runtime", "active", "customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_PUBLISH_OUTPUT, "out"),
-                        Pair(DotnetConstants.PARAM_PUBLISH_CONFIG, "Release")),
+                        Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out"),
+                        Pair(DotnetConstants.PARAM_CONFIG, "Release")),
                         listOf("--configuration", "Release", "--output", "out", "customArg1")),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_PUBLISH_OUTPUT to "c:\\build\\out",
+                        DotnetConstants.PARAM_OUTPUT_DIR to "c:\\build\\out",
                         DotnetConstants.PARAM_PATHS to "project.csproj",
-                        DotnetConstants.PARAM_PUBLISH_CONFIG to "Release"),
+                        DotnetConstants.PARAM_CONFIG to "Release"),
                         listOf("--configuration", "Release", "--output", "c:\\build\\out", "customArg1"))
         )
     }

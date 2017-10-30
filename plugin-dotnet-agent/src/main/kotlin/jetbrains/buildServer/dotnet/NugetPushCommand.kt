@@ -29,27 +29,22 @@ class NugetPushCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_NUGET_PUSH_API_KEY)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--api-key"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_NUGET_PUSH_SOURCE)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--source"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_SYMBOLS, "").trim().toBoolean()) {
+            if (parameters(DotnetConstants.PARAM_NUGET_NO_SYMBOLS, "").trim().toBoolean()) {
                 yield(CommandLineArgument("--no-symbols"))
-                yield(CommandLineArgument("true"))
-            }
-
-            if (parameters(DotnetConstants.PARAM_NUGET_PUSH_NO_BUFFER, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--disable-buffering"))
                 yield(CommandLineArgument("true"))
             }
 

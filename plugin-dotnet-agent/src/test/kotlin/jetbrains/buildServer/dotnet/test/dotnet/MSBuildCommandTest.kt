@@ -15,11 +15,11 @@ class MSBuildCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "restore;build"),
-                        Pair(DotnetConstants.PARAM_MSBUILD_RUNTIME, "osx.10.11-x64"),
-                        Pair(DotnetConstants.PARAM_MSBUILD_CONFIG, "Release")),
+                        Pair(DotnetConstants.PARAM_TARGETS, "restore;build"),
+                        Pair(DotnetConstants.PARAM_RUNTIME, "osx.10.11-x64"),
+                        Pair(DotnetConstants.PARAM_CONFIG, "Release")),
                         listOf("/t:restore;build", "/p:Configuration=Release", "/p:RuntimeIdentifiers=osx.10.11-x64", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_MSBUILD_TARGETS, "clean restore, build;pack")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore, build;pack")),
                         listOf("/t:clean;restore;build;pack", "customArg1")))
     }
 

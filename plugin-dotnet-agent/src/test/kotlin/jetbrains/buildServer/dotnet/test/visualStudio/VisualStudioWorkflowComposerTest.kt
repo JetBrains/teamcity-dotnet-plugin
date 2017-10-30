@@ -44,8 +44,8 @@ class VisualStudioWorkflowComposerTest {
                         mapOf(
                                 DotnetConstants.PARAM_COMMAND to DotnetCommandType.VisualStudio.id,
                                 DotnetConstants.PARAM_VISUAL_STUDIO_ACTION to "build",
-                                DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "Debug",
-                                DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM to "x86",
+                                DotnetConstants.PARAM_CONFIG to "Debug",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1 arg2"),
                         sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln"))),
                         listOf(
@@ -75,7 +75,7 @@ class VisualStudioWorkflowComposerTest {
                         mapOf(
                                 DotnetConstants.PARAM_COMMAND to DotnetCommandType.VisualStudio.id,
                                 DotnetConstants.PARAM_VISUAL_STUDIO_ACTION to "rebuild",
-                                DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "release",
+                                DotnetConstants.PARAM_CONFIG to "release",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1"),
                         sequenceOf(CommandTarget(File("my1.csproj"))),
                         listOf(
@@ -93,14 +93,14 @@ class VisualStudioWorkflowComposerTest {
                         mapOf(
                                 DotnetConstants.PARAM_COMMAND to "abc",
                                 DotnetConstants.PARAM_VISUAL_STUDIO_ACTION to "rebuild",
-                                DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "release",
+                                DotnetConstants.PARAM_CONFIG to "release",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1"),
                         sequenceOf(CommandTarget(File("my1.csproj"))),
                         emptyList<CommandLine>()),
                 arrayOf(
                         mapOf(
                                 DotnetConstants.PARAM_VISUAL_STUDIO_ACTION to "rebuild",
-                                DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "release",
+                                DotnetConstants.PARAM_CONFIG to "release",
                                 DotnetConstants.PARAM_ARGUMENTS to "arg1"),
                         sequenceOf(CommandTarget(File("my1.csproj"))),
                         emptyList<CommandLine>()))
@@ -151,8 +151,8 @@ class VisualStudioWorkflowComposerTest {
         val parameters = mapOf(
                 DotnetConstants.PARAM_COMMAND to DotnetCommandType.VisualStudio.id,
                 DotnetConstants.PARAM_VISUAL_STUDIO_ACTION to "build",
-                DotnetConstants.PARAM_VISUAL_STUDIO_CONFIG to "Debug",
-                DotnetConstants.PARAM_VISUAL_STUDIO_PLATFORM to "x86",
+                DotnetConstants.PARAM_CONFIG to "Debug",
+                DotnetConstants.PARAM_PLATFORM to "x86",
                 DotnetConstants.PARAM_ARGUMENTS to "arg1 arg2")
 
         val targets = sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln")))

@@ -23,25 +23,25 @@ class MSBuildCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_MSBUILD_TARGETS)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_TARGETS)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/t:${StringUtil.split(it).joinToString(";")}"))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_MSBUILD_CONFIG)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/p:Configuration=$it"))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_MSBUILD_PLATFORM)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/p:Platform=$it"))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_MSBUILD_RUNTIME)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/p:RuntimeIdentifiers=$it"))
                 }

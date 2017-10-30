@@ -29,35 +29,42 @@ class TestCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_TEST_TEST_CASE_FILTER)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--filter"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_TEST_FRAMEWORK)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--framework"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_TEST_CONFIG)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--configuration"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_TEST_OUTPUT)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--settings"))
+                    yield(CommandLineArgument(it))
+                }
+            }
+
+            parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("--output"))
                     yield(CommandLineArgument(it))
                 }
             }
 
-            if (parameters(DotnetConstants.PARAM_TEST_NO_BUILD, "").trim().toBoolean()) {
+            if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
                 yield(CommandLineArgument("--no-build"))
             }
 

@@ -24,39 +24,38 @@ class VSTestCommand(
 
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_VSTEST_SETTINGS_FILE)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/Settings:$it"))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_VSTEST_TEST_NAMES)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+            when(parameters(DotnetConstants.PARAM_TEST_FILTER)) {
+                "filter" -> {
+                    parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
+                        if (it.isNotBlank()) {
+                            yield(CommandLineArgument("/TestCaseFilter:$it"))
+                        }
+                    }
+                }
+                "name" -> {
+                    parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
+                        if (it.isNotBlank()) {
+                            yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                        }
+                    }
                 }
             }
 
-            parameters(DotnetConstants.PARAM_VSTEST_IN_ISOLATION)?.trim()?.let {
-                if (it.isNotBlank() && "true".equals(it, true)) {
-                    yield(CommandLineArgument("/InIsolation"))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_VSTEST_PLATFORM)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/Platform:$it"))
                 }
             }
 
-            parameters(DotnetConstants.PARAM_VSTEST_FRAMEWORK)?.trim()?.let {
+            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
                 if (it.isNotBlank()) {
                     yield(CommandLineArgument("/Framework:$it"))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_VSTEST_TEST_CASE_FILTER)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/TestCaseFilter:$it"))
                 }
             }
 
