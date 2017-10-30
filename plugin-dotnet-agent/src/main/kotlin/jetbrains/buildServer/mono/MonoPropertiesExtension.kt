@@ -28,7 +28,6 @@ class MonoPropertiesExtension(
                     emptyList())
             _commandLineExecutor.tryExecute(command)?.let {
                 _versionParser.tryParse(it.standardOutput)?.let {
-                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_NAME, it)
                     agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.absolutePath)
                     LOG.info("Found Mono $it at ${command.executableFile.absolutePath}")
                 }
