@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'clean'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'clean'">
     <class name="DotnetCleanStep">
         <description>
             A [dotnet clean step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,10 +19,10 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="clean"/>
+        <param name="command" value="clean"/>
     </init>
     <params>
-        <param name="dotnet-paths" dslName="projects">
+        <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
@@ -33,22 +33,22 @@
                 directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
             </description>
         </param>
-        <param name="dotnet-clean-framework" dslName="framework">
+        <param name="framework">
             <description>Target framework to clean for.</description>
         </param>
-        <param name="dotnet-clean-config" dslName="configuration">
+        <param name="configuration">
             <description>Target configuration to clean for.</description>
         </param>
-        <param name="dotnet-clean-runtime" dslName="runtime">
+        <param name="runtime">
             <description>Target runtime to clean for.</description>
         </param>
-        <param name="dotnet-clean-output" dslName="outputDir">
+        <param name="outputDir">
             <description>The directory where outputs are placed.</description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="args">
             <description>Enter additional command line parameters for dotnet clean.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity

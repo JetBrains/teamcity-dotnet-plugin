@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'nuget-delete'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'nuget-delete'">
     <class name="DotnetNugetDeleteStep">
         <description>
             A [dotnet nuget delete step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,22 +19,22 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="nuget-delete"/>
+        <param name="command" value="nuget-delete"/>
     </init>
     <params>
-        <param name="dotnet-nuget-delete-source" dslName="serverUrl" mandatory="true">
+        <param name="nuget.packageSource" dslName="serverUrl" mandatory="true">
             <description>Specify the server URL.</description>
         </param>
-        <param name="dotnet-nuget-delete-id" dslName="packageId" mandatory="true">
+        <param name="nuget.packageId" dslName="packageId" mandatory="true">
             <description>Specify the package name and version separated by a space.</description>
         </param>
-        <param name="secure:dotnet-nuget-delete-api-key" dslName="apiKey" mandatory="true">
+        <param name="secure:nuget.apiKey" dslName="apiKey" mandatory="true">
             <description>Specify the API key to access the NuGet packages feed.</description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="args">
             <description>Enter additional command line parameters for dotnet nuget delete.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity

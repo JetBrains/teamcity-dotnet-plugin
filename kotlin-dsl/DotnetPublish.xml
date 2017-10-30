@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'publish'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'publish'">
     <class name="DotnetPublishStep">
         <description>
             A [dotnet publish step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,10 +19,10 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="publish"/>
+        <param name="command" value="publish"/>
     </init>
     <params>
-        <param name="dotnet-paths" dslName="projects">
+        <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
@@ -33,25 +33,25 @@
                 directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
             </description>
         </param>
-        <param name="dotnet-publish-framework" dslName="framework">
+        <param name="framework">
             <description>Target framework to publish for.</description>
         </param>
-        <param name="dotnet-publish-config" dslName="configuration">
+        <param name="configuration">
             <description>Target configuration to publish for.</description>
         </param>
-        <param name="dotnet-publish-runtime" dslName="runtime">
+        <param name="runtime">
             <description>Target runtime to publish for.</description>
         </param>
-        <param name="dotnet-publish-output" dslName="outputDir">
+        <param name="outputDir">
             <description>The directory where to publish the app.</description>
         </param>
-        <param name="dotnet-publish-version-suffix" dslName="versionSuffix">
+        <param name="versionSuffix">
             <description>Defines the value for the $(VersionSuffix) property in the project.</description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="args">
             <description>Enter additional command line parameters for dotnet publish.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity

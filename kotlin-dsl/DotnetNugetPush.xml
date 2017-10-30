@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'nuget-push'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'nuget-push'">
     <class name="DotnetNugetPushStep">
         <description>
             A [dotnet nuget push step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,27 +19,30 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="nuget-push"/>
+        <param name="command" value="nuget-push"/>
     </init>
     <params>
-        <param name="dotnet-paths" dslName="packages" mandatory="true">
+        <param name="paths" dslName="packages" mandatory="true">
             <description>Specify paths to nuget packages. Wildcards are supported.</description>
         </param>
-        <param name="dotnet-nuget-push-source" dslName="serverUrl" mandatory="true">
+        <param name="nuget.packageSource" dslName="serverUrl" mandatory="true">
             <description>
                 Specify the server URL. For the built-in TeamCity NuGet server use %teamcity.nuget.feed.server%.
             </description>
         </param>
-        <param name="secure:dotnet-nuget-push-api-key" dslName="apiKey" mandatory="true">
+        <param name="secure:nuget.apiKey" dslName="apiKey" mandatory="true">
             <description>
                 Specify the API key to access the NuGet packages feed.
                 For the built-in TeamCity NuGet server use %teamcity.nuget.feed.api.key%.
             </description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="nuget.noSymbols" dslName="noSymbols" type="boolean" trueValue="true" falseValue="">
+            <description>Do not publish an existing nuget symbols package</description>
+        </param>
+        <param name="args">
             <description>Enter additional command line parameters for dotnet nuget push.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity

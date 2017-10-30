@@ -50,11 +50,11 @@ object DotnetConstants {
     const val PARAM_TEST_FILTER = "test.filter"
     const val PARAM_TEST_NAMES = "test.names"
     const val PARAM_TEST_CASE_FILTER = "test.testCaseFilter"
-    const val PARAM_TEST_SETTINGS_FILE = "test.settings.file"
+    const val PARAM_TEST_SETTINGS_FILE = "test.settingsFile"
     const val PARAM_VISUAL_STUDIO_ACTION = "vs.action"
     const val PARAM_VISUAL_STUDIO_VERSION = "vs.version"
     const val PARAM_VERBOSITY = "verbosity"
-    const val PARAM_VERSION_SUFFIX = "version.suffix"
+    const val PARAM_VERSION_SUFFIX = "versionSuffix"
     const val PARAM_VSTEST_VERSION = "vstest.version"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"

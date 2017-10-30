@@ -377,7 +377,7 @@
     <th>Options:</th>
     <td>
         <props:checkboxProperty name="${params.skipBuildKey}"/>
-        <label for="${params.skipBuildKey}">Do not build the project before packing</label>
+        <label for="${params.skipBuildKey}">Do not build the projects</label>
     </td>
 </tr>
 

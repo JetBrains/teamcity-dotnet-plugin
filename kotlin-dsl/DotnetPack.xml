@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'pack'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'pack'">
     <class name="DotnetPackStep">
         <description>
             A [dotnet pack step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,10 +19,10 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="pack"/>
+        <param name="command" value="pack"/>
     </init>
     <params>
-        <param name="dotnet-paths" dslName="projects">
+        <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
@@ -33,22 +33,25 @@
                 directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
             </description>
         </param>
-        <param name="dotnet-pack-config" dslName="configuration">
+        <param name="configuration">
             <description>Target configuration to pack for.</description>
         </param>
-        <param name="dotnet-pack-output" dslName="outputDir">
+        <param name="runtime">
+            <description>Target runtime to pack for.</description>
+        </param>
+        <param name="outputDir">
             <description>The directory where to place outputs.</description>
         </param>
-        <param name="dotnet-pack-version-suffix" dslName="versionSuffix">
+        <param name="versionSuffix">
             <description>Defines the value for the $(VersionSuffix) property in the project.</description>
         </param>
-        <param name="dotnet-pack-no-build" dslName="noBuild" type="boolean" trueValue="true" falseValue="">
+        <param name="skipBuild" type="boolean" trueValue="true" falseValue="">
             <description>Do not build the project before packing</description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="args">
             <description>Enter additional command line parameters for dotnet pack.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity

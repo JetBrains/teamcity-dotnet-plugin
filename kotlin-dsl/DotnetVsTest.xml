@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['dotnet-command'] == 'vstest'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'vstest'">
     <class name="DotnetVsTestStep">
         <description>
             A [dotnet vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
@@ -19,10 +19,10 @@
         </description>
     </function>
     <init>
-        <param name="dotnet-command" value="vstest"/>
+        <param name="command" value="vstest"/>
     </init>
     <params>
-        <param name="dotnet-paths" dslName="assemblies">
+        <param name="paths" dslName="assemblies">
             <description>Specify paths to test assemblies. Wildcards are supported.</description>
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
@@ -33,31 +33,31 @@
                 directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
             </description>
         </param>
-        <param name="dotnet-vstest-filter-type" dslName="filterType" type="compound">
+        <param name="test.filter" dslName="filter" type="compound">
             <description>
                 The filter type used while test run
             </description>
             <option name="testName" value="name">
-                <param name="dotnet-vstest-test-names" dslName="names">
+                <param name="test.names" dslName="names">
                     <description>Specify the list of test names to run.</description>
                 </param>
             </option>
             <option name="testCaseFilter" value="filter">
-                <param name="dotnet-vstest-test-case-filter" dslName="filter">
+                <param name="test.testCaseFilter" dslName="filter">
                     <description>Run tests that match the given expression.</description>
                 </param>
             </option>
         </param>
-        <param name="dotnet-vstest-framework" dslName="framework">
+        <param name="framework">
             <description>The target .NET Framework version to be used for test execution.</description>
         </param>
-        <param name="dotnet-vstest-config-file" dslName="settingsFile">
+        <param name="test.settingsFile" dslName="settingsFile">
             <description>The path to the run settings configuration file.</description>
         </param>
-        <param name="dotnet-args" dslName="args">
+        <param name="args">
             <description>Enter additional command line parameters for dotnet vstest.</description>
         </param>
-        <param name="dotnet-verbosity" dslName="logging" type="Verbosity">
+        <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity
