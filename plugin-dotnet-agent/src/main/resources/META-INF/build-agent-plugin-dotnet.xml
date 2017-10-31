@@ -79,8 +79,12 @@
     </bean>
 
     <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
+        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    </bean>
+    <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand">
+        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    </bean>
     <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
     <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
     <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>

@@ -14,7 +14,7 @@ import kotlin.coroutines.experimental.buildSequence
 class NugetPushCommand(
         parametersService: ParametersService,
         private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _customArgumentsProvider: ArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCommandBase(parametersService) {
 
@@ -48,6 +48,6 @@ class NugetPushCommand(
                 yield(CommandLineArgument("true"))
             }
 
-            yieldAll(_commonArgumentsProvider.arguments)
+            yieldAll(_customArgumentsProvider.arguments)
         }
 }

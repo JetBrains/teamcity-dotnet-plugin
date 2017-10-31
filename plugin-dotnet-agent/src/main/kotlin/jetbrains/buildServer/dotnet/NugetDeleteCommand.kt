@@ -13,7 +13,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class NugetDeleteCommand(
         parametersService: ParametersService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _customArgumentsProvider: ArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCommandBase(parametersService) {
 
@@ -50,6 +50,6 @@ class NugetDeleteCommand(
 
             yield(CommandLineArgument("--non-interactive"))
 
-            yieldAll(_commonArgumentsProvider.arguments)
+            yieldAll(_customArgumentsProvider.arguments)
         }
 }

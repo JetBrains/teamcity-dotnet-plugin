@@ -20,10 +20,4 @@ class ArgumentsServiceImpl : ArgumentsService {
                         }
                     }
                     .joinToString(argumentsSeparator)
-
-    override fun escape(text: String): String {
-        val buffer = StringBuilder()
-        StringUtil.escapeStringCharacters(text.length, text, null, buffer)
-        return buffer.toString()
-    }
 }
