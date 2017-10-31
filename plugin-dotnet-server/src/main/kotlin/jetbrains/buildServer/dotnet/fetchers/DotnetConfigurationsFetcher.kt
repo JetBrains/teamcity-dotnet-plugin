@@ -7,47 +7,31 @@
 
 package jetbrains.buildServer.dotnet.fetchers
 
-import jetbrains.buildServer.dotnet.DotnetModelParser
-import jetbrains.buildServer.dotnet.models.CsProject
-import jetbrains.buildServer.dotnet.models.Project
+import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.serverSide.DataItem
+import jetbrains.buildServer.serverSide.ProjectDataFetcher
+import jetbrains.buildServer.util.StringUtil
+import jetbrains.buildServer.util.browser.Browser
 import java.util.TreeSet
 
 /**
  * Provides configurations fetcher for project model.
  */
-class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjectsDataFetcher(modelParser) {
+class DotnetConfigurationsFetcher(private val _solutionDiscover: SolutionDiscover) : ProjectDataFetcher {
 
-    override fun getDataItems(project: Project?): Collection<String> {
-        val configurations = TreeSet(String.CASE_INSENSITIVE_ORDER)
-        configurations.addAll(DefaultConfigurations)
-        configurations.addAll(project?.configurations?.keys ?: emptySet())
+    override fun retrieveData(fsBrowser: Browser, projectFilePath: String): MutableList<DataItem> =
+            getValues(StreamFactoryImpl(fsBrowser), StringUtil.splitCommandArgumentsAndUnquote(projectFilePath).asSequence())
+                    .map { DataItem(it, null) }
+                    .toMutableList()
 
-        return configurations
-    }
-
-    public override fun getDataItems(project: CsProject?): Collection<String> {
-        val configurations = TreeSet(String.CASE_INSENSITIVE_ORDER)
-        configurations.addAll(DefaultConfigurations)
-
-        project?.let {
-            val conditions = TreeSet(String.CASE_INSENSITIVE_ORDER)
-            it.propertyGroups?.let {
-                conditions.addAll(it.mapNotNull { it.condition })
-            }
-
-            it.itemGroups?.let {
-                conditions.addAll(it.mapNotNull { it.condition })
-            }
-
-            conditions.forEach {
-                ConditionPattern.find(it)?.let {
-                    configurations.add(it.groupValues[2])
-                }
-            }
-        }
-
-        return configurations
-    }
+    fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
+            _solutionDiscover.discover(streamFactory, paths)
+                    .flatMap { it.projects.asSequence() }
+                    .flatMap { it.configurations.asSequence() }
+                    .map { it.name }
+                    .plus(DefaultConfigurations)
+                    .distinctBy() { it.toLowerCase() }
+                    .sorted()
 
     override fun getType(): String {
         return "DotnetConfigurations"
@@ -55,6 +39,5 @@ class DotnetConfigurationsFetcher(modelParser: DotnetModelParser) : DotnetProjec
 
     companion object {
         private val DefaultConfigurations: Collection<String> = listOf("Release", "Debug")
-        private val ConditionPattern: Regex = Regex("'\\$\\(Configuration\\)([^']*)' == '([^|]*)([^']*)'")
     }
 }

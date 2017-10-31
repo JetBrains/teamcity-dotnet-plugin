@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.XmlDocumentService
+import jetbrains.buildServer.XmlDocumentService
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
