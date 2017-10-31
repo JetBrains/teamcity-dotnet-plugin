@@ -70,7 +70,7 @@ class DotnetRunnerDiscoveryExtension(private val _solutionDiscover: SolutionDisc
 
     private fun isTestProject(project: Project): Boolean = project.references.filter { TestReferencePattern.matcher(it.id).find() }.any()
 
-    private fun isPublishProject(project: Project): Boolean = project.references.filter { PublishReferencePattern.matcher(it.id).find() }.any()
+    private fun isPublishProject(project: Project): Boolean = project.generatePackageOnBuild || project.references.filter { PublishReferencePattern.matcher(it.id).find() }.any()
 
     private fun normalizePath(path: String): String = path.replace('\\', '/')
 

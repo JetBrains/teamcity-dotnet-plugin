@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Nik.Nuget.Sample</AssemblyName>
+    <PackageId>Nik.Nuget.Sample</PackageId>
+    <PackageVersion>1.0.3</PackageVersion>
+    <Authors>NikolayP</Authors>
+    <Description>Smaple</Description>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

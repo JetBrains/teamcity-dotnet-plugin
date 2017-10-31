@@ -58,7 +58,11 @@ class MSBuildProjectDeserializer(
                         .map { Target(it) }
                         .toList()
 
-                Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets)))
+                val generatePackageOnBuild = getContents(doc, "/Project/PropertyGroup/GeneratePackageOnBuild")
+                        .filter { "true".equals(it.trim(), true) }
+                        .any()
+
+                Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets, generatePackageOnBuild)))
             }
         } ?: Solution(emptyList())
 

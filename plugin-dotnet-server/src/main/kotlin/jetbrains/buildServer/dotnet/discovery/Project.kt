@@ -6,5 +6,6 @@ data class Project(
         var frameworks: List<Framework> = emptyList(),
         var runtimes: List<Runtime> = emptyList(),
         val references: List<Reference> = emptyList(),
-        val targets: List<Target> = emptyList()) {
+        val targets: List<Target> = emptyList(),
+        val generatePackageOnBuild: Boolean = false) {
 }

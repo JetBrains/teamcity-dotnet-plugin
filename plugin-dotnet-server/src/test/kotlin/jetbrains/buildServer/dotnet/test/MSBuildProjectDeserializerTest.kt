@@ -18,6 +18,9 @@ class MSBuildProjectDeserializerTest {
                         File("src/test/resources/project-runtime.csproj"),
                         Solution(listOf(Project("projectPath", emptyList(), emptyList(), listOf(Runtime("win7-x64"), Runtime("win-7x86"), Runtime("ubuntu.16.10-x64")), emptyList())))),
                 arrayOf(
+                        File("src/test/resources/GeneratePackageOnBuild.csproj"),
+                        Solution(listOf(Project("projectPath", emptyList(), listOf(Framework("netstandard2.0")), emptyList(), emptyList(), emptyList(), true)))),
+                arrayOf(
                         File("src/test/resources/project14.csproj"),
                         Solution(listOf(Project("projectPath", listOf(Configuration("Debug"), Configuration("Release")), emptyList(), emptyList(), listOf(Reference("nunit.engine.api"), Reference("System"), Reference("System.Data"), Reference("System.Xml")))))),
                 arrayOf(

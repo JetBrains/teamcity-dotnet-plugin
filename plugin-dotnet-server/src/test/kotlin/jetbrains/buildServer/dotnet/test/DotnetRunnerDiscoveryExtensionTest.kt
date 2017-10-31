@@ -65,6 +65,10 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet")))))),
                         listOf(DiscoveredTarget(mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget(mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                // Publish project when generatePackageOnBuild is true
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), true)))),
+                        listOf(DiscoveredTarget(mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget(mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
                 // Publish project case insensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("MicrosofT.ASPnet")))))),
