@@ -106,7 +106,7 @@ class WorkflowSessionImpl(
         override fun getWorkingDirectory(): String = _commandLine.workingDirectory.absolutePath
 
         override fun getArguments(): MutableList<String> = _commandLine.arguments.map {
-            _argumentsService.escape(it.value)
+            it.value
         }.toMutableList()
 
         override fun getEnvironment(): MutableMap<String, String> {
