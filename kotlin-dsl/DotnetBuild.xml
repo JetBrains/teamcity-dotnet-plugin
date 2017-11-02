@@ -6,7 +6,7 @@
   ~  See LICENSE in the project root for license information.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet-cli" generateDslJar="true" applicable="params['command'] == 'build'">
+<dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'build'">
     <class name="DotnetBuildStep">
         <description>
             A [dotnet build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command

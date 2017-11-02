@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dsl-add-on kind="buildStep">
   <extends>
-    <dsl type="dotnet-cli" applicable="params['command'] == 'msbuild'" />
-    <dsl type="dotnet-cli" applicable="params['command'] == 'test'" />
-    <dsl type="dotnet-cli" applicable="params['command'] == 'vstest'" />
+    <dsl type="dotnet.cli" applicable="params['command'] == 'msbuild'" />
+    <dsl type="dotnet.cli" applicable="params['command'] == 'test'" />
+    <dsl type="dotnet.cli" applicable="params['command'] == 'vstest'" />
   </extends>
   <params>
     <param name="dotNetCoverage.tool" dslName="coverage" type="compound">
