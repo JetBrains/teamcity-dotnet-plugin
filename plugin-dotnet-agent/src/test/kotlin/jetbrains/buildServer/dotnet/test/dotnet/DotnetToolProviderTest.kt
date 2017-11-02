@@ -36,10 +36,10 @@ class DotnetToolProviderTest {
     @DataProvider
     fun supportToolCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf("dotnet", true),
-                arrayOf("DoTnet", true),
-                arrayOf("DOTNET", true),
-                arrayOf("DOTNET2", false),
+                arrayOf("dotnet-cli", true),
+                arrayOf("DoTnet-cli", true),
+                arrayOf("DOTNET-cli", true),
+                arrayOf("DOTNET2-cli", false),
                 arrayOf("abc", false),
                 arrayOf(" dotnet ", false),
                 arrayOf("   ", false),
