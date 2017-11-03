@@ -23,7 +23,7 @@ class DotnetToolProvider(
     override fun supports(toolName: String): Boolean = DotnetConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-            _toolSearchService.find(DotnetConstants.RUNNER_TYPE, DotnetConstants.TOOL_HOME)
+            _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME)
                     .firstOrNull()
                     ?.absolutePath
                     ?: throw ToolCannotBeFoundException("""

@@ -27,7 +27,7 @@
 
     <!-- dotnet -->
     <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
-        <constructor-arg value="dotnet"/>
+        <constructor-arg value="dotnet.cli"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
