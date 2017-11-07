@@ -147,6 +147,10 @@
     </td>
 </tr>
 
+<c:set var="testNamesHint">
+    Run tests with names that match the provided values.
+    <bs:help urlPrefix="https://msdn.microsoft.com/en-us/library/jj155796.aspx" file=""/>
+</c:set>
 <tr class="advancedSetting dotnet vstest">
     <th class="noBorder">
         <label for="${params.testNamesKey}">Test names: <l:star/></label>
@@ -154,7 +158,7 @@
     <td>
         <props:multilineProperty expanded="true" name="${params.testNamesKey}" className="longField"
                                  rows="3" cols="49" linkTitle="Edit test names"
-                                 note="Run tests with names that match the provided values." />
+                                 note="${testNamesHint}" />
     </td>
 </tr>
 
@@ -165,7 +169,10 @@
     <td>
         <props:textProperty name="${params.testCaseFilterKey}" className="longField" />
         <span class="error" id="error_${params.testCaseFilterKey}"></span>
-        <span class="smallNote">Run tests that match the given expression.</span>
+        <span class="smallNote">
+            Run tests that match the given expression.
+            <bs:help urlPrefix="https://msdn.microsoft.com/en-us/library/jj155796.aspx" file=""/>
+        </span>
     </td>
 </tr>
 
