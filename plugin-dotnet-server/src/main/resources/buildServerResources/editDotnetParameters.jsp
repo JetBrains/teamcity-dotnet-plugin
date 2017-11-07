@@ -16,6 +16,7 @@
 
     BS.DotnetParametersForm = {
         appendProjectFile: [],
+        projectArtifactsSelector: [],
         coverageEnabled: [],
         hideLogging: [],
         hideWorkingDirectory: [],
@@ -39,7 +40,7 @@
             var pathsName = BS.DotnetParametersForm.pathName[commandName];
             var pathsRow = $j(BS.Util.escapeId('${params.pathsKey}-row'));
             if (pathsName) {
-                var label = pathsRow.show().find("label");
+                var label = pathsRow.find("label");
                 label.text(pathsName + ':');
                 if (BS.DotnetParametersForm.mandatoryPaths[commandName]) {
                     label.append(' ').append('${asterisk}');
@@ -47,6 +48,11 @@
 
                 var hint = BS.DotnetParametersForm.pathHint[commandName];
                 $j(BS.Util.escapeId('${params.pathsKey}-hint')).text(hint);
+                var artifactsSelector = BS.DotnetParametersForm.projectArtifactsSelector[commandName];
+                pathsRow.find('.vcsTreeSources').toggleClass('hidden', !!artifactsSelector);
+                pathsRow.find('.vcsTreeFiles').toggleClass('hidden', !artifactsSelector);
+
+                pathsRow.show()
             } else {
                 pathsRow.hide();
             }
@@ -96,7 +102,14 @@
     <td>
         <div class="position-relative">
             <props:textProperty name="${params.pathsKey}" className="longField" expandable="true"/>
-            <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
+            <div class="vcsTreeSources">
+                <bs:vcsTree treeId="${params.pathsKey}" callback="BS.DotnetParametersForm.selectProjectFile"/>
+            </div>
+            <div class="vcsTreeFiles hidden">
+                <c:if test="${not buildForm.template}">
+                    <bs:agentArtifactsTree fieldId="${params.pathsKey}" buildTypeId="${buildForm.externalId}" filesOnly="true"/>
+                </c:if>
+            </div>
         </div>
         <span class="error" id="error_${params.pathsKey}"></span>
         <span class="smallNote">
@@ -365,7 +378,7 @@
     <th>Options:</th>
     <td>
         <props:checkboxProperty name="${params.nugetNoSymbolsKey}"/>
-        <label for="${params.nugetNoSymbolsKey}">Do not publish an existing nuget symbols package</label>
+        <label for="${params.nugetNoSymbolsKey}">Do not publish an existing nuget symbols packages</label>
     </td>
 </tr>
 
