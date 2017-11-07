@@ -3,8 +3,10 @@ package jetbrains.buildServer.dotnet.discovery
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.serverSide.BuildTypeSettings
 import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExtension
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
+import jetbrains.buildServer.util.browser.Browser
 import jetbrains.buildServer.util.browser.Element
 import java.util.regex.Pattern
 import java.util.regex.Pattern.CASE_INSENSITIVE
@@ -17,6 +19,30 @@ class DotnetRunnerDiscoveryExtension(
     override fun discoverRunnersInDirectory(dir: Element, filesAndDirs: MutableList<Element>): MutableList<DiscoveredObject> =
         discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
 
+    override fun postProcessDiscoveredObjects(
+            settings: BuildTypeSettings,
+            browser: Browser,
+            discovered: MutableList<DiscoveredObject>): MutableList<DiscoveredObject> =
+                getNewCommands(getExistingCommands(settings), getCreatedCommands(discovered))
+                .map { createTarget(it) }
+                .toMutableList()
+
+    fun getNewCommands(existingCommands: Sequence<Command>, createdCommands: Sequence<Command>): Sequence<Command> =
+        createdCommands.minus(existingCommands)
+
+    fun getExistingCommands(settings: BuildTypeSettings): Sequence<Command> =
+        settings.buildRunners
+        .filter { DotnetConstants.RUNNER_TYPE.equals(it.runType.type, true) }
+        .map { Command(it.name, extractParameters(it.parameters)) }
+        .toSet()
+        .asSequence()
+
+    fun getCreatedCommands(discovered: MutableList<DiscoveredObject>): Sequence<Command> =
+        discovered
+        .filter { it is DiscoveredTarget }
+        .map { it.let { Command(it.toString(), extractParameters(it.parameters)) } }
+        .asSequence()
+
     fun discover(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<DiscoveredTarget> {
         val solutions = _solutionDiscover.discover(streamFactory, paths).toList()
         val complexSolutions = solutions.asSequence().filter { !it.isSimple }.toList()
@@ -24,6 +50,9 @@ class DotnetRunnerDiscoveryExtension(
         val simpleSolutions = solutions.asSequence().filter { it.isSimple && !complexSolutionProjects.containsAll(it.projects) }
         return complexSolutions.asSequence().plus(simpleSolutions).flatMap { createCommands(it) }.distinct().map { createTarget(it) }
     }
+
+    private fun extractParameters(parameters: Map<String, String>): List<Parameter> =
+        parameters.filter { Params.contains(it.key) && !it.value.isNullOrBlank()}.map { Parameter(it.key, it.value) }.toList()
 
     private fun getElements(elements: Sequence<Element>, depth: Int = 3): Sequence<Element> =
             if (depth > 0)
@@ -86,19 +115,35 @@ class DotnetRunnerDiscoveryExtension(
 
     private fun normalizePath(path: String): String = path.replace('\\', '/')
 
-    private data class Command(val name: String, private val _parameters: List<Parameter>) {
+    class Command(val name: String, _parameters: List<Parameter>) {
         val parameters: List<Parameter>
 
         init {
             parameters = _parameters.sortedBy { it.name }
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Command
+
+            if (parameters != other.parameters) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return parameters.hashCode()
+        }
+
     }
 
-    private data class Parameter(val name: String, val value: String) { }
+    data class Parameter(val name: String, val value: String) { }
 
     private companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnerDiscoveryExtension::class.java.name)
         private val PublishReferencePattern: Pattern = Pattern.compile("Microsoft\\.aspnet.*", CASE_INSENSITIVE)
         private val TestReferencePattern: Pattern = Pattern.compile("Microsoft\\.NET\\.Test\\.Sdk", CASE_INSENSITIVE)
+        private val Params = setOf(DotnetConstants.PARAM_COMMAND, DotnetConstants.PARAM_PATHS)
     }
 }

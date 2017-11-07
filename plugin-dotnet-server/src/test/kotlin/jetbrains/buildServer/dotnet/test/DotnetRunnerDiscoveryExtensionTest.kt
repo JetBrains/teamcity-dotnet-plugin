@@ -3,6 +3,12 @@ package jetbrains.buildServer.dotnet.test
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.serverSide.BuildTypeSettings
+import jetbrains.buildServer.serverSide.PropertiesProcessor
+import jetbrains.buildServer.serverSide.RunType
+import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor
+import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
+import jetbrains.buildServer.serverSide.impl.agent.PollingRemoteAgentConnection
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -11,7 +17,7 @@ import org.testng.annotations.Test
 
 class DotnetRunnerDiscoveryExtensionTest {
     @DataProvider
-    fun testData(): Array<Array<Any>> {
+    fun testGenerateCommandsData(): Array<Array<Any>> {
         return arrayOf(
                 // Default project command is build
                 arrayOf(
@@ -102,7 +108,7 @@ class DotnetRunnerDiscoveryExtensionTest {
                         listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")))))
     }
 
-    @Test(dataProvider = "testData")
+    @Test(dataProvider = "testGenerateCommandsData")
     fun shouldDiscoveryAndGenerateCommands(solutions: Sequence<Solution>, expectedTargets: List<DiscoveredTarget>) {
         // Given
         val paths = sequenceOf("dir1/proj1.csproj", "dir2/proj2.json")
@@ -127,5 +133,159 @@ class DotnetRunnerDiscoveryExtensionTest {
 
         // Then
         Assert.assertEquals(actualTargets, expectedTargets)
+    }
+
+    @DataProvider
+    fun testGetNewCommandsData(): Array<Array<Sequence<DotnetRunnerDiscoveryExtension.Command>>> {
+        return arrayOf(
+                // New command
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1"))), DotnetRunnerDiscoveryExtension.Command("c", listOf(DotnetRunnerDiscoveryExtension.Parameter("param2", "value2")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("c", listOf(DotnetRunnerDiscoveryExtension.Parameter("param2", "value2"))))),
+                arrayOf(
+                        sequenceOf(),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1"))))),
+                // Commands case insensitive
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1"))))),
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("Param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("Param1", "value1"))))),
+                // Has all commands
+                arrayOf(
+                        sequenceOf(),
+                        sequenceOf(),
+                        sequenceOf()),
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf()),
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("A", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf()),
+                // Has all commands with dif names
+                arrayOf(
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("b", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf()))}
+
+    @Test(dataProvider = "testGetNewCommandsData")
+    fun shouldGetNewCommands(
+            existingCommands: Sequence<DotnetRunnerDiscoveryExtension.Command>,
+            createdCommands: Sequence<DotnetRunnerDiscoveryExtension.Command>,
+            expectedCommands: Sequence<DotnetRunnerDiscoveryExtension.Command>) {
+        // Given
+        val ctx = Mockery()
+        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"))
+
+        // When
+        val actualCommands = discoveryExtension.getNewCommands(existingCommands, createdCommands).toList()
+
+        // Then
+        Assert.assertEquals(actualCommands, expectedCommands.toList())
+    }
+
+    @Test
+    fun shouldGetCreatedCommands() {
+        // Given
+        val ctx = Mockery()
+        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"))
+        val discoveredTarget1 = DiscoveredTarget("abc", mapOf(DotnetConstants.PARAM_COMMAND to "value1"))
+        val discoveredTarget2 = DiscoveredTarget("xyz", mapOf(DotnetConstants.PARAM_PATHS to "value2"))
+
+        // When
+        val actualCommands = discoveryExtension.getCreatedCommands(listOf<DiscoveredObject>(discoveredTarget1, discoveredTarget2).toMutableList()).toList()
+
+        // Then
+        Assert.assertEquals(actualCommands, listOf(DotnetRunnerDiscoveryExtension.Command("abc", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_COMMAND, "value1"))), DotnetRunnerDiscoveryExtension.Command("xyz", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_PATHS, "value2")))))
+    }
+
+    @Test
+    fun shouldGetExistingCommands() {
+        // Given
+        val ctx = Mockery()
+        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
+        val buildRunnerDescriptor1 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor1")
+        val buildRunnerDescriptor2 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor2")
+        val buildRunnerDescriptor3 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor3")
+        val buildTypeSettings = ctx.mock(BuildTypeSettings::class.java)
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"))
+        ctx.checking(object : Expectations() {
+            init {
+                oneOf<BuildTypeSettings>(buildTypeSettings).buildRunners
+                will(returnValue(listOf(buildRunnerDescriptor1, buildRunnerDescriptor2, buildRunnerDescriptor3)))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).runType
+                will(returnValue(MyRunType(DotnetConstants.RUNNER_TYPE)))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).name
+                will(returnValue("abc"))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).parameters
+                will(returnValue(mapOf(DotnetConstants.PARAM_COMMAND to "value1")))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).runType
+                will(returnValue(MyRunType("jjj")))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).name
+                will(returnValue("abc"))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).parameters
+                will(returnValue(mapOf(DotnetConstants.PARAM_COMMAND to "value1")))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).runType
+                will(returnValue(MyRunType(DotnetConstants.RUNNER_TYPE)))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).name
+                will(returnValue("xyz"))
+
+                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).parameters
+                will(returnValue(mapOf(DotnetConstants.PARAM_PATHS to "value2")))
+            }
+        })
+
+
+        // When
+        val actualCommands = discoveryExtension.getExistingCommands(buildTypeSettings).toList()
+
+        // Then
+        Assert.assertEquals(actualCommands, listOf(DotnetRunnerDiscoveryExtension.Command("abc", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_COMMAND, "value1"))), DotnetRunnerDiscoveryExtension.Command("xyz", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_PATHS, "value2")))))
+    }
+
+    private class MyRunType(private val type: String): RunType() {
+        override fun getViewRunnerParamsJspFilePath(): String? {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getRunnerPropertiesProcessor(): PropertiesProcessor? {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getDescription(): String {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getEditRunnerParamsJspFilePath(): String? {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getType(): String = type
+
+        override fun getDisplayName(): String {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getDefaultRunnerProperties(): MutableMap<String, String> {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
     }
 }
