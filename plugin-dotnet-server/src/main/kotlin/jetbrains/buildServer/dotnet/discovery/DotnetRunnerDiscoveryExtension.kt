@@ -14,7 +14,8 @@ import kotlin.coroutines.experimental.buildSequence
 
 class DotnetRunnerDiscoveryExtension(
         private val _solutionDiscover: SolutionDiscover,
-        private val _defaultDiscoveredTargetNameFactory: DiscoveredTargetNameFactory)
+        private val _defaultDiscoveredTargetNameFactory: DiscoveredTargetNameFactory,
+        private val _projectTypeSelector: ProjectTypeSelector)
     : BreadthFirstRunnerDiscoveryExtension(1) {
     override fun discoverRunnersInDirectory(dir: Element, filesAndDirs: MutableList<Element>): MutableList<DiscoveredObject> =
         discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
@@ -70,12 +71,13 @@ class DotnetRunnerDiscoveryExtension(
             var solutionPath = normalizePath(solution.solution)
             yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
             yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
+            val projectTypes = solution.projects.flatMap { _projectTypeSelector.select(it) }.toSet()
 
-            if (solution.projects.filter { isTestProject(it) }.any()) {
+            if (projectTypes.contains(ProjectType.Test)) {
                 yield(createSimpleCommand(DotnetCommandType.Test, solutionPath))
             }
 
-            if (solution.projects.filter { isPublishProject(it) }.any()) {
+            if (projectTypes.contains(ProjectType.Publish)) {
                 yield(createSimpleCommand(DotnetCommandType.Publish, solutionPath))
             }
         }
@@ -88,12 +90,14 @@ class DotnetRunnerDiscoveryExtension(
                 var projectPath = normalizePath(project.project)
                 yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
 
-                if (isTestProject(project)) {
+                val projectTypes = _projectTypeSelector.select(project)
+
+                if (projectTypes.contains(ProjectType.Test)) {
                     yield(createSimpleCommand(DotnetCommandType.Test, projectPath))
                     continue
                 }
 
-                if (isPublishProject(project)) {
+                if (projectTypes.contains(ProjectType.Publish)) {
                     yield(createSimpleCommand(DotnetCommandType.Publish, projectPath))
                     continue
                 }
@@ -108,10 +112,6 @@ class DotnetRunnerDiscoveryExtension(
 
     private fun createDefaultName(commandType: DotnetCommandType, path:String): String =
             _defaultDiscoveredTargetNameFactory.createName(commandType, path)
-
-    private fun isTestProject(project: Project): Boolean = project.references.filter { TestReferencePattern.matcher(it.id).find() }.any()
-
-    private fun isPublishProject(project: Project): Boolean = project.generatePackageOnBuild || project.references.filter { PublishReferencePattern.matcher(it.id).find() }.any()
 
     private fun normalizePath(path: String): String = path.replace('\\', '/')
 
@@ -142,8 +142,6 @@ class DotnetRunnerDiscoveryExtension(
 
     private companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnerDiscoveryExtension::class.java.name)
-        private val PublishReferencePattern: Pattern = Pattern.compile("Microsoft\\.aspnet.*", CASE_INSENSITIVE)
-        private val TestReferencePattern: Pattern = Pattern.compile("Microsoft\\.NET\\.Test\\.Sdk", CASE_INSENSITIVE)
         private val Params = setOf(DotnetConstants.PARAM_COMMAND, DotnetConstants.PARAM_PATHS)
     }
 }
