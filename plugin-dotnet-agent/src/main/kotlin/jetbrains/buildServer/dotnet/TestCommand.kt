@@ -8,11 +8,13 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class TestCommand(
         parametersService: ParametersService,
+        private val _failedTestDetector: FailedTestDetector,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
@@ -64,5 +66,6 @@ class TestCommand(
             yieldAll(_commonArgumentsProvider.arguments)
         }
 
-    override fun isSuccessfulExitCode(exitCode: Int): Boolean = exitCode >= 0
+    override fun isSuccessful(result: CommandLineResult) =
+            result.exitCode == 0 || (result.exitCode > 0 && _failedTestDetector.hasFailedTest(result))
 }

@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -76,20 +77,25 @@ class VSTestCommandTest {
     @DataProvider
     fun checkSuccessData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(0, true),
-                arrayOf(1, true),
-                arrayOf(99, true),
-                arrayOf(-1, false),
-                arrayOf(-99, false))
+                arrayOf(0, false, true),
+                arrayOf(0, true, true),
+                arrayOf(1, true, true),
+                arrayOf(1, false, false),
+                arrayOf(99, true, true),
+                arrayOf(99, false, false),
+                arrayOf(-1, true, false),
+                arrayOf(-1, false, false),
+                arrayOf(-99, true, false),
+                arrayOf(-99, false, false))
     }
 
     @Test(dataProvider = "checkSuccessData")
-    fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
+    fun shouldImplementCheckSuccess(exitCode: Int, hasFailedTest: Boolean, expectedResult: Boolean) {
         // Given
-        val command = createCommand()
+        val command = createCommand(emptyMap(), emptySequence(), emptySequence(), FailedTestDetectorStub(hasFailedTest))
 
         // When
-        val actualResult = command.isSuccessfulExitCode(exitCode)
+        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)
@@ -110,9 +116,11 @@ class VSTestCommandTest {
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
+            arguments: Sequence<CommandLineArgument> = emptySequence(),
+            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand =
             VSTestCommand(
                     ParametersServiceStub(parameters),
+                    failedTestDetector,
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     DotnetCommonArgumentsProviderStub(arguments),

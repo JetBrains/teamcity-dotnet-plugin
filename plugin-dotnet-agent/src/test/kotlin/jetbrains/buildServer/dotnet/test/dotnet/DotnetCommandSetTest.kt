@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.DotnetCommandSet
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -100,6 +101,7 @@ class DotnetCommandSetTest {
     @Test
     fun shouldCheckExitCode() {
         // Given
+        val result = CommandLineResult(sequenceOf(10), emptySequence(), emptySequence())
         _ctx!!.checking(object : Expectations() {
             init {
                 oneOf<DotnetCommand>(_buildCommand).commandType
@@ -111,7 +113,7 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_buildCommand).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
 
-                allowing<DotnetCommand>(_buildCommand).isSuccessfulExitCode(10)
+                allowing<DotnetCommand>(_buildCommand).isSuccessful(result)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_cleanCommand).commandType
@@ -124,7 +126,7 @@ class DotnetCommandSetTest {
                 listOf(_buildCommand!!, _cleanCommand!!))
 
         // When
-        val actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessfulExitCode(10) }.toList()
+        val actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessful(result) }.toList()
 
         // Then
         _ctx!!.assertIsSatisfied()

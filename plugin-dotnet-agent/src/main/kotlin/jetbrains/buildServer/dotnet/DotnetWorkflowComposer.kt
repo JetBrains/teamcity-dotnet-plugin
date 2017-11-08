@@ -37,8 +37,8 @@ class DotnetWorkflowComposer(
                                 _defaultEnvironmentVariables.variables.toList()))
                     }
                 }
-
-                if (context.lastResult.isCompleted && !command.isSuccessfulExitCode(context.lastResult.exitCode)) {
+                
+                if (context.lastResult.isCompleted && !command.isSuccessful(context.lastResult)) {
                     context.abort(BuildFinishedStatus.FINISHED_FAILED)
                     return@buildSequence
                 }

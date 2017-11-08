@@ -1,12 +1,14 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
         parametersService: ParametersService,
+        private val _failedTestDetector: FailedTestDetector,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
@@ -64,5 +66,6 @@ class VSTestCommand(
             yieldAll(_customArgumentsProvider.arguments)
         }
 
-    override fun isSuccessfulExitCode(exitCode: Int): Boolean = exitCode >= 0
+    override fun isSuccessful(result: CommandLineResult) =
+            result.exitCode == 0 || (result.exitCode > 0 && _failedTestDetector.hasFailedTest(result))
 }

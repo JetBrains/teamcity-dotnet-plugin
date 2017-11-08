@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
@@ -64,6 +65,6 @@ class DotnetCommandSet(
         override val targetArguments: Sequence<TargetArguments>
             get() = sequenceOf(_targetArguments)
 
-        override fun isSuccessfulExitCode(exitCode: Int) = _command.isSuccessfulExitCode(exitCode)
+        override fun isSuccessful(result: CommandLineResult) = _command.isSuccessful(result)
     }
 }
