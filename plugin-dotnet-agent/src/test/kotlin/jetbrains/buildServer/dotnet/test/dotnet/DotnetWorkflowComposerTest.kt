@@ -4,12 +4,10 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
-import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.Closeable
 import java.io.File
@@ -58,6 +56,7 @@ class DotnetWorkflowComposerTest {
         val envVars = listOf<CommandLineEnvironmentVariable>(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
         val args1 = listOf<CommandLineArgument>(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
         val args2 = listOf<CommandLineArgument>(CommandLineArgument("arg3"))
+        val result = CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())
 
         // When
         _ctx!!.checking(object : Expectations() {
@@ -74,7 +73,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand1).arguments
                 will(returnValue(args1.asSequence()))
 
-                oneOf<DotnetCommand>(_dotnetCommand1).isSuccessfulExitCode(0)
+                oneOf<DotnetCommand>(_dotnetCommand1).isSuccessful(result)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).toolResolver
@@ -92,7 +91,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand2).arguments
                 will(returnValue(args2.asSequence()))
 
-                oneOf<DotnetCommand>(_dotnetCommand2).isSuccessfulExitCode(0)
+                oneOf<DotnetCommand>(_dotnetCommand2).isSuccessful(result)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).toolResolver
@@ -108,7 +107,7 @@ class DotnetWorkflowComposerTest {
                 will(returnValue(workingDirectory))
 
                 allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
+                will(returnValue(result))
 
                 oneOf<LoggerService>(_loggerService).onStandardOutput("dotnet.exe arg1 arg2")
 
@@ -135,7 +134,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<Closeable>(_closeable2).close()
 
                 allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
+                will(returnValue(result))
             }
         })
 

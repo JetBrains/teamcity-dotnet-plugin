@@ -77,7 +77,7 @@
         <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     </bean>
-
+    <bean class="jetbrains.buildServer.dotnet.FailedTestDetectorImpl"/>
     <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand"/>
     <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>

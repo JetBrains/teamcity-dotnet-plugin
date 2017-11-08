@@ -1,5 +1,7 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.CommandLineResult
+
 interface DotnetCommand: ArgumentsProvider {
     val commandType: DotnetCommandType
 
@@ -7,5 +9,5 @@ interface DotnetCommand: ArgumentsProvider {
 
     val targetArguments: Sequence<TargetArguments>
 
-    fun isSuccessfulExitCode(exitCode: Int): Boolean
+    fun isSuccessful(result: CommandLineResult): Boolean
 }

@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
@@ -55,5 +56,5 @@ class RunCommand(
             yieldAll(_commonArgumentsProvider.arguments)
         }
 
-    override fun isSuccessfulExitCode(exitCode: Int): Boolean = true
+    override fun isSuccessful(result: CommandLineResult): Boolean = true
 }
