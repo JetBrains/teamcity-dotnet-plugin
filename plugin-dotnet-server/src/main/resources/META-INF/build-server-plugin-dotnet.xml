@@ -23,6 +23,9 @@
   <bean class="jetbrains.buildServer.dotnet.discovery.DotnetRunnerDiscoveryExtension">
     <constructor-arg ref="defaultDiscoveredTargetNameFactory"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.discovery.ProjectTypeSelectorImpl"/>
+
+  <!--Fetchers-->
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetConfigurationsFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetFrameworksFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetRuntimesFetcher"/>
