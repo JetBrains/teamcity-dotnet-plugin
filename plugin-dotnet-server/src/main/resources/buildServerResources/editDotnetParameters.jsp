@@ -15,7 +15,6 @@
     var commandId = BS.Util.escapeId('${params.commandKey}');
 
     BS.DotnetParametersForm = {
-        appendProjectFile: [],
         projectArtifactsSelector: [],
         coverageEnabled: [],
         hideLogging: [],
@@ -26,10 +25,8 @@
             var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
             var value = BS.Util.trimSpaces($paths.val());
 
-            var commandName = $j(commandId).val();
-            var appendFile = BS.DotnetParametersForm.appendProjectFile.indexOf(commandName) >= 0;
             chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
-            $paths.val(appendFile && value.length > 0 ? value + " " + chosenFile : chosenFile);
+            $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
             BS.MultilineProperties.updateVisible();
         },
         pathName: [],
