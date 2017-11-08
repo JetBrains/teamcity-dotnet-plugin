@@ -150,7 +150,7 @@
     <th><label for="${params.testFilterKey}">Tests filtration:</label></th>
     <td>
         <props:selectProperty name="${params.testFilterKey}" enableFilter="true" className="mediumField">
-            <props:option value="">&lt;Default&gt;</props:option>
+            <props:option value="">&lt;Disabled&gt;</props:option>
             <props:option value="name">Test names</props:option>
             <props:option value="filter">Test case filter</props:option>
         </props:selectProperty>
