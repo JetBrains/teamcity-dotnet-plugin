@@ -23,7 +23,7 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 | Branch | Status | Download | TeamCity |
 |--------|--------|----------|----------|
-| master | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCLI_20172&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCLI_20172),branch:master/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20172/.lastSuccessful/dotnet-cli.zip?branch=master&guest=1)| 2017.2.x |
+| master | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCLI_20172&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCLI_20172),branch:master/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20172/.lastSuccessful/dotnet.cli.zip?branch=master&guest=1)| 2017.2.x |
 | Indore-2017.1.x | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild),branch:Indore-2017.1.x/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-cli.zip?branch=Indore-2017.1.x&guest=1)| 2017.1.x |
 
 # Compatibility
