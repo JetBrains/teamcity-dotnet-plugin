@@ -36,9 +36,15 @@ class ToolsPropertiesExtension(
         for (integrationPackage in packages) {
             LOG.debug("Found .NET integration package at \"${integrationPackage.absolutePath}\"")
         }
+
+        val default = packages.first()
+        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.DEFAULT", default.absolutePath)
+        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.BUNDLED", default.absolutePath)
+        agent.configuration.addConfigurationParameter("$ToolPrefix.${default.name}", default.absolutePath)
     }
 
     companion object {
         private val LOG = Logger.getInstance(ToolsPropertiesExtension::class.java.name)
+        private const val ToolPrefix = "teamcity.tool"
     }
 }
