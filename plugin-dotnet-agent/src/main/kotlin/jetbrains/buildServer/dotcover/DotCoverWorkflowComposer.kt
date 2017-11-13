@@ -6,6 +6,7 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
@@ -59,7 +60,11 @@ class DotCoverWorkflowComposer(
         }
 
         return Workflow(buildSequence {
+            var deferredServiceMessages: DeferredServiceMessages? = null
+
             for (commandLineToGetCoverage in workflow.commandLines) {
+                sendServiceMessages(context, deferredServiceMessages)
+
                 val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
                 val dotCoverProject = DotCoverProject(
                         commandLineToGetCoverage,
@@ -95,13 +100,20 @@ class DotCoverWorkflowComposer(
                         createArguments(dotCoverProject).toList(),
                         commandLineToGetCoverage.environmentVariables))
 
-                if (!context.lastResult.isCompleted) {
+                val lastResult = context.lastResult
+                if (!lastResult.isCompleted) {
                     return@buildSequence
                 }
 
-                _loggerService.onMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
-                _loggerService.onMessage(ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                deferredServiceMessages =
+                        DeferredServiceMessages(
+                                lastResult,
+                                listOf(
+                                        DotCoverServiceMessage(File(dotCoverPath).absoluteFile),
+                                        ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile)))
             }
+
+            sendServiceMessages(context, deferredServiceMessages)
         })
     }
 
@@ -126,10 +138,22 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
     }
 
+    private fun sendServiceMessages(context: WorkflowContext, deferredServiceMessages: DeferredServiceMessages?) {
+        if (context.status == WorkflowStatus.Failed) {
+            return
+        }
+
+        deferredServiceMessages?.let {
+            it.serviceMessages.forEach { _loggerService.onMessage(it) }
+        }
+    }
+
     companion object {
         internal val DotCoverExecutableFile = "dotCover.exe"
         internal val DotCoverToolName = "dotcover"
         internal val DotCoverProjectExtension = ".dotCover"
         internal val DotCoverSnapshotExtension = ".dcvr"
     }
+
+    private data class DeferredServiceMessages(val result: CommandLineResult, val serviceMessages: List<ServiceMessage>) {}
 }
