@@ -31,7 +31,6 @@ class DotCoverCoverageType : CommandType() {
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         yieldAll(super.getRequirements(parameters))
-        yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
         yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetFramework3\\.5_.+|DotNetFramework4\\.[\\d\\.]+_.+)", null, RequirementType.EXISTS))
     }
 }
