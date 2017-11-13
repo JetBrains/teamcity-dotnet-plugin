@@ -32,7 +32,7 @@ class WorkflowSessionImpl(
                 ?: _workflowComposer.compose(this).commandLines.iterator()
         _commandLinesIterator = commandLinesIterator
 
-        if (_buildFinishedStatus != null || !commandLinesIterator.hasNext()) {
+        if (status != WorkflowStatus.Running || !commandLinesIterator.hasNext()) {
             return null
         }
 
@@ -50,6 +50,19 @@ class WorkflowSessionImpl(
                 _loggerService,
                 _argumentsService)
     }
+
+    override val status: WorkflowStatus
+        get() {
+            val cuStatus = _buildFinishedStatus
+            if (cuStatus == null) {
+                return WorkflowStatus.Running
+            }
+
+            when(cuStatus) {
+                BuildFinishedStatus.FINISHED_SUCCESS, BuildFinishedStatus.FINISHED_WITH_PROBLEMS -> return WorkflowStatus.Completed
+                else -> return WorkflowStatus.Failed
+            }
+        }
 
     override fun abort(buildFinishedStatus: BuildFinishedStatus) {
         _buildFinishedStatus = buildFinishedStatus
