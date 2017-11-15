@@ -28,6 +28,7 @@ class DotnetWorkflowComposerTest {
     private var _loggerService: LoggerService? = null
     private var _closeable3: Closeable? = null
     private var _closeable4: Closeable? = null
+    private var _failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)
 
     @BeforeMethod
     fun setUp() {
@@ -135,6 +136,8 @@ class DotnetWorkflowComposerTest {
 
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
+
+                oneOf<WorkflowContext>(_workflowContext).registerOutputFilter(composer)
             }
         })
 
@@ -160,10 +163,11 @@ class DotnetWorkflowComposerTest {
                 ))
     }
 
-    private fun createInstance(): WorkflowComposer {
+    private fun createInstance(): DotnetWorkflowComposer {
         return DotnetWorkflowComposer(
                 _pathService!!,
                 _loggerService!!,
+                _failedTestDetector,
                 ArgumentsServiceStub(),
                 _environmentVariables!!,
                 _vstestLoggerEnvironment!!,

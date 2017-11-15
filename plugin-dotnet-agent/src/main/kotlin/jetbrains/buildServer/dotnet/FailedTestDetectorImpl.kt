@@ -5,8 +5,8 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
 
 class FailedTestDetectorImpl : FailedTestDetector {
-    override fun hasFailedTest(result: CommandLineResult): Boolean =
-        result.standardOutput.filter { it.trimStart().startsWith(FailedTestMarker) }.any()
+    override fun hasFailedTest(text: String): Boolean =
+            text.trimStart().startsWith(FailedTestMarker)
 
     companion object {
         val FailedTestMarker = "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED}"

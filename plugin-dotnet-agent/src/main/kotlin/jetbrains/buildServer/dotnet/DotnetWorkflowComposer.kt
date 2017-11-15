@@ -11,38 +11,49 @@ import kotlin.coroutines.experimental.buildSequence
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _loggerService: LoggerService,
+        private val _failedTestDetector: FailedTestDetector,
         private val _argumentsService: ArgumentsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _vstestLoggerEnvironment: VSTestLoggerEnvironment,
-        private val _commandSet: CommandSet) : WorkflowComposer {
+        private val _commandSet: CommandSet) : WorkflowComposer, WorkflowOutputFilter {
 
     override val target: TargetType
         get() = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         return Workflow(buildSequence {
-            for (command in _commandSet.commands) {
-                val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
-                _vstestLoggerEnvironment.configure(targets).use {
-                    val executableFile = command.toolResolver.executableFile
-                    val args = command.arguments.toList()
-                    val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
-                    _loggerService.onStandardOutput(commandHeader)
-                    _loggerService.onBlock(command.commandType.id.replace('-', ' ')).use {
-                        yield(CommandLine(
-                                TargetType.Tool,
-                                executableFile,
-                                _pathsService.getPath(PathType.WorkingDirectory),
-                                args,
-                                _defaultEnvironmentVariables.variables.toList()))
+            context.registerOutputFilter(this@DotnetWorkflowComposer).use {
+                for (command in _commandSet.commands) {
+                    val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
+                    _vstestLoggerEnvironment.configure(targets).use {
+                        val executableFile = command.toolResolver.executableFile
+                        val args = command.arguments.toList()
+                        val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
+                        _loggerService.onStandardOutput(commandHeader)
+                        _loggerService.onBlock(command.commandType.id.replace('-', ' ')).use {
+                            yield(CommandLine(
+                                    TargetType.Tool,
+                                    executableFile,
+                                    _pathsService.getPath(PathType.WorkingDirectory),
+                                    args,
+                                    _defaultEnvironmentVariables.variables.toList()))
+                        }
                     }
-                }
-                
-                if (context.lastResult.isCompleted && !command.isSuccessful(context.lastResult)) {
-                    context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                    return@buildSequence
+
+                    if (!command.isSuccessful(context.lastResult)) {
+                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                        return@buildSequence
+                    }
                 }
             }
         })
+    }
+
+    override fun acceptStandardOutput(text: String): Boolean {
+        return _failedTestDetector.hasFailedTest(text)
+    }
+
+    override fun acceptErrorOutput(text: String): Boolean {
+        return false
     }
 }

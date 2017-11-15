@@ -100,14 +100,9 @@ class DotCoverWorkflowComposer(
                         createArguments(dotCoverProject).toList(),
                         commandLineToGetCoverage.environmentVariables))
 
-                val lastResult = context.lastResult
-                if (!lastResult.isCompleted) {
-                    return@buildSequence
-                }
-
                 deferredServiceMessages =
                         DeferredServiceMessages(
-                                lastResult,
+                                context.lastResult,
                                 listOf(
                                         DotCoverServiceMessage(File(dotCoverPath).absoluteFile),
                                         ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile)))

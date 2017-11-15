@@ -12,6 +12,7 @@ import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.CommandLineResult
+import java.io.Closeable
 import java.io.File
 
 class WorkflowSessionImpl(
@@ -21,6 +22,7 @@ class WorkflowSessionImpl(
         private val _argumentsService: ArgumentsService)
     : MultiCommandBuildSession, WorkflowContext {
 
+    private val _outputFilters = mutableListOf<WorkflowOutputFilter>()
     private var _commandLinesIterator: Iterator<CommandLine>? = null
     private var _lastResult: CommandLineResult? = null
     private var _buildFinishedStatus: BuildFinishedStatus? = null
@@ -28,11 +30,15 @@ class WorkflowSessionImpl(
     override fun sessionStarted() = Unit
 
     override fun getNextCommand(): CommandExecution? {
-        val commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator
-                ?: _workflowComposer.compose(this).commandLines.iterator()
+        val commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator()
         _commandLinesIterator = commandLinesIterator
 
-        if (status != WorkflowStatus.Running || !commandLinesIterator.hasNext()) {
+        if (status != WorkflowStatus.Running) {
+            return null
+        }
+
+        // yield command here
+        if (!commandLinesIterator.hasNext()) {
             return null
         }
 
@@ -43,6 +49,7 @@ class WorkflowSessionImpl(
 
         return CommandExecutionAdapter(
                 commandLinesIterator.next(),
+                _outputFilters,
                 exitCode,
                 standardOutput,
                 errorOutput,
@@ -73,8 +80,14 @@ class WorkflowSessionImpl(
     override val lastResult: CommandLineResult
         get() = _lastResult ?: throw RunBuildException("There are no any results yet")
 
+    override fun registerOutputFilter(listener: WorkflowOutputFilter): Closeable {
+        _outputFilters.add(listener)
+        return Closeable { _outputFilters.remove(listener) }
+    }
+
     private class CommandExecutionAdapter(
             private val _commandLine: CommandLine,
+            private val _outputFilters: List<WorkflowOutputFilter>,
             private val _exitCode: MutableCollection<Int>,
             private val _standardOutput: MutableCollection<String>,
             private val _errorOutput: MutableCollection<String>,
@@ -96,12 +109,18 @@ class WorkflowSessionImpl(
                 _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
         override fun onStandardOutput(text: String) {
-            _standardOutput.add(text)
+            if (_outputFilters.filter { it.acceptStandardOutput(text) }.any()){
+                _standardOutput.add(text)
+            }
+
             _loggerService.onStandardOutput(text)
         }
 
         override fun onErrorOutput(text: String) {
-            _errorOutput.add(text)
+            if (_outputFilters.filter { it.acceptErrorOutput(text) }.any()){
+                _errorOutput.add(text)
+            }
+
             _loggerService.onErrorOutput(text)
         }
 
