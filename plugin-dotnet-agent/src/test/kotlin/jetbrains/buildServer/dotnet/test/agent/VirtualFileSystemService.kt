@@ -6,7 +6,7 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 
 class VirtualFileSystemService : FileSystemService {
-    private val _directories: HashSet<File> = hashSetOf()
+    private val _directories: MutableMap<File, DirectoryInfo> = mutableMapOf()
     private val _files: MutableMap<File, FileInfo> = mutableMapOf()
 
     override fun write(file: File, writer: (OutputStream) -> Unit) {
@@ -18,15 +18,15 @@ class VirtualFileSystemService : FileSystemService {
         reader(_files[file]!!.inputStream)
     }
 
-    fun addDirectory(directory: File): VirtualFileSystemService
+    fun addDirectory(directory: File, attributes: Attributes = Attributes()): VirtualFileSystemService
     {
-        _directories.add(directory)
+        _directories[directory] = DirectoryInfo(attributes)
         var parent: File? = directory
         while (parent != null){
             parent = parent.parentFile
             if(parent != null) {
                 if(!_directories.contains(parent)) {
-                    _directories.add(parent)
+                    _directories[parent] = DirectoryInfo(attributes)
                 }
             }
         }
@@ -34,7 +34,7 @@ class VirtualFileSystemService : FileSystemService {
         return this
     }
 
-    fun addFile(file: File): VirtualFileSystemService
+    fun addFile(file: File, attributes: Attributes = Attributes()): VirtualFileSystemService
     {
         val parent = file.parentFile
         if (parent != null) {
@@ -42,7 +42,7 @@ class VirtualFileSystemService : FileSystemService {
         }
 
         if (!_files.containsKey(file)) {
-            _files.put(file, FileInfo())
+            _files.put(file, FileInfo(attributes))
         }
 
         return this
@@ -50,8 +50,21 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isExists(file: File): Boolean = _directories.contains(file) || _files.contains(file)
 
+    override fun isDirectory(file: File): Boolean = _directories.contains(file)
+
+    override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
+
     override fun copy(source: File, destination: File) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if(!isDirectory(source)) {
+            val sourceFile = _files[source]!!
+            addFile(destination, sourceFile.attributes)
+            _files[destination] = sourceFile
+        }
+        else {
+            val sourceDir = _directories[source]!!
+            addDirectory(destination, sourceDir.attributes)
+            _directories[destination] = sourceDir
+        }
     }
 
     override fun remove(file: File) {
@@ -62,9 +75,9 @@ class VirtualFileSystemService : FileSystemService {
         _directories.remove(file)
     }
 
-    override fun list(file: File): Sequence<File> = _directories.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
+    override fun list(file: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
 
-    class FileInfo {
+    private data class FileInfo(val attributes: Attributes) {
         val inputStream: InputStream
         val outputStream: OutputStream
         init {
@@ -72,4 +85,8 @@ class VirtualFileSystemService : FileSystemService {
             inputStream = PipedInputStream(outputStream)
         }
     }
+
+    private data class DirectoryInfo(val attributes: Attributes) { }
+
+    data class Attributes(val isAbsolute:Boolean = false) { }
 }
