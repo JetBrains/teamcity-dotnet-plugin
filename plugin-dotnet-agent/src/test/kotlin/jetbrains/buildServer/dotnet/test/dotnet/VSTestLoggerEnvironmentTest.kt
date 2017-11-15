@@ -44,6 +44,17 @@ class VSTestLoggerEnvironmentTest {
                                 File("wd").absoluteFile,
                                 File(File("wd"), "dir").absoluteFile)),
 
+                // one project's dir in checkout dir
+                arrayOf(
+                        File("wd").absoluteFile,
+                        listOf(File("dir")),
+                        VirtualFileSystemService()
+                                .addDirectory(File("wd").absoluteFile, VirtualFileSystemService.Attributes(true))
+                                .addDirectory(File(File("wd"),"dir").absoluteFile, VirtualFileSystemService.Attributes(false)),
+                        listOf(
+                                File("wd").absoluteFile,
+                                File(File("wd"), "dir").absoluteFile)),
+
                 // several projects in checkout dir
                 arrayOf(
                         File("wd").absoluteFile,
