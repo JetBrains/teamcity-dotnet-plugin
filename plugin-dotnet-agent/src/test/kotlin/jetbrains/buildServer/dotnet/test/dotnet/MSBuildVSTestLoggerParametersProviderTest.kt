@@ -12,24 +12,12 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildVSTestLoggerParametersProviderTest {
-    @DataProvider
-    fun testLoggerArgumentsData(): Array<Array<Any?>> {
-        return arrayOf(
-                // Success scenario
-                arrayOf(
-                        File("loggerPath", "vstestlogger.dll") as File?,
-                        listOf(MSBuildParameter("VSTestLogger", "logger://teamcity"), MSBuildParameter("VSTestTestAdapterPath", File("wd").absolutePath)))
-        )
-    }
-
-    @Test(dataProvider = "testLoggerArgumentsData")
-    fun shouldGetArguments(
-            loggerFile: File,
-            expectedParameters: List<MSBuildParameter>) {
+    @Test
+    fun shouldGetArguments() {
         // Given
         val ctx = Mockery()
         val pathsService = ctx.mock(PathsService::class.java)
-        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile))
+        val argumentsProvider = MSBuildVSTestLoggerParametersProvider()
 
         // When
         ctx.checking(object : Expectations() {
@@ -42,6 +30,6 @@ class MSBuildVSTestLoggerParametersProviderTest {
         val actualParameters = argumentsProvider.parameters.toList()
 
         // Then
-        Assert.assertEquals(actualParameters, expectedParameters)
+        Assert.assertEquals(actualParameters, listOf(MSBuildParameter("VSTestLogger", "logger://teamcity"), MSBuildParameter("VSTestTestAdapterPath", ".")))
     }
 }

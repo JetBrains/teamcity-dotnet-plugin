@@ -7,6 +7,10 @@ import java.io.OutputStream
 interface FileSystemService {
     fun isExists(file: File): Boolean
 
+    fun isDirectory(file: File): Boolean
+
+    fun isAbsolute(file: File): Boolean
+
     fun write(file: File, writer: (OutputStream) -> Unit)
 
     fun read(file: File, reader: (InputStream) -> Unit)
