@@ -94,7 +94,7 @@ class TestCommandTest {
         val command = createCommand(emptyMap(), emptySequence(), emptySequence(), FailedTestDetectorStub(hasFailedTest))
 
         // When
-        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
+        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), sequenceOf("some line"), emptySequence()))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)

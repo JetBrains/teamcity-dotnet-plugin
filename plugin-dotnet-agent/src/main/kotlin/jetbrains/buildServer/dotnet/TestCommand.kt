@@ -74,5 +74,5 @@ class TestCommand(
         }
 
     override fun isSuccessful(result: CommandLineResult) =
-            result.exitCode == 0 || (result.exitCode > 0 && _failedTestDetector.hasFailedTest(result))
+            result.exitCode == 0 || (result.exitCode > 0 && result.standardOutput.map { _failedTestDetector.hasFailedTest(it) }.filter { it }.any())
 }

@@ -5,9 +5,6 @@ data class CommandLineResult(
         val standardOutput: Sequence<String>,
         val errorOutput: Sequence<String>) {
 
-    val isCompleted: Boolean
-        get() = _exitCode.any()
-
     val exitCode: Int
         get() = _exitCode.single()
 }

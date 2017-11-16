@@ -4,5 +4,5 @@ import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.FailedTestDetector
 
 class FailedTestDetectorStub(private val _hasFailedTest: Boolean): FailedTestDetector {
-    override fun hasFailedTest(result: CommandLineResult) = _hasFailedTest
+    override fun hasFailedTest(text: String) = _hasFailedTest
 }

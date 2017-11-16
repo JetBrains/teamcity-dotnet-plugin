@@ -31,7 +31,7 @@ class FailedTestDetectorTest {
         val failedTestDetector = FailedTestDetectorImpl()
 
         // When
-        val actualHasFailedTest = failedTestDetector.hasFailedTest(CommandLineResult(sequenceOf(0), output, emptySequence()))
+        val actualHasFailedTest = output.map { failedTestDetector.hasFailedTest(it) }.filter { it }.any()
 
         // Then
         Assert.assertEquals(actualHasFailedTest, expectedHasFailedTest)

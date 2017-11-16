@@ -61,7 +61,7 @@ class VisualStudioWorkflowComposer(
                     }.toList(),
                     emptyList()))
 
-            if (context.lastResult.isCompleted && context.lastResult.exitCode != 0) {
+            if (context.lastResult.exitCode != 0) {
                 context.abort(BuildFinishedStatus.FINISHED_FAILED)
                 return@buildSequence
             }
