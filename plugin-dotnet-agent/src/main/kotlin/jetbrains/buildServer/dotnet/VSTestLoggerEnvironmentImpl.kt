@@ -47,7 +47,7 @@ class VSTestLoggerEnvironmentImpl(
         private val LOG = Logger.getInstance(VSTestLoggerEnvironmentImpl::class.java.name)
         val DirectoryPrefix = "teamcity.logger."
         val ReadmeFileName = "readme.txt"
-        val ReadmeFileContent = " This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."
+        val ReadmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."
         private val EmptyClosable = Closeable { }
     }
 }
