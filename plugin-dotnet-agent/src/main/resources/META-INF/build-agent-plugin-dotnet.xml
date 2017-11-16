@@ -44,6 +44,8 @@
     <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
 
     <!--Dotnet arguments' providers-->
+    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleanerImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentImpl"/>
     <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
     <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />

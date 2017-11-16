@@ -12,24 +12,36 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildVSTestLoggerParametersProviderTest {
-    @Test
-    fun shouldGetArguments() {
+    @DataProvider
+    fun testLoggerArgumentsData(): Array<Array<Any?>> {
+        return arrayOf(
+                // Success scenario
+                arrayOf(
+                        File("loggerPath", "vstestlogger.dll") as File?,
+                        listOf(MSBuildParameter("VSTestLogger", "logger://teamcity"), MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath)))
+        )
+    }
+
+    @Test(dataProvider = "testLoggerArgumentsData")
+    fun shouldGetArguments(
+            loggerFile: File,
+            expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
         val pathsService = ctx.mock(PathsService::class.java)
-        val argumentsProvider = MSBuildVSTestLoggerParametersProvider()
+        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile))
 
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<PathsService>(pathsService).getPath(PathType.WorkingDirectory)
-                will(returnValue(File("wd")))
+                oneOf<PathsService>(pathsService).getPath(PathType.Checkout)
+                will(returnValue(File("CheckoutDir")))
             }
         })
 
         val actualParameters = argumentsProvider.parameters.toList()
 
         // Then
-        Assert.assertEquals(actualParameters, listOf(MSBuildParameter("VSTestLogger", "logger://teamcity"), MSBuildParameter("VSTestTestAdapterPath", ".")))
+        Assert.assertEquals(actualParameters, expectedParameters)
     }
 }
