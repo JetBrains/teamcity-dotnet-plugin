@@ -68,11 +68,25 @@ class VirtualFileSystemService : FileSystemService {
     }
 
     override fun remove(file: File) {
-        if(_files.containsKey(file)) {
+        val fileInfo = _files[file]
+        if (fileInfo != null) {
+            val errorOnRemove = fileInfo.attributes.errorOnRemove
+            if (errorOnRemove != null) {
+                throw errorOnRemove
+            }
+
             _files.remove(file)
         }
 
-        _directories.remove(file)
+        val dirInfo = _directories[file]
+        if (dirInfo != null) {
+            val errorOnRemove = dirInfo.attributes.errorOnRemove
+            if (errorOnRemove != null) {
+                throw errorOnRemove
+            }
+
+            _directories.remove(file)
+        }
     }
 
     override fun list(file: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
@@ -88,5 +102,22 @@ class VirtualFileSystemService : FileSystemService {
 
     private data class DirectoryInfo(val attributes: Attributes) { }
 
-    data class Attributes(val isAbsolute:Boolean = false) { }
+    class Attributes {
+        var isAbsolute:Boolean = false
+        var errorOnRemove: Exception? = null
+    }
+
+    companion object {
+        fun absolute(isAbsolute: Boolean = true): Attributes {
+            val attr = Attributes()
+            attr.isAbsolute = isAbsolute
+            return attr
+        }
+
+        fun errorOnRemove(errorOnRemove: Exception): Attributes {
+            val attr = Attributes()
+            attr.errorOnRemove = errorOnRemove
+            return attr
+        }
+    }
 }
