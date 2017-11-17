@@ -1,10 +1,8 @@
 package jetbrains.buildServer.dotnet.test.visualStudio
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CommandTarget
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
@@ -27,6 +25,7 @@ class VisualStudioWorkflowComposerTest {
     private var _workflowContext: WorkflowContext? = null
     private var _targetService: TargetService? = null
     private var _toolResolver: ToolResolver? = null
+    private var _loggerService: LoggerService? = null
 
     @BeforeMethod
     fun setUp() {
@@ -35,6 +34,7 @@ class VisualStudioWorkflowComposerTest {
         _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
         _targetService = _ctx!!.mock(TargetService::class.java)
         _toolResolver = _ctx!!.mock(ToolResolver::class.java)
+        _loggerService = _ctx!!.mock(LoggerService::class.java)
     }
 
     @DataProvider(name = "composeCases")
@@ -188,6 +188,8 @@ class VisualStudioWorkflowComposerTest {
                 will(returnValue(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence())))
 
                 oneOf<WorkflowContext>(_workflowContext).abort(BuildFinishedStatus.FINISHED_FAILED)
+
+                oneOf<LoggerService>(_loggerService).onBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${exitCode}"))
             }
         })
 
@@ -203,6 +205,7 @@ class VisualStudioWorkflowComposerTest {
                 ParametersServiceStub(parameters),
                 ArgumentsServiceStub(),
                 _pathService!!,
+                _loggerService!!,
                 _targetService!!,
                 _toolResolver!!)
     }

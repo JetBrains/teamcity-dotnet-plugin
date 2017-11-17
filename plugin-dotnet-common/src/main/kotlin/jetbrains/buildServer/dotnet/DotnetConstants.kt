@@ -25,6 +25,7 @@ object DotnetConstants {
     const val CONFIG_SDK_NAME = "DotNetCoreSDK"
 
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
+    const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
 
     const val PARAM_COMMAND = "dotnet-command"
     const val PARAM_PATHS = "dotnet-paths"

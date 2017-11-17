@@ -22,6 +22,7 @@ class VSTestLoggerEnvironmentTest {
     private var _loggerService: LoggerService? = null
     private var _environmentCleaner: VSTestLoggerEnvironmentCleaner? = null
     private var _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer? = null
+    private var _testReportingParameters: TestReportingParameters? = null
 
     @BeforeMethod
     fun setUp() {
@@ -32,6 +33,7 @@ class VSTestLoggerEnvironmentTest {
         _loggerService = _ctx!!.mock(LoggerService::class.java)
         _environmentCleaner = _ctx!!.mock(VSTestLoggerEnvironmentCleaner::class.java)
         _environmentAnalyzer = _ctx!!.mock(VSTestLoggerEnvironmentAnalyzer::class.java)
+        _testReportingParameters = _ctx!!.mock(TestReportingParameters::class.java)
     }
 
     @DataProvider
@@ -65,12 +67,16 @@ class VSTestLoggerEnvironmentTest {
                 fileSystemService,
                 _loggerResolver!!,
                 _loggerService!!,
+                _testReportingParameters!!,
                 _environmentCleaner!!,
                 _environmentAnalyzer!!)
 
         // When
         _ctx!!.checking(object : Expectations() {
             init {
+                oneOf<TestReportingParameters>(_testReportingParameters).mode
+                will(returnValue(TestReportingMode.On))
+
                 oneOf<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
                 will(returnValue(loggerFile))
 
@@ -99,5 +105,42 @@ class VSTestLoggerEnvironmentTest {
             val dir = File(expectedDir, uniqueName)
             Assert.assertEquals(fileSystemService.isExists(dir), false)
         }
+    }
+
+    @Test
+    fun shouldNotInjectLoggerWhenTestReportingIsOff() {
+        // Given
+        val targetFiles = listOf(File("dir", "my.proj"))
+        val loggerEnvironment = VSTestLoggerEnvironmentImpl(
+                _pathService!!,
+                _fileSystemService!!,
+                _loggerResolver!!,
+                _loggerService!!,
+                _testReportingParameters!!,
+                _environmentCleaner!!,
+                _environmentAnalyzer!!)
+
+        // When
+        _ctx!!.checking(object : Expectations() {
+            init {
+                oneOf<TestReportingParameters>(_testReportingParameters).mode
+                will(returnValue(TestReportingMode.Off))
+
+                never<LoggerResolver>(_loggerResolver).resolve(ToolType.VSTest)
+
+                never<PathsService>(_pathService).getPath(PathType.Checkout)
+
+                never<VSTestLoggerEnvironmentCleaner>(_environmentCleaner).clean()
+
+                never<VSTestLoggerEnvironmentAnalyzer>(_environmentAnalyzer).analyze(targetFiles)
+
+                never<PathsService>(_pathService).uniqueName
+            }
+        })
+
+        loggerEnvironment.configure(targetFiles).close()
+
+        // Then
+        _ctx!!.assertIsSatisfied()
     }
 }
