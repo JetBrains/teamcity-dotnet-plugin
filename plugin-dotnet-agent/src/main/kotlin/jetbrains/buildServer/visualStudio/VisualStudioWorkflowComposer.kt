@@ -1,5 +1,6 @@
 package jetbrains.buildServer.visualStudio
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
@@ -12,6 +13,7 @@ class VisualStudioWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
         private val _pathsService: PathsService,
+        private val _loggerService: LoggerService,
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver)
     : WorkflowComposer {
@@ -62,6 +64,7 @@ class VisualStudioWorkflowComposer(
                     emptyList()))
 
             if (context.lastResult.exitCode != 0) {
+                _loggerService.onBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
                 context.abort(BuildFinishedStatus.FINISHED_FAILED)
                 return@buildSequence
             }

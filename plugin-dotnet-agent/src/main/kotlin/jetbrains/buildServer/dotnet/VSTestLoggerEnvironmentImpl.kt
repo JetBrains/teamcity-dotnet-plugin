@@ -14,10 +14,15 @@ class VSTestLoggerEnvironmentImpl(
         private val _fileSystemService: FileSystemService,
         private val _loggerResolver: LoggerResolver,
         private val _loggerService: LoggerService,
+        private val _testReportingParameters: TestReportingParameters,
         private val _environmentCleaner: VSTestLoggerEnvironmentCleaner,
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
     : VSTestLoggerEnvironment {
     override fun configure(targets: List<File>): Closeable {
+        if (_testReportingParameters.mode == TestReportingMode.Off) {
+           return EmptyClosable
+        }
+
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
         val loggerDirectory = File(checkoutDirectory, "$DirectoryPrefix${_pathsService.uniqueName}")
 

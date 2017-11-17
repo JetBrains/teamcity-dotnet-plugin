@@ -26,6 +26,7 @@
     </bean>
 
     <!-- dotnet -->
+    <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
         <constructor-arg value="dotnet.cli"/>
     </bean>

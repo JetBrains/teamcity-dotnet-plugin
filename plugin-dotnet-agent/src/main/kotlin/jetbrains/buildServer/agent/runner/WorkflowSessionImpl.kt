@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.BuildFinishedStatus
@@ -39,6 +40,10 @@ class WorkflowSessionImpl(
 
         // yield command here
         if (!commandLinesIterator.hasNext()) {
+            if (_buildFinishedStatus == null) {
+               _buildFinishedStatus = BuildFinishedStatus.FINISHED_SUCCESS
+            }
+
             return null
         }
 
@@ -133,13 +138,14 @@ class WorkflowSessionImpl(
             private val _argumentsService: ArgumentsService,
             private val _commandLine: CommandLine,
             private val _environmentVariables: Map<String, String>) : ProgramCommandLine {
-        override fun getExecutablePath(): String = _commandLine.executableFile.absolutePath
+        override fun getExecutablePath(): String =
+                _commandLine.executableFile.absolutePath
 
-        override fun getWorkingDirectory(): String = _commandLine.workingDirectory.absolutePath
+        override fun getWorkingDirectory(): String =
+                _commandLine.workingDirectory.absolutePath
 
-        override fun getArguments(): MutableList<String> = _commandLine.arguments.map {
-            it.value
-        }.toMutableList()
+        override fun getArguments(): MutableList<String> =
+                _commandLine.arguments.map { it.value }.toMutableList()
 
         override fun getEnvironment(): MutableMap<String, String> {
             val environmentVariables = _environmentVariables.toMutableMap()

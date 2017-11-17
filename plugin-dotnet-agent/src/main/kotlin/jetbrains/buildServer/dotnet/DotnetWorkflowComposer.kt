@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
@@ -41,6 +42,7 @@ class DotnetWorkflowComposer(
                     }
 
                     if (!command.isSuccessful(context.lastResult)) {
+                        _loggerService.onBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
                         context.abort(BuildFinishedStatus.FINISHED_FAILED)
                         return@buildSequence
                     }
