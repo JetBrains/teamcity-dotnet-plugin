@@ -78,6 +78,16 @@
 </script>
 
 <c:set var="commandTitle">Command:<bs:help urlPrefix="https://docs.microsoft.com/en-us/dotnet/core/tools/" file=""/></c:set>
+<c:if test="${propertiesBean.properties[params.commandKey] == 'nuget delete'}">
+    <c:set target="${propertiesBean.properties}" property="${params.commandKey}" value="nuget-delete"/>
+    <c:if test="${not empty propertiesBean.properties[params.nugetPushSourceKey]}">
+        <c:set target="${propertiesBean.properties}" property="${params.nugetDeleteSourceKey}"
+               value="${propertiesBean.properties[params.nugetPushSourceKey]}"/>
+    </c:if>
+</c:if>
+<c:if test="${propertiesBean.properties[params.commandKey] == 'nuget push'}">
+    <c:set target="${propertiesBean.properties}" property="${params.commandKey}" value="nuget-push"/>
+</c:if>
 <props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
     <tr id="${params.pathsKey}-row">
         <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>

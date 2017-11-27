@@ -4,6 +4,16 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
+<c:if test="${propertiesBean.properties[params.commandKey] == 'nuget delete'}">
+    <c:set target="${propertiesBean.properties}" property="${params.commandKey}" value="nuget-delete"/>
+    <c:if test="${not empty propertiesBean.properties[params.nugetPushSourceKey]}">
+        <c:set target="${propertiesBean.properties}" property="${params.nugetDeleteSourceKey}"
+               value="${propertiesBean.properties[params.nugetPushSourceKey]}"/>
+    </c:if>
+</c:if>
+<c:if test="${propertiesBean.properties[params.commandKey] == 'nuget push'}">
+    <c:set target="${propertiesBean.properties}" property="${params.commandKey}" value="nuget-push"/>
+</c:if>
 <c:forEach items="${params.commands}" var="type">
     <c:if test="${propertiesBean.properties[params.commandKey] eq type.name}">
         <div class="parameter">
