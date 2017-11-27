@@ -15,7 +15,8 @@ class DotnetCommandSet(
 
     override val commands: Sequence<DotnetCommand>
         get() = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
-            _knownCommands[it]?.let { command ->
+            val commandName = it.replace(' ', '-')
+            _knownCommands[commandName]?.let { command ->
                 getTargetArguments(command).asSequence().map {
                     val targetArguments = TargetArguments(it.arguments.toList().asSequence())
                     CompositeCommand(command, getArguments(command, targetArguments), targetArguments)
