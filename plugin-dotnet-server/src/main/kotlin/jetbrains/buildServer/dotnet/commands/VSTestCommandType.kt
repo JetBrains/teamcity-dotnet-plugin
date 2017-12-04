@@ -20,6 +20,8 @@ class VSTestCommandType : CommandType() {
         get() = "viewVSTestParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+        if (isDocker(parameters)) return@buildSequence
+
         var shouldBeWindows = false
         var hasRequirement = false
         parameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {

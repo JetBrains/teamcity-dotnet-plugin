@@ -24,6 +24,7 @@ object DotnetConstants {
     const val CONFIG_NAME = "DotNetCLI"
     const val CONFIG_PATH = CONFIG_NAME + PATH_SUFFIX
     const val CONFIG_SDK_NAME = "DotNetCoreSDK"
+    const val PARAM_DOCKER_IMAGE = "plugin.docker.imageId"
 
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"

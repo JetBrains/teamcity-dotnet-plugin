@@ -31,6 +31,8 @@ class VisualStudioCommandType : CommandType() {
     }
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+        if (isDocker(parameters)) return@buildSequence
+
         var hasRequirements = false
         parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
             Tool.tryParse(it)?.let {

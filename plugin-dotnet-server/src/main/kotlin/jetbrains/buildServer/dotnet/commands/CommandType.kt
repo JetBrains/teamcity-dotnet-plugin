@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
 
@@ -26,4 +27,6 @@ abstract class CommandType {
     open fun validateProperties(properties: Map<String, String>): Sequence<InvalidProperty> = emptySequence()
 
     open fun getRequirements(parameters: Map<String, String>): Sequence<Requirement> = emptySequence()
+
+    protected fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
 }

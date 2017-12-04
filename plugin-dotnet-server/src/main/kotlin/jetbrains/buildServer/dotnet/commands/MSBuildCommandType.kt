@@ -20,6 +20,8 @@ class MSBuildCommandType : CommandType() {
         get() = "viewMSBuildParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+        if (isDocker(parameters)) return@buildSequence
+
         var shouldBeWindows = false
         var hasRequirement = false
 

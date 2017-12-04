@@ -7,6 +7,8 @@ import kotlin.coroutines.experimental.buildSequence
 
 abstract class DotnetType : CommandType() {
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+        if (isDocker(parameters)) return@buildSequence
+
         yield(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))
     }
 }
