@@ -48,4 +48,4 @@ This project uses gradle as a build system. You can easily open it in [IntelliJ 
 
 # Contributions
 
-We appreciate all kinds of feedback, so please feel free to send a PR or write an issue.
+We appreciate all kinds of feedback, so please feel free to send a PR or file an issue in the [TeamCity tracker](https://youtrack.jetbrains.com/newIssue?project=TW&clearDraft=true&summary=.NET%20CLI:&c=Subsystem%20Agent%20-%20.NET&c=tag%20.NET%20Core).
