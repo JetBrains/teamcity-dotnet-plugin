@@ -27,10 +27,8 @@ dependencies {
   compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.1"
 
   provided 'javax.servlet:jstl:1.1.2'
-  provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/common-api.jar")
-  provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/common-tools.jar")
-  provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-api.jar")
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
+  provided 'org.jetbrains.teamcity:server-api:2017.2'
 
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }

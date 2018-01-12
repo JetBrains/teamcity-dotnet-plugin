@@ -8,7 +8,6 @@ import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
-import jetbrains.buildServer.serverSide.impl.agent.PollingRemoteAgentConnection
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
