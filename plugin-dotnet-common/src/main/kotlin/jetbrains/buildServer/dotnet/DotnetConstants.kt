@@ -28,6 +28,8 @@ object DotnetConstants {
 
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
+    // Set to false to not use .rsp files
+    const val PARAM_RSP = "dotnet.cli.rsp"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"
