@@ -79,6 +79,7 @@
     <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
         <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+        <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.FailedTestDetectorImpl"/>
     <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand"/>
