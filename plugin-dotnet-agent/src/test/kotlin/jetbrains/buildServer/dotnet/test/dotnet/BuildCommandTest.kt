@@ -4,6 +4,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -107,10 +108,15 @@ class BuildCommandTest {
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
-            BuildCommand(
-                    ParametersServiceStub(parameters),
-                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(File("dotnet"), true))
+            arguments: Sequence<CommandLineArgument> = emptySequence(),
+            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand {
+        var ctx = Mockery()
+        return BuildCommand(
+                ParametersServiceStub(parameters),
+                failedTestDetector,
+                TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                DotnetCommonArgumentsProviderStub(arguments),
+                DotnetToolResolverStub(File("dotnet"), true),
+                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+    }
 }

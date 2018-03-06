@@ -9,20 +9,21 @@ import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter
 
-class VSTestLoggerEnvironmentImpl(
+class VSTestLoggerEnvironmentBuilder(
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
         private val _loggerResolver: LoggerResolver,
         private val _loggerService: LoggerService,
         private val _testReportingParameters: TestReportingParameters,
-        private val _environmentCleaner: VSTestLoggerEnvironmentCleaner,
+        private val _environmentCleaner: EnvironmentCleaner,
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
-    : VSTestLoggerEnvironment {
-    override fun configure(targets: List<File>): Closeable {
+    : EnvironmentBuilder {
+    override fun build(command: DotnetCommand): Closeable {
         if (_testReportingParameters.mode == TestReportingMode.Off) {
            return EmptyClosable
         }
 
+        val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
         val loggerDirectory = File(checkoutDirectory, "$DirectoryPrefix${_pathsService.uniqueName}")
 
@@ -49,7 +50,7 @@ class VSTestLoggerEnvironmentImpl(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(VSTestLoggerEnvironmentImpl::class.java.name)
+        private val LOG = Logger.getInstance(VSTestLoggerEnvironmentBuilder::class.java.name)
         val DirectoryPrefix = "teamcity.logger."
         val ReadmeFileName = "readme.txt"
         val ReadmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."

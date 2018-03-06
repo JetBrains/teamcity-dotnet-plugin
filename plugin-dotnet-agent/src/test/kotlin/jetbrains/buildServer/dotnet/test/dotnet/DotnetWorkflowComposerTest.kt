@@ -16,7 +16,7 @@ class DotnetWorkflowComposerTest {
     private var _ctx: Mockery? = null
     private var _pathService: PathsService? = null
     private var _workflowContext: WorkflowContext? = null
-    private var _vstestLoggerEnvironment: VSTestLoggerEnvironment? = null
+    private var _environmentBuilder1: EnvironmentBuilder? = null
     private var _environmentVariables: EnvironmentVariables? = null
     private var _commandSet: CommandSet? = null
     private var _dotnetCommand1: DotnetCommand? = null
@@ -24,7 +24,6 @@ class DotnetWorkflowComposerTest {
     private var _toolResolver1: ToolResolver? = null
     private var _toolResolver2: ToolResolver? = null
     private var _closeable1: Closeable? = null
-    private var _closeable2: Closeable? = null
     private var _loggerService: LoggerService? = null
     private var _closeable3: Closeable? = null
     private var _closeable4: Closeable? = null
@@ -37,14 +36,13 @@ class DotnetWorkflowComposerTest {
         _loggerService = _ctx!!.mock(LoggerService::class.java)
         _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
         _environmentVariables = _ctx!!.mock(EnvironmentVariables::class.java)
-        _vstestLoggerEnvironment = _ctx!!.mock(VSTestLoggerEnvironment::class.java)
         _commandSet = _ctx!!.mock(CommandSet::class.java)
         _dotnetCommand1 = _ctx!!.mock(DotnetCommand::class.java, "command1")
+        _environmentBuilder1 = _ctx!!.mock(EnvironmentBuilder::class.java)
         _toolResolver1 = _ctx!!.mock(ToolResolver::class.java, "resolver1")
         _closeable1 = _ctx!!.mock(Closeable::class.java, "closeable1")
         _dotnetCommand2 = _ctx!!.mock(DotnetCommand::class.java, "command2")
         _toolResolver2 = _ctx!!.mock(ToolResolver::class.java, "resolver2")
-        _closeable2 = _ctx!!.mock(Closeable::class.java, "closeable2")
         _closeable3 = _ctx!!.mock(Closeable::class.java, "closeable3")
         _closeable4 = _ctx!!.mock(Closeable::class.java, "closeable4")
     }
@@ -65,14 +63,14 @@ class DotnetWorkflowComposerTest {
                 allowing<EnvironmentVariables>(_environmentVariables).variables
                 will(returnValue(envVars.asSequence()))
 
-                oneOf<DotnetCommand>(_dotnetCommand1).targetArguments
-                will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csproj"))))))
-
                 oneOf<DotnetCommand>(_dotnetCommand1).commandType
                 will(returnValue(DotnetCommandType.Build))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).arguments
                 will(returnValue(args1.asSequence()))
+
+                oneOf<DotnetCommand>(_dotnetCommand1).environmentBuilders
+                will(returnValue(sequenceOf(_environmentBuilder1)))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).isSuccessful(result)
                 will(returnValue(true))
@@ -83,14 +81,14 @@ class DotnetWorkflowComposerTest {
                 oneOf<ToolResolver>(_toolResolver1).executableFile
                 will(returnValue(File("dotnet.exe")))
 
-                oneOf<DotnetCommand>(_dotnetCommand2).targetArguments
-                will(returnValue(emptySequence<TargetArguments>()))
-
                 oneOf<DotnetCommand>(_dotnetCommand2).commandType
                 will(returnValue(DotnetCommandType.NuGetPush))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).arguments
                 will(returnValue(args2.asSequence()))
+
+                oneOf<DotnetCommand>(_dotnetCommand2).environmentBuilders
+                will(returnValue(emptySequence<EnvironmentBuilder>()))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).isSuccessful(result)
                 will(returnValue(true))
@@ -124,15 +122,10 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<Closeable>(_closeable4).close()
 
-                oneOf<VSTestLoggerEnvironment>(_vstestLoggerEnvironment).configure(listOf(File("my.csproj")))
+                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_dotnetCommand1!!)
                 will(returnValue(_closeable1))
 
                 oneOf<Closeable>(_closeable1).close()
-
-                oneOf<VSTestLoggerEnvironment>(_vstestLoggerEnvironment).configure(emptyList())
-                will(returnValue(_closeable2))
-
-                oneOf<Closeable>(_closeable2).close()
 
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
@@ -170,7 +163,6 @@ class DotnetWorkflowComposerTest {
                 _failedTestDetector,
                 ArgumentsServiceStub(),
                 _environmentVariables!!,
-                _vstestLoggerEnvironment!!,
                 _commandSet!!)
     }
 }

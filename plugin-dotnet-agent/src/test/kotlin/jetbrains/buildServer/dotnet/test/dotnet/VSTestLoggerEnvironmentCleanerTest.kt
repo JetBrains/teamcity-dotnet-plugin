@@ -31,12 +31,12 @@ class VSTestLoggerEnvironmentCleanerTest {
     fun shouldClean() {
         // Given
         val checkoutDir = File("checkoutDir")
-        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentImpl.DirectoryPrefix}loggerdir")
-        val loggerDir2 = File(checkoutDir, "${VSTestLoggerEnvironmentImpl.DirectoryPrefix}2313123")
-        val dir1 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentImpl.DirectoryPrefix}")
-        val dir2 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentImpl.DirectoryPrefix}")
-        val dir3 = File("abc", "${VSTestLoggerEnvironmentImpl.DirectoryPrefix}loggerdir")
-        val file1 = File(checkoutDir, "${VSTestLoggerEnvironmentImpl.DirectoryPrefix}abc")
+        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
+        val loggerDir2 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}2313123")
+        val dir1 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}")
+        val dir2 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}")
+        val dir3 = File("abc", "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
+        val file1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}abc")
 
         val fileSystemService = VirtualFileSystemService()
                 .addDirectory(checkoutDir)
@@ -47,7 +47,7 @@ class VSTestLoggerEnvironmentCleanerTest {
                 .addDirectory(dir3)
                 .addFile(file1)
 
-        val environmentCleaner = VSTestLoggerEnvironmentCleanerImpl(
+        val environmentCleaner = VSTestLoggerEnvironmentCleaner(
                 _pathService!!,
                 fileSystemService,
                 _loggerService!!)
@@ -77,14 +77,14 @@ class VSTestLoggerEnvironmentCleanerTest {
     fun shouldLogError() {
         // Given
         val checkoutDir = File("checkoutDir")
-        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentImpl.DirectoryPrefix}loggerdir")
+        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
         val error = Exception("some error")
 
         val fileSystemService = VirtualFileSystemService()
                 .addDirectory(checkoutDir)
                 .addDirectory(loggerDir1, VirtualFileSystemService.errorOnRemove(error))
 
-        val environmentCleaner = VSTestLoggerEnvironmentCleanerImpl(
+        val environmentCleaner = VSTestLoggerEnvironmentCleaner(
                 _pathService!!,
                 fileSystemService,
                 _loggerService!!)
