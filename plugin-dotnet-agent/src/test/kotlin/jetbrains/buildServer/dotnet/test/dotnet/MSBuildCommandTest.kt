@@ -4,6 +4,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -113,11 +114,14 @@ class MSBuildCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand =
-            MSBuildCommand(
-                    ParametersServiceStub(parameters),
-                    failedTestDetector,
-                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(File("msbuild.exe"), true))
+            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand {
+        var ctx = Mockery()
+        return MSBuildCommand(
+                ParametersServiceStub(parameters),
+                failedTestDetector,
+                TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                DotnetCommonArgumentsProviderStub(arguments),
+                DotnetToolResolverStub(File("msbuild.exe"), true),
+                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+    }
 }

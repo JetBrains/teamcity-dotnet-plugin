@@ -1,11 +1,10 @@
 package jetbrains.buildServer.dotnet
 
+import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.BuildProblemData
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
@@ -15,7 +14,6 @@ class DotnetWorkflowComposer(
         private val _failedTestDetector: FailedTestDetector,
         private val _argumentsService: ArgumentsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
-        private val _vstestLoggerEnvironment: VSTestLoggerEnvironment,
         private val _commandSet: CommandSet) : WorkflowComposer, WorkflowOutputFilter {
 
     override val target: TargetType
@@ -25,8 +23,13 @@ class DotnetWorkflowComposer(
         return Workflow(buildSequence {
             context.registerOutputFilter(this@DotnetWorkflowComposer).use {
                 for (command in _commandSet.commands) {
-                    val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
-                    _vstestLoggerEnvironment.configure(targets).use {
+                    // Build the environment
+                    val environmentTokens = mutableListOf<Closeable>()
+                    for (environmentBuilder in command.environmentBuilders) {
+                        environmentTokens.add(environmentBuilder.build(command));
+                    }
+
+                    try {
                         val executableFile = command.toolResolver.executableFile
                         val args = command.arguments.toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
@@ -38,6 +41,18 @@ class DotnetWorkflowComposer(
                                     _pathsService.getPath(PathType.WorkingDirectory),
                                     args,
                                     _defaultEnvironmentVariables.variables.toList()))
+                        }
+                    }
+                    finally {
+                        // Clean the environment
+                        for (environmentToken in environmentTokens) {
+                            try
+                            {
+                                environmentToken.close();
+                            }
+                            catch(ex: Exception) {
+                                LOG.error("Error during cleaning environment.", ex)
+                            }
                         }
                     }
 
@@ -57,5 +72,9 @@ class DotnetWorkflowComposer(
 
     override fun acceptErrorOutput(text: String): Boolean {
         return false
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(DotnetWorkflowComposer::class.java.name)
     }
 }

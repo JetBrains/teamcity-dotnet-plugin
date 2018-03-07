@@ -1,13 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetCommandSet
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineResult
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -21,12 +17,14 @@ class DotnetCommandSetTest {
     private var _ctx: Mockery? = null
     private var _buildCommand: DotnetCommand? = null
     private var _cleanCommand: DotnetCommand? = null
+    private var _environmentBuilder: EnvironmentBuilder? = null
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _buildCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
         _cleanCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
+        _environmentBuilder = _ctx!!.mock(EnvironmentBuilder::class.java)
     }
 
     @DataProvider
@@ -60,6 +58,9 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_buildCommand).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
 
+                allowing<DotnetCommand>(_buildCommand).environmentBuilders
+                will(returnValue(sequenceOf(_environmentBuilder)))
+
                 allowing<DotnetCommand>(_cleanCommand).commandType
                 will(returnValue(DotnetCommandType.Clean))
 
@@ -71,6 +72,9 @@ class DotnetCommandSetTest {
 
                 allowing<DotnetCommand>(_cleanCommand).targetArguments
                 will(returnValue(emptySequence<TargetArguments>()))
+
+                allowing<DotnetCommand>(_cleanCommand).environmentBuilders
+                will(returnValue(emptySequence<EnvironmentBuilder>()))
             }
         })
 
@@ -112,6 +116,9 @@ class DotnetCommandSetTest {
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
+
+                allowing<DotnetCommand>(_buildCommand).environmentBuilders
+                will(returnValue(sequenceOf(_environmentBuilder)))
 
                 allowing<DotnetCommand>(_buildCommand).isSuccessful(result)
                 will(returnValue(true))

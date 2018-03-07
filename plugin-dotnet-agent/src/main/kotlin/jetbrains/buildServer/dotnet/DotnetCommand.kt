@@ -9,5 +9,7 @@ interface DotnetCommand: ArgumentsProvider {
 
     val targetArguments: Sequence<TargetArguments>
 
+    val environmentBuilders: Sequence<EnvironmentBuilder>
+
     fun isSuccessful(result: CommandLineResult): Boolean
 }

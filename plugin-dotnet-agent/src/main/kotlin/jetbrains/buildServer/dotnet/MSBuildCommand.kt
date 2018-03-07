@@ -11,7 +11,8 @@ class MSBuildCommand(
         private val _failedTestDetector: FailedTestDetector,
         private val _targetService: TargetService,
         private val _msbuildResponseFileArgumentsProvider: ArgumentsProvider,
-        private val _msbuildToolResolver: ToolResolver)
+        private val _msbuildToolResolver: ToolResolver,
+        private val _vstestLoggerEnvironment: EnvironmentBuilder)
     : DotnetCommandBase(parametersService) {
 
     override val commandType: DotnetCommandType
@@ -60,4 +61,7 @@ class MSBuildCommand(
 
     override fun isSuccessful(result: CommandLineResult) =
             result.exitCode == 0 || (result.exitCode > 0 && result.standardOutput.map { _failedTestDetector.hasFailedTest(it) }.filter { it }.any())
+
+    override val environmentBuilders: Sequence<EnvironmentBuilder>
+        get() = buildSequence { yield(_vstestLoggerEnvironment) }
 }
