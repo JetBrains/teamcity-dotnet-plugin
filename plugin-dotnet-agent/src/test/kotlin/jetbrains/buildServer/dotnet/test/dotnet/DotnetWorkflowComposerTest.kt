@@ -27,12 +27,13 @@ class DotnetWorkflowComposerTest {
     private var _loggerService: LoggerService? = null
     private var _closeable3: Closeable? = null
     private var _closeable4: Closeable? = null
-    private var _failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)
+    private var _failedTestDetector: FailedTestDetector? = null
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx!!.mock(PathsService::class.java)
+        _failedTestDetector = _ctx!!.mock(FailedTestDetector::class.java)
         _loggerService = _ctx!!.mock(LoggerService::class.java)
         _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
         _environmentVariables = _ctx!!.mock(EnvironmentVariables::class.java)
@@ -160,7 +161,7 @@ class DotnetWorkflowComposerTest {
         return DotnetWorkflowComposer(
                 _pathService!!,
                 _loggerService!!,
-                _failedTestDetector,
+                _failedTestDetector!!,
                 ArgumentsServiceStub(),
                 _environmentVariables!!,
                 _commandSet!!)

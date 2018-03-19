@@ -20,6 +20,7 @@
     <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.LoggerServiceImpl"/>
+    <bean class="jetbrains.buildServer.agent.runner.BuildOptionsImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
     <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
         <constructor-arg ref="layeredWorkflowComposer"/>
@@ -82,7 +83,7 @@
         <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
     </bean>
-    <bean class="jetbrains.buildServer.dotnet.FailedTestDetectorImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl"/>
     <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand"/>
     <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
         <constructor-arg ref="dotnetCustomArgumentsProvider"/>

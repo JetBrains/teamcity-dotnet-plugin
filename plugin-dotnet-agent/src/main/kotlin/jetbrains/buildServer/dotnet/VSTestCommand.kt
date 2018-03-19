@@ -8,7 +8,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
         parametersService: ParametersService,
-        private val _failedTestDetector: FailedTestDetector,
+        private val _testsResultsAnalyzer: TestsResultsAnalyzer,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
@@ -66,5 +66,5 @@ class VSTestCommand(
         }
 
     override fun isSuccessful(result: CommandLineResult) =
-            result.exitCode == 0 || (result.exitCode > 0 && result.standardOutput.map { _failedTestDetector.hasFailedTest(it) }.filter { it }.any())
+            _testsResultsAnalyzer.isSuccessful(result)
 }

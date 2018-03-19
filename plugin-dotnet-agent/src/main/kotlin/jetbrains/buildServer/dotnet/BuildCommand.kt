@@ -14,7 +14,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class BuildCommand(
         parametersService: ParametersService,
-        private val _failedTestDetector: FailedTestDetector,
+        private val _testsResultsAnalyzer: TestsResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver,
@@ -71,7 +71,7 @@ class BuildCommand(
         }
 
     override fun isSuccessful(result: CommandLineResult) =
-            result.exitCode == 0 || (result.exitCode > 0 && result.standardOutput.map { _failedTestDetector.hasFailedTest(it) }.filter { it }.any())
+            _testsResultsAnalyzer.isSuccessful(result)
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
         get() = buildSequence { yield(_vstestLoggerEnvironment) }

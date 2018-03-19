@@ -74,42 +74,15 @@ class TestCommandTest {
         Assert.assertEquals(actualCommand, DotnetCommandType.Test)
     }
 
-    @DataProvider
-    fun checkSuccessData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(0, false, true),
-                arrayOf(0, true, true),
-                arrayOf(1, true, true),
-                arrayOf(1, false, false),
-                arrayOf(99, true, true),
-                arrayOf(99, false, false),
-                arrayOf(-1, true, false),
-                arrayOf(-1, false, false),
-                arrayOf(-99, true, false),
-                arrayOf(-99, false, false))
-    }
-
-    @Test(dataProvider = "checkSuccessData")
-    fun shouldImplementCheckSuccess(exitCode: Int, hasFailedTest: Boolean, expectedResult: Boolean) {
-        // Given
-        val command = createCommand(emptyMap(), emptySequence(), emptySequence(), FailedTestDetectorStub(hasFailedTest))
-
-        // When
-        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), sequenceOf("some line"), emptySequence()))
-
-        // Then
-        Assert.assertEquals(actualResult, expectedResult)
-    }
-
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand {
+            testsResultsAnalyzer: TestsResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand {
         var ctx = Mockery()
         return TestCommand(
                 ParametersServiceStub(parameters),
-                failedTestDetector,
+                testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 DotnetCommonArgumentsProviderStub(arguments),
                 DotnetToolResolverStub(File("dotnet"), true),

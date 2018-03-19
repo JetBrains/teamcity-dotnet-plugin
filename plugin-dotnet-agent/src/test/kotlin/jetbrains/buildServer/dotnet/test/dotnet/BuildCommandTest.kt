@@ -71,28 +71,6 @@ class BuildCommandTest {
         Assert.assertEquals(actualCommand, DotnetCommandType.Build)
     }
 
-    @DataProvider
-    fun checkSuccessData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(0, true),
-                arrayOf(1, false),
-                arrayOf(99, false),
-                arrayOf(-1, false),
-                arrayOf(-99, false))
-    }
-
-    @Test(dataProvider = "checkSuccessData")
-    fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
-        // Given
-        val command = createCommand()
-
-        // When
-        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
-
-        // Then
-        Assert.assertEquals(actualResult, expectedResult)
-    }
-
     @Test
     fun shouldProvideToolExecutableFile() {
         // Given
@@ -109,11 +87,11 @@ class BuildCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            failedTestDetector: FailedTestDetector = FailedTestDetectorStub(false)): DotnetCommand {
+            testsResultsAnalyzer: TestsResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand {
         var ctx = Mockery()
         return BuildCommand(
                 ParametersServiceStub(parameters),
-                failedTestDetector,
+                testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 DotnetCommonArgumentsProviderStub(arguments),
                 DotnetToolResolverStub(File("dotnet"), true),
