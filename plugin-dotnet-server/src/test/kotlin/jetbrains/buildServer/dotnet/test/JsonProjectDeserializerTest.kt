@@ -13,15 +13,15 @@ class JsonProjectDeserializerTest {
     fun testDeserializeData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(
-                        File("src/test/resources/project.json"),
+                        "/project.json",
                         Solution(listOf(Project("projectPath", emptyList(), listOf(Framework("dnx451"), Framework("dnxcore50")), emptyList(), emptyList())))))
     }
 
     @Test(dataProvider = "testDeserializeData")
-    fun shouldDeserialize(target: File, expectedSolution: Solution) {
+    fun shouldDeserialize(target: String, expectedSolution: Solution) {
         // Given
         val path = "projectPath";
-        val streamFactory = StreamFactoryStub().add(path, FileInputStream(target))
+        val streamFactory = StreamFactoryStub().add(path, this::class.java.getResourceAsStream(target))
         val deserializer = JsonProjectDeserializer(ReaderFactoryImpl())
 
         // When

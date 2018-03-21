@@ -15,33 +15,33 @@ class MSBuildProjectDeserializerTest {
     fun testDeserializeData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(
-                        File("src/test/resources/project-runtime.csproj"),
+                        "/project-runtime.csproj",
                         Solution(listOf(Project("projectPath", emptyList(), emptyList(), listOf(Runtime("win7-x64"), Runtime("win-7x86"), Runtime("ubuntu.16.10-x64")), emptyList())))),
                 arrayOf(
-                        File("src/test/resources/GeneratePackageOnBuild.csproj"),
+                        "/GeneratePackageOnBuild.csproj",
                         Solution(listOf(Project("projectPath", emptyList(), listOf(Framework("netstandard2.0")), emptyList(), emptyList(), emptyList(), true)))),
                 arrayOf(
-                        File("src/test/resources/project14.csproj"),
+                        "/project14.csproj",
                         Solution(listOf(Project("projectPath", listOf(Configuration("Debug"), Configuration("Release")), emptyList(), emptyList(), listOf(Reference("nunit.engine.api"), Reference("System"), Reference("System.Data"), Reference("System.Xml")))))),
                 arrayOf(
-                        File("src/test/resources/project.csproj"),
+                        "/project.csproj",
                         Solution(listOf(Project("projectPath", listOf(Configuration("Core")), listOf(Framework("netcoreapp1.0")), emptyList(), listOf(Reference("Microsoft.NET.Sdk"), Reference("Microsoft.NET.Test.Sdk")))))),
                 arrayOf(
-                        File("src/test/resources/build.proj"),
+                        "/build.proj",
                         Solution(listOf(Project("projectPath", listOf(Configuration("Release")), emptyList(), emptyList(), emptyList(), listOf(Target("GetNuGet"), Target("Build"), Target("Test")))))),
                 arrayOf(
-                        File("src/test/resources/project-simplified.csproj"),
+                        "/project-simplified.csproj",
                         Solution(listOf(Project("projectPath", listOf(Configuration("Core")), listOf(Framework("netcoreapp1.0")), emptyList(), listOf(Reference("Microsoft.NET.Sdk"), Reference("Microsoft.NET.Test.Sdk")))))),
                 arrayOf(
-                        File("src/test/resources/project-frameworks.csproj"),
+                        "/project-frameworks.csproj",
                         Solution(listOf(Project("projectPath", emptyList(), listOf(Framework("net45"), Framework("netstandard1.3")), emptyList(), listOf(Reference("Newtonsoft.Json")))))))
     }
 
     @Test(dataProvider = "testDeserializeData")
-    fun shouldDeserialize(target: File, expectedSolution: Solution) {
+    fun shouldDeserialize(target: String, expectedSolution: Solution) {
         // Given
         val path = "projectPath";
-        val streamFactory = StreamFactoryStub().add(path, FileInputStream(target))
+        val streamFactory = StreamFactoryStub().add(path, this::class.java.getResourceAsStream(target))
         val deserializer = MSBuildProjectDeserializer(XmlDocumentServiceImpl())
 
         // When
