@@ -9,19 +9,23 @@ import kotlin.text.*
 class Version(
         vararg version: Int): Comparable<Version> {
 
+    private var _zeroCounter = 0;
+
     val version = buildSequence {
-        var zeroCounter = 0;
         // Trim zero(s) at the end
         for (versionItem in version) {
             if (versionItem != 0) {
-                yieldAll(repeat(0, zeroCounter))
-                zeroCounter = 0;
+                yieldAll(repeat(0, _zeroCounter))
+                _zeroCounter = 0;
                 yield(versionItem)
+            }
+            else {
+                _zeroCounter++;
             }
         }
     }.toList().toIntArray()
 
-    override fun toString(): String = version.joinToString(".")
+    override fun toString(): String = version.asSequence().plus(repeat(0, _zeroCounter)).joinToString(".")
 
     override fun compareTo(other: Version): Int =
             version

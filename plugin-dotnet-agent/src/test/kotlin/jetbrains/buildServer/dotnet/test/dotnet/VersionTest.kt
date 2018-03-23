@@ -21,7 +21,8 @@ class VersionTest {
                 arrayOf(Version(1), Version(2), -1),
                 arrayOf(Version(1, 2), Version(1, 1), 1),
                 arrayOf(Version(), Version(1), -1),
-                arrayOf(Version(3, 3), Version(), 2))
+                arrayOf(Version(3, 3), Version(), 2),
+                arrayOf(Version(0, 3), Version(5), -5))
     }
 
     @Test(dataProvider = "testDataComparable")
@@ -33,6 +34,27 @@ class VersionTest {
 
         // Then
         Assert.assertEquals(actualCompareResult, exptectedCompareResult)
+    }
+
+    @DataProvider
+    fun testDataToString(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(Version(2), "2"),
+                arrayOf(Version(99, 3, 10), "99.3.10"),
+                arrayOf(Version(0, 2), "0.2"),
+                arrayOf(Version(2, 0, 0), "2.0.0"),
+                arrayOf(Version(0, 0, 2, 0, 0), "0.0.2.0.0"))
+    }
+
+    @Test(dataProvider = "testDataToString")
+    fun shouldSupportToString(version: Version, expectedString: String) {
+        // Given
+
+        // When
+        val actualString = version.toString()
+
+        // Then
+        Assert.assertEquals(actualString, expectedString)
     }
 
     @DataProvider
@@ -78,6 +100,7 @@ class VersionTest {
                 arrayOf("", Version.Empty),
                 arrayOf("1", Version(1)),
                 arrayOf("1.23.99", Version(1, 23, 99)),
+                arrayOf("1 . 23 .   99", Version(1, 23, 99)),
                 arrayOf("abc", Version.Empty),
                 arrayOf("abc.xyz", Version.Empty),
                 arrayOf("abc.", Version.Empty),
