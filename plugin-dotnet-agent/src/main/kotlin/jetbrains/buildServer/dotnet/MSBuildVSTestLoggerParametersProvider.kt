@@ -12,13 +12,19 @@ class MSBuildVSTestLoggerParametersProvider(
 
     override val parameters: Sequence<MSBuildParameter>
         get() = buildSequence {
-            if (_testReportingParameters.mode == TestReportingMode.Off) {
+            var testReportingMode = _testReportingParameters.Mode;
+            if (testReportingMode.contains(TestReportingMode.Off)) {
                 return@buildSequence
             }
 
             _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
-                yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
+                if(testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
+                    yield(MSBuildParameter("VSTestTestAdapterPath", "${it.absolutePath};."))
+                }
+                else {
+                    yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
+                }
             }
         }
 }

@@ -14,6 +14,7 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
+import java.util.*
 
 class VSTestLoggerEnvironmentBuilderTest {
     private var _ctx: Mockery? = null
@@ -79,8 +80,8 @@ class VSTestLoggerEnvironmentBuilderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(_testReportingParameters).mode
-                will(returnValue(TestReportingMode.On))
+                oneOf<TestReportingParameters>(_testReportingParameters).Mode
+                will(returnValue(EnumSet.of(TestReportingMode.On)))
 
                 oneOf<DotnetCommand>(_dotnetCommand).targetArguments
                 will(returnValue(targetArguments))
@@ -115,8 +116,18 @@ class VSTestLoggerEnvironmentBuilderTest {
         }
     }
 
-    @Test
-    fun shouldNotInjectLoggerWhenTestReportingIsOff() {
+    @DataProvider
+    fun testDataNotBuildEnv(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(EnumSet.of<TestReportingMode>(TestReportingMode.Off)),
+                arrayOf(EnumSet.of<TestReportingMode>(TestReportingMode.MultiAdapterPath)),
+                arrayOf(EnumSet.of<TestReportingMode>(TestReportingMode.MultiAdapterPath, TestReportingMode.Off)),
+                arrayOf(EnumSet.of<TestReportingMode>(TestReportingMode.MultiAdapterPath, TestReportingMode.On)),
+                arrayOf(EnumSet.of<TestReportingMode>(TestReportingMode.Off, TestReportingMode.On, TestReportingMode.MultiAdapterPath)))
+    }
+
+    @Test(dataProvider = "testDataNotBuildEnv")
+    fun shouldNotBuildEnvWhenSpecificTestReportingMode(modes: EnumSet<TestReportingMode>) {
         // Given
         val targetFiles = listOf(File("dir", "my.proj"))
         val loggerEnvironment = VSTestLoggerEnvironmentBuilder(
@@ -131,8 +142,8 @@ class VSTestLoggerEnvironmentBuilderTest {
         // When
         _ctx!!.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(_testReportingParameters).mode
-                will(returnValue(TestReportingMode.Off))
+                oneOf<TestReportingParameters>(_testReportingParameters).Mode
+                will(returnValue(modes))
 
                 never<DotnetCommand>(_dotnetCommand).targetArguments
 

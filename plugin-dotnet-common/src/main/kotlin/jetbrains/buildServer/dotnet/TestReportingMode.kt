@@ -1,12 +1,23 @@
 package jetbrains.buildServer.dotnet
 
+import java.util.*
+
 enum class TestReportingMode(val id: String) {
-    On("on"),
-    Off("off");
+    On("On"),
+    MultiAdapterPath("MultiAdapterPath"),
+    Off("Off");
 
     companion object {
-        fun tryParse(id: String): TestReportingMode? {
-            return TestReportingMode.values().singleOrNull { it.id.equals(id, true) }
+        fun parse(text: String): EnumSet<TestReportingMode> {
+            var modes = text.splitToSequence('|').map { id ->
+                TestReportingMode.values().singleOrNull { it.id.equals(id.trim(), true) }
+            }.toList()
+
+            if( modes.filter { it == null }.any()) {
+                return EnumSet.noneOf<TestReportingMode>(TestReportingMode::class.java)
+            }
+
+            return EnumSet.copyOf<TestReportingMode>(modes);
         }
     }
 }

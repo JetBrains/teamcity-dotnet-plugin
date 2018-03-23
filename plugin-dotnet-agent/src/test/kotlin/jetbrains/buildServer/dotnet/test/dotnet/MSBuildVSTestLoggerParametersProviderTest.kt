@@ -12,6 +12,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
+import java.util.*
 
 class MSBuildVSTestLoggerParametersProviderTest {
     @DataProvider
@@ -20,13 +21,23 @@ class MSBuildVSTestLoggerParametersProviderTest {
                 // Success scenario
                 arrayOf(
                         File("loggerPath", "vstestlogger.dll") as File?,
-                        TestReportingMode.On,
-                        listOf(MSBuildParameter("VSTestLogger", "logger://teamcity"), MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath))),
+                        EnumSet.of(TestReportingMode.On),
+                        listOf(
+                                MSBuildParameter("VSTestLogger", "logger://teamcity"),
+                                MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath))),
+
+                // Supports mult VSTestTestAdapterPath (.NET Core SDK 2.1.102)
+                arrayOf(
+                        File("loggerPath", "vstestlogger.dll") as File?,
+                        EnumSet.of(TestReportingMode.MultiAdapterPath),
+                        listOf(
+                                MSBuildParameter("VSTestLogger", "logger://teamcity"),
+                                MSBuildParameter("VSTestTestAdapterPath", "${File("loggerPath").absolutePath};."))),
 
                 // Reporting is off
                 arrayOf(
                         File("loggerPath", "vstestlogger.dll") as File?,
-                        TestReportingMode.Off,
+                        EnumSet.of(TestReportingMode.Off),
                         emptyList<MSBuildParameter>())
         )
     }
@@ -34,7 +45,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
     @Test(dataProvider = "testLoggerArgumentsData")
     fun shouldGetArguments(
             loggerFile: File,
-            testReportingMode: TestReportingMode,
+            testReportingMode: EnumSet<TestReportingMode>,
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
@@ -45,7 +56,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(testReportingParameters).mode
+                oneOf<TestReportingParameters>(testReportingParameters).Mode
                 will(returnValue(testReportingMode))
 
                 oneOf<PathsService>(pathsService).getPath(PathType.Checkout)

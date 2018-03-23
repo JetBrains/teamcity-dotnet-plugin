@@ -23,10 +23,12 @@ class DotnetPropertiesExtension(
         private val _versionParser: VersionParser,
         private val _semanticVersionParser: SemanticVersionParser,
         private val _fileSystemService: FileSystemService)
-    : AgentLifeCycleAdapter() {
+    : AgentLifeCycleAdapter(), DotnetCliToolInfo {
     init {
         events.addListener(this)
     }
+
+    private var _version: Version = jetbrains.buildServer.dotnet.Version.Empty;
 
     override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
         LOG.debug("Locating .NET CLI")
@@ -41,6 +43,7 @@ class DotnetPropertiesExtension(
             _commandLineExecutor.tryExecute(command)?.let {
                 _versionParser.tryParse(it.standardOutput)?.let {
                     val dotnetPath = command.executableFile
+                    _version = jetbrains.buildServer.dotnet.Version.parse(it);
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
                     LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$it\"")
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
@@ -67,6 +70,8 @@ class DotnetPropertiesExtension(
             LOG.debug(e)
         }
     }
+
+    override val Version: Version get() = _version
 
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)

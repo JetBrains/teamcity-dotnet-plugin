@@ -19,8 +19,13 @@ class VSTestLoggerEnvironmentBuilder(
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
     : EnvironmentBuilder {
     override fun build(command: DotnetCommand): Closeable {
-        if (_testReportingParameters.mode == TestReportingMode.Off) {
+        val testReportingMode = _testReportingParameters.Mode;
+        if (testReportingMode.contains(TestReportingMode.Off)) {
            return EmptyClosable
+        }
+
+        if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
+            return EmptyClosable
         }
 
         val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
