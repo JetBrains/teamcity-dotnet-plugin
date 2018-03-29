@@ -28,6 +28,8 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 # Compatibility
 
+**Note**: This plugin is [bundled in TeamCity 2017.2+](https://confluence.jetbrains.com/display/TCDL/Upgrade+Notes)
+
 The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://www.microsoft.com/net/download/core).
 
 # Configuration
