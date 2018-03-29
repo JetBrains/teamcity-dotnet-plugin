@@ -8,7 +8,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildCommand(
         parametersService: ParametersService,
-        private val _testsResultsAnalyzer: TestsResultsAnalyzer,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _msbuildResponseFileArgumentsProvider: ArgumentsProvider,
         private val _msbuildToolResolver: ToolResolver,
@@ -60,7 +60,7 @@ class MSBuildCommand(
         }
 
     override fun isSuccessful(result: CommandLineResult) =
-            _testsResultsAnalyzer.isSuccessful(result)
+            _resultsAnalyzer.isSuccessful(result)
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
         get() = buildSequence { yield(_vstestLoggerEnvironment) }

@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -90,7 +89,7 @@ class VSTestCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: TestsResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand =
+            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand =
             VSTestCommand(
                     ParametersServiceStub(parameters),
                     testsResultsAnalyzer,

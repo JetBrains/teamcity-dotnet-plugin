@@ -8,7 +8,7 @@ import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
         parametersService: ParametersService,
-        private val _testsResultsAnalyzer: TestsResultsAnalyzer,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
@@ -66,5 +66,5 @@ class VSTestCommand(
         }
 
     override fun isSuccessful(result: CommandLineResult) =
-            _testsResultsAnalyzer.isSuccessful(result)
+            _resultsAnalyzer.isSuccessful(result)
 }

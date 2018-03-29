@@ -7,7 +7,7 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
 
 class TestsResultsAnalyzerImpl(
         private val _buildOptions: BuildOptions)
-    : FailedTestDetector, TestsResultsAnalyzer {
+    : FailedTestDetector, ResultsAnalyzer {
 
     override fun hasFailedTest(text: String): Boolean =
             text.contains(FailedTestMarker)
