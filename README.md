@@ -44,6 +44,16 @@ You can also configure the `DOTNET_HOME` environment variable for your TeamCity 
 DOTNET_HOME=C:\Program Files\dotnet\
 ```
 
+## Reported agent configuration parameters
+
+During initialization this plugin reports the following agent configuration parameters:
+
+| Name                  | Description                                 |
+|-----------------------|-------------------------------------------- |
+| DotNetCLI             | The version of found .NET CLI (dotnet) app  |
+| DotNetCLI_Path        | The path to the found .NET CLI (dotnet) app |
+| DotNetCoreSDKx.x_Path | The path to the found .NET Core SDK         |
+
 # Build
 
 This project uses gradle as a build system. You can easily open it in [IntelliJ IDEA](https://www.jetbrains.com/idea/help/importing-project-from-gradle-model.html) or [Eclipse](http://gradle.org/eclipse/).
