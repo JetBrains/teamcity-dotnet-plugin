@@ -1,15 +1,17 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class CleanCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Clean

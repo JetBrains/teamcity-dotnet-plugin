@@ -13,11 +13,12 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class RunCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Run
@@ -55,6 +56,4 @@ class RunCommand(
 
             yieldAll(_commonArgumentsProvider.arguments)
         }
-
-    override fun isSuccessful(result: CommandLineResult): Boolean = true
 }

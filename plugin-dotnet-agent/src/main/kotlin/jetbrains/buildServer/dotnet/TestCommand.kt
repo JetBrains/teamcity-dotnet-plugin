@@ -13,13 +13,13 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class TestCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
         private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Test
@@ -73,9 +73,6 @@ class TestCommand(
 
             yieldAll(_commonArgumentsProvider.arguments)
         }
-
-    override fun isSuccessful(result: CommandLineResult) =
-            _resultsAnalyzer.isSuccessful(result)
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
         get() = buildSequence { yield(_vstestLoggerEnvironment) }

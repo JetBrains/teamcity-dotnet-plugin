@@ -7,13 +7,13 @@ import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
         private val _resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         private val _vstestToolResolver: ToolResolver)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.VSTest
@@ -64,7 +64,4 @@ class VSTestCommand(
             yieldAll(_vstestLoggerArgumentsProvider.arguments)
             yieldAll(_customArgumentsProvider.arguments)
         }
-
-    override fun isSuccessful(result: CommandLineResult) =
-            _resultsAnalyzer.isSuccessful(result)
 }

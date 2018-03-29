@@ -13,12 +13,13 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class RestoreCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _argumentsService: ArgumentsService,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Restore

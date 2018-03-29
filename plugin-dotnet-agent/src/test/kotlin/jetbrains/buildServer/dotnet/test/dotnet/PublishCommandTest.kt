@@ -4,12 +4,23 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class PublishCommandTest {
+    private lateinit var _ctx: Mockery
+    private lateinit var _resultsAnalyzer: ResultsAnalyzer
+
+    @BeforeMethod
+    fun setUp() {
+        _ctx = Mockery()
+        _resultsAnalyzer = _ctx.mock<ResultsAnalyzer>(ResultsAnalyzer::class.java)
+    }
+
     @DataProvider
     fun testPublishArgumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -80,28 +91,6 @@ class PublishCommandTest {
         Assert.assertEquals(actualCommand, DotnetCommandType.Publish)
     }
 
-    @DataProvider
-    fun checkSuccessData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(0, true),
-                arrayOf(1, false),
-                arrayOf(99, false),
-                arrayOf(-1, false),
-                arrayOf(-99, false))
-    }
-
-    @Test(dataProvider = "checkSuccessData")
-    fun shouldImplementCheckSuccess(exitCode: Int, expectedResult: Boolean) {
-        // Given
-        val command = createCommand()
-
-        // When
-        val actualResult = command.isSuccessful(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
-
-        // Then
-        Assert.assertEquals(actualResult, expectedResult)
-    }
-
     @Test
     fun shouldProvideToolExecutableFile() {
         // Given
@@ -120,6 +109,7 @@ class PublishCommandTest {
             arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
             PublishCommand(
                     ParametersServiceStub(parameters),
+                    _resultsAnalyzer,
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     DotnetCommonArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(File("dotnet"), true))

@@ -83,6 +83,7 @@
         <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
         <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
     </bean>
+    <bean class="jetbrains.buildServer.dotnet.ResultsAnalyzerImpl" primary="true" />
     <bean class="jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
     <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand">
         <constructor-arg ref="testsResultsAnalyzer"/>

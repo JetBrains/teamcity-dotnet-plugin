@@ -12,10 +12,11 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class NugetDeleteCommand(
-        parametersService: ParametersService,
+        private val _parametersService: ParametersService,
+        private val _resultsAnalyzer: ResultsAnalyzer,
         private val _customArgumentsProvider: ArgumentsProvider,
         private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommandBase(parametersService) {
+    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.NuGetDelete
