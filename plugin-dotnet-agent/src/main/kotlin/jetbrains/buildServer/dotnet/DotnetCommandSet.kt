@@ -18,7 +18,7 @@ class DotnetCommandSet(
             _knownCommands[it]?.let { command ->
                 getTargetArguments(command).asSequence().map {
                     val targetArguments = TargetArguments(it.arguments.toList().asSequence())
-                    CompositeCommand(command, getArguments(command, targetArguments), targetArguments, command.environmentBuilders)
+                    CompositeCommand(command, getArguments(command, targetArguments), targetArguments)
                 }
             }
         } ?: emptySequence()
@@ -50,8 +50,7 @@ class DotnetCommandSet(
     class CompositeCommand(
             private val _command: DotnetCommand,
             private val _arguments: Sequence<CommandLineArgument>,
-            private val _targetArguments: TargetArguments,
-            private val _environmentBuilders: Sequence<EnvironmentBuilder>)
+            private val _targetArguments: TargetArguments)
         : DotnetCommand {
 
         override val commandType: DotnetCommandType
@@ -67,8 +66,9 @@ class DotnetCommandSet(
             get() = sequenceOf(_targetArguments)
 
         override val environmentBuilders: Sequence<EnvironmentBuilder>
-            get() = _environmentBuilders
+            get() = _command.environmentBuilders
 
-        override fun isSuccessful(result: CommandLineResult) = _command.isSuccessful(result)
+        override val resultsAnalyzer: ResultsAnalyzer
+            get() = _command.resultsAnalyzer
     }
 }

@@ -8,44 +8,49 @@ import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.Closeable
 import java.io.File
 
 class DotnetWorkflowComposerTest {
-    private var _ctx: Mockery? = null
-    private var _pathService: PathsService? = null
-    private var _workflowContext: WorkflowContext? = null
-    private var _environmentBuilder1: EnvironmentBuilder? = null
-    private var _environmentVariables: EnvironmentVariables? = null
-    private var _commandSet: CommandSet? = null
-    private var _dotnetCommand1: DotnetCommand? = null
-    private var _dotnetCommand2: DotnetCommand? = null
-    private var _toolResolver1: ToolResolver? = null
-    private var _toolResolver2: ToolResolver? = null
-    private var _closeable1: Closeable? = null
-    private var _loggerService: LoggerService? = null
-    private var _closeable3: Closeable? = null
-    private var _closeable4: Closeable? = null
-    private var _failedTestDetector: FailedTestDetector? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathService: PathsService
+    private lateinit var _workflowContext: WorkflowContext
+    private lateinit var _environmentBuilder1: EnvironmentBuilder
+    private lateinit var _environmentVariables: EnvironmentVariables
+    private lateinit var _commandSet: CommandSet
+    private lateinit var _dotnetCommand1: DotnetCommand
+    private lateinit var _dotnetCommand2: DotnetCommand
+    private lateinit var _toolResolver1: ToolResolver
+    private lateinit var _toolResolver2: ToolResolver
+    private lateinit var _closeable1: Closeable
+    private lateinit var _loggerService: LoggerService
+    private lateinit var _closeable3: Closeable
+    private lateinit var _closeable4: Closeable
+    private lateinit var _failedTestDetector: FailedTestDetector
+    private lateinit var _resultsAnalyzer1: ResultsAnalyzer
+    private lateinit var _resultsAnalyzer2: ResultsAnalyzer
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock(PathsService::class.java)
-        _failedTestDetector = _ctx!!.mock(FailedTestDetector::class.java)
-        _loggerService = _ctx!!.mock(LoggerService::class.java)
-        _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
-        _environmentVariables = _ctx!!.mock(EnvironmentVariables::class.java)
-        _commandSet = _ctx!!.mock(CommandSet::class.java)
-        _dotnetCommand1 = _ctx!!.mock(DotnetCommand::class.java, "command1")
-        _environmentBuilder1 = _ctx!!.mock(EnvironmentBuilder::class.java)
-        _toolResolver1 = _ctx!!.mock(ToolResolver::class.java, "resolver1")
-        _closeable1 = _ctx!!.mock(Closeable::class.java, "closeable1")
-        _dotnetCommand2 = _ctx!!.mock(DotnetCommand::class.java, "command2")
-        _toolResolver2 = _ctx!!.mock(ToolResolver::class.java, "resolver2")
-        _closeable3 = _ctx!!.mock(Closeable::class.java, "closeable3")
-        _closeable4 = _ctx!!.mock(Closeable::class.java, "closeable4")
+        _pathService = _ctx.mock(PathsService::class.java)
+        _failedTestDetector = _ctx.mock(FailedTestDetector::class.java)
+        _loggerService = _ctx.mock(LoggerService::class.java)
+        _workflowContext = _ctx.mock(WorkflowContext::class.java)
+        _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
+        _commandSet = _ctx.mock(CommandSet::class.java)
+        _dotnetCommand1 = _ctx.mock(DotnetCommand::class.java, "command1")
+        _environmentBuilder1 = _ctx.mock(EnvironmentBuilder::class.java)
+        _resultsAnalyzer1 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer1")
+        _toolResolver1 = _ctx.mock(ToolResolver::class.java, "resolver1")
+        _closeable1 = _ctx.mock(Closeable::class.java, "closeable1")
+        _dotnetCommand2 = _ctx.mock(DotnetCommand::class.java, "command2")
+        _toolResolver2 = _ctx.mock(ToolResolver::class.java, "resolver2")
+        _closeable3 = _ctx.mock(Closeable::class.java, "closeable3")
+        _closeable4 = _ctx.mock(Closeable::class.java, "closeable4")
+        _resultsAnalyzer2 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer2")
     }
 
     @Test
@@ -59,7 +64,7 @@ class DotnetWorkflowComposerTest {
         val result = CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 allowing<EnvironmentVariables>(_environmentVariables).variables
                 will(returnValue(envVars.asSequence()))
@@ -73,7 +78,10 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand1).environmentBuilders
                 will(returnValue(sequenceOf(_environmentBuilder1)))
 
-                oneOf<DotnetCommand>(_dotnetCommand1).isSuccessful(result)
+                oneOf<DotnetCommand>(_dotnetCommand1).resultsAnalyzer
+                will(returnValue(_resultsAnalyzer1))
+
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).isSuccessful(result)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).toolResolver
@@ -91,7 +99,10 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand2).environmentBuilders
                 will(returnValue(emptySequence<EnvironmentBuilder>()))
 
-                oneOf<DotnetCommand>(_dotnetCommand2).isSuccessful(result)
+                oneOf<DotnetCommand>(_dotnetCommand2).resultsAnalyzer
+                will(returnValue(_resultsAnalyzer2))
+
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).isSuccessful(result)
                 will(returnValue(true))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).toolResolver
@@ -123,7 +134,7 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<Closeable>(_closeable4).close()
 
-                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_dotnetCommand1!!)
+                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_dotnetCommand1)
                 will(returnValue(_closeable1))
 
                 oneOf<Closeable>(_closeable1).close()
@@ -135,10 +146,10 @@ class DotnetWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext!!).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(
                 actualCommandLines,
                 listOf(
@@ -159,11 +170,13 @@ class DotnetWorkflowComposerTest {
 
     private fun createInstance(): DotnetWorkflowComposer {
         return DotnetWorkflowComposer(
-                _pathService!!,
-                _loggerService!!,
-                _failedTestDetector!!,
+                _pathService,
+                _loggerService,
+                _failedTestDetector,
                 ArgumentsServiceStub(),
-                _environmentVariables!!,
-                _commandSet!!)
+                _environmentVariables,
+                _commandSet)
     }
+
+    public data class Result(val isSuccess: Boolean, val hasFailedTest: Boolean)
 }

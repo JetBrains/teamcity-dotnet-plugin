@@ -22,7 +22,8 @@ class DotnetWorkflowComposer(
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         return Workflow(buildSequence {
             context.registerOutputFilter(this@DotnetWorkflowComposer).use {
-                for (command in _commandSet.commands) {
+                val hasFailedTests = mutableListOf<Boolean>()
+                for(command in _commandSet.commands) {
                     // Build the environment
                     val environmentTokens = mutableListOf<Closeable>()
                     for (environmentBuilder in command.environmentBuilders) {
@@ -56,11 +57,23 @@ class DotnetWorkflowComposer(
                         }
                     }
 
-                    if (!command.isSuccessful(context.lastResult)) {
-                        _loggerService.onBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
+                    val result = context.lastResult
+                    if (!command.resultsAnalyzer.isSuccessful(result)) {
+                        _loggerService.onBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code${result.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${result.exitCode}"))
                         context.abort(BuildFinishedStatus.FINISHED_FAILED)
                         return@buildSequence
                     }
+                    else {
+                        val hasFailedTest = result.standardOutput.any { _failedTestDetector.hasFailedTest(it) }
+                        hasFailedTests.add(hasFailedTest)
+                        if (hasFailedTest) {
+                            _loggerService.onErrorOutput("Process finished with positive exit code ${result.exitCode} (some tests have failed). Reporting step success as all the tests have run. Use \"at least one test failed\" failure condition to fail the build.")
+                        }
+                    }
+                }
+
+                if (hasFailedTests.size > 1 && !hasFailedTests.last() && hasFailedTests.any { it }) {
+                    _loggerService.onErrorOutput("Process(es) finished with positive exit code (some tests have failed). Reporting step success as all the tests have run. Use \"at least one test failed\" failure condition to fail the build.")
                 }
             }
         })

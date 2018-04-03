@@ -8,18 +8,15 @@ import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
         private val _parametersService: ParametersService,
-        private val _resultsAnalyzer: ResultsAnalyzer,
+        override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
-        private val _vstestToolResolver: ToolResolver)
-    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
+        override val toolResolver: ToolResolver)
+    : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.VSTest
-
-    override val toolResolver: ToolResolver
-        get() = _vstestToolResolver
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }

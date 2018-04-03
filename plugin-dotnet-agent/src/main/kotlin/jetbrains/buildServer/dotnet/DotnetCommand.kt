@@ -11,5 +11,5 @@ interface DotnetCommand: ArgumentsProvider {
 
     val environmentBuilders: Sequence<EnvironmentBuilder>
 
-    fun isSuccessful(result: CommandLineResult): Boolean
+    val resultsAnalyzer: ResultsAnalyzer
 }

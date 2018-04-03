@@ -8,18 +8,15 @@ import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildCommand(
         private val _parametersService: ParametersService,
-        private val _resultsAnalyzer: ResultsAnalyzer,
+        override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _msbuildResponseFileArgumentsProvider: ArgumentsProvider,
-        private val _msbuildToolResolver: ToolResolver,
+        override val toolResolver: ToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder)
-    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
+    : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.MSBuild
-
-    override val toolResolver: ToolResolver
-        get() = _msbuildToolResolver
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }

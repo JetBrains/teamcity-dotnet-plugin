@@ -13,16 +13,13 @@ import kotlin.coroutines.experimental.buildSequence
 
 class NugetDeleteCommand(
         private val _parametersService: ParametersService,
-        private val _resultsAnalyzer: ResultsAnalyzer,
+        override val resultsAnalyzer: ResultsAnalyzer,
         private val _customArgumentsProvider: ArgumentsProvider,
-        private val _dotnetToolResolver: DotnetToolResolver)
-    : DotnetCommandBase(_parametersService, _resultsAnalyzer) {
+        override val toolResolver: DotnetToolResolver)
+    : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.NuGetDelete
-
-    override val toolResolver: ToolResolver
-        get() = _dotnetToolResolver
 
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()

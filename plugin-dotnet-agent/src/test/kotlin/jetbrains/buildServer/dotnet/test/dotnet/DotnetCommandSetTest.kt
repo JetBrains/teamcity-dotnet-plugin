@@ -101,42 +101,4 @@ class DotnetCommandSetTest {
             Assert.assertEquals(actualArguments, expectedArguments)
         }
     }
-
-    @Test
-    fun shouldCheckExitCode() {
-        // Given
-        val result = CommandLineResult(sequenceOf(10), emptySequence(), emptySequence())
-        _ctx!!.checking(object : Expectations() {
-            init {
-                oneOf<DotnetCommand>(_buildCommand).commandType
-                will(returnValue(DotnetCommandType.Build))
-
-                allowing<DotnetCommand>(_buildCommand).arguments
-                will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
-
-                allowing<DotnetCommand>(_buildCommand).targetArguments
-                will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
-
-                allowing<DotnetCommand>(_buildCommand).environmentBuilders
-                will(returnValue(sequenceOf(_environmentBuilder)))
-
-                allowing<DotnetCommand>(_buildCommand).isSuccessful(result)
-                will(returnValue(true))
-
-                oneOf<DotnetCommand>(_cleanCommand).commandType
-                will(returnValue(DotnetCommandType.Clean))
-            }
-        })
-
-        val dotnetCommandSet = DotnetCommandSet(
-                ParametersServiceStub(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build"))),
-                listOf(_buildCommand!!, _cleanCommand!!))
-
-        // When
-        val actualExitCodes = dotnetCommandSet.commands.map { it.isSuccessful(result) }.toList()
-
-        // Then
-        _ctx!!.assertIsSatisfied()
-        Assert.assertEquals(actualExitCodes, listOf(true))
-    }
 }
