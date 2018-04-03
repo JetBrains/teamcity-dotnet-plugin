@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.PathMatcher
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotnet.CommandResult
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
@@ -14,6 +15,8 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.Serializable
+import java.util.*
 
 class TestsResultsAnalyzerImplTest {
     private var _ctx: Mockery? = null
@@ -54,33 +57,33 @@ class TestsResultsAnalyzerImplTest {
     }
 
     @DataProvider
-    fun isSuccessful(): Array<Array<Any>> {
+    fun checkAnalyzeResult(): Array<Array<Serializable>> {
         return arrayOf(
-                arrayOf(0, false, true, true),
-                arrayOf(0, true, true, true),
-                arrayOf(1, true, true, true),
-                arrayOf(1, false, true, false),
-                arrayOf(99, true, true, true),
-                arrayOf(99, false, true, false),
-                arrayOf(-1, true, true, false),
-                arrayOf(-1, false, true, false),
-                arrayOf(-99, true, true, false),
-                arrayOf(-99, false, true, false),
+                arrayOf(0, false, true, EnumSet.of(CommandResult.Success)),
+                arrayOf(0, true, true, EnumSet.of(CommandResult.Success)),
+                arrayOf(1, true, true, EnumSet.of(CommandResult.Success, CommandResult.FailedTests)),
+                arrayOf(1, false, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(99, true, true, EnumSet.of(CommandResult.Success, CommandResult.FailedTests)),
+                arrayOf(99, false, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-1, true, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-1, false, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-99, true, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-99, false, true, EnumSet.of(CommandResult.Fail)),
 
-                arrayOf(0, false, false, true),
-                arrayOf(0, true, false, true),
-                arrayOf(1, true, false, true),
-                arrayOf(1, false, false, false),
-                arrayOf(99, true, false, true),
-                arrayOf(99, false, false, false),
-                arrayOf(-1, true, false, true),
-                arrayOf(-1, false, false, true),
-                arrayOf(-99, true, false, true),
-                arrayOf(-99, false, false, true))
+                arrayOf(0, false, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(0, true, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(1, true, false, EnumSet.of(CommandResult.Success, CommandResult.FailedTests)),
+                arrayOf(1, false, false, EnumSet.of(CommandResult.Fail)),
+                arrayOf(99, true, false, EnumSet.of(CommandResult.Success, CommandResult.FailedTests)),
+                arrayOf(99, false, false, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-1, true, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(-1, false, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(-99, true, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(-99, false, false, EnumSet.of(CommandResult.Success)))
     }
 
-    @Test(dataProvider = "isSuccessful")
-    fun shouldImplementIsSuccessful(exitCode: Int, hasFailedTest: Boolean, failBuildOnExitCode: Boolean, expectedResult: Boolean) {
+    @Test(dataProvider = "checkAnalyzeResult")
+    fun shouldAnalyzeResult(exitCode: Int, hasFailedTest: Boolean, failBuildOnExitCode: Boolean, expectedResult: EnumSet<CommandResult>) {
         // Given
         val testsResultsAnalyzer = TestsResultsAnalyzerImpl(_buildOptions!!)
         _ctx!!.checking(object : Expectations() {
@@ -99,7 +102,7 @@ class TestsResultsAnalyzerImplTest {
         }
 
         // When
-        val actualResult = testsResultsAnalyzer.isSuccessful(CommandLineResult(sequenceOf(exitCode), lines, emptySequence()))
+        val actualResult = testsResultsAnalyzer.analyze(CommandLineResult(sequenceOf(exitCode), lines, emptySequence()))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)

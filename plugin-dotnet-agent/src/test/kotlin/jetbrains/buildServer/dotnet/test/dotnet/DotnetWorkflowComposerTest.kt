@@ -12,6 +12,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.Closeable
 import java.io.File
+import java.util.*
 
 class DotnetWorkflowComposerTest {
     private lateinit var _ctx: Mockery
@@ -81,8 +82,8 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand1).resultsAnalyzer
                 will(returnValue(_resultsAnalyzer1))
 
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).isSuccessful(result)
-                will(returnValue(true))
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).analyze(result)
+                will(returnValue(EnumSet.of(CommandResult.Success)))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).toolResolver
                 will(returnValue(_toolResolver1))
@@ -102,8 +103,8 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand2).resultsAnalyzer
                 will(returnValue(_resultsAnalyzer2))
 
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).isSuccessful(result)
-                will(returnValue(true))
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).analyze(result)
+                will(returnValue(EnumSet.of(CommandResult.Success)))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).toolResolver
                 will(returnValue(_toolResolver2))

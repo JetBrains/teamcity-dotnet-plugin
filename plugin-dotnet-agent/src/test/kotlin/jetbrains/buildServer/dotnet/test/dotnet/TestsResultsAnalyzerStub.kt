@@ -1,10 +1,11 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineResult
+import jetbrains.buildServer.dotnet.CommandResult
 import jetbrains.buildServer.dotnet.ResultsAnalyzer
+import java.util.*
 
-class TestsResultsAnalyzerStub(private val _hasFailedTest: Boolean): ResultsAnalyzer {
-    override fun isSuccessful(result: CommandLineResult): Boolean {
-        return !_hasFailedTest
-    }
+class TestsResultsAnalyzerStub(): ResultsAnalyzer {
+    override fun analyze(result: CommandLineResult): EnumSet<CommandResult> =
+            EnumSet.of(CommandResult.Success)
 }

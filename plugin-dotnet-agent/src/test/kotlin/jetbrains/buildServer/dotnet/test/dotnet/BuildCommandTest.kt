@@ -86,7 +86,7 @@ class BuildCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand {
+            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
         var ctx = Mockery()
         return BuildCommand(
                 ParametersServiceStub(parameters),

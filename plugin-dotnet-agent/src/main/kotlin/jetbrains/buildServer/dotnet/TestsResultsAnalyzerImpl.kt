@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.BuildOptions
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
+import java.util.*
 
 class TestsResultsAnalyzerImpl(
         private val _buildOptions: BuildOptions)
@@ -12,16 +13,26 @@ class TestsResultsAnalyzerImpl(
     override fun hasFailedTest(text: String): Boolean =
             text.contains(FailedTestMarker)
 
-    override fun isSuccessful(result: CommandLineResult): Boolean {
+    override fun analyze(result: CommandLineResult): EnumSet<CommandResult> {
         if (result.exitCode == 0) {
-            return true
+            return EnumSet.of(CommandResult.Success)
         }
 
         if (result.exitCode > 0) {
-            return result.standardOutput.map { hasFailedTest(it) }.filter { it }.any()
+            if(result.standardOutput.map { hasFailedTest(it) }.filter { it }.any()) {
+                return EnumSet.of(CommandResult.Success, CommandResult.FailedTests)
+            }
+            else {
+                return EnumSet.of(CommandResult.Fail)
+            }
         }
 
-        return !_buildOptions.failBuildOnExitCode
+        if(!_buildOptions.failBuildOnExitCode) {
+            return EnumSet.of(CommandResult.Success)
+        }
+        else  {
+            return EnumSet.of(CommandResult.Fail)
+        }
     }
 
     companion object {

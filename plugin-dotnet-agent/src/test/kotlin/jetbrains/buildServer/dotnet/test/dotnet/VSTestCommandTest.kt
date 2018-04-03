@@ -89,7 +89,7 @@ class VSTestCommandTest {
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub(false)): DotnetCommand =
+            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand =
             VSTestCommand(
                     ParametersServiceStub(parameters),
                     testsResultsAnalyzer,

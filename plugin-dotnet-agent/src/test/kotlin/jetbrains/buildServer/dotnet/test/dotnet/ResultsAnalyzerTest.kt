@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.ToolProvidersRegistry
 import jetbrains.buildServer.agent.runner.BuildOptions
+import jetbrains.buildServer.dotnet.CommandResult
 import jetbrains.buildServer.dotnet.ResultsAnalyzer
 import jetbrains.buildServer.dotnet.ResultsAnalyzerImpl
 import org.jmock.Expectations
@@ -12,6 +13,8 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.Serializable
+import java.util.*
 
 class ResultsAnalyzerTest {
     private lateinit var _ctx: Mockery
@@ -24,23 +27,23 @@ class ResultsAnalyzerTest {
     }
 
     @DataProvider
-    fun checkIsSuccessData(): Array<Array<Any>> {
+    fun checkAnalyzeResult(): Array<Array<Serializable>> {
         return arrayOf(
-                arrayOf(0, true, true),
-                arrayOf(1, true, false),
-                arrayOf(99, true, false),
-                arrayOf(-1, true, false),
-                arrayOf(-99, true, false),
+                arrayOf(0, true, EnumSet.of(CommandResult.Success)),
+                arrayOf(1, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(99, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-1, true, EnumSet.of(CommandResult.Fail)),
+                arrayOf(-99, true, EnumSet.of(CommandResult.Fail)),
 
-                arrayOf(0, false, true),
-                arrayOf(1, false, true),
-                arrayOf(99, false, true),
-                arrayOf(-1, false, true),
-                arrayOf(-99, false, true))
+                arrayOf(0, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(1, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(99, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(-1, false, EnumSet.of(CommandResult.Success)),
+                arrayOf(-99, false, EnumSet.of(CommandResult.Success)))
     }
 
-    @Test(dataProvider = "checkIsSuccessData")
-    fun shouldCheckIsSuccess(exitCode: Int, failBuildOnExitCode: Boolean, expectedResult: Boolean) {
+    @Test(dataProvider = "checkAnalyzeResult")
+    fun shouldAnalyzeResult(exitCode: Int, failBuildOnExitCode: Boolean, expectedResult: EnumSet<CommandResult>) {
         // Given
         val resultsAnalyzer = ResultsAnalyzerImpl(_buildOptions)
         _ctx!!.checking(object : Expectations() {
@@ -51,7 +54,7 @@ class ResultsAnalyzerTest {
         })
 
         // When
-        val actualResult = resultsAnalyzer.isSuccessful(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
+        val actualResult = resultsAnalyzer.analyze(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)
