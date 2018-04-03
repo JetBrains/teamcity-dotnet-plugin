@@ -32,12 +32,14 @@ class DotnetWorkflowComposerTest {
     private lateinit var _failedTestDetector: FailedTestDetector
     private lateinit var _resultsAnalyzer1: ResultsAnalyzer
     private lateinit var _resultsAnalyzer2: ResultsAnalyzer
+    private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx.mock(PathsService::class.java)
         _failedTestDetector = _ctx.mock(FailedTestDetector::class.java)
+        _dotnetWorkflowAnalyzer = _ctx.mock(DotnetWorkflowAnalyzer::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
         _workflowContext = _ctx.mock(WorkflowContext::class.java)
         _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
@@ -144,6 +146,9 @@ class DotnetWorkflowComposerTest {
                 will(returnValue(result))
 
                 oneOf<WorkflowContext>(_workflowContext).registerOutputFilter(composer)
+
+                allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0) )
+                oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
             }
         })
 
@@ -176,6 +181,7 @@ class DotnetWorkflowComposerTest {
                 _failedTestDetector,
                 ArgumentsServiceStub(),
                 _environmentVariables,
+                _dotnetWorkflowAnalyzer,
                 _commandSet)
     }
 

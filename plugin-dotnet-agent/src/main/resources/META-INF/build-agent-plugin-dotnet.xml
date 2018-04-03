@@ -44,6 +44,7 @@
     </bean>
     <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
     <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
 
     <!--Dotnet arguments' providers-->
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
