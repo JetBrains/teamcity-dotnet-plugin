@@ -22,9 +22,6 @@ class TestsResultsAnalyzerImpl(
             if(result.standardOutput.map { hasFailedTest(it) }.filter { it }.any()) {
                 return EnumSet.of(CommandResult.Success, CommandResult.FailedTests)
             }
-            else {
-                return EnumSet.of(CommandResult.Fail)
-            }
         }
 
         if(!_buildOptions.failBuildOnExitCode) {
