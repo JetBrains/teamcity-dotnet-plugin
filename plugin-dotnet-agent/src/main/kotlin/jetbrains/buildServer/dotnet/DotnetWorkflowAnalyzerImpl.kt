@@ -16,7 +16,7 @@ class DotnetWorkflowAnalyzerImpl(private val _loggerService: LoggerService)
         else {
             context.addResult(result)
             if (result.contains(CommandResult.FailedTests)) {
-                _loggerService.onErrorOutput("Process finished with positive exit code ${exitCode} (some tests have failed). Reporting step success as all the tests have run. Use \"at least one test failed\" failure condition to fail the build.")
+                _loggerService.onErrorOutput("Process finished with positive exit code ${exitCode} (some tests have failed). Reporting step success as all the tests have run.")
             }
         }
     }
@@ -29,7 +29,7 @@ class DotnetWorkflowAnalyzerImpl(private val _loggerService: LoggerService)
         val lastCommandIsSucceeded = !context.results.last().contains(CommandResult.FailedTests)
         val hasFailedTests = context.results.any { it.contains(CommandResult.FailedTests) };
         if (lastCommandIsSucceeded && hasFailedTests) {
-            _loggerService.onErrorOutput("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run. Use \"at least one test failed\" failure condition to fail the build.")
+            _loggerService.onErrorOutput("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run.")
         }
     }
 }
