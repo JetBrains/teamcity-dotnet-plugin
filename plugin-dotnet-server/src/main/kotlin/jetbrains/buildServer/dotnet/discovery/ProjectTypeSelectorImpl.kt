@@ -15,6 +15,10 @@ class ProjectTypeSelectorImpl : ProjectTypeSelector {
             projectTypes.add(ProjectType.Test)
         }
 
+        if (projectTypes.size == 0) {
+            projectTypes.add(ProjectType.Unknown)
+        }
+
         return projectTypes
     }
 

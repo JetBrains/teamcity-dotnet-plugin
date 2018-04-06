@@ -73,11 +73,11 @@ class DotnetRunnerDiscoveryExtension(
             yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
             val projectTypes = solution.projects.flatMap { _projectTypeSelector.select(it) }.toSet()
 
-            if (projectTypes.contains(ProjectType.Test)) {
+            if (projectTypes.size == 1 && projectTypes.contains(ProjectType.Test)) {
                 yield(createSimpleCommand(DotnetCommandType.Test, solutionPath))
             }
 
-            if (projectTypes.contains(ProjectType.Publish)) {
+            if (projectTypes.size == 1 && projectTypes.contains(ProjectType.Publish)) {
                 yield(createSimpleCommand(DotnetCommandType.Publish, solutionPath))
             }
         }
@@ -135,7 +135,6 @@ class DotnetRunnerDiscoveryExtension(
         override fun hashCode(): Int {
             return parameters.hashCode()
         }
-
     }
 
     data class Parameter(val name: String, val value: String) { }

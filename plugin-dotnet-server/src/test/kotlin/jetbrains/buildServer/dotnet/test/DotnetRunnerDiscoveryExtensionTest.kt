@@ -58,11 +58,21 @@ class DotnetRunnerDiscoveryExtensionTest {
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Publish)),
                         listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
-                // Solution has has priority vs test, publish
+                // Solution for tests is working when all project are tests
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
+                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Test)),
+                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                // Solution for tests and publish is no working when at least one project is no tests or publish
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                // Solution for publish is working when all project are publish
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
+                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish, ProjectType.Publish)),
+                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
                 // Solution has has priority vs project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("abc")))), "dir3/my.sln")),
