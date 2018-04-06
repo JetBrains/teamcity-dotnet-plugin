@@ -17,81 +17,87 @@ import org.testng.annotations.Test
 class DotnetRunnerDiscoveryExtensionTest {
     @DataProvider
     fun testGenerateCommandsData(): Array<Array<Any>> {
+        val restore1 = createCommand(DotnetCommandType.Restore, "dir/mypro.proj")
+        val build1 = createCommand(DotnetCommandType.Build, "dir/mypro.proj")
+        val test1 = createCommand(DotnetCommandType.Test, "dir/mypro.proj")
+        val restore2 = createCommand(DotnetCommandType.Restore, "dir2/My.sln")
+        val build2 = createCommand(DotnetCommandType.Build, "dir2/My.sln")
+        val publish1 = createCommand(DotnetCommandType.Publish, "dir/mypro.proj")
         return arrayOf(
                 // Default project command is build
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, build1)),
                 // Distinct similar default
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, build1)),
                 // Path is case sensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/myproj.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir/MyProj.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/myproj.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/myproj.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/MyProj.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/MyProj.proj")))),
+                        listOf(createCommand(DotnetCommandType.Restore, "dir/myproj.proj"), createCommand(DotnetCommandType.Build, "dir/myproj.proj"), createCommand(DotnetCommandType.Restore, "dir/MyProj.proj"), createCommand(DotnetCommandType.Build, "dir/MyProj.proj"))),
                 // Default project command is build with some refs
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("abc")))))),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, build1)),
                 // Normalize project name
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, build1)),
                 // Test project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, test1)),
                 // Distinct similar tests
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"), Reference("Abc"))), Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, test1)),
                 // Test project has priority vs publish
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, test1)),
                 // Solution for tests is working when all project are tests
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Test)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                        listOf(restore2, build2, createCommand(DotnetCommandType.Test, "dir2/My.sln"))),
                 // Solution for tests and publish is no working when at least one project is no tests or publish
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                        listOf(restore2, build2)),
                 // Solution for publish is working when all project are publish
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish, ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir2/My.sln")))),
+                        listOf(restore2, build2, createCommand(DotnetCommandType.Publish, "dir2/My.sln"))),
                 // Solution has has priority vs project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("abc")))), "dir3/my.sln")),
                         mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir3/my.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir3/my.sln")))),
+                        listOf(createCommand(DotnetCommandType.Restore, "dir3/my.sln"), createCommand(DotnetCommandType.Build, "dir3/my.sln"))),
                 // Publish project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, publish1)),
                 // Distinct similar publish
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"))), Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("ggg"), Reference("Microsoft.aspnet.DDD")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, publish1)),
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.Aspnetaaa")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Publish.id, DotnetConstants.PARAM_PATHS to "dir/mypro.proj")))),
+                        listOf(restore1, publish1)),
                 // Empty project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("", emptyList(), emptyList(), emptyList(), emptyList())))),
@@ -111,7 +117,7 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))), "dir2\\my.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
-                        listOf(DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Restore.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Build.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")), DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.Test.id, DotnetConstants.PARAM_PATHS to "dir2/my.sln")))))
+                        listOf(createCommand(DotnetCommandType.Restore, "dir2/my.sln"), createCommand(DotnetCommandType.Build, "dir2/my.sln"), createCommand(DotnetCommandType.Test, "dir2/my.sln"))))
     }
 
     @Test(dataProvider = "testGenerateCommandsData")
@@ -161,23 +167,25 @@ class DotnetRunnerDiscoveryExtensionTest {
 
     @DataProvider
     fun testGetNewCommandsData(): Array<Array<Sequence<DotnetRunnerDiscoveryExtension.Command>>> {
+        val command1 = DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))
+        val command2 = DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1")))
         return arrayOf(
-                // New command
+                // New command1
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1"))), DotnetRunnerDiscoveryExtension.Command("c", listOf(DotnetRunnerDiscoveryExtension.Parameter("param2", "value2")))),
+                        sequenceOf(command1),
+                        sequenceOf(command1, DotnetRunnerDiscoveryExtension.Command("c", listOf(DotnetRunnerDiscoveryExtension.Parameter("param2", "value2")))),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("c", listOf(DotnetRunnerDiscoveryExtension.Parameter("param2", "value2"))))),
                 arrayOf(
                         sequenceOf(),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1")))),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1"))))),
+                        sequenceOf(command2),
+                        sequenceOf(command2)),
                 // Commands case insensitive
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1")))),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "Value1"))))),
+                        sequenceOf(command1),
+                        sequenceOf(command2),
+                        sequenceOf(command2)),
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(command1),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("Param1", "value1")))),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("Param1", "value1"))))),
                 // Has all commands
@@ -186,16 +194,16 @@ class DotnetRunnerDiscoveryExtensionTest {
                         sequenceOf(),
                         sequenceOf()),
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(command1),
+                        sequenceOf(command1),
                         sequenceOf()),
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(command1),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("A", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
                         sequenceOf()),
                 // Has all commands with dif names
                 arrayOf(
-                        sequenceOf(DotnetRunnerDiscoveryExtension.Command("a", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
+                        sequenceOf(command1),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("b", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
                         sequenceOf()))}
 
@@ -286,6 +294,8 @@ class DotnetRunnerDiscoveryExtensionTest {
         // Then
         Assert.assertEquals(actualCommands, listOf(DotnetRunnerDiscoveryExtension.Command("abc", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_COMMAND, "value1"))), DotnetRunnerDiscoveryExtension.Command("xyz", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_PATHS, "value2")))))
     }
+
+    private fun createCommand(commandType: DotnetCommandType, path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
 
     private class MyRunType(private val type: String): RunType() {
         override fun getViewRunnerParamsJspFilePath(): String? {
