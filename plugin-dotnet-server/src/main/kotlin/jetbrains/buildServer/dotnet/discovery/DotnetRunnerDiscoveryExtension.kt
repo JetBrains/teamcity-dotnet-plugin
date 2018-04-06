@@ -18,31 +18,31 @@ class DotnetRunnerDiscoveryExtension(
         private val _projectTypeSelector: ProjectTypeSelector)
     : BreadthFirstRunnerDiscoveryExtension(1) {
     override fun discoverRunnersInDirectory(dir: Element, filesAndDirs: MutableList<Element>): MutableList<DiscoveredObject> =
-        discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
+            discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
 
     override fun postProcessDiscoveredObjects(
             settings: BuildTypeSettings,
             browser: Browser,
             discovered: MutableList<DiscoveredObject>): MutableList<DiscoveredObject> =
-                getNewCommands(getExistingCommands(settings), getCreatedCommands(discovered))
-                .map { createTarget(it) }
-                .toMutableList()
+            getNewCommands(getExistingCommands(settings), getCreatedCommands(discovered))
+                    .map { createTarget(it) }
+                    .toMutableList()
 
     fun getNewCommands(existingCommands: Sequence<Command>, createdCommands: Sequence<Command>): Sequence<Command> =
-        createdCommands.minus(existingCommands)
+            createdCommands.minus(existingCommands)
 
     fun getExistingCommands(settings: BuildTypeSettings): Sequence<Command> =
-        settings.buildRunners
-        .filter { DotnetConstants.RUNNER_TYPE.equals(it.runType.type, true) }
-        .map { Command(it.name, extractParameters(it.parameters)) }
-        .toSet()
-        .asSequence()
+            settings.buildRunners
+                    .filter { DotnetConstants.RUNNER_TYPE.equals(it.runType.type, true) }
+                    .map { Command(it.name, extractParameters(it.parameters)) }
+                    .toSet()
+                    .asSequence()
 
     fun getCreatedCommands(discovered: MutableList<DiscoveredObject>): Sequence<Command> =
-        discovered
-        .filter { it is DiscoveredTarget }
-        .map { it.let { Command(it.toString(), extractParameters(it.parameters)) } }
-        .asSequence()
+            discovered
+                    .filter { it is DiscoveredTarget }
+                    .map { it.let { Command(it.toString(), extractParameters(it.parameters)) } }
+                    .asSequence()
 
     fun discover(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<DiscoveredTarget> {
         val solutions = _solutionDiscover.discover(streamFactory, paths).toList()
@@ -53,7 +53,7 @@ class DotnetRunnerDiscoveryExtension(
     }
 
     private fun extractParameters(parameters: Map<String, String>): List<Parameter> =
-        parameters.filter { Params.contains(it.key) && !it.value.isNullOrBlank()}.map { Parameter(it.key, it.value) }.toList()
+            parameters.filter { Params.contains(it.key) && !it.value.isNullOrBlank()}.map { Parameter(it.key, it.value) }.toList()
 
     private fun getElements(elements: Sequence<Element>, depth: Int = 3): Sequence<Element> =
             if (depth > 0)
@@ -71,14 +71,10 @@ class DotnetRunnerDiscoveryExtension(
             var solutionPath = normalizePath(solution.solution)
             yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
             yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
-            val projectTypes = solution.projects.flatMap { _projectTypeSelector.select(it) }.toSet()
 
-            if (projectTypes.size == 1 && projectTypes.contains(ProjectType.Test)) {
+            // If all projects contain tests
+            if (solution.projects.map { _projectTypeSelector.select(it) }.all{ it.contains(ProjectType.Test)}) {
                 yield(createSimpleCommand(DotnetCommandType.Test, solutionPath))
-            }
-
-            if (projectTypes.size == 1 && projectTypes.contains(ProjectType.Publish)) {
-                yield(createSimpleCommand(DotnetCommandType.Publish, solutionPath))
             }
         }
         else {
@@ -89,26 +85,35 @@ class DotnetRunnerDiscoveryExtension(
 
                 var projectPath = normalizePath(project.project)
                 yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
-
                 val projectTypes = _projectTypeSelector.select(project)
-
-                if (projectTypes.contains(ProjectType.Test)) {
-                    yield(createSimpleCommand(DotnetCommandType.Test, projectPath))
-                    continue
+                if (projectTypes.contains(ProjectType.Unknown)) {
+                    yield(createSimpleCommand(DotnetCommandType.Build, projectPath))
                 }
+            }
+        }
 
-                if (projectTypes.contains(ProjectType.Publish)) {
-                    yield(createSimpleCommand(DotnetCommandType.Publish, projectPath))
-                    continue
-                }
+        for (project in solution.projects) {
+            if (project.project.isNullOrBlank()) {
+                continue
+            }
 
-                yield(createSimpleCommand(DotnetCommandType.Build, projectPath))
+            var projectPath = normalizePath(project.project)
+            val projectTypes = _projectTypeSelector.select(project)
+
+            if (projectTypes.contains(ProjectType.Test)) {
+                yield(createSimpleCommand(DotnetCommandType.Test, projectPath))
+                continue
+            }
+
+            if (projectTypes.contains(ProjectType.Publish)) {
+                yield(createSimpleCommand(DotnetCommandType.Publish, projectPath))
+                continue
             }
         }
     }
 
     private fun createSimpleCommand(commandType: DotnetCommandType, path:String): Command =
-        Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
+            Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
 
     private fun createDefaultName(commandType: DotnetCommandType, path:String): String =
             _defaultDiscoveredTargetNameFactory.createName(commandType, path)

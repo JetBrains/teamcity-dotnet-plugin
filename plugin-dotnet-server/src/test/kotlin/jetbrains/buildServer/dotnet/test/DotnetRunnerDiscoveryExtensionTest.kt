@@ -23,31 +23,32 @@ class DotnetRunnerDiscoveryExtensionTest {
         val restore2 = createCommand(DotnetCommandType.Restore, "dir2/My.sln")
         val build2 = createCommand(DotnetCommandType.Build, "dir2/My.sln")
         val publish1 = createCommand(DotnetCommandType.Publish, "dir/mypro.proj")
+        val defaultProjectTypeMap = mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Unknown))
         return arrayOf(
                 // Default project command is build
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         listOf(restore1, build1)),
                 // Distinct similar default
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         listOf(restore1, build1)),
                 // Path is case sensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/myproj.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir/MyProj.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        mapOf<String, Set<ProjectType>>("dir/myproj.proj" to setOf<ProjectType>(ProjectType.Unknown), "dir/MyProj.proj" to setOf<ProjectType>(ProjectType.Unknown)),
                         listOf(createCommand(DotnetCommandType.Restore, "dir/myproj.proj"), createCommand(DotnetCommandType.Build, "dir/myproj.proj"), createCommand(DotnetCommandType.Restore, "dir/MyProj.proj"), createCommand(DotnetCommandType.Build, "dir/MyProj.proj"))),
                 // Default project command is build with some refs
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("abc")))))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         listOf(restore1, build1)),
                 // Normalize project name
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        mapOf<String, Set<ProjectType>>("dir\\mypro.proj" to setOf<ProjectType>(ProjectType.Unknown)),
                         listOf(restore1, build1)),
                 // Test project
                 arrayOf(
@@ -67,22 +68,17 @@ class DotnetRunnerDiscoveryExtensionTest {
                 // Solution for tests is working when all project are tests
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
-                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Test)),
-                        listOf(restore2, build2, createCommand(DotnetCommandType.Test, "dir2/My.sln"))),
-                // Solution for tests and publish is no working when at least one project is no tests or publish
+                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
+                        listOf(restore2, build2, createCommand(DotnetCommandType.Test, "dir2/My.sln"), createCommand(DotnetCommandType.Test, "dir/mypro.proj"))),
+                // Solution for tests is no working when at least one project is no tests
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test, ProjectType.Publish)),
-                        listOf(restore2, build2)),
-                // Solution for publish is working when all project are publish
-                arrayOf(
-                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.aspnet"), Reference("Microsoft.NET.Test.Sdk")))), "dir2\\My.sln")),
-                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Publish, ProjectType.Publish)),
-                        listOf(restore2, build2, createCommand(DotnetCommandType.Publish, "dir2/My.sln"))),
+                        listOf(restore2, build2, createCommand(DotnetCommandType.Test, "dir2/My.sln"), createCommand(DotnetCommandType.Test, "dir/mypro.proj"))),
                 // Solution has has priority vs project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("abc")))), "dir3/my.sln")),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         listOf(createCommand(DotnetCommandType.Restore, "dir3/my.sln"), createCommand(DotnetCommandType.Build, "dir3/my.sln"))),
                 // Publish project
                 arrayOf(
@@ -101,23 +97,23 @@ class DotnetRunnerDiscoveryExtensionTest {
                 // Empty project
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("", emptyList(), emptyList(), emptyList(), emptyList())))),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         emptyList<DiscoveredTarget>()),
                 // Empty solution
                 arrayOf(
                         sequenceOf(Solution(emptyList())),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         emptyList<DiscoveredTarget>()),
                 // Empty solutions
                 arrayOf(
                         emptySequence<Solution>(),
-                        mapOf<String, Set<ProjectType>>("" to setOf<ProjectType>()),
+                        defaultProjectTypeMap,
                         emptyList<DiscoveredTarget>()),
                 // Skip test project from proj when it uses in some solution
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"))))), Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))), "dir2\\my.sln")),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
-                        listOf(createCommand(DotnetCommandType.Restore, "dir2/my.sln"), createCommand(DotnetCommandType.Build, "dir2/my.sln"), createCommand(DotnetCommandType.Test, "dir2/my.sln"))))
+                        listOf(createCommand(DotnetCommandType.Restore, "dir2/my.sln"), createCommand(DotnetCommandType.Build, "dir2/my.sln"), createCommand(DotnetCommandType.Test, "dir2/my.sln"), createCommand(DotnetCommandType.Test, "dir/mypro.proj"))))
     }
 
     @Test(dataProvider = "testGenerateCommandsData")
