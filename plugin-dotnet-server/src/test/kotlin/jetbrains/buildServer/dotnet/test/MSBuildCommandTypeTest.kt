@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
 import jetbrains.buildServer.requirements.Requirement
@@ -14,6 +15,7 @@ class MSBuildCommandTypeTest {
     @DataProvider
     fun testRequirementsData(): Array<Array<out Any?>> {
         return arrayOf(
+                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15Mono.id), sequenceOf(Requirement(MonoConstants.CONFIG_PATH, null, RequirementType.EXISTS))),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild12WindowsX64.id), sequenceOf(Requirement("MSBuildTools12.0_x64_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id), sequenceOf(Requirement("MSBuildTools14.0_x86_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id), sequenceOf(Requirement("MSBuildTools15.0_x64_Path", null, RequirementType.EXISTS), windowsReq)),

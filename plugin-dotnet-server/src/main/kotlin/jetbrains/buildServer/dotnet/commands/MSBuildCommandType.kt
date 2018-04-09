@@ -48,7 +48,7 @@ class MSBuildCommandType : CommandType() {
                             }
                         }
                         ToolPlatform.Mono -> {
-                            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + MonoConstants.CONFIG_PATH, null, RequirementType.EXISTS))
+                            yield(Requirement(MonoConstants.CONFIG_PATH, null, RequirementType.EXISTS))
                             hasRequirement = true
                         }
                     }
