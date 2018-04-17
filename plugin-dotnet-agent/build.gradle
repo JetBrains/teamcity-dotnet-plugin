@@ -31,6 +31,7 @@ project.tasks.nugetRestore.doFirst {
 }
 
 nugetRestore {
+  version = '4.5.0'
   packagesConfigFile = file('./../packages.config')
   packagesDirectory = './packages'
 }
