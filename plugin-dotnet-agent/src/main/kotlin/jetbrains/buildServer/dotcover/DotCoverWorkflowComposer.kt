@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.util.StringUtil
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
@@ -131,6 +132,11 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
+            StringUtil.split(it).forEach {
+                yield(CommandLineArgument(it))
+            }
+        }
     }
 
     private fun sendServiceMessages(context: WorkflowContext, deferredServiceMessages: DeferredServiceMessages?) {
