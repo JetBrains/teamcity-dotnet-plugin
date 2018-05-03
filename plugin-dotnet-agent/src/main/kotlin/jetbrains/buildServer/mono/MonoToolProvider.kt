@@ -27,5 +27,11 @@ class MonoToolProvider(
                     Mono directory or defined `${MonoConstants.TOOL_HOME}` variable.""".trimIndent())
 
     @Throws(ToolCannotBeFoundException::class)
-    override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String = getPath(toolName)
+    override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String {
+        return if (runner.isVirtualContext) {
+            MonoConstants.RUNNER_TYPE
+        } else {
+            getPath(toolName)
+        }
+    }
 }

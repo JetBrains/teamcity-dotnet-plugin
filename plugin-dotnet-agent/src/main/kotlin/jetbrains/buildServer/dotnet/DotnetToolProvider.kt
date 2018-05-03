@@ -31,5 +31,11 @@ class DotnetToolProvider(
                     .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
 
     @Throws(ToolCannotBeFoundException::class)
-    override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String = getPath(toolName)
+    override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String {
+        return if (runner.isVirtualContext) {
+            DotnetConstants.EXECUTABLE
+        } else {
+            getPath(toolName)
+        }
+    }
 }
