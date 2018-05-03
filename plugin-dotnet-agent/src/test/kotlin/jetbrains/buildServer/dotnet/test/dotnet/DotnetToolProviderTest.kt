@@ -7,10 +7,7 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.agent.ToolProvider
-import jetbrains.buildServer.agent.ToolProvidersRegistry
-import jetbrains.buildServer.agent.ToolSearchService
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.DotnetToolProvider
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import org.jmock.Expectations
@@ -25,6 +22,9 @@ class DotnetToolProviderTest {
     private var _ctx: Mockery? = null
     private var _toolProvidersRegistry: ToolProvidersRegistry? = null
     private var _toolSearchService: ToolSearchService? = null
+
+    private val ctx: Mockery
+        get() = _ctx!!
 
     @BeforeMethod
     fun setUp() {
@@ -113,6 +113,25 @@ class DotnetToolProviderTest {
         }
 
         Assert.assertEquals(actualToolCannotBeFoundException, expectedToolCannotBeFoundException)
+    }
+
+    @Test
+    fun shouldNotSearchToolInVirtualContext() {
+        val build = ctx.mock(AgentRunningBuild::class.java)
+        val context = ctx.mock(BuildRunnerContext::class.java)
+        ctx.checking(object: Expectations() {
+            init {
+                oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
+
+                allowing(context).isVirtualContext
+                will(returnValue(true))
+            }
+        })
+
+        val toolProvider = createInstance(emptySequence())
+        val path = toolProvider.getPath("dotnet.cli", build, context)
+
+        Assert.assertEquals(path, "dotnet")
     }
 
     private fun createInstance(files: Sequence<File>): ToolProvider =

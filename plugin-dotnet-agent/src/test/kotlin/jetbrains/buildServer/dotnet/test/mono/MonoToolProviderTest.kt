@@ -1,9 +1,6 @@
 package jetbrains.buildServer.dotnet.test.mono
 
-import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.agent.ToolProvider
-import jetbrains.buildServer.agent.ToolProvidersRegistry
-import jetbrains.buildServer.agent.ToolSearchService
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import jetbrains.buildServer.mono.MonoToolProvider
 import org.jmock.Expectations
@@ -18,6 +15,9 @@ class MonoToolProviderTest {
     private var _ctx: Mockery? = null
     private var _toolProvidersRegistry: ToolProvidersRegistry? = null
     private var _toolSearchService: ToolSearchService? = null
+
+    private val ctx: Mockery
+        get() = _ctx!!
 
     @BeforeMethod
     fun setUp() {
@@ -105,6 +105,25 @@ class MonoToolProviderTest {
         }
 
         Assert.assertEquals(actualToolCannotBeFoundException, expectedToolCannotBeFoundException)
+    }
+
+    @Test
+    fun shouldNotSearchToolInVirtualContext() {
+        val build = ctx.mock(AgentRunningBuild::class.java)
+        val context = ctx.mock(BuildRunnerContext::class.java)
+        ctx.checking(object: Expectations() {
+            init {
+                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(MonoToolProvider::class.java)))
+
+                allowing(context).isVirtualContext
+                will(returnValue(true))
+            }
+        })
+
+        val toolProvider = createInstance(emptySequence())
+        val path = toolProvider.getPath("mono", build, context)
+
+        Assert.assertEquals(path, "mono")
     }
 
     private fun createInstance(files: Sequence<File>): ToolProvider =
