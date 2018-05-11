@@ -82,10 +82,10 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<LoggerService>(_loggerService).onStandardOutput("par1", Color.Details)
                 oneOf<LoggerService>(_loggerService).onStandardOutput("par2", Color.Details)
 
-                oneOf<BuildStepContext>(_stepContext).runnerContext
+                allowing<BuildStepContext>(_stepContext).runnerContext
                 will(returnValue(_runnerContext))
 
-                oneOf<BuildRunnerContext>(_runnerContext).isVirtualContext
+                allowing<BuildRunnerContext>(_runnerContext).isVirtualContext
                 will(returnValue(false))
             }
         })
