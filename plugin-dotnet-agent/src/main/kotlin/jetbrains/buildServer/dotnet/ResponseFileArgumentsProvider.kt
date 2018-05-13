@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.util.SystemInfo
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
@@ -16,7 +15,6 @@ class ResponseFileArgumentsProvider(
         private val _fileSystemService: FileSystemService,
         private val _loggerService: LoggerService,
         private val _msBuildParameterConverter: MSBuildParameterConverter,
-        private val _buildStepContext: BuildStepContext,
         private val _argumentsProviders: List<ArgumentsProvider>,
         private val _parametersProviders: List<MSBuildParametersProvider>)
     : ArgumentsProvider {
@@ -55,16 +53,9 @@ class ResponseFileArgumentsProvider(
             val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
             val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
             _fileSystemService.write(msBuildResponseFile) {
-                OutputStreamWriter(it).use { writer ->
-                    // In Windows docker container paths should be on drive C
-                    val windowsPathMappingRequired = SystemInfo.isWindows &&
-                            _buildStepContext.runnerContext.isVirtualContext &&
-                            !_pathsService.getPath(PathType.Bin).absolutePath.startsWith("C:", true)
-                    (if (windowsPathMappingRequired) lines.map {
-
-                        DRIVE_LETTER_PATTERN.replaceFirst(it, "$1C$3")
-                    } else lines).forEach {
-                        writer.write("$it\n")
+                OutputStreamWriter(it).use {
+                    for(line in lines) {
+                        it.write("$line\n")
                     }
                 }
             }
@@ -75,6 +66,5 @@ class ResponseFileArgumentsProvider(
     companion object {
         internal const val ResponseFileExtension = ".rsp"
         internal const val BlockName = "MSBuild Response File"
-        private val DRIVE_LETTER_PATTERN = Regex("(.*)([a-z])((:\\\\|%3A%5C).+)", RegexOption.IGNORE_CASE)
     }
 }

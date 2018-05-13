@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
@@ -21,8 +20,6 @@ class ResponseFileArgumentsProviderTest {
     private var _parametersService: ParametersService? = null
     private var _loggerService: LoggerService? = null
     private var _msBuildParameterConverter: MSBuildParameterConverter? = null
-    private var _stepContext: BuildStepContext? = null
-    private var _runnerContext: BuildRunnerContext? = null
 
     @BeforeMethod
     fun setUp() {
@@ -31,8 +28,6 @@ class ResponseFileArgumentsProviderTest {
         _parametersService = _ctx!!.mock(ParametersService::class.java)
         _loggerService = _ctx!!.mock(LoggerService::class.java)
         _msBuildParameterConverter = _ctx!!.mock(MSBuildParameterConverter::class.java)
-        _stepContext = _ctx!!.mock(BuildStepContext::class.java)
-        _runnerContext = _ctx!!.mock(BuildRunnerContext::class.java)
     }
 
     @Test
@@ -81,12 +76,6 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<LoggerService>(_loggerService).onStandardOutput("arg3", Color.Details)
                 oneOf<LoggerService>(_loggerService).onStandardOutput("par1", Color.Details)
                 oneOf<LoggerService>(_loggerService).onStandardOutput("par2", Color.Details)
-
-                allowing<BuildStepContext>(_stepContext).runnerContext
-                will(returnValue(_runnerContext))
-
-                allowing<BuildRunnerContext>(_runnerContext).isVirtualContext
-                will(returnValue(false))
             }
         })
 
@@ -113,7 +102,6 @@ class ResponseFileArgumentsProviderTest {
                 fileSystemService,
                 _loggerService!!,
                 _msBuildParameterConverter!!,
-                _stepContext!!,
                 argumentsProviders,
                 parametersProvider)
     }
