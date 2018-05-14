@@ -12,6 +12,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
+import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 /**
@@ -74,7 +75,14 @@ class DotnetRunnerRunType(
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val paths = parameters[DotnetConstants.PARAM_PATHS] ?: ""
-        return "${parameters[DotnetConstants.PARAM_COMMAND]?.replace('-', ' ')} $paths"
+        val commandName = parameters[DotnetConstants.PARAM_COMMAND]?.replace('-', ' ')
+        return if (!commandName.isNullOrBlank()) {
+            "$commandName $paths"
+        } else {
+            parameters[DotnetConstants.PARAM_ARGUMENTS]?.let {
+                StringUtil.splitCommandArgumentsAndUnquote(it).take(2).joinToString(" ")
+            } ?: ""
+        }
     }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {

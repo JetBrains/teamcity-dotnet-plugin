@@ -38,7 +38,9 @@ class DotnetCommandSet(
     private fun getArguments(command: DotnetCommand, targetArguments: TargetArguments) = buildSequence {
         if (command.toolResolver.isCommandRequired) {
             // command
-            yieldAll(command.commandType.id.split('-').map { CommandLineArgument(it) })
+            yieldAll(command.commandType.id.split('-')
+                    .filter { it.isNotEmpty() }
+                    .map { CommandLineArgument(it) })
         }
 
         // projects

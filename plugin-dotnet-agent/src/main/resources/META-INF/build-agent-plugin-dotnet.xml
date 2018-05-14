@@ -103,6 +103,9 @@
         <constructor-arg ref="testsResultsAnalyzer"/>
     </bean>
     <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
+    <bean class="jetbrains.buildServer.dotnet.CustomCommand" id="dotnetCustomCommand">
+        <constructor-arg ref="testsResultsAnalyzer"/>
+    </bean>
 
     <!-- MSBuild command -->
     <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>

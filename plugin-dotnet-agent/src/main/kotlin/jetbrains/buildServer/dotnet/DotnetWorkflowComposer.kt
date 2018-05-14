@@ -1,12 +1,12 @@
 package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.BuildProblemData
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.agent.BuildFinishedStatus
+import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
 import java.io.Closeable
-import java.io.File
-import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
 class DotnetWorkflowComposer(
@@ -29,7 +29,7 @@ class DotnetWorkflowComposer(
                     // Build the environment
                     val environmentTokens = mutableListOf<Closeable>()
                     for (environmentBuilder in command.environmentBuilders) {
-                        environmentTokens.add(environmentBuilder.build(command));
+                        environmentTokens.add(environmentBuilder.build(command))
                     }
 
                     try {
@@ -37,7 +37,13 @@ class DotnetWorkflowComposer(
                         val args = command.arguments.toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
                         _loggerService.onStandardOutput(commandHeader)
-                        _loggerService.onBlock(command.commandType.id.replace('-', ' ')).use {
+                        val commandName = command.commandType.id.replace('-', ' ')
+                        val blockName = if (commandName.isNotBlank()) {
+                            commandName
+                        } else {
+                            args.firstOrNull()?.value ?: ""
+                        }
+                        _loggerService.onBlock(blockName).use {
                             yield(CommandLine(
                                     TargetType.Tool,
                                     executableFile,
@@ -51,7 +57,7 @@ class DotnetWorkflowComposer(
                         for (environmentToken in environmentTokens) {
                             try
                             {
-                                environmentToken.close();
+                                environmentToken.close()
                             }
                             catch(ex: Exception) {
                                 LOG.error("Error during cleaning environment.", ex)
@@ -61,14 +67,14 @@ class DotnetWorkflowComposer(
 
                     val result = context.lastResult
                     val commandResult = command.resultsAnalyzer.analyze(result)
-                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, result.exitCode);
+                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, result.exitCode)
                     if (commandResult.contains(CommandResult.Fail)) {
                         context.abort(BuildFinishedStatus.FINISHED_FAILED)
                         return@buildSequence
                     }
                 }
 
-                _dotnetWorkflowAnalyzer.summarize(analyzerContext);
+                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             }
         })
     }
