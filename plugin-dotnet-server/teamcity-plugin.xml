@@ -13,4 +13,5 @@
         </vendor>
     </info>
     <deployment use-separate-classloader="true"/>
+    <requirements min-build="40000" max-build="49000" />
 </teamcity-plugin>
