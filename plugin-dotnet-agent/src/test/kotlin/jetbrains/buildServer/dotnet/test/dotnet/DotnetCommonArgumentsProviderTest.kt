@@ -14,12 +14,12 @@ class DotnetCommonArgumentsProviderTest {
         return arrayOf(
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id),
-                        listOf("--verbosity", Verbosity.Normal.id)),
+                        listOf("--verbosity", Verbosity.Normal.id.toLowerCase())),
                 arrayOf(emptyMap<String, String>(),
                         emptyList<String>()),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_VERBOSITY to Verbosity.Detailed.id),
-                        listOf("--verbosity", Verbosity.Detailed.id)))
+                        listOf("--verbosity", Verbosity.Detailed.id.toLowerCase())))
     }
 
     @Test(dataProvider = "argumentsData")
