@@ -19,7 +19,7 @@ class DotnetCommonArgumentsProviderImpl(
             parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
                 Verbosity.tryParse(it)?.let {
                     yield(CommandLineArgument("--verbosity"))
-                    yield(CommandLineArgument(it.id))
+                    yield(CommandLineArgument(it.id.toLowerCase()))
                 }
             }
 

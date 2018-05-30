@@ -16,10 +16,10 @@ class DotnetCommonArgumentsProviderTest {
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id,
                             DotnetConstants.PARAM_RSP to "true"),
-                        listOf("--verbosity", Verbosity.Normal.id)),
+                        listOf("--verbosity", Verbosity.Normal.id.toLowerCase())),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id),
-                        listOf("--verbosity", Verbosity.Normal.id)),
+                        listOf("--verbosity", Verbosity.Normal.id.toLowerCase())),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_RSP to "false"),
                         listOf("l:/logger", "/p:param=value")),
@@ -30,7 +30,7 @@ class DotnetCommonArgumentsProviderTest {
                         emptyList<String>()),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_VERBOSITY to Verbosity.Detailed.id),
-                        listOf("--verbosity", Verbosity.Detailed.id)))
+                        listOf("--verbosity", Verbosity.Detailed.id.toLowerCase())))
     }
 
     @Test(dataProvider = "argumentsData")
