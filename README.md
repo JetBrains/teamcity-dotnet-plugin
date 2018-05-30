@@ -55,6 +55,10 @@ During initialization this plugin reports the following agent configuration para
 | DotNetCLI_Path        | The path to the found .NET CLI (dotnet) app |
 | DotNetCoreSDKx.x_Path | The path to the found .NET Core SDK         |
 
+# Known issues
+
+Tests might not be reported correctly for .NET Core xunit test projects when logging verbosity levels is `minimal` or `quiet` because of [issue](https://github.com/xunit/xunit/issues/1706).
+
 # Build
 
 This project uses gradle as a build system. You can easily open it in [IntelliJ IDEA](https://www.jetbrains.com/idea/help/importing-project-from-gradle-model.html) or [Eclipse](http://gradle.org/eclipse/).
