@@ -49,7 +49,7 @@ class MSBuildCommand(
 
             parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
                 Verbosity.tryParse(it)?.let {
-                    yield(CommandLineArgument("/v:${it.id}"))
+                    yield(CommandLineArgument("/v:${it.id.toLowerCase()}"))
                 }
             }
 
