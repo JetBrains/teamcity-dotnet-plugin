@@ -129,7 +129,7 @@ class WorkflowSessionImpl(
             _loggerService.onErrorOutput(text)
         }
 
-        override fun interruptRequested(): TerminationAction = TerminationAction.NONE
+        override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 
         override fun isCommandLineLoggingEnabled(): Boolean = true
     }
