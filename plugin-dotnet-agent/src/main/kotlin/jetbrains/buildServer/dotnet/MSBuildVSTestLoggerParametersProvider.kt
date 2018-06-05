@@ -7,7 +7,8 @@ import kotlin.coroutines.experimental.buildSequence
 class MSBuildVSTestLoggerParametersProvider(
         private val _pathsService: PathsService,
         private val _loggerResolver: LoggerResolver,
-        private val _testReportingParameters: TestReportingParameters)
+        private val _testReportingParameters: TestReportingParameters,
+        private val _loggerParameters: LoggerParameters)
     : MSBuildParametersProvider {
 
     override val parameters: Sequence<MSBuildParameter>
@@ -26,5 +27,7 @@ class MSBuildVSTestLoggerParametersProvider(
                     yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
                 }
             }
+
+            yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.VSTestVerbosity.id.toLowerCase()))
         }
 }

@@ -62,6 +62,7 @@
         <constructor-arg ref="dotnetToolResolver"/>
     </bean>
 
+    <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
