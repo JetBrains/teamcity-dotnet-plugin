@@ -14,12 +14,11 @@ class DotnetCommonArgumentsProviderTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id,
-                            DotnetConstants.PARAM_RSP to "true"),
-                        listOf("--verbosity", Verbosity.Normal.id.toLowerCase())),
+                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Quiet.id),
+                        emptyList<String>()),
                 arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id),
-                        listOf("--verbosity", Verbosity.Normal.id.toLowerCase())),
+                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id, DotnetConstants.PARAM_RSP to "true"),
+                        emptyList<String>()),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_RSP to "false"),
                         listOf("l:/logger", "/p:param=value")),
@@ -27,10 +26,7 @@ class DotnetCommonArgumentsProviderTest {
                         DotnetConstants.PARAM_RSP to "FaLse"),
                         listOf("l:/logger", "/p:param=value")),
                 arrayOf(emptyMap<String, String>(),
-                        emptyList<String>()),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Detailed.id),
-                        listOf("--verbosity", Verbosity.Detailed.id.toLowerCase())))
+                        emptyList<String>()))
     }
 
     @Test(dataProvider = "argumentsData")
@@ -42,7 +38,7 @@ class DotnetCommonArgumentsProviderTest {
         val msBuildParametersProvider = ctx.mock(MSBuildParametersProvider::class.java)
         val msBuildParameterConverter = ctx.mock(MSBuildParameterConverter::class.java)
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
-        ctx!!.checking(object : Expectations() {
+        ctx.checking(object : Expectations() {
             init {
                 allowing<MSBuildParametersProvider>(msBuildParametersProvider).parameters
                 will(returnValue(sequenceOf(msBuildParameter)))

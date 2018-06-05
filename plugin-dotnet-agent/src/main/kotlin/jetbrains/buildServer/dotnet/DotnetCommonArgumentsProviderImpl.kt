@@ -16,13 +16,6 @@ class DotnetCommonArgumentsProviderImpl(
     : DotnetCommonArgumentsProvider {
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
-            parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-                Verbosity.tryParse(it)?.let {
-                    yield(CommandLineArgument("--verbosity"))
-                    yield(CommandLineArgument(it.id.toLowerCase()))
-                }
-            }
-
             yieldAll(_customArgumentsProvider.arguments)
             val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.let { it.equals("false", true) } ?: false;
             if (!avoidUsingRspFiles) {

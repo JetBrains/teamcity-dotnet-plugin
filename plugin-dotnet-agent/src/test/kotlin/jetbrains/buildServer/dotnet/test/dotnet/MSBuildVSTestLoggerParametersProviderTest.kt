@@ -2,10 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.MSBuildParameter
-import jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider
-import jetbrains.buildServer.dotnet.TestReportingMode
-import jetbrains.buildServer.dotnet.TestReportingParameters
+import jetbrains.buildServer.dotnet.*
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -24,7 +21,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         EnumSet.of(TestReportingMode.On),
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath))),
+                                MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
 
                 // Supports mult VSTestTestAdapterPath (.NET Core SDK 2.1.102)
                 arrayOf(
@@ -32,7 +30,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         EnumSet.of(TestReportingMode.MultiAdapterPath),
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", "${File("loggerPath").absolutePath};."))),
+                                MSBuildParameter("VSTestTestAdapterPath", "${File("loggerPath").absolutePath};."),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
 
                 // Reporting is off
                 arrayOf(
@@ -51,7 +50,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
         val ctx = Mockery()
         val pathsService = ctx.mock(PathsService::class.java)
         val testReportingParameters = ctx.mock(TestReportingParameters::class.java)
-        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile), testReportingParameters)
+        val msBuildVSTestLoggerParameters = ctx.mock(LoggerParameters::class.java)
+        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile), testReportingParameters, msBuildVSTestLoggerParameters)
 
         // When
         ctx.checking(object : Expectations() {
@@ -61,6 +61,9 @@ class MSBuildVSTestLoggerParametersProviderTest {
 
                 oneOf<PathsService>(pathsService).getPath(PathType.Checkout)
                 will(returnValue(File("CheckoutDir")))
+
+                oneOf<LoggerParameters>(msBuildVSTestLoggerParameters).VSTestVerbosity
+                will(returnValue(Verbosity.Detailed))
             }
         })
 
