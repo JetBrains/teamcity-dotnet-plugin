@@ -272,7 +272,7 @@
     <td>
         <c:set var="note">
             Specifies NuGet package sources to use during the restore.<br/>
-            To use a TeamCity NuGet feed<bs:help file="NuGet"/>, specify the URL from the NuGet feed project settings page.
+            To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the NuGet feed project settings page.
         </c:set>
         <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
                                  cols="60" rows="3" linkTitle="Sources" note="${note}"/>
@@ -321,7 +321,7 @@
         <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
         <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
         <span class="smallNote">
-            Specify the server URL. To use a TeamCity NuGet feed<bs:help file="NuGet"/>, specify the URL from the
+            Specify the server URL. To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the
             NuGet feed project settings page.
         </span>
     </td>
