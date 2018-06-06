@@ -27,7 +27,7 @@
         </param>
         <param name="nuget.packageSource" dslName="serverUrl" mandatory="true">
             <description>
-                Specify the server URL. For the built-in TeamCity NuGet server use %teamcity.nuget.feed.server%.
+                Specify the server URL. To use a TeamCity NuGet feed, specify the URL from the NuGet feed project settings page.
             </description>
         </param>
         <param name="secure:nuget.apiKey" dslName="apiKey" mandatory="true">
