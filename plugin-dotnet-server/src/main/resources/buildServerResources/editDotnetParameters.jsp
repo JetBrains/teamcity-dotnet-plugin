@@ -462,5 +462,5 @@
 
 <script type="text/javascript">
   BS.DotnetParametersForm.updateElements();
-  $('buildTypeId').value = window.location.search.substring(1).split('&').grep(/id=buildType:(.*)/).join('').split(':')[1];
+  $('buildTypeId').value = window.location.search.substring(1).split('&').grep(/id=buildType:(.*)/).join('').split(':')[1] + ":guestAuth";
 </script>
