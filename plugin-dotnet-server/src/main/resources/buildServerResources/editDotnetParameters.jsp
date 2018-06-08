@@ -272,10 +272,12 @@
     <td>
         <c:set var="note">
             Specifies NuGet package sources to use during the restore.<br/>
-            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.
+            To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the NuGet feed project settings page.
         </c:set>
         <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
                                  cols="60" rows="3" linkTitle="Sources" note="${note}"/>
+        <bs:projectData type="NuGetFeedUrls" sourceFieldId="buildTypeId"
+                        targetFieldId="${params.nugetPackageSourcesKey}" popupTitle="Select TeamCity NuGet feeds"/>
         <span class="error" id="error_${params.nugetPackageSourcesKey}"></span>
     </td>
 </tr>
@@ -319,9 +321,12 @@
     <th><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
     <td>
         <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
+        <bs:projectData type="NuGetFeedUrls" sourceFieldId="buildTypeId" selectionMode="single"
+                        targetFieldId="${params.nugetPackageSourceKey}" popupTitle="Select TeamCity NuGet feed" />
         <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
         <span class="smallNote">
-            Specify the server URL. For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.server%</em>.
+            Specify the server URL. To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the
+            NuGet feed project settings page.
         </span>
     </td>
 </tr>
@@ -342,7 +347,7 @@
         <span class="error" id="error_${params.nugetApiKey}"></span>
         <span class="smallNote">
             Specify the API key to access the NuGet packages feed.<br/>
-            For the built-in TeamCity NuGet server use <em>%teamcity.nuget.feed.api.key%</em>.
+            For the built-in TeamCity NuGet feeds use the <em>%teamcity.nuget.feed.api.key%</em>.
         </span>
     </td>
 </tr>
@@ -442,6 +447,8 @@
     </l:settingsGroup>
 </tbody>
 
+<button id="buildTypeId" style="display: none"></button>
+
 <tbody>
 
 <c:if test="${params.experimentalMode == true}">
@@ -455,4 +462,5 @@
 
 <script type="text/javascript">
   BS.DotnetParametersForm.updateElements();
+  $('buildTypeId').value = window.location.search.substring(1).split('&').grep(/id=buildType:(.*)/).join('').split(':')[1];
 </script>
