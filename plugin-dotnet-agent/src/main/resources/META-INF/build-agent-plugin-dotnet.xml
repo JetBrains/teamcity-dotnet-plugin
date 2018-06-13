@@ -63,7 +63,6 @@
     </bean>
 
     <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl" />
-    <bean class="jetbrains.buildServer.dotnet.CompilationParametersProvider" id="compilationParametersProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider" />
     <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
     <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
@@ -76,7 +75,6 @@
         <constructor-arg>
             <list>
                 <ref bean="msbuildVSTestLoggerParametersProvider" />
-                <ref bean="compilationParametersProvider" />
                 <ref bean="systemParametersProvider" />
             </list>
         </constructor-arg>
@@ -122,7 +120,6 @@
         <constructor-arg>
             <list>
                 <ref bean="msbuildVSTestLoggerParametersProvider" />
-                <ref bean="compilationParametersProvider" />
                 <ref bean="systemParametersProvider" />
             </list>
         </constructor-arg>
