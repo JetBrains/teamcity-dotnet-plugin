@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.util.IntegerOption
-import jetbrains.buildServer.util.VersionComparatorUtil
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.text.*
@@ -9,23 +7,24 @@ import kotlin.text.*
 class Version(
         vararg version: Int): Comparable<Version> {
 
-    private var _zeroCounter = 0;
-
     val version = buildSequence {
         // Trim zero(s) at the end
+        var zeroCounter = 0;
         for (versionItem in version) {
             if (versionItem != 0) {
-                yieldAll(repeat(0, _zeroCounter))
-                _zeroCounter = 0;
+                yieldAll(repeat(0, zeroCounter))
+                zeroCounter = 0;
                 yield(versionItem)
             }
             else {
-                _zeroCounter++;
+                zeroCounter++;
             }
         }
     }.toList().toIntArray()
 
-    override fun toString(): String = version.asSequence().plus(repeat(0, _zeroCounter)).joinToString(".")
+    val fullVersion= version
+
+    override fun toString(): String = fullVersion.joinToString(".")
 
     override fun compareTo(other: Version): Int =
             version
