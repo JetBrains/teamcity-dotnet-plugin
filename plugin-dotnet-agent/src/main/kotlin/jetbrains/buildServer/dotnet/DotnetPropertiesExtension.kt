@@ -12,6 +12,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides a list of available .NET CLI parameters.
@@ -21,7 +22,6 @@ class DotnetPropertiesExtension(
         private val _toolProvider: ToolProvider,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser,
-        private val _semanticVersionParser: SemanticVersionParser,
         private val _fileSystemService: FileSystemService)
     : AgentLifeCycleAdapter(), DotnetCliToolInfo {
     init {
@@ -52,15 +52,17 @@ class DotnetPropertiesExtension(
 
                     LOG.debug("Locating .NET Core SDKs")
 
-                    _fileSystemService.list(File(dotnetPath.parentFile, "sdk")).forEach { file ->
-                        if (file.isDirectory) {
-                            _semanticVersionParser.tryParse(file.name)?.let {
-                                val paramName = "${DotnetConstants.CONFIG_SDK_NAME}${it.major}.${it.minor}${DotnetConstants.PATH_SUFFIX}"
-                                agent.configuration.addConfigurationParameter(paramName, file.absolutePath)
-                                LOG.debug("Add configuration parameter \"$paramName\": \"${file.absolutePath}\"")
-                                LOG.info(".NET Core SDK $it found at \"${file.absolutePath}\"")
-                            }
-                        }
+                    val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
+                            .filter { it.isDirectory }
+                            .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }
+                            .filter { it.version != jetbrains.buildServer.dotnet.Version.Empty }
+
+                    for (sdk in enumerateSdk(sdks)) {
+                        val paramName = "${DotnetConstants.CONFIG_SDK_NAME}${sdk.version}${DotnetConstants.PATH_SUFFIX}"
+                        val paramValue = sdk.path.absolutePath;
+                        agent.configuration.addConfigurationParameter(paramName, paramValue)
+                        LOG.debug("Add configuration parameter \"$paramName\": \"${paramValue}\"")
+                        LOG.info(".NET Core SDK ${paramValue} found at \"${paramValue}\"")
                     }
                 }
             }
@@ -75,5 +77,14 @@ class DotnetPropertiesExtension(
 
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
+
+        fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = buildSequence {
+            for (majorVersionGroup in versions.groupBy { Version(*it.version.fullVersion.take(2).toIntArray()) }) {
+                yield(Sdk(majorVersionGroup.value.maxBy { it.version }!!.path, majorVersionGroup.key))
+                yieldAll(majorVersionGroup.value)
+            }
+        }
     }
+
+    data class Sdk(val path :File, val version: Version) {}
 }
