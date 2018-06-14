@@ -8,7 +8,8 @@ import kotlin.coroutines.experimental.buildSequence
  */
 
 class VSTestLoggerArgumentsProvider(
-        private val _loggerResolver: LoggerResolver)
+        private val _loggerResolver: LoggerResolver,
+        private val _loggerParameters: LoggerParameters)
     : ArgumentsProvider {
 
     override val arguments: Sequence<CommandLineArgument>
@@ -16,6 +17,7 @@ class VSTestLoggerArgumentsProvider(
             _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(CommandLineArgument("/logger:logger://teamcity"))
                 yield(CommandLineArgument("/TestAdapterPath:${it.absolutePath}"))
+                yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.VSTestVerbosity.id.toLowerCase()}"))
             }
         }
 }
