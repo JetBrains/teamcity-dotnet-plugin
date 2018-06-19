@@ -12,5 +12,5 @@ abstract class DotnetCommandBase(
 
     protected fun parameters(parameterName: String, defaultValue: String): String = _parametersService.tryGetParameter(ParameterType.Runner, parameterName) ?: defaultValue
 
-    override val environmentBuilders: Sequence<EnvironmentBuilder> get() = buildSequence { return@buildSequence }
+    override val environmentBuilders: Sequence<EnvironmentBuilder> get() = emptySequence()
 }

@@ -14,8 +14,7 @@ import kotlin.coroutines.experimental.buildSequence
 class CustomCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder)
     : DotnetCommandBase(_parametersService) {
@@ -24,11 +23,11 @@ class CustomCommand(
         get() = DotnetCommandType.Custom
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
+        get() = emptySequence()
 
     override val arguments: Sequence<CommandLineArgument>
-        get() = _commonArgumentsProvider.arguments
+        get() = _customArgumentsProvider.arguments
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
-        get() = buildSequence { yield(_vstestLoggerEnvironment) }
+        get() = emptySequence()
 }

@@ -23,30 +23,10 @@ class CustomCommandTest {
             expectedArguments: List<String>) {
         // Given
         val arguments = parameters[DotnetConstants.PARAM_ARGUMENTS]!!.split(' ').map { CommandLineArgument(it)}.asSequence()
-        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = arguments )
+        val command = createCommand(arguments = arguments )
 
         // When
         val actualArguments = command.arguments.map { it.value }.toList()
-
-        // Then
-        Assert.assertEquals(actualArguments, expectedArguments)
-    }
-
-    @DataProvider
-    fun projectsArgumentsData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(listOf("my.csproj") as Any, listOf(listOf("my.csproj"))),
-                arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf("my.csproj", "my2.csproj") as Any, listOf(listOf("my.csproj"), listOf("my2.csproj"))))
-    }
-
-    @Test(dataProvider = "projectsArgumentsData")
-    fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
-        // Given
-        val command = createCommand(targets = targets.asSequence())
-
-        // When
-        val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -78,14 +58,12 @@ class CustomCommandTest {
 
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
-            targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
+            resultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
         var ctx = Mockery()
         return CustomCommand(
                 ParametersServiceStub(parameters),
-                testsResultsAnalyzer,
-                TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                resultsAnalyzer,
                 DotnetCommonArgumentsProviderStub(arguments),
                 DotnetToolResolverStub(File("dotnet"), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
