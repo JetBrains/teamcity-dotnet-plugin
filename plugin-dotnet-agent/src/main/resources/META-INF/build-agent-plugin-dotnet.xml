@@ -16,6 +16,7 @@
     <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
 
     <!-- common agent's runner services -->
+    <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
     <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
@@ -28,6 +29,7 @@
 
     <!-- dotnet -->
     <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
+    <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
         <constructor-arg value="dotnet.cli"/>
     </bean>

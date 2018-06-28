@@ -1,27 +1,21 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineResult
-import jetbrains.buildServer.agent.runner.BuildOptions
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
 import java.util.*
+import jetbrains.buildServer.agent.runner.*
+
 
 class TestsResultsAnalyzerImpl(
         private val _buildOptions: BuildOptions)
-    : FailedTestDetector, ResultsAnalyzer {
+    : ResultsAnalyzer {
 
-    override fun hasFailedTest(text: String): Boolean =
-            text.contains(FailedTestMarker)
-
-    override fun analyze(result: CommandLineResult): EnumSet<CommandResult> {
-        if (result.exitCode == 0) {
+    override fun analyze(exitCode: Int, result: EnumSet<CommandResult>): EnumSet<CommandResult> {
+        if (exitCode == 0) {
             return EnumSet.of(CommandResult.Success)
         }
 
-        if (result.exitCode > 0) {
-            if(result.standardOutput.map { hasFailedTest(it) }.filter { it }.any()) {
-                return EnumSet.of(CommandResult.Success, CommandResult.FailedTests)
-            }
+        if (exitCode > 0 && result.contains(CommandResult.FailedTests)) {
+            result.add(CommandResult.Success)
+            return result
         }
 
         if(!_buildOptions.failBuildOnExitCode) {
@@ -30,9 +24,5 @@ class TestsResultsAnalyzerImpl(
         else  {
             return EnumSet.of(CommandResult.Fail)
         }
-    }
-
-    companion object {
-        val FailedTestMarker = "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED}"
     }
 }

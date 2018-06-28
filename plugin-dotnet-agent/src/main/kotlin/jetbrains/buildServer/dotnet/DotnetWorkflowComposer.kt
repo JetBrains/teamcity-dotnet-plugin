@@ -6,85 +6,86 @@ import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
+import jetbrains.buildServer.rx.*
 import java.io.Closeable
+import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
+@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _loggerService: LoggerService,
-        private val _failedTestDetector: FailedTestDetector,
         private val _argumentsService: ArgumentsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
-        private val _commandSet: CommandSet) : WorkflowComposer, WorkflowOutputFilter {
+        private val _commandSet: CommandSet,
+        private val _failedTestSource: FailedTestSource) : WorkflowComposer {
 
     override val target: TargetType
         get() = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         return Workflow(buildSequence {
-            context.registerOutputFilter(this@DotnetWorkflowComposer).use {
-                val analyzerContext = DotnetWorkflowAnalyzerContext()
-                for(command in _commandSet.commands) {
-                    // Build the environment
-                    val environmentTokens = mutableListOf<Closeable>()
-                    for (environmentBuilder in command.environmentBuilders) {
-                        environmentTokens.add(environmentBuilder.build(command))
+            val analyzerContext = DotnetWorkflowAnalyzerContext()
+            for(command in _commandSet.commands) {
+                val result = EnumSet.noneOf(CommandResult::class.java)
+                // Build the environment
+                val environmentTokens = mutableListOf<Closeable>()
+                for (environmentBuilder in command.environmentBuilders) {
+                    environmentTokens.add(environmentBuilder.build(command))
+                }
+
+                try {
+                    val executableFile = command.toolResolver.executableFile
+                    val args = command.arguments.toList()
+                    val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
+                    _loggerService.onStandardOutput(commandHeader)
+                    val commandName = command.commandType.id.replace('-', ' ')
+                    val blockName = if (commandName.isNotBlank()) {
+                        commandName
+                    }
+                    else {
+                        args.firstOrNull()?.value ?: ""
                     }
 
-                    try {
-                        val executableFile = command.toolResolver.executableFile
-                        val args = command.arguments.toList()
-                        val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
-                        _loggerService.onStandardOutput(commandHeader)
-                        val commandName = command.commandType.id.replace('-', ' ')
-                        val blockName = if (commandName.isNotBlank()) {
-                            commandName
-                        } else {
-                            args.firstOrNull()?.value ?: ""
-                        }
-                        _loggerService.onBlock(blockName).use {
-                            yield(CommandLine(
-                                    TargetType.Tool,
-                                    executableFile,
-                                    _pathsService.getPath(PathType.WorkingDirectory),
-                                    args,
-                                    _defaultEnvironmentVariables.variables.toList()))
-                        }
+                    _loggerService.onBlock(blockName).use {
+                        _failedTestSource
+                                .subscribe({ result.add(CommandResult.FailedTests) })
+                                .use {
+                                    yield(CommandLine(
+                                            TargetType.Tool,
+                                            executableFile,
+                                            _pathsService.getPath(PathType.WorkingDirectory),
+                                            args,
+                                            _defaultEnvironmentVariables.variables.toList()))
+                                }
                     }
-                    finally {
-                        // Clean the environment
-                        for (environmentToken in environmentTokens) {
-                            try
-                            {
-                                environmentToken.close()
-                            }
-                            catch(ex: Exception) {
-                                LOG.error("Error during cleaning environment.", ex)
-                            }
+                }
+                finally {
+                    // Clean the environment
+                    for (environmentToken in environmentTokens) {
+                        try
+                        {
+                            environmentToken.close()
                         }
-                    }
-
-                    val result = context.lastResult
-                    val commandResult = command.resultsAnalyzer.analyze(result)
-                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, result.exitCode)
-                    if (commandResult.contains(CommandResult.Fail)) {
-                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                        return@buildSequence
+                        catch(ex: Exception) {
+                            LOG.error("Error during cleaning environment.", ex)
+                        }
                     }
                 }
 
-                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
+                val exitCode = context.lastResult.exitCode
+                val commandResult = command.resultsAnalyzer.analyze(exitCode, result)
+                _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, exitCode)
+                if (commandResult.contains(CommandResult.Fail)) {
+                    context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                    return@buildSequence
+                }
             }
+
+            _dotnetWorkflowAnalyzer.summarize(analyzerContext)
         })
-    }
-
-    override fun acceptStandardOutput(text: String): Boolean {
-        return _failedTestDetector.hasFailedTest(text)
-    }
-
-    override fun acceptErrorOutput(text: String): Boolean {
-        return false
     }
 
     companion object {

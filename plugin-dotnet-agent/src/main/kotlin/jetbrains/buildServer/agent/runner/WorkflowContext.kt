@@ -10,6 +10,4 @@ interface WorkflowContext {
     val status: WorkflowStatus
 
     fun abort(buildFinishedStatus: BuildFinishedStatus)
-
-    fun registerOutputFilter(listener: WorkflowOutputFilter): Closeable
 }

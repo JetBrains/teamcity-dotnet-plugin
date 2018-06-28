@@ -29,34 +29,6 @@ class TestsResultsAnalyzerImplTest {
     }
 
     @DataProvider
-    fun testData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(sequenceOf("${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']"), true),
-                arrayOf(sequenceOf("${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']", "xyz"), true),
-                arrayOf(sequenceOf("    ${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']", "xyz"), true),
-                arrayOf(sequenceOf("abc    ${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']", "xyz"), true),
-                arrayOf(sequenceOf("abc${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']", "xyz"), true),
-                arrayOf(sequenceOf("abc", "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FAILED} details='aaa']", "xyz"), true),
-                arrayOf(sequenceOf("abc", "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_FINISHED} details='aaa']", "xyz"), false),
-                arrayOf(sequenceOf("abc", "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.TEST_IGNORED} details='aaa']", "xyz"), false),
-                arrayOf(sequenceOf("abc", "${ServiceMessage.SERVICE_MESSAGE_START}${ServiceMessageTypes.BLOCK_OPENED} details='aaa']", "xyz"), false),
-                arrayOf(sequenceOf("abc", "xyz"), false),
-                arrayOf(sequenceOf(""), false))
-    }
-
-    @Test(dataProvider = "testData")
-    fun shouldImplementCheckSuccess(output: Sequence<String>, expectedHasFailedTest: Boolean) {
-        // Given
-        val failedTestDetector = TestsResultsAnalyzerImpl(_buildOptions!!)
-
-        // When
-        val actualHasFailedTest = output.map { failedTestDetector.hasFailedTest(it) }.filter { it }.any()
-
-        // Then
-        Assert.assertEquals(actualHasFailedTest, expectedHasFailedTest)
-    }
-
-    @DataProvider
     fun checkAnalyzeResult(): Array<Array<Serializable>> {
         return arrayOf(
                 arrayOf(0, false, true, EnumSet.of(CommandResult.Success)),
@@ -85,7 +57,7 @@ class TestsResultsAnalyzerImplTest {
     @Test(dataProvider = "checkAnalyzeResult")
     fun shouldAnalyzeResult(exitCode: Int, hasFailedTest: Boolean, failBuildOnExitCode: Boolean, expectedResult: EnumSet<CommandResult>) {
         // Given
-        val testsResultsAnalyzer = TestsResultsAnalyzerImpl(_buildOptions!!)
+        val resultsAnalyzer = TestsResultsAnalyzerImpl(_buildOptions!!)
         _ctx!!.checking(object : Expectations() {
             init {
                 oneOf<BuildOptions>(_buildOptions).failBuildOnExitCode
@@ -93,16 +65,8 @@ class TestsResultsAnalyzerImplTest {
             }
         })
 
-        var lines: Sequence<String>;
-        if (hasFailedTest) {
-            lines = sequenceOf("some line", TestsResultsAnalyzerImpl.FailedTestMarker)
-        }
-        else {
-            lines = sequenceOf("some line")
-        }
-
         // When
-        val actualResult = testsResultsAnalyzer.analyze(CommandLineResult(sequenceOf(exitCode), lines, emptySequence()))
+        val actualResult = resultsAnalyzer.analyze(exitCode, if(hasFailedTest) EnumSet.of(CommandResult.FailedTests) else EnumSet.noneOf(CommandResult::class.java))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)

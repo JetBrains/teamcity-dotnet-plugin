@@ -4,6 +4,10 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.messages.serviceMessages.TestFailed
+import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.rx.toObservable
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -13,6 +17,11 @@ import org.testng.annotations.Test
 import java.io.Closeable
 import java.io.File
 import java.util.*
+import jetbrains.buildServer.dotnet.test.*
+import jetbrains.buildServer.rx.emptyDisposable
+import org.hamcrest.CustomMatcher
+import org.jmock.api.Invocation
+import org.jmock.lib.action.CustomAction
 
 class DotnetWorkflowComposerTest {
     private lateinit var _ctx: Mockery
@@ -29,7 +38,7 @@ class DotnetWorkflowComposerTest {
     private lateinit var _loggerService: LoggerService
     private lateinit var _closeable3: Closeable
     private lateinit var _closeable4: Closeable
-    private lateinit var _failedTestDetector: FailedTestDetector
+    private lateinit var _failedTestSource: FailedTestSource
     private lateinit var _resultsAnalyzer1: ResultsAnalyzer
     private lateinit var _resultsAnalyzer2: ResultsAnalyzer
     private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
@@ -38,7 +47,7 @@ class DotnetWorkflowComposerTest {
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx.mock(PathsService::class.java)
-        _failedTestDetector = _ctx.mock(FailedTestDetector::class.java)
+        _failedTestSource = _ctx.mock(FailedTestSource::class.java)
         _dotnetWorkflowAnalyzer = _ctx.mock(DotnetWorkflowAnalyzer::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
         _workflowContext = _ctx.mock(WorkflowContext::class.java)
@@ -81,10 +90,27 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand1).environmentBuilders
                 will(returnValue(sequenceOf(_environmentBuilder1)))
 
+                _ctx.invocation {
+                    on(_failedTestSource)
+                    count(2)
+                    func(_failedTestSource::subscribe)
+                    will (object : CustomAction("") {
+                        @Suppress("UNCHECKED_CAST")
+                        override fun invoke(p0: Invocation?): Any {
+                            val observer = p0!!.getParameter(0) as Observer<Unit>
+                            observer.onNext(Unit)
+                            return emptyDisposable()
+                        }
+                    })
+                    with(object : CustomMatcher<Observer<ServiceMessage>>("") {
+                        override fun matches(item: Any?): Boolean = true
+                    })
+                }
+
                 oneOf<DotnetCommand>(_dotnetCommand1).resultsAnalyzer
                 will(returnValue(_resultsAnalyzer1))
 
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).analyze(result)
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).analyze(0, EnumSet.of(CommandResult.FailedTests))
                 will(returnValue(EnumSet.of(CommandResult.Success)))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).toolResolver
@@ -105,7 +131,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetCommand>(_dotnetCommand2).resultsAnalyzer
                 will(returnValue(_resultsAnalyzer2))
 
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).analyze(result)
+                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).analyze(0, EnumSet.of(CommandResult.FailedTests))
                 will(returnValue(EnumSet.of(CommandResult.Success)))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).toolResolver
@@ -145,8 +171,6 @@ class DotnetWorkflowComposerTest {
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
 
-                oneOf<WorkflowContext>(_workflowContext).registerOutputFilter(composer)
-
                 allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0) )
                 oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
             }
@@ -178,11 +202,11 @@ class DotnetWorkflowComposerTest {
         return DotnetWorkflowComposer(
                 _pathService,
                 _loggerService,
-                _failedTestDetector,
                 ArgumentsServiceStub(),
                 _environmentVariables,
                 _dotnetWorkflowAnalyzer,
-                _commandSet)
+                _commandSet,
+                _failedTestSource)
     }
 
     public data class Result(val isSuccess: Boolean, val hasFailedTest: Boolean)

@@ -46,17 +46,20 @@ class ResultsAnalyzerTest {
     fun shouldAnalyzeResult(exitCode: Int, failBuildOnExitCode: Boolean, expectedResult: EnumSet<CommandResult>) {
         // Given
         val resultsAnalyzer = ResultsAnalyzerImpl(_buildOptions)
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
-                oneOf<BuildOptions>(_buildOptions).failBuildOnExitCode
+                allowing<BuildOptions>(_buildOptions).failBuildOnExitCode
                 will(returnValue(failBuildOnExitCode))
             }
         })
 
         // When
-        val actualResult = resultsAnalyzer.analyze(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence()))
+        val actualResult1 = resultsAnalyzer.analyze(exitCode, EnumSet.noneOf(CommandResult::class.java))
+        val actualResult2 = resultsAnalyzer.analyze(exitCode, EnumSet.of(CommandResult.FailedTests))
 
         // Then
-        Assert.assertEquals(actualResult, expectedResult)
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualResult1, expectedResult)
+        Assert.assertEquals(actualResult2, expectedResult)
     }
 }

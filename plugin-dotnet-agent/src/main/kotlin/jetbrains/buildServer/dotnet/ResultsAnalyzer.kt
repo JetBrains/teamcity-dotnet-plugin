@@ -4,5 +4,5 @@ import jetbrains.buildServer.agent.CommandLineResult
 import java.util.*
 
 interface ResultsAnalyzer {
-    fun analyze(result: CommandLineResult): EnumSet<CommandResult>
+    fun analyze(exitCode: Int, result: EnumSet<CommandResult>): EnumSet<CommandResult>
 }

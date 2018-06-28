@@ -17,5 +17,6 @@
     <orderEntry type="library" name="commons-io" level="project" />
     <orderEntry type="library" scope="TEST" name="jmock-2.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="hamcrest-1.3" level="project" />
+    <orderEntry type="module" module-name="serviceMessages" scope="PROVIDED" />
   </component>
 </module>
