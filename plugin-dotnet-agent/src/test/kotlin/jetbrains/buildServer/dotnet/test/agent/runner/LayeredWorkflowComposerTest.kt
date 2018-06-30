@@ -31,7 +31,7 @@ class LayeredWorkflowComposerTest {
                 will(returnValue(_toolWorkflow))
 
                 allowing<WorkflowComposer>(profilerOfCodeCoverageWorkflowComposer).target
-                will(returnValue(TargetType.ProfilerOfCodeCoverage))
+                will(returnValue(TargetType.CodeCoverageProfiler))
 
                 allowing<WorkflowComposer>(profilerOfCodeCoverageWorkflowComposer).compose(workflowContext, _toolWorkflow)
                 will(returnValue(_profilerOfCodeCoverageWorkflow))

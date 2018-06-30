@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
 import jetbrains.buildServer.rx.*
 import java.io.Closeable
 import java.util.*
@@ -20,73 +19,71 @@ class DotnetWorkflowComposer(
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
         private val _commandSet: CommandSet,
-        private val _failedTestSource: FailedTestSource) : WorkflowComposer {
+        private val _failedTestSource: FailedTestSource,
+        private val _targetRegistry: TargetRegistry) : WorkflowComposer {
 
     override val target: TargetType
         get() = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
-        return Workflow(buildSequence {
-            val analyzerContext = DotnetWorkflowAnalyzerContext()
-            for(command in _commandSet.commands) {
-                val result = EnumSet.noneOf(CommandResult::class.java)
-                // Build the environment
-                val environmentTokens = mutableListOf<Closeable>()
-                for (environmentBuilder in command.environmentBuilders) {
-                    environmentTokens.add(environmentBuilder.build(command))
-                }
-
-                try {
-                    val executableFile = command.toolResolver.executableFile
-                    val args = command.arguments.toList()
-                    val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
-                    _loggerService.onStandardOutput(commandHeader)
-                    val commandName = command.commandType.id.replace('-', ' ')
-                    val blockName = if (commandName.isNotBlank()) {
-                        commandName
-                    }
-                    else {
-                        args.firstOrNull()?.value ?: ""
+    override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
+            Workflow(buildSequence {
+                val analyzerContext = DotnetWorkflowAnalyzerContext()
+                for (command in _commandSet.commands) {
+                    val result = EnumSet.noneOf(CommandResult::class.java)
+                    // Build the environment
+                    val environmentTokens = mutableListOf<Closeable>()
+                    for (environmentBuilder in command.environmentBuilders) {
+                        environmentTokens.add(environmentBuilder.build(command))
                     }
 
-                    _loggerService.onBlock(blockName).use {
-                        _failedTestSource
-                                .subscribe({ result.add(CommandResult.FailedTests) })
-                                .use {
-                                    yield(CommandLine(
-                                            TargetType.Tool,
-                                            executableFile,
-                                            _pathsService.getPath(PathType.WorkingDirectory),
-                                            args,
-                                            _defaultEnvironmentVariables.variables.toList()))
-                                }
-                    }
-                }
-                finally {
-                    // Clean the environment
-                    for (environmentToken in environmentTokens) {
-                        try
-                        {
-                            environmentToken.close()
+                    try {
+                        val executableFile = command.toolResolver.executableFile
+                        val args = command.arguments.toList()
+                        val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
+                        _loggerService.onStandardOutput(commandHeader)
+                        val commandName = command.commandType.id.replace('-', ' ')
+                        val blockName = if (commandName.isNotBlank()) {
+                            commandName
+                        } else {
+                            args.firstOrNull()?.value ?: ""
                         }
-                        catch(ex: Exception) {
-                            LOG.error("Error during cleaning environment.", ex)
+
+                        _loggerService.onBlock(blockName).use {
+                            _failedTestSource
+                                    .subscribe({ result.add(CommandResult.FailedTests) })
+                                    .use {
+                                        _targetRegistry.activate(target).use {
+                                            yield(CommandLine(
+                                                    TargetType.Tool,
+                                                    executableFile,
+                                                    _pathsService.getPath(PathType.WorkingDirectory),
+                                                    args,
+                                                    _defaultEnvironmentVariables.variables.toList()))
+                                        }
+                                    }
                         }
+                    } finally {
+                        // Clean the environment
+                        for (environmentToken in environmentTokens) {
+                            try {
+                                environmentToken.close()
+                            } catch (ex: Exception) {
+                                LOG.error("Error during cleaning environment.", ex)
+                            }
+                        }
+                    }
+
+                    val exitCode = context.lastResult.exitCode
+                    val commandResult = command.resultsAnalyzer.analyze(exitCode, result)
+                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, exitCode)
+                    if (commandResult.contains(CommandResult.Fail)) {
+                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                        return@buildSequence
                     }
                 }
 
-                val exitCode = context.lastResult.exitCode
-                val commandResult = command.resultsAnalyzer.analyze(exitCode, result)
-                _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, exitCode)
-                if (commandResult.contains(CommandResult.Fail)) {
-                    context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                    return@buildSequence
-                }
-            }
-
-            _dotnetWorkflowAnalyzer.summarize(analyzerContext)
-        })
-    }
+                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
+            })
 
     companion object {
         private val LOG = Logger.getInstance(DotnetWorkflowComposer::class.java.name)

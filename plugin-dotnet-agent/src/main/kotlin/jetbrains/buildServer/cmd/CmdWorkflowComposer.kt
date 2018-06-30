@@ -3,6 +3,7 @@ package jetbrains.buildServer.cmd
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -15,28 +16,28 @@ class CmdWorkflowComposer(
     override val target: TargetType
         get() = TargetType.Host
 
-    override fun compose(context: WorkflowContext, workflow: Workflow) = when (_environment.OS) {
-        OSType.WINDOWS -> {
-            Workflow(buildSequence {
-                val cmdExecutable = _environment.tryGetVariable(ComSpecEnvVarName)
-                        ?: throw RunBuildException("Environment variable \"$ComSpecEnvVarName\" was not found")
-                for (commandLine in workflow.commandLines) {
-                    when (commandLine.executableFile.extension.toLowerCase()) {
-                        "cmd", "bat" -> {
-                            yield(CommandLine(
-                                    TargetType.Host,
-                                    File(cmdExecutable),
-                                    commandLine.workingDirectory,
-                                    getArguments(commandLine).toList(),
-                                    commandLine.environmentVariables))
+    override fun compose(context: WorkflowContext, workflow: Workflow) =
+            when (_environment.OS) {
+                OSType.WINDOWS -> {
+                    Workflow(buildSequence {
+                        val cmdExecutable = _environment.tryGetVariable(ComSpecEnvVarName) ?: throw RunBuildException("Environment variable \"$ComSpecEnvVarName\" was not found")
+                        for (commandLine in workflow.commandLines) {
+                            when (commandLine.executableFile.extension.toLowerCase()) {
+                                "cmd", "bat" -> {
+                                    yield(CommandLine(
+                                            TargetType.Host,
+                                            File(cmdExecutable),
+                                            commandLine.workingDirectory,
+                                            getArguments(commandLine).toList(),
+                                            commandLine.environmentVariables))
+                                }
+                                else -> yield(commandLine)
+                            }
                         }
-                        else -> yield(commandLine)
-                    }
+                    })
                 }
-            })
-        }
-        else -> workflow
-    }
+                else -> workflow
+            }
 
     private fun getArguments(commandLine: CommandLine) = buildSequence {
         yield(CommandLineArgument("/D"))

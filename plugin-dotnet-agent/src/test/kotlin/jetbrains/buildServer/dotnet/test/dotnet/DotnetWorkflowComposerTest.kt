@@ -18,6 +18,7 @@ import java.io.Closeable
 import java.io.File
 import java.util.*
 import jetbrains.buildServer.dotnet.test.*
+import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.emptyDisposable
 import org.hamcrest.CustomMatcher
 import org.jmock.api.Invocation
@@ -42,6 +43,8 @@ class DotnetWorkflowComposerTest {
     private lateinit var _resultsAnalyzer1: ResultsAnalyzer
     private lateinit var _resultsAnalyzer2: ResultsAnalyzer
     private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
+    private lateinit var _targetRegistry: TargetRegistry
+    private lateinit var _targetRegistrationToken: Disposable
 
     @BeforeMethod
     fun setUp() {
@@ -63,6 +66,8 @@ class DotnetWorkflowComposerTest {
         _closeable3 = _ctx.mock(Closeable::class.java, "closeable3")
         _closeable4 = _ctx.mock(Closeable::class.java, "closeable4")
         _resultsAnalyzer2 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer2")
+        _targetRegistry = _ctx.mock(TargetRegistry::class.java)
+        _targetRegistrationToken = _ctx.mock(Disposable::class.java)
     }
 
     @Test
@@ -173,6 +178,11 @@ class DotnetWorkflowComposerTest {
 
                 allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0) )
                 oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
+
+                exactly(2).of(_targetRegistry).activate(TargetType.Tool)
+                will(returnValue(_targetRegistrationToken))
+
+                exactly(2).of(_targetRegistrationToken).dispose()
             }
         })
 
@@ -206,7 +216,8 @@ class DotnetWorkflowComposerTest {
                 _environmentVariables,
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
-                _failedTestSource)
+                _failedTestSource,
+                _targetRegistry)
     }
 
     public data class Result(val isSuccess: Boolean, val hasFailedTest: Boolean)

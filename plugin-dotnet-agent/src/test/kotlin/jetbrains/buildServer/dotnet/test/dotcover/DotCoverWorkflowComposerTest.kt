@@ -8,6 +8,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import jetbrains.buildServer.rx.Disposable
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -17,23 +18,27 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotCoverWorkflowComposerTest {
-    private var _ctx: Mockery? = null
-    private var _pathService: PathsService? = null
-    private var _parametersService: ParametersService? = null
-    private var _dotCoverProjectSerializer: DotCoverProjectSerializer? = null
-    private var _loggerService: LoggerService? = null
-    private var _workflowContext: WorkflowContext? = null
-    private var _coverageFilterProvider: CoverageFilterProvider? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathService: PathsService
+    private lateinit var _parametersService: ParametersService
+    private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
+    private lateinit var _loggerService: LoggerService
+    private lateinit var _workflowContext: WorkflowContext
+    private lateinit var _coverageFilterProvider: CoverageFilterProvider
+    private lateinit var _targetRegistry: TargetRegistry
+    private lateinit var _targetRegistrationToken: Disposable
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock<PathsService>(PathsService::class.java)
-        _parametersService = _ctx!!.mock<ParametersService>(ParametersService::class.java)
-        _dotCoverProjectSerializer = _ctx!!.mock<DotCoverProjectSerializer>(DotCoverProjectSerializer::class.java)
-        _loggerService = _ctx!!.mock<LoggerService>(LoggerService::class.java)
-        _workflowContext = _ctx!!.mock<WorkflowContext>(WorkflowContext::class.java)
-        _coverageFilterProvider = _ctx!!.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
+        _pathService = _ctx.mock<PathsService>(PathsService::class.java)
+        _parametersService = _ctx.mock<ParametersService>(ParametersService::class.java)
+        _dotCoverProjectSerializer = _ctx.mock<DotCoverProjectSerializer>(DotCoverProjectSerializer::class.java)
+        _loggerService = _ctx.mock<LoggerService>(LoggerService::class.java)
+        _workflowContext = _ctx.mock<WorkflowContext>(WorkflowContext::class.java)
+        _coverageFilterProvider = _ctx.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
+        _targetRegistry = _ctx.mock(TargetRegistry::class.java)
+        _targetRegistrationToken = _ctx.mock(Disposable::class.java)
     }
 
     @Test
@@ -44,7 +49,7 @@ class DotCoverWorkflowComposerTest {
         // When
 
         // Then
-        Assert.assertEquals(composer.target, TargetType.ProfilerOfCodeCoverage)
+        Assert.assertEquals(composer.target, TargetType.CodeCoverageProfiler)
     }
 
     @DataProvider(name = "composeCases")
@@ -96,7 +101,7 @@ class DotCoverWorkflowComposerTest {
         val composer = createInstance(fileSystemService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(coverageType))
@@ -132,13 +137,18 @@ class DotCoverWorkflowComposerTest {
 
                 oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
                 oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+
+                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext!!, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -174,7 +184,7 @@ class DotCoverWorkflowComposerTest {
         val baseWorkflow = Workflow(sequenceOf(commandLine))
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(coverageType))
@@ -187,10 +197,10 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualWorkflow = composer.compose(_workflowContext!!, baseWorkflow)
+        val actualWorkflow = composer.compose(_workflowContext, baseWorkflow)
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualWorkflow, baseWorkflow)
     }
 
@@ -241,7 +251,7 @@ class DotCoverWorkflowComposerTest {
         val composer = createInstance(fileSystemService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
@@ -294,13 +304,18 @@ class DotCoverWorkflowComposerTest {
 
                 oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+
+                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext!!, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -344,7 +359,7 @@ class DotCoverWorkflowComposerTest {
         val composer = createInstance(fileSystemService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
@@ -380,13 +395,18 @@ class DotCoverWorkflowComposerTest {
 
                 never<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 never<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+
+                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext!!, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -433,7 +453,7 @@ class DotCoverWorkflowComposerTest {
         val composer = createInstance(fileSystemService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
@@ -469,24 +489,30 @@ class DotCoverWorkflowComposerTest {
 
                 oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
                 oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+
+                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext!!, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
     private fun createInstance(fileSystemService: FileSystemService): WorkflowComposer {
         return DotCoverWorkflowComposer(
-                _pathService!!,
-                _parametersService!!,
+                _pathService,
+                _parametersService,
                 fileSystemService,
-                _dotCoverProjectSerializer!!,
-                _loggerService!!,
+                _dotCoverProjectSerializer,
+                _loggerService,
                 ArgumentsServiceStub(),
-                _coverageFilterProvider!!)
+                _coverageFilterProvider,
+                _targetRegistry)
     }
 }

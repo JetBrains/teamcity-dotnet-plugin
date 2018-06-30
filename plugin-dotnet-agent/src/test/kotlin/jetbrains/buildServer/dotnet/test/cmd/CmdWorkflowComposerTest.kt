@@ -16,9 +16,9 @@ import org.testng.annotations.Test
 import java.io.File
 
 class CmdWorkflowComposerTest {
-    private var _ctx: Mockery? = null
-    private var _environment: Environment? = null
-    private var _workflowContext: WorkflowContext? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _environment: Environment
+    private lateinit var _workflowContext: WorkflowContext
     private var _workflowCmd = createWorkflow(File("abc1", "my.cmd"))
     private var _workflowBat = createWorkflow(File("abc2", "my.bat"))
     private var _workflowOther = createWorkflow(File("abc3", "my.exe"))
@@ -26,8 +26,8 @@ class CmdWorkflowComposerTest {
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _environment = _ctx!!.mock(Environment::class.java)
-        _workflowContext = _ctx!!.mock(WorkflowContext::class.java)
+        _environment = _ctx.mock(Environment::class.java)
+        _workflowContext = _ctx.mock(WorkflowContext::class.java)
     }
 
     @Test
@@ -100,7 +100,7 @@ class CmdWorkflowComposerTest {
         val composer = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<Environment>(_environment).OS
                 will(returnValue(osType))
@@ -110,17 +110,17 @@ class CmdWorkflowComposerTest {
             }
         })
 
-        val actualWorkflow = composer.compose(_workflowContext!!, baseWorkflow)
+        val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
-        Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflow.commandLines.toList())
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
     private fun createInstance(): WorkflowComposer {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
-                _environment!!)
+                _environment)
     }
 
     companion object {

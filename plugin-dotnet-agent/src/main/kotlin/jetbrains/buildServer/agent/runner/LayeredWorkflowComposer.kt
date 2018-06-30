@@ -27,5 +27,5 @@ class LayeredWorkflowComposer(
             }
 
     private fun compose(context: WorkflowContext, toolWorkflow: Workflow, otherWorkflowComposers: List<WorkflowComposer>): Workflow =
-            otherWorkflowComposers.fold(toolWorkflow, { acc, it -> it.compose(context, acc) })
+            otherWorkflowComposers.fold(toolWorkflow) { acc, it -> it.compose(context, acc) }
 }

@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.StringUtil
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -18,11 +19,12 @@ class DotCoverWorkflowComposer(
         private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
         private val _loggerService: LoggerService,
         private val _argumentsService: ArgumentsService,
-        private val _coverageFilterProvider: CoverageFilterProvider)
+        private val _coverageFilterProvider: CoverageFilterProvider,
+        private val _targetRegistry: TargetRegistry)
     : WorkflowComposer {
 
     override val target: TargetType
-        get() = TargetType.ProfilerOfCodeCoverage
+        get() = TargetType.CodeCoverageProfiler
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         if (!dotCoverEnabled) {
@@ -63,50 +65,52 @@ class DotCoverWorkflowComposer(
         return Workflow(buildSequence {
             var deferredServiceMessages: DeferredServiceMessages? = null
 
-            for (commandLineToGetCoverage in workflow.commandLines) {
-                sendServiceMessages(context, deferredServiceMessages)
+            _targetRegistry.activate(target).use {
+                for (commandLineToGetCoverage in workflow.commandLines) {
+                    sendServiceMessages(context, deferredServiceMessages)
 
-                val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
-                val dotCoverProject = DotCoverProject(
-                        commandLineToGetCoverage,
-                        File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
-                        File(tempDirectory, _pathsService.uniqueName + DotCoverSnapshotExtension))
+                    val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
+                    val dotCoverProject = DotCoverProject(
+                            commandLineToGetCoverage,
+                            File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
+                            File(tempDirectory, _pathsService.uniqueName + DotCoverSnapshotExtension))
 
-                _fileSystemService.write(dotCoverProject.configFile) {
-                    _dotCoverProjectSerializer.serialize(dotCoverProject, it)
-                }
+                    _fileSystemService.write(dotCoverProject.configFile) {
+                        _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+                    }
 
-                if (showDiagnostics) {
-                    _loggerService.onBlock("dotCover Settings").use {
-                        val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
-                        _loggerService.onStandardOutput("Command line:")
-                        _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
+                    if (showDiagnostics) {
+                        _loggerService.onBlock("dotCover Settings").use {
+                            val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
+                            _loggerService.onStandardOutput("Command line:")
+                            _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
 
-                        _loggerService.onStandardOutput("Filters:")
-                        for (filter in _coverageFilterProvider.filters) {
-                            _loggerService.onStandardOutput("  $filter", Color.Details)
-                        }
+                            _loggerService.onStandardOutput("Filters:")
+                            for (filter in _coverageFilterProvider.filters) {
+                                _loggerService.onStandardOutput("  $filter", Color.Details)
+                            }
 
-                        _loggerService.onStandardOutput("Attribute Filters:")
-                        for (filter in _coverageFilterProvider.attributeFilters) {
-                            _loggerService.onStandardOutput("  $filter", Color.Details)
+                            _loggerService.onStandardOutput("Attribute Filters:")
+                            for (filter in _coverageFilterProvider.attributeFilters) {
+                                _loggerService.onStandardOutput("  $filter", Color.Details)
+                            }
                         }
                     }
+
+                    yield(CommandLine(
+                            TargetType.Tool,
+                            dotCoverExecutableFile,
+                            commandLineToGetCoverage.workingDirectory,
+                            createArguments(dotCoverProject).toList(),
+                            commandLineToGetCoverage.environmentVariables))
+
+                    deferredServiceMessages =
+                            DeferredServiceMessages(
+                                    context.lastResult,
+                                    listOf(
+                                            DotCoverServiceMessage(File(dotCoverPath).absoluteFile),
+                                            ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile)))
                 }
-
-                yield(CommandLine(
-                        TargetType.Tool,
-                        dotCoverExecutableFile,
-                        commandLineToGetCoverage.workingDirectory,
-                        createArguments(dotCoverProject).toList(),
-                        commandLineToGetCoverage.environmentVariables))
-
-                deferredServiceMessages =
-                        DeferredServiceMessages(
-                                context.lastResult,
-                                listOf(
-                                        DotCoverServiceMessage(File(dotCoverPath).absoluteFile),
-                                        ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile)))
             }
 
             sendServiceMessages(context, deferredServiceMessages)

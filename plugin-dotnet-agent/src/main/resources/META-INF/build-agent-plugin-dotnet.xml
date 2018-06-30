@@ -17,6 +17,7 @@
 
     <!-- common agent's runner services -->
     <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
+    <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
     <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
     <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
