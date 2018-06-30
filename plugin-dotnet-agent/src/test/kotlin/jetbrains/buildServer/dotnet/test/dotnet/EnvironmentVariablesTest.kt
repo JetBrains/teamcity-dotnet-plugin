@@ -4,7 +4,9 @@ import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.TargetRegistry
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetCliToolInfo
+import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -65,10 +67,10 @@ class EnvironmentVariablesTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<Environment>(environment).OS
+                oneOf<Environment>(environment).os
                 will(returnValue(os))
 
-                oneOf<DotnetCliToolInfo>(dotnetCliToolInfo).Version
+                oneOf<DotnetCliToolInfo>(dotnetCliToolInfo).version
                 will(returnValue(version))
 
                 oneOf<TargetRegistry>(targetRegistry).activeTargets

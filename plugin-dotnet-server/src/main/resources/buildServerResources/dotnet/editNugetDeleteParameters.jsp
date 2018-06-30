@@ -1,3 +1,3 @@
 <script type="text/javascript">
-    BS.DotnetParametersForm.hideWorkingDirectory["nuget-delete"] = true;
+  BS.DotnetParametersForm.hideWorkingDirectory["nuget-delete"] = true;
 </script>

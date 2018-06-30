@@ -13,16 +13,16 @@ data class CoverageFilter(
 
     private val typeStr: String
         get() = when (type) {
-            CoverageFilter.CoverageFilterType.Undefined -> UNDEFINED_OP_SYMBOL
-            CoverageFilter.CoverageFilterType.Include -> INCLUDE_SYMBOL
-            CoverageFilter.CoverageFilterType.Exclude -> EXCLUDE_SYMBOL
+            CoverageFilter.CoverageFilterType.Undefined -> UnspecifiedSymbol
+            CoverageFilter.CoverageFilterType.Include -> IncludeSymbol
+            CoverageFilter.CoverageFilterType.Exclude -> ExcludeSymbol
         }
 
     companion object {
-        private val UNDEFINED_OP_SYMBOL = "?"
-        private val EXCLUDE_SYMBOL = "-"
-        private val INCLUDE_SYMBOL = "+"
-        val Any = "*"
+        private const val UnspecifiedSymbol = "?"
+        private const val ExcludeSymbol = "-"
+        private const val IncludeSymbol = "+"
+        internal const val Any = "*"
     }
 
     enum class CoverageFilterType {

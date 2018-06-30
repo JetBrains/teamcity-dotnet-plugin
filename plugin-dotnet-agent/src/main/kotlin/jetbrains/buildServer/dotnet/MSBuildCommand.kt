@@ -1,16 +1,17 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildCommand(
-        private val _parametersService: ParametersService,
+        _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
-        private val _msbuildResponseFileArgumentsProvider: ArgumentsProvider,
+        private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
         override val toolResolver: ToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder)
     : DotnetCommandBase(_parametersService) {
@@ -53,7 +54,7 @@ class MSBuildCommand(
                 }
             }
 
-            yieldAll(_msbuildResponseFileArgumentsProvider.arguments)
+            yieldAll(_msBuildResponseFileArgumentsProvider.arguments)
         }
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>

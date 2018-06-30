@@ -2,8 +2,6 @@ package jetbrains.buildServer.dotnet.test.agent
 
 import jetbrains.buildServer.agent.FileSystemService
 import java.io.*
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 
 class VirtualFileSystemService : FileSystemService {
     private val _directories: MutableMap<File, DirectoryInfo> = mutableMapOf()
@@ -18,14 +16,13 @@ class VirtualFileSystemService : FileSystemService {
         reader(_files[file]!!.inputStream)
     }
 
-    fun addDirectory(directory: File, attributes: Attributes = Attributes()): VirtualFileSystemService
-    {
+    fun addDirectory(directory: File, attributes: Attributes = Attributes()): VirtualFileSystemService {
         _directories[directory] = DirectoryInfo(attributes)
         var parent: File? = directory
-        while (parent != null){
+        while (parent != null) {
             parent = parent.parentFile
-            if(parent != null) {
-                if(!_directories.contains(parent)) {
+            if (parent != null) {
+                if (!_directories.contains(parent)) {
                     _directories[parent] = DirectoryInfo(attributes)
                 }
             }
@@ -34,15 +31,14 @@ class VirtualFileSystemService : FileSystemService {
         return this
     }
 
-    fun addFile(file: File, attributes: Attributes = Attributes()): VirtualFileSystemService
-    {
+    fun addFile(file: File, attributes: Attributes = Attributes()): VirtualFileSystemService {
         val parent = file.parentFile
         if (parent != null) {
             addDirectory(parent)
         }
 
         if (!_files.containsKey(file)) {
-            _files.put(file, FileInfo(attributes))
+            _files[file] = FileInfo(attributes)
         }
 
         return this
@@ -55,12 +51,11 @@ class VirtualFileSystemService : FileSystemService {
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
     override fun copy(source: File, destination: File) {
-        if(!isDirectory(source)) {
+        if (!isDirectory(source)) {
             val sourceFile = _files[source]!!
             addFile(destination, sourceFile.attributes)
             _files[destination] = sourceFile
-        }
-        else {
+        } else {
             val sourceDir = _directories[source]!!
             addDirectory(destination, sourceDir.attributes)
             _directories[destination] = sourceDir
@@ -94,16 +89,17 @@ class VirtualFileSystemService : FileSystemService {
     private data class FileInfo(val attributes: Attributes) {
         val inputStream: InputStream
         val outputStream: OutputStream
+
         init {
             outputStream = PipedOutputStream()
             inputStream = PipedInputStream(outputStream)
         }
     }
 
-    private data class DirectoryInfo(val attributes: Attributes) { }
+    private data class DirectoryInfo(val attributes: Attributes)
 
     class Attributes {
-        var isAbsolute:Boolean = false
+        var isAbsolute: Boolean = false
         var errorOnRemove: Exception? = null
     }
 

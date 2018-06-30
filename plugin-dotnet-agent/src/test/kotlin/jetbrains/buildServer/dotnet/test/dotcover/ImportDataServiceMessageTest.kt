@@ -10,9 +10,9 @@ class ImportDataServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-            arrayOf("dotcover", File("dotCoverHome"), "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='dotCoverHome']"),
-            arrayOf("dotCover", File("dotCover Home"), "##teamcity[importData type='dotNetCoverage' tool='dotCover' path='dotCover Home']"),
-            arrayOf("", File(""), "##teamcity[importData type='dotNetCoverage' tool='' path='']"))
+                arrayOf("dotcover", File("dotCoverHome"), "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='dotCoverHome']"),
+                arrayOf("dotCover", File("dotCover Home"), "##teamcity[importData type='dotNetCoverage' tool='dotCover' path='dotCover Home']"),
+                arrayOf("", File(""), "##teamcity[importData type='dotNetCoverage' tool='' path='']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")

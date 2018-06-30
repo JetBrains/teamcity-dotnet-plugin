@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -17,14 +19,11 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet run command.
  */
 class RunCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Run.id
+    override val name: String = DotnetCommandType.Run.id
 
-    override val editPage: String
-        get() = "editRunParameters.jsp"
+    override val editPage: String = "editRunParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewRunParameters.jsp"
+    override val viewPage: String = "viewRunParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         yieldAll(super.getRequirements(parameters))

@@ -199,7 +199,7 @@ class VisualStudioWorkflowComposerTest {
 
                 oneOf<WorkflowContext>(_workflowContext).abort(BuildFinishedStatus.FINISHED_FAILED)
 
-                oneOf<LoggerService>(_loggerService).onBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${exitCode}"))
+                oneOf<LoggerService>(_loggerService).onBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
 
                 oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.Tool)
                 will(returnValue(_targetRegistrationToken))

@@ -11,9 +11,8 @@ import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.DirectoryCleanersProvider
 import jetbrains.buildServer.agent.DirectoryCleanersProviderContext
 import jetbrains.buildServer.agent.DirectoryCleanersRegistry
-
 import java.io.File
-import java.util.Date
+import java.util.*
 
 /**
  * Cleans up nuget package and cache directories.

@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -15,14 +17,11 @@ import kotlin.coroutines.experimental.buildSequence
  */
 class VisualStudioCommandType : CommandType() {
 
-    override val name: String
-        get() = DotnetCommandType.VisualStudio.id
+    override val name: String = DotnetCommandType.VisualStudio.id
 
-    override val editPage: String
-        get() = "editVisualStudioParameters.jsp"
+    override val editPage: String = "editVisualStudioParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewVisualStudioParameters.jsp"
+    override val viewPage: String = "viewVisualStudioParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
         if (properties[DotnetConstants.PARAM_VISUAL_STUDIO_ACTION].isNullOrBlank()) {

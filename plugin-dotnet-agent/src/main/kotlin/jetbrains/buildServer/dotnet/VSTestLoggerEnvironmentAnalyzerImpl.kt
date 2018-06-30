@@ -26,7 +26,7 @@ class VSTestLoggerEnvironmentAnalyzerImpl(
         }
 
         for (target in allTargets) {
-            if(_fileSystemService.isAbsolute(target)) {
+            if (_fileSystemService.isAbsolute(target)) {
                 if (!target.absoluteFile.canonicalPath.startsWith(checkoutCanonical)) {
                     invalidTargets.add(target)
                     LOG.debug("\"$target\" is invalid to run tests")
@@ -39,8 +39,8 @@ class VSTestLoggerEnvironmentAnalyzerImpl(
         }
 
         if (invalidTargets.isNotEmpty()) {
-            var invalidTargetsList = invalidTargets.distinctBy { it.absolutePath }.map { it.path }.joinToString(", ")
-            var targetType = if (useWorkingDirectory) "directory \"${invalidTargetsList}\" is" else "file(s) \"${invalidTargetsList}\" are"
+            val invalidTargetsList = invalidTargets.distinctBy { it.absolutePath }.joinToString(", ") { it.path }
+            val targetType = if (useWorkingDirectory) "directory \"$invalidTargetsList\" is" else "file(s) \"$invalidTargetsList\" are"
             val warning = "The $targetType located outside of the build checkout directory: \"$checkoutDir\". In this case there can be problems with running this build tests on TeamCity agent. Please refer to this issue for details: https://youtrack.jetbrains.com/issue/TW-52485"
             LOG.warn(warning)
             _loggerService.onErrorOutput(warning)

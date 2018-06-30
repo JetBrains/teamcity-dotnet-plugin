@@ -14,13 +14,13 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildToolResolverTest {
-    private var _ctx: Mockery? = null
-    private var _environment: Environment? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _environment: Environment
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _environment = _ctx!!.mock(Environment::class.java)
+        _environment = _ctx.mock(Environment::class.java)
     }
 
     @DataProvider
@@ -56,9 +56,9 @@ class MSBuildToolResolverTest {
         val instance = createInstance(parameters, File("dotnet"))
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
-                oneOf<Environment>(_environment!!).OS
+                oneOf<Environment>(_environment).os
                 will(returnValue(os))
             }
         })
@@ -85,6 +85,9 @@ class MSBuildToolResolverTest {
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return MSBuildToolResolver(_environment!!, ParametersServiceStub(parameters), DotnetToolResolverStub(executableFile, true))
+        return MSBuildToolResolver(
+                _environment,
+                ParametersServiceStub(parameters),
+                DotnetToolResolverStub(executableFile, true))
     }
 }

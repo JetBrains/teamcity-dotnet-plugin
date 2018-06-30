@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.dotnet.discovery.Target
 import jetbrains.buildServer.dotnet.fetchers.DotnetTargetsFetcher
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -15,62 +16,62 @@ class DotnetTargetsFetcherTest {
                 // Test
                 arrayOf(
                         create(),
-                        setOf<ProjectType>(ProjectType.Test),
+                        setOf(ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Publish
                 arrayOf(
                         create(),
-                        setOf<ProjectType>(ProjectType.Test),
+                        setOf(ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Mixed
                 arrayOf(
                         create(),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Custom
                 arrayOf(
                         create("abc"),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("xyz", "Abc"),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("xyz").plus("Abc").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("xyz", ""),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("xyz", "  "),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("abc", "xyz", "abc"),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("abc", "xyz", "ABc"),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("abc", "xyz", DotnetTargetsFetcher.InitialDefaultTargets.first()),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create(DotnetTargetsFetcher.InitialDefaultTargets.first()),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
                         create("abc", "xyz", DotnetTargetsFetcher.TestTargets.first()),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
-                        create(DotnetTargetsFetcher.PublishTargets.first(), "abc", DotnetTargetsFetcher.TestTargets.first(), "xyz" ),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        create(DotnetTargetsFetcher.PublishTargets.first(), "abc", DotnetTargetsFetcher.TestTargets.first(), "xyz"),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
-                        create(DotnetTargetsFetcher.PublishTargets.first().toUpperCase(), "abc", DotnetTargetsFetcher.TestTargets.first().toUpperCase(), "xyz" ),
-                        setOf<ProjectType>(ProjectType.Publish, ProjectType.Test),
+                        create(DotnetTargetsFetcher.PublishTargets.first().toUpperCase(), "abc", DotnetTargetsFetcher.TestTargets.first().toUpperCase(), "xyz"),
+                        setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Default
                 arrayOf(

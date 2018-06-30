@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.runner.BuildOptions
 import java.util.*
-import jetbrains.buildServer.agent.runner.*
 
 
 class TestsResultsAnalyzerImpl(
@@ -18,11 +18,10 @@ class TestsResultsAnalyzerImpl(
             return result
         }
 
-        if(!_buildOptions.failBuildOnExitCode) {
-            return EnumSet.of(CommandResult.Success)
-        }
-        else  {
-            return EnumSet.of(CommandResult.Fail)
+        return if (!_buildOptions.failBuildOnExitCode) {
+            EnumSet.of(CommandResult.Success)
+        } else {
+            EnumSet.of(CommandResult.Fail)
         }
     }
 }

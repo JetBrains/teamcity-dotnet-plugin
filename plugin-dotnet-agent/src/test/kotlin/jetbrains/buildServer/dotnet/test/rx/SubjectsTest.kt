@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet.test.rx
 
+import jetbrains.buildServer.rx.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import jetbrains.buildServer.rx.*
 
 class SubjectsTest {
     @DataProvider
@@ -16,11 +16,11 @@ class SubjectsTest {
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>(), NotificationNext(4)),
                         listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(_error)),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error)),
+                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(_error), NotificationNext(4)),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error), NotificationNext(4)),
+                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error))),
                 arrayOf(
                         emptyObservable<Int>(),
                         emptyList<Int>()))
@@ -31,7 +31,7 @@ class SubjectsTest {
         // Given
         val subject = subjectOf<Int>()
         val actualNotifications = mutableListOf<Notification<Int>>()
-        subject.materialize().subscribe({actualNotifications.add(it)}).use {
+        subject.materialize().subscribe { actualNotifications += it }.use {
             // When
             data.dematerialize().subscribe(subject)
 
@@ -43,7 +43,7 @@ class SubjectsTest {
     }
 
     companion object {
-        private val _error = Exception()
+        private val error = Exception()
     }
 
 }

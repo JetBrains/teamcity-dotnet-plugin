@@ -1,162 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
 
-    <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml" />
+  <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml"/>
 
-    <!-- common agent services -->
-    <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
-    <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
-    <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
-    <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
+  <!-- common agent services -->
+  <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
+  <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
+  <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
+  <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
 
-    <!-- common agent's runner services -->
-    <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
-    <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.LoggerServiceImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.BuildOptionsImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
-    <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
-        <constructor-arg ref="layeredWorkflowComposer"/>
-    </bean>
+  <!-- common agent's runner services -->
+  <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
+  <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.LoggerServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.BuildOptionsImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
+    <constructor-arg ref="layeredWorkflowComposer"/>
+  </bean>
 
-    <!-- dotnet -->
-    <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
-    <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
-        <constructor-arg value="dotnet.cli"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
-    <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
-        <constructor-arg ref="dotnetToolProvider"/>
-        <constructor-arg ref="dotnetVersionParser"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-        <constructor-arg ref="dotnetCommandSet"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
+  <!-- dotnet -->
+  <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
+    <constructor-arg value="dotnet.cli"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
+  <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
+    <constructor-arg ref="dotnetToolProvider"/>
+    <constructor-arg ref="dotnetVersionParser"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
+    <constructor-arg ref="dotnetCommandSet"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
 
-    <!--Dotnet arguments' providers-->
-    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
-    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
-    <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
-    <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl" />
-    <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider" />
-    <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver" />
-    <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
-        <constructor-arg ref="dotnetToolResolver"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.VSTestToolResolver" id="vstestToolResolver">
-        <constructor-arg ref="dotnetToolResolver"/>
-    </bean>
+  <!--Dotnet arguments' providers-->
+  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
+  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
+  <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
+    <constructor-arg ref="dotnetToolResolver"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.VSTestToolResolver" id="vstestToolResolver">
+    <constructor-arg ref="dotnetToolResolver"/>
+  </bean>
 
-    <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl" />
-    <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider" />
-    <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider" />
-    <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
-        <constructor-arg>
-            <list>
-                <ref bean="msBuildLoggerArgumentsProvider" />
-            </list>
-        </constructor-arg>
-        <constructor-arg>
-            <list>
-                <ref bean="msbuildVSTestLoggerParametersProvider" />
-                <ref bean="systemParametersProvider" />
-            </list>
-        </constructor-arg>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
-        <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-        <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
-        <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.ResultsAnalyzerImpl" primary="true" />
-    <bean class="jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
-    <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand">
-        <constructor-arg ref="testsResultsAnalyzer"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand">
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
-        <constructor-arg ref="testsResultsAnalyzer"/>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
-    <bean class="jetbrains.buildServer.dotnet.CustomCommand" id="dotnetCustomCommand">
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-    </bean>
+  <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="msBuildLoggerArgumentsProvider"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <ref bean="msbuildVSTestLoggerParametersProvider"/>
+        <ref bean="systemParametersProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProviderImpl">
+    <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
+    <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.ResultsAnalyzerImpl" primary="true"/>
+  <bean class="jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
+  <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand">
+    <constructor-arg ref="testsResultsAnalyzer"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand">
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
+    <constructor-arg ref="testsResultsAnalyzer"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.CustomCommand" id="dotnetCustomCommand">
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+  </bean>
 
-    <!-- MSBuild command -->
-    <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
-    <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
-        <constructor-arg>
-            <list>
-                <ref bean="msBuildLoggerArgumentsProvider" />
-                <ref bean="dotnetCustomArgumentsProvider" />
-            </list>
-        </constructor-arg>
-        <constructor-arg>
-            <list>
-                <ref bean="msbuildVSTestLoggerParametersProvider" />
-                <ref bean="systemParametersProvider" />
-            </list>
-        </constructor-arg>
-    </bean>
-    <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
-        <constructor-arg ref="testsResultsAnalyzer"/>
-        <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
-        <constructor-arg ref="msbuildToolResolver"/>
-    </bean>
+  <!-- MSBuild command -->
+  <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="msBuildLoggerArgumentsProvider"/>
+        <ref bean="dotnetCustomArgumentsProvider"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <ref bean="msbuildVSTestLoggerParametersProvider"/>
+        <ref bean="systemParametersProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
+    <constructor-arg ref="testsResultsAnalyzer"/>
+    <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
+    <constructor-arg ref="msbuildToolResolver"/>
+  </bean>
 
-    <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
-        <constructor-arg ref="vstestLoggerArgumentsProvider"/>
-        <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-        <constructor-arg ref="vstestToolResolver"/>
-    </bean>
+  <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
+    <constructor-arg ref="vstestLoggerArgumentsProvider"/>
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    <constructor-arg ref="vstestToolResolver"/>
+  </bean>
 
-    <!-- dotCover workflow composer -->
-    <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer" />
-    <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
-    <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
-    <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
+  <!-- dotCover workflow composer -->
+  <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
 
-    <!-- Mono -->
-    <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider"/>
-    <bean class="jetbrains.buildServer.mono.MonoVersionParser" id="monoVersionParser"/>
-    <bean class="jetbrains.buildServer.mono.MonoPropertiesExtension">
-        <constructor-arg ref="monoToolProvider"/>
-        <constructor-arg ref="monoVersionParser"/>
-    </bean>
+  <!-- Mono -->
+  <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider"/>
+  <bean class="jetbrains.buildServer.mono.MonoVersionParser" id="monoVersionParser"/>
+  <bean class="jetbrains.buildServer.mono.MonoPropertiesExtension">
+    <constructor-arg ref="monoToolProvider"/>
+    <constructor-arg ref="monoVersionParser"/>
+  </bean>
 
-    <!-- Cmd -->
-    <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
+  <!-- Cmd -->
+  <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
 
-    <!-- Visual Studio -->
-    <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer" />
-    <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
+  <!-- Visual Studio -->
+  <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
 </beans>

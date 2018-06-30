@@ -3,9 +3,11 @@ package jetbrains.buildServer.dotnet.test.dotcover
 import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.XmlDocumentServiceImpl
-import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
 import jetbrains.buildServer.dotcover.DotCoverProject
@@ -26,17 +28,17 @@ import java.io.OutputStream
 class DotCoverProjectSerializerTest {
     private val _realXmlDocumentService: XmlDocumentService = XmlDocumentServiceImpl()
     private val _argumentsService: ArgumentsService = ArgumentsServiceStub()
-    private var _ctx: Mockery? = null
-    private var _pathService: PathsService? = null
-    private var _xmlDocumentService: XmlDocumentService? = null
-    private var _coverageFilterProvider: CoverageFilterProvider? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathService: PathsService
+    private lateinit var _xmlDocumentService: XmlDocumentService
+    private lateinit var _coverageFilterProvider: CoverageFilterProvider
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock<PathsService>(PathsService::class.java)
-        _xmlDocumentService = _ctx!!.mock<XmlDocumentService>(XmlDocumentService::class.java)
-        _coverageFilterProvider = _ctx!!.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
+        _pathService = _ctx.mock<PathsService>(PathsService::class.java)
+        _xmlDocumentService = _ctx.mock<XmlDocumentService>(XmlDocumentService::class.java)
+        _coverageFilterProvider = _ctx.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
     }
 
     @Test
@@ -78,7 +80,7 @@ class DotCoverProjectSerializerTest {
                 "</AttributeFilters>" +
                 "</CoverageParams>"
 
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<XmlDocumentService>(_xmlDocumentService).create()
                 will(returnValue(document))
@@ -111,16 +113,16 @@ class DotCoverProjectSerializerTest {
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
                 CommandLine(TargetType.Tool, tool, workingDirectory, listOf(CommandLineArgument("arg1")), emptyList()),
-            File(tempDir, "config.dotCover"),
-            File(tempDir, "snapshot.dcvr"))
+                File(tempDir, "config.dotCover"),
+                File(tempDir, "snapshot.dcvr"))
 
         // When
         instance.serialize(dotCoverProject, outputStream)
-        val actual = String(outputStream.toByteArray()).trim({ it <= ' ' }).replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
         val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actual, expected)
     }
 
@@ -139,7 +141,7 @@ class DotCoverProjectSerializerTest {
                 "<Output>" + File(tempDir, "snapshot.dcvr").absolutePath + "</Output>" +
                 "</CoverageParams>"
 
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<XmlDocumentService>(_xmlDocumentService).create()
                 will(returnValue(document))
@@ -164,24 +166,24 @@ class DotCoverProjectSerializerTest {
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
                 CommandLine(TargetType.Tool, tool, workingDirectory, emptyList(), emptyList()),
-            File(tempDir, "config.dotCover"),
-            File(tempDir, "snapshot.dcvr"))
+                File(tempDir, "config.dotCover"),
+                File(tempDir, "snapshot.dcvr"))
 
         // When
         instance.serialize(dotCoverProject, outputStream)
 
-        val actual = String(outputStream.toByteArray()).trim({ it <= ' ' }).replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
         val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actual, expected)
     }
 
     private fun createInstance(): Serializer<DotCoverProject> {
         return DotCoverProjectSerializerImpl(
-                _xmlDocumentService!!,
+                _xmlDocumentService,
                 _argumentsService,
-                _coverageFilterProvider!!)
+                _coverageFilterProvider)
     }
 }

@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
@@ -17,7 +19,7 @@ class VSTestLoggerArgumentsProvider(
             _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(CommandLineArgument("/logger:logger://teamcity"))
                 yield(CommandLineArgument("/TestAdapterPath:${it.absolutePath}"))
-                yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.VSTestVerbosity.id.toLowerCase()}"))
+                yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}"))
             }
         }
 }

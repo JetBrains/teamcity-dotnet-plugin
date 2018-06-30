@@ -5,19 +5,19 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <c:if test="${not empty propertiesBean.properties[params.frameworkKey]}">
-    <div class="parameter">
-        Framework: <props:displayValue name="${params.frameworkKey}"/>
-    </div>
+  <div class="parameter">
+    Framework: <props:displayValue name="${params.frameworkKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.configKey]}">
-    <div class="parameter">
-        Configuration: <props:displayValue name="${params.configKey}"/>
-    </div>
+  <div class="parameter">
+    Configuration: <props:displayValue name="${params.configKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.runtimeKey]}">
-    <div class="parameter">
-        Runtime: <props:displayValue name="${params.runtimeKey}"/>
-    </div>
+  <div class="parameter">
+    Runtime: <props:displayValue name="${params.runtimeKey}"/>
+  </div>
 </c:if>

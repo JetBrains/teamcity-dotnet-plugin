@@ -15,19 +15,19 @@ import java.io.File
 import java.io.InputStreamReader
 
 class ResponseFileArgumentsProviderTest {
-    private var _ctx: Mockery? = null
-    private var _pathService: PathsService? = null
-    private var _parametersService: ParametersService? = null
-    private var _loggerService: LoggerService? = null
-    private var _msBuildParameterConverter: MSBuildParameterConverter? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathService: PathsService
+    private lateinit var _parametersService: ParametersService
+    private lateinit var _loggerService: LoggerService
+    private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock(PathsService::class.java)
-        _parametersService = _ctx!!.mock(ParametersService::class.java)
-        _loggerService = _ctx!!.mock(LoggerService::class.java)
-        _msBuildParameterConverter = _ctx!!.mock(MSBuildParameterConverter::class.java)
+        _pathService = _ctx.mock(PathsService::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
+        _loggerService = _ctx.mock(LoggerService::class.java)
+        _msBuildParameterConverter = _ctx.mock(MSBuildParameterConverter::class.java)
     }
 
     @Test
@@ -39,15 +39,15 @@ class ResponseFileArgumentsProviderTest {
         val fileSystemService = VirtualFileSystemService()
         val argsProvider1 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
         val argsProvider2 = DotnetCommonArgumentsProviderStub(emptySequence())
-        val argsProvider3 = DotnetCommonArgumentsProviderStub(sequenceOf( CommandLineArgument("arg3")))
+        val argsProvider3 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
         val buildParameter1 = MSBuildParameter("param1", "val1")
-        val parametersProvider1 = _ctx!!.mock(MSBuildParametersProvider::class.java, "parametersProvider1")
+        val parametersProvider1 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider1")
         val buildParameter2 = MSBuildParameter("param2", "val2")
-        val parametersProvider2 = _ctx!!.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
+        val parametersProvider2 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
                 will(returnValue(Verbosity.Detailed.id))
@@ -82,7 +82,7 @@ class ResponseFileArgumentsProviderTest {
         val actualArguments = argumentsProvider.arguments.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}")))
         fileSystemService.read(rspFile) {
             InputStreamReader(it).use {
@@ -96,12 +96,12 @@ class ResponseFileArgumentsProviderTest {
             argumentsProviders: List<ArgumentsProvider>,
             parametersProvider: List<MSBuildParametersProvider>): ArgumentsProvider {
         return ResponseFileArgumentsProvider(
-                _pathService!!,
+                _pathService,
                 ArgumentsServiceStub(),
-                _parametersService!!,
+                _parametersService,
                 fileSystemService,
-                _loggerService!!,
-                _msBuildParameterConverter!!,
+                _loggerService,
+                _msBuildParameterConverter,
                 argumentsProviders,
                 parametersProvider)
     }

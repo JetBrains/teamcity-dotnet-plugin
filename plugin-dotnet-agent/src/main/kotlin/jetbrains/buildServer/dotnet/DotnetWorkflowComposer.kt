@@ -6,7 +6,8 @@ import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.rx.use
 import java.io.Closeable
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
@@ -50,7 +51,7 @@ class DotnetWorkflowComposer(
 
                         _loggerService.onBlock(blockName).use {
                             _failedTestSource
-                                    .subscribe({ result.add(CommandResult.FailedTests) })
+                                    .subscribe { result += CommandResult.FailedTests }
                                     .use {
                                         _targetRegistry.activate(target).use {
                                             yield(CommandLine(
@@ -78,7 +79,6 @@ class DotnetWorkflowComposer(
                     _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, exitCode)
                     if (commandResult.contains(CommandResult.Fail)) {
                         context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                        return@buildSequence
                     }
                 }
 

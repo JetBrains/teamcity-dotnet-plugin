@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.ArgumentsService
@@ -34,11 +36,11 @@ class ResponseFileArgumentsProvider(
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
                 Verbosity.tryParse(it)?.let {
                     @Suppress("NON_EXHAUSTIVE_WHEN")
-                    when(it) {
+                    when (it) {
                         Verbosity.Detailed, Verbosity.Diagnostic -> {
                             _loggerService.onBlock(BlockName).use {
-                                for (arg in args) {
-                                    _loggerService.onStandardOutput(arg.value, Color.Details)
+                                for ((value) in args) {
+                                    _loggerService.onStandardOutput(value, Color.Details)
                                 }
 
                                 for (paramLine in paramLines) {
@@ -54,7 +56,7 @@ class ResponseFileArgumentsProvider(
             val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
             _fileSystemService.write(msBuildResponseFile) {
                 OutputStreamWriter(it).use {
-                    for(line in lines) {
+                    for (line in lines) {
                         it.write("$line\n")
                     }
                 }

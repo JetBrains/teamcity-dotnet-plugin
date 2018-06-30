@@ -23,10 +23,9 @@ class LoggerServiceImpl(
     override fun onBuildProblem(buildProblem: BuildProblemData) = buildLogger.logBuildProblem(buildProblem)
 
     override fun onStandardOutput(text: String, color: Color) {
-        if(color == Color.Default) {
+        if (color == Color.Default) {
             listener.onStandardOutput(text)
-        }
-        else {
+        } else {
             listener.onStandardOutput("\u001B[${_colorTheme.getAnsiColor(color)}m$text")
         }
     }
@@ -34,7 +33,7 @@ class LoggerServiceImpl(
     override fun onErrorOutput(text: String) = listener.onErrorOutput(text)
 
     override fun onBlock(blockName: String, description: String): Closeable {
-        buildLogger.message(BlockOpened(blockName, if(description.isBlank()) null else description).toString())
+        buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
         return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
     }
 }

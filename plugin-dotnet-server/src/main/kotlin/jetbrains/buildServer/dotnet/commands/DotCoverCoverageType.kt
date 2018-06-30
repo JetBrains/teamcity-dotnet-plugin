@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.CoverageConstants
@@ -9,17 +11,13 @@ import jetbrains.buildServer.serverSide.InvalidProperty
 import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverCoverageType : CommandType() {
-    override val name: String
-        get() = CoverageConstants.PARAM_DOTCOVER
+    override val name: String = CoverageConstants.PARAM_DOTCOVER
 
-    override val description: String
-        get() = "JetBrains dotCover"
+    override val description: String = "JetBrains dotCover"
 
-    override val editPage: String
-        get() = "editDotCoverParameters.jsp"
+    override val editPage: String = "editDotCoverParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewDotCoverParameters.jsp"
+    override val viewPage: String = "viewDotCoverParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
         yieldAll(super.validateProperties(properties))

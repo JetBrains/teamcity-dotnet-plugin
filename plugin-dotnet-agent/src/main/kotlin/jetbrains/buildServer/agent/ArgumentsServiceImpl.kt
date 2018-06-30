@@ -14,8 +14,7 @@ class ArgumentsServiceImpl : ArgumentsService {
                     .map {
                         if (it.contains(ArgumentsService.ArgsSeparator)) {
                             StringUtil.doubleQuote(StringUtil.unquoteString(it))
-                        }
-                        else {
+                        } else {
                             it
                         }
                     }

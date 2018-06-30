@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetToolResolverImpl
-import jetbrains.buildServer.agent.runner.PathsService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -12,13 +12,13 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetToolResolverTest {
-    private var _ctx: Mockery? = null
-    private var _pathsService: PathsService? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathsService: PathsService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathsService = _ctx!!.mock<PathsService>(PathsService::class.java)
+        _pathsService = _ctx.mock<PathsService>(PathsService::class.java)
     }
 
     @Test
@@ -28,9 +28,9 @@ class DotnetToolResolverTest {
         val toolFile = File("dotnet")
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
-                oneOf<PathsService>(_pathsService!!).getToolPath(DotnetConstants.RUNNER_TYPE)
+                oneOf<PathsService>(_pathsService).getToolPath(DotnetConstants.RUNNER_TYPE)
                 will(returnValue(toolFile))
             }
         })
@@ -38,11 +38,11 @@ class DotnetToolResolverTest {
         val actualExecutableFile = instance.executableFile
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualExecutableFile, toolFile)
     }
 
     private fun createInstance(): DotnetToolResolver {
-        return DotnetToolResolverImpl(_pathsService!!)
+        return DotnetToolResolverImpl(_pathsService)
     }
 }

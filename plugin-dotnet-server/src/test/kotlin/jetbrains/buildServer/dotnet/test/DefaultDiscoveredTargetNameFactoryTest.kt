@@ -1,12 +1,10 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.dotnet.discovery.DefaultDiscoveredTargetNameFactory
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
-import java.io.FileInputStream
 
 class DefaultDiscoveredTargetNameFactoryTest {
     @DataProvider
@@ -19,7 +17,7 @@ class DefaultDiscoveredTargetNameFactoryTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldCreateName(commandType: DotnetCommandType, path:String, expectedName: String) {
+    fun shouldCreateName(commandType: DotnetCommandType, path: String, expectedName: String) {
         // Given
         val nameFactory = DefaultDiscoveredTargetNameFactory()
 

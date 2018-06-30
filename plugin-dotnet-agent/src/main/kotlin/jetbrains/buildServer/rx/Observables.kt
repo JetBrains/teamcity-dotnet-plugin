@@ -20,7 +20,14 @@ fun <T> emptyObservable(): Observable<T> =
             emptyDisposable()
         }
 
-inline fun <T> Observable<T>.subscribe(crossinline onNext: (T) -> Unit, crossinline onError: (Exception) -> Unit = {}, crossinline onComplete: () -> Unit = {}): Disposable =
+inline fun <T> Observable<T>.subscribe(crossinline onNext: (T) -> Unit): Disposable =
+        subscribe(object : Observer<T> {
+            override fun onNext(value: T) = onNext(value)
+            override fun onError(error: Exception) = Unit
+            override fun onComplete() = Unit
+        })
+
+inline fun <T> Observable<T>.subscribe(crossinline onNext: (T) -> Unit, crossinline onError: (Exception) -> Unit, crossinline onComplete: () -> Unit): Disposable =
         subscribe(object : Observer<T> {
             override fun onNext(value: T) = onNext(value)
             override fun onError(error: Exception) = onError(error)
@@ -52,8 +59,8 @@ inline fun <T> Observable<T>.until(crossinline completionCondition: (T) -> Boole
                     }
                 }
             },
-            { if(!isCompleted.get()) observer.onError(it) },
-            { if(!isCompleted.get()) observer.onComplete() })
+            { if (!isCompleted.get()) observer.onError(it) },
+            { if (!isCompleted.get()) observer.onComplete() })
 }
 
 fun <T> Observable<T>.take(range: LongRange): Observable<T> = observableOf {
@@ -77,11 +84,11 @@ fun <T> Sequence<T>.toObservable(): Observable<T> = observableOf { observer ->
 
 fun <T> Observable<T>.toSequence(): Sequence<T> =
         object : Sequence<T>, Disposable {
-            private val _subscriptions = mutableListOf<Disposable>()
+            private val subscriptions = mutableListOf<Disposable>()
 
             override fun dispose() =
-                    synchronized(_subscriptions) {
-                        _subscriptions.forEach { it.dispose() }
+                    synchronized(subscriptions) {
+                        subscriptions.forEach { it.dispose() }
                     }
 
             override fun iterator(): Iterator<T> {
@@ -108,8 +115,8 @@ fun <T> Observable<T>.toSequence(): Sequence<T> =
                             }
                         })
 
-                synchronized(_subscriptions) {
-                    _subscriptions.add(subscription)
+                synchronized(subscriptions) {
+                    subscriptions.add(subscription)
                 }
 
                 return object : Iterator<T> {
@@ -171,8 +178,7 @@ inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, c
         try {
             onSubscribe(false)
             subscription = subscribe(it)
-        }
-        finally {
+        } finally {
             onSubscribe(true)
         }
 
@@ -180,8 +186,7 @@ inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, c
             try {
                 onUnsubscribe(false)
                 subscription.dispose()
-            }
-            finally {
+            } finally {
                 onUnsubscribe(true)
             }
         }
@@ -194,6 +199,7 @@ enum class NotificationKind {
     OnCompleted
 }
 
+@Suppress("unused")
 abstract class Notification<T>(val notificationKind: NotificationKind)
 
 data class NotificationNext<T>(val value: T) : Notification<T>(NotificationKind.OnNext)
@@ -225,11 +231,11 @@ fun <T> Observable<T>.materialize(): Observable<Notification<T>> = observableOf 
 }
 
 fun <T> Observable<Notification<T>>.dematerialize(): Observable<T> = observableOf { observer ->
-    subscribe({
+    subscribe {
         when (it) {
-            is NotificationNext<T> -> observer.onNext(it.value )
+            is NotificationNext<T> -> observer.onNext(it.value)
             is NotificationError -> observer.onError(it.error)
             is NotificationCompleted -> observer.onComplete()
         }
-    })
+    }
 }

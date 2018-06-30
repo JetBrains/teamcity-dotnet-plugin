@@ -10,8 +10,8 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         cmd.setWorkingDirectory(cmd.workDirectory)
         cmd.addParameters(commandLine.arguments.map { it.value })
         val currentEnvironment = System.getenv()
-        for (overridingEnvVar in commandLine.environmentVariables) {
-            currentEnvironment.put(overridingEnvVar.name, overridingEnvVar.value)
+        for ((name, value) in commandLine.environmentVariables) {
+            currentEnvironment[name] = value
         }
 
         cmd.envParams = currentEnvironment
@@ -20,9 +20,9 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
         return executor.runProcess(executionTimeoutSeconds)?.let {
             val result = CommandLineResult(
-                sequenceOf(it.exitCode),
-                it.outLines.asSequence(),
-                it.stderr.split("\\r?\\n").asSequence())
+                    sequenceOf(it.exitCode),
+                    it.outLines.asSequence(),
+                    it.stderr.split("\\r?\\n").asSequence())
 
             if (LOG.isDebugEnabled) {
                 val resultStr = StringBuilder()

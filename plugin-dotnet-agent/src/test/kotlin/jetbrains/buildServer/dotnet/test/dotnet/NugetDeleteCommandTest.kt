@@ -1,8 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
 import org.testng.Assert

@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import com.google.gson.JsonParser
@@ -15,7 +17,7 @@ open class NuGetServiceImpl(
     : NuGetService {
 
     @Cacheable("getPackagesById")
-    open override fun getPackagesById(packageId: String, allowPrerelease: Boolean): Sequence<NuGetPackage> {
+    override fun getPackagesById(packageId: String, allowPrerelease: Boolean): Sequence<NuGetPackage> {
         return enumeratePackagesById(packageId, allowPrerelease).toList().asSequence()
     }
 

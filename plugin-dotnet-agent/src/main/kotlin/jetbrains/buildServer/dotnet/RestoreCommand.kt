@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.ArgumentsService
@@ -13,7 +15,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 class RestoreCommand(
-        private val _parametersService: ParametersService,
+        _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _argumentsService: ArgumentsService,
         private val _targetService: TargetService,

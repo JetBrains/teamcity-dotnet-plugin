@@ -1,7 +1,10 @@
 package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.AgentLifeCycleAdapter
+import jetbrains.buildServer.agent.AgentLifeCycleListener
+import jetbrains.buildServer.agent.BuildAgent
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File

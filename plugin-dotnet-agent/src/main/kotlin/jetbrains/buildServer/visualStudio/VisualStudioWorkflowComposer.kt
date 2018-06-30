@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.BuildProblemData
@@ -50,14 +52,14 @@ class VisualStudioWorkflowComposer(
 
                 val executableFile = _toolResolver.executableFile
 
-                for (commandTarget in _targetService.targets) {
+                for ((targetFile) in _targetService.targets) {
                     _targetRegistry.activate(target).use {
                         yield(CommandLine(
                                 TargetType.Tool,
                                 executableFile,
                                 workingDirectory,
                                 buildSequence {
-                                    yield(CommandLineArgument(commandTarget.targetFile.absolutePath))
+                                    yield(CommandLineArgument(targetFile.absolutePath))
                                     yield(CommandLineArgument("/$action"))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))

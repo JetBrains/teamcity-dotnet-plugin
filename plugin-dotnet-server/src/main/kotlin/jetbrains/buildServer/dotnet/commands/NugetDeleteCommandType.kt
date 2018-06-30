@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -16,17 +18,13 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet nuget delete command.
  */
 class NugetDeleteCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.NuGetDelete.id
+    override val name: String = DotnetCommandType.NuGetDelete.id
 
-    override val description: String
-        get() = name.replace('-', ' ')
+    override val description: String = name.replace('-', ' ')
 
-    override val editPage: String
-        get() = "editNugetDeleteParameters.jsp"
+    override val editPage: String = "editNugetDeleteParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewNugetDeleteParameters.jsp"
+    override val viewPage: String = "viewNugetDeleteParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
         DotnetConstants.PARAM_NUGET_PACKAGE_ID.let {

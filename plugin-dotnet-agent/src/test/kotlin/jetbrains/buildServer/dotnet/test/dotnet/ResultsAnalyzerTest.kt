@@ -1,11 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.CommandLineResult
-import jetbrains.buildServer.agent.ToolProvider
-import jetbrains.buildServer.agent.ToolProvidersRegistry
 import jetbrains.buildServer.agent.runner.BuildOptions
 import jetbrains.buildServer.dotnet.CommandResult
-import jetbrains.buildServer.dotnet.ResultsAnalyzer
 import jetbrains.buildServer.dotnet.ResultsAnalyzerImpl
 import org.jmock.Expectations
 import org.jmock.Mockery

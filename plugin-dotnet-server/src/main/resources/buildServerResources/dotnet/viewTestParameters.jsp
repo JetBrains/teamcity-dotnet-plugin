@@ -4,37 +4,37 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <c:if test="${not empty propertiesBean.properties[params.testCaseFilterKey]}">
-    <div class="parameter">
-        Test case filter: <props:displayValue name="${params.testCaseFilterKey}"/>
-    </div>
+  <div class="parameter">
+    Test case filter: <props:displayValue name="${params.testCaseFilterKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.frameworkKey]}">
-    <div class="parameter">
-        Framework: <props:displayValue name="${params.frameworkKey}"/>
-    </div>
+  <div class="parameter">
+    Framework: <props:displayValue name="${params.frameworkKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.configKey]}">
-    <div class="parameter">
-        Configuration: <props:displayValue name="${params.configKey}"/>
-    </div>
+  <div class="parameter">
+    Configuration: <props:displayValue name="${params.configKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.outputDirKey]}">
-    <div class="parameter">
-        Output directory: <props:displayValue name="${params.outputDirKey}"/>
-    </div>
+  <div class="parameter">
+    Output directory: <props:displayValue name="${params.outputDirKey}"/>
+  </div>
 </c:if>
 
 <c:if test="${propertiesBean.properties[params.skipBuildKey]}">
-    <div class="parameter">
-        Do not build the project before testing: <strong>ON</strong>
-    </div>
+  <div class="parameter">
+    Do not build the project before testing: <strong>ON</strong>
+  </div>
 </c:if>
 
 <c:if test="${not empty propertiesBean.properties[params.testSettingsFileKey]}">
-    <div class="parameter">
-        Settings file: <props:displayValue name="${params.testSettingsFileKey}"/>
-    </div>
+  <div class="parameter">
+    Settings file: <props:displayValue name="${params.testSettingsFileKey}"/>
+  </div>
 </c:if>

@@ -7,8 +7,8 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.dotnet.TargetServiceImpl
 import org.jmock.Expectations
@@ -20,19 +20,19 @@ import org.testng.annotations.Test
 import java.io.File
 
 class TargetServiceTest {
-    private var _ctx: Mockery? = null
-    private var _pathsService: PathsService? = null
-    private var _parametersService: ParametersService? = null
-    private var _argumentsService: ArgumentsService? = null
-    private var _pathMatcher: PathMatcher? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathsService: PathsService
+    private lateinit var _parametersService: ParametersService
+    private lateinit var _argumentsService: ArgumentsService
+    private lateinit var _pathMatcher: PathMatcher
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathsService = _ctx!!.mock<PathsService>(PathsService::class.java)
-        _parametersService = _ctx!!.mock<ParametersService>(ParametersService::class.java)
-        _argumentsService = _ctx!!.mock<ArgumentsService>(ArgumentsService::class.java)
-        _pathMatcher = _ctx!!.mock<PathMatcher>(PathMatcher::class.java)
+        _pathsService = _ctx.mock<PathsService>(PathsService::class.java)
+        _parametersService = _ctx.mock<ParametersService>(ParametersService::class.java)
+        _argumentsService = _ctx.mock<ArgumentsService>(ArgumentsService::class.java)
+        _pathMatcher = _ctx.mock<PathMatcher>(PathMatcher::class.java)
     }
 
     @Test
@@ -43,7 +43,7 @@ class TargetServiceTest {
         val includeRules = sequenceOf("rule1", "rule2", "rule3")
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
@@ -71,7 +71,7 @@ class TargetServiceTest {
         val expectedRules = sequenceOf("rule1", "rule/a/2", "rule/b/c/2", "rule3")
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
@@ -104,7 +104,7 @@ class TargetServiceTest {
         val includeRules = listOf("rule1", "rule/**/2", "rule3")
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
@@ -123,8 +123,7 @@ class TargetServiceTest {
         var actualExceptionWasThrown = false
         try {
             instance.targets.toList()
-        }
-        catch (ex: RunBuildException) {
+        } catch (ex: RunBuildException) {
             actualExceptionWasThrown = true
         }
 
@@ -147,7 +146,7 @@ class TargetServiceTest {
         val checkoutDirectory = File("checkout")
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue(pathsParam))
@@ -165,9 +164,9 @@ class TargetServiceTest {
 
     private fun createInstance(): TargetService {
         return TargetServiceImpl(
-                _pathsService!!,
-                _parametersService!!,
-                _argumentsService!!,
-                _pathMatcher!!)
+                _pathsService,
+                _parametersService,
+                _argumentsService,
+                _pathMatcher)
     }
 }

@@ -5,7 +5,7 @@ import java.io.File
 
 class AntPathMatcher : PathMatcher {
     override fun match(path: File, includeRules: List<String>): List<File> =
-        AntPatternFileCollector.scanDir(path, includeRules.toTypedArray(), emptyArray(), ScanOptions)
+            AntPatternFileCollector.scanDir(path, includeRules.toTypedArray(), emptyArray(), ScanOptions)
 
     companion object {
         private val ScanOptions = arrayOf(

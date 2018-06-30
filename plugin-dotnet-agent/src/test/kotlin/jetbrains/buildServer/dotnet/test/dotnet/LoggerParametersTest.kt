@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.LoggerParametersImpl
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -16,9 +18,9 @@ class LoggerParametersTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, Verbosity.Detailed.id)), Verbosity.Detailed),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, Verbosity.Diagnostic.id)), Verbosity.Diagnostic),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, "abc")), null),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, "")),  null),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, null)),  null),
-                arrayOf(emptyMap<String, String>(),  null))
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, "")), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_VERBOSITY, null)), null),
+                arrayOf(emptyMap<String, String>(), null))
     }
 
     @Test(dataProvider = "paramVerbosity")
@@ -29,8 +31,8 @@ class LoggerParametersTest {
         val msBuildVSTestLoggerParameters = LoggerParametersImpl(ParametersServiceStub(parameters))
 
         // When
-        val actualParamVerbosity = msBuildVSTestLoggerParameters.ParamVerbosity
-        val actualMSBuildLoggerVerbosity = msBuildVSTestLoggerParameters.MSBuildLoggerVerbosity
+        val actualParamVerbosity = msBuildVSTestLoggerParameters.paramVerbosity
+        val actualMSBuildLoggerVerbosity = msBuildVSTestLoggerParameters.msBuildLoggerVerbosity
 
         // Then
         Assert.assertEquals(actualParamVerbosity, expectedVerbosity)
@@ -61,7 +63,7 @@ class LoggerParametersTest {
         val msBuildVSTestLoggerParameters = LoggerParametersImpl(ParametersServiceStub(parameters))
 
         // When
-        val actualVerbosity = msBuildVSTestLoggerParameters.VSTestVerbosity
+        val actualVerbosity = msBuildVSTestLoggerParameters.vsTestVerbosity
 
         // Then
         Assert.assertEquals(actualVerbosity, expectedVerbosity)

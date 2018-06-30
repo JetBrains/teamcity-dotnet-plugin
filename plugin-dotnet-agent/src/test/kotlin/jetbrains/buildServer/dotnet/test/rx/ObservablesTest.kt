@@ -1,9 +1,11 @@
+@file:Suppress("MoveLambdaOutsideParentheses")
+
 package jetbrains.buildServer.dotnet.test.rx
 
+import jetbrains.buildServer.rx.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import jetbrains.buildServer.rx.*
 
 class ObservablesTest {
     @Test
@@ -50,7 +52,7 @@ class ObservablesTest {
         val source = observableOf<Int> {
             it.onNext(1)
             it.onNext(2)
-            it.onError(_error)
+            it.onError(error)
             emptyDisposable()
         }
 
@@ -58,7 +60,7 @@ class ObservablesTest {
         val actual = source.materialize().toSequence().toList()
         Assert.assertEquals(
                 actual,
-                listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)))
+                listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)))
     }
 
     @Test
@@ -81,8 +83,8 @@ class ObservablesTest {
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext("1"), NotificationNext("2"), NotificationCompleted.shared<String>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
-                        listOf(NotificationNext("1"), NotificationNext("2"), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
+                        listOf(NotificationNext("1"), NotificationNext("2"), NotificationError<Int>(error))),
                 arrayOf(
                         observableOf(NotificationCompleted.shared<Int>()),
                         listOf(NotificationCompleted.shared<String>())))
@@ -94,7 +96,7 @@ class ObservablesTest {
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.map{ it.toString() }
+        val actualNotifications = source.map { it.toString() }
 
         // Then
         val actual = actualNotifications.materialize().toSequence().toList()
@@ -108,8 +110,8 @@ class ObservablesTest {
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
-                        listOf(NotificationNext(1), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
+                        listOf(NotificationNext(1), NotificationError<Int>(error))),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
@@ -130,7 +132,7 @@ class ObservablesTest {
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.filter{ it != 2 }
+        val actualNotifications = source.filter { it != 2 }
 
         // Then
         val actual = actualNotifications.materialize().toSequence().toList()
@@ -147,11 +149,11 @@ class ObservablesTest {
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
                         listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationError<Int>(_error)),
-                        listOf(NotificationNext(1), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationError<Int>(error)),
+                        listOf(NotificationNext(1), NotificationError<Int>(error))),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
@@ -166,7 +168,7 @@ class ObservablesTest {
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.until{ it == 2 }
+        val actualNotifications = source.until { it == 2 }
 
         // Then
         val actual = actualNotifications.materialize().toSequence().toList()
@@ -189,15 +191,15 @@ class ObservablesTest {
                         1..1,
                         listOf(NotificationNext(2), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
-                        0 .. 9,
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
+                        0..9,
+                        listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
                         0..1,
                         listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(_error)),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
                         0..0,
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
                 arrayOf(
@@ -206,11 +208,11 @@ class ObservablesTest {
                         listOf(NotificationCompleted.shared<Int>())),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
-                        0 .. 1,
+                        0..1,
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
                 arrayOf(
                         observableOf(NotificationCompleted.shared<Int>()),
-                        0 .. 1,
+                        0..1,
                         listOf(NotificationCompleted.shared<Int>())))
     }
 
@@ -236,11 +238,11 @@ class ObservablesTest {
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationError<Int>(_error)),
+                        observableOf(NotificationNext(1), NotificationError<Int>(error)),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
                 arrayOf(
-                        observableOf(NotificationError<Int>(_error)),
-                        listOf(NotificationError<Int>(_error))),
+                        observableOf(NotificationError<Int>(error)),
+                        listOf(NotificationError<Int>(error))),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
                         listOf(NotificationNext(1), NotificationCompleted.shared<Int>())))
@@ -274,7 +276,7 @@ class ObservablesTest {
         }.share()
 
         source.subscribe({}).use {
-            source.subscribe({ }).use {
+            source.subscribe({}).use {
             }
         }
 
@@ -293,7 +295,7 @@ class ObservablesTest {
             it.onComplete()
             emptyDisposable()
         }
-                .track({subscribes.add(it)}, {unsubscribes.add(it)})
+                .track({ subscribes.add(it) }, { unsubscribes.add(it) })
                 .subscribe({})
                 .use { }
 
@@ -303,6 +305,6 @@ class ObservablesTest {
     }
 
     companion object {
-        private val _error = Exception()
+        private val error = Exception()
     }
 }

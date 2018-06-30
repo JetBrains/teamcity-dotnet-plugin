@@ -1,9 +1,12 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.cmd
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.use
+import jetbrains.buildServer.agent.runner.Workflow
+import jetbrains.buildServer.agent.runner.WorkflowComposer
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.util.OSType
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -17,7 +20,7 @@ class CmdWorkflowComposer(
         get() = TargetType.Host
 
     override fun compose(context: WorkflowContext, workflow: Workflow) =
-            when (_environment.OS) {
+            when (_environment.os) {
                 OSType.WINDOWS -> {
                     Workflow(buildSequence {
                         val cmdExecutable = _environment.tryGetVariable(ComSpecEnvVarName) ?: throw RunBuildException("Environment variable \"$ComSpecEnvVarName\" was not found")

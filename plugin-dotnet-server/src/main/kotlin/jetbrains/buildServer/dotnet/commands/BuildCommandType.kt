@@ -13,12 +13,9 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
  * Provides parameters for dotnet build command.
  */
 class BuildCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Build.id
+    override val name: String = DotnetCommandType.Build.id
 
-    override val editPage: String
-        get() = "editBuildParameters.jsp"
+    override val editPage: String = "editBuildParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewBuildParameters.jsp"
+    override val viewPage: String = "viewBuildParameters.jsp"
 }

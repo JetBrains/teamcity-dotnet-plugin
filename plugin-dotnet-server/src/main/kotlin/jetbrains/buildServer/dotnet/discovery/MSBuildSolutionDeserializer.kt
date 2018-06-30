@@ -1,12 +1,10 @@
 package jetbrains.buildServer.dotnet.discovery
 
-import jetbrains.buildServer.dotnet.DotnetConstants
-import java.io.File
 import java.util.regex.Pattern
 
 class MSBuildSolutionDeserializer(
         private val _readerFactory: ReaderFactory,
-        private val _msBuildProjectDeserializer: SolutionDeserializer): SolutionDeserializer {
+        private val _msBuildProjectDeserializer: SolutionDeserializer) : SolutionDeserializer {
     override fun accept(path: String): Boolean = PathPattern.matcher(path).find()
 
     override fun deserialize(path: String, streamFactory: StreamFactory): Solution =
@@ -20,7 +18,7 @@ class MSBuildSolutionDeserializer(
                                 .filter { it.find() }
                                 .map {
                                     it?.let {
-                                        var projectPath = normalizePath(path, it.group(1))
+                                        val projectPath = normalizePath(path, it.group(1))
                                         if (_msBuildProjectDeserializer.accept(projectPath)) {
                                             _msBuildProjectDeserializer.deserialize(projectPath, streamFactory).projects.asSequence()
                                         } else {
@@ -41,7 +39,7 @@ class MSBuildSolutionDeserializer(
     fun normalizePath(basePath: String, path: String): String {
         val baseParent = basePath.replace('\\', '/').split('/').reversed().drop(1).reversed().joinToString("/")
         val normalizedPath = path.replace('\\', '/')
-        if (baseParent.isNullOrBlank()) {
+        if (baseParent.isBlank()) {
             return normalizedPath
         }
 

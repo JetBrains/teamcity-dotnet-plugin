@@ -13,7 +13,7 @@ class DotnetToolProviderAdapter(
         private val _packageVersionParser: SemanticVersionParser,
         private val _httpDownloader: HttpDownloader,
         private val _nuGetService: NuGetService,
-        private val _fileSystemService: FileSystemService): ServerToolProviderAdapter() {
+        private val _fileSystemService: FileSystemService) : ServerToolProviderAdapter() {
 
     override fun getType(): jetbrains.buildServer.tools.ToolType = DotnetToolTypeAdapter.Shared
 
@@ -27,7 +27,7 @@ class DotnetToolProviderAdapter(
         LOG.info("Get package version for file \"$toolPackage\"")
         val versionResult = _packageVersionParser.tryParse(toolPackage.name)?.let {
             GetPackageVersionResult.version(DotnetToolVersion(it.toString()))
-        } ?: GetPackageVersionResult.error("Failed to get version of " + toolPackage)
+        } ?: GetPackageVersionResult.error("Failed to get version of $toolPackage")
 
         LOG.info("Package version is \"${versionResult.toolVersion?.version ?: "null"}\"")
         return versionResult
@@ -37,7 +37,7 @@ class DotnetToolProviderAdapter(
         LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
         val downloadableTool = tools.firstOrNull { it.version == toolVersion.version }
-                ?: throw ToolException("Failed to find package " + toolVersion)
+                ?: throw ToolException("Failed to find package $toolVersion")
 
         val downloadUrl = downloadableTool.downloadUrl
         LOG.info("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
@@ -63,8 +63,7 @@ class DotnetToolProviderAdapter(
             }
 
             LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
-        }
-        else {
+        } else {
             LOG.info("Package $toolPackage is not acceptable")
         }
     }
@@ -85,7 +84,7 @@ class DotnetToolProviderAdapter(
         }
 
         val toolVersion = _packageVersionParser.tryParse(toolPackage.nameWithoutExtension)
-            ?.let { GetPackageVersionResult.version(DotnetToolVersion(it.toString())).toolVersion }
+                ?.let { GetPackageVersionResult.version(DotnetToolVersion(it.toString())).toolVersion }
 
         if (toolVersion == null) {
             LOG.warn("Failed to parse version from \"${toolPackage.nameWithoutExtension}\"")
@@ -95,16 +94,17 @@ class DotnetToolProviderAdapter(
         return mutableListOf(SimpleInstalledToolVersion.newBundledToAgentTool(DotnetToolVersion(toolVersion.version), toolPackage))
     }
 
-    private val tools: List<DotnetTool> get() {
-        try {
-            return _nuGetService.getPackagesById(type.type, true)
-                    .filter { it.isListed }
-                    .map { DotnetTool(it) }
-                    .toList().reversed()
-        } catch (e: Throwable) {
-            throw ToolException("Failed to download list of packages for ${type.type}: " + e.message, e)
+    private val tools: List<DotnetTool>
+        get() {
+            try {
+                return _nuGetService.getPackagesById(type.type, true)
+                        .filter { it.isListed }
+                        .map { DotnetTool(it) }
+                        .toList().reversed()
+            } catch (e: Throwable) {
+                throw ToolException("Failed to download list of packages for ${type.type}: " + e.message, e)
+            }
         }
-    }
 
     private inner class DotnetToolVersion internal constructor(version: String)
         : SimpleToolVersion(type, version, ToolVersionIdHelper.getToolId(DotnetConstants.PACKAGE_TYPE, version))

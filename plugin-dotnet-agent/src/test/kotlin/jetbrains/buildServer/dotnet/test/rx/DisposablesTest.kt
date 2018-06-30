@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet.test.rx
 
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.use
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -94,8 +96,8 @@ class DisposablesTest {
         // When
         try {
             disposable.use { throw Exception() }
+        } catch (ex: Exception) {
         }
-        catch (ex: Exception) { }
 
         // Then
         ctx.assertIsSatisfied()

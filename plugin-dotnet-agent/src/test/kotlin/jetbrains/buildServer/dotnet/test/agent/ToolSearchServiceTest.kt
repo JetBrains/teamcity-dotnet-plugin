@@ -12,22 +12,22 @@ import org.testng.annotations.Test
 import java.io.File
 
 class ToolSearchServiceTest {
-    private var _ctx: Mockery? = null
-    private var _environment: Environment? = null
-    private var _fileSystem: FileSystemService? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _environment: Environment
+    private lateinit var _fileSystem: FileSystemService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _environment = _ctx!!.mock(Environment::class.java)
-        _fileSystem = _ctx!!.mock(FileSystemService::class.java)
+        _environment = _ctx.mock(Environment::class.java)
+        _fileSystem = _ctx.mock(FileSystemService::class.java)
     }
 
     @Test
     fun shouldFind() {
         // Given
         val target = "dotnet"
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<Environment>(_environment).tryGetVariable("TOOL_HOME")
                 will(returnValue("home"))
@@ -51,7 +51,7 @@ class ToolSearchServiceTest {
         val actualTools = searchService.find(target, "TOOL_HOME").toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualTools, listOf(File("home2", "dotnet")))
     }
 
@@ -59,7 +59,7 @@ class ToolSearchServiceTest {
     fun shouldFindWhenToolHomeOnly() {
         // Given
         val target = "dotnet"
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<Environment>(_environment).tryGetVariable("TOOL_HOME")
                 will(returnValue("home"))
@@ -77,7 +77,7 @@ class ToolSearchServiceTest {
         val actualTools = searchService.find(target, "TOOL_HOME") { File(it, "bin") }.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualTools, listOf(File("home/bin", "dotnet")))
     }
 
@@ -85,7 +85,7 @@ class ToolSearchServiceTest {
     fun shouldFindWhenHasNoToolHome() {
         // Given
         val target = "dotnet"
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<Environment>(_environment).tryGetVariable("TOOL_HOME")
                 will(returnValue(null))
@@ -106,9 +106,9 @@ class ToolSearchServiceTest {
         val actualTools = searchService.find(target, "TOOL_HOME").toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualTools, listOf(File("home1", "dotnet"), File("home2", "dotnet")))
     }
 
-    private fun createInstance(): ToolSearchService = ToolSearchServiceImpl(_environment!!, _fileSystem!!)
+    private fun createInstance(): ToolSearchService = ToolSearchServiceImpl(_environment, _fileSystem)
 }

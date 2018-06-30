@@ -13,12 +13,9 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
  * Provides parameters for dotnet publish command.
  */
 class PublishCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Publish.id
+    override val name: String = DotnetCommandType.Publish.id
 
-    override val editPage: String
-        get() = "editPublishParameters.jsp"
+    override val editPage: String = "editPublishParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewPublishParameters.jsp"
+    override val viewPage: String = "viewPublishParameters.jsp"
 }

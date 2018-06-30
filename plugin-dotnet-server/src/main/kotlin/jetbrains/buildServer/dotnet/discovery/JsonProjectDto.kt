@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("unused")
+
 package jetbrains.buildServer.dotnet.discovery
 
 /**

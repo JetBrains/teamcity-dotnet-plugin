@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
@@ -16,7 +18,7 @@ import kotlin.coroutines.experimental.buildSequence
  */
 
 class PublishCommand(
-        private val _parametersService: ParametersService,
+        _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,

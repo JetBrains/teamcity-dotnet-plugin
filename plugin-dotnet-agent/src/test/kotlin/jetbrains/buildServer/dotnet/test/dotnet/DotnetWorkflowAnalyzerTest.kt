@@ -2,14 +2,14 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.CommandResult
+import jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzer
+import jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerContext
+import jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl
 import org.jmock.Expectations
 import org.jmock.Mockery
-import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import java.io.File
 import java.util.*
 
 class DotnetWorkflowAnalyzerTest {

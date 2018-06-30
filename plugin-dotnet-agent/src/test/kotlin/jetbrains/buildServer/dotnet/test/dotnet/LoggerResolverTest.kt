@@ -1,13 +1,15 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.LoggerResolverImpl
+import jetbrains.buildServer.dotnet.Tool
+import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -155,21 +157,19 @@ class LoggerResolverTest {
         val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService, pathsService)
 
         // When
-        var actualLogger: File? = null;
+        var actualLogger: File? = null
         try {
             actualLogger = loggerProvider.resolve(toolType)
-        }
-        catch (ex: RunBuildException) {
-            if(expectedErrorPattern != null) {
+        } catch (ex: RunBuildException) {
+            if (expectedErrorPattern != null) {
                 Assert.assertEquals(Regex(expectedErrorPattern).matches(ex.message as String), true)
-            }
-            else {
-                Assert.fail("Unexpected exception ${ex}")
+            } else {
+                Assert.fail("Unexpected exception $ex")
             }
         }
 
         // Then
-        if(actualLogger != null) {
+        if (actualLogger != null) {
             Assert.assertEquals(actualLogger, expectedLogger)
         }
     }

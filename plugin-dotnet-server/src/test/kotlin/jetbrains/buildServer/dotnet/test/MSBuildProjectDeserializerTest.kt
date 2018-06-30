@@ -1,14 +1,11 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.XmlDocumentServiceImpl
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.dotnet.discovery.Target
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
-import java.io.FileInputStream
 
 class MSBuildProjectDeserializerTest {
     @DataProvider
@@ -40,7 +37,7 @@ class MSBuildProjectDeserializerTest {
     @Test(dataProvider = "testDeserializeData")
     fun shouldDeserialize(target: String, expectedSolution: Solution) {
         // Given
-        val path = "projectPath";
+        val path = "projectPath"
         val streamFactory = StreamFactoryStub().add(path, this::class.java.getResourceAsStream(target))
         val deserializer = MSBuildProjectDeserializer(XmlDocumentServiceImpl())
 

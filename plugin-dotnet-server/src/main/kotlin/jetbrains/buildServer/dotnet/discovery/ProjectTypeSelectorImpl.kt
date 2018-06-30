@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet.discovery
 
-import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.dotnet.DotnetConstants
 import java.util.regex.Pattern
 
 class ProjectTypeSelectorImpl : ProjectTypeSelector {

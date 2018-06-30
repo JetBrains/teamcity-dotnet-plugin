@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -16,17 +18,13 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet %custom% command.
  */
 class CustomCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Custom.id
+    override val name: String = DotnetCommandType.Custom.id
 
-    override val description: String
-        get() = "<custom>"
+    override val description: String = "<custom>"
 
-    override val editPage: String
-        get() = "editCustomParameters.jsp"
+    override val editPage: String = "editCustomParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewCustomParameters.jsp"
+    override val viewPage: String = "viewCustomParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
         yieldAll(super.validateProperties(properties))

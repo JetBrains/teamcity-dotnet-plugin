@@ -12,8 +12,8 @@ class ServiceMessageSourceImpl(
     private val _subject: Subject<ServiceMessage> = subjectOf()
     private val _sharedSource: Observable<ServiceMessage> = _subject
             .track(
-                { if(it) activate() },
-                { if(!it) deactivate() })
+                    { if (it) activate() },
+                    { if (!it) deactivate() })
             .share()
 
     override fun subscribe(observer: Observer<ServiceMessage>): Disposable =
@@ -23,12 +23,12 @@ class ServiceMessageSourceImpl(
             _subject.onNext(serviceMessage)
 
     private fun activate() =
-            _serviceMessages.forEach { _serviceMessagesRegister.registerHandler(it, this) }
+            serviceMessages.forEach { _serviceMessagesRegister.registerHandler(it, this) }
 
     private fun deactivate() =
-            _serviceMessages.forEach { _serviceMessagesRegister.removeHandler(it) }
+            serviceMessages.forEach { _serviceMessagesRegister.removeHandler(it) }
 
     companion object {
-        private val _serviceMessages = sequenceOf(ServiceMessageTypes.TEST_FAILED)
+        internal val serviceMessages = sequenceOf(ServiceMessageTypes.TEST_FAILED)
     }
 }

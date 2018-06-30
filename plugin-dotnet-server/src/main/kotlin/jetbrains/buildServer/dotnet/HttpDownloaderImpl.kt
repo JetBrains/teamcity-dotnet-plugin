@@ -13,7 +13,7 @@ class HttpDownloaderImpl : HttpDownloader {
                 var count: Int
                 do {
                     count = it.read(buffer)
-                    if(count > 0) {
+                    if (count > 0) {
                         outputStream.write(buffer, 0, count)
                     }
                 } while (count > 0)

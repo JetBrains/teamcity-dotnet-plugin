@@ -35,13 +35,14 @@ class VSTestToolResolver(
             return true
         }
 
-    private val _currentTool: Tool? get() {
-        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VSTEST_VERSION)?.let {
-            return Tool.tryParse(it)
-        }
+    private val _currentTool: Tool?
+        get() {
+            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VSTEST_VERSION)?.let {
+                return Tool.tryParse(it)
+            }
 
-        return null
-    }
+            return null
+        }
 
     private fun tryGetTool(parameterName: String): File? {
         _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {

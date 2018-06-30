@@ -1,8 +1,8 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -17,7 +17,7 @@ class MSBuildLoggerArgumentsProvider(
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             yield(CommandLineArgument("/noconsolelogger"))
-            val verbosityStr = _loggerParameters.MSBuildLoggerVerbosity?.let { ";verbosity=${it.id.toLowerCase()}"} ?: ""
-            yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${_loggerResolver.resolve(ToolType.MSBuild).absolutePath};TeamCity${verbosityStr}"))
+            val verbosityStr = _loggerParameters.msBuildLoggerVerbosity?.let { ";verbosity=${it.id.toLowerCase()}" } ?: ""
+            yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${_loggerResolver.resolve(ToolType.MSBuild).absolutePath};TeamCity$verbosityStr"))
         }
 }

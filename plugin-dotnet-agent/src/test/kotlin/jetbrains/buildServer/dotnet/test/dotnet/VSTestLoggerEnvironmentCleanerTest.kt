@@ -4,7 +4,8 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder
+import jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -14,29 +15,29 @@ import org.testng.annotations.Test
 import java.io.File
 
 class VSTestLoggerEnvironmentCleanerTest {
-    private var _ctx: Mockery? = null
-    private var _pathService: PathsService? = null
-    private var _fileSystemService: FileSystemService? = null
-    private var _loggerService: LoggerService? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _pathService: PathsService
+    private lateinit var _fileSystemService: FileSystemService
+    private lateinit var _loggerService: LoggerService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _pathService = _ctx!!.mock(PathsService::class.java)
-        _fileSystemService = _ctx!!.mock(FileSystemService::class.java)
-        _loggerService = _ctx!!.mock(LoggerService::class.java)
+        _pathService = _ctx.mock(PathsService::class.java)
+        _fileSystemService = _ctx.mock(FileSystemService::class.java)
+        _loggerService = _ctx.mock(LoggerService::class.java)
     }
 
     @Test
     fun shouldClean() {
         // Given
         val checkoutDir = File("checkoutDir")
-        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
-        val loggerDir2 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}2313123")
-        val dir1 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}")
-        val dir2 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}")
-        val dir3 = File("abc", "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
-        val file1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}abc")
+        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.directoryPrefix}loggerdir")
+        val loggerDir2 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.directoryPrefix}2313123")
+        val dir1 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.directoryPrefix}")
+        val dir2 = File(checkoutDir, "2313123${VSTestLoggerEnvironmentBuilder.directoryPrefix}")
+        val dir3 = File("abc", "${VSTestLoggerEnvironmentBuilder.directoryPrefix}loggerdir")
+        val file1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.directoryPrefix}abc")
 
         val fileSystemService = VirtualFileSystemService()
                 .addDirectory(checkoutDir)
@@ -48,12 +49,12 @@ class VSTestLoggerEnvironmentCleanerTest {
                 .addFile(file1)
 
         val environmentCleaner = VSTestLoggerEnvironmentCleaner(
-                _pathService!!,
+                _pathService,
                 fileSystemService,
-                _loggerService!!)
+                _loggerService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<PathsService>(_pathService).getPath(PathType.Checkout)
                 will(returnValue(checkoutDir))
@@ -63,7 +64,7 @@ class VSTestLoggerEnvironmentCleanerTest {
         environmentCleaner.clean()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(fileSystemService.isExists(checkoutDir), true)
         Assert.assertEquals(fileSystemService.isExists(loggerDir1), false)
         Assert.assertEquals(fileSystemService.isExists(loggerDir2), false)
@@ -77,7 +78,7 @@ class VSTestLoggerEnvironmentCleanerTest {
     fun shouldLogError() {
         // Given
         val checkoutDir = File("checkoutDir")
-        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.DirectoryPrefix}loggerdir")
+        val loggerDir1 = File(checkoutDir, "${VSTestLoggerEnvironmentBuilder.directoryPrefix}loggerdir")
         val error = Exception("some error")
 
         val fileSystemService = VirtualFileSystemService()
@@ -85,12 +86,12 @@ class VSTestLoggerEnvironmentCleanerTest {
                 .addDirectory(loggerDir1, VirtualFileSystemService.errorOnRemove(error))
 
         val environmentCleaner = VSTestLoggerEnvironmentCleaner(
-                _pathService!!,
+                _pathService,
                 fileSystemService,
-                _loggerService!!)
+                _loggerService)
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<PathsService>(_pathService).getPath(PathType.Checkout)
                 will(returnValue(checkoutDir))
@@ -102,6 +103,6 @@ class VSTestLoggerEnvironmentCleanerTest {
         environmentCleaner.clean()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
     }
 }

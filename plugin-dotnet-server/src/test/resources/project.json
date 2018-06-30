@@ -10,7 +10,10 @@
     "Microsoft.AspNet.Logging": "0.1-alpha-*",
     "System.Data.Common": "0.1-alpha-*"
   },
-  "code": ["**/*.cs", "/Shared/*.cs"],
+  "code": [
+    "**/*.cs",
+    "/Shared/*.cs"
+  ],
   "frameworks": {
     "dnx451": {
       "frameworkAssemblies": {

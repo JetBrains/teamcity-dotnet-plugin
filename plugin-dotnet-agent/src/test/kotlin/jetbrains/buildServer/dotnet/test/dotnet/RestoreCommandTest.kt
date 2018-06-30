@@ -1,10 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
-import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -43,7 +42,7 @@ class RestoreCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = createCommand(parameters=parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
         val actualArguments = command.arguments.map { it.value }.toList()

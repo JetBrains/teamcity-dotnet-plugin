@@ -1,14 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.CommandLineResult
-import jetbrains.buildServer.agent.PathMatcher
-import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.agent.runner.BuildOptions
 import jetbrains.buildServer.dotnet.CommandResult
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessageTypes
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -19,13 +13,13 @@ import java.io.Serializable
 import java.util.*
 
 class TestsResultsAnalyzerImplTest {
-    private var _ctx: Mockery? = null
-    private var _buildOptions: BuildOptions? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _buildOptions: BuildOptions
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _buildOptions = _ctx!!.mock<BuildOptions>(BuildOptions::class.java)
+        _buildOptions = _ctx.mock<BuildOptions>(BuildOptions::class.java)
     }
 
     @DataProvider
@@ -57,8 +51,8 @@ class TestsResultsAnalyzerImplTest {
     @Test(dataProvider = "checkAnalyzeResult")
     fun shouldAnalyzeResult(exitCode: Int, hasFailedTest: Boolean, failBuildOnExitCode: Boolean, expectedResult: EnumSet<CommandResult>) {
         // Given
-        val resultsAnalyzer = TestsResultsAnalyzerImpl(_buildOptions!!)
-        _ctx!!.checking(object : Expectations() {
+        val resultsAnalyzer = TestsResultsAnalyzerImpl(_buildOptions)
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<BuildOptions>(_buildOptions).failBuildOnExitCode
                 will(returnValue(failBuildOnExitCode))
@@ -66,7 +60,7 @@ class TestsResultsAnalyzerImplTest {
         })
 
         // When
-        val actualResult = resultsAnalyzer.analyze(exitCode, if(hasFailedTest) EnumSet.of(CommandResult.FailedTests) else EnumSet.noneOf(CommandResult::class.java))
+        val actualResult = resultsAnalyzer.analyze(exitCode, if (hasFailedTest) EnumSet.of(CommandResult.FailedTests) else EnumSet.noneOf(CommandResult::class.java))
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)

@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.CustomArgumentsProvider
-import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

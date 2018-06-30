@@ -7,12 +7,13 @@
 
 package jetbrains.buildServer.dotnet.fetchers
 
-import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.dotnet.discovery.SolutionDiscover
+import jetbrains.buildServer.dotnet.discovery.StreamFactory
+import jetbrains.buildServer.dotnet.discovery.StreamFactoryImpl
 import jetbrains.buildServer.serverSide.DataItem
 import jetbrains.buildServer.serverSide.ProjectDataFetcher
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.browser.Browser
-import java.util.TreeSet
 
 /**
  * Provides configurations fetcher for project model.
@@ -24,13 +25,13 @@ class DotnetConfigurationsFetcher(private val _solutionDiscover: SolutionDiscove
                     .map { DataItem(it, null) }
                     .toMutableList()
 
-    fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
+    private fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
             _solutionDiscover.discover(streamFactory, paths)
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.configurations.asSequence() }
                     .map { it.name }
                     .plus(DefaultConfigurations)
-                    .distinctBy() { it.toLowerCase() }
+                    .distinctBy { it.toLowerCase() }
                     .sorted()
 
     override fun getType(): String {

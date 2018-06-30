@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import jetbrains.buildServer.dotnet.Version
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import jetbrains.buildServer.dotnet.Version
 
 class VersionTest {
     @DataProvider
@@ -80,8 +80,8 @@ class VersionTest {
 
         // When
         val actualEqualsResult1 = version1 == version2
-        val actualEqualsResult2 = version1.equals(version2)
-        val actualEqualsResult3 = version2.equals(version1)
+        val actualEqualsResult2 = version1 == version2
+        val actualEqualsResult3 = version2 == version1
         val hashCode1 = version1.hashCode()
         val hashCode2 = version1.hashCode()
 
@@ -89,7 +89,7 @@ class VersionTest {
         Assert.assertEquals(actualEqualsResult1, exptectedEqualsResult)
         Assert.assertEquals(actualEqualsResult2, exptectedEqualsResult)
         Assert.assertEquals(actualEqualsResult3, exptectedEqualsResult)
-        if(exptectedEqualsResult) {
+        if (exptectedEqualsResult) {
             Assert.assertTrue(hashCode1 == hashCode2)
         }
     }

@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -16,17 +18,13 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet nuget push command.
  */
 class NugetPushCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.NuGetPush.id
+    override val name: String = DotnetCommandType.NuGetPush.id
 
-    override val description: String
-        get() = name.replace('-', ' ')
+    override val description: String = name.replace('-', ' ')
 
-    override val editPage: String
-        get() = "editNugetPushParameters.jsp"
+    override val editPage: String = "editNugetPushParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewNugetPushParameters.jsp"
+    override val viewPage: String = "viewNugetPushParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = buildSequence {
         DotnetConstants.PARAM_PATHS.let {

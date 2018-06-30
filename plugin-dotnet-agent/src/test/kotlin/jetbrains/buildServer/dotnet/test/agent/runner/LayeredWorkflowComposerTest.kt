@@ -2,7 +2,10 @@ package jetbrains.buildServer.dotnet.test.agent.runner
 
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.TargetType
-import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.agent.runner.LayeredWorkflowComposer
+import jetbrains.buildServer.agent.runner.Workflow
+import jetbrains.buildServer.agent.runner.WorkflowComposer
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert

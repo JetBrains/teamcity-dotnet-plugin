@@ -5,5 +5,5 @@ import java.io.File
 
 class DotnetToolResolverStub(
         override val executableFile: File,
-        override val isCommandRequired: Boolean):
+        override val isCommandRequired: Boolean) :
         DotnetToolResolver

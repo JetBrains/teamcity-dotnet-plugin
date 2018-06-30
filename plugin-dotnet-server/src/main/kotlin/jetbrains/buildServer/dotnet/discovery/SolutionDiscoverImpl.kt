@@ -1,15 +1,16 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.discovery
 
 import com.intellij.openapi.diagnostic.Logger
-import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
 class SolutionDiscoverImpl(
         private val _discoverers: List<SolutionDeserializer>)
     : SolutionDiscover {
 
-    override fun discover(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<Solution>  =
-        paths.map { createSolutionSource(streamFactory, it) }.flatMap { it }
+    override fun discover(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<Solution> =
+            paths.map { createSolutionSource(streamFactory, it) }.flatMap { it }
 
     private fun createSolutionSource(streamFactory: StreamFactory, path: String): Sequence<Solution> = buildSequence {
         LOG.debug("Discover \"$path\"")
@@ -18,14 +19,13 @@ class SolutionDiscoverImpl(
                 continue
             }
 
-            LOG.debug("Use discoverer \"${discoverer}\" for \"$path\"")
+            LOG.debug("Use discoverer \"$discoverer\" for \"$path\"")
             try {
                 val solution = discoverer.deserialize(path, streamFactory)
-                LOG.debug("\"${discoverer}\" finds \"${solution}\"")
+                LOG.debug("\"$discoverer\" finds \"$solution\"")
                 yield(solution)
                 break
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 LOG.error("Discover error", ex)
             }
         }

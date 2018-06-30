@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.runner.PathType
@@ -13,21 +15,20 @@ class MSBuildVSTestLoggerParametersProvider(
 
     override val parameters: Sequence<MSBuildParameter>
         get() = buildSequence {
-            var testReportingMode = _testReportingParameters.Mode;
+            val testReportingMode = _testReportingParameters.mode
             if (testReportingMode.contains(TestReportingMode.Off)) {
                 return@buildSequence
             }
 
             _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
                 yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
-                if(testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
+                if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
                     yield(MSBuildParameter("VSTestTestAdapterPath", "${it.absolutePath};."))
-                }
-                else {
+                } else {
                     yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
                 }
             }
 
-            yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.VSTestVerbosity.id.toLowerCase()))
+            yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.toLowerCase()))
         }
 }

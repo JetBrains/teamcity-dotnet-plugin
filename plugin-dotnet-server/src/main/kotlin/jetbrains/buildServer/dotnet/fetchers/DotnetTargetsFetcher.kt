@@ -36,8 +36,8 @@ class DotnetTargetsFetcher(
         }
 
         return InitialDefaultTargets.plus(discoveredTargets).plus(targets).plus(FinishDefaultTargets).asSequence()
-                .filter { !it.isNullOrBlank() }
-                .distinctBy() { it.toLowerCase() }
+                .filter { !it.isBlank() }
+                .distinctBy { it.toLowerCase() }
     }
 
     private fun exclude(src: List<String>, items: List<String>): List<String> {
@@ -47,9 +47,6 @@ class DotnetTargetsFetcher(
 
     override fun getType(): String {
         return "DotnetTargets"
-    }
-
-    private fun getDefaultTargets() {
     }
 
     companion object {

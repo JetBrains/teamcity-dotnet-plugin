@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineResult
-
-interface DotnetCommand: ArgumentsProvider {
+interface DotnetCommand : ArgumentsProvider {
     val commandType: DotnetCommandType
 
     val toolResolver: ToolResolver

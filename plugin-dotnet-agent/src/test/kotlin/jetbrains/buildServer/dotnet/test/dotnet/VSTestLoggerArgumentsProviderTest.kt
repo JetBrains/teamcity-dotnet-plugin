@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.LoggerParameters
 import jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider
 import jetbrains.buildServer.dotnet.Verbosity
@@ -47,7 +46,7 @@ class VSTestLoggerArgumentsProviderTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerParameters>(loggerParameters).VSTestVerbosity
+                oneOf<LoggerParameters>(loggerParameters).vsTestVerbosity
                 will(returnValue(verbosity))
             }
         })

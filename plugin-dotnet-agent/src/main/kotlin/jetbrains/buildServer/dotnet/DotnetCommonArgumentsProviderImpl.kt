@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
@@ -17,15 +19,12 @@ class DotnetCommonArgumentsProviderImpl(
     override val arguments: Sequence<CommandLineArgument>
         get() = buildSequence {
             yieldAll(_customArgumentsProvider.arguments)
-            val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.let { it.equals("false", true) } ?: false;
+            val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
             if (!avoidUsingRspFiles) {
                 yieldAll(_responseFileArgumentsProvider.arguments)
-            }
-            else {
+            } else {
                 yieldAll(_msBuildLoggerArgumentsProvider.arguments)
-                yieldAll(_msBuildVSTestLoggerParametersProvider.parameters.map { CommandLineArgument( _msBuildParameterConverter.convert(it)) })
+                yieldAll(_msBuildVSTestLoggerParametersProvider.parameters.map { CommandLineArgument(_msBuildParameterConverter.convert(it)) })
             }
         }
-
-    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

@@ -5,16 +5,16 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
 
 <div class="parameter">
-    Source: <strong><props:displayValue name="${params.nugetPackageSourceKey}"
-                                        emptyValue="Use default source"/></strong>
+  Source: <strong><props:displayValue name="${params.nugetPackageSourceKey}"
+                                      emptyValue="Use default source"/></strong>
 </div>
 
 <div class="parameter">
-    Packages: <props:displayValue name="${params.pathsKey}"/>
+  Packages: <props:displayValue name="${params.pathsKey}"/>
 </div>
 
 <c:if test="${propertiesBean.properties[params.nugetNoSymbolsKey]}">
-    <div class="parameter">
-        Do not publish an existing nuget symbols package: <strong>ON</strong>
-    </div>
+  <div class="parameter">
+    Do not publish an existing nuget symbols package: <strong>ON</strong>
+  </div>
 </c:if>

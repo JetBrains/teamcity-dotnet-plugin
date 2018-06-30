@@ -9,10 +9,10 @@ class DotnetVersionParser : VersionParser {
      * **/
     override fun tryParse(output: Sequence<String>): String? =
             output
-                .map { VersionPattern.matcher(it) }
-                .filter { it.find() }
-                .map { it.group(1).trim() }
-                .firstOrNull()
+                    .map { VersionPattern.matcher(it) }
+                    .filter { it.find() }
+                    .map { it.group(1).trim() }
+                    .firstOrNull()
 
     companion object {
         private val VersionPattern = Pattern.compile("^.*(\\d+\\.\\d+\\.\\d+[^\\s]*)")

@@ -4,7 +4,7 @@ import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
 
 class DotnetTool(
-        private val _package: NuGetPackage): ToolVersion {
+        private val _package: NuGetPackage) : ToolVersion {
 
     val downloadUrl: String
         get() {

@@ -19,18 +19,15 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetToolProviderTest {
-    private var _ctx: Mockery? = null
-    private var _toolProvidersRegistry: ToolProvidersRegistry? = null
-    private var _toolSearchService: ToolSearchService? = null
-
-    private val ctx: Mockery
-        get() = _ctx!!
+    private lateinit var _ctx: Mockery
+    private lateinit var _toolProvidersRegistry: ToolProvidersRegistry
+    private lateinit var _toolSearchService: ToolSearchService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _toolProvidersRegistry = _ctx!!.mock(ToolProvidersRegistry::class.java)
-        _toolSearchService = _ctx!!.mock(ToolSearchService::class.java)
+        _toolProvidersRegistry = _ctx.mock(ToolProvidersRegistry::class.java)
+        _toolSearchService = _ctx.mock(ToolSearchService::class.java)
     }
 
     @DataProvider
@@ -50,7 +47,7 @@ class DotnetToolProviderTest {
     @Test(dataProvider = "supportToolCases")
     fun shouldSupportTool(toolName: String, expectedResult: Boolean) {
         // Given
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
             }
@@ -61,7 +58,7 @@ class DotnetToolProviderTest {
         val actualResult = toolProvider.supports(toolName)
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualResult, expectedResult)
     }
 
@@ -88,7 +85,7 @@ class DotnetToolProviderTest {
             expectedPath: File,
             expectedToolCannotBeFoundException: Boolean) {
         // Given
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
             }
@@ -101,14 +98,13 @@ class DotnetToolProviderTest {
         var actualPath = ""
         try {
             actualPath = toolProvider.getPath("tool")
-        }
-        catch (ex: ToolCannotBeFoundException) {
+        } catch (ex: ToolCannotBeFoundException) {
             actualToolCannotBeFoundException = true
         }
 
 
         // Then
-        if(!expectedToolCannotBeFoundException) {
+        if (!expectedToolCannotBeFoundException) {
             Assert.assertEquals(actualPath, expectedPath.absolutePath)
         }
 
@@ -117,9 +113,9 @@ class DotnetToolProviderTest {
 
     @Test
     fun shouldNotSearchToolInVirtualContext() {
-        val build = ctx.mock(AgentRunningBuild::class.java)
-        val context = ctx.mock(BuildRunnerContext::class.java)
-        ctx.checking(object: Expectations() {
+        val build = _ctx.mock(AgentRunningBuild::class.java)
+        val context = _ctx.mock(BuildRunnerContext::class.java)
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
 
@@ -136,6 +132,6 @@ class DotnetToolProviderTest {
 
     private fun createInstance(files: Sequence<File>): ToolProvider =
             DotnetToolProvider(
-                    _toolProvidersRegistry!!,
+                    _toolProvidersRegistry,
                     ToolSearchServiceStub(files))
 }

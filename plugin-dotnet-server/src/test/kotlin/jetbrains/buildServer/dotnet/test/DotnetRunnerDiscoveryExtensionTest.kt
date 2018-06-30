@@ -136,14 +136,13 @@ class DotnetRunnerDiscoveryExtensionTest {
                         if (types != null) {
                             allowing<ProjectTypeSelector>(projectTypeSelector).select(project)
                             will(returnValue(types))
-                        }
-                        else {
+                        } else {
                             allowing<ProjectTypeSelector>(projectTypeSelector).select(project)
                             will(returnValue(emptySet<ProjectType>()))
                         }
                     }
                 }
-                
+
                 oneOf<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
                 will(returnValue(solutions))
 
@@ -201,7 +200,8 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(command1),
                         sequenceOf(DotnetRunnerDiscoveryExtension.Command("b", listOf(DotnetRunnerDiscoveryExtension.Parameter("param1", "value1")))),
-                        sequenceOf()))}
+                        sequenceOf()))
+    }
 
     @Test(dataProvider = "testGetNewCommandsData")
     fun shouldGetNewCommands(
@@ -293,7 +293,7 @@ class DotnetRunnerDiscoveryExtensionTest {
 
     private fun createCommand(commandType: DotnetCommandType, path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
 
-    private class MyRunType(private val type: String): RunType() {
+    private class MyRunType(private val type: String) : RunType() {
         override fun getViewRunnerParamsJspFilePath(): String? {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }

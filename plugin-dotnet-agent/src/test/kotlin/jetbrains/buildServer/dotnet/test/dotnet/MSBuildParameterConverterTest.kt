@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.MSBuildParameter
 import jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

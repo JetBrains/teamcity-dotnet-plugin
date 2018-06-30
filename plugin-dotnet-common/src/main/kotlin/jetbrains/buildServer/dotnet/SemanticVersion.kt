@@ -7,10 +7,9 @@ data class SemanticVersion(
         val buildName: String = "") {
 
     override fun toString(): String {
-        return if(buildName.isEmpty()) {
+        return if (buildName.isEmpty()) {
             "$major.$minor.$build"
-        }
-        else {
+        } else {
             "$major.$minor.$build-$buildName"
         }
     }

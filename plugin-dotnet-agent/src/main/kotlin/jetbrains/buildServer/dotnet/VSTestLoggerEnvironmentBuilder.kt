@@ -19,9 +19,9 @@ class VSTestLoggerEnvironmentBuilder(
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
     : EnvironmentBuilder {
     override fun build(command: DotnetCommand): Closeable {
-        val testReportingMode = _testReportingParameters.Mode;
+        val testReportingMode = _testReportingParameters.mode
         if (testReportingMode.contains(TestReportingMode.Off)) {
-           return EmptyClosable
+            return EmptyClosable
         }
 
         if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
@@ -30,7 +30,7 @@ class VSTestLoggerEnvironmentBuilder(
 
         val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
-        val loggerDirectory = File(checkoutDirectory, "$DirectoryPrefix${_pathsService.uniqueName}")
+        val loggerDirectory = File(checkoutDirectory, "$directoryPrefix${_pathsService.uniqueName}")
 
         _environmentCleaner.clean()
         _environmentAnalyzer.analyze(targets)
@@ -39,10 +39,10 @@ class VSTestLoggerEnvironmentBuilder(
             try {
                 LOG.debug("Copy logger to \"$loggerDirectory\" from \"$it\"")
                 _fileSystemService.copy(it, loggerDirectory)
-                LOG.debug("Create \"$ReadmeFileName\" file in the directory \"$loggerDirectory\"")
-                _fileSystemService.write(File(loggerDirectory, ReadmeFileName)) {
+                LOG.debug("Create \"$readmeFileName\" file in the directory \"$loggerDirectory\"")
+                _fileSystemService.write(File(loggerDirectory, readmeFileName)) {
                     OutputStreamWriter(it).use {
-                        it.write(ReadmeFileContent)
+                        it.write(readmeFileContent)
                     }
                 }
             } catch (ex: Exception) {
@@ -56,9 +56,9 @@ class VSTestLoggerEnvironmentBuilder(
 
     companion object {
         private val LOG = Logger.getInstance(VSTestLoggerEnvironmentBuilder::class.java.name)
-        val DirectoryPrefix = "teamcity.logger."
-        val ReadmeFileName = "readme.txt"
-        val ReadmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."
+        internal const val directoryPrefix = "teamcity.logger."
+        internal const val readmeFileName = "readme.txt"
+        internal const val readmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."
         private val EmptyClosable = Closeable { }
     }
 }

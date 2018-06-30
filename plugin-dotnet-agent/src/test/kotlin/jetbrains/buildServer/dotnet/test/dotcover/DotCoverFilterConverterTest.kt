@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.runner.Converter
 import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl
-import jetbrains.buildServer.agent.runner.Converter
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -19,7 +19,7 @@ class DotCoverFilterConverterTest {
                 arrayOf("+:aaa$ourLineSeparator-:module=bbb", "+:aaa;module=*;class=*;function=*$ourLineSeparator-:*;module=bbb;class=*;function=*", false),
                 arrayOf("+:module=aaa$ourLineSeparator  $ourLineSeparator-:module=bbb", "+:*;module=aaa;class=*;function=*$ourLineSeparator-:*;module=bbb;class=*;function=*", false),
                 arrayOf("+aaa$ourLineSeparator-:bbb", "", true),
-                arrayOf("" + ourLineSeparator + "-:bbb", "-:bbb;module=*;class=*;function=*", false),
+                arrayOf("$ourLineSeparator-:bbb", "-:bbb;module=*;class=*;function=*", false),
                 arrayOf("+:$ourLineSeparator-:bbb", "", true),
                 arrayOf("+$ourLineSeparator-:bbb", "", true),
                 arrayOf("?$ourLineSeparator-:bbb", "", true),

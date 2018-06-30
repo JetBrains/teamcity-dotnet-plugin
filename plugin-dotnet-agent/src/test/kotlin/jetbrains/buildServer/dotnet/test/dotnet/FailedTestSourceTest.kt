@@ -18,7 +18,7 @@ class FailedTestSourceTest {
         return arrayOf(
                 arrayOf(
                         observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext<Unit>(Unit), NotificationCompleted.shared<Unit>())),
+                        listOf(NotificationNext(Unit), NotificationCompleted.shared<Unit>())),
                 arrayOf(
                         observableOf(NotificationNext<ServiceMessage>(TestFinished("name", 1)), NotificationCompleted.shared<Int>()),
                         listOf(NotificationCompleted.shared<Unit>())),
@@ -27,7 +27,7 @@ class FailedTestSourceTest {
                         listOf(NotificationCompleted.shared<Unit>())),
                 arrayOf(
                         observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationNext<ServiceMessage>(TestFailed("name2", "message2")), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext<Unit>(Unit), NotificationCompleted.shared<Unit>())),
+                        listOf(NotificationNext(Unit), NotificationCompleted.shared<Unit>())),
                 arrayOf(
                         observableOf(NotificationCompleted.shared<Int>()),
                         listOf(NotificationCompleted.shared<Unit>())))
@@ -38,7 +38,7 @@ class FailedTestSourceTest {
         // Given
         val serviceMessageSource = object : ServiceMessageSource {
             override fun subscribe(observer: Observer<ServiceMessage>): Disposable =
-                data.dematerialize().subscribe(observer)
+                    data.dematerialize().subscribe(observer)
         }
 
         // When

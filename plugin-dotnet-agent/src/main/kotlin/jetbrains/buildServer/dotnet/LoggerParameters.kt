@@ -1,9 +1,9 @@
 package jetbrains.buildServer.dotnet
 
 interface LoggerParameters {
-    val ParamVerbosity: Verbosity?
+    val paramVerbosity: Verbosity?
 
-    val MSBuildLoggerVerbosity: Verbosity?
+    val msBuildLoggerVerbosity: Verbosity?
 
-    val VSTestVerbosity: Verbosity
+    val vsTestVerbosity: Verbosity
 }

@@ -26,8 +26,7 @@ open class BeanConfig(
             beanFactory.registerSingleton(
                     DotnetToolProviderAdapter::class.java.name,
                     DotnetToolProviderAdapter(pluginDescriptor, packageVersionParser, httpDownloader, nuGetService, _fileSystemService))
-        }
-        else {
+        } else {
             val toolIds = installedToolsState.all.filter { it.toolType == DotnetConstants.PACKAGE_TYPE }.map { it.toolId }.toList()
             for (toolId in toolIds) {
                 installedToolsState.remove(toolId)

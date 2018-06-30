@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
@@ -14,17 +13,17 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetCommandSetTest {
-    private var _ctx: Mockery? = null
-    private var _buildCommand: DotnetCommand? = null
-    private var _cleanCommand: DotnetCommand? = null
-    private var _environmentBuilder: EnvironmentBuilder? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _buildCommand: DotnetCommand
+    private lateinit var _cleanCommand: DotnetCommand
+    private lateinit var _environmentBuilder: EnvironmentBuilder
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _buildCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
-        _cleanCommand = _ctx!!.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
-        _environmentBuilder = _ctx!!.mock(EnvironmentBuilder::class.java)
+        _buildCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
+        _cleanCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
+        _environmentBuilder = _ctx.mock(EnvironmentBuilder::class.java)
     }
 
     @DataProvider
@@ -44,7 +43,7 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 allowing<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
@@ -80,7 +79,7 @@ class DotnetCommandSetTest {
 
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
-                listOf(_buildCommand!!, _cleanCommand!!))
+                listOf(_buildCommand, _cleanCommand))
 
         // When
         var actualArguments: List<String> = emptyList()
@@ -89,15 +88,13 @@ class DotnetCommandSetTest {
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
-        }
-        catch (ex: RunBuildException)
-        {
+        } catch (ex: RunBuildException) {
             Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 
         // Then
         if (exceptionPattern == null) {
-            _ctx!!.assertIsSatisfied()
+            _ctx.assertIsSatisfied()
             Assert.assertEquals(actualArguments, expectedArguments)
         }
     }

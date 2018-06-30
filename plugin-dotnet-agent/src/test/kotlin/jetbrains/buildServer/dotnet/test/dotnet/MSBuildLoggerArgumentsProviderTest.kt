@@ -1,9 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.dotnet.LoggerParameters
+import jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider
+import jetbrains.buildServer.dotnet.Verbosity
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -54,7 +53,7 @@ class MSBuildLoggerArgumentsProviderTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerParameters>(loggerParameters).MSBuildLoggerVerbosity
+                oneOf<LoggerParameters>(loggerParameters).msBuildLoggerVerbosity
                 will(returnValue(verbosity))
             }
         })

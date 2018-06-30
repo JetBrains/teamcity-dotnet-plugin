@@ -1,6 +1,9 @@
 package jetbrains.buildServer.dotnet.discovery
 
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.Reader
 
 class ReaderFactoryImpl : ReaderFactory {
     override fun create(inputStream: InputStream): Reader = getInputStreamReader(BufferedInputStream(inputStream))

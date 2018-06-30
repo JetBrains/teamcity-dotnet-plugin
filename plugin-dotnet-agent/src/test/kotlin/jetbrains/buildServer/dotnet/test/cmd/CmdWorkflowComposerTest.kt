@@ -102,7 +102,7 @@ class CmdWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<Environment>(_environment).OS
+                oneOf<Environment>(_environment).os
                 will(returnValue(osType))
 
                 allowing<Environment>(_environment).tryGetVariable(CmdWorkflowComposer.ComSpecEnvVarName)

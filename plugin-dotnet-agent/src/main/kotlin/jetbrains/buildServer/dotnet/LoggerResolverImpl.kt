@@ -15,27 +15,27 @@ class LoggerResolverImpl(
     : LoggerResolver {
 
     override fun resolve(toolType: ToolType): File =
-        loggerHome?.let { home ->
-            when(toolType) {
-                ToolType.MSBuild -> {
-                    getLogger(sequenceOf(DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION))?.let {
-                        return getLoggerAssembly(toolType, home, it.msbuildLogger.path)
+            loggerHome?.let { home ->
+                when (toolType) {
+                    ToolType.MSBuild -> {
+                        getLogger(sequenceOf(DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION))?.let {
+                            return getLoggerAssembly(toolType, home, it.msbuildLogger.path)
+                        }
+                    }
+                    ToolType.VSTest -> {
+                        getLogger(sequenceOf(DotnetConstants.PARAM_VSTEST_VERSION, DotnetConstants.PARAM_MSBUILD_VERSION))?.let {
+                            return getLoggerAssembly(toolType, home, it.vstestLogger.path)
+                        }
+                    }
+                    else -> {
+                        throw RunBuildException("Unknown tool $toolType")
                     }
                 }
-                ToolType.VSTest -> {
-                    getLogger(sequenceOf(DotnetConstants.PARAM_VSTEST_VERSION, DotnetConstants.PARAM_MSBUILD_VERSION))?.let {
-                        return getLoggerAssembly(toolType, home, it.vstestLogger.path)
-                    }
-                }
-                else -> {
-                    throw RunBuildException("Unknown tool $toolType")
-                }
-            }
-        } ?: bundledLoggerHome
+            } ?: bundledLoggerHome
 
-    private fun getLoggerAssembly(toolType: ToolType, home:File, path:String): File {
+    private fun getLoggerAssembly(toolType: ToolType, home: File, path: String): File {
         val loggerAssemblyPath = File(home, path)
-        if(!_fileSystemService.isExists(loggerAssemblyPath)) {
+        if (!_fileSystemService.isExists(loggerAssemblyPath)) {
             throw RunBuildException("Path \"$loggerAssemblyPath\" to $toolType logger was not found")
         }
 
@@ -47,25 +47,27 @@ class LoggerResolverImpl(
         return Logger.values().firstOrNull { it.msbuildTool == currentTool || it.vstestTool == currentTool }
     }
 
-    private val loggerHome: File? get() {
-        val loggerHome =_parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)
-        if (loggerHome.isNullOrBlank()) {
-            return bundledLoggerHome
+    private val loggerHome: File?
+        get() {
+            val loggerHome = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)
+            if (loggerHome.isNullOrBlank()) {
+                return bundledLoggerHome
+            }
+
+            val loggerHomePath = File(loggerHome)
+            if (!_fileSystemService.isExists(loggerHomePath)) {
+                return bundledLoggerHome
+            }
+
+            return loggerHomePath
         }
 
-        val loggerHomePath = File(loggerHome)
-        if (!_fileSystemService.isExists(loggerHomePath)) {
-            return bundledLoggerHome
+    private val bundledLoggerHome: File
+        get() {
+            val toolsPath = File(_pathsService.getPath(PathType.Plugin), ToolsDirectoryName)
+            return _fileSystemService.list(toolsPath).firstOrNull()
+                    ?: throw RunBuildException(".NET integration package was not found at \"${toolsPath.absolutePath}\"")
         }
-
-        return loggerHomePath
-    }
-
-    private val bundledLoggerHome: File get() {
-        val toolsPath = File(_pathsService.getPath(PathType.Plugin), ToolsDirectoryName)
-        return _fileSystemService.list(toolsPath).firstOrNull()
-                ?: throw RunBuildException(".NET integration package was not found at \"${toolsPath.absolutePath}\"")
-    }
 
     private fun getCurrentTool(versionParameterName: String): Tool? {
         _parametersService.tryGetParameter(ParameterType.Runner, versionParameterName)?.let {

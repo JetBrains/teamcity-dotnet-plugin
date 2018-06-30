@@ -1,7 +1,10 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Tool
+import jetbrains.buildServer.dotnet.ToolResolver
+import jetbrains.buildServer.dotnet.VSTestToolResolver
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -35,9 +38,7 @@ class VSTestToolResolverTest {
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
-        }
-        catch (ex: RunBuildException)
-        {
+        } catch (ex: RunBuildException) {
             Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
 

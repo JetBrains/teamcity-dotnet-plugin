@@ -9,11 +9,11 @@ enum class TestReportingMode(val id: String) {
 
     companion object {
         fun parse(text: String): EnumSet<TestReportingMode> {
-            var modes = text.splitToSequence('|').map { id ->
+            val modes = text.splitToSequence('|').map { id ->
                 TestReportingMode.values().singleOrNull { it.id.equals(id.trim(), true) }
             }.toList()
 
-            if( modes.filter { it == null }.any()) {
+            if (modes.filter { it == null }.any()) {
                 return EnumSet.noneOf<TestReportingMode>(TestReportingMode::class.java)
             }
 

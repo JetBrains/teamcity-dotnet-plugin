@@ -13,13 +13,12 @@ class VSTestLoggerEnvironmentCleaner(
 ) : EnvironmentCleaner {
     override fun clean() {
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
-        val loggersToClean = _fileSystemService.list(checkoutDirectory).filter { _fileSystemService.isDirectory(it) && it.name.startsWith(VSTestLoggerEnvironmentBuilder.DirectoryPrefix) }.toList()
+        val loggersToClean = _fileSystemService.list(checkoutDirectory).filter { _fileSystemService.isDirectory(it) && it.name.startsWith(VSTestLoggerEnvironmentBuilder.directoryPrefix) }.toList()
         for (loggerToClean in loggersToClean) {
             LOG.debug("Removing \"$loggerToClean\"")
             try {
                 _fileSystemService.remove(loggerToClean)
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 LOG.error(ex)
                 _loggerService.onErrorOutput("Failed to remove logger directory \"$loggerToClean\"")
             }

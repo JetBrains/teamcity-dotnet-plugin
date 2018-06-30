@@ -1,9 +1,7 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 abstract class DotnetCommandBase(
         private val _parametersService: ParametersService)

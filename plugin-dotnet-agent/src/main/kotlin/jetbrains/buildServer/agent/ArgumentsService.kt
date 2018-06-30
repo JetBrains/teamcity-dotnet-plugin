@@ -6,6 +6,6 @@ interface ArgumentsService {
     fun combine(arguments: Sequence<String>, argumentsSeparator: String = ArgsSeparator): String
 
     companion object {
-        internal val ArgsSeparator = " "
+        internal const val ArgsSeparator = " "
     }
 }

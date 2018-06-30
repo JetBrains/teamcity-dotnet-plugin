@@ -21,7 +21,7 @@ class CustomCacheManager(
                 cache = this.cacheMap[name]
                 if (!isValidCache(cache)) {
                     cache = CustomCache(name, _evictStrategy())
-                    this.cacheMap.put(name, cache!!)
+                    this.cacheMap[name] = cache!!
                 }
             }
         }
@@ -29,5 +29,5 @@ class CustomCacheManager(
         return cache
     }
 
-    private fun isValidCache(cache: CustomCache?): Boolean =  !(cache == null || cache.evictStrategy.isEvicting)
+    private fun isValidCache(cache: CustomCache?): Boolean = !(cache == null || cache.evictStrategy.isEvicting)
 }

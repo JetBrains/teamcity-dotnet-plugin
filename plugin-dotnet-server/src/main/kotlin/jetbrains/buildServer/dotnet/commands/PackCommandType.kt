@@ -5,6 +5,8 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -17,14 +19,11 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet pack command.
  */
 class PackCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Pack.id
+    override val name: String = DotnetCommandType.Pack.id
 
-    override val editPage: String
-        get() = "editPackParameters.jsp"
+    override val editPage: String = "editPackParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewPackParameters.jsp"
+    override val viewPage: String = "viewPackParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         yieldAll(super.getRequirements(parameters))

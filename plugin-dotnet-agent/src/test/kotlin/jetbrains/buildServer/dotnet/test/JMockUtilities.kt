@@ -1,3 +1,5 @@
+@file:Suppress("unused", "PublicApiImplicitType")
+
 package jetbrains.buildServer.dotnet.test
 
 import org.hamcrest.Matcher
@@ -9,9 +11,6 @@ import org.jmock.internal.InvocationExpectation
 import org.jmock.internal.matcher.MethodMatcher
 import org.jmock.internal.matcher.MethodNameMatcher
 import org.jmock.internal.matcher.MockObjectMatcher
-import java.io.IOException
-import java.io.InputStream
-import java.nio.charset.Charset
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod

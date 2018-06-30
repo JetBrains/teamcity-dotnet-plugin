@@ -3,26 +3,23 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.test.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import jetbrains.buildServer.messages.serviceMessages.TestFailed
+import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
-import jetbrains.buildServer.rx.toObservable
+import jetbrains.buildServer.rx.emptyDisposable
+import org.hamcrest.CustomMatcher
 import org.jmock.Expectations
 import org.jmock.Mockery
+import org.jmock.api.Invocation
+import org.jmock.lib.action.CustomAction
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.Closeable
 import java.io.File
 import java.util.*
-import jetbrains.buildServer.dotnet.test.*
-import jetbrains.buildServer.rx.Disposable
-import jetbrains.buildServer.rx.emptyDisposable
-import org.hamcrest.CustomMatcher
-import org.jmock.api.Invocation
-import org.jmock.lib.action.CustomAction
 
 class DotnetWorkflowComposerTest {
     private lateinit var _ctx: Mockery
@@ -75,9 +72,9 @@ class DotnetWorkflowComposerTest {
         // Given
         val workingDirectory = File("workingDir")
         val composer = createInstance()
-        val envVars = listOf<CommandLineEnvironmentVariable>(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
-        val args1 = listOf<CommandLineArgument>(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
-        val args2 = listOf<CommandLineArgument>(CommandLineArgument("arg3"))
+        val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
+        val args1 = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
+        val args2 = listOf(CommandLineArgument("arg3"))
         val result = CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())
 
         // When
@@ -99,7 +96,7 @@ class DotnetWorkflowComposerTest {
                     on(_failedTestSource)
                     count(2)
                     func(_failedTestSource::subscribe)
-                    will (object : CustomAction("") {
+                    will(object : CustomAction("") {
                         @Suppress("UNCHECKED_CAST")
                         override fun invoke(p0: Invocation?): Any {
                             val observer = p0!!.getParameter(0) as Observer<Unit>
@@ -176,7 +173,8 @@ class DotnetWorkflowComposerTest {
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
 
-                allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0) )
+                allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java))
+                        ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0))
                 oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
 
                 exactly(2).of(_targetRegistry).activate(TargetType.Tool)
@@ -219,6 +217,4 @@ class DotnetWorkflowComposerTest {
                 _failedTestSource,
                 _targetRegistry)
     }
-
-    public data class Result(val isSuccess: Boolean, val hasFailedTest: Boolean)
 }

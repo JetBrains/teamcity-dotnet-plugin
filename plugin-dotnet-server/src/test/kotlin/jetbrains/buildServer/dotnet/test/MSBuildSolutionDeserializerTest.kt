@@ -1,21 +1,18 @@
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.XmlDocumentServiceImpl
 import jetbrains.buildServer.dotnet.discovery.*
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
-import java.io.FileInputStream
 
 class MSBuildSolutionDeserializerTest {
     @Test
     fun shouldDeserialize() {
         // Given
         val target = "/solution.sln"
-        val path = "projectPath/aaa.sln";
+        val path = "projectPath/aaa.sln"
         val streamFactory = StreamFactoryStub().add(path, this::class.java.getResourceAsStream(target))
         val ctx = Mockery()
         val msBuildProjectDeserializer = ctx.mock(SolutionDeserializer::class.java)

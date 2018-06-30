@@ -13,12 +13,9 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
  * Provides parameters for dotnet restore command.
  */
 class RestoreCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Restore.id
+    override val name: String = DotnetCommandType.Restore.id
 
-    override val editPage: String
-        get() = "editRestoreParameters.jsp"
+    override val editPage: String = "editRestoreParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewRestoreParameters.jsp"
+    override val viewPage: String = "viewRestoreParameters.jsp"
 }

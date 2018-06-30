@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.XmlDocumentService
+import jetbrains.buildServer.agent.ArgumentsService
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -10,7 +10,7 @@ class DotCoverProjectSerializerImpl(
         private val _xmlDocumentService: XmlDocumentService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider)
-    : DotCoverProjectSerializer{
+    : DotCoverProjectSerializer {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun serialize(project: DotCoverProject, outputStream: OutputStream) {
@@ -88,24 +88,24 @@ class DotCoverProjectSerializerImpl(
     }
 
     companion object {
-        private val COVERAGE_PARAMS_ELEMENT = "CoverageParams"
-        private val HTTP_WWW_W3_NS_URI = "http://www.w3.org/2000/xmlns/"
-        private val XMLNS_XSD_NS = "xmlns:xsd"
-        private val XMLNS_XSD_NS_URI = "http://www.w3.org/2001/XMLSchema"
-        private val XMLNS_XSI_NS = "xmlns:xsi"
-        private val XMLNS_XSI_NS_URI = "http://www.w3.org/2001/XMLSchema-instance"
-        private val EXECUTABLE_ELEMENT = "Executable"
-        private val ARGUMENTS_ELEMENT = "Arguments"
-        private val WORKING_DIR_ELEMENT = "WorkingDir"
-        private val OUTPUT_ELEMENT = "Output"
-        private val FILTERS_ELEMENT = "Filters"
-        private val INCLUDE_FILTERS_ELEMENT = "IncludeFilters"
-        private val EXCLUDE_FILTERS_ELEMENT = "ExcludeFilters"
-        private val FILTER_ENTRY_ELEMENT = "FilterEntry"
-        private val ATTRIBUTE_FILTER_ENTRY_ELEMENT = "AttributeFilterEntry"
-        private val MODULE_MASK_ELEMENT = "ModuleMask"
-        private val FUNCTION_MASK_ELEMENT = "FunctionMask"
-        private val CLASS_MASK_ELEMENT = "ClassMask"
-        private val ATTRIBUTE_FILTERS_ELEMENT = "AttributeFilters"
+        private const val COVERAGE_PARAMS_ELEMENT = "CoverageParams"
+        private const val HTTP_WWW_W3_NS_URI = "http://www.w3.org/2000/xmlns/"
+        private const val XMLNS_XSD_NS = "xmlns:xsd"
+        private const val XMLNS_XSD_NS_URI = "http://www.w3.org/2001/XMLSchema"
+        private const val XMLNS_XSI_NS = "xmlns:xsi"
+        private const val XMLNS_XSI_NS_URI = "http://www.w3.org/2001/XMLSchema-instance"
+        private const val EXECUTABLE_ELEMENT = "Executable"
+        private const val ARGUMENTS_ELEMENT = "Arguments"
+        private const val WORKING_DIR_ELEMENT = "WorkingDir"
+        private const val OUTPUT_ELEMENT = "Output"
+        private const val FILTERS_ELEMENT = "Filters"
+        private const val INCLUDE_FILTERS_ELEMENT = "IncludeFilters"
+        private const val EXCLUDE_FILTERS_ELEMENT = "ExcludeFilters"
+        private const val FILTER_ENTRY_ELEMENT = "FilterEntry"
+        private const val ATTRIBUTE_FILTER_ENTRY_ELEMENT = "AttributeFilterEntry"
+        private const val MODULE_MASK_ELEMENT = "ModuleMask"
+        private const val FUNCTION_MASK_ELEMENT = "FunctionMask"
+        private const val CLASS_MASK_ELEMENT = "ClassMask"
+        private const val ATTRIBUTE_FILTERS_ELEMENT = "AttributeFilters"
     }
 }

@@ -13,12 +13,9 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
  * Provides parameters for dotnet test command.
  */
 class TestCommandType : DotnetType() {
-    override val name: String
-        get() = DotnetCommandType.Test.id
+    override val name: String = DotnetCommandType.Test.id
 
-    override val editPage: String
-        get() = "editTestParameters.jsp"
+    override val editPage: String = "editTestParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewTestParameters.jsp"
+    override val viewPage: String = "viewTestParameters.jsp"
 }

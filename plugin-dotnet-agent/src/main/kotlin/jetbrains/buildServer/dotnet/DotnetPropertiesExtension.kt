@@ -5,11 +5,12 @@
  * See LICENSE in the project root for license information.
  */
 
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
@@ -28,7 +29,7 @@ class DotnetPropertiesExtension(
         events.addListener(this)
     }
 
-    private var _version: Version = jetbrains.buildServer.dotnet.Version.Empty;
+    private var _version: Version = jetbrains.buildServer.dotnet.Version.Empty
 
     override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
         LOG.debug("Locating .NET CLI")
@@ -43,7 +44,7 @@ class DotnetPropertiesExtension(
             _commandLineExecutor.tryExecute(command)?.let {
                 _versionParser.tryParse(it.standardOutput)?.let {
                     val dotnetPath = command.executableFile
-                    _version = jetbrains.buildServer.dotnet.Version.parse(it);
+                    _version = jetbrains.buildServer.dotnet.Version.parse(it)
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
                     LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$it\"")
                     agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
@@ -57,12 +58,12 @@ class DotnetPropertiesExtension(
                             .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }
                             .filter { it.version != jetbrains.buildServer.dotnet.Version.Empty }
 
-                    for (sdk in enumerateSdk(sdks)) {
-                        val paramName = "${DotnetConstants.CONFIG_SDK_NAME}${sdk.version}${DotnetConstants.PATH_SUFFIX}"
-                        val paramValue = sdk.path.absolutePath;
+                    for ((path, version) in enumerateSdk(sdks)) {
+                        val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
+                        val paramValue = path.absolutePath
                         agent.configuration.addConfigurationParameter(paramName, paramValue)
-                        LOG.debug("Add configuration parameter \"$paramName\": \"${paramValue}\"")
-                        LOG.info(".NET Core SDK ${paramValue} found at \"${paramValue}\"")
+                        LOG.debug("Add configuration parameter \"$paramName\": \"$paramValue\"")
+                        LOG.info(".NET Core SDK $paramValue found at \"$paramValue\"")
                     }
                 }
             }
@@ -73,18 +74,19 @@ class DotnetPropertiesExtension(
         }
     }
 
-    override val Version: Version get() = _version
+    override val version: Version get() = _version
 
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
 
-        fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = buildSequence {
-            for (majorVersionGroup in versions.groupBy { Version(*it.version.fullVersion.take(2).toIntArray()) }) {
-                yield(Sdk(majorVersionGroup.value.maxBy { it.version }!!.path, majorVersionGroup.key))
-                yieldAll(majorVersionGroup.value)
+        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = buildSequence {
+            val groupedVersions = versions.groupBy { Version(*it.version.fullVersion.take(2).toIntArray()) }
+            for ((version, sdks) in groupedVersions) {
+                yield(Sdk(sdks.maxBy { it.version }!!.path, version))
+                yieldAll(sdks)
             }
         }
     }
 
-    data class Sdk(val path :File, val version: Version) {}
+    data class Sdk(val path: File, val version: Version)
 }

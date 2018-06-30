@@ -2,7 +2,8 @@ package jetbrains.buildServer.dotnet.test.agent.runner
 
 import jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl
 import jetbrains.buildServer.messages.serviceMessages.*
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.rx.use
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -28,8 +29,8 @@ class ServiceMessageSourceTest {
             }
         })
 
-        source.subscribe({actualMessages.add(it)}).use {
-            source.subscribe({ }).use {
+        source.subscribe { actualMessages += it }.use {
+            source.subscribe { }.use {
                 for (serviceMessage in sequenceOf(testFailed, testIgnored)) {
                     source.handle(serviceMessage)
                 }
@@ -41,6 +42,7 @@ class ServiceMessageSourceTest {
         Assert.assertEquals(actualMessages, listOf(testFailed, testIgnored))
     }
 
+    @Test
     fun shouldRegisterAndUnregisterHandlerOnce() {
         // Given
         val ctx = Mockery()
@@ -50,15 +52,16 @@ class ServiceMessageSourceTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<ServiceMessagesRegister>(serviceMessagesRegister).registerHandler(ServiceMessageTypes.TEST_FAILED, source)
-
-                oneOf<ServiceMessagesRegister>(serviceMessagesRegister).removeHandler(ServiceMessageTypes.TEST_FAILED)
+                ServiceMessageSourceImpl.serviceMessages.forEach {
+                    oneOf<ServiceMessagesRegister>(serviceMessagesRegister).registerHandler(it, source)
+                    oneOf<ServiceMessagesRegister>(serviceMessagesRegister).removeHandler(it)
+                }
             }
         })
 
-        source.subscribe({}).use {
-            source.subscribe({}).use {
-                source.subscribe({ }).use {
+        source.subscribe {}.use {
+            source.subscribe {}.use {
+                source.subscribe { }.use {
                 }
             }
         }

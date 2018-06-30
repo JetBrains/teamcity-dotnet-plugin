@@ -10,21 +10,20 @@ class LayeredWorkflowComposer(
 
     override fun compose(
             context: WorkflowContext,
-            workflow: Workflow): Workflow
-            {
-                val toolWorkflows = _workflowComposers
-                        .filter { it.target == TargetType.Tool }
-                        .asSequence()
-                        .map { it.compose(context) }
+            workflow: Workflow): Workflow {
+        val toolWorkflows = _workflowComposers
+                .filter { it.target == TargetType.Tool }
+                .asSequence()
+                .map { it.compose(context) }
 
-                val otherWorkflowComposers = _workflowComposers
-                        .filter { it.target != TargetType.NotApplicable && it.target != TargetType.Tool }
-                        .sortedBy { it.target }
+        val otherWorkflowComposers = _workflowComposers
+                .filter { it.target != TargetType.NotApplicable && it.target != TargetType.Tool }
+                .sortedBy { it.target.priority }
 
-                val workflows = toolWorkflows.map { compose(context, it, otherWorkflowComposers) }
-                val commandLines = workflows.flatMap { it.commandLines }
-                return Workflow(commandLines)
-            }
+        val workflows = toolWorkflows.map { compose(context, it, otherWorkflowComposers) }
+        val commandLines = workflows.flatMap { it.commandLines }
+        return Workflow(commandLines)
+    }
 
     private fun compose(context: WorkflowContext, toolWorkflow: Workflow, otherWorkflowComposers: List<WorkflowComposer>): Workflow =
             otherWorkflowComposers.fold(toolWorkflow) { acc, it -> it.compose(context, acc) }

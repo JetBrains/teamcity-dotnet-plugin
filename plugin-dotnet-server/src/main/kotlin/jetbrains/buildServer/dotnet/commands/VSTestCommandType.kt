@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
@@ -10,14 +12,11 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet VSTest command.
  */
 class VSTestCommandType : CommandType() {
-    override val name: String
-        get() = DotnetCommandType.VSTest.id
+    override val name: String = DotnetCommandType.VSTest.id
 
-    override val editPage: String
-        get() = "editVSTestParameters.jsp"
+    override val editPage: String = "editVSTestParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewVSTestParameters.jsp"
+    override val viewPage: String = "viewVSTestParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         if (isDocker(parameters)) return@buildSequence

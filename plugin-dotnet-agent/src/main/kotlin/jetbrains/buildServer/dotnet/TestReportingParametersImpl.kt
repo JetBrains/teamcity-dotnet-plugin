@@ -8,22 +8,22 @@ class TestReportingParametersImpl(
         private val _parametersService: ParametersService,
         private val _dotnetCliToolInfo: DotnetCliToolInfo)
     : TestReportingParameters {
-    override val Mode: EnumSet<TestReportingMode>
+    override val mode: EnumSet<TestReportingMode>
         get() {
             val modes = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_TEST_REPORTING)?.let {
-                TestReportingMode.parse(it);
+                TestReportingMode.parse(it)
             } ?: EnumSet.noneOf<TestReportingMode>(TestReportingMode::class.java)
 
-            if(!modes.isEmpty()) {
-                return modes;
+            if (!modes.isEmpty()) {
+                return modes
             }
 
             val modeSet = mutableSetOf(TestReportingMode.On)
-            if(_dotnetCliToolInfo.Version >= MultiAdapterPathVersion) {
+            if (_dotnetCliToolInfo.version >= MultiAdapterPathVersion) {
                 modeSet.add(TestReportingMode.MultiAdapterPath)
             }
 
-            return EnumSet.copyOf<TestReportingMode>(modeSet);
+            return EnumSet.copyOf<TestReportingMode>(modeSet)
         }
 
     companion object {

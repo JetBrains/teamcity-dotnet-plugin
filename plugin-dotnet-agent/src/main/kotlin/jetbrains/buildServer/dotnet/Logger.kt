@@ -2,11 +2,11 @@ package jetbrains.buildServer.dotnet
 
 import java.io.File
 
-private val MSBuildLoggerAssemblyName = "TeamCity.MSBuild.Logger.dll"
-private val MSBuildLoggerSubDir = "msbuild"
+private const val MSBuildLoggerAssemblyName = "TeamCity.MSBuild.Logger.dll"
+private const val MSBuildLoggerSubDir = "msbuild"
 
-private val VSTestLoggerAssemblyName = "TeamCity.VSTest.TestAdapter.dll"
-private val VSTestSubDir = "vstest"
+private const val VSTestLoggerAssemblyName = "TeamCity.VSTest.TestAdapter.dll"
+private const val VSTestSubDir = "vstest"
 
 enum class Logger(val msbuildTool: Tool, val vstestTool: Tool, val msbuildLogger: File, val vstestLogger: File) {
     // MSBuild loggers

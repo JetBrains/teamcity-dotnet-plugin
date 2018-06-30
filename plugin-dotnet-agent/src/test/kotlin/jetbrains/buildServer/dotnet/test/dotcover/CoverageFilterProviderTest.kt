@@ -1,13 +1,13 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
-import jetbrains.buildServer.dotcover.CoverageFilter
-import jetbrains.buildServer.dotcover.CoverageFilterProvider
-import jetbrains.buildServer.dotcover.CoverageFilterProviderImpl
-import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.agent.runner.Converter
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotcover.CoverageFilter
+import jetbrains.buildServer.dotcover.CoverageFilterProvider
+import jetbrains.buildServer.dotcover.CoverageFilterProviderImpl
 import jetbrains.buildServer.dotcover.DotCoverFilterConverter
+import jetbrains.buildServer.dotnet.CoverageConstants
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -15,15 +15,15 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
 class CoverageFilterProviderTest {
-    private var _ctx: Mockery? = null
-    private var _coverageFilterConverter: DotCoverFilterConverter? = null
-    private var _parametersService: ParametersService? = null
+    private lateinit var _ctx: Mockery
+    private lateinit var _coverageFilterConverter: DotCoverFilterConverter
+    private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _coverageFilterConverter = _ctx!!.mock(DotCoverFilterConverter::class.java)
-        _parametersService = _ctx!!.mock(ParametersService::class.java)
+        _coverageFilterConverter = _ctx.mock(DotCoverFilterConverter::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
     }
 
     @Test
@@ -32,7 +32,7 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
@@ -49,11 +49,11 @@ class CoverageFilterProviderTest {
 
         // Then
         Assert.assertEquals(
-            filters,
-            sequenceOf(
-                CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "aaa", CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "bbb", CoverageFilter.Any, CoverageFilter.Any))
-                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
+                filters,
+                sequenceOf(
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "aaa", CoverageFilter.Any, CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "bbb", CoverageFilter.Any, CoverageFilter.Any))
+                        .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -62,7 +62,7 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
@@ -75,11 +75,11 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(
-            filters,
-            sequenceOf(CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any))
-                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
+                filters,
+                sequenceOf(CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any))
+                        .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -88,14 +88,14 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
                 will(returnValue(sequenceOf(
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)
                 )))
             }
         })
@@ -103,13 +103,13 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(
-            filters,
-            sequenceOf(
-                CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
-                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
+                filters,
+                sequenceOf(
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
+                        .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -118,14 +118,14 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
                 will(returnValue(sequenceOf(
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any)
                 )))
             }
         })
@@ -133,13 +133,13 @@ class CoverageFilterProviderTest {
         val filters = instance.filters.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(
-            filters,
-            sequenceOf(
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
-                    .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
+                filters,
+                sequenceOf(
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "*.*", CoverageFilter.Any, CoverageFilter.Any))
+                        .plus(CoverageFilterProviderImpl.DefaultExcludeFilters).toList())
     }
 
     @Test
@@ -148,18 +148,18 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)
                 will(returnValue("some filter"))
 
                 oneOf<Converter<String, Sequence<CoverageFilter>>>(_coverageFilterConverter).convert("some filter")
                 will(returnValue(sequenceOf(
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, "aaa", CoverageFilter.Any),
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, "zzz", CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "ccc", CoverageFilter.Any, CoverageFilter.Any),
-                    CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, "ddd")
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, "aaa", CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, "zzz", CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "ccc", CoverageFilter.Any, CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, CoverageFilter.Any, "ddd")
                 )))
             }
         })
@@ -167,14 +167,14 @@ class CoverageFilterProviderTest {
         val filters = instance.attributeFilters.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(
-            filters,
-            sequenceOf(
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
-                CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "zzz", CoverageFilter.Any))
-                    .plus(CoverageFilterProviderImpl.DefaultExcludeAttributeFilters)
-                    .toList())
+                filters,
+                sequenceOf(
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
+                        CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "zzz", CoverageFilter.Any))
+                        .plus(CoverageFilterProviderImpl.DefaultExcludeAttributeFilters)
+                        .toList())
     }
 
     @Test
@@ -183,7 +183,7 @@ class CoverageFilterProviderTest {
         val instance = createInstance()
 
         // When
-        _ctx!!.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)
                 will(returnValue(null))
@@ -193,11 +193,11 @@ class CoverageFilterProviderTest {
         val filters = instance.attributeFilters.toList()
 
         // Then
-        _ctx!!.assertIsSatisfied()
+        _ctx.assertIsSatisfied()
         Assert.assertEquals(filters, CoverageFilterProviderImpl.DefaultExcludeAttributeFilters.toList())
     }
 
     private fun createInstance(): CoverageFilterProvider {
-        return CoverageFilterProviderImpl(_parametersService!!, _coverageFilterConverter!!)
+        return CoverageFilterProviderImpl(_parametersService, _coverageFilterConverter)
     }
 }

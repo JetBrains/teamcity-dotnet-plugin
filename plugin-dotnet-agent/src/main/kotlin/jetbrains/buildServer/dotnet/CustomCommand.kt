@@ -9,14 +9,12 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 class CustomCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: DotnetToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder)
+        override val toolResolver: DotnetToolResolver)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType

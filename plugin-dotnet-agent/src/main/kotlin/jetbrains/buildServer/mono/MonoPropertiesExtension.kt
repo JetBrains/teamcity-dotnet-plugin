@@ -1,9 +1,9 @@
 package jetbrains.buildServer.mono
 
-import jetbrains.buildServer.util.EventDispatcher
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.MonoConstants
+import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
 
 class MonoPropertiesExtension(

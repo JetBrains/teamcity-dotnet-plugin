@@ -19,7 +19,7 @@ class EnvironmentImpl(private val _fileSystemService: FileSystemService) : Envir
                         .filter { _fileSystemService.isExists(it) }
             } ?: emptySequence()
 
-    override val OS: OSType
+    override val os: OSType
         get() = OSDetector.detect() ?: OSType.UNIX
 
     companion object {

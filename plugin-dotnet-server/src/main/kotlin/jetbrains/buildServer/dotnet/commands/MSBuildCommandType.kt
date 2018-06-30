@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
@@ -10,14 +12,11 @@ import kotlin.coroutines.experimental.buildSequence
  * Provides parameters for dotnet MSBuild command.
  */
 class MSBuildCommandType : CommandType() {
-    override val name: String
-        get() = DotnetCommandType.MSBuild.id
+    override val name: String = DotnetCommandType.MSBuild.id
 
-    override val editPage: String
-        get() = "editMSBuildParameters.jsp"
+    override val editPage: String = "editMSBuildParameters.jsp"
 
-    override val viewPage: String
-        get() = "viewMSBuildParameters.jsp"
+    override val viewPage: String = "viewMSBuildParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>) = buildSequence {
         if (isDocker(parameters)) return@buildSequence
@@ -33,11 +32,11 @@ class MSBuildCommandType : CommandType() {
                         ToolPlatform.Windows -> {
                             shouldBeWindows = true
                             hasRequirement = when (it.bitness) {
-                                ToolBitness.x64 -> {
+                                ToolBitness.X64 -> {
                                     yield(Requirement("MSBuildTools${it.version}.0_x64_Path", null, RequirementType.EXISTS))
                                     true
                                 }
-                                ToolBitness.x86 -> {
+                                ToolBitness.X86 -> {
                                     yield(Requirement("MSBuildTools${it.version}.0_x86_Path", null, RequirementType.EXISTS))
                                     true
                                 }

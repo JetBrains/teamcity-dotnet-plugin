@@ -1,13 +1,14 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineResult
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 import kotlin.coroutines.experimental.buildSequence
 
 class VSTestCommand(
-        private val _parametersService: ParametersService,
+        _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
@@ -29,7 +30,7 @@ class VSTestCommand(
                 }
             }
 
-            when(parameters(DotnetConstants.PARAM_TEST_FILTER)) {
+            when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
                 "filter" -> {
                     parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
                         if (it.isNotBlank()) {

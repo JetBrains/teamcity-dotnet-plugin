@@ -56,13 +56,13 @@ class MSBuildVSTestLoggerParametersProviderTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(testReportingParameters).Mode
+                oneOf<TestReportingParameters>(testReportingParameters).mode
                 will(returnValue(testReportingMode))
 
                 oneOf<PathsService>(pathsService).getPath(PathType.Checkout)
                 will(returnValue(File("CheckoutDir")))
 
-                oneOf<LoggerParameters>(msBuildVSTestLoggerParameters).VSTestVerbosity
+                oneOf<LoggerParameters>(msBuildVSTestLoggerParameters).vsTestVerbosity
                 will(returnValue(Verbosity.Detailed))
             }
         })

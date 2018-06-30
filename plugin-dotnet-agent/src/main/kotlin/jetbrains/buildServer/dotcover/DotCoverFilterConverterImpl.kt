@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.RunBuildException
@@ -103,15 +105,15 @@ class DotCoverFilterConverterImpl : DotCoverFilterConverter {
     }
 
     companion object {
-        private val DEFAULT_VAR = 0
-        private val MODULE_VAR = 1
-        private val CLASS_VAR = 2
-        private val FUNCTION_VAR = 3
-        private val NAMED_PART_TYPE_GROUP = 1
-        private val NAMED_PART_VALUE_GROUP = 2
-        private val VALUE_GROUP = 3
-        private val FILTER_TYPE_GROUP = 1
-        private val FILTER_BODY_GROUP = 2
+        private const val DEFAULT_VAR = 0
+        private const val MODULE_VAR = 1
+        private const val CLASS_VAR = 2
+        private const val FUNCTION_VAR = 3
+        private const val NAMED_PART_TYPE_GROUP = 1
+        private const val NAMED_PART_VALUE_GROUP = 2
+        private const val VALUE_GROUP = 3
+        private const val FILTER_TYPE_GROUP = 1
+        private const val FILTER_BODY_GROUP = 2
         private val ourFilterPattern = Pattern.compile("^\\s*([-|+]\\s*)\\s*:\\s*([^:\\s]+)\\s*\\z", Pattern.CASE_INSENSITIVE)
         private val ourFilterPartPattern = Pattern.compile("(module|assembly|class|type|attribute|attributename|function|method)[=]([^;=]+)|([^;=]+)", Pattern.CASE_INSENSITIVE)
         private val ourEndOfLinePattern = Pattern.compile("\\n")

@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
@@ -19,8 +21,8 @@ class EnvironmentVariablesImpl(
             // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
             // https://youtrack.jetbrains.com/issue/TW-55268
             // https://github.com/dotnet/roslyn/issues/27566
-            if (_dotnetCliToolInfo.Version > LastNotHangingVBCSCompilerVersion) {
-                when (_environment.OS) {
+            if (_dotnetCliToolInfo.version > LastNotHangingVBCSCompilerVersion) {
+                when (_environment.os) {
                     OSType.UNIX, OSType.MAC -> yield(useSharedCompilationEnvironmentVariable)
                     else -> {
                         // dotCover is waiting for finishing of all spawned processes including a build's infrastructure processes
@@ -35,11 +37,11 @@ class EnvironmentVariablesImpl(
 
     companion object {
         private val LastNotHangingVBCSCompilerVersion: Version = Version(2, 1, 105)
-        val defaultVariables = sequenceOf(
+        internal val defaultVariables = sequenceOf(
                 CommandLineEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true"),
                 CommandLineEnvironmentVariable("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true"),
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
 
-        val useSharedCompilationEnvironmentVariable = CommandLineEnvironmentVariable("UseSharedCompilation", "false")
+        internal val useSharedCompilationEnvironmentVariable = CommandLineEnvironmentVariable("UseSharedCompilation", "false")
     }
 }

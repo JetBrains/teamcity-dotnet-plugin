@@ -5,15 +5,13 @@ import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.Test
-import java.io.File
-import java.io.FileInputStream
 
 class SolutionDiscoverTest {
     @Test
     fun shouldDiscover() {
         // Given
-        val path1 = "projectPath1/aaa.sln";
-        val path2 = "projectPath2/proj.sln";
+        val path1 = "projectPath1/aaa.sln"
+        val path2 = "projectPath2/proj.sln"
 
         val streamFactory = StreamFactoryStub()
         val ctx = Mockery()

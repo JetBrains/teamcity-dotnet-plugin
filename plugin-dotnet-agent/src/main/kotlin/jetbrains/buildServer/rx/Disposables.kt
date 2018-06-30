@@ -21,20 +21,19 @@ inline fun <T : Disposable?, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null
     try {
         return block(this)
-    }
-    catch (e: Throwable) {
+    } catch (e: Throwable) {
         exception = e
         throw e
-    }
-    finally {
+    } finally {
         when {
-            this == null -> {}
+            this == null -> {
+            }
             exception == null -> dispose()
             else ->
                 try {
                     dispose()
+                } catch (ex: Throwable) {
                 }
-                catch (ex: Throwable) { }
         }
     }
 }

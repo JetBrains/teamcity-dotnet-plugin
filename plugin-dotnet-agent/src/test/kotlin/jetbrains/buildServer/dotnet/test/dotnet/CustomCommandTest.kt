@@ -1,9 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -22,8 +21,8 @@ class CustomCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val arguments = parameters[DotnetConstants.PARAM_ARGUMENTS]!!.split(' ').map { CommandLineArgument(it)}.asSequence()
-        val command = createCommand(arguments = arguments )
+        val arguments = parameters[DotnetConstants.PARAM_ARGUMENTS]!!.split(' ').map { CommandLineArgument(it) }.asSequence()
+        val command = createCommand(arguments = arguments)
 
         // When
         val actualArguments = command.arguments.map { it.value }.toList()
@@ -60,12 +59,10 @@ class CustomCommandTest {
             parameters: Map<String, String> = emptyMap(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
             resultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
-        var ctx = Mockery()
         return CustomCommand(
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
                 DotnetCommonArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(File("dotnet"), true),
-                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+                DotnetToolResolverStub(File("dotnet"), true))
     }
 }

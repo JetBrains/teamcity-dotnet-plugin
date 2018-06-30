@@ -1,36 +1,36 @@
 package jetbrains.buildServer.rx
 
-fun <T>subjectOf(): Subject<T> = object : Subject<T> {
-    private val _observers: MutableList<Observer<T>> = mutableListOf()
-    private var _isCompleted: Boolean = false
+fun <T> subjectOf(): Subject<T> = object : Subject<T> {
+    private val observers: MutableList<Observer<T>> = mutableListOf()
+    private var isCompleted: Boolean = false
 
     override fun subscribe(observer: Observer<T>): Disposable {
-        synchronized(_observers) {
-            if (_isCompleted) {
+        synchronized(observers) {
+            if (isCompleted) {
                 observer.onComplete()
                 return@synchronized
             }
 
-            _observers.add(observer)
+            observers.add(observer)
         }
 
         return disposableOf {
-            synchronized(_observers) {
-                _observers.remove(observer)
+            synchronized(observers) {
+                observers.remove(observer)
             }
         }
     }
 
     override fun onNext(value: T) =
-            synchronized(_observers) {
-                for (observer in _observers) {
+            synchronized(observers) {
+                for (observer in observers) {
                     observer.onNext(value)
                 }
             }
 
     override fun onError(error: Exception) =
-            synchronized(_observers) {
-                for (observer in _observers) {
+            synchronized(observers) {
+                for (observer in observers) {
                     observer.onError(error)
                 }
 
@@ -38,8 +38,8 @@ fun <T>subjectOf(): Subject<T> = object : Subject<T> {
             }
 
     override fun onComplete() =
-            synchronized(_observers) {
-                for (observer in _observers) {
+            synchronized(observers) {
+                for (observer in observers) {
                     observer.onComplete()
                 }
 
@@ -47,7 +47,7 @@ fun <T>subjectOf(): Subject<T> = object : Subject<T> {
             }
 
     private fun finish() {
-        _observers.clear()
-        _isCompleted = true
+        observers.clear()
+        isCompleted = true
     }
 }

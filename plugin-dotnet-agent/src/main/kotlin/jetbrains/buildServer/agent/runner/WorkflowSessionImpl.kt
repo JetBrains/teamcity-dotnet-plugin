@@ -8,14 +8,15 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.BuildFinishedStatus
+import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.CommandLineResult
 import java.io.File
 
 class WorkflowSessionImpl(
         private val _workflowComposer: WorkflowComposer,
         private val _buildStepContext: BuildStepContext,
-        private val _loggerService: LoggerService,
-        private val _argumentsService: ArgumentsService)
+        private val _loggerService: LoggerService)
     : MultiCommandBuildSession, WorkflowContext {
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null
@@ -33,7 +34,7 @@ class WorkflowSessionImpl(
         // yield command here
         if (!commandLinesIterator.hasNext()) {
             if (_buildFinishedStatus == null) {
-               _buildFinishedStatus = BuildFinishedStatus.FINISHED_SUCCESS
+                _buildFinishedStatus = BuildFinishedStatus.FINISHED_SUCCESS
             }
 
             return null
@@ -46,22 +47,16 @@ class WorkflowSessionImpl(
                 commandLinesIterator.next(),
                 exitCode,
                 _buildStepContext,
-                _loggerService,
-                _argumentsService)
+                _loggerService)
     }
 
     override val status: WorkflowStatus
-        get() {
-            val curStatus = _buildFinishedStatus
-            if (curStatus == null) {
-                return WorkflowStatus.Running
+        get() =
+            when (_buildFinishedStatus) {
+                null -> WorkflowStatus.Running
+                BuildFinishedStatus.FINISHED_SUCCESS, BuildFinishedStatus.FINISHED_WITH_PROBLEMS -> WorkflowStatus.Completed
+                else -> WorkflowStatus.Failed
             }
-
-            when (curStatus) {
-                BuildFinishedStatus.FINISHED_SUCCESS, BuildFinishedStatus.FINISHED_WITH_PROBLEMS -> return WorkflowStatus.Completed
-                else -> return WorkflowStatus.Failed
-            }
-        }
 
     override fun abort(buildFinishedStatus: BuildFinishedStatus) {
         _buildFinishedStatus = buildFinishedStatus
@@ -70,7 +65,7 @@ class WorkflowSessionImpl(
     override fun sessionStarted() = Unit
 
     override fun sessionFinished(): BuildFinishedStatus? =
-        _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
+            _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
 
     override val lastResult: CommandLineResult
         get() = _lastResult ?: throw RunBuildException("There are no any results yet")
@@ -79,8 +74,7 @@ class WorkflowSessionImpl(
             private val _commandLine: CommandLine,
             private val _exitCode: MutableCollection<Int>,
             private val _buildStepContext: BuildStepContext,
-            private val _loggerService: LoggerService,
-            private val _argumentsService: ArgumentsService) : CommandExecution {
+            private val _loggerService: LoggerService) : CommandExecution {
 
         override fun beforeProcessStarted() = Unit
 
@@ -91,11 +85,10 @@ class WorkflowSessionImpl(
         }
 
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(
-                _argumentsService,
                 _commandLine,
                 _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
-        override fun onStandardOutput(text: String)= _loggerService.onStandardOutput(text)
+        override fun onStandardOutput(text: String) = _loggerService.onStandardOutput(text)
 
         override fun onErrorOutput(text: String) = _loggerService.onErrorOutput(text)
 
@@ -105,9 +98,9 @@ class WorkflowSessionImpl(
     }
 
     private class ProgramCommandLineAdapter(
-            private val _argumentsService: ArgumentsService,
             private val _commandLine: CommandLine,
             private val _environmentVariables: Map<String, String>) : ProgramCommandLine {
+
         override fun getExecutablePath(): String =
                 _commandLine.executableFile.absolutePath
 

@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotnet.discovery
 
 import com.intellij.openapi.diagnostic.Logger
@@ -8,8 +10,6 @@ import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExt
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
 import jetbrains.buildServer.util.browser.Browser
 import jetbrains.buildServer.util.browser.Element
-import java.util.regex.Pattern
-import java.util.regex.Pattern.CASE_INSENSITIVE
 import kotlin.coroutines.experimental.buildSequence
 
 class DotnetRunnerDiscoveryExtension(
@@ -53,7 +53,7 @@ class DotnetRunnerDiscoveryExtension(
     }
 
     private fun extractParameters(parameters: Map<String, String>): List<Parameter> =
-            parameters.filter { Params.contains(it.key) && !it.value.isNullOrBlank()}.map { Parameter(it.key, it.value) }.toList()
+            parameters.filter { Params.contains(it.key) && !it.value.isBlank() }.map { Parameter(it.key, it.value) }.toList()
 
     private fun getElements(elements: Sequence<Element>, depth: Int = 3): Sequence<Element> =
             if (depth > 0)
@@ -67,23 +67,22 @@ class DotnetRunnerDiscoveryExtension(
     }
 
     private fun createCommands(solution: Solution): Sequence<Command> = buildSequence {
-        if (!solution.solution.isNullOrBlank()) {
-            var solutionPath = normalizePath(solution.solution)
+        if (!solution.solution.isBlank()) {
+            val solutionPath = normalizePath(solution.solution)
             yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
             yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
 
             // If all projects contain tests
-            if (solution.projects.map { _projectTypeSelector.select(it) }.all{ it.contains(ProjectType.Test)}) {
+            if (solution.projects.map { _projectTypeSelector.select(it) }.all { it.contains(ProjectType.Test) }) {
                 yield(createSimpleCommand(DotnetCommandType.Test, solutionPath))
             }
-        }
-        else {
+        } else {
             for (project in solution.projects) {
-                if (project.project.isNullOrBlank()) {
+                if (project.project.isBlank()) {
                     continue
                 }
 
-                var projectPath = normalizePath(project.project)
+                val projectPath = normalizePath(project.project)
                 yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
                 val projectTypes = _projectTypeSelector.select(project)
                 if (projectTypes.contains(ProjectType.Unknown)) {
@@ -93,11 +92,11 @@ class DotnetRunnerDiscoveryExtension(
         }
 
         for (project in solution.projects) {
-            if (project.project.isNullOrBlank()) {
+            if (project.project.isBlank()) {
                 continue
             }
 
-            var projectPath = normalizePath(project.project)
+            val projectPath = normalizePath(project.project)
             val projectTypes = _projectTypeSelector.select(project)
 
             if (projectTypes.contains(ProjectType.Test)) {
@@ -112,20 +111,16 @@ class DotnetRunnerDiscoveryExtension(
         }
     }
 
-    private fun createSimpleCommand(commandType: DotnetCommandType, path:String): Command =
+    private fun createSimpleCommand(commandType: DotnetCommandType, path: String): Command =
             Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
 
-    private fun createDefaultName(commandType: DotnetCommandType, path:String): String =
+    private fun createDefaultName(commandType: DotnetCommandType, path: String): String =
             _defaultDiscoveredTargetNameFactory.createName(commandType, path)
 
     private fun normalizePath(path: String): String = path.replace('\\', '/')
 
     class Command(val name: String, _parameters: List<Parameter>) {
-        val parameters: List<Parameter>
-
-        init {
-            parameters = _parameters.sortedBy { it.name }
-        }
+        val parameters: List<Parameter> = _parameters.sortedBy { it.name }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -142,7 +137,7 @@ class DotnetRunnerDiscoveryExtension(
         }
     }
 
-    data class Parameter(val name: String, val value: String) { }
+    data class Parameter(val name: String, val value: String)
 
     private companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnerDiscoveryExtension::class.java.name)

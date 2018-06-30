@@ -1,3 +1,5 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.RunBuildException
@@ -154,11 +156,11 @@ class DotCoverWorkflowComposer(
     }
 
     companion object {
-        internal val DotCoverExecutableFile = "dotCover.exe"
-        internal val DotCoverToolName = "dotcover"
-        internal val DotCoverProjectExtension = ".dotCover"
-        internal val DotCoverSnapshotExtension = ".dcvr"
+        internal const val DotCoverExecutableFile = "dotCover.exe"
+        internal const val DotCoverToolName = "dotcover"
+        internal const val DotCoverProjectExtension = ".dotCover"
+        internal const val DotCoverSnapshotExtension = ".dcvr"
     }
 
-    private data class DeferredServiceMessages(val result: CommandLineResult, val serviceMessages: List<ServiceMessage>) {}
+    private data class DeferredServiceMessages(val result: CommandLineResult, val serviceMessages: List<ServiceMessage>)
 }

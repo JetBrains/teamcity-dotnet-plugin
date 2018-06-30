@@ -10,9 +10,9 @@ class DotCoverServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-            arrayOf(File("dotCoverHome"), "##teamcity[dotNetCoverage dotcover_home='dotCoverHome']"),
-            arrayOf(File("dotCover Home"), "##teamcity[dotNetCoverage dotcover_home='dotCover Home']"),
-            arrayOf(File(""), "##teamcity[dotNetCoverage dotcover_home='']"))
+                arrayOf(File("dotCoverHome"), "##teamcity[dotNetCoverage dotcover_home='dotCoverHome']"),
+                arrayOf(File("dotCover Home"), "##teamcity[dotNetCoverage dotcover_home='dotCover Home']"),
+                arrayOf(File(""), "##teamcity[dotNetCoverage dotcover_home='']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")

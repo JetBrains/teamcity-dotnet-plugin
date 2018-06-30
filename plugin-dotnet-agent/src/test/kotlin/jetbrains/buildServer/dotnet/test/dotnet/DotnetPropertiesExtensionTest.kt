@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetPropertiesExtension
+import jetbrains.buildServer.dotnet.Version
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -8,11 +9,11 @@ import java.io.File
 
 class DotnetPropertiesExtensionTest {
     @DataProvider
-    fun testData(): Array<Array<Sequence<DotnetPropertiesExtension.Sdk>>>{
+    fun testData(): Array<Array<Sequence<DotnetPropertiesExtension.Sdk>>> {
         return arrayOf(
                 arrayOf(
-                        emptySequence<DotnetPropertiesExtension.Sdk>(),
-                        emptySequence<DotnetPropertiesExtension.Sdk>()),
+                        emptySequence(),
+                        emptySequence()),
 
                 arrayOf(
                         sequenceOf(
@@ -42,7 +43,7 @@ class DotnetPropertiesExtensionTest {
         // Given
 
         // When
-        val actualSdks = DotnetPropertiesExtension.enumerateSdk(originSdks).toList();
+        val actualSdks = DotnetPropertiesExtension.enumerateSdk(originSdks).toList()
 
         // Then
         Assert.assertEquals(actualSdks, expectedSdks.toList())

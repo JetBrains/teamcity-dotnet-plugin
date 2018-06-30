@@ -8,5 +8,5 @@ interface Environment {
 
     val paths: Sequence<File>
 
-    val OS: OSType
+    val os: OSType
 }

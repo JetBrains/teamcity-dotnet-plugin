@@ -1,8 +1,10 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.CoverageConstants
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 

@@ -7,7 +7,9 @@
 
 package jetbrains.buildServer.dotnet.fetchers
 
-import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.dotnet.discovery.SolutionDiscover
+import jetbrains.buildServer.dotnet.discovery.StreamFactory
+import jetbrains.buildServer.dotnet.discovery.StreamFactoryImpl
 import jetbrains.buildServer.serverSide.DataItem
 import jetbrains.buildServer.serverSide.ProjectDataFetcher
 import jetbrains.buildServer.util.StringUtil
@@ -23,12 +25,12 @@ class DotnetRuntimesFetcher(private val _solutionDiscover: SolutionDiscover) : P
                     .map { DataItem(it, null) }
                     .toMutableList()
 
-    fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
+    private fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
             _solutionDiscover.discover(streamFactory, paths)
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.runtimes.asSequence() }
                     .map { it.name }
-                    .distinctBy() { it.toLowerCase() }
+                    .distinctBy { it.toLowerCase() }
                     .sorted()
 
     override fun getType(): String {
