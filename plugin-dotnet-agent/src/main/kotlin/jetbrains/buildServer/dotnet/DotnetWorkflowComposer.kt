@@ -21,10 +21,10 @@ class DotnetWorkflowComposer(
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
         private val _commandSet: CommandSet,
         private val _failedTestSource: FailedTestSource,
-        private val _targetRegistry: TargetRegistry) : WorkflowComposer {
+        private val _targetRegistry: TargetRegistry,
+        private val _commandRegistry: CommandRegistry) : WorkflowComposer {
 
-    override val target: TargetType
-        get() = TargetType.Tool
+    override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
             Workflow(buildSequence {
@@ -42,7 +42,8 @@ class DotnetWorkflowComposer(
                         val args = command.arguments.toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
                         _loggerService.onStandardOutput(commandHeader)
-                        val commandName = command.commandType.id.replace('-', ' ')
+                        val commandType = command.commandType
+                        val commandName = commandType.id.replace('-', ' ')
                         val blockName = if (commandName.isNotBlank()) {
                             commandName
                         } else {
@@ -54,6 +55,7 @@ class DotnetWorkflowComposer(
                                     .subscribe { result += CommandResult.FailedTests }
                                     .use {
                                         _targetRegistry.activate(target).use {
+                                            _commandRegistry.register(commandType)
                                             yield(CommandLine(
                                                     TargetType.Tool,
                                                     executableFile,

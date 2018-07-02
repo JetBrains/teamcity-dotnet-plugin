@@ -16,8 +16,7 @@ class CmdWorkflowComposer(
         private val _environment: Environment)
     : WorkflowComposer {
 
-    override val target: TargetType
-        get() = TargetType.Host
+    override val target: TargetType = TargetType.Host
 
     override fun compose(context: WorkflowContext, workflow: Workflow) =
             when (_environment.os) {

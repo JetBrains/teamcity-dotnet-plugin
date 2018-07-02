@@ -19,14 +19,10 @@ class TestReportingParametersImpl(
             }
 
             val modeSet = mutableSetOf(TestReportingMode.On)
-            if (_dotnetCliToolInfo.version >= MultiAdapterPathVersion) {
+            if (_dotnetCliToolInfo.version >= Version.MultiAdapterPathVersion) {
                 modeSet.add(TestReportingMode.MultiAdapterPath)
             }
 
             return EnumSet.copyOf<TestReportingMode>(modeSet)
         }
-
-    companion object {
-        val MultiAdapterPathVersion: Version = Version(2, 1, 102)
-    }
 }

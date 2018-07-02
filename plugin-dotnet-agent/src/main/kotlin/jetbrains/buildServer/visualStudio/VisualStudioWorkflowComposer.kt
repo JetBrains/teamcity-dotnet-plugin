@@ -22,8 +22,7 @@ class VisualStudioWorkflowComposer(
         private val _targetRegistry: TargetRegistry)
     : WorkflowComposer {
 
-    override val target: TargetType
-        get() = TargetType.Tool
+    override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow) =
             Workflow(buildSequence {

@@ -25,8 +25,7 @@ class DotCoverWorkflowComposer(
         private val _targetRegistry: TargetRegistry)
     : WorkflowComposer {
 
-    override val target: TargetType
-        get() = TargetType.CodeCoverageProfiler
+    override val target: TargetType = TargetType.CodeCoverageProfiler
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
         if (!dotCoverEnabled) {

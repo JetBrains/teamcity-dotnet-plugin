@@ -7,6 +7,7 @@
   <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml"/>
 
   <!-- common agent services -->
+  <bean class="jetbrains.buildServer.agent.AgentLifeCycleEventSourcesImpl"/>
   <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
   <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
@@ -29,6 +30,7 @@
   </bean>
 
   <!-- dotnet -->
+  <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>
   <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">

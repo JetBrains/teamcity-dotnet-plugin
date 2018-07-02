@@ -42,6 +42,7 @@ class DotnetWorkflowComposerTest {
     private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
+    private lateinit var _commandRegistry: CommandRegistry
 
     @BeforeMethod
     fun setUp() {
@@ -65,6 +66,7 @@ class DotnetWorkflowComposerTest {
         _resultsAnalyzer2 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer2")
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
+        _commandRegistry = _ctx.mock(CommandRegistry::class.java)
     }
 
     @Test
@@ -181,6 +183,10 @@ class DotnetWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 exactly(2).of(_targetRegistrationToken).dispose()
+
+                oneOf(_commandRegistry).register(DotnetCommandType.Build)
+
+                oneOf(_commandRegistry).register(DotnetCommandType.NuGetPush)
             }
         })
 
@@ -215,6 +221,7 @@ class DotnetWorkflowComposerTest {
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
                 _failedTestSource,
-                _targetRegistry)
+                _targetRegistry,
+                _commandRegistry)
     }
 }

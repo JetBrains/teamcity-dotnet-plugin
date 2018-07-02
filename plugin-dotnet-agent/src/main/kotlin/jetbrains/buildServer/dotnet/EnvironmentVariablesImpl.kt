@@ -21,7 +21,7 @@ class EnvironmentVariablesImpl(
             // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
             // https://youtrack.jetbrains.com/issue/TW-55268
             // https://github.com/dotnet/roslyn/issues/27566
-            if (_dotnetCliToolInfo.version > LastNotHangingVBCSCompilerVersion) {
+            if (_dotnetCliToolInfo.version > Version.LastVersionWithoutSharedCompilation) {
                 when (_environment.os) {
                     OSType.UNIX, OSType.MAC -> yield(useSharedCompilationEnvironmentVariable)
                     else -> {
@@ -36,7 +36,6 @@ class EnvironmentVariablesImpl(
         }
 
     companion object {
-        private val LastNotHangingVBCSCompilerVersion: Version = Version(2, 1, 105)
         internal val defaultVariables = sequenceOf(
                 CommandLineEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true"),
                 CommandLineEnvironmentVariable("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true"),

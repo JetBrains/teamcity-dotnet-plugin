@@ -5,9 +5,7 @@ package jetbrains.buildServer.dotnet
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
-class Version(
-        vararg version: Int) : Comparable<Version> {
-
+class Version(vararg version: Int) : Comparable<Version> {
     val version = buildSequence {
         // Trim zero(s) at the end
         var zeroCounter = 0
@@ -62,5 +60,8 @@ class Version(
             var counter = count
             return generateSequence { (counter--).takeIf { it > 0 } }.map { value }
         }
+
+        val LastVersionWithoutSharedCompilation: Version = Version(2, 1, 105)
+        val MultiAdapterPathVersion: Version = Version(2, 1, 102)
     }
 }
