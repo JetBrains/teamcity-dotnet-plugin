@@ -2,12 +2,13 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.runner.ServiceMessageSource
 import jetbrains.buildServer.dotnet.FailedTestSourceImpl
+import jetbrains.buildServer.dotnet.test.rx.assertEquals
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.TestFailed
 import jetbrains.buildServer.messages.serviceMessages.TestFinished
 import jetbrains.buildServer.messages.serviceMessages.TestIgnored
 import jetbrains.buildServer.rx.*
-import org.testng.Assert
+import jetbrains.buildServer.rx.NotificationCompleted.Companion.completed
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
@@ -17,24 +18,24 @@ class FailedTestSourceTest {
     fun testData(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(Unit), NotificationCompleted.shared<Unit>())),
+                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), completed()),
+                        observableOf(NotificationNext(Unit), completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestFinished("name", 1)), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<Unit>())),
+                        observableOf(NotificationNext<ServiceMessage>(TestFinished("name", 1)), completed()),
+                        observableOf(completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestIgnored("name", "comment")), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<Unit>())),
+                        observableOf(NotificationNext<ServiceMessage>(TestIgnored("name", "comment")), completed()),
+                        observableOf(completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationNext<ServiceMessage>(TestFailed("name2", "message2")), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(Unit), NotificationCompleted.shared<Unit>())),
+                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationNext<ServiceMessage>(TestFailed("name2", "message2")), completed()),
+                        observableOf(NotificationNext(Unit), completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<Unit>())))
+                        observableOf(completed()),
+                        observableOf(completed<ServiceMessage>())))
     }
 
     @Test(dataProvider = "testData")
-    fun shouldMap(data: Observable<Notification<ServiceMessage>>, expectedNotifications: List<Notification<Unit>>) {
+    fun shouldMap(data: Observable<Notification<ServiceMessage>>, expectedNotifications: Observable<Notification<Unit>>) {
         // Given
         val serviceMessageSource = object : ServiceMessageSource {
             override fun subscribe(observer: Observer<ServiceMessage>): Disposable =
@@ -45,9 +46,6 @@ class FailedTestSourceTest {
         val actualNotifications = FailedTestSourceImpl(serviceMessageSource)
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                expectedNotifications)
+        assertEquals(actualNotifications, expectedNotifications.dematerialize())
     }
 }

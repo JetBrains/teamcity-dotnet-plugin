@@ -10,11 +10,11 @@ class SubjectsTest {
     fun testData(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.completed<Int>()),
+                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>(), NotificationNext(4)),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.completed<Int>(), NotificationNext(4)),
+                        listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.completed<Int>())),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error)),
                         listOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationError<Int>(error))),

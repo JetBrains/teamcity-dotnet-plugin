@@ -3,6 +3,7 @@
 package jetbrains.buildServer.dotnet.test.rx
 
 import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.NotificationCompleted.Companion.completed
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -13,18 +14,15 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = observableOf<Int> {
-            it.onNext(1)
-            it.onNext(2)
-            it.onComplete()
+        val source = buildObservable<Int> {
+            onNext(1)
+            onNext(2)
+            onComplete()
             emptyDisposable()
         }
 
         // Then
-        val actual = source.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()))
+        assertEquals(source, observableOf(1, 2))
     }
 
     @Test
@@ -32,16 +30,13 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = observableOf<Int> {
-            it.onComplete()
+        val source = buildObservable<Int> {
+            onComplete()
             emptyDisposable()
         }
 
         // Then
-        val actual = source.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                listOf(NotificationCompleted.shared<Int>()))
+        assertEquals(source, emptyObservable())
     }
 
     @Test
@@ -49,18 +44,15 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = observableOf<Int> {
-            it.onNext(1)
-            it.onNext(2)
-            it.onError(error)
+        val source = buildObservable<Int> {
+            onNext(1)
+            onNext(2)
+            onError(error)
             emptyDisposable()
         }
 
         // Then
-        val actual = source.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)))
+        assertEquals(source, observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)).dematerialize())
     }
 
     @Test
@@ -71,196 +63,276 @@ class ObservablesTest {
         val source = emptyObservable<Int>()
 
         // Then
-        Assert.assertEquals(
-                source.materialize().toSequence().toList(),
-                listOf(NotificationCompleted.shared<Int>()))
+        assertEquals(source, observableOf(completed<Int>()).dematerialize())
     }
 
     @DataProvider
     fun testDataMap(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext("1"), NotificationNext("2"), NotificationCompleted.shared<String>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>()),
+                        observableOf(NotificationNext("1"), NotificationNext("2"), completed<String>())),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
-                        listOf(NotificationNext("1"), NotificationNext("2"), NotificationError<Int>(error))),
+                        observableOf(NotificationNext("1"), NotificationNext("2"), NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<String>())))
+                        observableOf(completed<Int>()),
+                        observableOf(completed<String>())))
     }
 
     @Test(dataProvider = "testDataMap")
-    fun shouldMap(data: Observable<Notification<Int>>, expectedNotifications: List<Notification<String>>) {
+    fun shouldMap(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<String>>) {
         // Given
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.map { it.toString() }
+        val actual = source.map{ it.toString() }
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(actual, expectedNotifications)
+        assertEquals(actual, expectedNotifications.dematerialize())
+    }
+
+    @DataProvider
+    fun testDataReduce(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
+                        observableOf(NotificationNext(6), completed<Long>())),
+                arrayOf(
+                        observableOf(NotificationError<Int>(error)),
+                        observableOf(NotificationError<Long>(error))),
+                arrayOf(
+                        observableOf(NotificationNext(33), completed()),
+                        observableOf(NotificationNext(33), completed<Long>())),
+                arrayOf(
+                        observableOf(completed<Int>()),
+                        observableOf(NotificationNext(0), completed<Long>())))
+    }
+
+    @Test(dataProvider = "testDataReduce")
+    fun shouldReduce(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Long>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual = source.reduce(0) { total, next -> total + next}
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
     }
 
     @DataProvider
     fun testDataFilter(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
-                        listOf(NotificationNext(1), NotificationError<Int>(error))),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError(error)),
+                        observableOf(NotificationNext(1), NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationNext(3), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(3), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(3), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(3), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<Int>())))
+                        observableOf(completed()),
+                        observableOf(completed<Int>())))
     }
 
     @Test(dataProvider = "testDataFilter")
-    fun shouldFilter(data: Observable<Notification<Int>>, expectedNotifications: List<Notification<Int>>) {
+    fun shouldFilter(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Int>>) {
         // Given
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.filter { it != 2 }
+        val actual = source.filter{ it != 2 }
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(actual, expectedNotifications)
+        assertEquals(actual, expectedNotifications.dematerialize())
+
     }
 
     @DataProvider
     fun testDataUntil(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError(error)),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationError<Int>(error)),
-                        listOf(NotificationNext(1), NotificationError<Int>(error))),
+                        observableOf(NotificationNext(1), NotificationError(error)),
+                        observableOf(NotificationNext(1), NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationCompleted.shared<Int>()),
-                        listOf(NotificationCompleted.shared<Int>())))
+                        observableOf(completed()),
+                        observableOf(completed<Int>())))
     }
 
     @Test(dataProvider = "testDataUntil")
-    fun shouldUntil(data: Observable<Notification<Int>>, expectedNotifications: List<Notification<Int>>) {
+    fun shouldUntil(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Int>>) {
         // Given
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.until { it == 2 }
+        val actual = source.until{ it == 2 }
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(actual, expectedNotifications)
+        assertEquals(actual, expectedNotifications.dematerialize())
     }
 
     @DataProvider
     fun testDataTake(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
                         0..1,
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
                         1..2,
-                        listOf(NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(2), NotificationNext(3), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
                         1..1,
-                        listOf(NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(2), completed<Int>())),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
-                        0..9,
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error))),
+                        0 .. 9,
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error))),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
                         0..1,
-                        listOf(NotificationNext(1), NotificationNext(2), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
                 arrayOf(
                         observableOf(NotificationNext(1), NotificationNext(2), NotificationError<Int>(error)),
                         0..0,
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
                         -2..-1,
-                        listOf(NotificationCompleted.shared<Int>())),
+                        observableOf(completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
-                        0..1,
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), completed<Int>()),
+                        0 .. 1,
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationCompleted.shared<Int>()),
-                        0..1,
-                        listOf(NotificationCompleted.shared<Int>())))
+                        observableOf(completed<Int>()),
+                        0 .. 1,
+                        observableOf(completed<Int>())))
     }
 
     @Test(dataProvider = "testDataTake")
-    fun shouldTake(data: Observable<Notification<Int>>, range: IntRange, expectedNotifications: List<Notification<Int>>) {
+    fun shouldTake(data: Observable<Notification<Int>>, range: IntRange, expectedNotifications: Observable<Notification<Int>>) {
         // Given
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.take(range)
+        val actual = source.take(range)
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                expectedNotifications)
+        assertEquals(actual, expectedNotifications.dematerialize())
     }
 
     @DataProvider
     fun testDataFirst(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationError<Int>(error)),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())),
+                        observableOf(NotificationNext(1), NotificationError(error)),
+                        observableOf(NotificationNext(1), completed<Int>())),
                 arrayOf(
-                        observableOf(NotificationError<Int>(error)),
-                        listOf(NotificationError<Int>(error))),
+                        observableOf(NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))),
                 arrayOf(
-                        observableOf(NotificationNext(1), NotificationCompleted.shared<Int>()),
-                        listOf(NotificationNext(1), NotificationCompleted.shared<Int>())))
+                        observableOf(NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())))
     }
 
     @Test(dataProvider = "testDataFirst")
-    fun shouldFirst(data: Observable<Notification<Int>>, expectedNotifications: List<Notification<Int>>) {
+    fun shouldFirst(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Int>>) {
         // Given
         val source = data.dematerialize()
 
         // When
-        val actualNotifications = source.first()
+        val actual= source.first()
 
         // Then
-        val actual = actualNotifications.materialize().toSequence().toList()
-        Assert.assertEquals(
-                actual,
-                expectedNotifications)
+        assertEquals(actual, expectedNotifications.dematerialize())
+    }
+
+    @DataProvider
+    fun testDataLast(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(3), completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))),
+                arrayOf(
+                        observableOf(NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))),
+                arrayOf(
+                        observableOf(NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), completed<Int>())),
+                arrayOf(
+                        observableOf(completed()),
+                        observableOf(completed<Int>())))
+    }
+
+    @Test(dataProvider = "testDataLast")
+    fun shouldLast(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Int>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual = source.last()
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
+    }
+
+    @DataProvider
+    fun testDataCount(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>()),
+                        observableOf(NotificationNext(3L), completed<Long>())),
+                arrayOf(
+                        observableOf(NotificationError<Int>(error)),
+                        observableOf(NotificationError<Long>(error))),
+                arrayOf(
+                        observableOf(NotificationNext(33), completed()),
+                        observableOf(NotificationNext(1L), completed<Long>())),
+                arrayOf(
+                        observableOf(completed<Int>()),
+                        observableOf(NotificationNext(0L), completed<Long>())))
+    }
+
+    @Test(dataProvider = "testDataCount")
+    fun shouldCount(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Long>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual = source.count()
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
     }
 
     @Test
@@ -269,14 +341,14 @@ class ObservablesTest {
         val observers = mutableListOf<Observer<Int>>()
 
         // When
-        val source = observableOf<Int> {
-            observers.add(it)
-            it.onComplete()
+        val source = buildObservable<Int> {
+            observers.add(this)
+            onComplete()
             emptyDisposable()
         }.share()
 
-        source.subscribe({}).use {
-            source.subscribe({}).use {
+        source.subscribe {}.use {
+            source.subscribe { }.use {
             }
         }
 
@@ -291,12 +363,12 @@ class ObservablesTest {
         val unsubscribes = mutableListOf<Boolean>()
 
         // When
-        observableOf<Int> {
-            it.onComplete()
+        buildObservable<Int> {
+            onComplete()
             emptyDisposable()
         }
-                .track({ subscribes.add(it) }, { unsubscribes.add(it) })
-                .subscribe({})
+                .track({subscribes.add(it)}, {unsubscribes.add(it)})
+                .subscribe {}
                 .use { }
 
         // Then

@@ -5,18 +5,19 @@ package jetbrains.buildServer.rx
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
-inline fun <T> observableOf(crossinline subscriber: (Observer<T>) -> Disposable): Observable<T> =
+inline fun <T> buildObservable(crossinline subscriber: Observer<T>.() -> Disposable): Observable<T> =
         object : Observable<T> {
             override fun subscribe(observer: Observer<T>): Disposable = subscriber(observer)
         }
 
-fun <T> observableOf(vararg elements: T): Observable<T> =
-        if (elements.isEmpty()) emptyObservable() else elements.asSequence().toObservable()
+fun <T> observableOf(vararg values: T): Observable<T> =
+        if (values.isEmpty()) emptyObservable() else values.asSequence().toObservable()
 
 fun <T> emptyObservable(): Observable<T> =
-        observableOf {
-            it.onComplete()
+        buildObservable {
+            onComplete()
             emptyDisposable()
         }
 
@@ -34,55 +35,90 @@ inline fun <T> Observable<T>.subscribe(crossinline onNext: (T) -> Unit, crossinl
             override fun onComplete() = onComplete()
         })
 
-inline fun <T, R> Observable<T>.map(crossinline map: (T) -> R): Observable<R> = observableOf { observer ->
-    subscribe(
-            { observer.onNext(map(it)) },
-            { observer.onError(it) },
-            { observer.onComplete() })
-}
+inline fun <T, R> Observable<T>.map(crossinline map: (T) -> R): Observable<R> =
+        buildObservable {
+            subscribe(
+                    { onNext(map(it)) },
+                    { onError(it) },
+                    { onComplete() })
+        }
 
-inline fun <T> Observable<T>.filter(crossinline filter: (T) -> Boolean): Observable<T> = observableOf { observer ->
-    subscribe(
-            { if (filter(it)) observer.onNext(it) },
-            { observer.onError(it) },
-            { observer.onComplete() })
-}
+inline fun <T, R> Observable<T>.reduce(initialValue: R, crossinline operation: (acc: R, T) -> R): Observable<R> =
+        buildObservable {
+            val accumulator = AtomicReference<R>(initialValue)
+            subscribe(
+                    { value: T -> accumulator.getAndUpdate { operation(it, value) } },
+                    { onError(it) },
+                    {
+                        onNext(accumulator.get())
+                        onComplete()
+                    })
+        }
 
-inline fun <T> Observable<T>.until(crossinline completionCondition: (T) -> Boolean): Observable<T> = observableOf { observer ->
-    val isCompleted = AtomicBoolean(false)
-    subscribe(
-            {
-                if (isCompleted.compareAndSet(false, completionCondition(it))) {
-                    observer.onNext(it)
-                    if (isCompleted.get()) {
-                        observer.onComplete()
-                    }
-                }
-            },
-            { if (!isCompleted.get()) observer.onError(it) },
-            { if (!isCompleted.get()) observer.onComplete() })
-}
+inline fun <T> Observable<T>.filter(crossinline filter: (T) -> Boolean): Observable<T> =
+        buildObservable {
+            subscribe(
+                    { if (filter(it)) onNext(it) },
+                    { onError(it) },
+                    { onComplete() })
+        }
 
-fun <T> Observable<T>.take(range: LongRange): Observable<T> = observableOf {
-    val position = AtomicLong(0)
-    map { Pair(it, position.getAndIncrement()) }
-            .until { it.second >= range.endInclusive }
-            .filter { range.contains(it.second) }
-            .map { it.first }
-            .subscribe(it)
-}
+inline fun <T> Observable<T>.until(crossinline completionCondition: (T) -> Boolean): Observable<T> =
+        buildObservable {
+            val isCompleted = AtomicBoolean(false)
+            subscribe(
+                    {
+                        if (isCompleted.compareAndSet(false, completionCondition(it))) {
+                            onNext(it)
+                            if (isCompleted.get()) {
+                                onComplete()
+                            }
+                        }
+                    },
+                    { if(!isCompleted.get()) onError(it) },
+                    { if(!isCompleted.get()) onComplete() })
+        }
 
-fun <T> Observable<T>.take(range: IntRange): Observable<T> = take(LongRange(range.start.toLong(), range.endInclusive.toLong()))
+fun <T> Observable<T>.take(range: LongRange): Observable<T> =
+        buildObservable {
+            val position = AtomicLong(0)
+            map { Pair(it, position.getAndIncrement()) }
+                    .until { it.second >= range.endInclusive }
+                    .filter { range.contains(it.second) }
+                    .map { it.first }
+                    .subscribe(this)
+        }
 
-fun <T> Observable<T>.first(): Observable<T> = take(LongRange(0, 0))
+fun <T> Observable<T>.take(range: IntRange): Observable<T> =
+        take(LongRange(range.start.toLong(), range.endInclusive.toLong()))
 
-fun <T> Sequence<T>.toObservable(): Observable<T> = observableOf { observer ->
-    forEach { observer.onNext(it) }
-    observer.onComplete()
-    emptyDisposable()
-}
+fun <T> Observable<T>.first(): Observable<T> =
+        take(LongRange(0, 0))
 
-fun <T> Observable<T>.toSequence(): Sequence<T> =
+fun <T> Observable<T>.last(): Observable<T> =
+        buildObservable {
+            val lastValue: AtomicReference<T> = AtomicReference()
+            subscribe(
+                    { lastValue.set(it) },
+                    { onError(it) },
+                    {
+                        lastValue.get()?.let { onNext(it) }
+                        onComplete()
+                    })
+        }
+
+fun <T> Observable<T>.count(): Observable<Long> =
+        reduce(0L ){ total, _ -> total + 1L}
+
+fun <T> Sequence<T>.toObservable(): Observable<T> =
+        buildObservable {
+            forEach { onNext(it) }
+            onComplete()
+            emptyDisposable()
+        }
+
+@Throws(InterruptedException::class)
+fun <T> Observable<T>.toSequence(timeout: Long): Sequence<T> =
         object : Sequence<T>, Disposable {
             private val subscriptions = mutableListOf<Disposable>()
 
@@ -93,12 +129,12 @@ fun <T> Observable<T>.toSequence(): Sequence<T> =
 
             override fun iterator(): Iterator<T> {
                 val lockObject = Object()
-                val items = mutableListOf<T>()
+                val values = mutableListOf<T>()
                 var isFinished = false
                 val subscription = subscribe(
                         {
                             synchronized(lockObject) {
-                                items.add(it)
+                                values.add(it)
                                 lockObject.notify()
                             }
                         },
@@ -122,23 +158,26 @@ fun <T> Observable<T>.toSequence(): Sequence<T> =
                 return object : Iterator<T> {
                     override fun hasNext(): Boolean {
                         synchronized(lockObject) {
-                            while (items.size == 0 && !isFinished) {
-                                lockObject.wait()
+                            when(timeout) {
+                                0L -> while (isEmpty()) { lockObject.wait(0) }
+                                else -> if (isEmpty()) { lockObject.wait(timeout) }
                             }
-                        }
 
-                        return items.size > 0 || !isFinished
+                            return values.size > 0
+                        }
                     }
 
                     override fun next(): T {
                         var nextItem: T? = null
                         synchronized(lockObject) {
-                            nextItem = items[0]
-                            items.removeAt(0)
+                            nextItem = values[0]
+                            values.removeAt(0)
                         }
 
                         return nextItem!!
                     }
+
+                    private fun isEmpty() = values.size == 0 && !isFinished
                 }
             }
         }
@@ -148,15 +187,15 @@ fun <T> Observable<T>.share(): Observable<T> {
     val refCounter = AtomicInteger(0)
     val subject = subjectOf<T>()
     var subscription = emptyDisposable()
-    return observableOf {
-        val curSubscription = subject.subscribe(it)
+    return buildObservable {
+        val curSubscription = subject.subscribe(this)
         if (refCounter.incrementAndGet() == 1) {
             synchronized(subject) {
                 subscription = subscribe(subject)
             }
         }
 
-        return@observableOf disposableOf {
+        disposableOf {
             curSubscription.dispose()
             if (refCounter.decrementAndGet() == 0) {
                 synchronized(subject) {
@@ -171,71 +210,50 @@ fun <T> Observable<T>.share(): Observable<T> {
     }
 }
 
-inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, crossinline onUnsubscribe: (Boolean) -> Unit = {}): Observable<T> {
-    return observableOf {
-        val subscription: Disposable
+inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, crossinline onUnsubscribe: (Boolean) -> Unit = {}): Observable<T> =
+        buildObservable {
+            val subscription: Disposable
 
-        try {
-            onSubscribe(false)
-            subscription = subscribe(it)
-        } finally {
-            onSubscribe(true)
-        }
-
-        return@observableOf disposableOf {
             try {
-                onUnsubscribe(false)
-                subscription.dispose()
-            } finally {
-                onUnsubscribe(true)
+                onSubscribe(false)
+                subscription = subscribe(this)
+            }
+            finally {
+                onSubscribe(true)
+            }
+
+            disposableOf {
+                try {
+                    onUnsubscribe(false)
+                    subscription.dispose()
+                }
+                finally {
+                    onUnsubscribe(true)
+                }
             }
         }
-    }
-}
 
-enum class NotificationKind {
-    OnNext,
-    OnError,
-    OnCompleted
-}
-
-@Suppress("unused")
-abstract class Notification<T>(val notificationKind: NotificationKind)
-
-data class NotificationNext<T>(val value: T) : Notification<T>(NotificationKind.OnNext)
-
-data class NotificationError<T>(val error: Exception) : Notification<T>(NotificationKind.OnError)
-
-class NotificationCompleted<T> private constructor() : Notification<T>(NotificationKind.OnCompleted) {
-    companion object {
-        private val sharedObject = NotificationCompleted<Any>()
-
-        fun <T> shared(): NotificationCompleted<T> {
-            @Suppress("UNCHECKED_CAST")
-            return sharedObject as NotificationCompleted<T>
+fun <T> Observable<T>.materialize(): Observable<Notification<T>> =
+        buildObservable {
+            subscribe(
+                    { onNext(NotificationNext(it)) },
+                    {
+                        onNext(NotificationError(it))
+                        onComplete()
+                    },
+                    {
+                        onNext(NotificationCompleted.completed())
+                        onComplete()
+                    })
         }
-    }
-}
 
-fun <T> Observable<T>.materialize(): Observable<Notification<T>> = observableOf { observer ->
-    subscribe(
-            { observer.onNext(NotificationNext(it)) },
-            {
-                observer.onNext(NotificationError(it))
-                observer.onComplete()
-            },
-            {
-                observer.onNext(NotificationCompleted.shared())
-                observer.onComplete()
-            })
-}
-
-fun <T> Observable<Notification<T>>.dematerialize(): Observable<T> = observableOf { observer ->
-    subscribe {
-        when (it) {
-            is NotificationNext<T> -> observer.onNext(it.value)
-            is NotificationError -> observer.onError(it.error)
-            is NotificationCompleted -> observer.onComplete()
+fun <T> Observable<Notification<T>>.dematerialize(): Observable<T> =
+        buildObservable {
+            subscribe {
+                when (it) {
+                    is NotificationNext<T> -> onNext(it.value )
+                    is NotificationError -> onError(it.error)
+                    is NotificationCompleted -> onComplete()
+                }
+            }
         }
-    }
-}
