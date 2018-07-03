@@ -8,7 +8,7 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 
 class BuildServerShutdownMonitor(
-        _agentLifeCycleEventSources: AgentLifeCycleEventSources,
+        agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _dotnetCliToolInfo: DotnetCliToolInfo,
         private val _dotnetToolResolver: DotnetToolResolver,
@@ -19,7 +19,7 @@ class BuildServerShutdownMonitor(
     private var _hasBuildCommand = false
 
     init {
-        _subscriptionToken = _agentLifeCycleEventSources.buildFinishedSource.subscribe {
+        _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
             try {
                 if (_hasBuildCommand) {
                     LOG.debug("Has a build command")

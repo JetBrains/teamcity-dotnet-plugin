@@ -11,66 +11,71 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.util.EventDispatcher
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.subscribe
 import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
-/**
+/**`
  * Provides a list of available .NET CLI parameters.
  */
 class DotnetPropertiesExtension(
-        events: EventDispatcher<AgentLifeCycleListener>,
+        agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _toolProvider: ToolProvider,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser,
         private val _fileSystemService: FileSystemService)
     : AgentLifeCycleAdapter(), DotnetCliToolInfo {
-    init {
-        events.addListener(this)
-    }
 
+    private var _subscriptionToken: Disposable
     private var _version: Version = jetbrains.buildServer.dotnet.Version.Empty
 
-    override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
-        LOG.debug("Locating .NET CLI")
-        try {
-            val command = CommandLine(
-                    TargetType.Tool,
-                    File(_toolProvider.getPath(DotnetConstants.EXECUTABLE)),
-                    File("."),
-                    listOf(CommandLineArgument("--version")),
-                    emptyList())
+    init {
+        _subscriptionToken = agentLifeCycleEventSources.beforeAgentConfigurationLoadedSource.subscribe {
+            LOG.debug("Locating .NET CLI")
+            try {
+                val command = CommandLine(
+                        TargetType.Tool,
+                        File(_toolProvider.getPath(DotnetConstants.EXECUTABLE)),
+                        File("."),
+                        versionArgs,
+                        emptyList())
 
-            _commandLineExecutor.tryExecute(command)?.let {
-                _versionParser.tryParse(it.standardOutput)?.let {
-                    val dotnetPath = command.executableFile
-                    _version = jetbrains.buildServer.dotnet.Version.parse(it)
-                    agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
-                    LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$it\"")
-                    agent.configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
-                    LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
-                    LOG.info(".NET CLI $it found at \"${dotnetPath.absolutePath}\"")
+                val agent = it.agent
+                _commandLineExecutor.tryExecute(command)?.let {
+                    _versionParser.tryParse(it.standardOutput)?.let {
+                        _version = jetbrains.buildServer.dotnet.Version.parse(it)
+                        val configuration = agent.configuration
 
-                    LOG.debug("Locating .NET Core SDKs")
+                        configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, it)
+                        LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$it\"")
 
-                    val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
-                            .filter { it.isDirectory }
-                            .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }
-                            .filter { it.version != jetbrains.buildServer.dotnet.Version.Empty }
+                        val dotnetPath = command.executableFile
+                        configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
+                        LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
+                        LOG.info(".NET CLI $it found at \"${dotnetPath.absolutePath}\"")
 
-                    for ((path, version) in enumerateSdk(sdks)) {
-                        val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
-                        val paramValue = path.absolutePath
-                        agent.configuration.addConfigurationParameter(paramName, paramValue)
-                        LOG.debug("Add configuration parameter \"$paramName\": \"$paramValue\"")
-                        LOG.info(".NET Core SDK $paramValue found at \"$paramValue\"")
+                        LOG.debug("Locating .NET Core SDKs")
+
+                        val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
+                                .filter { _fileSystemService.isDirectory(it) }
+                                .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }
+                                .filter { it.version != jetbrains.buildServer.dotnet.Version.Empty }
+
+                        for ((path, version) in enumerateSdk(sdks)) {
+                            val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
+                            val paramValue = path.absolutePath
+                            configuration.addConfigurationParameter(paramName, paramValue)
+                            LOG.debug("Add configuration parameter \"$paramName\": \"$paramValue\"")
+                            LOG.info(".NET Core SDK $paramValue found at \"$paramValue\"")
+                        }
                     }
                 }
-            }
 
-        } catch (e: ToolCannotBeFoundException) {
-            LOG.info(".NET CLI not found")
-            LOG.debug(e)
+            } catch (e: ToolCannotBeFoundException) {
+                LOG.info(".NET CLI not found")
+                LOG.debug(e)
+            }
         }
     }
 
@@ -86,6 +91,8 @@ class DotnetPropertiesExtension(
                 yieldAll(sdks)
             }
         }
+
+        internal val versionArgs = listOf(CommandLineArgument("--version"))
     }
 
     data class Sdk(val path: File, val version: Version)

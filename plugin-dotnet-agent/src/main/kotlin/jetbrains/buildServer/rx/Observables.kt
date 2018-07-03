@@ -2,7 +2,6 @@
 
 package jetbrains.buildServer.rx
 
-import org.jetbrains.kotlin.codegen.range.comparison.ObjectComparisonGenerator
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
@@ -82,8 +81,8 @@ inline fun <T> Observable<T>.until(crossinline completionCondition: (T) -> Boole
                             }
                         }
                     },
-                    { if(!isCompleted.get()) onError(it) },
-                    { if(!isCompleted.get()) onComplete() })
+                    { if (!isCompleted.get()) onError(it) },
+                    { if (!isCompleted.get()) onComplete() })
         }
 
 fun <T> Observable<T>.take(range: LongRange): Observable<T> =
@@ -115,7 +114,7 @@ fun <T> Observable<T>.last(): Observable<T> =
         }
 
 fun <T> Observable<T>.count(): Observable<Long> =
-        reduce(0L ){ total, _ -> total + 1L}
+        reduce(0L) { total, _ -> total + 1L }
 
 fun <T> Sequence<T>.toObservable(): Observable<T> =
         buildObservable {
@@ -165,9 +164,13 @@ fun <T> Observable<T>.toSequence(timeout: Long): Sequence<T> =
                 return object : Iterator<T> {
                     override fun hasNext(): Boolean {
                         synchronized(lockObject) {
-                            when(timeout) {
-                                0L -> while (isEmpty()) { lockObject.wait(0) }
-                                else -> if (isEmpty()) { lockObject.wait(timeout) }
+                            when (timeout) {
+                                0L -> while (isEmpty()) {
+                                    lockObject.wait(0)
+                                }
+                                else -> if (isEmpty()) {
+                                    lockObject.wait(timeout)
+                                }
                             }
 
                             return values.size > 0
@@ -224,8 +227,7 @@ inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, c
             try {
                 onSubscribe(false)
                 subscription = subscribe(this)
-            }
-            finally {
+            } finally {
                 onSubscribe(true)
             }
 
@@ -233,8 +235,7 @@ inline fun <T> Observable<T>.track(crossinline onSubscribe: (Boolean) -> Unit, c
                 try {
                     onUnsubscribe(false)
                     subscription.dispose()
-                }
-                finally {
+                } finally {
                     onUnsubscribe(true)
                 }
             }
@@ -258,7 +259,7 @@ fun <T> Observable<Notification<T>>.dematerialize(): Observable<T> =
         buildObservable {
             subscribe {
                 when (it) {
-                    is NotificationNext<T> -> onNext(it.value )
+                    is NotificationNext<T> -> onNext(it.value)
                     is NotificationError -> onError(it.error)
                     is NotificationCompleted -> onComplete()
                 }
