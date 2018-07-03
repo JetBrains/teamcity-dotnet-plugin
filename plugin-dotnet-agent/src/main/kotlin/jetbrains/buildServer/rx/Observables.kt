@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.rx
 
+import org.jetbrains.kotlin.codegen.range.comparison.ObjectComparisonGenerator
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
@@ -45,12 +46,18 @@ inline fun <T, R> Observable<T>.map(crossinline map: (T) -> R): Observable<R> =
 
 inline fun <T, R> Observable<T>.reduce(initialValue: R, crossinline operation: (acc: R, T) -> R): Observable<R> =
         buildObservable {
-            val accumulator = AtomicReference<R>(initialValue)
+            var accumulator: R = initialValue
+            val lockObject = Object()
             subscribe(
-                    { value: T -> accumulator.getAndUpdate { operation(it, value) } },
+                    {
+                        synchronized(lockObject) { accumulator = operation(accumulator, it) }
+                    },
                     { onError(it) },
                     {
-                        onNext(accumulator.get())
+                        synchronized(lockObject) {
+                            onNext(accumulator)
+                        }
+
                         onComplete()
                     })
         }
