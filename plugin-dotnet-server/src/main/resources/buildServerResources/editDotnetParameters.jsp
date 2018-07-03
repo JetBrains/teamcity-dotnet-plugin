@@ -64,7 +64,8 @@
       var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
       $j(BS.Util.escapeId('dotnet-coverage')).toggleClass('hidden', !coverageEnabled);
 
-      $j(BS.Util.escapeId('dotnet-help')).attr('href', 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-' + commandName);
+      var helpUrl = 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet' + (commandName !== '-' ? '-' + commandName : '');
+      $j(BS.Util.escapeId('dotnet-help')).attr('href', helpUrl);
 
       var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
       $j(BS.Util.escapeId('teamcity.build.workingDir')).closest('tr').toggleClass('hidden', !!hideWorkingDirectory);

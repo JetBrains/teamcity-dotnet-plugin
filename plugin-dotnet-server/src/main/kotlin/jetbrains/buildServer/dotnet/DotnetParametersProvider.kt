@@ -168,7 +168,7 @@ class DotnetParametersProvider {
                     VSTestCommandType()
             ).plus(experimentalCommandTypes)
                     .sortedBy { it.description }
-                    //.plus(CustomCommandType())
+                    .plus(CustomCommandType())
                     .associateBy { it.name }
 
         val coverageTypes
