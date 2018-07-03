@@ -10,7 +10,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         cmd.setWorkingDirectory(cmd.workDirectory)
         cmd.addParameters(commandLine.arguments.map { it.value })
 
-        val currentEnvironment = System.getenv()
+        val currentEnvironment = System.getenv().toMutableMap()
         for ((name, value) in commandLine.environmentVariables) {
             currentEnvironment[name] = value
         }
