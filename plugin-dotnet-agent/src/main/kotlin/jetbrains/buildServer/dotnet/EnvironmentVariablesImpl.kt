@@ -33,6 +33,10 @@ class EnvironmentVariablesImpl(
                     }
                 }
             }
+
+            if (System.getenv(HOME_VARIABLE).isNullOrEmpty()) {
+                yield(CommandLineEnvironmentVariable(HOME_VARIABLE, System.getProperty("user.home")))
+            }
         }
 
     companion object {
@@ -42,5 +46,6 @@ class EnvironmentVariablesImpl(
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
 
         internal val useSharedCompilationEnvironmentVariable = CommandLineEnvironmentVariable("UseSharedCompilation", "false")
+        const val HOME_VARIABLE = "HOME"
     }
 }

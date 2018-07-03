@@ -9,11 +9,12 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         cmd.exePath = commandLine.executableFile.path
         cmd.setWorkingDirectory(cmd.workDirectory)
         cmd.addParameters(commandLine.arguments.map { it.value })
+
         val currentEnvironment = System.getenv()
         for ((name, value) in commandLine.environmentVariables) {
             currentEnvironment[name] = value
         }
-
+        currentEnvironment.getOrPut("HOME") { System.getProperty("user.home") }
         cmd.envParams = currentEnvironment
 
         LOG.info("Execute command line: ${cmd.commandLineString}")
