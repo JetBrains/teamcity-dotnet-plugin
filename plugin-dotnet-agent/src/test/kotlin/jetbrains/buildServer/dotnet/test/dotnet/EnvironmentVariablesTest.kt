@@ -78,7 +78,7 @@ class EnvironmentVariablesTest {
             }
         })
 
-        val actualVariables = environmentVariables.variables.toList()
+        val actualVariables = environmentVariables.variables.filter { it.name != "HOME" }.toList()
 
         // Then
         Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + expectedVariables).toList())
