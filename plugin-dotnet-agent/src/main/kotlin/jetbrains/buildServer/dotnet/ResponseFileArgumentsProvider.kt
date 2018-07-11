@@ -20,50 +20,49 @@ class ResponseFileArgumentsProvider(
         private val _argumentsProviders: List<ArgumentsProvider>,
         private val _parametersProviders: List<MSBuildParametersProvider>)
     : ArgumentsProvider {
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            val args = _argumentsProviders.flatMap { it.arguments.toList() }
-            val params = _parametersProviders.flatMap { it.parameters.toList() }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
+        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }
 
-            if (args.isEmpty() && params.isEmpty()) {
-                return@buildSequence
-            }
+        if (args.isEmpty() && params.isEmpty()) {
+            return@buildSequence
+        }
 
-            val argLine = _argumentsService.combine(args.map { it.value }.asSequence(), "\n")
-            val paramLines = params.map { _msBuildParameterConverter.convert(it) }
-            val lines = listOf(argLine) + paramLines
+        val argLine = _argumentsService.combine(args.map { it.value }.asSequence(), "\n")
+        val paramLines = params.map { _msBuildParameterConverter.convert(it) }
+        val lines = listOf(argLine) + paramLines
 
-            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-                Verbosity.tryParse(it)?.let {
-                    @Suppress("NON_EXHAUSTIVE_WHEN")
-                    when (it) {
-                        Verbosity.Detailed, Verbosity.Diagnostic -> {
-                            _loggerService.onBlock(BlockName).use {
-                                for ((value) in args) {
-                                    _loggerService.onStandardOutput(value, Color.Details)
-                                }
+        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
+            Verbosity.tryParse(it)?.let {
+                @Suppress("NON_EXHAUSTIVE_WHEN")
+                when (it) {
+                    Verbosity.Detailed, Verbosity.Diagnostic -> {
+                        _loggerService.onBlock(BlockName).use {
+                            for ((value) in args) {
+                                _loggerService.onStandardOutput(value, Color.Details)
+                            }
 
-                                for (paramLine in paramLines) {
-                                    _loggerService.onStandardOutput(paramLine, Color.Details)
-                                }
+                            for (paramLine in paramLines) {
+                                _loggerService.onStandardOutput(paramLine, Color.Details)
                             }
                         }
                     }
                 }
             }
+        }
 
-            val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
-            val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
-            _fileSystemService.write(msBuildResponseFile) {
-                OutputStreamWriter(it).use {
-                    for (line in lines) {
-                        it.write("$line\n")
-                    }
+        val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
+        val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
+        _fileSystemService.write(msBuildResponseFile) {
+            OutputStreamWriter(it).use {
+                for (line in lines) {
+                    it.write("$line\n")
                 }
             }
-
-            yield(CommandLineArgument("@${msBuildResponseFile.path}"))
         }
+
+        yield(CommandLineArgument("@${msBuildResponseFile.path}"))
+    }
 
     companion object {
         internal const val ResponseFileExtension = ".rsp"

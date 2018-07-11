@@ -19,7 +19,7 @@ class DotnetCommandSet(
             _knownCommands[it]?.let { command ->
                 getTargetArguments(command).asSequence().map {
                     val targetArguments = TargetArguments(it.arguments.toList().asSequence())
-                    CompositeCommand(command, getArguments(command, targetArguments), targetArguments)
+                    CompositeCommand(command, targetArguments)
                 }
             }
         } ?: emptySequence()
@@ -36,23 +36,8 @@ class DotnetCommandSet(
         }
     }
 
-    private fun getArguments(command: DotnetCommand, targetArguments: TargetArguments) = buildSequence {
-        if (command.toolResolver.isCommandRequired) {
-            // command
-            yieldAll(command.commandType.id.split('-')
-                    .filter { it.isNotEmpty() }
-                    .map { CommandLineArgument(it) })
-        }
-
-        // projects
-        yieldAll(targetArguments.arguments)
-        // command specific arguments
-        yieldAll(command.arguments)
-    }
-
     class CompositeCommand(
             private val _command: DotnetCommand,
-            private val _arguments: Sequence<CommandLineArgument>,
             private val _targetArguments: TargetArguments)
         : DotnetCommand {
 
@@ -62,8 +47,20 @@ class DotnetCommandSet(
         override val toolResolver: ToolResolver
             get() = _command.toolResolver
 
-        override val arguments: Sequence<CommandLineArgument>
-            get() = _arguments
+        override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
+                buildSequence {
+                    if (_command.toolResolver.isCommandRequired) {
+                        // command
+                        yieldAll(_command.commandType.id.split('-')
+                                .filter { it.isNotEmpty() }
+                                .map { CommandLineArgument(it) })
+                    }
+
+                    // projects
+                    yieldAll(_targetArguments.arguments)
+                    // command specific arguments
+                    yieldAll(_command.getArguments(context))
+                }
 
         override val targetArguments: Sequence<TargetArguments>
             get() = sequenceOf(_targetArguments)

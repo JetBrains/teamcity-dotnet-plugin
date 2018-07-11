@@ -29,29 +29,28 @@ class RunCommand(
             TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path)))
         }
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--framework"))
-                    yield(CommandLineArgument(it))
-                }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--framework"))
+                yield(CommandLineArgument(it))
             }
-
-            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--configuration"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--runtime"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            yieldAll(_commonArgumentsProvider.arguments)
         }
+
+        parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--configuration"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--runtime"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        yieldAll(_commonArgumentsProvider.getArguments(context))
+    }
 }

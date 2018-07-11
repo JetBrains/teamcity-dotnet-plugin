@@ -23,8 +23,7 @@ class CustomCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = _customArgumentsProvider.arguments
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = _customArgumentsProvider.getArguments(context)
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
         get() = emptySequence()

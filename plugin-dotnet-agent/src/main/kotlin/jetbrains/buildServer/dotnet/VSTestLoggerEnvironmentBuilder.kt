@@ -18,8 +18,8 @@ class VSTestLoggerEnvironmentBuilder(
         private val _environmentCleaner: EnvironmentCleaner,
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
     : EnvironmentBuilder {
-    override fun build(command: DotnetCommand): Closeable {
-        val testReportingMode = _testReportingParameters.mode
+    override fun build(context: DotnetBuildContext): Closeable {
+        val testReportingMode = _testReportingParameters.getMode(context)
         if (testReportingMode.contains(TestReportingMode.Off)) {
             return EmptyClosable
         }
@@ -28,7 +28,7 @@ class VSTestLoggerEnvironmentBuilder(
             return EmptyClosable
         }
 
-        val targets = command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
+        val targets = context.command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
         val loggerDirectory = File(checkoutDirectory, "$directoryPrefix${_pathsService.uniqueName}")
 

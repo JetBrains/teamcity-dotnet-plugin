@@ -1,9 +1,12 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.CustomArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -23,9 +26,11 @@ class CustomArgumentsProviderTest {
             expectedArguments: List<String>) {
         // Given
         val argumentsProvider = CustomArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
+        val ctx = Mockery()
+        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
 
         // When
-        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
+        val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

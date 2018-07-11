@@ -27,27 +27,26 @@ class NugetPushCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--api-key"))
-                    yield(CommandLineArgument(it))
-                }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--api-key"))
+                yield(CommandLineArgument(it))
             }
-
-            parameters(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--source"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            if (parameters(DotnetConstants.PARAM_NUGET_NO_SYMBOLS, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-symbols"))
-                yield(CommandLineArgument("true"))
-            }
-
-            yieldAll(_customArgumentsProvider.arguments)
         }
+
+        parameters(DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--source"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        if (parameters(DotnetConstants.PARAM_NUGET_NO_SYMBOLS, "").trim().toBoolean()) {
+            yield(CommandLineArgument("--no-symbols"))
+            yield(CommandLineArgument("true"))
+        }
+
+        yieldAll(_customArgumentsProvider.getArguments(context))
+    }
 }

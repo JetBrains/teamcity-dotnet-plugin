@@ -30,6 +30,13 @@
   </bean>
 
   <!-- dotnet -->
+  <bean class="jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl">
+    <constructor-arg ref="dotnetToolProvider"/>
+    <constructor-arg ref="dotnetVersionParser"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>
   <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
@@ -41,7 +48,6 @@
   <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
     <constructor-arg ref="dotnetToolProvider"/>
-    <constructor-arg ref="dotnetVersionParser"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">

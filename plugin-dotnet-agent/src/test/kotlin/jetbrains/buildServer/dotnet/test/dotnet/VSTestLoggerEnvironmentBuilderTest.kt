@@ -64,6 +64,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             fileSystemService: VirtualFileSystemService,
             expectedDirs: List<File>) {
         // Given
+        val context = DotnetBuildContext(_dotnetCommand)
         val loggerFile = File("vstest15", "logger.dll")
         fileSystemService.addFile(loggerFile.absoluteFile)
 
@@ -80,7 +81,7 @@ class VSTestLoggerEnvironmentBuilderTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(_testReportingParameters).mode
+                oneOf<TestReportingParameters>(_testReportingParameters).getMode(context)
                 will(returnValue(EnumSet.of(TestReportingMode.On)))
 
                 oneOf<DotnetCommand>(_dotnetCommand).targetArguments
@@ -101,7 +102,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             }
         })
 
-        val ticket = loggerEnvironment.build(_dotnetCommand)
+        val ticket = loggerEnvironment.build(context)
 
         // Then
         _ctx.assertIsSatisfied()
@@ -129,6 +130,7 @@ class VSTestLoggerEnvironmentBuilderTest {
     @Test(dataProvider = "testDataNotBuildEnv")
     fun shouldNotBuildEnvWhenSpecificTestReportingMode(modes: EnumSet<TestReportingMode>) {
         // Given
+        val context = DotnetBuildContext(_dotnetCommand)
         val targetFiles = listOf(File("dir", "my.proj"))
         val loggerEnvironment = VSTestLoggerEnvironmentBuilder(
                 _pathService,
@@ -142,7 +144,7 @@ class VSTestLoggerEnvironmentBuilderTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(_testReportingParameters).mode
+                oneOf<TestReportingParameters>(_testReportingParameters).getMode(context)
                 will(returnValue(modes))
 
                 never<DotnetCommand>(_dotnetCommand).targetArguments
@@ -159,7 +161,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             }
         })
 
-        loggerEnvironment.build(_dotnetCommand).close()
+        loggerEnvironment.build(context).close()
 
         // Then
         _ctx.assertIsSatisfied()

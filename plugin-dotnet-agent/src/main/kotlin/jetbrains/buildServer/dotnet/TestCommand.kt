@@ -28,49 +28,48 @@ class TestCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--filter"))
-                    yield(CommandLineArgument(it))
-                }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--filter"))
+                yield(CommandLineArgument(it))
             }
-
-            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--framework"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--configuration"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--settings"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--output"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-build"))
-            }
-
-            yieldAll(_commonArgumentsProvider.arguments)
         }
+
+        parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--framework"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--configuration"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--settings"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--output"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
+            yield(CommandLineArgument("--no-build"))
+        }
+
+        yieldAll(_commonArgumentsProvider.getArguments(context))
+    }
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
         get() = buildSequence { yield(_vstestLoggerEnvironment) }

@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
@@ -16,9 +14,7 @@ class BuildServerShutdownMonitorTest {
     private lateinit var _ctx: Mockery
     private lateinit var _agentLifeCycleEventSources: AgentLifeCycleEventSources
     private lateinit var _commandLineExecutor: CommandLineExecutor
-    private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
     private lateinit var _dotnetToolResolver: DotnetToolResolver
-    private lateinit var _pathsService: PathsService
     private lateinit var _agentRunningBuild: AgentRunningBuild
 
     @BeforeMethod
@@ -26,34 +22,43 @@ class BuildServerShutdownMonitorTest {
         _ctx = Mockery()
         _agentLifeCycleEventSources = _ctx.mock(AgentLifeCycleEventSources::class.java)
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
-        _dotnetCliToolInfo = _ctx.mock(DotnetCliToolInfo::class.java)
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
-        _pathsService = _ctx.mock(PathsService::class.java)
         _agentRunningBuild = _ctx.mock(AgentRunningBuild::class.java)
     }
 
     @DataProvider
     fun supportToolCases(): Array<Array<out Any>> {
         return arrayOf(
-                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), true),
-                arrayOf(DotnetCommandType.Pack, Version(2, 1, 300), true),
-                arrayOf(DotnetCommandType.Publish, Version(2, 1, 300), true),
-                arrayOf(DotnetCommandType.Test, Version(2, 1, 300), true),
-                arrayOf(DotnetCommandType.Run, Version(2, 1, 300), true),
-                arrayOf(DotnetCommandType.MSBuild, Version(2, 1, 300), true))
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Build, emptySequence<Version>(), false),
+                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Publish, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300), Version(1, 0, 0)), true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(1, 1, 0), Version(1, 0, 0)), false),
+                arrayOf(DotnetCommandType.Test, emptySequence<Version>(), false),
+                arrayOf(DotnetCommandType.Run, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.MSBuild, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.NuGetPush, sequenceOf(Version(2, 1, 300)), false),
+                arrayOf(DotnetCommandType.NuGetDelete, sequenceOf(Version(2, 1, 300)), false),
+                arrayOf(DotnetCommandType.Custom, sequenceOf(Version(2, 1, 300)), false))
     }
 
     @Test(dataProvider = "supportToolCases")
-    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, version: Version, expectedShutdown: Boolean) {
+    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, expectedShutdown: Boolean) {
         // Given
         val executableFile = File("dotnet")
-        val checkout = File("checkoutDir")
+        val taregtPath = File("checkoutDir")
         val buildServerShutdownCommandline = CommandLine(
                 TargetType.Tool,
                 executableFile,
-                checkout,
+                taregtPath,
                 BuildServerShutdownMonitor.shutdownArgs,
                 emptyList())
+
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(command, versions.map { DotnetSdk(CommandLineArgument("target"), taregtPath, it) }.toSet())
 
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
@@ -61,15 +66,12 @@ class BuildServerShutdownMonitorTest {
                 oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
 
-                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).version
-                will(returnValue(version))
+                oneOf<DotnetCommand>(command).commandType
+                will(returnValue(dotnetCommandType))
 
                 if (expectedShutdown) {
                     oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
                     will(returnValue(executableFile))
-
-                    oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
-                    will(returnValue(checkout))
 
                     oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(buildServerShutdownCommandline)
                 }
@@ -79,7 +81,7 @@ class BuildServerShutdownMonitorTest {
         val monitor = createInstance()
 
         // When
-        monitor.register(dotnetCommandType)
+        monitor.register(context)
         buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
 
         // Then
@@ -90,7 +92,5 @@ class BuildServerShutdownMonitorTest {
             BuildServerShutdownMonitor(
                     _agentLifeCycleEventSources,
                     _commandLineExecutor,
-                    _dotnetCliToolInfo,
-                    _dotnetToolResolver,
-                    _pathsService)
+                    _dotnetToolResolver)
 }

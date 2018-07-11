@@ -14,12 +14,11 @@ class VSTestLoggerArgumentsProvider(
         private val _loggerParameters: LoggerParameters)
     : ArgumentsProvider {
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
-                yield(CommandLineArgument("/logger:logger://teamcity"))
-                yield(CommandLineArgument("/TestAdapterPath:${it.absolutePath}"))
-                yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}"))
-            }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
+            yield(CommandLineArgument("/logger:logger://teamcity"))
+            yield(CommandLineArgument("/TestAdapterPath:${it.absolutePath}"))
+            yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}"))
         }
+    }
 }

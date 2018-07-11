@@ -22,44 +22,43 @@ class VSTestCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/Settings:$it"))
-                }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("/Settings:$it"))
             }
-
-            when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
-                "filter" -> {
-                    parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
-                        if (it.isNotBlank()) {
-                            yield(CommandLineArgument("/TestCaseFilter:$it"))
-                        }
-                    }
-                }
-                "name" -> {
-                    parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
-                        if (it.isNotBlank()) {
-                            yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
-                        }
-                    }
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/Platform:$it"))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("/Framework:$it"))
-                }
-            }
-
-            yieldAll(_vstestLoggerArgumentsProvider.arguments)
-            yieldAll(_customArgumentsProvider.arguments)
         }
+
+        when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
+            "filter" -> {
+                parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
+                    if (it.isNotBlank()) {
+                        yield(CommandLineArgument("/TestCaseFilter:$it"))
+                    }
+                }
+            }
+            "name" -> {
+                parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
+                    if (it.isNotBlank()) {
+                        yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                    }
+                }
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("/Platform:$it"))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("/Framework:$it"))
+            }
+        }
+
+        yieldAll(_vstestLoggerArgumentsProvider.getArguments(context))
+        yieldAll(_customArgumentsProvider.getArguments(context))
+    }
 }

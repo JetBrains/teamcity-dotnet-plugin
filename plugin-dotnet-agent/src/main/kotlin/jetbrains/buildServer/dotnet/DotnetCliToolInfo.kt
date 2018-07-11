@@ -1,5 +1,7 @@
 package jetbrains.buildServer.dotnet
 
+import java.io.File
+
 interface DotnetCliToolInfo {
-    val version: Version
+    fun getVersion(path: File): Version
 }

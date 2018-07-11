@@ -43,6 +43,7 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
+        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java))
         _ctx.checking(object : Expectations() {
             init {
                 allowing<DotnetCommand>(_buildCommand).commandType
@@ -51,7 +52,7 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_buildCommand).toolResolver
                 will(returnValue(DotnetToolResolverStub(File("dotnet"), false)))
 
-                allowing<DotnetCommand>(_buildCommand).arguments
+                allowing<DotnetCommand>(_buildCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
 
                 allowing<DotnetCommand>(_buildCommand).targetArguments
@@ -66,7 +67,7 @@ class DotnetCommandSetTest {
                 allowing<DotnetCommand>(_cleanCommand).toolResolver
                 will(returnValue(DotnetToolResolverStub(File("dotnet"), true)))
 
-                allowing<DotnetCommand>(_cleanCommand).arguments
+                allowing<DotnetCommand>(_cleanCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
 
                 allowing<DotnetCommand>(_cleanCommand).targetArguments
@@ -84,7 +85,7 @@ class DotnetCommandSetTest {
         // When
         var actualArguments: List<String> = emptyList()
         try {
-            actualArguments = dotnetCommandSet.commands.flatMap { it.arguments }.map { it.value }.toList()
+            actualArguments = dotnetCommandSet.commands.flatMap { it.getArguments(context) }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }

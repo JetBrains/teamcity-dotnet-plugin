@@ -43,6 +43,9 @@ class DotnetWorkflowComposerTest {
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
     private lateinit var _commandRegistry: CommandRegistry
+    private lateinit var _buildContextFactory: DotnetBuildContextFactory
+    private lateinit var _buildContext1: DotnetBuildContext
+    private lateinit var _buildContext2: DotnetBuildContext
 
     @BeforeMethod
     fun setUp() {
@@ -67,6 +70,9 @@ class DotnetWorkflowComposerTest {
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
         _commandRegistry = _ctx.mock(CommandRegistry::class.java)
+        _buildContextFactory = _ctx.mock(DotnetBuildContextFactory::class.java)
+        _buildContext1 = DotnetBuildContext(_dotnetCommand1)
+        _buildContext2 = DotnetBuildContext(_dotnetCommand2)
     }
 
     @Test
@@ -82,13 +88,16 @@ class DotnetWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                allowing<EnvironmentVariables>(_environmentVariables).variables
+                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand1)
+                will(returnValue(_buildContext1))
+
+                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(_buildContext1)
                 will(returnValue(envVars.asSequence()))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).commandType
                 will(returnValue(DotnetCommandType.Build))
 
-                oneOf<DotnetCommand>(_dotnetCommand1).arguments
+                oneOf<DotnetCommand>(_dotnetCommand1).getArguments(_buildContext1)
                 will(returnValue(args1.asSequence()))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).environmentBuilders
@@ -123,10 +132,16 @@ class DotnetWorkflowComposerTest {
                 oneOf<ToolResolver>(_toolResolver1).executableFile
                 will(returnValue(File("dotnet.exe")))
 
+                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand2)
+                will(returnValue(_buildContext2))
+
+                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(_buildContext2)
+                will(returnValue(envVars.asSequence()))
+
                 oneOf<DotnetCommand>(_dotnetCommand2).commandType
                 will(returnValue(DotnetCommandType.NuGetPush))
 
-                oneOf<DotnetCommand>(_dotnetCommand2).arguments
+                oneOf<DotnetCommand>(_dotnetCommand2).getArguments(_buildContext2)
                 will(returnValue(args2.asSequence()))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).environmentBuilders
@@ -167,7 +182,7 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<Closeable>(_closeable4).close()
 
-                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_dotnetCommand1)
+                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_buildContext1)
                 will(returnValue(_closeable1))
 
                 oneOf<Closeable>(_closeable1).close()
@@ -184,9 +199,9 @@ class DotnetWorkflowComposerTest {
 
                 exactly(2).of(_targetRegistrationToken).dispose()
 
-                oneOf(_commandRegistry).register(DotnetCommandType.Build)
+                oneOf(_commandRegistry).register(_buildContext1)
 
-                oneOf(_commandRegistry).register(DotnetCommandType.NuGetPush)
+                oneOf(_commandRegistry).register(_buildContext2)
             }
         })
 
@@ -222,6 +237,7 @@ class DotnetWorkflowComposerTest {
                 _commandSet,
                 _failedTestSource,
                 _targetRegistry,
-                _commandRegistry)
+                _commandRegistry,
+                _buildContextFactory)
     }
 }

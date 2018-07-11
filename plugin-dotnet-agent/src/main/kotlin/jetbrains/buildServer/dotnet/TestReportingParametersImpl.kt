@@ -5,24 +5,24 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import java.util.*
 
 class TestReportingParametersImpl(
-        private val _parametersService: ParametersService,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo)
+        private val _parametersService: ParametersService)
     : TestReportingParameters {
-    override val mode: EnumSet<TestReportingMode>
-        get() {
-            val modes = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_TEST_REPORTING)?.let {
-                TestReportingMode.parse(it)
-            } ?: EnumSet.noneOf<TestReportingMode>(TestReportingMode::class.java)
+    override fun getMode(context: DotnetBuildContext): EnumSet<TestReportingMode> {
+        val modes = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_TEST_REPORTING)?.let {
+            TestReportingMode.parse(it)
+        } ?: EnumSet.noneOf<TestReportingMode>(TestReportingMode::class.java)
 
-            if (!modes.isEmpty()) {
-                return modes
-            }
+        if (!modes.isEmpty()) {
+            return modes
+        }
 
-            val modeSet = mutableSetOf(TestReportingMode.On)
-            if (_dotnetCliToolInfo.version >= Version.MultiAdapterPathVersion) {
+        val modeSet = mutableSetOf(TestReportingMode.On)
+        context.sdks.minBy { it.version }?.let {
+            if (it.version >= Version.MultiAdapterPathVersion) {
                 modeSet.add(TestReportingMode.MultiAdapterPath)
             }
-
-            return EnumSet.copyOf<TestReportingMode>(modeSet)
         }
+
+        return EnumSet.copyOf<TestReportingMode>(modeSet)
+    }
 }

@@ -10,37 +10,20 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class DotnetCommonArgumentsProviderTest {
-    @DataProvider
-    fun argumentsData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Quiet.id),
-                        emptyList<String>()),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_VERBOSITY to Verbosity.Normal.id, DotnetConstants.PARAM_RSP to "true"),
-                        emptyList<String>()),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_RSP to "false"),
-                        listOf("l:/logger", "/p:param=value")),
-                arrayOf(mapOf(
-                        DotnetConstants.PARAM_RSP to "FaLse"),
-                        listOf("l:/logger", "/p:param=value")),
-                arrayOf(emptyMap<String, String>(),
-                        emptyList<String>()))
-    }
 
-    @Test(dataProvider = "argumentsData")
+
     fun shouldGetArguments(
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
         val ctx = Mockery()
+        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
         val msBuildParametersProvider = ctx.mock(MSBuildParametersProvider::class.java)
         val msBuildParameterConverter = ctx.mock(MSBuildParameterConverter::class.java)
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
         ctx.checking(object : Expectations() {
             init {
-                allowing<MSBuildParametersProvider>(msBuildParametersProvider).parameters
+                allowing<MSBuildParametersProvider>(msBuildParametersProvider).getParameters(context)
                 will(returnValue(sequenceOf(msBuildParameter)))
 
                 allowing<MSBuildParameterConverter>(msBuildParameterConverter).convert(msBuildParameter)
@@ -57,7 +40,7 @@ class DotnetCommonArgumentsProviderTest {
                 msBuildParameterConverter)
 
         // When
-        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
+        val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

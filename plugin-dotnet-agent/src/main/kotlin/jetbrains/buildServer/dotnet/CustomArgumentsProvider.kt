@@ -17,12 +17,11 @@ class CustomArgumentsProvider(
         private val _argumentsService: ArgumentsService)
     : ArgumentsProvider {
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-                yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
-            }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }
+    }
 
     private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }

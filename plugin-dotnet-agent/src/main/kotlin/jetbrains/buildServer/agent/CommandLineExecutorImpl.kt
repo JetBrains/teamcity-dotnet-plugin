@@ -7,7 +7,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
     override fun tryExecute(commandLine: CommandLine, executionTimeoutSeconds: Int): CommandLineResult? {
         val cmd = GeneralCommandLine()
         cmd.exePath = commandLine.executableFile.path
-        cmd.setWorkingDirectory(cmd.workDirectory)
+        cmd.setWorkingDirectory(commandLine.workingDirectory)
         cmd.addParameters(commandLine.arguments.map { it.value })
 
         val currentEnvironment = System.getenv().toMutableMap()

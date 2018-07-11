@@ -13,22 +13,21 @@ class MSBuildVSTestLoggerParametersProvider(
         private val _loggerParameters: LoggerParameters)
     : MSBuildParametersProvider {
 
-    override val parameters: Sequence<MSBuildParameter>
-        get() = buildSequence {
-            val testReportingMode = _testReportingParameters.mode
-            if (testReportingMode.contains(TestReportingMode.Off)) {
-                return@buildSequence
-            }
-
-            _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
-                yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
-                if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
-                    yield(MSBuildParameter("VSTestTestAdapterPath", "${it.absolutePath};."))
-                } else {
-                    yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
-                }
-            }
-
-            yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.toLowerCase()))
+    override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = buildSequence {
+        val testReportingMode = _testReportingParameters.getMode(context)
+        if (testReportingMode.contains(TestReportingMode.Off)) {
+            return@buildSequence
         }
+
+        _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
+            yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
+            if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
+                yield(MSBuildParameter("VSTestTestAdapterPath", "${it.absolutePath};."))
+            } else {
+                yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
+            }
+        }
+
+        yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.toLowerCase()))
+    }
 }

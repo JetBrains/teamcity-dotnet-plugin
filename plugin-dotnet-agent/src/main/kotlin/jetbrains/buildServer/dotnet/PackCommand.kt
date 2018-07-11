@@ -27,40 +27,39 @@ class PackCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--configuration"))
-                    yield(CommandLineArgument(it))
-                }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--configuration"))
+                yield(CommandLineArgument(it))
             }
-
-            parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--runtime"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--output"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            parameters(DotnetConstants.PARAM_VERSION_SUFFIX)?.trim()?.let {
-                if (it.isNotBlank()) {
-                    yield(CommandLineArgument("--version-suffix"))
-                    yield(CommandLineArgument(it))
-                }
-            }
-
-            if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
-                yield(CommandLineArgument("--no-build"))
-            }
-
-            yieldAll(_commonArgumentsProvider.arguments)
         }
+
+        parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--runtime"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_OUTPUT_DIR)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--output"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        parameters(DotnetConstants.PARAM_VERSION_SUFFIX)?.trim()?.let {
+            if (it.isNotBlank()) {
+                yield(CommandLineArgument("--version-suffix"))
+                yield(CommandLineArgument(it))
+            }
+        }
+
+        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
+            yield(CommandLineArgument("--no-build"))
+        }
+
+        yieldAll(_commonArgumentsProvider.getArguments(context))
+    }
 }

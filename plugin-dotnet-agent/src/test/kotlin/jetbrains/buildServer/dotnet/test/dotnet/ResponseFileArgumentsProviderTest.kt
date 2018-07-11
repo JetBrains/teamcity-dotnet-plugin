@@ -45,6 +45,7 @@ class ResponseFileArgumentsProviderTest {
         val buildParameter2 = MSBuildParameter("param2", "val2")
         val parametersProvider2 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
+        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java))
 
         // When
         _ctx.checking(object : Expectations() {
@@ -55,13 +56,13 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
-                oneOf<MSBuildParametersProvider>(parametersProvider1).parameters
+                oneOf<MSBuildParametersProvider>(parametersProvider1).getParameters(context)
                 will(returnValue(sequenceOf(buildParameter1)))
 
                 oneOf<Converter<MSBuildParameter, String>>(_msBuildParameterConverter).convert(buildParameter1)
                 will(returnValue("par1"))
 
-                oneOf<MSBuildParametersProvider>(parametersProvider2).parameters
+                oneOf<MSBuildParametersProvider>(parametersProvider2).getParameters(context)
                 will(returnValue(sequenceOf(buildParameter2)))
 
                 oneOf<Converter<MSBuildParameter, String>>(_msBuildParameterConverter).convert(buildParameter2)
@@ -79,7 +80,7 @@ class ResponseFileArgumentsProviderTest {
             }
         })
 
-        val actualArguments = argumentsProvider.arguments.toList()
+        val actualArguments = argumentsProvider.getArguments(context).toList()
 
         // Then
         _ctx.assertIsSatisfied()

@@ -14,10 +14,9 @@ class MSBuildLoggerArgumentsProvider(
         private val _loggerParameters: LoggerParameters)
     : ArgumentsProvider {
 
-    override val arguments: Sequence<CommandLineArgument>
-        get() = buildSequence {
-            yield(CommandLineArgument("/noconsolelogger"))
-            val verbosityStr = _loggerParameters.msBuildLoggerVerbosity?.let { ";verbosity=${it.id.toLowerCase()}" } ?: ""
-            yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${_loggerResolver.resolve(ToolType.MSBuild).absolutePath};TeamCity$verbosityStr"))
-        }
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+        yield(CommandLineArgument("/noconsolelogger"))
+        val verbosityStr = _loggerParameters.msBuildLoggerVerbosity?.let { ";verbosity=${it.id.toLowerCase()}" } ?: ""
+        yield(CommandLineArgument("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${_loggerResolver.resolve(ToolType.MSBuild).absolutePath};TeamCity$verbosityStr"))
+    }
 }

@@ -11,17 +11,17 @@ import kotlin.coroutines.experimental.buildSequence
 
 class EnvironmentVariablesImpl(
         private val _environment: Environment,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo,
         private val _targetRegistry: TargetRegistry)
     : EnvironmentVariables {
-    override val variables: Sequence<CommandLineEnvironmentVariable>
-        get() = buildSequence {
-            yieldAll(defaultVariables)
+    override fun getVariables(context: DotnetBuildContext): Sequence<CommandLineEnvironmentVariable> = buildSequence {
+        yieldAll(defaultVariables)
 
-            // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
-            // https://youtrack.jetbrains.com/issue/TW-55268
-            // https://github.com/dotnet/roslyn/issues/27566
-            if (_dotnetCliToolInfo.version > Version.LastVersionWithoutSharedCompilation) {
+        // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
+        // https://youtrack.jetbrains.com/issue/TW-55268
+        // https://github.com/dotnet/roslyn/issues/27566
+
+        context.sdks.maxBy { it.version }?.let {
+            if (it.version > Version.LastVersionWithoutSharedCompilation) {
                 when (_environment.os) {
                     OSType.UNIX, OSType.MAC -> yield(useSharedCompilationEnvironmentVariable)
                     else -> {
@@ -33,11 +33,13 @@ class EnvironmentVariablesImpl(
                     }
                 }
             }
-
-            if (System.getenv(HOME_VARIABLE).isNullOrEmpty()) {
-                yield(CommandLineEnvironmentVariable(HOME_VARIABLE, System.getProperty("user.home")))
-            }
         }
+
+
+        if (System.getenv(HOME_VARIABLE).isNullOrEmpty()) {
+            yield(CommandLineEnvironmentVariable(HOME_VARIABLE, System.getProperty("user.home")))
+        }
+    }
 
     companion object {
         internal val defaultVariables = sequenceOf(

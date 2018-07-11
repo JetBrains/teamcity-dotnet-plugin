@@ -45,7 +45,7 @@ class RestoreCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.arguments.map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

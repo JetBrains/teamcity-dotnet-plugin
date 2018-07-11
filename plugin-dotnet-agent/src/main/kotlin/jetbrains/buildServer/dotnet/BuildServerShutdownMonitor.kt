@@ -2,50 +2,47 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 
 class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _commandLineExecutor: CommandLineExecutor,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo,
-        private val _dotnetToolResolver: DotnetToolResolver,
-        private val _pathsService: PathsService)
+        private val _dotnetToolResolver: DotnetToolResolver)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
-    private var _hasBuildCommand = false
+    private var _contexts = mutableListOf<DotnetBuildContext>()
 
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
             try {
-                if (_hasBuildCommand) {
+                if (_contexts.size > 0) {
                     LOG.debug("Has a build command")
-                    val version = _dotnetCliToolInfo.version
-                    if (version > Version.LastVersionWithoutSharedCompilation) {
-                        LOG.debug("$version is greater then ${Version.LastVersionWithoutSharedCompilation}")
+                    _contexts.flatMap { it.sdks }.maxBy { it.version }?.let {
+                        if (it.version > Version.LastVersionWithoutSharedCompilation) {
+                            LOG.debug("$it.version is greater then ${Version.LastVersionWithoutSharedCompilation}")
 
-                        val buildServerShutdownCommandline = CommandLine(
-                                TargetType.Tool,
-                                _dotnetToolResolver.executableFile,
-                                _pathsService.getPath(PathType.Checkout),
-                                shutdownArgs,
-                                emptyList())
+                            val buildServerShutdownCommandline = CommandLine(
+                                    TargetType.Tool,
+                                    _dotnetToolResolver.executableFile,
+                                    it.path,
+                                    shutdownArgs,
+                                    emptyList())
 
-                        _commandLineExecutor.tryExecute(buildServerShutdownCommandline)
+                            _commandLineExecutor.tryExecute(buildServerShutdownCommandline)
+                        }
                     }
                 }
             } finally {
-                _hasBuildCommand = false
+                _contexts.clear()
             }
         }
     }
 
-    override fun register(dotnetCommandType: DotnetCommandType) {
-        if (buildCommands.contains(dotnetCommandType)) {
-            _hasBuildCommand = true
+    override fun register(context: DotnetBuildContext) {
+        if (buildCommands.contains(context.command.commandType)) {
+            _contexts.add(context)
         }
     }
 

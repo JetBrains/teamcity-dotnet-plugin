@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.dotnet.LoggerParameters
-import jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider
-import jetbrains.buildServer.dotnet.Verbosity
+import jetbrains.buildServer.dotnet.*
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -47,6 +45,7 @@ class MSBuildLoggerArgumentsProviderTest {
             expectedArguments: List<String>) {
         // Given
         val ctx = Mockery()
+        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
         val loggerParameters = ctx.mock(LoggerParameters::class.java)
         val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")), loggerParameters)
 
@@ -57,7 +56,7 @@ class MSBuildLoggerArgumentsProviderTest {
                 will(returnValue(verbosity))
             }
         })
-        val actualArguments = argumentsProvider.arguments.map { it.value }.toList()
+        val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

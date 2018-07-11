@@ -48,6 +48,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
+        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
         val pathsService = ctx.mock(PathsService::class.java)
         val testReportingParameters = ctx.mock(TestReportingParameters::class.java)
         val msBuildVSTestLoggerParameters = ctx.mock(LoggerParameters::class.java)
@@ -56,7 +57,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
         // When
         ctx.checking(object : Expectations() {
             init {
-                oneOf<TestReportingParameters>(testReportingParameters).mode
+                oneOf<TestReportingParameters>(testReportingParameters).getMode(context)
                 will(returnValue(testReportingMode))
 
                 oneOf<PathsService>(pathsService).getPath(PathType.Checkout)
@@ -67,7 +68,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
             }
         })
 
-        val actualParameters = argumentsProvider.parameters.toList()
+        val actualParameters = argumentsProvider.getParameters(context).toList()
 
         // Then
         Assert.assertEquals(actualParameters, expectedParameters)
