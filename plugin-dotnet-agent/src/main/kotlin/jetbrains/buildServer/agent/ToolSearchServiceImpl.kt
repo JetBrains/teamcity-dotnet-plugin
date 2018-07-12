@@ -5,7 +5,6 @@ import java.io.File
 class ToolSearchServiceImpl(private val _environment: Environment,
                             private val _fileSystem: FileSystemService)
     : ToolSearchService {
-
     override fun find(toolName: String,
                       environmentVariableName: String,
                       basePathResolver: (File) -> File): Sequence<File> {
@@ -13,9 +12,9 @@ class ToolSearchServiceImpl(private val _environment: Environment,
             sequenceOf(File(it))
         } ?: emptySequence()
 
-        val pattern = Regex("^.*$toolName(\\.(exe))?$")
+        val pattern = Regex("^$toolName(\\.(exe))?$")
         return paths.plus(_environment.paths)
                 .flatMap { _fileSystem.list(basePathResolver(it)) }
-                .filter { it.absolutePath.matches(pattern) }
+                .filter { it.name.matches(pattern) }
     }
 }

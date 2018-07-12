@@ -8,6 +8,7 @@ import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -23,8 +24,24 @@ class ToolSearchServiceTest {
         _fileSystem = _ctx.mock(FileSystemService::class.java)
     }
 
-    @Test
-    fun shouldFind() {
+    @DataProvider
+    fun testData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(File("home2", "dotnet"), true),
+                arrayOf(File("home1", "dotnet"), true),
+                arrayOf(File("home2", "dotnet.exe"), true),
+                arrayOf(File("home2", "abc.exe"), false),
+                arrayOf(File("home2", "Dotnet.exe"), false),
+                arrayOf(File("home2", "_dotnet.exe"), false),
+                arrayOf(File("home2", "abc_dotnet.exe"), false),
+                arrayOf(File("home2", "dotnet.exea"), false),
+                arrayOf(File("home2", "dotnet.a"), false),
+                arrayOf(File("home2", "dotneta"), false)
+        )
+    }
+
+    @Test(dataProvider = "testData")
+    fun shouldFind(executable: File, success: Boolean) {
         // Given
         val target = "dotnet"
         _ctx.checking(object : Expectations() {
@@ -42,7 +59,7 @@ class ToolSearchServiceTest {
                 will(returnValue(emptySequence<File>()))
 
                 oneOf<FileSystemService>(_fileSystem).list(File("home2"))
-                will(returnValue(sequenceOf(File("home2", "dotnet"))))
+                will(returnValue(sequenceOf(executable)))
             }
         })
         val searchService = createInstance()
@@ -52,7 +69,7 @@ class ToolSearchServiceTest {
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(actualTools, listOf(File("home2", "dotnet")))
+        Assert.assertEquals(actualTools.contains(executable), success)
     }
 
     @Test
