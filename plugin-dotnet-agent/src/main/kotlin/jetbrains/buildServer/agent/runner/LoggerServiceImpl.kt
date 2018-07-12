@@ -18,11 +18,11 @@ class LoggerServiceImpl(
     private val buildLogger: BuildProgressLogger
         get() = _buildStepContext.runnerContext.build.buildLogger
 
-    override fun onMessage(serviceMessage: ServiceMessage) = buildLogger.message(serviceMessage.toString())
+    override fun writeMessage(serviceMessage: ServiceMessage) = buildLogger.message(serviceMessage.toString())
 
-    override fun onBuildProblem(buildProblem: BuildProblemData) = buildLogger.logBuildProblem(buildProblem)
+    override fun writeBuildProblem(buildProblem: BuildProblemData) = buildLogger.logBuildProblem(buildProblem)
 
-    override fun onStandardOutput(text: String, color: Color) {
+    override fun writeStandardOutput(text: String, color: Color) {
         if (color == Color.Default) {
             listener.onStandardOutput(text)
         } else {
@@ -30,9 +30,9 @@ class LoggerServiceImpl(
         }
     }
 
-    override fun onErrorOutput(text: String) = listener.onErrorOutput(text)
+    override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
 
-    override fun onBlock(blockName: String, description: String): Closeable {
+    override fun writeBlock(blockName: String, description: String): Closeable {
         buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
         return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
     }

@@ -47,7 +47,7 @@ class VSTestLoggerEnvironmentBuilder(
                 }
             } catch (ex: Exception) {
                 LOG.error(ex)
-                _loggerService.onErrorOutput("Failed to create logger directory \"$loggerDirectory\"")
+                _loggerService.writeErrorOutput("Failed to create logger directory \"$loggerDirectory\"")
             }
 
             return Closeable { _fileSystemService.remove(loggerDirectory) }

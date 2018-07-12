@@ -88,9 +88,9 @@ class WorkflowSessionImpl(
                 _commandLine,
                 _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
-        override fun onStandardOutput(text: String) = _loggerService.onStandardOutput(text)
+        override fun onStandardOutput(text: String) = _loggerService.writeStandardOutput(text)
 
-        override fun onErrorOutput(text: String) = _loggerService.onErrorOutput(text)
+        override fun onErrorOutput(text: String) = _loggerService.writeErrorOutput(text)
 
         override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 

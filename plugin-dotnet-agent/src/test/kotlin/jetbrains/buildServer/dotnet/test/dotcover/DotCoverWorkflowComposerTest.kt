@@ -135,8 +135,8 @@ class DotCoverWorkflowComposerTest {
                 oneOf<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
-                oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
-                oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
                 oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
@@ -286,24 +286,24 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
                 // Check diagnostics info
-                oneOf<LoggerService>(_loggerService).onBlock("dotCover Settings")
-                oneOf<LoggerService>(_loggerService).onStandardOutput("Command line:")
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  \"${File("sdk", "dotnet.exe").path}\" arg1", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("Filters:")
+                oneOf<LoggerService>(_loggerService).writeBlock("dotCover Settings")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("Command line:")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("  \"${File("sdk", "dotnet.exe").path}\" arg1", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("Filters:")
                 val filter1 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "abc")
                 val filter2 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "qwerty")
                 oneOf<CoverageFilterProvider>(_coverageFilterProvider).filters
                 will(returnValue(sequenceOf(filter1, filter2)))
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  $filter1", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  $filter2", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("Attribute Filters:")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("  $filter1", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("  $filter2", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("Attribute Filters:")
                 val attributeFilter = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "xyz")
                 oneOf<CoverageFilterProvider>(_coverageFilterProvider).attributeFilters
                 will(returnValue(sequenceOf(attributeFilter)))
-                oneOf<LoggerService>(_loggerService).onStandardOutput("  $attributeFilter", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("  $attributeFilter", Color.Details)
 
-                oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
-                oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
                 oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
@@ -393,8 +393,8 @@ class DotCoverWorkflowComposerTest {
                 oneOf<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
-                never<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
-                never<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                never<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
+                never<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
                 oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
@@ -487,8 +487,8 @@ class DotCoverWorkflowComposerTest {
                 oneOf<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
-                oneOf<LoggerService>(_loggerService).onMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
-                oneOf<LoggerService>(_loggerService).onMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
                 oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))

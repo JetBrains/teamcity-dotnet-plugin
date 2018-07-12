@@ -63,7 +63,7 @@ class EnvironmentVariablesTest {
         val ctx = Mockery()
         val environment = ctx.mock(Environment::class.java)
         val targetRegistry = ctx.mock(TargetRegistry::class.java)
-        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java), versions.map { DotnetSdk(CommandLineArgument("target"), File("targetPath"), it) }.toSet())
+        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java), null, versions.map { DotnetSdk(CommandLineArgument("target"), File("targetPath"), it) }.toSet())
         val environmentVariables = EnvironmentVariablesImpl(environment, targetRegistry)
 
         // When

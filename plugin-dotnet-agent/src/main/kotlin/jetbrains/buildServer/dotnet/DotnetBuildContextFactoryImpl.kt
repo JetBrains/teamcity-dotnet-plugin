@@ -2,17 +2,19 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.agent.runner.*
 import java.io.File
 
 class DotnetBuildContextFactoryImpl(
         private val _fileSystemService: FileSystemService,
         private val _pathService: PathsService,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo) : DotnetBuildContextFactory {
+        private val _dotnetCliToolInfo: DotnetCliToolInfo,
+        private val _parametersService: ParametersService)
+    : DotnetBuildContextFactory {
     override fun create(command: DotnetCommand): DotnetBuildContext =
             DotnetBuildContext(
                     command,
+                    getVerbosityLevel(),
                     command.targetArguments
                             .flatMap { it.arguments }
                             .map { tryGetSdk(it) }
@@ -35,4 +37,9 @@ class DotnetBuildContextFactoryImpl(
 
         return DotnetSdk(targetArgument, targetPath, version)
     }
+
+    private fun getVerbosityLevel(): Verbosity? =
+            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
+                Verbosity.tryParse(it)
+            }
 }

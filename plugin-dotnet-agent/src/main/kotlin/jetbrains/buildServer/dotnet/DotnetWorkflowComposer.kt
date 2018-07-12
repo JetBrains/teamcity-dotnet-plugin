@@ -23,7 +23,8 @@ class DotnetWorkflowComposer(
         private val _failedTestSource: FailedTestSource,
         private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
-        private val _contextFactory: DotnetBuildContextFactory) : WorkflowComposer {
+        private val _contextFactory: DotnetBuildContextFactory)
+    : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
@@ -44,7 +45,7 @@ class DotnetWorkflowComposer(
                         val executableFile = command.toolResolver.executableFile
                         val args = command.getArguments(dotnetBuildContext).toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
-                        _loggerService.onStandardOutput(commandHeader)
+                        _loggerService.writeStandardOutput(commandHeader)
                         val commandType = command.commandType
                         val commandName = commandType.id.replace('-', ' ')
                         val blockName = if (commandName.isNotBlank()) {
@@ -53,7 +54,7 @@ class DotnetWorkflowComposer(
                             args.firstOrNull()?.value ?: ""
                         }
 
-                        _loggerService.onBlock(blockName).use {
+                        _loggerService.writeBlock(blockName).use {
                             _failedTestSource
                                     .subscribe { result += CommandResult.FailedTests }
                                     .use {

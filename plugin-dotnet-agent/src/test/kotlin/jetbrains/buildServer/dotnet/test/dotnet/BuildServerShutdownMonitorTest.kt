@@ -58,7 +58,7 @@ class BuildServerShutdownMonitorTest {
                 emptyList())
 
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(command, versions.map { DotnetSdk(CommandLineArgument("target"), taregtPath, it) }.toSet())
+        val context = DotnetBuildContext(command, null, versions.map { DotnetSdk(CommandLineArgument("target"), taregtPath, it) }.toSet())
 
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {

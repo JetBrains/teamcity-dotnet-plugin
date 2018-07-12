@@ -20,7 +20,7 @@ class VSTestLoggerEnvironmentCleaner(
                 _fileSystemService.remove(loggerToClean)
             } catch (ex: Exception) {
                 LOG.error(ex)
-                _loggerService.onErrorOutput("Failed to remove logger directory \"$loggerToClean\"")
+                _loggerService.writeErrorOutput("Failed to remove logger directory \"$loggerToClean\"")
             }
         }
     }

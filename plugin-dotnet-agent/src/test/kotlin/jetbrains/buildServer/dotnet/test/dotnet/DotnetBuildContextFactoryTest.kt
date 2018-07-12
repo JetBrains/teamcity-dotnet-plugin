@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -17,6 +19,7 @@ class DotnetBuildContextFactoryTest {
     private lateinit var _ctx: Mockery
     private lateinit var _pathsService: PathsService
     private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
+    private lateinit var _parametersService: ParametersService
     private lateinit var _command: DotnetCommand;
 
     @BeforeMethod
@@ -24,11 +27,12 @@ class DotnetBuildContextFactoryTest {
         _ctx = Mockery()
         _pathsService = _ctx.mock(PathsService::class.java)
         _dotnetCliToolInfo = _ctx.mock(DotnetCliToolInfo::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
         _command = _ctx.mock(DotnetCommand::class.java)
     }
 
     @DataProvider
-    fun testData(): Array<Array<Any>> {
+    fun testSdkData(): Array<Array<Any>> {
         return arrayOf(
                 // Targets were found by relative paths
                 arrayOf(
@@ -101,7 +105,7 @@ class DotnetBuildContextFactoryTest {
         )
     }
 
-    @Test(dataProvider = "testData")
+    @Test(dataProvider = "testSdkData")
     fun shouldGetDotnetVersionByPath(
             targets: Sequence<File>,
             fileSystemService: FileSystemService,
@@ -111,6 +115,9 @@ class DotnetBuildContextFactoryTest {
         val workingDir = File("wd")
         _ctx.checking(object : Expectations() {
             init {
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(Verbosity.Normal.id))
+
                 oneOf<DotnetCommand>(_command).targetArguments
                 will(returnValue(sequenceOf(TargetArguments(targets.map { CommandLineArgument(it.path) }))))
 
@@ -134,9 +141,51 @@ class DotnetBuildContextFactoryTest {
         Assert.assertEquals(actualContext.sdks, expectedSdks)
     }
 
+    @DataProvider
+    fun testVerbosityData(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(Verbosity.Normal.id, Verbosity.Normal),
+                arrayOf(Verbosity.Normal.id.toUpperCase(), Verbosity.Normal),
+                arrayOf(Verbosity.Quiet.id, Verbosity.Quiet),
+                arrayOf(Verbosity.Minimal.id, Verbosity.Minimal),
+                arrayOf(Verbosity.Detailed.id, Verbosity.Detailed),
+                arrayOf(Verbosity.Diagnostic.id, Verbosity.Diagnostic),
+                arrayOf("abc", null),
+                arrayOf("  ", null),
+                arrayOf("", null),
+                arrayOf<String?>(null, null)
+        )
+    }
+
+    @Test(dataProvider = "testVerbosityData")
+    fun shouldGetVerbosity(
+            parameterValue: String?,
+            expectedVerbosityLevel: Verbosity?) {
+        // Given
+        _ctx.checking(object : Expectations() {
+            init {
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(parameterValue))
+
+                oneOf<DotnetCommand>(_command).targetArguments
+                will(returnValue(emptySequence<TargetArguments>()))
+            }
+        })
+
+        val factory = createInstance(VirtualFileSystemService())
+
+        // When
+        val actualContext = factory.create(_command)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualContext.verbosityLevel, expectedVerbosityLevel)
+    }
+
     private fun createInstance(fileSystemService: FileSystemService) =
             DotnetBuildContextFactoryImpl(
                     fileSystemService,
                     _pathsService,
-                    _dotnetCliToolInfo)
+                    _dotnetCliToolInfo,
+                    _parametersService)
 }

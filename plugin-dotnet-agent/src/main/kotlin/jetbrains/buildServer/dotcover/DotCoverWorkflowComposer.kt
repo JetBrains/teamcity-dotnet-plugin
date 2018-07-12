@@ -81,19 +81,19 @@ class DotCoverWorkflowComposer(
                     }
 
                     if (showDiagnostics) {
-                        _loggerService.onBlock("dotCover Settings").use {
+                        _loggerService.writeBlock("dotCover Settings").use {
                             val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
-                            _loggerService.onStandardOutput("Command line:")
-                            _loggerService.onStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
+                            _loggerService.writeStandardOutput("Command line:")
+                            _loggerService.writeStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
 
-                            _loggerService.onStandardOutput("Filters:")
+                            _loggerService.writeStandardOutput("Filters:")
                             for (filter in _coverageFilterProvider.filters) {
-                                _loggerService.onStandardOutput("  $filter", Color.Details)
+                                _loggerService.writeStandardOutput("  $filter", Color.Details)
                             }
 
-                            _loggerService.onStandardOutput("Attribute Filters:")
+                            _loggerService.writeStandardOutput("Attribute Filters:")
                             for (filter in _coverageFilterProvider.attributeFilters) {
-                                _loggerService.onStandardOutput("  $filter", Color.Details)
+                                _loggerService.writeStandardOutput("  $filter", Color.Details)
                             }
                         }
                     }
@@ -150,7 +150,7 @@ class DotCoverWorkflowComposer(
         }
 
         deferredServiceMessages?.let {
-            it.serviceMessages.forEach { _loggerService.onMessage(it) }
+            it.serviceMessages.forEach { _loggerService.writeMessage(it) }
         }
     }
 

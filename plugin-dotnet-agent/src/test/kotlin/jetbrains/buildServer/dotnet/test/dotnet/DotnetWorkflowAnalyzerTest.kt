@@ -31,7 +31,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -50,7 +50,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).onBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code-99", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code -99"))
+                oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code-99", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code -99"))
             }
         })
 
@@ -82,8 +82,8 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -104,8 +104,8 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Process finished with positive exit code 33 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 33 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -126,7 +126,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 

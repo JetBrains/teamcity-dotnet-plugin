@@ -47,10 +47,8 @@ class MSBuildCommand(
             }
         }
 
-        parameters(DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-            Verbosity.tryParse(it)?.let {
-                yield(CommandLineArgument("/v:${it.id.toLowerCase()}"))
-            }
+        context.verbosityLevel?.let {
+            yield(CommandLineArgument("/v:${it.id.toLowerCase()}"))
         }
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))

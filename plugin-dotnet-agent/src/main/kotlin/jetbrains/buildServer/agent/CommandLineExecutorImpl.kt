@@ -31,8 +31,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
                 resultStr.append("Stdout:\n${it.stdout}")
                 resultStr.append("Stderr:\n${it.stderr}")
                 LOG.debug("Result:\n$resultStr")
-            }
-            else {
+            } else {
                 LOG.info("Exits with code: ${it.exitCode}")
             }
 

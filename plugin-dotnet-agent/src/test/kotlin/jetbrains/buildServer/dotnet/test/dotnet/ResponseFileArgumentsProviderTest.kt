@@ -17,7 +17,6 @@ import java.io.InputStreamReader
 class ResponseFileArgumentsProviderTest {
     private lateinit var _ctx: Mockery
     private lateinit var _pathService: PathsService
-    private lateinit var _parametersService: ParametersService
     private lateinit var _loggerService: LoggerService
     private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
 
@@ -25,7 +24,6 @@ class ResponseFileArgumentsProviderTest {
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx.mock(PathsService::class.java)
-        _parametersService = _ctx.mock(ParametersService::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
         _msBuildParameterConverter = _ctx.mock(MSBuildParameterConverter::class.java)
     }
@@ -45,14 +43,11 @@ class ResponseFileArgumentsProviderTest {
         val buildParameter2 = MSBuildParameter("param2", "val2")
         val parametersProvider2 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
-                will(returnValue(Verbosity.Detailed.id))
-
                 oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
@@ -71,12 +66,12 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<PathsService>(_pathService).uniqueName
                 will(returnValue(rspFileName))
 
-                oneOf<LoggerService>(_loggerService).onBlock(ResponseFileArgumentsProvider.BlockName)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("arg1", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("arg2", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("arg3", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("par1", Color.Details)
-                oneOf<LoggerService>(_loggerService).onStandardOutput("par2", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeBlock(ResponseFileArgumentsProvider.BlockName)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("arg1", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("arg2", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("arg3", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("par1", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("par2", Color.Details)
             }
         })
 
@@ -99,7 +94,6 @@ class ResponseFileArgumentsProviderTest {
         return ResponseFileArgumentsProvider(
                 _pathService,
                 ArgumentsServiceStub(),
-                _parametersService,
                 fileSystemService,
                 _loggerService,
                 _msBuildParameterConverter,

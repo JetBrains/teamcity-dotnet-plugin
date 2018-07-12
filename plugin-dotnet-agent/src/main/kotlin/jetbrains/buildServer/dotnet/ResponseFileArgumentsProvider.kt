@@ -13,7 +13,6 @@ import kotlin.coroutines.experimental.buildSequence
 class ResponseFileArgumentsProvider(
         private val _pathsService: PathsService,
         private val _argumentsService: ArgumentsService,
-        private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService,
         private val _loggerService: LoggerService,
         private val _msBuildParameterConverter: MSBuildParameterConverter,
@@ -32,19 +31,17 @@ class ResponseFileArgumentsProvider(
         val paramLines = params.map { _msBuildParameterConverter.convert(it) }
         val lines = listOf(argLine) + paramLines
 
-        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-            Verbosity.tryParse(it)?.let {
-                @Suppress("NON_EXHAUSTIVE_WHEN")
-                when (it) {
-                    Verbosity.Detailed, Verbosity.Diagnostic -> {
-                        _loggerService.onBlock(BlockName).use {
-                            for ((value) in args) {
-                                _loggerService.onStandardOutput(value, Color.Details)
-                            }
+        context.verbosityLevel?.let {
+            @Suppress("NON_EXHAUSTIVE_WHEN")
+            when (it) {
+                Verbosity.Detailed, Verbosity.Diagnostic -> {
+                    _loggerService.writeBlock(BlockName).use {
+                        for ((value) in args) {
+                            _loggerService.writeStandardOutput(value, Color.Details)
+                        }
 
-                            for (paramLine in paramLines) {
-                                _loggerService.onStandardOutput(paramLine, Color.Details)
-                            }
+                        for (paramLine in paramLines) {
+                            _loggerService.writeStandardOutput(paramLine, Color.Details)
                         }
                     }
                 }

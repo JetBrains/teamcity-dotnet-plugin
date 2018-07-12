@@ -168,16 +168,16 @@ class DotnetWorkflowComposerTest {
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
 
-                oneOf<LoggerService>(_loggerService).onStandardOutput("dotnet.exe arg1 arg2")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("dotnet.exe arg1 arg2")
 
-                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.Build.id)
+                oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.Build.id)
                 will(returnValue(_closeable3))
 
                 oneOf<Closeable>(_closeable3).close()
 
-                oneOf<LoggerService>(_loggerService).onStandardOutput("msbuild.exe arg3")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("msbuild.exe arg3")
 
-                oneOf<LoggerService>(_loggerService).onBlock(DotnetCommandType.NuGetPush.id.replace('-', ' '))
+                oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.NuGetPush.id.replace('-', ' '))
                 will(returnValue(_closeable4))
 
                 oneOf<Closeable>(_closeable4).close()

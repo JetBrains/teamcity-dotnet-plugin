@@ -5,13 +5,13 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import java.io.Closeable
 
 interface LoggerService {
-    fun onMessage(serviceMessage: ServiceMessage)
+    fun writeMessage(serviceMessage: ServiceMessage)
 
-    fun onBuildProblem(buildProblem: BuildProblemData)
+    fun writeBuildProblem(buildProblem: BuildProblemData)
 
-    fun onStandardOutput(text: String, color: Color = Color.Default)
+    fun writeStandardOutput(text: String, color: Color = Color.Default)
 
-    fun onErrorOutput(text: String)
+    fun writeErrorOutput(text: String)
 
-    fun onBlock(blockName: String, description: String = ""): Closeable
+    fun writeBlock(blockName: String, description: String = ""): Closeable
 }

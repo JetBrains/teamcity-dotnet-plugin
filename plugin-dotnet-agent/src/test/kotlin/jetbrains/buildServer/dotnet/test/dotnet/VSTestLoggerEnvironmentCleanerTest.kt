@@ -96,7 +96,7 @@ class VSTestLoggerEnvironmentCleanerTest {
                 oneOf<PathsService>(_pathService).getPath(PathType.Checkout)
                 will(returnValue(checkoutDir))
 
-                oneOf<LoggerService>(_loggerService).onErrorOutput("Failed to remove logger directory \"$loggerDir1\"")
+                oneOf<LoggerService>(_loggerService).writeErrorOutput("Failed to remove logger directory \"$loggerDir1\"")
             }
         })
 
