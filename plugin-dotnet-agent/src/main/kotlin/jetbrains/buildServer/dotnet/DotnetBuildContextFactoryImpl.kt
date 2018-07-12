@@ -1,12 +1,12 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.*
-import java.io.File
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathsService
+import kotlin.coroutines.experimental.buildSequence
 
 class DotnetBuildContextFactoryImpl(
-        private val _fileSystemService: FileSystemService,
         private val _pathService: PathsService,
         private val _dotnetCliToolInfo: DotnetCliToolInfo,
         private val _parametersService: ParametersService)
@@ -15,28 +15,16 @@ class DotnetBuildContextFactoryImpl(
             DotnetBuildContext(
                     command,
                     getVerbosityLevel(),
-                    command.targetArguments
-                            .flatMap { it.arguments }
-                            .map { tryGetSdk(it) }
-                            .filterNotNull()
-                            .toSet())
+                    getSdks().toSet())
 
-    private fun tryGetSdk(targetArgument: CommandLineArgument): DotnetSdk? {
-        var targetPath = File(targetArgument.value).parentFile
-        if (!_fileSystemService.isExists(targetPath)) {
-            targetPath = File(_pathService.getPath(PathType.WorkingDirectory), targetPath.path)
-            if (!_fileSystemService.isExists(targetPath)) {
-                return null
+    private fun getSdks(): Sequence<DotnetSdk> =
+            buildSequence {
+                val targetPath = _pathService.getPath(PathType.WorkingDirectory)
+                val version = _dotnetCliToolInfo.getVersion(targetPath)
+                if (version != Version.Empty) {
+                    yield(DotnetSdk(targetPath, version))
+                }
             }
-        }
-
-        val version = _dotnetCliToolInfo.getVersion(targetPath)
-        if (version == Version.Empty) {
-            return null
-        }
-
-        return DotnetSdk(targetArgument, targetPath, version)
-    }
 
     private fun getVerbosityLevel(): Verbosity? =
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {

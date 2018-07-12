@@ -19,19 +19,22 @@ class BuildServerShutdownMonitor(
             try {
                 if (_contexts.size > 0) {
                     LOG.debug("Has a build command")
-                    _contexts.flatMap { it.sdks }.maxBy { it.version }?.let {
-                        if (it.version > Version.LastVersionWithoutSharedCompilation) {
-                            LOG.debug("$it.version is greater then ${Version.LastVersionWithoutSharedCompilation}")
+                    val sdks = _contexts
+                            .flatMap { it.sdks }
+                            .filter { it.version > Version.LastVersionWithoutSharedCompilation }
+                            .distinctBy { it.path }
 
-                            val buildServerShutdownCommandline = CommandLine(
-                                    TargetType.Tool,
-                                    _dotnetToolResolver.executableFile,
-                                    it.path,
-                                    shutdownArgs,
-                                    emptyList())
-
-                            _commandLineExecutor.tryExecute(buildServerShutdownCommandline)
-                        }
+                    val executableFile = _dotnetToolResolver.executableFile
+                    for ((path, version) in sdks) {
+                        LOG.debug("$version is greater then ${Version.LastVersionWithoutSharedCompilation} in the \"$path\"")
+                        _commandLineExecutor.tryExecute(
+                                CommandLine(
+                                        TargetType.Tool,
+                                        executableFile,
+                                        path,
+                                        shutdownArgs,
+                                        emptyList())
+                        )
                     }
                 }
             } finally {

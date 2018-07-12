@@ -1,12 +1,10 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -31,86 +29,8 @@ class DotnetBuildContextFactoryTest {
         _command = _ctx.mock(DotnetCommand::class.java)
     }
 
-    @DataProvider
-    fun testSdkData(): Array<Array<Any>> {
-        return arrayOf(
-                // Targets were found by relative paths
-                arrayOf(
-                        sequenceOf(File("dir1", "target1"), File("dir2", "target2")),
-                        VirtualFileSystemService()
-                                .addDirectory(File("dir1"))
-                                .addDirectory(File("dir2")),
-                        mapOf(
-                                File("dir1") to Version(1, 0, 0),
-                                File("dir2") to Version(2, 0, 0)
-                        ),
-                        setOf(
-                                DotnetSdk(CommandLineArgument(File("dir1", "target1").path), File("dir1"), Version(1, 0, 0)),
-                                DotnetSdk(CommandLineArgument(File("dir2", "target2").path), File("dir2"), Version(2, 0, 0))
-                        )
-                ),
-
-                // Targets were found by paths relative to working directory
-                arrayOf(
-                        sequenceOf(File("dir1", "target1"), File("dir2", "target2")),
-                        VirtualFileSystemService()
-                                .addDirectory(File("wd", "dir1"))
-                                .addDirectory(File("wd", "dir2")),
-                        mapOf(
-                                File("wd", "dir1") to Version(1, 0, 0),
-                                File("wd", "dir2") to Version(2, 0, 0)
-                        ),
-                        setOf(
-                                DotnetSdk(CommandLineArgument(File("dir1", "target1").path), File("wd", "dir1"), Version(1, 0, 0)),
-                                DotnetSdk(CommandLineArgument(File("dir2", "target2").path), File("wd", "dir2"), Version(2, 0, 0))
-                        )
-                ),
-
-                // Mixed targets
-                arrayOf(
-                        sequenceOf(File("dir1", "target1"), File("dir2", "target2")),
-                        VirtualFileSystemService()
-                                .addDirectory(File("dir1"))
-                                .addDirectory(File("wd", "dir2")),
-                        mapOf(
-                                File("dir1") to Version(1, 0, 0),
-                                File("wd", "dir2") to Version(2, 0, 0)
-                        ),
-                        setOf(
-                                DotnetSdk(CommandLineArgument(File("dir1", "target1").path), File("dir1"), Version(1, 0, 0)),
-                                DotnetSdk(CommandLineArgument(File("dir2", "target2").path), File("wd", "dir2"), Version(2, 0, 0))
-                        )
-                ),
-
-                // One target was not found
-                arrayOf(
-                        sequenceOf(File("dir1", "target1"), File("dir2", "target2")),
-                        VirtualFileSystemService()
-                                .addDirectory(File("dir1")),
-                        mapOf(
-                                File("dir1") to Version(1, 0, 0)
-                        ),
-                        setOf(
-                                DotnetSdk(CommandLineArgument(File("dir1", "target1").path), File("dir1"), Version(1, 0, 0))
-                        )
-                ),
-
-                // Targets were not found
-                arrayOf(
-                        sequenceOf(File("dir1", "target1"), File("dir2", "target2")),
-                        VirtualFileSystemService(),
-                        emptyMap<File, Version>(),
-                        emptySet<DotnetSdk>()
-                )
-        )
-    }
-
-    @Test(dataProvider = "testSdkData")
-    fun shouldGetDotnetVersionByPath(
-            targets: Sequence<File>,
-            fileSystemService: FileSystemService,
-            versions: Map<File, Version>,
-            expectedSdks: Set<DotnetSdk>) {
+    @Test
+    fun shouldGetDotnetSdkVersionFromWorkingDirectory() {
         // Given
         val workingDir = File("wd")
         _ctx.checking(object : Expectations() {
@@ -118,27 +38,22 @@ class DotnetBuildContextFactoryTest {
                 allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
                 will(returnValue(Verbosity.Normal.id))
 
-                oneOf<DotnetCommand>(_command).targetArguments
-                will(returnValue(sequenceOf(TargetArguments(targets.map { CommandLineArgument(it.path) }))))
-
-                allowing<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
+                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(workingDir))
 
-                for ((path, version) in versions) {
-                    oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(path)
-                    will(returnValue(version))
-                }
+                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(workingDir)
+                will(returnValue(Version(1, 2, 3)))
             }
         })
 
-        val factory = createInstance(fileSystemService)
+        val factory = createInstance()
 
         // When
         val actualContext = factory.create(_command)
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(actualContext.sdks, expectedSdks)
+        Assert.assertEquals(actualContext.sdks, setOf(DotnetSdk(workingDir, Version(1, 2, 3))))
     }
 
     @DataProvider
@@ -164,15 +79,18 @@ class DotnetBuildContextFactoryTest {
         // Given
         _ctx.checking(object : Expectations() {
             init {
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
-                will(returnValue(parameterValue))
+                allowing<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
+                will(returnValue(File(".")))
 
-                oneOf<DotnetCommand>(_command).targetArguments
-                will(returnValue(emptySequence<TargetArguments>()))
+                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File("."))
+                will(returnValue(Version(1, 2, 3)))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(parameterValue))
             }
         })
 
-        val factory = createInstance(VirtualFileSystemService())
+        val factory = createInstance()
 
         // When
         val actualContext = factory.create(_command)
@@ -182,9 +100,8 @@ class DotnetBuildContextFactoryTest {
         Assert.assertEquals(actualContext.verbosityLevel, expectedVerbosityLevel)
     }
 
-    private fun createInstance(fileSystemService: FileSystemService) =
+    private fun createInstance() =
             DotnetBuildContextFactoryImpl(
-                    fileSystemService,
                     _pathsService,
                     _dotnetCliToolInfo,
                     _parametersService)

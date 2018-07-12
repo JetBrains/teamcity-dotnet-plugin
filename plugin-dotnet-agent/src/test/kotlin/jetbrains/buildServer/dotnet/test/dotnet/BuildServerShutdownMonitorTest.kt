@@ -31,8 +31,10 @@ class BuildServerShutdownMonitorTest {
         return arrayOf(
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), true),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300), Version(2, 1, 301)), true),
                 arrayOf(DotnetCommandType.Build, emptySequence<Version>(), false),
                 arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300)), true),
+                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300), Version(2, 1, 301)), true),
                 arrayOf(DotnetCommandType.Publish, sequenceOf(Version(2, 1, 300)), true),
                 arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300)), true),
                 arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300), Version(1, 0, 0)), true),
@@ -49,16 +51,8 @@ class BuildServerShutdownMonitorTest {
     fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, expectedShutdown: Boolean) {
         // Given
         val executableFile = File("dotnet")
-        val taregtPath = File("checkoutDir")
-        val buildServerShutdownCommandline = CommandLine(
-                TargetType.Tool,
-                executableFile,
-                taregtPath,
-                BuildServerShutdownMonitor.shutdownArgs,
-                emptyList())
-
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(command, null, versions.map { DotnetSdk(CommandLineArgument("target"), taregtPath, it) }.toSet())
+        val context = DotnetBuildContext(command, null, versions.map { DotnetSdk(File("wd$it"), it) }.toSet())
 
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
@@ -69,11 +63,21 @@ class BuildServerShutdownMonitorTest {
                 oneOf<DotnetCommand>(command).commandType
                 will(returnValue(dotnetCommandType))
 
-                if (expectedShutdown) {
-                    oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
-                    will(returnValue(executableFile))
+                allowing<DotnetToolResolver>(_dotnetToolResolver).executableFile
+                will(returnValue(executableFile))
 
-                    oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(buildServerShutdownCommandline)
+                if (expectedShutdown) {
+                    for(version in versions.filter { it > Version.LastVersionWithoutSharedCompilation }) {
+                        val path = File("wd$version")
+                        val buildServerShutdownCommandline = CommandLine(
+                                TargetType.Tool,
+                                executableFile,
+                                path,
+                                BuildServerShutdownMonitor.shutdownArgs,
+                                emptyList())
+
+                        oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(buildServerShutdownCommandline)
+                    }
                 }
             }
         })
