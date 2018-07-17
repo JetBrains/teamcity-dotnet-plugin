@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
@@ -16,6 +18,7 @@ class BuildServerShutdownMonitorTest {
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _dotnetToolResolver: DotnetToolResolver
     private lateinit var _agentRunningBuild: AgentRunningBuild
+    private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
@@ -24,31 +27,37 @@ class BuildServerShutdownMonitorTest {
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
         _agentRunningBuild = _ctx.mock(AgentRunningBuild::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
     }
 
     @DataProvider
-    fun supportToolCases(): Array<Array<out Any>> {
+    fun supportToolCases(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300), Version(2, 1, 301)), true),
-                arrayOf(DotnetCommandType.Build, emptySequence<Version>(), false),
-                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300), Version(2, 1, 301)), true),
-                arrayOf(DotnetCommandType.Publish, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300), Version(1, 0, 0)), true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(1, 1, 0), Version(1, 0, 0)), false),
-                arrayOf(DotnetCommandType.Test, emptySequence<Version>(), false),
-                arrayOf(DotnetCommandType.Run, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.MSBuild, sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(DotnetCommandType.NuGetPush, sequenceOf(Version(2, 1, 300)), false),
-                arrayOf(DotnetCommandType.NuGetDelete, sequenceOf(Version(2, 1, 300)), false),
-                arrayOf(DotnetCommandType.Custom, sequenceOf(Version(2, 1, 300)), false))
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "true", true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "True", true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "abc", true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "false", false),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "FaLse", false),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300), Version(2, 1, 301)), null, true),
+                arrayOf(DotnetCommandType.Build, emptySequence<Version>(), null, false),
+                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300), Version(2, 1, 301)), null, true),
+                arrayOf(DotnetCommandType.Publish, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300), Version(1, 0, 0)), null, true),
+                arrayOf(DotnetCommandType.Test, sequenceOf(Version(1, 1, 0), Version(1, 0, 0)), null, false),
+                arrayOf(DotnetCommandType.Test, emptySequence<Version>(), null, false),
+                arrayOf(DotnetCommandType.Run, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.MSBuild, sequenceOf(Version(2, 1, 300)), null, true),
+                arrayOf(DotnetCommandType.NuGetPush, sequenceOf(Version(2, 1, 300)), null, false),
+                arrayOf(DotnetCommandType.NuGetDelete, sequenceOf(Version(2, 1, 300)), null, false),
+                arrayOf(DotnetCommandType.Custom, sequenceOf(Version(2, 1, 300)), null, false))
     }
 
     @Test(dataProvider = "supportToolCases")
-    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, expectedShutdown: Boolean) {
+    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, buildServerShutdownParam: String?, expectedShutdown: Boolean) {
         // Given
         val executableFile = File("dotnet")
         val command = _ctx.mock(DotnetCommand::class.java)
@@ -57,6 +66,9 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)
+                will(returnValue(buildServerShutdownParam))
+
                 oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
 
@@ -96,5 +108,6 @@ class BuildServerShutdownMonitorTest {
             BuildServerShutdownMonitor(
                     _agentLifeCycleEventSources,
                     _commandLineExecutor,
-                    _dotnetToolResolver)
+                    _dotnetToolResolver,
+                    _parametersService)
 }
