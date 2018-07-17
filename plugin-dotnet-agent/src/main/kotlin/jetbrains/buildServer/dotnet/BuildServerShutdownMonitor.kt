@@ -2,16 +2,13 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 
 class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _commandLineExecutor: CommandLineExecutor,
-        private val _dotnetToolResolver: DotnetToolResolver,
-        private val _parametersService: ParametersService)
+        private val _dotnetToolResolver: DotnetToolResolver)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
@@ -20,8 +17,7 @@ class BuildServerShutdownMonitor(
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
             try {
-                val avoidShotdownBuildService = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)?.equals("false", true) ?: false
-                if (!avoidShotdownBuildService && _contexts.size > 0) {
+                if (_contexts.size > 0) {
                     LOG.debug("Has a build command")
                     val sdks = _contexts
                             .flatMap { it.sdks }
