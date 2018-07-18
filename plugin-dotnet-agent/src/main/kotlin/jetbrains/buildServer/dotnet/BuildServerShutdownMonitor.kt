@@ -48,8 +48,8 @@ class BuildServerShutdownMonitor(
 
     override fun register(context: DotnetBuildContext) {
         if (buildCommands.contains(context.command.commandType)) {
-            val avoidShutdownBuildService = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)?.equals("false", true) ?: false
-            if (!avoidShutdownBuildService) {
+            val useSharedCompilation = _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true
+            if (useSharedCompilation) {
                 _contexts.add(context)
             }
         }
@@ -58,6 +58,7 @@ class BuildServerShutdownMonitor(
     companion object {
         private val LOG = Logger.getInstance(BuildServerShutdownMonitor::class.java.name)
         internal val shutdownArgs = listOf(CommandLineArgument("build-server"), CommandLineArgument("shutdown"))
+        internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
         private val buildCommands = setOf(
                 DotnetCommandType.Build,
                 DotnetCommandType.Pack,

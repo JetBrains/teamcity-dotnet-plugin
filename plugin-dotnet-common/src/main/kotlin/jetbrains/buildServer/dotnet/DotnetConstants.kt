@@ -29,9 +29,6 @@ object DotnetConstants {
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
 
-    // Set to false to not shutdown dotnet build-server
-    const val PARAM_BUILD_SERVER_SHUTDOWN = "dotnet.cli.build.server.shutdown"
-
     // Set to false to not use .rsp files
     const val PARAM_RSP = "dotnet.cli.rsp"
 

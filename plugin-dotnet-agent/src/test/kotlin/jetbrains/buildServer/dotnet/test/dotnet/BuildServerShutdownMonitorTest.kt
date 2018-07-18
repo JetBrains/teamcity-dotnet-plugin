@@ -36,7 +36,7 @@ class BuildServerShutdownMonitorTest {
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), null, true),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "true", true),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "True", true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "abc", true),
+                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "abc", false),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "false", false),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "FaLse", false),
                 arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), null, true),
@@ -57,7 +57,7 @@ class BuildServerShutdownMonitorTest {
     }
 
     @Test(dataProvider = "supportToolCases")
-    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, buildServerShutdownParam: String?, expectedShutdown: Boolean) {
+    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, useSharedCompilationParam: String?, expectedShutdown: Boolean) {
         // Given
         val executableFile = File("dotnet")
         val command = _ctx.mock(DotnetCommand::class.java)
@@ -66,8 +66,8 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)
-                will(returnValue(buildServerShutdownParam))
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue(useSharedCompilationParam))
 
                 oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
@@ -110,7 +110,7 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
-                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)
+                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
 
                 oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
