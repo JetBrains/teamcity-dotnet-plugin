@@ -2,13 +2,16 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 
 class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _commandLineExecutor: CommandLineExecutor,
-        private val _dotnetToolResolver: DotnetToolResolver)
+        private val _dotnetToolResolver: DotnetToolResolver,
+        private val _parametersService: ParametersService)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
@@ -16,8 +19,8 @@ class BuildServerShutdownMonitor(
 
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
-            try {
-                if (_contexts.size > 0) {
+            if (_contexts.size > 0) {
+                try {
                     LOG.debug("Has a build command")
                     val sdks = _contexts
                             .flatMap { it.sdks }
@@ -36,16 +39,19 @@ class BuildServerShutdownMonitor(
                                         emptyList())
                         )
                     }
+                } finally {
+                    _contexts.clear()
                 }
-            } finally {
-                _contexts.clear()
             }
         }
     }
 
     override fun register(context: DotnetBuildContext) {
         if (buildCommands.contains(context.command.commandType)) {
-            _contexts.add(context)
+            val avoidShutdownBuildService = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_BUILD_SERVER_SHUTDOWN)?.equals("false", true) ?: false
+            if (!avoidShutdownBuildService) {
+                _contexts.add(context)
+            }
         }
     }
 
