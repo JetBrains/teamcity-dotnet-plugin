@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.dotnet
 
+import com.intellij.openapi.util.SystemInfo
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.TargetType
@@ -48,6 +49,6 @@ class EnvironmentVariablesImpl(
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
 
         internal val useSharedCompilationEnvironmentVariable = CommandLineEnvironmentVariable("UseSharedCompilation", "false")
-        const val HOME_VARIABLE = "HOME"
+        val HOME_VARIABLE = if (SystemInfo.isWindows) "USERPROFILE" else "HOME"
     }
 }
