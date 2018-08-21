@@ -78,6 +78,13 @@
   };
 
   $j(document).on('change', commandId, function () {
+    $j(".runnerFormTable").each(function(){
+      $j(this).find(':input').each(function(id, element) {
+        if (element.name && /^prop:(?!teamcity|command|plugin)/.test(element.name)) {
+          $j(element).val('');
+        }
+      });
+    });
     BS.DotnetParametersForm.updateElements();
   });
 
