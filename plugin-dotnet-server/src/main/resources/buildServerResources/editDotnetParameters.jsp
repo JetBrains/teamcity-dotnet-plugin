@@ -43,6 +43,8 @@
         }
         if (element.name === "select") {
           element.selectedIndex = 0;
+        } else if (element.type === "checkbox") {
+          $element.removeAttr('checked');
         } else {
           $element.val('').change();
         }
