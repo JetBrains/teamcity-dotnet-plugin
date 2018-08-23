@@ -13,6 +13,9 @@
   BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
 
   var commandId = BS.Util.escapeId('${params.commandKey}');
+  var clearPropertiesSkipList = [
+      "prop:dotNetCoverage.dotCover.home.path"
+  ];
 
   BS.DotnetParametersForm = {
     projectArtifactsSelector: [],
@@ -31,6 +34,21 @@
     },
     pathName: [],
     pathHint: [],
+    clearInputValues: function(row) {
+      $j(row).find(':input').each(function(id, element) {
+        var $element = $j(element);
+        var name = $element.attr("name");
+        if (!name || name.indexOf("prop:") !== 0 || clearPropertiesSkipList.indexOf(name) >= 0) {
+          return;
+        }
+        if (element.name === "select") {
+          element.selectedIndex = 0;
+        } else {
+          $element.val('').change();
+        }
+        $element.change();
+      });
+    },
     updateElements: function () {
       var commandName = $j(commandId).val();
 
@@ -52,23 +70,39 @@
         pathsRow.show()
       } else {
         pathsRow.hide();
+        BS.DotnetParametersForm.clearInputValues(pathsRow);
       }
 
-      $j("tr.dotnet:not(." + commandName + ")").hide();
-      $j("tr.dotnet." + commandName).show();
+      $j("tr.dotnet").each(function(id, element) {
+        var $row = $j(element);
+        if (!$row.hasClass(commandName)) {
+          $row.hide();
+          BS.DotnetParametersForm.clearInputValues($row);
+        } else {
+          $row.show();
+        }
+      });
       $j(".runnerFormTable span.error").empty();
 
       var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
       $j(BS.Util.escapeId('logging')).toggleClass('hidden', !!hideLogging);
 
       var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
-      $j(BS.Util.escapeId('dotnet-coverage')).toggleClass('hidden', !coverageEnabled);
+      var $coverageRow = $j(BS.Util.escapeId('dotnet-coverage'));
+      $coverageRow.toggleClass('hidden', !coverageEnabled);
+      if (!coverageEnabled) {
+          BS.DotnetParametersForm.clearInputValues($coverageRow);
+      }
 
       var helpUrl = 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet' + (commandName !== '-' ? '-' + commandName : '');
       $j(BS.Util.escapeId('dotnet-help')).attr('href', helpUrl);
 
       var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
-      $j(BS.Util.escapeId('teamcity.build.workingDir')).closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
+      var $workingDir = $j(BS.Util.escapeId('teamcity.build.workingDir'));
+      $workingDir.closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
+      if (hideWorkingDirectory) {
+          $workingDir.val('');
+      }
 
       var init = BS.DotnetParametersForm.initFunctions[commandName];
       if (init) init();
@@ -78,13 +112,6 @@
   };
 
   $j(document).on('change', commandId, function () {
-    $j(".runnerFormTable").each(function(){
-      $j(this).find(':input').each(function(id, element) {
-        if (element.name && /^prop:(?!teamcity|command|plugin)/.test(element.name)) {
-          $j(element).val('');
-        }
-      });
-    });
     BS.DotnetParametersForm.updateElements();
   });
 
