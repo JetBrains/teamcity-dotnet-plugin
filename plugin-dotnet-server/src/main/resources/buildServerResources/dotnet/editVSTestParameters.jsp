@@ -17,6 +17,12 @@
 
     function updateElements() {
       var filter = $j(optionId).val();
+      if (filter !== 'name') {
+          BS.DotnetParametersForm.clearInputValues($testNames);
+      }
+      if (filter !== 'filter') {
+          BS.DotnetParametersForm.clearInputValues($testCaseFilter);
+      }
       $testNames.toggle(filter === 'name');
       $testCaseFilter.toggle(filter === 'filter');
       BS.MultilineProperties.updateVisible();

@@ -41,14 +41,20 @@
         if (!name || name.indexOf("prop:") !== 0 || clearPropertiesSkipList.indexOf(name) >= 0) {
           return;
         }
+        var changed = false;
         if (element.name === "select") {
+          changed = element.selectedIndex !== 0;
           element.selectedIndex = 0;
         } else if (element.type === "checkbox") {
+          changed = $element.is(':checked');
           $element.removeAttr('checked');
         } else {
-          $element.val('').change();
+          changed = $element.val() !== '';
+          $element.val('');
         }
-        $element.change();
+        if (changed) {
+          $element.change();
+        }
       });
     },
     updateElements: function () {
