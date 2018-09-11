@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Version
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -15,14 +14,12 @@ class DotnetCliToolInfoTest {
     private lateinit var _ctx: Mockery
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _versionParser: VersionParser
-    private lateinit var _toolProvider: ToolProvider
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _versionParser = _ctx.mock(VersionParser::class.java)
-        _toolProvider = _ctx.mock(ToolProvider::class.java)
     }
 
     @Test
@@ -43,9 +40,6 @@ class DotnetCliToolInfoTest {
         val versionStr = "1.0.1"
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<ToolProvider>(_toolProvider).getPath(DotnetConstants.EXECUTABLE)
-                will(returnValue(toolPath.path))
-
                 oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
                 will(returnValue(getVersionResult))
 
@@ -57,7 +51,7 @@ class DotnetCliToolInfoTest {
         val dotnetCliToolInfo = createInstance()
 
         // When
-        val version = dotnetCliToolInfo.getVersion(workingDirectoryPath)
+        val version = dotnetCliToolInfo.getVersion(toolPath, workingDirectoryPath)
 
         // Then
         _ctx.assertIsSatisfied()
@@ -66,7 +60,6 @@ class DotnetCliToolInfoTest {
 
     private fun createInstance() =
             DotnetCliToolInfoImpl(
-                    _toolProvider,
                     _commandLineExecutor,
                     _versionParser)
 }

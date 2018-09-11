@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import java.io.File
 import kotlin.coroutines.experimental.buildSequence
 
 class DotnetBuildContextFactoryImpl(
@@ -19,10 +20,13 @@ class DotnetBuildContextFactoryImpl(
 
     private fun getSdks(): Sequence<DotnetSdk> =
             buildSequence {
-                val targetPath = _pathService.getPath(PathType.WorkingDirectory)
-                val version = _dotnetCliToolInfo.getVersion(targetPath)
-                if (version != Version.Empty) {
-                    yield(DotnetSdk(targetPath, version))
+                _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)?.let { path ->
+                    val dotnetExecutable = File(path)
+                    val targetPath = _pathService.getPath(PathType.WorkingDirectory)
+                    val version = _dotnetCliToolInfo.getVersion(dotnetExecutable, targetPath)
+                    if (version != Version.Empty) {
+                        yield(DotnetSdk(targetPath, version))
+                    }
                 }
             }
 

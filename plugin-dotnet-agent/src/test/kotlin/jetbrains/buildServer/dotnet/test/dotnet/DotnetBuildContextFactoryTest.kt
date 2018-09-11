@@ -18,7 +18,7 @@ class DotnetBuildContextFactoryTest {
     private lateinit var _pathsService: PathsService
     private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
     private lateinit var _parametersService: ParametersService
-    private lateinit var _command: DotnetCommand;
+    private lateinit var _command: DotnetCommand
 
     @BeforeMethod
     fun setUp() {
@@ -33,6 +33,8 @@ class DotnetBuildContextFactoryTest {
     fun shouldGetDotnetSdkVersionFromWorkingDirectory() {
         // Given
         val workingDir = File("wd")
+        val dotnetExecutable = "dotnet"
+
         _ctx.checking(object : Expectations() {
             init {
                 allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
@@ -41,8 +43,11 @@ class DotnetBuildContextFactoryTest {
                 oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(workingDir))
 
-                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(workingDir)
+                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File(dotnetExecutable), workingDir)
                 will(returnValue(Version(1, 2, 3)))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                will(returnValue(dotnetExecutable))
             }
         })
 
@@ -77,16 +82,21 @@ class DotnetBuildContextFactoryTest {
             parameterValue: String?,
             expectedVerbosityLevel: Verbosity?) {
         // Given
+        val dotnetExecutable = "dotnet"
+
         _ctx.checking(object : Expectations() {
             init {
                 allowing<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(File(".")))
 
-                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File("."))
+                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File(dotnetExecutable), File("."))
                 will(returnValue(Version(1, 2, 3)))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
                 will(returnValue(parameterValue))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                will(returnValue(dotnetExecutable))
             }
         })
 

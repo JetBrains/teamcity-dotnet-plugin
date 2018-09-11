@@ -83,7 +83,7 @@ class DotnetPropertiesExtensionTest {
                 oneOf<PathsService>(_pathsService).getPath(PathType.Work)
                 will(returnValue(workPath))
 
-                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(workPath)
+                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(toolPath, workPath)
                 will(returnValue(version101))
 
                 oneOf<BuildAgent>(_buildAgent).configuration

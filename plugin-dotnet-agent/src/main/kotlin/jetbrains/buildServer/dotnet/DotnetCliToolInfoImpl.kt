@@ -5,12 +5,10 @@ import jetbrains.buildServer.agent.*
 import java.io.File
 
 class DotnetCliToolInfoImpl(
-        private val _toolProvider: ToolProvider,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser)
     : DotnetCliToolInfo {
-    override fun getVersion(path: File): Version {
-        val dotnetExecutable = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
+    override fun getVersion(dotnetExecutable: File, path: File): Version {
         LOG.info("Try getting the dotnet CLI version for directory \"$path\".")
         val versionResult = _commandLineExecutor.tryExecute(
                 CommandLine(

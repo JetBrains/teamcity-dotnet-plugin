@@ -36,18 +36,19 @@ class DotnetPropertiesExtension(
             LOG.debug("Locating .NET CLI")
             try {
                 val configuration = it.agent.configuration
-                val defaultSdkVersion = _dotnetCliToolInfo.getVersion(_pathsService.getPath(PathType.Work)).toString()
 
-                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, defaultSdkVersion)
-                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$defaultSdkVersion\"")
-
+                // Detect .NET CLI path
                 val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
                 configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
                 LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
                 LOG.info(".NET CLI $it found at \"${dotnetPath.absolutePath}\"")
 
-                LOG.debug("Locating .NET Core SDKs")
+                // Detect .NET CLi version
+                val defaultSdkVersion = _dotnetCliToolInfo.getVersion(dotnetPath, _pathsService.getPath(PathType.Work)).toString()
+                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, defaultSdkVersion)
+                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$defaultSdkVersion\"")
 
+                LOG.debug("Locating .NET Core SDKs")
                 val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
                         .filter { _fileSystemService.isDirectory(it) }
                         .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }

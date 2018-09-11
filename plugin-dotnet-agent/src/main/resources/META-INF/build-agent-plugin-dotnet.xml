@@ -34,7 +34,6 @@
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl">
-    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>
