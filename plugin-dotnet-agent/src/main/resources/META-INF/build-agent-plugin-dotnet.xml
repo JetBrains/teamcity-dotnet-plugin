@@ -48,7 +48,6 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.DotnetCacheCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
   </bean>
