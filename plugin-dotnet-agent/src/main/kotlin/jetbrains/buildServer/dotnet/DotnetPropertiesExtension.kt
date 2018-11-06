@@ -29,18 +29,18 @@ class DotnetPropertiesExtension(
     private var _subscriptionToken: Disposable
 
     init {
-        _subscriptionToken = agentLifeCycleEventSources.beforeAgentConfigurationLoadedSource.subscribe {
+        _subscriptionToken = agentLifeCycleEventSources.beforeAgentConfigurationLoadedSource.subscribe { event ->
             LOG.debug("Locating .NET CLI")
             try {
-                val configuration = it.agent.configuration
+                val configuration = event.agent.configuration
 
                 // Detect .NET CLI path
                 val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
                 configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
                 LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
-                LOG.info(".NET CLI $it found at \"${dotnetPath.absolutePath}\"")
+                LOG.info(".NET CLI $event found at \"${dotnetPath.absolutePath}\"")
 
-                // Detect .NET CLi version
+                // Detect .NET CLI version
                 val defaultSdkVersion = _dotnetCliToolInfo.getVersion(dotnetPath, _pathsService.getPath(PathType.Work)).toString()
                 configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, defaultSdkVersion)
                 LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$defaultSdkVersion\"")
@@ -48,15 +48,14 @@ class DotnetPropertiesExtension(
                 LOG.debug("Locating .NET Core SDKs")
                 val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
                         .filter { _fileSystemService.isDirectory(it) }
-                        .map { Sdk(it, jetbrains.buildServer.dotnet.Version.parse(it.name)) }
-                        .filter { it.version != jetbrains.buildServer.dotnet.Version.Empty }
+                        .map { Sdk(it, Version.parse(it.name)) }
+                        .filter { it.version != Version.Empty }
 
-                for ((path, version) in enumerateSdk(sdks)) {
+                for ((version, path) in enumerateSdk(sdks)) {
                     val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
-                    val paramValue = path.absolutePath
-                    configuration.addConfigurationParameter(paramName, paramValue)
-                    LOG.debug("Add configuration parameter \"$paramName\": \"$paramValue\"")
-                    LOG.info(".NET Core SDK $paramValue found at \"$paramValue\"")
+                    configuration.addConfigurationParameter(paramName, path)
+                    LOG.debug("Add configuration parameter \"$paramName\": \"$path\"")
+                    LOG.info(".NET Core SDK $version found at \"$path\"")
                 }
 
             } catch (e: ToolCannotBeFoundException) {
@@ -69,11 +68,11 @@ class DotnetPropertiesExtension(
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
 
-        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = sequence {
-            val groupedVersions = versions.groupBy { Version(*it.version.fullVersion.take(2).toIntArray()) }
+        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Pair<String, String>> = sequence {
+            val groupedVersions = versions.groupBy { Version(it.version.major, it.version.minor) }
             for ((version, sdks) in groupedVersions) {
-                yield(Sdk(sdks.maxBy { it.version }!!.path, version))
-                yieldAll(sdks)
+                yield("${version.major}.${version.minor}" to sdks.maxBy { it.version }!!.path.absolutePath)
+                yieldAll(sdks.map { it.version.toString() to it.path.absolutePath })
             }
         }
     }

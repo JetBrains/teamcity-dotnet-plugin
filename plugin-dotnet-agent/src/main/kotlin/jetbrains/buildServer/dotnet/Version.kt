@@ -1,61 +1,70 @@
 package jetbrains.buildServer.dotnet
 
-import java.util.*
+class Version private constructor(val major: Int,
+                                  val minor: Int,
+                                  private val patch: Int,
+                                  private val build: Int = 0,
+                                  private val release: String? = null,
+                                  private val metadata: String? = null) : Comparable<Version> {
 
-class Version(vararg version: Int) : Comparable<Version> {
-    val version = sequence {
-        // Trim zero(s) at the end
-        var zeroCounter = 0
-        for (versionItem in version) {
-            if (versionItem != 0) {
-                yieldAll(repeat(0, zeroCounter))
-                zeroCounter = 0
-                yield(versionItem)
-            } else {
-                zeroCounter++
-            }
+    constructor(major: Int) : this(major, 0)
+
+    constructor(major: Int, minor: Int) : this(major, minor, 0)
+
+    constructor(major: Int, minor: Int, patch: Int) : this(major, minor, patch, 0)
+
+    private val versionString: String = buildString {
+        append(major)
+        append('.')
+        append(minor)
+        append('.')
+        append(patch)
+        if (build > 0) append('.').append(build)
+        if (release != null) append('-').append(release)
+        if (metadata != null) append('+').append(metadata)
+    }
+
+    override fun toString(): String = versionString
+
+    override fun compareTo(other: Version): Int {
+        major.compareTo(other.major).run { if (this != 0) return this }
+        minor.compareTo(other.minor).run { if (this != 0) return this }
+        patch.compareTo(other.patch).run { if (this != 0) return this }
+        build.compareTo(other.build).run { if (this != 0) return this }
+        return if (release == null) {
+            if (other.release == null) 0 else 1
+        } else {
+            if (other.release == null) -1 else release.compareTo(other.release)
         }
-    }.toList().toIntArray()
-
-    val fullVersion = version
-
-    override fun toString(): String = fullVersion.joinToString(".")
-
-    override fun compareTo(other: Version): Int =
-            version
-                    .zip(other.version)
-                    .filter { it.first != it.second }
-                    .map { it.first - it.second }
-                    .lastOrNull() ?: 0
-                    .let { if (it != 0) it else version.size - other.version.size }
-
-    override fun hashCode(): Int = Arrays.hashCode(version)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-        other as Version
-        return Arrays.equals(version, other.version)
+        if (other !is Version) return false
+        return compareTo(other) == 0
+    }
+
+    override fun hashCode(): Int {
+        return versionString.hashCode()
     }
 
     companion object {
-        val Empty: Version = Version()
+        private val VERSION_PATTERN = Regex("^([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?$", RegexOption.IGNORE_CASE)
+        val Empty: Version = Version(0, 0, 0, 0)
 
         fun parse(text: String): Version {
-            val version = text.splitToSequence('.').map {
-                it.trim().toIntOrNull()
-            }.toList()
-
-            if (version.filter { it == null }.any()) {
-                return Empty
+            VERSION_PATTERN.matchEntire(text)?.let {
+                val (majorStr, minorStr, patchStr, buildStr, releaseStr, metadataStr) = it.destructured
+                val major = majorStr.toIntOrNull() ?: 0
+                val minor = minorStr.toIntOrNull() ?: 0
+                val patch = patchStr.toIntOrNull() ?: 0
+                val build = buildStr.toIntOrNull() ?: 0
+                val release = if (releaseStr.isEmpty()) null else releaseStr
+                val metadata = if (metadataStr.isEmpty()) null else metadataStr
+                return Version(major, minor, patch, build, release, metadata)
             }
 
-            return Version(*version.map { it as Int }.toList().toIntArray())
-        }
-
-        private fun <T> repeat(value: T, count: Int): Sequence<T> {
-            var counter = count
-            return generateSequence { (counter--).takeIf { it > 0 } }.map { value }
+            return Empty
         }
 
         val LastVersionWithoutSharedCompilation: Version = Version(2, 1, 105)

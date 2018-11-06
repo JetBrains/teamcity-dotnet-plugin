@@ -35,7 +35,7 @@ class DotnetPropertiesExtensionTest {
     }
 
     @DataProvider
-    fun testData(): Array<Array<Sequence<DotnetPropertiesExtension.Sdk>>> {
+    fun testData(): Array<Array<Sequence<Any>>> {
         return arrayOf(
                 arrayOf(
                         emptySequence(),
@@ -45,8 +45,8 @@ class DotnetPropertiesExtensionTest {
                         sequenceOf(
                                 DotnetPropertiesExtension.Sdk(File("1.0.0"), Version(1, 0, 0))),
                         sequenceOf(
-                                DotnetPropertiesExtension.Sdk(File("1.0.0"), Version(1, 0)),
-                                DotnetPropertiesExtension.Sdk(File("1.0.0"), Version(1, 0, 0)))),
+                                "1.0" to File("1.0.0").absolutePath,
+                                "1.0.0" to File("1.0.0").absolutePath)),
 
                 // Select newest version as default for group by Version(x, y)
                 arrayOf(
@@ -55,17 +55,27 @@ class DotnetPropertiesExtensionTest {
                                 DotnetPropertiesExtension.Sdk(File("1.1.300"), Version(1, 1, 300)),
                                 DotnetPropertiesExtension.Sdk(File("1.1.1"), Version(1, 1, 1))),
                         sequenceOf(
-                                DotnetPropertiesExtension.Sdk(File("1.1.300"), Version(1, 1)),
+                                "1.1" to File("1.1.300").absolutePath,
+                                "1.1.1" to File("1.1.1").absolutePath,
+                                "1.1.100" to File("1.1.100").absolutePath,
+                                "1.1.300" to File("1.1.300").absolutePath)),
+
+                // Display preview versions
+                arrayOf(
+                        sequenceOf(
                                 DotnetPropertiesExtension.Sdk(File("1.1.100"), Version(1, 1, 100)),
-                                DotnetPropertiesExtension.Sdk(File("1.1.300"), Version(1, 1, 300)),
-                                DotnetPropertiesExtension.Sdk(File("1.1.1"), Version(1, 1, 1))))
+                                DotnetPropertiesExtension.Sdk(File("1.1.300-preview"), Version(1, 1, 300))),
+                        sequenceOf(
+                                "1.1" to File("1.1.300-preview").absolutePath,
+                                "1.1.100" to File("1.1.100").absolutePath,
+                                "1.1.300-preview" to File("1.1.300-preview").absolutePath))
         )
     }
 
     @Test(dataProvider = "testData")
     fun shouldShutdownDotnetBuildServer(
             originSdks: Sequence<DotnetPropertiesExtension.Sdk>,
-            expectedSdks: Sequence<DotnetPropertiesExtension.Sdk>) {
+            expectedSdks: Sequence<Pair<String, String>>) {
         // Given
         val toolPath = File("dotnet")
         val version101 = Version(1, 0, 1)
@@ -100,8 +110,8 @@ class DotnetPropertiesExtensionTest {
                     will(returnValue(true))
                 }
 
-                for ((path, version) in expectedSdks) {
-                    oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path.absolutePath)
+                for ((version, path) in expectedSdks) {
+                    oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path)
                 }
             }
         })

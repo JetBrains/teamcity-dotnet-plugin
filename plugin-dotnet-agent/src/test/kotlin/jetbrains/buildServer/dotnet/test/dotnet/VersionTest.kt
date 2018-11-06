@@ -16,34 +16,38 @@ class VersionTest {
                 arrayOf(Version(2), Version(2, 0), 0),
                 arrayOf(Version(2, 0, 1), Version(2, 0, 1), 0),
                 arrayOf(Version(2, 1), Version(2, 1, 0), 0),
-                arrayOf(Version(2, 1), Version(2, 1, 0, 0, 0), 0),
-                arrayOf(Version(2, 0, 1), Version(2, 0, 1, 0, 0, 0), 0),
+                arrayOf(Version(2, 1), Version(2, 1, 0), 0),
+                arrayOf(Version(2, 0, 1), Version(2, 0, 1), 0),
                 arrayOf(Version(1), Version(2), -1),
                 arrayOf(Version(1, 2), Version(1, 1), 1),
-                arrayOf(Version(), Version(1), -1),
-                arrayOf(Version(3, 3), Version(), 2),
-                arrayOf(Version(0, 3), Version(5), -5))
+                arrayOf(Version(0), Version(1), -1),
+                arrayOf(Version(3, 3), Version(0), 1),
+                arrayOf(Version(0, 3), Version(5), -1),
+                arrayOf(Version.parse("1.0.0"), Version.parse("1.0.0-beta"), 1),
+                arrayOf(Version.parse("1.0.0-beta1"), Version.parse("1.0.0-beta2"), -1),
+                arrayOf(Version.parse("1.0.0-beta+meta1"), Version.parse("1.0.0-beta+meta2"), 0))
     }
 
     @Test(dataProvider = "testDataComparable")
-    fun shouldBeComparable(version1: Version, version2: Version, exptectedCompareResult: Int) {
+    fun shouldBeComparable(version1: Version, version2: Version, expectedCompareResult: Int) {
         // Given
 
         // When
         val actualCompareResult = version1.compareTo(version2)
 
         // Then
-        Assert.assertEquals(actualCompareResult, exptectedCompareResult)
+        Assert.assertEquals(actualCompareResult, expectedCompareResult)
     }
 
     @DataProvider
     fun testDataToString(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(Version(2), "2"),
+                arrayOf(Version(2), "2.0.0"),
                 arrayOf(Version(99, 3, 10), "99.3.10"),
-                arrayOf(Version(0, 2), "0.2"),
+                arrayOf(Version(0, 2), "0.2.0"),
                 arrayOf(Version(2, 0, 0), "2.0.0"),
-                arrayOf(Version(0, 0, 2, 0, 0), "0.0.2.0.0"))
+                arrayOf(Version(0, 0, 2), "0.0.2"),
+                arrayOf(Version.parse("0.1.2-beta+meta"), "0.1.2-beta+meta"))
     }
 
     @Test(dataProvider = "testDataToString")
@@ -67,15 +71,17 @@ class VersionTest {
                 arrayOf(Version(1), Version(2), false),
                 arrayOf(Version(1, 0), Version(2, 0), false),
                 arrayOf(Version(0, 1, 0), Version(0, 2, 0), false),
-                arrayOf(Version(), Version(2), false),
+                arrayOf(Version(0), Version(2), false),
                 arrayOf(Version(1, 2), Version(1, 2), true),
                 arrayOf(Version(1, 2), Version(1), false),
                 arrayOf(Version(1, 2), Version(1, 3), false),
-                arrayOf(Version(1, 2), Version(2, 2), false))
+                arrayOf(Version(1, 2), Version(2, 2), false),
+                arrayOf(Version.parse("1.0.0-beta+meta1"), Version.parse("1.0.0-beta+meta2"), true),
+                arrayOf(Version.parse("1.0.0-beta1"), Version.parse("1.0.0-beta2"), false))
     }
 
     @Test(dataProvider = "testDataEquitable")
-    fun shouldBeEquitable(version1: Version, version2: Version, exptectedEqualsResult: Boolean) {
+    fun shouldBeEquitable(version1: Version, version2: Version, expectedEqualsResult: Boolean) {
         // Given
 
         // When
@@ -86,10 +92,10 @@ class VersionTest {
         val hashCode2 = version1.hashCode()
 
         // Then
-        Assert.assertEquals(actualEqualsResult1, exptectedEqualsResult)
-        Assert.assertEquals(actualEqualsResult2, exptectedEqualsResult)
-        Assert.assertEquals(actualEqualsResult3, exptectedEqualsResult)
-        if (exptectedEqualsResult) {
+        Assert.assertEquals(actualEqualsResult1, expectedEqualsResult)
+        Assert.assertEquals(actualEqualsResult2, expectedEqualsResult)
+        Assert.assertEquals(actualEqualsResult3, expectedEqualsResult)
+        if (expectedEqualsResult) {
             Assert.assertTrue(hashCode1 == hashCode2)
         }
     }
@@ -100,7 +106,6 @@ class VersionTest {
                 arrayOf("", Version.Empty),
                 arrayOf("1", Version(1)),
                 arrayOf("1.23.99", Version(1, 23, 99)),
-                arrayOf("1 . 23 .   99", Version(1, 23, 99)),
                 arrayOf("abc", Version.Empty),
                 arrayOf("abc.xyz", Version.Empty),
                 arrayOf("abc.", Version.Empty),

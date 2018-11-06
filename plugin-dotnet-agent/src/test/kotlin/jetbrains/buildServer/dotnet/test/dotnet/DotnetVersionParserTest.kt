@@ -29,7 +29,8 @@ class DotnetVersionParserTest {
                         "Product Information:",
                         " Version:     1.0.0-beta-001598",
                         " Commit Sha:  7582649f88"),
-                        "1.0.0-beta-001598"))
+                        "1.0.0-beta-001598"),
+                arrayOf(sequenceOf("2.1.500-preview-009335"), "2.1.500-preview-009335"))
     }
 
     @Test(dataProvider = "versionCases")
