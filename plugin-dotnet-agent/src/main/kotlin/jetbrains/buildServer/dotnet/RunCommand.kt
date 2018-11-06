@@ -11,7 +11,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 class RunCommand(
         _parametersService: ParametersService,
@@ -29,7 +28,7 @@ class RunCommand(
             TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path)))
         }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--framework"))

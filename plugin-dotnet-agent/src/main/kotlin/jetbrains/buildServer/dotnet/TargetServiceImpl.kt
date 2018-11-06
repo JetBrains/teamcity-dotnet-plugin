@@ -10,7 +10,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
-import kotlin.coroutines.experimental.buildSequence
 
 class TargetServiceImpl(
         private val _pathsService: PathsService,
@@ -19,12 +18,12 @@ class TargetServiceImpl(
         private val _pathMatcher: PathMatcher)
     : TargetService {
     override val targets: Sequence<CommandTarget>
-        get() = buildSequence {
+        get() = sequence {
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)?.trim()?.let {
                 val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
                 val includeRulesStr = it.trim()
                 if (includeRulesStr.isEmpty()) {
-                    return@buildSequence
+                    return@sequence
                 }
 
                 // We need to resolve paths in the specified sequence where

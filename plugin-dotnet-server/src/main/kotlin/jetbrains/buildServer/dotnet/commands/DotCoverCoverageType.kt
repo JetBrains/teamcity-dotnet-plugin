@@ -8,7 +8,6 @@ import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverCoverageType : CommandType() {
     override val name: String = CoverageConstants.PARAM_DOTCOVER
@@ -19,7 +18,7 @@ class DotCoverCoverageType : CommandType() {
 
     override val viewPage: String = "viewDotCoverParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+    override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
 
         if (properties[CoverageConstants.PARAM_DOTCOVER_HOME].isNullOrBlank()) {
@@ -27,10 +26,10 @@ class DotCoverCoverageType : CommandType() {
         }
     }
 
-    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
+    override fun getRequirements(parameters: Map<String, String>) = sequence {
         yieldAll(super.getRequirements(parameters))
 
-        if (isDocker(parameters)) return@buildSequence
+        if (isDocker(parameters)) return@sequence
 
         yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetFramework3\\.5_.+|DotNetFramework4\\.[\\d\\.]+_.+)", null, RequirementType.EXISTS))
     }

@@ -12,7 +12,6 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 class RestoreCommand(
         _parametersService: ParametersService,
@@ -29,7 +28,7 @@ class RestoreCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_PACKAGES_DIR)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--packages"))

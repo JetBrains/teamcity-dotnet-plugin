@@ -8,13 +8,12 @@ import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.TargetRegistry
 import jetbrains.buildServer.util.OSType
-import kotlin.coroutines.experimental.buildSequence
 
 class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _targetRegistry: TargetRegistry)
     : EnvironmentVariables {
-    override fun getVariables(context: DotnetBuildContext): Sequence<CommandLineEnvironmentVariable> = buildSequence {
+    override fun getVariables(context: DotnetBuildContext): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
 
         // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory

@@ -117,7 +117,7 @@ class BuildServerShutdownMonitorTest {
             }
         })
 
-        val monitor = createInstance()
+        @Suppress("UNUSED_VARIABLE") val monitor = createInstance()
 
         // When
         buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))

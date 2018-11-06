@@ -178,7 +178,7 @@ fun <T> Observable<T>.toSequence(timeout: Long): Sequence<T> =
                     }
 
                     override fun next(): T {
-                        var nextItem: T? = null
+                        var nextItem: T?
                         synchronized(lockObject) {
                             nextItem = values[0]
                             values.removeAt(0)

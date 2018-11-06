@@ -12,7 +12,6 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet nuget push command.
@@ -26,7 +25,7 @@ class NugetPushCommandType : DotnetType() {
 
     override val viewPage: String = "viewNugetPushParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+    override fun validateProperties(properties: Map<String, String>) = sequence {
         DotnetConstants.PARAM_PATHS.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))

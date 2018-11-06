@@ -2,8 +2,6 @@
 
 package jetbrains.buildServer.dotnet
 
-import kotlin.coroutines.experimental.buildSequence
-
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     override fun convert(source: MSBuildParameter): String = "/p:${toString(normalizeName(source.name))}=${normalizeValue(source.value)}"
 
@@ -15,7 +13,7 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         return toString(escape(value))
     }
 
-    private fun normalizeName(name: String): Sequence<Char> = buildSequence {
+    private fun normalizeName(name: String): Sequence<Char> = sequence {
         for (char in name.asSequence()) {
             if (char.isLetterOrDigit() || char == '_') {
                 yield(char)
@@ -25,7 +23,7 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         }
     }
 
-    private fun escape(name: String): Sequence<Char> = buildSequence {
+    private fun escape(name: String): Sequence<Char> = sequence {
         for (char in name.asSequence()) {
             if (char.isLetterOrDigit()) {
                 yield(char)

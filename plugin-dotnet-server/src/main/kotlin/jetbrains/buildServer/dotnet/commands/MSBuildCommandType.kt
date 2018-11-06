@@ -6,7 +6,6 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet MSBuild command.
@@ -18,8 +17,8 @@ class MSBuildCommandType : CommandType() {
 
     override val viewPage: String = "viewMSBuildParameters.jsp"
 
-    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
-        if (isDocker(parameters)) return@buildSequence
+    override fun getRequirements(parameters: Map<String, String>) = sequence {
+        if (isDocker(parameters)) return@sequence
 
         var shouldBeWindows = false
         var hasRequirement = false

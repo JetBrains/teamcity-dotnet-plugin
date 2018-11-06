@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
 import java.net.URL
-import kotlin.coroutines.experimental.buildSequence
 
 open class NuGetServiceImpl(
         private val _httpDownloader: HttpDownloader,
@@ -21,7 +20,7 @@ open class NuGetServiceImpl(
         return enumeratePackagesById(packageId, allowPrerelease).toList().asSequence()
     }
 
-    private fun enumeratePackagesById(packageId: String, allowPrerelease: Boolean) = buildSequence {
+    private fun enumeratePackagesById(packageId: String, allowPrerelease: Boolean) = sequence {
         LOG.info("Downloading list of packages for $packageId")
         var counter = 0
         val listOfPackagesStream = ByteArrayOutputStream()

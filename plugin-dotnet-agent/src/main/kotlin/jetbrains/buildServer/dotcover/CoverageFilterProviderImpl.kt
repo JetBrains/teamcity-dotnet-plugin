@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.CoverageConstants
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 class CoverageFilterProviderImpl(
         private val _parametersService: ParametersService,
@@ -33,7 +32,7 @@ class CoverageFilterProviderImpl(
         }
 
     override val attributeFilters: Sequence<CoverageFilter>
-        get() = buildSequence {
+        get() = sequence {
             _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS)?.let {
                 for (filter in _coverageFilterConverter.convert(it).map { toAttributeFilter(it) }) {
                     if (filter.type == CoverageFilter.CoverageFilterType.Exclude && CoverageFilter.Any != filter.classMask) {

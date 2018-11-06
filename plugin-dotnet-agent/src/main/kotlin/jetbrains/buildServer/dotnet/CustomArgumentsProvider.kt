@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet for custom arguments.
@@ -17,7 +16,7 @@ class CustomArgumentsProvider(
         private val _argumentsService: ArgumentsService)
     : ArgumentsProvider {
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
             yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
         }

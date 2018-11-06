@@ -16,7 +16,6 @@ import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import java.io.File
-import kotlin.coroutines.experimental.buildSequence
 
 /**`
  * Provides a list of available .NET CLI parameters.
@@ -72,7 +71,7 @@ class DotnetPropertiesExtension(
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
 
-        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = buildSequence {
+        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Sdk> = sequence {
             val groupedVersions = versions.groupBy { Version(*it.version.fullVersion.take(2).toIntArray()) }
             for ((version, sdks) in groupedVersions) {
                 yield(Sdk(sdks.maxBy { it.version }!!.path, version))

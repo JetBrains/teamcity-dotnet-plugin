@@ -10,7 +10,6 @@ import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for devenv.com /build command.
@@ -23,14 +22,14 @@ class VisualStudioCommandType : CommandType() {
 
     override val viewPage: String = "viewVisualStudioParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+    override fun validateProperties(properties: Map<String, String>) = sequence {
         if (properties[DotnetConstants.PARAM_VISUAL_STUDIO_ACTION].isNullOrBlank()) {
             yield(InvalidProperty(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION, DotnetConstants.VALIDATION_EMPTY))
         }
     }
 
-    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
-        if (isDocker(parameters)) return@buildSequence
+    override fun getRequirements(parameters: Map<String, String>) = sequence {
+        if (isDocker(parameters)) return@sequence
 
         var hasRequirements = false
         parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {

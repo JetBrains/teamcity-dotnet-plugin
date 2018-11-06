@@ -11,7 +11,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet publish id.
@@ -31,7 +30,7 @@ class PublishCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--framework"))

@@ -11,7 +11,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
+import jetbrains.buildServer.util.StringUtil
 
 class NugetDeleteCommand(
         _parametersService: ParametersService,
@@ -26,10 +26,10 @@ class NugetDeleteCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_PACKAGE_ID)?.trim()?.let {
             if (it.isNotBlank()) {
-                yieldAll(jetbrains.buildServer.util.StringUtil.split(it).map { CommandLineArgument(it) })
+                yieldAll(StringUtil.split(it).map { CommandLineArgument(it) })
             }
         }
 

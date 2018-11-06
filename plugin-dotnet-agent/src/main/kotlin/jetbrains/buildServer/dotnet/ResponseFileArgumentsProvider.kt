@@ -8,7 +8,6 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
 import java.io.File
 import java.io.OutputStreamWriter
-import kotlin.coroutines.experimental.buildSequence
 
 class ResponseFileArgumentsProvider(
         private val _pathsService: PathsService,
@@ -19,12 +18,12 @@ class ResponseFileArgumentsProvider(
         private val _argumentsProviders: List<ArgumentsProvider>,
         private val _parametersProviders: List<MSBuildParametersProvider>)
     : ArgumentsProvider {
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
         val params = _parametersProviders.flatMap { it.getParameters(context).toList() }
 
         if (args.isEmpty() && params.isEmpty()) {
-            return@buildSequence
+            return@sequence
         }
 
         val argLine = _argumentsService.combine(args.map { it.value }.asSequence(), "\n")

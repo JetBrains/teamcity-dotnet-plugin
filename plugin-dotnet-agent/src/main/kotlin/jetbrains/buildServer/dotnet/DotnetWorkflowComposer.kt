@@ -10,7 +10,6 @@ import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import java.io.Closeable
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetWorkflowComposer(
@@ -29,7 +28,7 @@ class DotnetWorkflowComposer(
     override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
-            Workflow(buildSequence {
+            Workflow(sequence {
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
                     LOG.debug("Create the build context.")

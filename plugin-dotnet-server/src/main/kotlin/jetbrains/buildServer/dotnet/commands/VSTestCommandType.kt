@@ -6,7 +6,6 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet VSTest command.
@@ -18,8 +17,8 @@ class VSTestCommandType : CommandType() {
 
     override val viewPage: String = "viewVSTestParameters.jsp"
 
-    override fun getRequirements(parameters: Map<String, String>) = buildSequence {
-        if (isDocker(parameters)) return@buildSequence
+    override fun getRequirements(parameters: Map<String, String>) = sequence {
+        if (isDocker(parameters)) return@sequence
 
         var shouldBeWindows = false
         var hasRequirement = false
@@ -47,7 +46,7 @@ class VSTestCommandType : CommandType() {
         }
     }
 
-    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+    override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
         DotnetConstants.PARAM_PATHS.let {
             if (properties[it].isNullOrBlank()) {

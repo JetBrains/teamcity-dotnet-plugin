@@ -11,7 +11,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 class TestCommand(
         _parametersService: ParametersService,
@@ -28,7 +27,7 @@ class TestCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--filter"))
@@ -72,5 +71,5 @@ class TestCommand(
     }
 
     override val environmentBuilders: Sequence<EnvironmentBuilder>
-        get() = buildSequence { yield(_vstestLoggerEnvironment) }
+        get() = sequence { yield(_vstestLoggerEnvironment) }
 }

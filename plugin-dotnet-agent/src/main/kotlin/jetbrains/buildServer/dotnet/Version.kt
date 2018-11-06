@@ -3,10 +3,9 @@
 package jetbrains.buildServer.dotnet
 
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 class Version(vararg version: Int) : Comparable<Version> {
-    val version = buildSequence {
+    val version = sequence {
         // Trim zero(s) at the end
         var zeroCounter = 0
         for (versionItem in version) {

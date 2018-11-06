@@ -4,7 +4,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildVSTestLoggerParametersProvider(
         private val _pathsService: PathsService,
@@ -13,10 +12,10 @@ class MSBuildVSTestLoggerParametersProvider(
         private val _loggerParameters: LoggerParameters)
     : MSBuildParametersProvider {
 
-    override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = buildSequence {
+    override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {
         val testReportingMode = _testReportingParameters.getMode(context)
         if (testReportingMode.contains(TestReportingMode.Off)) {
-            return@buildSequence
+            return@sequence
         }
 
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {

@@ -10,7 +10,6 @@ import jetbrains.buildServer.serverSide.discovery.BreadthFirstRunnerDiscoveryExt
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
 import jetbrains.buildServer.util.browser.Browser
 import jetbrains.buildServer.util.browser.Element
-import kotlin.coroutines.experimental.buildSequence
 
 class DotnetRunnerDiscoveryExtension(
         private val _solutionDiscover: SolutionDiscover,
@@ -66,7 +65,7 @@ class DotnetRunnerDiscoveryExtension(
         return DiscoveredTarget(command.name, command.parameters.associate { it.name to it.value })
     }
 
-    private fun createCommands(solution: Solution): Sequence<Command> = buildSequence {
+    private fun createCommands(solution: Solution): Sequence<Command> = sequence {
         if (!solution.solution.isBlank()) {
             val solutionPath = normalizePath(solution.solution)
             yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))

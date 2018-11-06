@@ -10,7 +10,6 @@ import java.util.regex.Pattern
 import java.util.regex.Pattern.CASE_INSENSITIVE
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
-import kotlin.coroutines.experimental.buildSequence
 
 class MSBuildProjectDeserializer(
         private val _xmlDocumentService: XmlDocumentService) : SolutionDeserializer {
@@ -68,7 +67,7 @@ class MSBuildProjectDeserializer(
                 }
             } ?: Solution(emptyList())
 
-    private fun getElements(doc: Document, xpath: String): Sequence<Element> = buildSequence {
+    private fun getElements(doc: Document, xpath: String): Sequence<Element> = sequence {
         val nodes = xPath.evaluate(xpath, doc, XPathConstants.NODESET) as NodeList
         for (i in 0 until nodes.length) {
             val element = nodes.item(i) as Element

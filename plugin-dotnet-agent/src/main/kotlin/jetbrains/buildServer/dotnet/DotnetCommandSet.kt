@@ -5,7 +5,6 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import kotlin.coroutines.experimental.buildSequence
 
 class DotnetCommandSet(
         private val _parametersService: ParametersService,
@@ -24,7 +23,7 @@ class DotnetCommandSet(
             }
         } ?: emptySequence()
 
-    private fun getTargetArguments(command: DotnetCommand) = buildSequence {
+    private fun getTargetArguments(command: DotnetCommand) = sequence {
         var hasTargets = false
         for (targetArguments in command.targetArguments) {
             yield(targetArguments)
@@ -48,7 +47,7 @@ class DotnetCommandSet(
             get() = _command.toolResolver
 
         override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
-                buildSequence {
+                sequence {
                     if (_command.toolResolver.isCommandRequired) {
                         // command
                         yieldAll(_command.commandType.id.split('-')

@@ -10,7 +10,6 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.rx.use
-import kotlin.coroutines.experimental.buildSequence
 
 class VisualStudioWorkflowComposer(
         private val _parametersService: ParametersService,
@@ -25,12 +24,12 @@ class VisualStudioWorkflowComposer(
     override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow) =
-            Workflow(buildSequence {
+            Workflow(sequence {
                 parameters(DotnetConstants.PARAM_COMMAND)?.let {
                     if (!DotnetCommandType.VisualStudio.id.equals(it, true)) {
-                        return@buildSequence
+                        return@sequence
                     }
-                } ?: return@buildSequence
+                } ?: return@sequence
 
                 val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
                 val action = parameters(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION)
@@ -57,7 +56,7 @@ class VisualStudioWorkflowComposer(
                                 TargetType.Tool,
                                 executableFile,
                                 workingDirectory,
-                                buildSequence {
+                                sequence {
                                     yield(CommandLineArgument(targetFile.absolutePath))
                                     yield(CommandLineArgument("/$action"))
                                     if (!configValue.isBlank()) {
@@ -72,7 +71,7 @@ class VisualStudioWorkflowComposer(
                     if (context.lastResult.exitCode != 0) {
                         _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
                         context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                        return@buildSequence
+                        return@sequence
                     }
                 }
             })

@@ -12,7 +12,6 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.StringUtil
 import java.io.File
-import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverWorkflowComposer(
         private val _pathsService: PathsService,
@@ -63,7 +62,7 @@ class DotCoverWorkflowComposer(
             }
         }
 
-        return Workflow(buildSequence {
+        return Workflow(sequence {
             var deferredServiceMessages: DeferredServiceMessages? = null
 
             _targetRegistry.activate(target).use {
@@ -131,7 +130,7 @@ class DotCoverWorkflowComposer(
             return false
         }
 
-    private fun createArguments(dotCoverProject: DotCoverProject) = buildSequence {
+    private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
         yield(CommandLineArgument("cover"))
         yield(CommandLineArgument(dotCoverProject.configFile.absolutePath))
         yield(CommandLineArgument("/ReturnTargetExitCode"))

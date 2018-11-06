@@ -48,10 +48,10 @@ class DotnetRunnerRunType(
 
             val errors = arrayListOf<InvalidProperty>()
             DotnetParametersProvider.commandTypes[command]?.let {
-                errors.addAll(it.validateProperties(properties!!))
+                errors.addAll(it.validateProperties(properties))
             }
 
-            properties?.get(CoverageConstants.PARAM_TYPE)?.let {
+            properties[CoverageConstants.PARAM_TYPE]?.let {
                 DotnetParametersProvider.coverageTypes[it]?.let {
                     errors.addAll(it.validateProperties(properties))
                 }

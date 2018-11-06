@@ -4,14 +4,13 @@ package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.RunBuildException
 import java.util.regex.Pattern
-import kotlin.coroutines.experimental.buildSequence
 
 class DotCoverFilterConverterImpl : DotCoverFilterConverter {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override fun convert(filterString: String) = buildSequence {
+    override fun convert(filterString: String) = sequence {
         if (filterString.isBlank()) {
-            return@buildSequence
+            return@sequence
         }
 
         for (line in ourEndOfLinePattern.split(filterString)) {

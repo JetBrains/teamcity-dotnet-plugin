@@ -3,7 +3,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides arguments to dotnet related to TeamCity logger.
@@ -14,7 +13,7 @@ class VSTestLoggerArgumentsProvider(
         private val _loggerParameters: LoggerParameters)
     : ArgumentsProvider {
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             yield(CommandLineArgument("/logger:logger://teamcity"))
             yield(CommandLineArgument("/TestAdapterPath:${it.absolutePath}"))

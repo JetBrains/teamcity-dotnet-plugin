@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_RSP
-import kotlin.coroutines.experimental.buildSequence
 
 class DotnetCommonArgumentsProviderImpl(
         private val _parametersService: ParametersService,
@@ -16,7 +15,7 @@ class DotnetCommonArgumentsProviderImpl(
         private val _msBuildLoggerArgumentsProvider: ArgumentsProvider,
         private val _msBuildParameterConverter: MSBuildParameterConverter)
     : DotnetCommonArgumentsProvider {
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = buildSequence {
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         yieldAll(_customArgumentsProvider.getArguments(context))
         val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
         if (!avoidUsingRspFiles) {

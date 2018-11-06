@@ -5,7 +5,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
-import kotlin.coroutines.experimental.buildSequence
 
 class DotnetBuildContextFactoryImpl(
         private val _pathService: PathsService,
@@ -19,7 +18,7 @@ class DotnetBuildContextFactoryImpl(
                     getSdks().toSet())
 
     private fun getSdks(): Sequence<DotnetSdk> =
-            buildSequence {
+            sequence {
                 _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)?.let { path ->
                     val dotnetExecutable = File(path)
                     val targetPath = _pathService.getPath(PathType.WorkingDirectory)

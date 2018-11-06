@@ -12,7 +12,6 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.serverSide.InvalidProperty
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides parameters for dotnet %custom% command.
@@ -26,7 +25,7 @@ class CustomCommandType : DotnetType() {
 
     override val viewPage: String = "viewCustomParameters.jsp"
 
-    override fun validateProperties(properties: Map<String, String>) = buildSequence {
+    override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
 
         if (properties[DotnetConstants.PARAM_ARGUMENTS].isNullOrBlank()) {
