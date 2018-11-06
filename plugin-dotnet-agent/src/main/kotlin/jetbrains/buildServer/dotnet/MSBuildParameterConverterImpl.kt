@@ -1,5 +1,3 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package jetbrains.buildServer.dotnet
 
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {

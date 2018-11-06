@@ -11,7 +11,6 @@ import jetbrains.buildServer.rx.use
 import java.io.Closeable
 import java.util.*
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _loggerService: LoggerService,

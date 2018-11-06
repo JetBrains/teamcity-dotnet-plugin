@@ -1,5 +1,3 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.util.SystemInfo

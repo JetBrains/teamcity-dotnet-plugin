@@ -1,5 +1,3 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.BuildProblemData

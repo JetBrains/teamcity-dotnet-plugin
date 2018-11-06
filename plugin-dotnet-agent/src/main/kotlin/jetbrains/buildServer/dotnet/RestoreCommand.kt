@@ -5,8 +5,6 @@
  * See LICENSE in the project root for license information.
  */
 
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.ArgumentsService
