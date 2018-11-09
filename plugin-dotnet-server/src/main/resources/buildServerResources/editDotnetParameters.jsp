@@ -116,6 +116,30 @@
       if (init) init();
 
       BS.MultilineProperties.updateVisible();
+    },
+    getFeedUrlQueryString: function () {
+      var parameters = {
+        authTypes: "httpAuth;guestAuth",
+        apiVersions: "v3"
+      };
+      var search = window.location.search.substring(1).split('&');
+      search.forEach(function (value) {
+        var buildTypeMatch = value.match(/id=buildType:(.*)/);
+        if (buildTypeMatch) {
+          parameters["buildType"] = buildTypeMatch[1]
+        }
+        var templateMatch = value.match(/id=template:(.*)/);
+        if (templateMatch) {
+          parameters["template"] = templateMatch[1]
+        }
+      });
+
+      return Object.keys(parameters).reduce(function (previous, key) {
+        if (previous) {
+          previous += "&";
+        }
+        return previous + key + "=" + parameters[key];
+      }, "");
     }
   };
 
@@ -319,7 +343,7 @@
     </c:set>
     <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
                              cols="60" rows="3" linkTitle="Sources" note="${note}"/>
-    <bs:projectData type="NuGetFeedUrls" sourceFieldId="buildTypeId"
+    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
                     targetFieldId="${params.nugetPackageSourcesKey}" popupTitle="Select TeamCity NuGet feeds"/>
     <span class="error" id="error_${params.nugetPackageSourcesKey}"></span>
   </td>
@@ -364,7 +388,7 @@
   <th><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
   <td>
     <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
-    <bs:projectData type="NuGetFeedUrls" sourceFieldId="buildTypeId" selectionMode="single"
+    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString" selectionMode="single"
                     targetFieldId="${params.nugetPackageSourceKey}" popupTitle="Select TeamCity NuGet feed"/>
     <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
     <span class="smallNote">
@@ -490,7 +514,7 @@
 </l:settingsGroup>
 </tbody>
 
-<button id="buildTypeId" style="display: none"></button>
+<button id="queryString" style="display: none"></button>
 
 <tbody>
 
@@ -505,5 +529,5 @@
 
 <script type="text/javascript">
   BS.DotnetParametersForm.updateElements();
-  $('buildTypeId').value = window.location.search.substring(1).split('&').grep(/id=buildType:(.*)/).join('').split(':')[1] + ":guestAuth";
+  $('queryString').value = encodeURIComponent(BS.DotnetParametersForm.getFeedUrlQueryString());
 </script>
