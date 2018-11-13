@@ -13,6 +13,7 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.util.OSType
 import java.io.File
 
 /**`
@@ -23,7 +24,8 @@ class DotnetPropertiesExtension(
         private val _toolProvider: ToolProvider,
         private val _dotnetCliToolInfo: DotnetCliToolInfo,
         private val _pathsService: PathsService,
-        private val _fileSystemService: FileSystemService)
+        private val _fileSystemService: FileSystemService,
+        private val _sdkPathProvider: SdkPathProvider)
     : AgentLifeCycleAdapter() {
 
     private var _subscriptionToken: Disposable
@@ -46,7 +48,7 @@ class DotnetPropertiesExtension(
                 LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$defaultSdkVersion\"")
 
                 LOG.debug("Locating .NET Core SDKs")
-                val sdks = _fileSystemService.list(File(dotnetPath.parentFile, "sdk"))
+                val sdks = _fileSystemService.list(_sdkPathProvider.path)
                         .filter { _fileSystemService.isDirectory(it) }
                         .map { Sdk(it, Version.parse(it.name)) }
                         .filter { it.version != Version.Empty }

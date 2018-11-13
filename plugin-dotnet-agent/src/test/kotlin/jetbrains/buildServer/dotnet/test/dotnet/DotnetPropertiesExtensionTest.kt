@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
+import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.annotations.BeforeMethod
@@ -21,6 +22,7 @@ class DotnetPropertiesExtensionTest {
     private lateinit var _buildAgent: BuildAgent
     private lateinit var _buildAgentConfiguration: BuildAgentConfiguration
     private lateinit var _fileSystemService: FileSystemService
+    private lateinit var _sdkPathProvider: SdkPathProvider
 
     @BeforeMethod
     fun setUp() {
@@ -32,6 +34,7 @@ class DotnetPropertiesExtensionTest {
         _buildAgent = _ctx.mock(BuildAgent::class.java)
         _buildAgentConfiguration = _ctx.mock(BuildAgentConfiguration::class.java)
         _fileSystemService = _ctx.mock(FileSystemService::class.java)
+        _sdkPathProvider = _ctx.mock(SdkPathProvider::class.java)
     }
 
     @DataProvider
@@ -73,7 +76,7 @@ class DotnetPropertiesExtensionTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldShutdownDotnetBuildServer(
+    fun shouldProvideConfigParams(
             originSdks: Sequence<DotnetPropertiesExtension.Sdk>,
             expectedSdks: Sequence<Pair<String, String>>) {
         // Given
@@ -96,13 +99,16 @@ class DotnetPropertiesExtensionTest {
                 oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(toolPath, workPath)
                 will(returnValue(version101))
 
+                oneOf<SdkPathProvider>(_sdkPathProvider).path
+                will(returnValue(File("sdks")))
+
                 oneOf<BuildAgent>(_buildAgent).configuration
                 will(returnValue(_buildAgentConfiguration))
 
                 oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_NAME, version101.toString())
                 oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_PATH, toolPath.absolutePath)
 
-                oneOf<FileSystemService>(_fileSystemService).list(File(toolPath.parentFile, "sdk"))
+                oneOf<FileSystemService>(_fileSystemService).list(File("sdks"))
                 will(returnValue(originSdks.map { it.path }))
 
                 for ((path, _) in originSdks) {
@@ -131,5 +137,6 @@ class DotnetPropertiesExtensionTest {
                     _toolProvider,
                     _dotnetCliToolInfo,
                     _pathsService,
-                    _fileSystemService)
+                    _fileSystemService,
+                    _sdkPathProvider)
 }
