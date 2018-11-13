@@ -7,6 +7,7 @@ import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -26,7 +27,7 @@ class DotnetCliToolInfoTest {
     }
 
     @Test
-    fun shouldGetDotnetInfo() {
+    fun shouldGetDotnetInfoWhenSdksListIsNotSupported() {
         // Given
         val workingDirectoryPath = File("wd")
         val toolPath = File("dotnet")
@@ -79,10 +80,91 @@ class DotnetCliToolInfoTest {
                 ))
     }
 
+    @DataProvider
+    fun testData(): Array<Array<List<Any>>> {
+        return arrayOf(
+                arrayOf(
+                        listOf("1.0.4 [${sdkPath}]", "2.1.403 [${sdkPath}]"),
+                        listOf(
+                                DotnetSdk(File(sdkPath, "1.0.4"), Version(1, 0, 4)),
+                                DotnetSdk(File(sdkPath, "2.1.403"), Version(2, 1, 403))
+                        )
+                ),
+                arrayOf(
+                        emptyList<String>(),
+                        emptyList<DotnetSdk>()
+                ),
+                arrayOf(
+                        listOf("1.0.4 [${sdkPath}]", "2.1.403-rc [${sdkPath}]"),
+                        listOf(
+                                DotnetSdk(File(sdkPath, "1.0.4"), Version(1, 0, 4)),
+                                DotnetSdk(File(sdkPath, "2.1.403-rc"), Version.parse("2.1.403-rc"))
+                        )
+                )
+        )
+    }
+
+    @Test(dataProvider = "testData")
+    fun shouldGetDotnetInfoWhenSdksListIsSupported(stdOutSdks: List<String>, expectedSdks: List<DotnetSdk>) {
+        // Given
+        val workingDirectoryPath = File("wd")
+        val toolPath = File("dotnet")
+        val versionCommandline = CommandLine(
+                TargetType.Tool,
+                toolPath,
+                workingDirectoryPath,
+                DotnetCliToolInfoImpl.versionArgs,
+                emptyList())
+
+        val sdksCommandline = CommandLine(
+                TargetType.Tool,
+                toolPath,
+                workingDirectoryPath,
+                DotnetCliToolInfoImpl.listSdksArgs,
+                emptyList())
+
+        val stdOutVersion = sequenceOf("stdOut")
+        val stdErr = sequenceOf("stdErr")
+        val getVersionResult = CommandLineResult(sequenceOf(0), stdOutVersion, stdErr)
+        val getSdksResult = CommandLineResult(sequenceOf(0), stdOutSdks.asSequence(), stdErr)
+        val versionStr = Version.VersionSupportingSdksList.toString()
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
+                will(returnValue(getVersionResult))
+
+                oneOf<VersionParser>(_versionParser).tryParse(stdOutVersion)
+                will(returnValue(versionStr))
+
+                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(sdksCommandline)
+                will(returnValue(getSdksResult))
+            }
+        })
+
+        val fileSystemService = VirtualFileSystemService()
+        val dotnetCliToolInfo = createInstance(fileSystemService)
+
+        // When
+        val actualInfo = dotnetCliToolInfo.getInfo(toolPath, workingDirectoryPath)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(
+                actualInfo,
+                DotnetInfo(
+                        Version.VersionSupportingSdksList,
+                        expectedSdks
+                ))
+    }
+
     private fun createInstance(fileSystemService: FileSystemService) =
             DotnetCliToolInfoImpl(
                     _commandLineExecutor,
                     _versionParser,
                     fileSystemService,
                     _sdkPathProvider)
+
+    companion object {
+        private val sdkPath = File(File(File("Program Files"), "dotnet"), "sdk")
+    }
 }
