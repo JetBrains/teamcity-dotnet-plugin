@@ -1,8 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -14,16 +14,19 @@ class DotnetCliToolInfoTest {
     private lateinit var _ctx: Mockery
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _versionParser: VersionParser
+    private lateinit var _sdkPathProvider: SdkPathProvider
+
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _versionParser = _ctx.mock(VersionParser::class.java)
+        _sdkPathProvider = _ctx.mock(SdkPathProvider::class.java)
     }
 
     @Test
-    fun shouldGetDotnetVersionByPath() {
+    fun shouldGetDotnetInfo() {
         // Given
         val workingDirectoryPath = File("wd")
         val toolPath = File("dotnet")
@@ -45,21 +48,41 @@ class DotnetCliToolInfoTest {
 
                 oneOf<VersionParser>(_versionParser).tryParse(stdOut)
                 will(returnValue(versionStr))
+
+                oneOf<SdkPathProvider>(_sdkPathProvider).path
+                will(returnValue(File("sdkRoot")))
             }
         })
 
-        val dotnetCliToolInfo = createInstance()
+        val fileSystemService = VirtualFileSystemService()
+                .addDirectory(File(File("sdkRoot"), "1.2.3"))
+                .addDirectory(File(File("sdkRoot"), "1.2.3-rc"))
+                .addFile(File(File("sdkRoot"), "1.2.4"))
+                .addDirectory(File(File("sdkRoot"), "nuget"))
+                .addDirectory(File(File("sdkRoot"), "1.2.5"))
+        val dotnetCliToolInfo = createInstance(fileSystemService)
 
         // When
-        val version = dotnetCliToolInfo.getVersion(toolPath, workingDirectoryPath)
+        val actualInfo = dotnetCliToolInfo.getInfo(toolPath, workingDirectoryPath)
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(version, Version(1, 0, 1))
+        Assert.assertEquals(
+                actualInfo,
+                DotnetInfo(
+                        Version(1, 0, 1),
+                        listOf(
+                                DotnetSdk(File(File("sdkRoot"), "1.2.3"), Version(1, 2,3)),
+                                DotnetSdk(File(File("sdkRoot"), "1.2.3-rc"), Version.parse("1.2.3-rc")),
+                                DotnetSdk(File(File("sdkRoot"), "1.2.5"), Version(1, 2,5))
+                        )
+                ))
     }
 
-    private fun createInstance() =
+    private fun createInstance(fileSystemService: FileSystemService) =
             DotnetCliToolInfoImpl(
                     _commandLineExecutor,
-                    _versionParser)
+                    _versionParser,
+                    fileSystemService,
+                    _sdkPathProvider)
 }

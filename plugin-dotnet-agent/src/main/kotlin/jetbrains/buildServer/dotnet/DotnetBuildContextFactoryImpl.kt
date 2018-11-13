@@ -20,12 +20,7 @@ class DotnetBuildContextFactoryImpl(
     private fun getSdks(): Sequence<DotnetSdk> =
             sequence {
                 _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)?.let { path ->
-                    val dotnetExecutable = File(path)
-                    val targetPath = _pathService.getPath(PathType.WorkingDirectory)
-                    val version = _dotnetCliToolInfo.getVersion(dotnetExecutable, targetPath)
-                    if (version != Version.Empty) {
-                        yield(DotnetSdk(targetPath, version))
-                    }
+                    yieldAll(_dotnetCliToolInfo.getInfo(File(path), _pathService.getPath(PathType.WorkingDirectory)).sdks)
                 }
             }
 

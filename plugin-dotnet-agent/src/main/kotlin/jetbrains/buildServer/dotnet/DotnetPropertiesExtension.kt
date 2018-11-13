@@ -13,7 +13,6 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
-import jetbrains.buildServer.util.OSType
 import java.io.File
 
 /**`
@@ -23,9 +22,7 @@ class DotnetPropertiesExtension(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _toolProvider: ToolProvider,
         private val _dotnetCliToolInfo: DotnetCliToolInfo,
-        private val _pathsService: PathsService,
-        private val _fileSystemService: FileSystemService,
-        private val _sdkPathProvider: SdkPathProvider)
+        private val _pathsService: PathsService)
     : AgentLifeCycleAdapter() {
 
     private var _subscriptionToken: Disposable
@@ -43,17 +40,12 @@ class DotnetPropertiesExtension(
                 LOG.info(".NET CLI $event found at \"${dotnetPath.absolutePath}\"")
 
                 // Detect .NET CLI version
-                val defaultSdkVersion = _dotnetCliToolInfo.getVersion(dotnetPath, _pathsService.getPath(PathType.Work)).toString()
-                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, defaultSdkVersion)
-                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"$defaultSdkVersion\"")
+                val dotnetInfo = _dotnetCliToolInfo.getInfo(dotnetPath, _pathsService.getPath(PathType.Work))
+                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, dotnetInfo.version.toString())
+                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"${dotnetInfo.version}\"")
 
                 LOG.debug("Locating .NET Core SDKs")
-                val sdks = _fileSystemService.list(_sdkPathProvider.path)
-                        .filter { _fileSystemService.isDirectory(it) }
-                        .map { Sdk(it, Version.parse(it.name)) }
-                        .filter { it.version != Version.Empty }
-
-                for ((version, path) in enumerateSdk(sdks)) {
+                for ((version, path) in enumerateSdk(dotnetInfo.sdks)) {
                     val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
                     configuration.addConfigurationParameter(paramName, path)
                     LOG.debug("Add configuration parameter \"$paramName\": \"$path\"")
@@ -70,14 +62,12 @@ class DotnetPropertiesExtension(
     companion object {
         private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
 
-        internal fun enumerateSdk(versions: Sequence<Sdk>): Sequence<Pair<String, String>> = sequence {
-            val groupedVersions = versions.groupBy { Version(it.version.major, it.version.minor) }
+        internal fun enumerateSdk(versions: List<DotnetSdk>): Sequence<Pair<String, String>> = sequence {
+            val groupedVersions = versions.filter { it.version != Version.Empty }.groupBy { Version(it.version.major, it.version.minor) }
             for ((version, sdks) in groupedVersions) {
                 yield("${version.major}.${version.minor}" to sdks.maxBy { it.version }!!.path.absolutePath)
                 yieldAll(sdks.map { it.version.toString() to it.path.absolutePath })
             }
         }
     }
-
-    data class Sdk(val path: File, val version: Version)
 }

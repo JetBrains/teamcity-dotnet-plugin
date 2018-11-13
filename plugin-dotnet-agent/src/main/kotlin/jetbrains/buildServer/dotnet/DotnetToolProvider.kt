@@ -24,13 +24,13 @@ class DotnetToolProvider(
     override fun supports(toolName: String): Boolean = DotnetConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-            executblePath
+            executablePath
                     ?.absolutePath
                     ?: throw ToolCannotBeFoundException("""
                     Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
                     .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
 
-    private val executblePath: File? by lazy {
+    private val executablePath: File? by lazy {
         _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME)
                 .firstOrNull()
     }

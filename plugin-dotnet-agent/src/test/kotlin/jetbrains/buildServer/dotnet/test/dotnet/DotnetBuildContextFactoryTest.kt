@@ -43,8 +43,17 @@ class DotnetBuildContextFactoryTest {
                 oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(workingDir))
 
-                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File(dotnetExecutable), workingDir)
-                will(returnValue(Version(1, 2, 3)))
+                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getInfo(File(dotnetExecutable), workingDir)
+                will(returnValue(
+                        DotnetInfo(
+                                Version(2, 2, 5),
+                                listOf(
+                                        DotnetSdk(File("sdk3"), Version(1, 2, 3)),
+                                        DotnetSdk(File("sdk4"), Version(1, 2, 4)),
+                                        DotnetSdk(File("sdk3"), Version(1, 2, 3))
+                                )
+                        )
+                ))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
                 will(returnValue(dotnetExecutable))
@@ -58,7 +67,11 @@ class DotnetBuildContextFactoryTest {
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(actualContext.sdks, setOf(DotnetSdk(workingDir, Version(1, 2, 3))))
+        Assert.assertEquals(
+                actualContext.sdks,
+                setOf(
+                        DotnetSdk(File("sdk3"), Version(1, 2, 3)),
+                        DotnetSdk(File("sdk4"), Version(1, 2, 4))))
     }
 
     @DataProvider
@@ -89,8 +102,8 @@ class DotnetBuildContextFactoryTest {
                 allowing<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(File(".")))
 
-                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).getVersion(File(dotnetExecutable), File("."))
-                will(returnValue(Version(1, 2, 3)))
+                allowing<DotnetCliToolInfo>(_dotnetCliToolInfo).getInfo(File(dotnetExecutable), File("."))
+                will(returnValue(DotnetInfo(Version(1, 2, 3), listOf(DotnetSdk(File("sdk"), Version(1, 2, 3))))))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
                 will(returnValue(parameterValue))
