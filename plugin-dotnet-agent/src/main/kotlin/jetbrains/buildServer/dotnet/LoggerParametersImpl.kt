@@ -25,4 +25,11 @@ class LoggerParametersImpl(
             }
         }
                 ?: Verbosity.Normal
+
+    override val msBuildParameters: String
+        get() = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS) ?: defaultMsBuildLoggerParams
+
+    companion object {
+        const val defaultMsBuildLoggerParams = "plain";
+    }
 }

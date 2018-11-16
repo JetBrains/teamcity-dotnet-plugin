@@ -17,25 +17,25 @@ class MSBuildLoggerArgumentsProviderTest {
                         null,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Normal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=normal")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=normal;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Quiet,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=quiet")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=quiet;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Minimal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=minimal")))
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=minimal;params")))
     }
 
     @Test(dataProvider = "testLoggerArgumentsData")
@@ -54,6 +54,9 @@ class MSBuildLoggerArgumentsProviderTest {
             init {
                 oneOf<LoggerParameters>(loggerParameters).msBuildLoggerVerbosity
                 will(returnValue(verbosity))
+
+                oneOf<LoggerParameters>(loggerParameters).msBuildParameters
+                will(returnValue("params"))
             }
         })
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
