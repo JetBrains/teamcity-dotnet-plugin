@@ -6,4 +6,6 @@ interface LoggerParameters {
     val msBuildLoggerVerbosity: Verbosity?
 
     val vsTestVerbosity: Verbosity
+
+    val msBuildParameters: String
 }

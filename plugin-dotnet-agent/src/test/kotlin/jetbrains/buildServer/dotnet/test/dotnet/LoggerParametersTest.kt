@@ -28,11 +28,11 @@ class LoggerParametersTest {
             parameters: Map<String, String>,
             expectedVerbosity: Verbosity?) {
         // Given
-        val msBuildVSTestLoggerParameters = LoggerParametersImpl(ParametersServiceStub(parameters))
+        val oggerParametersImpl = LoggerParametersImpl(ParametersServiceStub(parameters))
 
         // When
-        val actualParamVerbosity = msBuildVSTestLoggerParameters.paramVerbosity
-        val actualMSBuildLoggerVerbosity = msBuildVSTestLoggerParameters.msBuildLoggerVerbosity
+        val actualParamVerbosity = oggerParametersImpl.paramVerbosity
+        val actualMSBuildLoggerVerbosity = oggerParametersImpl.msBuildLoggerVerbosity
 
         // Then
         Assert.assertEquals(actualParamVerbosity, expectedVerbosity)
@@ -60,12 +60,35 @@ class LoggerParametersTest {
             parameters: Map<String, String>,
             expectedVerbosity: Verbosity) {
         // Given
-        val msBuildVSTestLoggerParameters = LoggerParametersImpl(ParametersServiceStub(parameters))
+        val oggerParametersImpl = LoggerParametersImpl(ParametersServiceStub(parameters))
 
         // When
-        val actualVerbosity = msBuildVSTestLoggerParameters.vsTestVerbosity
+        val actualVerbosity = oggerParametersImpl.vsTestVerbosity
 
         // Then
         Assert.assertEquals(actualVerbosity, expectedVerbosity)
+    }
+
+    @DataProvider
+    fun msBuildParameters(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS, "Abc;WXY")), "Abc;WXY"),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS, "")), ""),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS, " ")), " "),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS, null)), LoggerParametersImpl.defaultMsBuildLoggerParams))
+    }
+
+    @Test(dataProvider = "msBuildParameters")
+    fun shouldProvideMSBuildParameters(
+            parameters: Map<String, String>,
+            expectedParameters: String) {
+        // Given
+        val loggerParametersImpl = LoggerParametersImpl(ParametersServiceStub(parameters))
+
+        // When
+        val actualParameters = loggerParametersImpl.msBuildParameters
+
+        // Then
+        Assert.assertEquals(actualParameters, expectedParameters)
     }
 }
