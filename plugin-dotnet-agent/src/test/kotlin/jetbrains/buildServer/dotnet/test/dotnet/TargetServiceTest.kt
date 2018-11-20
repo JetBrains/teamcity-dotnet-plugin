@@ -48,7 +48,7 @@ class TargetServiceTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
 
-                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(checkoutDirectory))
 
                 oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
@@ -76,7 +76,7 @@ class TargetServiceTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
 
-                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(checkoutDirectory))
 
                 oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
@@ -109,7 +109,7 @@ class TargetServiceTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue("some includeRules"))
 
-                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(checkoutDirectory))
 
                 oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
@@ -151,7 +151,7 @@ class TargetServiceTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
                 will(returnValue(pathsParam))
 
-                oneOf<PathsService>(_pathsService).getPath(PathType.Checkout)
+                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
                 will(returnValue(checkoutDirectory))
             }
         })

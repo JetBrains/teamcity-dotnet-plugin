@@ -64,5 +64,6 @@ class ResponseFileArgumentsProvider(
     companion object {
         internal const val ResponseFileExtension = ".rsp"
         internal const val BlockName = "MSBuild Response File"
+        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false")
     }
 }

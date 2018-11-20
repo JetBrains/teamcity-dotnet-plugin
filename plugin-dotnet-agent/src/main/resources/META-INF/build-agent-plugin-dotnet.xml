@@ -52,6 +52,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.SharedCompilationImpl"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
@@ -74,12 +75,14 @@
 
   <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.SharedCompilationArgumentsProvider" id="sharedCompilationArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
     <constructor-arg>
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>
+        <ref bean="sharedCompilationArgumentsProvider"/>
       </list>
     </constructor-arg>
     <constructor-arg>
@@ -93,6 +96,7 @@
     <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="msbuildVSTestLoggerParametersProvider"/>
+    <constructor-arg ref="sharedCompilationArgumentsProvider"/>
     <constructor-arg ref="msBuildLoggerArgumentsProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.ResultsAnalyzerImpl" primary="true"/>
@@ -125,6 +129,7 @@
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>
         <ref bean="dotnetCustomArgumentsProvider"/>
+        <ref bean="sharedCompilationArgumentsProvider"/>
       </list>
     </constructor-arg>
     <constructor-arg>

@@ -11,7 +11,8 @@ class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _dotnetToolResolver: DotnetToolResolver,
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _environmentVariables: EnvironmentVariables)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
@@ -23,20 +24,26 @@ class BuildServerShutdownMonitor(
                 try {
                     LOG.debug("Has a build command")
                     val sdks = _contexts
-                            .flatMap { it.sdks }
-                            .filter { it.version > Version.LastVersionWithoutSharedCompilation }
-                            .distinctBy { it.path }
+                            .flatMap {
+                                val context = it
+                                context.sdks.map { Pair(context, it) }
+                            }
+                            .filter { it.second.version > Version.LastVersionWithoutSharedCompilation }
+                            .distinctBy { it.second.path }
 
                     val executableFile = _dotnetToolResolver.executableFile
-                    for ((path, version) in sdks) {
-                        LOG.debug("$version is greater then ${Version.LastVersionWithoutSharedCompilation} in the \"$path\"")
+                    for (sdkInfo in sdks) {
+                        val context = sdkInfo.first
+                        val sdk = sdkInfo.second
+                        LOG.debug("${sdk.version} is greater then ${Version.LastVersionWithoutSharedCompilation} in the \"${sdk.path}\"")
+                        val envVariables = _environmentVariables.getVariables(context).toList()
                         _commandLineExecutor.tryExecute(
                                 CommandLine(
                                         TargetType.Tool,
                                         executableFile,
-                                        path,
+                                        sdk.path,
                                         shutdownArgs,
-                                        emptyList())
+                                        envVariables)
                         )
                     }
                 } finally {

@@ -19,6 +19,7 @@ class BuildServerShutdownMonitorTest {
     private lateinit var _dotnetToolResolver: DotnetToolResolver
     private lateinit var _agentRunningBuild: AgentRunningBuild
     private lateinit var _parametersService: ParametersService
+    private lateinit var _environmentVariables: EnvironmentVariables
 
     @BeforeMethod
     fun setUp() {
@@ -28,6 +29,7 @@ class BuildServerShutdownMonitorTest {
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
         _agentRunningBuild = _ctx.mock(AgentRunningBuild::class.java)
         _parametersService = _ctx.mock(ParametersService::class.java)
+        _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
     }
 
     @DataProvider
@@ -80,13 +82,17 @@ class BuildServerShutdownMonitorTest {
 
                 if (expectedShutdown) {
                     for(version in versions.filter { it > Version.LastVersionWithoutSharedCompilation }) {
+                        val envVars = sequenceOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
+                        allowing<EnvironmentVariables>(_environmentVariables).getVariables(context)
+                        will(returnValue(envVars))
+
                         val path = File("wd$version")
                         val buildServerShutdownCommandline = CommandLine(
                                 TargetType.Tool,
                                 executableFile,
                                 path,
                                 BuildServerShutdownMonitor.shutdownArgs,
-                                emptyList())
+                                envVars.toList())
 
                         oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(buildServerShutdownCommandline)
                     }
@@ -117,7 +123,7 @@ class BuildServerShutdownMonitorTest {
             }
         })
 
-        val monitor = createInstance()
+        createInstance()
 
         // When
         buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
@@ -131,5 +137,6 @@ class BuildServerShutdownMonitorTest {
                     _agentLifeCycleEventSources,
                     _commandLineExecutor,
                     _dotnetToolResolver,
-                    _parametersService)
+                    _parametersService,
+                    _environmentVariables)
 }
