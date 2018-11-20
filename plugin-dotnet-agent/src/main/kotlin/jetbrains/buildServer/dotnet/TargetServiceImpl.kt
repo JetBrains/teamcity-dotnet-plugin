@@ -18,7 +18,7 @@ class TargetServiceImpl(
     override val targets: Sequence<CommandTarget>
         get() = sequence {
             _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)?.trim()?.let {
-                val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
+                val checkoutDirectory = _pathsService.getPath(PathType.WorkingDirectory)
                 val includeRulesStr = it.trim()
                 if (includeRulesStr.isEmpty()) {
                     return@sequence

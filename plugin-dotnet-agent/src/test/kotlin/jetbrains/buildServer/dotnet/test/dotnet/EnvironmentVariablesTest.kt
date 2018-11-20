@@ -10,76 +10,72 @@ import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class EnvironmentVariablesTest {
-    @DataProvider
-    fun testData(): Array<Array<Any>> {
-        return arrayOf(
-                // UNIX or MAC and SDK v. > 2.1.105
-                // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), emptySequence<Version>(), emptySequence<CommandLineEnvironmentVariable>()),
+    private lateinit var _ctx: Mockery
+    private lateinit var _environment: Environment
+    private lateinit var _sharedCompilation: SharedCompilation
 
-                // SDK v. <= 2.1.105
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 105)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), emptySequence<CommandLineEnvironmentVariable>()),
-
-                // WINDOWS and CodeCoverageProfiler and SDK v. > 2.1.105
-                // dotCover is waiting for finishing of all spawned processes including a build's infrastructure processes
-                // https://github.com/JetBrains/teamcity-dotnet-plugin/issues/132
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), emptySequence<CommandLineEnvironmentVariable>()),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler), emptySequence<Version>(), emptySequence<CommandLineEnvironmentVariable>())
-        )
+    @BeforeMethod
+    fun setUp() {
+        _ctx = Mockery()
+        _environment = _ctx.mock<Environment>(Environment::class.java)
+        _sharedCompilation = _ctx.mock<SharedCompilation>(SharedCompilation::class.java)
     }
 
-    @Test(dataProvider = "testData")
-    fun shouldGetVariables(
-            os: OSType,
-            activeTargets: Sequence<TargetType>,
-            versions: Sequence<Version>,
-            expectedVariables: Sequence<CommandLineEnvironmentVariable>) {
+    @Test
+    fun shouldProvideDefaultVars() {
         // Given
-        val ctx = Mockery()
-        val environment = ctx.mock(Environment::class.java)
-        val targetRegistry = ctx.mock(TargetRegistry::class.java)
-        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java), null, versions.map { DotnetSdk(File("targetPath"), it) }.toSet())
-        val environmentVariables = EnvironmentVariablesImpl(environment, targetRegistry)
+        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), null, emptySet())
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
 
         // When
-        ctx.checking(object : Expectations() {
+        _ctx.checking(object : Expectations() {
             init {
-                oneOf<Environment>(environment).os
-                will(returnValue(os))
+                oneOf<Environment>(_environment).os
+                will(returnValue(OSType.WINDOWS))
 
-                oneOf<TargetRegistry>(targetRegistry).activeTargets
-                will(returnValue(activeTargets))
+                oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
+                will(returnValue("path"))
+
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                will(returnValue(false))
             }
         })
 
-        val actualVariables = environmentVariables.getVariables(context).filter { it.name != "HOME" }.toList()
+        val actualVariables = environmentVariables.getVariables(context).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + expectedVariables).toList())
+        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
+    }
+
+    @Test
+    fun shouldUseSharedCompilation() {
+        // Given
+        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), null, emptySet())
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
+
+        // When
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<Environment>(_environment).os
+                will(returnValue(OSType.WINDOWS))
+
+                oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
+                will(returnValue("path"))
+
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                will(returnValue(true))
+            }
+        })
+
+        val actualVariables = environmentVariables.getVariables(context).toList()
+
+        // Then
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())
     }
 }

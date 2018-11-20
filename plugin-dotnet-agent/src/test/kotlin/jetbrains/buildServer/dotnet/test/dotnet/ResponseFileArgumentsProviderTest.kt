@@ -19,6 +19,7 @@ class ResponseFileArgumentsProviderTest {
     private lateinit var _pathService: PathsService
     private lateinit var _loggerService: LoggerService
     private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
+    private lateinit var _sharedCompilation: SharedCompilation
 
     @BeforeMethod
     fun setUp() {
@@ -26,6 +27,8 @@ class ResponseFileArgumentsProviderTest {
         _pathService = _ctx.mock(PathsService::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
         _msBuildParameterConverter = _ctx.mock(MSBuildParameterConverter::class.java)
+        _sharedCompilation = _ctx.mock<SharedCompilation>(SharedCompilation::class.java)
+
     }
 
     @Test
@@ -72,6 +75,9 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("arg3", Color.Details)
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("par1", Color.Details)
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("par2", Color.Details)
+
+                allowing<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                will(returnValue(true))
             }
         })
 
