@@ -337,10 +337,7 @@
 <tr class="advancedSetting dotnet restore">
   <th><label for="${params.nugetPackageSourcesKey}">NuGet package sources:</label></th>
   <td>
-    <c:set var="note">
-      Specifies NuGet package sources to use during the restore.<br/>
-      To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the NuGet feed project settings page.
-    </c:set>
+    <c:set var="note">Specifies NuGet package sources to use during the restore.</c:set>
     <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
                              cols="60" rows="3" linkTitle="Sources" note="${note}"/>
     <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
@@ -391,10 +388,7 @@
     <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString" selectionMode="single"
                     targetFieldId="${params.nugetPackageSourceKey}" popupTitle="Select TeamCity NuGet feed"/>
     <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
-    <span class="smallNote">
-            Specify the server URL. To use a TeamCity NuGet feed<bs:help file="Using+TeamCity+as+NuGet+Server"/>, specify the URL from the
-            NuGet feed project settings page.
-        </span>
+    <span class="smallNote">Specify the NuGet server URL.</span>
   </td>
 </tr>
 
@@ -413,9 +407,10 @@
     <props:passwordProperty name="${params.nugetApiKey}" className="longField"/>
     <span class="error" id="error_${params.nugetApiKey}"></span>
     <span class="smallNote">
-            Specify the API key to access the NuGet packages feed.<br/>
-            For the built-in TeamCity NuGet feeds use the <em>%teamcity.nuget.feed.api.key%</em>.
-        </span>
+      Specify the API key to access the NuGet packages feed.<br/>
+      For the built-in TeamCity NuGet feeds<bs:help file="Using+TeamCity+as+NuGet+Server"/>
+      use the <em>%teamcity.nuget.feed.api.key%</em>.
+    </span>
   </td>
 </tr>
 
