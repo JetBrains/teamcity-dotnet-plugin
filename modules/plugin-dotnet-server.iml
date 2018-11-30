@@ -23,7 +23,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="plugin-dotnet-common" scope="PROVIDED" />
-    <orderEntry type="library" scope="PROVIDED" name="kotlin-1.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="kotlin" level="project" />
     <orderEntry type="library" scope="TEST" name="testng" level="project" />
     <orderEntry type="library" name="Spring-Framework" level="project" />
     <orderEntry type="module" module-name="server-tools" />
