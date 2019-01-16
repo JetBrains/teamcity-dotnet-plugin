@@ -115,7 +115,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.BuildTemp)
+                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName
@@ -265,7 +265,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.BuildTemp)
+                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName
@@ -373,7 +373,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.BuildTemp)
+                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName
@@ -467,7 +467,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue("/ProcessFilters=-:sqlservr.exe /arg"))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.BuildTemp)
+                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
                 will(returnValue(tempDirectory))
 
                 oneOf<PathsService>(_pathService).uniqueName

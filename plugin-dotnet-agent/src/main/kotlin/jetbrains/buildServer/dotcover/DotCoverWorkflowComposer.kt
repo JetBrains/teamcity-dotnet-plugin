@@ -67,7 +67,7 @@ class DotCoverWorkflowComposer(
                 for (commandLineToGetCoverage in workflow.commandLines) {
                     sendServiceMessages(context, deferredServiceMessages)
 
-                    val tempDirectory = _pathsService.getPath(PathType.BuildTemp)
+                    val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
                     val dotCoverProject = DotCoverProject(
                             commandLineToGetCoverage,
                             File(tempDirectory, _pathsService.uniqueName + DotCoverProjectExtension),
