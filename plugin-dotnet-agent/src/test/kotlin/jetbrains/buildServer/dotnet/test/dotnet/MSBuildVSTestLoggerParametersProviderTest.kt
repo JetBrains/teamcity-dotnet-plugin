@@ -48,7 +48,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
-        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
         val pathsService = ctx.mock(PathsService::class.java)
         val testReportingParameters = ctx.mock(TestReportingParameters::class.java)
         val msBuildVSTestLoggerParameters = ctx.mock(LoggerParameters::class.java)

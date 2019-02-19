@@ -35,35 +35,33 @@ class BuildServerShutdownMonitorTest {
     @DataProvider
     fun supportToolCases(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "true", true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "True", true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "abc", false),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "false", false),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(2, 1, 300)), "FaLse", false),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.Build, sequenceOf(Version(1, 0, 0), Version(2, 1, 300), Version(2, 1, 301)), null, true),
-                arrayOf(DotnetCommandType.Build, emptySequence<Version>(), null, false),
-                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.Pack, sequenceOf(Version(2, 1, 300), Version(2, 1, 301)), null, true),
-                arrayOf(DotnetCommandType.Publish, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(2, 1, 300), Version(1, 0, 0)), null, true),
-                arrayOf(DotnetCommandType.Test, sequenceOf(Version(1, 1, 0), Version(1, 0, 0)), null, false),
-                arrayOf(DotnetCommandType.Test, emptySequence<Version>(), null, false),
-                arrayOf(DotnetCommandType.Run, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.MSBuild, sequenceOf(Version(2, 1, 300)), null, true),
-                arrayOf(DotnetCommandType.NuGetPush, sequenceOf(Version(2, 1, 300)), null, false),
-                arrayOf(DotnetCommandType.NuGetDelete, sequenceOf(Version(2, 1, 300)), null, false),
-                arrayOf(DotnetCommandType.Custom, sequenceOf(Version(2, 1, 300)), null, false))
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), "true", true),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), "True", true),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), "abc", false),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), "false", false),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), "FaLse", false),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.Build, Version(2, 1, 301), null, true),
+                arrayOf(DotnetCommandType.Pack, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.Pack, Version(2, 1, 301), null, true),
+                arrayOf(DotnetCommandType.Publish, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.Test, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.Test, Version(1, 0, 0), null, true),
+                arrayOf(DotnetCommandType.Test, Version(1, 0, 0), null, false),
+                arrayOf(DotnetCommandType.Run, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.MSBuild, Version(2, 1, 300), null, true),
+                arrayOf(DotnetCommandType.NuGetPush, Version(2, 1, 300), null, false),
+                arrayOf(DotnetCommandType.NuGetDelete, Version(2, 1, 300), null, false),
+                arrayOf(DotnetCommandType.Custom, Version(2, 1, 300), null, false))
     }
 
     @Test(dataProvider = "supportToolCases")
-    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, versions: Sequence<Version>, useSharedCompilationParam: String?, expectedShutdown: Boolean) {
+    fun shouldShutdownDotnetBuildServer(dotnetCommandType: DotnetCommandType, sdkVersion: Version, useSharedCompilationParam: String?, expectedShutdown: Boolean) {
         // Given
         val executableFile = File("dotnet")
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(command, null, versions.map { DotnetSdk(File("wd$it"), it) }.toSet())
+        val context = DotnetBuildContext(File("wd"), command, DotnetSdk(File("dotnet"), sdkVersion))
 
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
@@ -81,16 +79,15 @@ class BuildServerShutdownMonitorTest {
                 will(returnValue(executableFile))
 
                 if (expectedShutdown) {
-                    for(version in versions.filter { it > Version.LastVersionWithoutSharedCompilation }) {
+                    if (sdkVersion > Version.LastVersionWithoutSharedCompilation ) {
                         val envVars = sequenceOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
-                        allowing<EnvironmentVariables>(_environmentVariables).getVariables(context)
+                        allowing<EnvironmentVariables>(_environmentVariables).getVariables(sdkVersion)
                         will(returnValue(envVars))
 
-                        val path = File("wd$version")
                         val buildServerShutdownCommandline = CommandLine(
                                 TargetType.Tool,
                                 executableFile,
-                                path,
+                                File("wd"),
                                 BuildServerShutdownMonitor.shutdownArgs,
                                 envVars.toList())
 

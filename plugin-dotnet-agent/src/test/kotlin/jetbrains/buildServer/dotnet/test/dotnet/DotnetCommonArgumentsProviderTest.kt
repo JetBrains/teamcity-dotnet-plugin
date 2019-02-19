@@ -35,7 +35,7 @@ class DotnetCommonArgumentsProviderTest {
     @Test(dataProvider = "testData")
     fun shouldGetArguments(parameters: Map<String, String>, expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
         _ctx.checking(object : Expectations() {
             init {

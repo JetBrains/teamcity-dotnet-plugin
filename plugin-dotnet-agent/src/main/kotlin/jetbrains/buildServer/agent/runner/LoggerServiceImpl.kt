@@ -22,13 +22,11 @@ class LoggerServiceImpl(
 
     override fun writeBuildProblem(buildProblem: BuildProblemData) = buildLogger.logBuildProblem(buildProblem)
 
-    override fun writeStandardOutput(text: String, color: Color) {
-        if (color == Color.Default) {
-            listener.onStandardOutput(text)
-        } else {
-            listener.onStandardOutput("\u001B[${_colorTheme.getAnsiColor(color)}m$text")
-        }
-    }
+    override fun writeStandardOutput(text: String, color: Color) =
+            listener.onStandardOutput(applyColor(text, color))
+
+    override fun writeStandardOutput(vararg text: Pair<String, Color>) =
+            listener.onStandardOutput(applyColor(*text))
 
     override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
 
@@ -36,4 +34,17 @@ class LoggerServiceImpl(
         buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
         return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
     }
+
+    private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
+        if (color == Color.Default)
+            if (color != prevColor)
+                "\u001B[0m$text"
+            else
+                text
+        else "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
+
+    private fun applyColor(vararg text: Pair<String, Color>): String =
+            text.fold(Pair<String, Color>("", Color.Default)) {
+                acc, (str, color) -> Pair<String, Color>(acc.first + applyColor(str, color, acc.second), color)
+            }.first
 }

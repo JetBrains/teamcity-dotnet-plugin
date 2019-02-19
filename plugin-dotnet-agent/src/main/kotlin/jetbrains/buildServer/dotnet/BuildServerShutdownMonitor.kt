@@ -6,6 +6,7 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
+import java.io.File
 
 class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
@@ -16,49 +17,38 @@ class BuildServerShutdownMonitor(
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
-    private var _contexts = mutableListOf<DotnetBuildContext>()
+    private var _workingDirectories = mutableMapOf<Version, File>()
 
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
-            if (_contexts.size > 0) {
+            if (_workingDirectories.isNotEmpty()) {
                 try {
-                    LOG.debug("Has a build command")
-                    val sdks = _contexts
-                            .flatMap {
-                                val context = it
-                                context.sdks.map { Pair(context, it) }
-                            }
-                            .filter { it.second.version > Version.LastVersionWithoutSharedCompilation }
-                            .distinctBy { it.second.path }
-
+                    LOG.debug("Shared compilation service shutdown.")
                     val executableFile = _dotnetToolResolver.executableFile
-                    for (sdkInfo in sdks) {
-                        val context = sdkInfo.first
-                        val sdk = sdkInfo.second
-                        LOG.debug("${sdk.version} is greater then ${Version.LastVersionWithoutSharedCompilation} in the \"${sdk.path}\"")
-                        val envVariables = _environmentVariables.getVariables(context).toList()
+                    for ((sdkVersion, workingDirectory) in _workingDirectories) {
+                        val envVariables = _environmentVariables.getVariables(sdkVersion).toList()
                         _commandLineExecutor.tryExecute(
                                 CommandLine(
                                         TargetType.Tool,
                                         executableFile,
-                                        sdk.path,
+                                        workingDirectory,
                                         shutdownArgs,
                                         envVariables)
                         )
                     }
                 } finally {
-                    _contexts.clear()
+                    _workingDirectories.clear()
                 }
             }
         }
     }
 
     override fun register(context: DotnetBuildContext) {
-        if (buildCommands.contains(context.command.commandType)) {
-            val useSharedCompilation = _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true
-            if (useSharedCompilation) {
-                _contexts.add(context)
-            }
+        if (
+                buildCommands.contains(context.command.commandType)
+                && context.currentSdk.version > Version.LastVersionWithoutSharedCompilation
+                && _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
+            _workingDirectories.getOrPut(context.currentSdk.version) { context.workingDirectory }
         }
     }
 

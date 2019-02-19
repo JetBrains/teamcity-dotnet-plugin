@@ -43,7 +43,7 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
         _ctx.checking(object : Expectations() {
             init {
                 allowing<DotnetCommand>(_buildCommand).commandType

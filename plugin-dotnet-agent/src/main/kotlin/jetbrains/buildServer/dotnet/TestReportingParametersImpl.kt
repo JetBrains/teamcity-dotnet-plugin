@@ -17,12 +17,9 @@ class TestReportingParametersImpl(
         }
 
         val modeSet = mutableSetOf(TestReportingMode.On)
-        context.sdks.minBy { it.version }?.let {
-            if (it.version >= Version.MultiAdapterPathVersion) {
-                modeSet.add(TestReportingMode.MultiAdapterPath)
-            }
+        if (context.currentSdk.version >= Version.MultiAdapterPathVersion) {
+            modeSet.add(TestReportingMode.MultiAdapterPath)
         }
-
         return EnumSet.copyOf<TestReportingMode>(modeSet)
     }
 }

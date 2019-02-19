@@ -49,7 +49,7 @@ class DotnetBuildContextFactoryTest {
                                 Version(2, 2, 5),
                                 listOf(
                                         DotnetSdk(File("sdk3"), Version(1, 2, 3)),
-                                        DotnetSdk(File("sdk4"), Version(1, 2, 4)),
+                                        DotnetSdk(File("sdk4"), Version(2, 2, 5)),
                                         DotnetSdk(File("sdk3"), Version(1, 2, 3))
                                 )
                         )
@@ -71,7 +71,7 @@ class DotnetBuildContextFactoryTest {
                 actualContext.sdks,
                 setOf(
                         DotnetSdk(File("sdk3"), Version(1, 2, 3)),
-                        DotnetSdk(File("sdk4"), Version(1, 2, 4))))
+                        DotnetSdk(File("sdk4"), Version(2, 2, 5))))
     }
 
     @DataProvider

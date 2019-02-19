@@ -27,12 +27,12 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldProvideNodeReuseArgumentsWhenSharedCompilationRequiresSuppressing() {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1, 2)), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2))
                 will(returnValue(true))
             }
         })
@@ -47,12 +47,12 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldNotProvideNodeReuseArgumentsWhenSharedCompilationDoesNotRequireSuppressing() {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1,2,3)), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1,2,3))
                 will(returnValue(false))
             }
         })

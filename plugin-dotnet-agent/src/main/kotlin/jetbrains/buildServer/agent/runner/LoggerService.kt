@@ -11,6 +11,8 @@ interface LoggerService {
 
     fun writeStandardOutput(text: String, color: Color = Color.Default)
 
+    fun writeStandardOutput(vararg text: Pair<String, Color>)
+
     fun writeErrorOutput(text: String)
 
     fun writeBlock(blockName: String, description: String = ""): Closeable

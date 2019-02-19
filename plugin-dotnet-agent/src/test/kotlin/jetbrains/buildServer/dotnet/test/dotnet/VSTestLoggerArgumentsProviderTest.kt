@@ -39,7 +39,7 @@ class VSTestLoggerArgumentsProviderTest {
             expectedArguments: List<String>) {
         // Given
         val ctx = Mockery()
-        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
         val loggerParameters = ctx.mock(LoggerParameters::class.java)
         val argumentsProvider = VSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile), loggerParameters)
 

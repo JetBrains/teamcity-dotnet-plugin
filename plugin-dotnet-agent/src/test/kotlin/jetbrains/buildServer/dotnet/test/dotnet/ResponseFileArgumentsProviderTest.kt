@@ -46,7 +46,7 @@ class ResponseFileArgumentsProviderTest {
         val buildParameter2 = MSBuildParameter("param2", "val2")
         val parametersProvider2 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1, 2)), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
@@ -76,7 +76,7 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("par1", Color.Details)
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("par2", Color.Details)
 
-                allowing<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                allowing<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2))
                 will(returnValue(true))
             }
         })

@@ -19,36 +19,34 @@ class SharedCompilationTest {
         return arrayOf(
                 // UNIX or MAC and SDK v. > 2.1.105
                 // Prevents the case when VBCSCompiler service remains in memory after `dotnet build` for Linux and consumes 100% of 1 CPU core and a lot of memory
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), true),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), true),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), false),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 300)), false),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), emptySequence<Version>(), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), Version(2, 1, 200), true),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), Version(2, 1, 200), true),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), Version(2, 1, 300), true),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), Version(2, 1, 300), true),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), Version(2, 1, 200), false),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), Version(2, 1, 300), false),
 
                 // SDK v. <= 2.1.105
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), false),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), false),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(2, 1, 105)), false),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), false),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), false),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 0, 0)), false),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), false),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), false),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), false),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), Version(2, 1, 105), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), Version(2, 1, 105), false),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), Version(2, 1, 105), false),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), Version(1, 0, 1), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), Version(2, 0, 0), false),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), Version(1, 0, 1), false),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.Tool), Version(1, 0, 1), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.Tool), Version(1, 0, 1), false),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.Tool), Version(1, 0, 1), false),
 
                 // WINDOWS and CodeCoverageProfiler and SDK v. > 2.1.105
                 // dotCover is waiting for finishing of all spawned processes including a build's infrastructure processes
                 // https://github.com/JetBrains/teamcity-dotnet-plugin/issues/132
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(2, 1, 300)), true),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 200)), true),
-                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 105)), false),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), true),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(1, 0, 1)), false),
-                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), true),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), sequenceOf(Version(1, 0, 1), Version(2, 1, 300)), true),
-                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler), emptySequence<Version>(), false)
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 300), true),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 200), true),
+                arrayOf(OSType.WINDOWS, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 105), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 300), true),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(1, 0, 1), false),
+                arrayOf(OSType.UNIX, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 300), true),
+                arrayOf(OSType.MAC, sequenceOf(TargetType.CodeCoverageProfiler, TargetType.Tool), Version(2, 1, 300), true)
         )
     }
 
@@ -56,13 +54,12 @@ class SharedCompilationTest {
     fun shouldDefineSuppressing(
             os: OSType,
             activeTargets: Sequence<TargetType>,
-            versions: Sequence<Version>,
+            version: Version,
             expectedRequireSuppressing: Boolean) {
         // Given
         val ctx = Mockery()
         val environment = ctx.mock(Environment::class.java)
         val targetRegistry = ctx.mock(TargetRegistry::class.java)
-        val context = DotnetBuildContext(ctx.mock(DotnetCommand::class.java), null, versions.map { DotnetSdk(File("targetPath"), it) }.toSet())
         val sharedCompilation = SharedCompilationImpl(environment, targetRegistry)
 
         // When
@@ -76,7 +73,7 @@ class SharedCompilationTest {
             }
         })
 
-        val actualRequireSuppressing = sharedCompilation.requireSuppressing(context)
+        val actualRequireSuppressing = sharedCompilation.requireSuppressing(version)
 
         // Then
         Assert.assertEquals(actualRequireSuppressing, expectedRequireSuppressing)

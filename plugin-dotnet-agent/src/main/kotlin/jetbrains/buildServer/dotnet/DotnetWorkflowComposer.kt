@@ -43,7 +43,9 @@ class DotnetWorkflowComposer(
                         val executableFile = command.toolResolver.executableFile
                         val args = command.getArguments(dotnetBuildContext).toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
-                        _loggerService.writeStandardOutput(commandHeader)
+                        _loggerService.writeStandardOutput(
+                                Pair(".NET Core SDK v${dotnetBuildContext.currentSdk.version} ", Color.Default),
+                                Pair(commandHeader, Color.Header))
                         val commandType = command.commandType
                         val commandName = commandType.id.replace('-', ' ')
                         val blockName = if (commandName.isNotBlank()) {
@@ -61,9 +63,9 @@ class DotnetWorkflowComposer(
                                             yield(CommandLine(
                                                     TargetType.Tool,
                                                     executableFile,
-                                                    _pathsService.getPath(PathType.WorkingDirectory),
+                                                    dotnetBuildContext.workingDirectory,
                                                     args,
-                                                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext).toList()))
+                                                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.currentSdk.version).toList()))
                                         }
                                     }
                         }

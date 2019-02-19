@@ -11,10 +11,10 @@ class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _sharedCompilation: SharedCompilation)
     : EnvironmentVariables {
-    override fun getVariables(context: DotnetBuildContext): Sequence<CommandLineEnvironmentVariable> = sequence {
+    override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
 
-        if (_sharedCompilation.requireSuppressing(context)) {
+        if (_sharedCompilation.requireSuppressing(sdkVersion)) {
             yield(useSharedCompilationEnvironmentVariable)
         }
 

@@ -71,14 +71,13 @@ class DotnetWorkflowComposerTest {
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
         _commandRegistry = _ctx.mock(CommandRegistry::class.java)
         _buildContextFactory = _ctx.mock(DotnetBuildContextFactory::class.java)
-        _buildContext1 = DotnetBuildContext(_dotnetCommand1)
-        _buildContext2 = DotnetBuildContext(_dotnetCommand2)
+        _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, DotnetSdk(File("dotnet"), Version(1)))
+        _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, DotnetSdk(File("dotnet"), Version(2)))
     }
 
     @Test
     fun shouldCompose() {
         // Given
-        val workingDirectory = File("workingDir")
         val composer = createInstance()
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
         val args1 = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
@@ -91,7 +90,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand1)
                 will(returnValue(_buildContext1))
 
-                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(_buildContext1)
+                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(1))
                 will(returnValue(envVars.asSequence()))
 
                 oneOf<DotnetCommand>(_dotnetCommand1).commandType
@@ -135,7 +134,7 @@ class DotnetWorkflowComposerTest {
                 oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand2)
                 will(returnValue(_buildContext2))
 
-                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(_buildContext2)
+                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(2))
                 will(returnValue(envVars.asSequence()))
 
                 oneOf<DotnetCommand>(_dotnetCommand2).commandType
@@ -162,20 +161,17 @@ class DotnetWorkflowComposerTest {
                 oneOf<CommandSet>(_commandSet).commands
                 will(returnValue(sequenceOf(_dotnetCommand1, _dotnetCommand2)))
 
-                allowing<PathsService>(_pathService).getPath(PathType.WorkingDirectory)
-                will(returnValue(workingDirectory))
-
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(result))
 
-                oneOf<LoggerService>(_loggerService).writeStandardOutput("dotnet.exe arg1 arg2")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput(Pair(".NET Core SDK v1.0.0 ", Color.Default), Pair("dotnet.exe arg1 arg2", Color.Header))
 
                 oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.Build.id)
                 will(returnValue(_closeable3))
 
                 oneOf<Closeable>(_closeable3).close()
 
-                oneOf<LoggerService>(_loggerService).writeStandardOutput("msbuild.exe arg3")
+                oneOf<LoggerService>(_loggerService).writeStandardOutput(Pair(".NET Core SDK v2.0.0 ", Color.Default), Pair("msbuild.exe arg3", Color.Header))
 
                 oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.NuGetPush.id.replace('-', ' '))
                 will(returnValue(_closeable4))
@@ -215,13 +211,13 @@ class DotnetWorkflowComposerTest {
                         CommandLine(
                                 TargetType.Tool,
                                 File("dotnet.exe"),
-                                workingDirectory,
+                                File("wd"),
                                 args1,
                                 envVars),
                         CommandLine(
                                 TargetType.Tool,
                                 File("msbuild.exe"),
-                                workingDirectory,
+                                File("wd"),
                                 args2,
                                 envVars)
                 ))

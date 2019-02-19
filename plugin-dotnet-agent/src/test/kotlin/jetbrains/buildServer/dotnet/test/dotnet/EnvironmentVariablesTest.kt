@@ -30,7 +30,6 @@ class EnvironmentVariablesTest {
     @Test
     fun shouldProvideDefaultVars() {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), null, emptySet())
         val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
 
         // When
@@ -42,12 +41,12 @@ class EnvironmentVariablesTest {
                 oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
                 will(returnValue("path"))
 
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
                 will(returnValue(false))
             }
         })
 
-        val actualVariables = environmentVariables.getVariables(context).toList()
+        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
         Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
@@ -56,7 +55,6 @@ class EnvironmentVariablesTest {
     @Test
     fun shouldUseSharedCompilation() {
         // Given
-        val context = DotnetBuildContext(_ctx.mock(DotnetCommand::class.java), null, emptySet())
         val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
 
         // When
@@ -68,12 +66,12 @@ class EnvironmentVariablesTest {
                 oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
                 will(returnValue("path"))
 
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(context)
+                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
                 will(returnValue(true))
             }
         })
 
-        val actualVariables = environmentVariables.getVariables(context).toList()
+        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
         Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())

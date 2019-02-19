@@ -14,6 +14,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         for ((name, value) in commandLine.environmentVariables) {
             currentEnvironment[name] = value
         }
+
         currentEnvironment.getOrPut("HOME") { System.getProperty("user.home") }
         cmd.envParams = currentEnvironment
 
