@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
 import java.io.File
 import java.io.OutputStreamWriter
 
@@ -45,8 +46,7 @@ class ResponseFileArgumentsProvider(
             }
         }
 
-        val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
-        val msBuildResponseFile = File(tempDirectory, _pathsService.uniqueName + ResponseFileExtension).absoluteFile
+        val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {
                 for (line in lines) {

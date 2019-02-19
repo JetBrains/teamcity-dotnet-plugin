@@ -34,9 +34,8 @@ class ResponseFileArgumentsProviderTest {
     @Test
     fun shouldProvideArguments() {
         // Given
-        val tempDirectory = File("temp")
         val rspFileName = "rspFile"
-        val rspFile = File(tempDirectory, rspFileName + ResponseFileArgumentsProvider.ResponseFileExtension).absoluteFile
+        val rspFile = File(rspFileName)
         val fileSystemService = VirtualFileSystemService()
         val argsProvider1 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
         val argsProvider2 = DotnetCommonArgumentsProviderStub(emptySequence())
@@ -51,9 +50,6 @@ class ResponseFileArgumentsProviderTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
-                will(returnValue(tempDirectory))
-
                 oneOf<MSBuildParametersProvider>(parametersProvider1).getParameters(context)
                 will(returnValue(sequenceOf(buildParameter1)))
 
@@ -66,8 +62,8 @@ class ResponseFileArgumentsProviderTest {
                 oneOf<Converter<MSBuildParameter, String>>(_msBuildParameterConverter).convert(buildParameter2)
                 will(returnValue("par2"))
 
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(rspFileName))
+                oneOf<PathsService>(_pathService).getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension)
+                will(returnValue(File(rspFileName)))
 
                 oneOf<LoggerService>(_loggerService).writeBlock(ResponseFileArgumentsProvider.BlockName)
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("arg1", Color.Details)

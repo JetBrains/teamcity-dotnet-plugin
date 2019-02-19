@@ -67,7 +67,6 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val tempDirectory = File("temp")
         val executableFile = File("sdk", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
@@ -79,11 +78,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars)
         val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
-        val dotCoverProject = DotCoverProject(
-                commandLine,
-                File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
-                File(tempDirectory, dotCoverSnapshotUniqueName + DotCoverWorkflowComposer.DotCoverSnapshotExtension))
-
+        val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
@@ -115,14 +110,11 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
-                will(returnValue(tempDirectory))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
+                will(returnValue(File(dotCoverProjectUniqueName)))
 
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverProjectUniqueName))
-
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverSnapshotUniqueName))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension)
+                will(returnValue(File(dotCoverSnapshotUniqueName)))
 
                 fileSystemService.write(dotCoverProject.configFile)
                 {
@@ -228,11 +220,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars)
         val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
-        val dotCoverProject = DotCoverProject(
-                commandLine,
-                File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
-                File(tempDirectory, dotCoverSnapshotUniqueName + DotCoverWorkflowComposer.DotCoverSnapshotExtension))
-
+        val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
@@ -265,14 +253,11 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
-                will(returnValue(tempDirectory))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
+                will(returnValue(File(dotCoverProjectUniqueName)))
 
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverProjectUniqueName))
-
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverSnapshotUniqueName))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension)
+                will(returnValue(File(dotCoverSnapshotUniqueName)))
 
                 fileSystemService.write(dotCoverProject.configFile)
                 {
@@ -324,7 +309,6 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val tempDirectory = File("temp")
         val executableFile = File("sdk", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
@@ -336,11 +320,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars)
         val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
-        val dotCoverProject = DotCoverProject(
-                commandLine,
-                File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
-                File(tempDirectory, dotCoverSnapshotUniqueName + DotCoverWorkflowComposer.DotCoverSnapshotExtension))
-
+        val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
@@ -373,14 +353,11 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
-                will(returnValue(tempDirectory))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
+                will(returnValue(File(dotCoverProjectUniqueName)))
 
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverProjectUniqueName))
-
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverSnapshotUniqueName))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension)
+                will(returnValue(File(dotCoverSnapshotUniqueName)))
 
                 fileSystemService.write(dotCoverProject.configFile)
                 {
@@ -415,7 +392,6 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val tempDirectory = File("temp")
         val executableFile = File("sdk", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
@@ -427,11 +403,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars)
         val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
-        val dotCoverProject = DotCoverProject(
-                commandLine,
-                File(tempDirectory, dotCoverProjectUniqueName + DotCoverWorkflowComposer.DotCoverProjectExtension),
-                File(tempDirectory, dotCoverSnapshotUniqueName + DotCoverWorkflowComposer.DotCoverSnapshotExtension))
-
+        val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
@@ -467,14 +439,11 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue("/ProcessFilters=-:sqlservr.exe /arg"))
 
-                oneOf<PathsService>(_pathService).getPath(PathType.AgentTemp)
-                will(returnValue(tempDirectory))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
+                will(returnValue(File(dotCoverProjectUniqueName)))
 
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverProjectUniqueName))
-
-                oneOf<PathsService>(_pathService).uniqueName
-                will(returnValue(dotCoverSnapshotUniqueName))
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension)
+                will(returnValue(File(dotCoverSnapshotUniqueName)))
 
                 fileSystemService.write(dotCoverProject.configFile)
                 {

@@ -1,6 +1,8 @@
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.BuildAgentConfiguration
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.impl.config.BuildAgentConfigurablePaths
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
 import java.io.File
@@ -10,8 +12,8 @@ class PathsServiceImpl(
         private val _buildStepContext: BuildStepContext,
         private val _buildAgentConfiguration: BuildAgentConfiguration,
         private val _buildAgentConfigurablePaths: BuildAgentConfigurablePaths,
-        private val _pluginDescriptor: PluginDescriptor) : PathsService {
-
+        private val _pluginDescriptor: PluginDescriptor,
+        private val _fileSystemService: FileSystemService) : PathsService {
     override val uniqueName: String
         get() = UUID.randomUUID().toString().replace("-", "")
 
@@ -33,4 +35,16 @@ class PathsServiceImpl(
     }
 
     override fun getToolPath(toolName: String): File = File(_buildStepContext.runnerContext.getToolPath(toolName))
+
+    override fun getTempFileName(extension: String): File {
+        val tempDir = getPath(PathType.AgentTemp)
+        for (num in 1 .. Int.MAX_VALUE) {
+            val file = File(tempDir, "$num$extension")
+            if (!_fileSystemService.isExists(file)) {
+               return file
+            }
+        }
+
+        throw RunBuildException("Cannot generate temp file name for $extension.");
+    }
 }
