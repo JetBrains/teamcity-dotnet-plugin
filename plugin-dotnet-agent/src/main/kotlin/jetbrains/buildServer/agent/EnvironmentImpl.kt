@@ -12,15 +12,26 @@ class EnvironmentImpl(private val _fileSystemService: FileSystemService) : Envir
 
     override val paths: Sequence<File>
         get() =
-            tryGetVariable(PathEnvironmentVariableName)?.let {
-                return StringUtil.splitHonorQuotes(it, File.pathSeparatorChar)
+            (tryGetVariable(PathEnvironmentVariableName)?.let { path ->
+                StringUtil.splitHonorQuotes(path, File.pathSeparatorChar)
                         .asSequence()
                         .map { File(it) }
                         .filter { _fileSystemService.isExists(it) }
-            } ?: emptySequence()
+            } ?: emptySequence()) + getHintPaths()
 
     override val os: OSType
         get() = OSDetector.detect() ?: OSType.UNIX
+
+    /**
+     * Provides a well known paths for tools on each platform.
+     */
+    private fun getHintPaths(): Sequence<File> = sequence {
+        when (os) {
+            OSType.MAC -> yield(File("/usr/local/share/dotnet"))
+            OSType.UNIX -> yield(File("/usr/share/dotnet"))
+            OSType.WINDOWS -> yield(File("C:\\Program Files\\dotnet"))
+        }
+    }
 
     companion object {
         private const val PathEnvironmentVariableName = "PATH"
