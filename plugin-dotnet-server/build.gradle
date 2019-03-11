@@ -27,6 +27,7 @@ dependencies {
 
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
   provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'
+  agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }
 
 nugetRestore {
