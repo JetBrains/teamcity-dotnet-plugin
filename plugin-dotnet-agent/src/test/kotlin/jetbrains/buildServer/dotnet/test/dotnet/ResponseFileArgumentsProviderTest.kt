@@ -37,9 +37,9 @@ class ResponseFileArgumentsProviderTest {
         val rspFileName = "rspFile"
         val rspFile = File(rspFileName)
         val fileSystemService = VirtualFileSystemService()
-        val argsProvider1 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
-        val argsProvider2 = DotnetCommonArgumentsProviderStub(emptySequence())
-        val argsProvider3 = DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
+        val argsProvider1 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
+        val argsProvider2 = ArgumentsProviderStub(emptySequence())
+        val argsProvider3 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
         val buildParameter1 = MSBuildParameter("param1", "val1")
         val parametersProvider1 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider1")
         val buildParameter2 = MSBuildParameter("param2", "val2")

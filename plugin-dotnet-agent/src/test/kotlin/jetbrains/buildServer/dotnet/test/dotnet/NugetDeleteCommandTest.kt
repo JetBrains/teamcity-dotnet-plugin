@@ -76,6 +76,6 @@ class NugetDeleteCommandTest {
             NugetDeleteCommand(
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
-                    DotnetCommonArgumentsProviderStub(arguments),
+                    ArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(File("dotnet"), true))
 }

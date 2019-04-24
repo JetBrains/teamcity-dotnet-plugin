@@ -62,7 +62,7 @@ class CustomCommandTest {
         return CustomCommand(
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
-                DotnetCommonArgumentsProviderStub(arguments),
+                ArgumentsProviderStub(arguments),
                 DotnetToolResolverStub(File("dotnet"), true))
     }
 }
