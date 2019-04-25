@@ -14,7 +14,7 @@ class RunCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: DotnetToolResolver)
     : DotnetCommandBase(_parametersService) {
 
@@ -48,6 +48,6 @@ class RunCommand(
             }
         }
 
-        yieldAll(_commonArgumentsProvider.getArguments(context))
+        yieldAll(_customArgumentsProvider.getArguments(context))
     }
 }

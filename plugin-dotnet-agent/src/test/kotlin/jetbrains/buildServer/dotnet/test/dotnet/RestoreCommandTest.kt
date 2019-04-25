@@ -104,6 +104,6 @@ class RestoreCommandTest {
                     _resultsAnalyzer,
                     ArgumentsServiceStub(),
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
-                    DotnetCommonArgumentsProviderStub(arguments),
+                    ArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(File("dotnet"), true))
 }

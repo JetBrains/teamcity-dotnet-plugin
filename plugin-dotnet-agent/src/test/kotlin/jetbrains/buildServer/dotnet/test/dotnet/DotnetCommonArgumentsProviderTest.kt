@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
@@ -49,11 +48,11 @@ class DotnetCommonArgumentsProviderTest {
 
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
                 ParametersServiceStub(parameters),
-                DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),
-                DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("customArg"))),
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("customArg"))),
                 _msBuildParametersProvider,
-                DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("l:/logger"))),
-                DotnetCommonArgumentsProviderStub(sequenceOf(CommandLineArgument("/nodeReuse:false"))),
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("l:/logger"))),
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("/nodeReuse:false"))),
                 _msBuildParameterConverter)
 
         // When
