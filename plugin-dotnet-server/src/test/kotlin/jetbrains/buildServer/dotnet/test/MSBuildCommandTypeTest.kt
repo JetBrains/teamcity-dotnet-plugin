@@ -4,9 +4,12 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
+import jetbrains.buildServer.dotnet.discovery.SolutionDiscover
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
+import org.jmock.Mockery
+import org.springframework.beans.factory.BeanFactory
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -31,9 +34,10 @@ class MSBuildCommandTypeTest {
             expectedRequirements: Sequence<Requirement>) {
         // Given
         val instance = MSBuildCommandType()
+        val ctx = Mockery()
 
         // When
-        val actualRequirements = instance.getRequirements(parameters)
+        val actualRequirements = instance.getRequirements(parameters, ctx.mock(BeanFactory::class.java))
 
         // Then
         Assert.assertEquals(actualRequirements.toList(), expectedRequirements.toList())

@@ -1,13 +1,18 @@
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.dotNet.DotNetConstants
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
+import jetbrains.buildServer.serverSide.ProjectManager
+import jetbrains.buildServer.tools.ServerToolManager
+import jetbrains.buildServer.util.VersionComparatorUtil
+import org.springframework.beans.factory.BeanFactory
 
-class DotCoverCoverageType : CommandType() {
+class DotCoverCoverageType: CommandType() {
     override val name: String = CoverageConstants.PARAM_DOTCOVER
 
     override val description: String = "JetBrains dotCover"
@@ -24,11 +29,31 @@ class DotCoverCoverageType : CommandType() {
         }
     }
 
-    override fun getRequirements(parameters: Map<String, String>) = sequence {
-        yieldAll(super.getRequirements(parameters))
+    override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
+        yieldAll(super.getRequirements(parameters, factory))
 
         if (isDocker(parameters)) return@sequence
 
-        yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetFramework3\\.5_.+|DotNetFramework4\\.[\\d\\.]+_.+)", null, RequirementType.EXISTS))
+        val requirements = mutableSetOf<Requirement>()
+        if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
+        val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
+        val toolManager = factory.getBean(ServerToolManager::class.java)
+        val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
+        val projectManager = factory.getBean(ProjectManager::class.java)
+        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject()) ?: return@sequence
+        if (VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0) {
+            requirements.add(OUR_NET_461_REQUIREMENT)
+        }
+
+        if (requirements.isEmpty()) {
+            requirements.add(OUR_MINIMAL_REQUIREMENT)
+        }
+
+        requirements.forEach { yield(it) }
+    }
+
+    companion object {
+        private val OUR_MINIMAL_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+)", null, RequirementType.EXISTS)
+        private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.|[7-9]|[\\d]{2,})[\\d\\.]*_.+)", null, RequirementType.EXISTS)
     }
 }

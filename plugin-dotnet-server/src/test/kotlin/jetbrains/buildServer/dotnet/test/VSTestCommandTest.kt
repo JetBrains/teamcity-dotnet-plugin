@@ -5,6 +5,8 @@ import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.VSTestCommandType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
+import org.jmock.Mockery
+import org.springframework.beans.factory.BeanFactory
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -26,9 +28,10 @@ class VSTestCommandTest {
             expectedRequirements: Sequence<Requirement>) {
         // Given
         val instance = VSTestCommandType()
+        val ctx = Mockery()
 
         // When
-        val actualRequirements = instance.getRequirements(parameters)
+        val actualRequirements = instance.getRequirements(parameters, ctx.mock(BeanFactory::class.java))
 
         // Then
         Assert.assertEquals(actualRequirements.toList(), expectedRequirements.toList())

@@ -11,6 +11,7 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
+import org.springframework.beans.factory.BeanFactory
 
 /**
  * Provides parameters for dotnet run command.
@@ -22,8 +23,8 @@ class RunCommandType : DotnetType() {
 
     override val viewPage: String = "viewRunParameters.jsp"
 
-    override fun getRequirements(parameters: Map<String, String>) = sequence {
-        yieldAll(super.getRequirements(parameters))
+    override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
+        yieldAll(super.getRequirements(parameters, factory))
 
         if (isDocker(parameters)) return@sequence
 

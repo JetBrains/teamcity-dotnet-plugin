@@ -14,11 +14,13 @@ import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
+import org.springframework.beans.factory.BeanFactory
 
 /**
  * Dotnet runner definition.
  */
 class DotnetRunnerRunType(
+        private val _factory: BeanFactory,
         private val _pluginDescriptor: PluginDescriptor,
         runTypeRegistry: RunTypeRegistry) : RunType() {
 
@@ -89,13 +91,13 @@ class DotnetRunnerRunType(
         val requirements = arrayListOf<Requirement>()
         runParameters[DotnetConstants.PARAM_COMMAND]?.let {
             DotnetParametersProvider.commandTypes[it]?.let {
-                requirements.addAll(it.getRequirements(runParameters))
+                requirements.addAll(it.getRequirements(runParameters, _factory))
             }
         }
 
         runParameters[CoverageConstants.PARAM_TYPE]?.let {
             DotnetParametersProvider.coverageTypes[it]?.let {
-                requirements.addAll(it.getRequirements(runParameters))
+                requirements.addAll(it.getRequirements(runParameters, _factory))
             }
         }
 

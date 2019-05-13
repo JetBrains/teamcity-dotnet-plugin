@@ -4,6 +4,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
+import org.springframework.beans.factory.BeanFactory
 
 /**
  * Provides parameters for dotnet VSTest command.
@@ -15,7 +16,7 @@ class VSTestCommandType : CommandType() {
 
     override val viewPage: String = "viewVSTestParameters.jsp"
 
-    override fun getRequirements(parameters: Map<String, String>) = sequence {
+    override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
         if (isDocker(parameters)) return@sequence
 
         var shouldBeWindows = false

@@ -10,6 +10,7 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
+import org.springframework.beans.factory.BeanFactory
 
 /**
  * Provides command-specific resources.
@@ -26,7 +27,7 @@ abstract class CommandType {
 
     open fun validateProperties(properties: Map<String, String>): Sequence<InvalidProperty> = emptySequence()
 
-    open fun getRequirements(parameters: Map<String, String>): Sequence<Requirement> = emptySequence()
+    open fun getRequirements(parameters: Map<String, String>, factory: BeanFactory): Sequence<Requirement> = emptySequence()
 
     protected fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
 }
