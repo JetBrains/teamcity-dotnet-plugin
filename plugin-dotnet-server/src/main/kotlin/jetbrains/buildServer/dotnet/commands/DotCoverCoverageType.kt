@@ -35,6 +35,7 @@ class DotCoverCoverageType: CommandType() {
         if (isDocker(parameters)) return@sequence
 
         val requirements = mutableSetOf<Requirement>()
+        requirements += OUR_MINIMAL_REQUIREMENT
         if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
         val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
         val toolManager = factory.getBean(ServerToolManager::class.java)
@@ -42,11 +43,8 @@ class DotCoverCoverageType: CommandType() {
         val projectManager = factory.getBean(ProjectManager::class.java)
         val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject()) ?: return@sequence
         if (VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0) {
+            requirements.clear()
             requirements.add(OUR_NET_461_REQUIREMENT)
-        }
-
-        if (requirements.isEmpty()) {
-            requirements.add(OUR_MINIMAL_REQUIREMENT)
         }
 
         requirements.forEach { yield(it) }
