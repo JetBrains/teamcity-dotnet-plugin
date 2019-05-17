@@ -65,7 +65,7 @@ class ToolSearchServiceTest {
         val searchService = createInstance()
 
         // When
-        val actualTools = searchService.find(target, "TOOL_HOME").toList()
+        val actualTools = searchService.find(target, "TOOL_HOME", emptySequence()).toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -91,7 +91,7 @@ class ToolSearchServiceTest {
         val searchService = createInstance()
 
         // When
-        val actualTools = searchService.find(target, "TOOL_HOME") { File(it, "bin") }.toList()
+        val actualTools = searchService.find(target, "TOOL_HOME", emptySequence()) { File(it, "bin") }.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -120,7 +120,7 @@ class ToolSearchServiceTest {
         val searchService = createInstance()
 
         // When
-        val actualTools = searchService.find(target, "TOOL_HOME").toList()
+        val actualTools = searchService.find(target, "TOOL_HOME", emptySequence()).toList()
 
         // Then
         _ctx.assertIsSatisfied()

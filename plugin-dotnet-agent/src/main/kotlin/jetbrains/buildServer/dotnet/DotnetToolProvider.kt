@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.util.OSType
 import java.io.File
 
 /**
@@ -15,7 +16,8 @@ import java.io.File
  */
 class DotnetToolProvider(
         toolProvidersRegistry: ToolProvidersRegistry,
-        private val _toolSearchService: ToolSearchService)
+        private val _toolSearchService: ToolSearchService,
+        private val _environment: Environment)
     : ToolProvider {
     init {
         toolProvidersRegistry.registerToolProvider(this)
@@ -24,15 +26,20 @@ class DotnetToolProvider(
     override fun supports(toolName: String): Boolean = DotnetConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-            executablePath
-                    ?.absolutePath
-                    ?: throw ToolCannotBeFoundException("""
-                    Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
-                    .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
+        executablePath
+                ?.absolutePath
+                ?: throw ToolCannotBeFoundException("""
+                        Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
+                        .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
+
+    val additionalPath: File get() = when(_environment.os) {
+        OSType.WINDOWS -> File("C:\\Program Files\\dotnet")
+        OSType.UNIX -> File("/usr/share/dotnet")
+        OSType.MAC -> File("/usr/local/share/dotnet")
+    }
 
     private val executablePath: File? by lazy {
-        _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME)
-                .firstOrNull()
+        _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME, sequenceOf(additionalPath)).firstOrNull()
     }
 
     @Throws(ToolCannotBeFoundException::class)

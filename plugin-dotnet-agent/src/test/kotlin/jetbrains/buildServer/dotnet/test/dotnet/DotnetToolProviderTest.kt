@@ -8,8 +8,10 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetToolProvider
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
+import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -22,12 +24,16 @@ class DotnetToolProviderTest {
     private lateinit var _ctx: Mockery
     private lateinit var _toolProvidersRegistry: ToolProvidersRegistry
     private lateinit var _toolSearchService: ToolSearchService
+    private lateinit var _environment: Environment
+    private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _toolProvidersRegistry = _ctx.mock(ToolProvidersRegistry::class.java)
         _toolSearchService = _ctx.mock(ToolSearchService::class.java)
+        _environment = _ctx.mock(Environment::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
     }
 
     @DataProvider
@@ -88,6 +94,9 @@ class DotnetToolProviderTest {
         _ctx.checking(object : Expectations() {
             init {
                 oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
+
+                oneOf<Environment>(_environment).os
+                will(returnValue(OSType.WINDOWS))
             }
         })
         val toolProvider = createInstance(files)
@@ -130,8 +139,39 @@ class DotnetToolProviderTest {
         Assert.assertEquals(path, "dotnet")
     }
 
-    private fun createInstance(files: Sequence<File>): ToolProvider =
+    @DataProvider
+    fun testDataAdditionalPath(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(OSType.WINDOWS, File("C:\\Program Files\\dotnet")),
+                arrayOf(OSType.UNIX, File("/usr/share/dotnet")),
+                arrayOf(OSType.MAC, File("/usr/local/share/dotnet")))
+    }
+
+    @Test(dataProvider = "testDataAdditionalPath")
+    fun shouldProvideAdditionalPath(os: OSType, expectedPath: File) {
+        // Given
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
+
+                oneOf<Environment>(_environment).os
+                will(returnValue(os))
+            }
+        })
+
+        val toolProvider = createInstance(emptySequence())
+
+        // When
+        val actualPath = toolProvider.additionalPath
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualPath, expectedPath)
+    }
+
+    private fun createInstance(files: Sequence<File>): DotnetToolProvider =
             DotnetToolProvider(
                     _toolProvidersRegistry,
-                    ToolSearchServiceStub(files))
+                    ToolSearchServiceStub(files),
+                    _environment)
 }

@@ -18,8 +18,8 @@ class MonoToolProvider(
     override fun supports(toolName: String): Boolean = MonoConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-            _toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME)
-                    .plus(_toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME) { File(it, "bin") })
+            _toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME, emptySequence())
+                    .plus(_toolSearchService.find(MonoConstants.RUNNER_TYPE, MonoConstants.TOOL_HOME, emptySequence()) { File(it, "bin") })
                     .firstOrNull()
                     ?.absolutePath
                     ?: throw ToolCannotBeFoundException("""

@@ -8,7 +8,7 @@ class DotnetCliToolInfoImpl(
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser,
         private val _fileSystemService: FileSystemService,
-        private val _sdkPathProvider: SdkPathProvider)
+        private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetCliToolInfo {
 
     override fun getInfo(dotnetExecutable: File, path: File): DotnetInfo {
@@ -51,7 +51,7 @@ class DotnetCliToolInfoImpl(
     }
 
     private fun getSdks(): Sequence<DotnetSdk> {
-        val sdkPath = _sdkPathProvider.path;
+        val sdkPath = File(_dotnetToolResolver.executableFile.parent, "sdk")
         LOG.info("Try getting the dotnet SDKs from directory \"$sdkPath\".")
         val sdks = _fileSystemService.list(sdkPath)
                 .filter { _fileSystemService.isDirectory(it) }

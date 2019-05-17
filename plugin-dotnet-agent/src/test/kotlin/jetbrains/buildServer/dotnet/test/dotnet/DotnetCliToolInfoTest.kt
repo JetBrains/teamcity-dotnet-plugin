@@ -15,19 +15,18 @@ class DotnetCliToolInfoTest {
     private lateinit var _ctx: Mockery
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _versionParser: VersionParser
-    private lateinit var _sdkPathProvider: SdkPathProvider
-
+    private lateinit var _dotnetToolResolver: DotnetToolResolver
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _versionParser = _ctx.mock(VersionParser::class.java)
-        _sdkPathProvider = _ctx.mock(SdkPathProvider::class.java)
+        _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
     }
 
     @Test
-    fun shouldGetDotnetInfoWhenSdksListIsNotSupported() {
+    fun shouldGetDotnetInfoWhenSdksListCommandIsNotSupported() {
         // Given
         val workingDirectoryPath = File("wd")
         val toolPath = File("dotnet")
@@ -50,17 +49,17 @@ class DotnetCliToolInfoTest {
                 oneOf<VersionParser>(_versionParser).tryParse(stdOut)
                 will(returnValue(versionStr))
 
-                oneOf<SdkPathProvider>(_sdkPathProvider).path
-                will(returnValue(File("sdkRoot")))
+                oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
+                will(returnValue(File("dotnet", "dotnet.exe")))
             }
         })
 
         val fileSystemService = VirtualFileSystemService()
-                .addDirectory(File(File("sdkRoot"), "1.2.3"))
-                .addDirectory(File(File("sdkRoot"), "1.2.3-rc"))
-                .addFile(File(File("sdkRoot"), "1.2.4"))
-                .addDirectory(File(File("sdkRoot"), "nuget"))
-                .addDirectory(File(File("sdkRoot"), "1.2.5"))
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.3"))
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.3-rc"))
+                .addFile(File(File("dotnet", "sdk"), "1.2.4"))
+                .addDirectory(File(File("dotnet", "sdk"), "nuget"))
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.5"))
         val dotnetCliToolInfo = createInstance(fileSystemService)
 
         // When
@@ -73,9 +72,9 @@ class DotnetCliToolInfoTest {
                 DotnetInfo(
                         Version(1, 0, 1),
                         listOf(
-                                DotnetSdk(File(File("sdkRoot"), "1.2.3"), Version(1, 2,3)),
-                                DotnetSdk(File(File("sdkRoot"), "1.2.3-rc"), Version.parse("1.2.3-rc")),
-                                DotnetSdk(File(File("sdkRoot"), "1.2.5"), Version(1, 2,5))
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2,3)),
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3-rc"), Version.parse("1.2.3-rc")),
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.5"), Version(1, 2,5))
                         )
                 ))
     }
@@ -105,7 +104,7 @@ class DotnetCliToolInfoTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldGetDotnetInfoWhenSdksListIsSupported(stdOutSdks: List<String>, expectedSdks: List<DotnetSdk>) {
+    fun shouldGetDotnetInfoWhenSdksListCommandIsSupported(stdOutSdks: List<String>, expectedSdks: List<DotnetSdk>) {
         // Given
         val workingDirectoryPath = File("wd")
         val toolPath = File("dotnet")
@@ -162,7 +161,7 @@ class DotnetCliToolInfoTest {
                     _commandLineExecutor,
                     _versionParser,
                     fileSystemService,
-                    _sdkPathProvider)
+                    _dotnetToolResolver)
 
     companion object {
         private val sdkPath = File(File(File("Program Files"), "dotnet"), "sdk")
