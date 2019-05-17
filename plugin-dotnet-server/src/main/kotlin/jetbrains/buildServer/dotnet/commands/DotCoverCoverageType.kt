@@ -52,6 +52,6 @@ class DotCoverCoverageType: CommandType() {
 
     companion object {
         private val OUR_MINIMAL_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+)", null, RequirementType.EXISTS)
-        private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.|[7-9]|[\\d]{2,})[\\d\\.]*_.+)", null, RequirementType.EXISTS)
+        private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+)", null, RequirementType.EXISTS)
     }
 }
