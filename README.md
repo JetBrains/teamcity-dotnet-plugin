@@ -15,11 +15,11 @@ The plugin provides the following features for .NET project building:
 * Auto-discovery of build steps
 * On-the-fly test reporting
 * Supports code coverage tools
-* Cleanup of NuGet caches to meet the agent [free space requirements](https://confluence.jetbrains.com/display/TCDL/Free+disk+space)
+* Cleanup of NuGet caches to meet the agent [free space requirements](https://www.jetbrains.com/help/teamcity/?Free+disk+space)
  
 # Download
 
-You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://confluence.jetbrains.com/display/TCDL/Installing+Additional+Plugins). The latest plugin builds:
+You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://www.jetbrains.com/help/teamcity/?Installing+Additional+Plugins). The latest plugin builds:
 
 | Branch | Status | Download | TeamCity |
 |--------|--------|----------|----------|
@@ -29,7 +29,7 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 # Compatibility
 
-**Note**: This plugin is [bundled in TeamCity 2017.2+](https://confluence.jetbrains.com/display/TCDL/Upgrade+Notes)
+**Note**: This plugin is [bundled in TeamCity 2017.2+](https://www.jetbrains.com/help/teamcity/?Upgrade+Notes)
 
 The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://www.microsoft.com/net/download/core).
 

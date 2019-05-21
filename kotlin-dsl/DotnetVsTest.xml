@@ -27,10 +27,10 @@
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
             <description>
-                [Build working directory](https://confluence.jetbrains.com/display/TCDL/Build+Working+Directory) for
+                [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
                 specify it if it is different from the [checkout
-                directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
+                directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
             </description>
         </param>
         <param name="test.filter" dslName="filter" type="compound">
