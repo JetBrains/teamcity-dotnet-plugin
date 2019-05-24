@@ -26,6 +26,7 @@ class EnvironmentVariablesImpl(
 
     companion object {
         internal val defaultVariables = sequenceOf(
+                CommandLineEnvironmentVariable("COMPlus_EnableDiagnostics", "0"),
                 CommandLineEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true"),
                 CommandLineEnvironmentVariable("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true"),
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
