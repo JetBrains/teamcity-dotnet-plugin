@@ -24,6 +24,9 @@ class WorkflowBuildServiceFactory(
         return beanFactory.getBean(WorkflowSessionImpl::class.java)
     }
 
+    override val isAvailable: Boolean
+        get() = _runnerContext != null
+
     override val runnerContext: BuildRunnerContext
         get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 

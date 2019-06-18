@@ -2,9 +2,11 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.BuildStepContext
 import java.io.File
 
 class DotnetCliToolInfoImpl(
+        private val _buildStepContext: BuildStepContext,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser,
         private val _fileSystemService: FileSystemService,
@@ -17,7 +19,7 @@ class DotnetCliToolInfoImpl(
         val sdks = if (version >= Version.VersionSupportingSdksList) {
             getSdks(dotnetExecutable, path)
         }  else {
-            getSdks()
+            getSdks(dotnetExecutable)
         }
 
         return DotnetInfo(version, sdks.toList())
@@ -50,8 +52,9 @@ class DotnetCliToolInfoImpl(
         return Version.Empty
     }
 
-    private fun getSdks(): Sequence<DotnetSdk> {
-        val sdkPath = File(_dotnetToolResolver.executableFile.parent, "sdk")
+    private fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
+        val executableFile = if(_buildStepContext.isAvailable) _dotnetToolResolver.executableFile else dotnetExecutable
+        val sdkPath = File(executableFile.parent, "sdk")
         LOG.info("Try getting the dotnet SDKs from directory \"$sdkPath\".")
         val sdks = _fileSystemService.list(sdkPath)
                 .filter { _fileSystemService.isDirectory(it) }

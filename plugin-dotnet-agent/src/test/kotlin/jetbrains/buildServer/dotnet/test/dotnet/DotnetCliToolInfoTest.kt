@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
@@ -16,6 +17,7 @@ class DotnetCliToolInfoTest {
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _versionParser: VersionParser
     private lateinit var _dotnetToolResolver: DotnetToolResolver
+    private lateinit var _buildStepContext: BuildStepContext
 
     @BeforeMethod
     fun setUp() {
@@ -23,6 +25,7 @@ class DotnetCliToolInfoTest {
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _versionParser = _ctx.mock(VersionParser::class.java)
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
+        _buildStepContext = _ctx.mock(BuildStepContext::class.java)
     }
 
     @Test
@@ -51,6 +54,65 @@ class DotnetCliToolInfoTest {
 
                 oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
                 will(returnValue(File("dotnet", "dotnet.exe")))
+
+                oneOf<BuildStepContext>(_buildStepContext).isAvailable
+                will(returnValue(true))
+            }
+        })
+
+        val fileSystemService = VirtualFileSystemService()
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.3"))
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.3-rc"))
+                .addFile(File(File("dotnet", "sdk"), "1.2.4"))
+                .addDirectory(File(File("dotnet", "sdk"), "nuget"))
+                .addDirectory(File(File("dotnet", "sdk"), "1.2.5"))
+        val dotnetCliToolInfo = createInstance(fileSystemService)
+
+        // When
+        val actualInfo = dotnetCliToolInfo.getInfo(toolPath, workingDirectoryPath)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(
+                actualInfo,
+                DotnetInfo(
+                        Version(1, 0, 1),
+                        listOf(
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2,3)),
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3-rc"), Version.parse("1.2.3-rc")),
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.5"), Version(1, 2,5))
+                        )
+                ))
+    }
+
+    @Test
+    fun shouldGetDotnetInfoWhenSdksListCommandIsNotSupportedOnStarting() {
+        // Given
+        val workingDirectoryPath = File("wd")
+        val toolPath = File("dotnet", "dotnet.exe")
+        val versionCommandline = CommandLine(
+                TargetType.Tool,
+                toolPath,
+                workingDirectoryPath,
+                DotnetCliToolInfoImpl.versionArgs,
+                emptyList())
+
+        val stdOut = sequenceOf("stdOut")
+        val stdErr = sequenceOf("stdErr")
+        val getVersionResult = CommandLineResult(sequenceOf(0), stdOut, stdErr)
+        val versionStr = "1.0.1"
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
+                will(returnValue(getVersionResult))
+
+                oneOf<VersionParser>(_versionParser).tryParse(stdOut)
+                will(returnValue(versionStr))
+
+                never<DotnetToolResolver>(_dotnetToolResolver).executableFile
+
+                oneOf<BuildStepContext>(_buildStepContext).isAvailable
+                will(returnValue(false))
             }
         })
 
@@ -158,6 +220,7 @@ class DotnetCliToolInfoTest {
 
     private fun createInstance(fileSystemService: FileSystemService) =
             DotnetCliToolInfoImpl(
+                    _buildStepContext,
                     _commandLineExecutor,
                     _versionParser,
                     fileSystemService,
