@@ -35,9 +35,10 @@ class DotnetCliToolInfoImpl(
                         versionArgs,
                         emptyList()))
 
-        if (versionResult == null) {
+        if (versionResult == null || versionResult.exitCode !=0 || versionResult.errorOutput.filter { it.isNotBlank() }.any()) {
             LOG.error("The error occurred getting the dotnet CLI version.")
-        } else {
+        }
+        else {
             val version = _versionParser.tryParse(versionResult.standardOutput)?.let {
                 Version.parse(it)
             }
@@ -64,7 +65,7 @@ class DotnetCliToolInfoImpl(
     }
 
     private fun getSdks(dotnetExecutable: File, path: File): Sequence<DotnetSdk> = sequence {
-        LOG.info("Try getting the dotnet SDKs using the command \"dotnet ${listSdksArgs.joinToString(" ")}\".")
+        LOG.info("Try getting the list of dotnet SDK using the command \"dotnet ${listSdksArgs.joinToString(" ")}\".")
         val sdksResult = _commandLineExecutor.tryExecute(
                 CommandLine(
                         TargetType.Tool,
@@ -74,7 +75,7 @@ class DotnetCliToolInfoImpl(
                         emptyList()))
 
         if (sdksResult == null) {
-            LOG.error("The error occurred getting the dotnet SDKs.")
+            LOG.error("The error occurred getting the list of dotnet SDK.")
         } else {
             for (line in sdksResult.standardOutput) {
                 val matchResult = sdkInfoRegex.find(line)

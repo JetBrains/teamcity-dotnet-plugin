@@ -41,7 +41,7 @@ class DotnetCliToolInfoTest {
                 emptyList())
 
         val stdOut = sequenceOf("stdOut")
-        val stdErr = sequenceOf("stdErr")
+        val stdErr = sequenceOf("")
         val getVersionResult = CommandLineResult(sequenceOf(0), stdOut, stdErr)
         val versionStr = "1.0.1"
         _ctx.checking(object : Expectations() {
@@ -98,7 +98,7 @@ class DotnetCliToolInfoTest {
                 emptyList())
 
         val stdOut = sequenceOf("stdOut")
-        val stdErr = sequenceOf("stdErr")
+        val stdErr = sequenceOf("")
         val getVersionResult = CommandLineResult(sequenceOf(0), stdOut, stdErr)
         val versionStr = "1.0.1"
         _ctx.checking(object : Expectations() {
@@ -185,7 +185,7 @@ class DotnetCliToolInfoTest {
                 emptyList())
 
         val stdOutVersion = sequenceOf("stdOut")
-        val stdErr = sequenceOf("stdErr")
+        val stdErr = sequenceOf("")
         val getVersionResult = CommandLineResult(sequenceOf(0), stdOutVersion, stdErr)
         val getSdksResult = CommandLineResult(sequenceOf(0), stdOutSdks.asSequence(), stdErr)
         val versionStr = Version.VersionSupportingSdksList.toString()
@@ -215,6 +215,98 @@ class DotnetCliToolInfoTest {
                 DotnetInfo(
                         Version.VersionSupportingSdksList,
                         expectedSdks
+                ))
+    }
+
+    @Test
+    fun shouldGetEmptyDotnetVersionWhenDotnetVersionResultContainsStdErr() {
+        // Given
+        val workingDirectoryPath = File("wd")
+        val toolPath = File("dotnet")
+        val versionCommandline = CommandLine(
+                TargetType.Tool,
+                toolPath,
+                workingDirectoryPath,
+                DotnetCliToolInfoImpl.versionArgs,
+                emptyList())
+
+        val stdOut = sequenceOf("stdOut")
+        val stdErr = sequenceOf("some error")
+        val getVersionResult = CommandLineResult(sequenceOf(0), stdOut, stdErr)
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
+                will(returnValue(getVersionResult))
+
+                oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
+                will(returnValue(File("dotnet", "dotnet.exe")))
+
+                oneOf<BuildStepContext>(_buildStepContext).isAvailable
+                will(returnValue(true))
+            }
+        })
+
+        val fileSystemService = VirtualFileSystemService().addDirectory(File(File("dotnet", "sdk"), "1.2.3"))
+        val dotnetCliToolInfo = createInstance(fileSystemService)
+
+        // When
+        val actualInfo = dotnetCliToolInfo.getInfo(toolPath, workingDirectoryPath)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(
+                actualInfo,
+                DotnetInfo(
+                        Version.Empty,
+                        listOf(
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2,3))
+                        )
+                ))
+    }
+
+    @Test
+    fun shouldGetEmptyDotnetVersionWhenDotnetVersionResultContainsNonZeroExitCode() {
+        // Given
+        val workingDirectoryPath = File("wd")
+        val toolPath = File("dotnet")
+        val versionCommandline = CommandLine(
+                TargetType.Tool,
+                toolPath,
+                workingDirectoryPath,
+                DotnetCliToolInfoImpl.versionArgs,
+                emptyList())
+
+        val stdOut = sequenceOf("stdOut")
+        val stdErr = sequenceOf("")
+        val getVersionResult = CommandLineResult(sequenceOf(22), stdOut, stdErr)
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
+                will(returnValue(getVersionResult))
+
+                oneOf<DotnetToolResolver>(_dotnetToolResolver).executableFile
+                will(returnValue(File("dotnet", "dotnet.exe")))
+
+                oneOf<BuildStepContext>(_buildStepContext).isAvailable
+                will(returnValue(true))
+            }
+        })
+
+        val fileSystemService = VirtualFileSystemService().addDirectory(File(File("dotnet", "sdk"), "1.2.3"))
+        val dotnetCliToolInfo = createInstance(fileSystemService)
+
+        // When
+        val actualInfo = dotnetCliToolInfo.getInfo(toolPath, workingDirectoryPath)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(
+                actualInfo,
+                DotnetInfo(
+                        Version.Empty,
+                        listOf(
+                                DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2,3))
+                        )
                 ))
     }
 
