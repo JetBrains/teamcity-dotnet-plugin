@@ -33,7 +33,11 @@ class DotnetToolProvider(
                         .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
 
     val additionalPath: File get() = when(_environment.os) {
-        OSType.WINDOWS -> File("C:\\Program Files\\dotnet")
+        OSType.WINDOWS -> _environment.tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
+                ?.let {
+                    File(it, DotnetConstants.DOTNET_DEFAULT_DIRECTORY)
+                }
+                ?: File("C:\\Program Files\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
         OSType.UNIX -> File("/usr/share/dotnet")
         OSType.MAC -> File("/usr/local/share/dotnet")
     }

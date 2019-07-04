@@ -20,6 +20,8 @@ class VSTestLoggerEnvironmentBuilder(
     : EnvironmentBuilder {
     override fun build(context: DotnetBuildContext): Closeable {
         val testReportingMode = _testReportingParameters.getMode(context)
+        LOG.debug("Test reporting mode: $testReportingMode")
+
         if (testReportingMode.contains(TestReportingMode.Off)) {
             return EmptyClosable
         }
@@ -29,10 +31,15 @@ class VSTestLoggerEnvironmentBuilder(
         }
 
         val targets = context.command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
+        LOG.debug("Targets: ${targets.joinToString (", "){ it.name }}")
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
+        LOG.debug("Checkout directory: $checkoutDirectory")
         val loggerDirectory = File(checkoutDirectory, "$directoryPrefix${_pathsService.uniqueName}")
+        LOG.debug("Logger directory: $loggerDirectory")
 
+        LOG.debug("Clean ...")
         _environmentCleaner.clean()
+        LOG.debug("Analyze ...")
         _environmentAnalyzer.analyze(targets)
 
         return _loggerResolver.resolve(ToolType.VSTest).parentFile?.absoluteFile?.let {

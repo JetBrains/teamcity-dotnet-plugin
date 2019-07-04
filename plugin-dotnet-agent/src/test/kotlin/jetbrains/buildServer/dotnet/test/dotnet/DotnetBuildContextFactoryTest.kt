@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import org.jmock.Expectations
@@ -19,6 +20,7 @@ class DotnetBuildContextFactoryTest {
     private lateinit var _parametersService: ParametersService
     private lateinit var _command: DotnetCommand
     private lateinit var _loggerService: LoggerService
+    private lateinit var _toolProvider: ToolProvider
 
     @BeforeMethod
     fun setUp() {
@@ -28,6 +30,7 @@ class DotnetBuildContextFactoryTest {
         _parametersService = _ctx.mock(ParametersService::class.java)
         _command = _ctx.mock(DotnetCommand::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
+        _toolProvider = _ctx.mock(ToolProvider::class.java)
     }
 
     @Test
@@ -207,6 +210,82 @@ class DotnetBuildContextFactoryTest {
         _ctx.assertIsSatisfied()
     }
 
+    @Test
+    fun shouldThrowExceptionWhenHasNoConfigParam_CONFIG_PATHAndCannotFindDotnet() {
+        // Given
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                will(returnValue(null))
+
+                oneOf(_toolProvider).getPath(DotnetConstants.EXECUTABLE)
+                will(returnValue(null))
+            }
+        })
+
+        val factory = createInstance()
+
+        // When
+        try {
+            val actualContext = factory.create(_command)
+            Assert.fail("Has no exception.")
+        }
+        catch (ex: RunBuildException) {
+            Assert.assertTrue(ex.message!!.contains(DotnetConstants.EXECUTABLE))
+        }
+
+        // Then
+        _ctx.assertIsSatisfied()
+    }
+
+    @Test
+    fun shouldThrowExceptionWhenHasNoConfigParam_CONFIG_PATHAndHasDotnet() {
+        // Given
+        val workingDir = File("wd")
+        val dotnetExecutable = "dotnet"
+
+        _ctx.checking(object : Expectations() {
+            init {
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(Verbosity.Normal.id))
+
+                oneOf(_parametersService).tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                will(returnValue(null))
+
+                oneOf(_toolProvider).getPath(DotnetConstants.EXECUTABLE)
+                will(returnValue(dotnetExecutable))
+
+                oneOf(_pathsService).getPath(PathType.WorkingDirectory)
+                will(returnValue(workingDir))
+
+                oneOf(_dotnetCliToolInfo).getInfo(File(dotnetExecutable), workingDir)
+                will(returnValue(
+                        DotnetInfo(
+                                Version(2, 2, 5),
+                                listOf(
+                                        DotnetSdk(File("sdk3"), Version(1, 2, 3)),
+                                        DotnetSdk(File("sdk4"), Version(2, 2, 5)),
+                                        DotnetSdk(File("sdk3"), Version(1, 2, 3))
+                                )
+                        )
+                ))
+            }
+        })
+
+        val factory = createInstance()
+
+        // When
+        val actualContext = factory.create(_command)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(
+                actualContext.sdks,
+                setOf(
+                        DotnetSdk(File("sdk3"), Version(1, 2, 3)),
+                        DotnetSdk(File("sdk4"), Version(2, 2, 5))))
+    }
+
     @DataProvider
     fun testVerbosityData(): Array<Array<out Any?>> {
         return arrayOf(
@@ -261,5 +340,6 @@ class DotnetBuildContextFactoryTest {
                     _pathsService,
                     _dotnetCliToolInfo,
                     _parametersService,
-                    _loggerService)
+                    _loggerService,
+                    _toolProvider)
 }

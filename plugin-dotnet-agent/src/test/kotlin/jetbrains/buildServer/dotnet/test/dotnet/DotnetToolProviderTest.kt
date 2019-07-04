@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolProvider
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import jetbrains.buildServer.util.OSType
@@ -55,7 +56,7 @@ class DotnetToolProviderTest {
         // Given
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
+                oneOf(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
             }
         })
         val toolProvider = createInstance(emptySequence())
@@ -93,10 +94,13 @@ class DotnetToolProviderTest {
         // Given
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
+                oneOf(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
 
-                oneOf<Environment>(_environment).os
+                oneOf(_environment).os
                 will(returnValue(OSType.WINDOWS))
+
+                oneOf(_environment).tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
+                will(returnValue("D:\\Program Files\\"))
             }
         })
         val toolProvider = createInstance(files)
@@ -142,7 +146,7 @@ class DotnetToolProviderTest {
     @DataProvider
     fun testDataAdditionalPath(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.WINDOWS, File("C:\\Program Files\\dotnet")),
+                arrayOf(OSType.WINDOWS, File("D:\\Program Files\\dotnet")),
                 arrayOf(OSType.UNIX, File("/usr/share/dotnet")),
                 arrayOf(OSType.MAC, File("/usr/local/share/dotnet")))
     }
@@ -154,8 +158,11 @@ class DotnetToolProviderTest {
             init {
                 oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
 
-                oneOf<Environment>(_environment).os
+                oneOf(_environment).os
                 will(returnValue(os))
+
+                allowing(_environment).tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
+                will(returnValue("D:\\Program Files\\"))
             }
         })
 
@@ -167,6 +174,31 @@ class DotnetToolProviderTest {
         // Then
         _ctx.assertIsSatisfied()
         Assert.assertEquals(actualPath, expectedPath)
+    }
+
+    @Test
+    fun shouldProvideAdditionalPathWhenHasNoProgramFilesEnvVar() {
+        // Given
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
+
+                oneOf(_environment).os
+                will(returnValue(OSType.WINDOWS))
+
+                oneOf(_environment).tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
+                will(returnValue(null))
+            }
+        })
+
+        val toolProvider = createInstance(emptySequence())
+
+        // When
+        val actualPath = toolProvider.additionalPath
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualPath, File("C:\\Program Files\\dotnet"))
     }
 
     private fun createInstance(files: Sequence<File>): DotnetToolProvider =

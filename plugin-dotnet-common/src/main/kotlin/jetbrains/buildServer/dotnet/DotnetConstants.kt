@@ -15,6 +15,8 @@ import jetbrains.buildServer.agent.Constants
 object DotnetConstants {
     const val RUNNER_TYPE = "dotnet.cli"
     const val EXECUTABLE = "dotnet"
+    const val DOTNET_DEFAULT_DIRECTORY = "dotnet"
+    const val PROGRAM_FILES_ENV_VAR = "ProgramFiles"
     const val RUNNER_DISPLAY_NAME = ".NET CLI (dotnet)"
     const val RUNNER_DESCRIPTION = "Provides .NET CLI toolchain support for .NET projects"
 
