@@ -146,7 +146,7 @@ class DotnetToolProviderTest {
     @DataProvider
     fun testDataAdditionalPath(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.WINDOWS, File("D:\\Program Files\\dotnet")),
+                arrayOf(OSType.WINDOWS, File("D:${File.separator}Program Files${File.separator}dotnet")),
                 arrayOf(OSType.UNIX, File("/usr/share/dotnet")),
                 arrayOf(OSType.MAC, File("/usr/local/share/dotnet")))
     }
@@ -162,7 +162,7 @@ class DotnetToolProviderTest {
                 will(returnValue(os))
 
                 allowing(_environment).tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
-                will(returnValue("D:\\Program Files\\"))
+                will(returnValue("D:${File.separator}Program Files${File.separator}"))
             }
         })
 
