@@ -408,7 +408,7 @@
     <span class="error" id="error_${params.nugetApiKey}"></span>
     <span class="smallNote">
       Specify the API key to access the NuGet packages feed.<br/>
-      For the built-in TeamCity NuGet feeds<bs:help file="Using+TeamCity+as+NuGet+Server"/>
+      For the built-in TeamCity NuGet feeds<bs:help file="Using+TeamCity+as+NuGet+Feed"/>
       use the <em>%teamcity.nuget.feed.api.key%</em>.
     </span>
   </td>
