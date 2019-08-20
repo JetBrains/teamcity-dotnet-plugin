@@ -473,7 +473,7 @@
     <span class="error" id="error_${params.argumentsKey}"></span>
     <span class="smallNote">
             Enter additional command line parameters for dotnet. <a
-        id="dotnet-help" target="_blank" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
+        id="dotnet-help" target="_blank" rel="noopener noreferrer" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
         </span>
   </td>
 </tr>
