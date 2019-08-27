@@ -38,7 +38,7 @@ class DotnetToolTypeAdapter : ToolTypeAdapter() {
     override fun getValidPackageDescription(): String? {
         return "Specify the path to a " + displayName + " (.nupkg).\n" +
                 "<br/>Download <em>TeamCity.Dotnet.Integration.&lt;VERSION&gt;.nupkg</em> from\n" +
-                "<a href=\"https://www.nuget.org/packages/TeamCity.Dotnet.Integration/\" target=\"_blank\" rel=\"noopener noreferrer\">www.nuget.org</a>"
+                "<a href=\"https://www.nuget.org/packages/TeamCity.Dotnet.Integration/\" target=\"_blank\" rel=\"noreferrer\">www.nuget.org</a>"
     }
 
     companion object {
