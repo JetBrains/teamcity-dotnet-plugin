@@ -208,7 +208,6 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val tempDirectory = File("temp")
         val executableFile = File("sdk", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))

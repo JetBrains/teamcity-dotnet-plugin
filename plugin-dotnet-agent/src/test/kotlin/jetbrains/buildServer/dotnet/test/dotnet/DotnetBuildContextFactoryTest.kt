@@ -200,7 +200,7 @@ class DotnetBuildContextFactoryTest {
 
         // When
         try {
-            val actualContext = factory.create(_command)
+            factory.create(_command)
             Assert.fail("Has no exception.")
         }
         catch (ex: RunBuildException) {
@@ -227,7 +227,7 @@ class DotnetBuildContextFactoryTest {
 
         // When
         try {
-            val actualContext = factory.create(_command)
+            factory.create(_command)
             Assert.fail("Has no exception.")
         }
         catch (ex: RunBuildException) {
