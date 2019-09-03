@@ -9,8 +9,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetToolProvider
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
@@ -27,6 +26,7 @@ class DotnetToolProviderTest {
     private lateinit var _toolSearchService: ToolSearchService
     private lateinit var _environment: Environment
     private lateinit var _parametersService: ParametersService
+    private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
 
     @BeforeMethod
     fun setUp() {
@@ -35,6 +35,7 @@ class DotnetToolProviderTest {
         _toolSearchService = _ctx.mock(ToolSearchService::class.java)
         _environment = _ctx.mock(Environment::class.java)
         _parametersService = _ctx.mock(ParametersService::class.java)
+        _dotnetCliToolInfo = _ctx.mock(DotnetCliToolInfo::class.java)
     }
 
     @DataProvider
@@ -74,21 +75,31 @@ class DotnetToolProviderTest {
         return arrayOf(
                 arrayOf(
                         sequenceOf(File("path1"), File("path1")),
+                        sequenceOf(DotnetSdk(File("path1"), Version(1))),
                         File("path1").absoluteFile,
                         false),
                 arrayOf(
                         sequenceOf(File("path2")),
+                        sequenceOf(DotnetSdk(File("path1"), Version(1))),
                         File("path2").absoluteFile,
                         false),
                 arrayOf(
                         emptySequence<File>(),
+                        emptySequence<DotnetSdk>(),
                         File("a").absoluteFile,
+                        true),
+                // has no sdk
+                arrayOf(
+                        sequenceOf(File("path1"), File("path1")),
+                        emptySequence<DotnetSdk>(),
+                        File("path1").absoluteFile,
                         true))
     }
 
     @Test(dataProvider = "getPathCases")
     fun shouldGetPath(
             files: Sequence<File>,
+            sdks: Sequence<DotnetSdk>,
             expectedPath: File,
             expectedToolCannotBeFoundException: Boolean) {
         // Given
@@ -101,6 +112,11 @@ class DotnetToolProviderTest {
 
                 oneOf(_environment).tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
                 will(returnValue("D:\\Program Files\\"))
+
+                if(files.any()) {
+                    allowing(_dotnetCliToolInfo).getSdks(files.first())
+                    will(returnValue(sdks))
+                }
             }
         })
         val toolProvider = createInstance(files)
@@ -205,5 +221,6 @@ class DotnetToolProviderTest {
             DotnetToolProvider(
                     _toolProvidersRegistry,
                     ToolSearchServiceStub(files),
-                    _environment)
+                    _environment,
+                    _dotnetCliToolInfo)
 }

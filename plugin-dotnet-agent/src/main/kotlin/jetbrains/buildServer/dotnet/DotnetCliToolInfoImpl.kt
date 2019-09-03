@@ -25,6 +25,17 @@ class DotnetCliToolInfoImpl(
         return DotnetInfo(version, sdks.toList())
     }
 
+    override fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
+        val executableFile = if(_buildStepContext.isAvailable) _dotnetToolResolver.executableFile else dotnetExecutable
+        val sdkPath = File(executableFile.parent, "sdk")
+        LOG.info("Try getting the dotnet SDKs from directory \"$sdkPath\".")
+        val sdks = _fileSystemService.list(sdkPath)
+                .filter { _fileSystemService.isDirectory(it) }
+                .map { DotnetSdk(it, Version.parse(it.name)) }
+                .filter { it.version != Version.Empty }
+        return sdks
+    }
+
     private fun getVersion(dotnetExecutable: File, path: File): Version {
         LOG.info("Try getting the dotnet CLI version for directory \"$path\".")
         val versionResult = _commandLineExecutor.tryExecute(
@@ -51,17 +62,6 @@ class DotnetCliToolInfoImpl(
         }
 
         return Version.Empty
-    }
-
-    private fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
-        val executableFile = if(_buildStepContext.isAvailable) _dotnetToolResolver.executableFile else dotnetExecutable
-        val sdkPath = File(executableFile.parent, "sdk")
-        LOG.info("Try getting the dotnet SDKs from directory \"$sdkPath\".")
-        val sdks = _fileSystemService.list(sdkPath)
-                .filter { _fileSystemService.isDirectory(it) }
-                .map { DotnetSdk(it, Version.parse(it.name)) }
-                .filter { it.version != Version.Empty }
-        return sdks
     }
 
     private fun getSdks(dotnetExecutable: File, path: File): Sequence<DotnetSdk> = sequence {

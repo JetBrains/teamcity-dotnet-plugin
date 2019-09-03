@@ -7,6 +7,7 @@
 
 package jetbrains.buildServer.dotnet
 
+import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.util.OSType
 import java.io.File
@@ -17,7 +18,8 @@ import java.io.File
 class DotnetToolProvider(
         toolProvidersRegistry: ToolProvidersRegistry,
         private val _toolSearchService: ToolSearchService,
-        private val _environment: Environment)
+        private val _environment: Environment,
+        private val _dotnetCliToolInfo: DotnetCliToolInfo)
     : ToolProvider {
     init {
         toolProvidersRegistry.registerToolProvider(this)
@@ -43,7 +45,23 @@ class DotnetToolProvider(
     }
 
     private val executablePath: File? by lazy {
-        _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME, sequenceOf(additionalPath)).firstOrNull()
+        val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME, sequenceOf(additionalPath)).distinct()
+        var dotnetRuntime: File? = null
+        for (dotnetExecutable in executables) {
+            if (_dotnetCliToolInfo.getSdks(dotnetExecutable).any()) {
+                return@lazy dotnetExecutable
+            }
+            else {
+                LOG.debug("Cannot find .NET Core SDK for <${dotnetExecutable}>.")
+                dotnetRuntime = dotnetExecutable
+            }
+        }
+
+        dotnetRuntime?.let {
+            LOG.warn(".NET Core SDK was not found (found .NET Core runtime at path <${it.absolutePath}>). Install .NET Core SDK into the default location or set ${DotnetConstants.TOOL_HOME} environment variable pointing to the installation directory.")
+        }
+
+        return@lazy null
     }
 
     @Throws(ToolCannotBeFoundException::class)
@@ -53,5 +71,9 @@ class DotnetToolProvider(
         } else {
             getPath(toolName)
         }
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(DotnetToolProvider::class.java.name)
     }
 }
