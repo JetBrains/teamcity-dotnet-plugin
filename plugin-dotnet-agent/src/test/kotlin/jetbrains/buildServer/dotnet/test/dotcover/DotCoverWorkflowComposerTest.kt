@@ -110,6 +110,9 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
+                will(returnValue(null))
+
                 oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
                 will(returnValue(File(dotCoverProjectUniqueName)))
 
@@ -252,6 +255,9 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
+                will(returnValue(null))
+
                 oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
                 will(returnValue(File(dotCoverProjectUniqueName)))
 
@@ -352,6 +358,9 @@ class DotCoverWorkflowComposerTest {
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue(null))
 
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
+                will(returnValue(null))
+
                 oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
                 will(returnValue(File(dotCoverProjectUniqueName)))
 
@@ -387,7 +396,7 @@ class DotCoverWorkflowComposerTest {
     }
 
     @Test
-    fun shouldHonorDotCoverArguments() {
+    fun shouldTakeInAccountDotCoverArguments() {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
@@ -437,6 +446,99 @@ class DotCoverWorkflowComposerTest {
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
                 will(returnValue("/ProcessFilters=-:sqlservr.exe /arg"))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
+                will(returnValue(null))
+
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
+                will(returnValue(File(dotCoverProjectUniqueName)))
+
+                oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension)
+                will(returnValue(File(dotCoverSnapshotUniqueName)))
+
+                fileSystemService.write(dotCoverProject.configFile)
+                {
+                    oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
+                }
+
+                allowing<WorkflowContext>(_workflowContext).status
+                will(returnValue(WorkflowStatus.Running))
+
+                oneOf<WorkflowContext>(_workflowContext).lastResult
+                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
+
+                oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
+                oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+
+                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
+            }
+        })
+
+        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
+    }
+
+    @Test
+    fun shouldSupportLogFileConfigParamArguments() {
+        // Given
+        val dotCoverProjectUniqueName = "proj000"
+        val dotCoverSnapshotUniqueName = "snapshot000"
+        val executableFile = File("sdk", "dotnet.exe")
+        val workingDirectory = File("wd")
+        val args = listOf(CommandLineArgument("arg1"))
+        val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
+        val commandLine = CommandLine(
+                TargetType.Tool,
+                executableFile,
+                workingDirectory,
+                args,
+                envVars)
+        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
+        val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
+        val expectedWorkflow = Workflow(
+                sequenceOf(
+                        CommandLine(
+                                TargetType.Tool,
+                                dotCoverExecutableFile,
+                                workingDirectory,
+                                listOf(
+                                        CommandLineArgument("cover"),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("/ReturnTargetExitCode"),
+                                        CommandLineArgument("/NoCheckForUpdates"),
+                                        CommandLineArgument("/AnalyzeTargetArguments=false"),
+                                        CommandLineArgument("/LogFile=Ab c.txt"),
+                                        CommandLineArgument("/ProcessFilters=-:sqlservr.exe"),
+                                        CommandLineArgument("/arg")
+                                ),
+                                envVars)))
+
+        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile)
+        val composer = createInstance(fileSystemService)
+
+        // When
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
+                will(returnValue(CoverageConstants.PARAM_DOTCOVER))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
+                will(returnValue(dotCoverExecutableFile.parentFile.absolutePath))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(Verbosity.Normal.id))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)
+                will(returnValue("/ProcessFilters=-:sqlservr.exe /arg"))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
+                will(returnValue("Ab c.txt"))
 
                 oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
                 will(returnValue(File(dotCoverProjectUniqueName)))

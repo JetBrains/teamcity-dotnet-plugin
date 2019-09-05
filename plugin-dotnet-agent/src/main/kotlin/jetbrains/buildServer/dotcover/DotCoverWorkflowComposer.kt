@@ -133,6 +133,10 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
+        _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
+            yield(CommandLineArgument("/LogFile=${it}"))
+        }
+
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
             StringUtil.split(it).forEach {
                 yield(CommandLineArgument(it))
