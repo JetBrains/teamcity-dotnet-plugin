@@ -20,4 +20,10 @@ interface FileSystemService {
     fun remove(file: File)
 
     fun list(file: File): Sequence<File>
+
+    fun createDirectory(path: File): Boolean
+
+    fun sanitizeFileName(name: String): String
+
+    fun generateTempFile(path: File, prefix: String, extension: String): File
 }

@@ -134,7 +134,8 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            yield(CommandLineArgument("/LogFile=${it}"))
+            val logFileName = _fileSystemService.generateTempFile(File(it), "dotCover", ".log")
+            yield(CommandLineArgument("/LogFile=${logFileName}"))
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {

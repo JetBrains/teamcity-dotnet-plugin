@@ -86,6 +86,14 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun list(file: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
 
+    override fun createDirectory(path: File): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun sanitizeFileName(name: String) = name
+
+    override fun generateTempFile(path: File, prefix: String, extension: String) = File(path, "${prefix}99${extension}")
+
     private data class FileInfo(val attributes: Attributes) {
         val inputStream: InputStream
         val outputStream: OutputStream
