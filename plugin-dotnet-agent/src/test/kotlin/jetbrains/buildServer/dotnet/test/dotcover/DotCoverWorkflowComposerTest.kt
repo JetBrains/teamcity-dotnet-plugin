@@ -513,7 +513,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
-                                        CommandLineArgument("/LogFile=Ab c.txt"),
+                                        CommandLineArgument("/LogFile=${File("logPath", "dotCover99.log")}"),
                                         CommandLineArgument("/ProcessFilters=-:sqlservr.exe"),
                                         CommandLineArgument("/arg")
                                 ),
@@ -538,7 +538,7 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue("/ProcessFilters=-:sqlservr.exe /arg"))
 
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)
-                will(returnValue("Ab c.txt"))
+                will(returnValue("logPath"))
 
                 oneOf<PathsService>(_pathService).getTempFileName(DotCoverWorkflowComposer.DotCoverProjectExtension)
                 will(returnValue(File(dotCoverProjectUniqueName)))
