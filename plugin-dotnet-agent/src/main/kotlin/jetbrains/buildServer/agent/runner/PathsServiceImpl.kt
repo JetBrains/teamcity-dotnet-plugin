@@ -34,8 +34,6 @@ class PathsServiceImpl(
         PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory
     }
 
-    override fun getToolPath(toolName: String): File = File(_buildStepContext.runnerContext.getToolPath(toolName))
-
     override fun getTempFileName(extension: String): File {
         val tempDir = getPath(PathType.AgentTemp)
         for (num in 1 .. Int.MAX_VALUE) {

@@ -7,7 +7,5 @@ interface PathsService {
 
     fun getPath(pathType: PathType): File
 
-    fun getToolPath(toolName: String): File
-
     fun getTempFileName(extension: String): File
 }
