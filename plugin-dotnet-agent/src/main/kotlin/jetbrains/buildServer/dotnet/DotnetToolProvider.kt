@@ -66,7 +66,7 @@ class DotnetToolProvider(
 
     @Throws(ToolCannotBeFoundException::class)
     override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String {
-        return if (runner.isVirtualContext) {
+        return if (runner.virtualContext.isVirtual) {
             DotnetConstants.EXECUTABLE
         } else {
             getPath(toolName)

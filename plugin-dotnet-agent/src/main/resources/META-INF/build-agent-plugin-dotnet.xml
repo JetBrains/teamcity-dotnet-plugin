@@ -28,6 +28,7 @@
   <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
     <constructor-arg ref="layeredWorkflowComposer"/>
   </bean>
+  <bean class="jetbrains.buildServer.agent.runner.VirtualContextImpl" scope="prototype"/>
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl">

@@ -144,11 +144,15 @@ class DotnetToolProviderTest {
     fun shouldNotSearchToolInVirtualContext() {
         val build = _ctx.mock(AgentRunningBuild::class.java)
         val context = _ctx.mock(BuildRunnerContext::class.java)
+        val virtualContext = _ctx.mock(VirtualContext::class.java)
         _ctx.checking(object : Expectations() {
             init {
                 oneOf(_toolProvidersRegistry)!!.registerToolProvider(with(any(DotnetToolProvider::class.java)))
 
-                allowing(context).isVirtualContext
+                allowing(context).virtualContext
+                will(returnValue(virtualContext))
+
+                allowing(virtualContext).isVirtual
                 will(returnValue(true))
             }
         })

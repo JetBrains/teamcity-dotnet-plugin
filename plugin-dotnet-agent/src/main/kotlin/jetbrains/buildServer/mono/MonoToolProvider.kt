@@ -28,7 +28,7 @@ class MonoToolProvider(
 
     @Throws(ToolCannotBeFoundException::class)
     override fun getPath(toolName: String, build: AgentRunningBuild, runner: BuildRunnerContext): String {
-        return if (runner.isVirtualContext) {
+        return if (runner.virtualContext.isVirtual) {
             MonoConstants.RUNNER_TYPE
         } else {
             getPath(toolName)
