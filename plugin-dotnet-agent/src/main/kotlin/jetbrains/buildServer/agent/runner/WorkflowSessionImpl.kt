@@ -8,9 +8,10 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.CommandLineResult
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.rx.subjectOf
 import java.io.File
 
 class WorkflowSessionImpl(
@@ -20,8 +21,11 @@ class WorkflowSessionImpl(
     : MultiCommandBuildSession, WorkflowContext {
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null
-    private var _lastResult: CommandLineResult? = null
+    private val _eventSource = subjectOf<CommandResultEvent>()
+    private var _lastResult: CommandLineResult? = CommandLineResult(emptySequence(), emptySequence(), emptySequence())
     private var _buildFinishedStatus: BuildFinishedStatus? = null
+
+    override fun subscribe(observer: Observer<CommandResultEvent>) = _eventSource.subscribe(observer)
 
     override fun getNextCommand(): CommandExecution? {
         val commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator()
@@ -47,7 +51,8 @@ class WorkflowSessionImpl(
                 commandLinesIterator.next(),
                 exitCode,
                 _buildStepContext,
-                _loggerService)
+                _loggerService,
+                _eventSource)
     }
 
     override val status: WorkflowStatus
@@ -74,13 +79,15 @@ class WorkflowSessionImpl(
             private val _commandLine: CommandLine,
             private val _exitCode: MutableCollection<Int>,
             private val _buildStepContext: BuildStepContext,
-            private val _loggerService: LoggerService) : CommandExecution {
+            private val _loggerService: LoggerService,
+            private val _eventSource: Observer<CommandResultEvent>) : CommandExecution {
 
         override fun beforeProcessStarted() = Unit
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit
 
         override fun processFinished(exitCode: Int) {
+            _eventSource.onNext(CommandResultExitCode(exitCode))
             _exitCode.add(exitCode)
         }
 
@@ -88,9 +95,15 @@ class WorkflowSessionImpl(
                 _commandLine,
                 _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
-        override fun onStandardOutput(text: String) = _loggerService.writeStandardOutput(text)
+        override fun onStandardOutput(text: String) {
+            _eventSource.onNext(CommandResultOutput(text))
+            _loggerService.writeStandardOutput(text)
+        }
 
-        override fun onErrorOutput(text: String) = _loggerService.writeErrorOutput(text)
+        override fun onErrorOutput(error: String) {
+            _eventSource.onNext(CommandResultOutput(error))
+            _loggerService.writeErrorOutput(error)
+        }
 
         override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 

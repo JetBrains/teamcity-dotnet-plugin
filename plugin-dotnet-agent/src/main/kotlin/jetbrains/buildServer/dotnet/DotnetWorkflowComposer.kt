@@ -18,7 +18,8 @@ class DotnetWorkflowComposer(
         private val _failedTestSource: FailedTestSource,
         private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
-        private val _contextFactory: DotnetBuildContextFactory)
+        private val _contextFactory: DotnetBuildContextFactory,
+        private val _versionParser: VersionParser)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -26,16 +27,22 @@ class DotnetWorkflowComposer(
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
             Workflow(sequence {
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
+                var dotNetVersion = Version.Empty
                 for (command in _commandSet.commands) {
-                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore) {
+                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore && dotNetVersion == Version.Empty) {
                         val dotnetExecutableFile = command.toolResolver.executableFile
                         val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-                        yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, versionArgs, emptyList()))
-                        if (context.lastResult.exitCode == 0) {
-                        }
-
-                        yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, listSdksArgs, emptyList()))
-                        if (context.lastResult.exitCode == 0) {
+                        context.subscribe {
+                            when {
+                                it is CommandResultOutput -> {
+                                    _versionParser.tryParse(sequenceOf(it.output))?.let {
+                                        dotNetVersion = Version.parse(it)
+                                    }
+                                }
+                                it is CommandResultExitCode -> { }
+                            }
+                        }.use {
+                            yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, versionArgs, emptyList()))
                         }
                     }
 
@@ -102,9 +109,9 @@ class DotnetWorkflowComposer(
             })
 
     companion object {
+        private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         internal val versionArgs = listOf(CommandLineArgument("--version"))
-        internal val listSdksArgs = listOf(CommandLineArgument("--list-sdks"))
     }
 }

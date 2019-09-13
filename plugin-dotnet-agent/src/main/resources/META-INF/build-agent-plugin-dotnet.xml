@@ -52,6 +52,7 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
+    <constructor-arg ref="dotnetVersionParser"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationImpl"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
