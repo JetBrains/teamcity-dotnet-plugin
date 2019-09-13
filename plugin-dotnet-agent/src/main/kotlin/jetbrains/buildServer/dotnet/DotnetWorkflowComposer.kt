@@ -1,9 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
@@ -30,9 +27,22 @@ class DotnetWorkflowComposer(
             Workflow(sequence {
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
+                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore) {
+                        val dotnetExecutableFile = command.toolResolver.executableFile
+                        val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+                        yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, versionArgs, emptyList()))
+                        if (context.lastResult.exitCode == 0) {
+                        }
+
+                        yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, listSdksArgs, emptyList()))
+                        if (context.lastResult.exitCode == 0) {
+                        }
+                    }
+
                     LOG.debug("Create the build context.")
                     val dotnetBuildContext = _contextFactory.create(command)
                     val result = EnumSet.noneOf(CommandResult::class.java)
+
                     LOG.debug("Build the environment.")
                     val environmentTokens = mutableListOf<Closeable>()
                     for (environmentBuilder in command.environmentBuilders) {
@@ -93,5 +103,8 @@ class DotnetWorkflowComposer(
 
     companion object {
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
+        private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
+        internal val versionArgs = listOf(CommandLineArgument("--version"))
+        internal val listSdksArgs = listOf(CommandLineArgument("--list-sdks"))
     }
 }

@@ -10,6 +10,9 @@ class VSTestToolResolver(
         private val _parametersService: ParametersService,
         private val _dotnetToolResolver: ToolResolver)
     : ToolResolver {
+    override val paltform: ToolPlatform
+        get() = _currentTool?.platform ?: ToolPlatform.DotnetCore
+
     override val executableFile: File
         get() {
             _currentTool?.let {

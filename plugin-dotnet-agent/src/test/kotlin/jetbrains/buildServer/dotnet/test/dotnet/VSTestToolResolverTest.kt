@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.ToolResolver
-import jetbrains.buildServer.dotnet.VSTestToolResolver
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -50,6 +47,6 @@ class VSTestToolResolverTest {
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(executableFile, true))
+        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.DotnetCore, executableFile, true))
     }
 }

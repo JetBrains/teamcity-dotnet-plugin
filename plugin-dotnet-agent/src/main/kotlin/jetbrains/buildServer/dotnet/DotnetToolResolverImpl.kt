@@ -13,6 +13,9 @@ class DotnetToolResolverImpl(
         private val _toolProvider: ToolProvider,
         private val _parametersService: ParametersService)
     : DotnetToolResolver {
+    override val paltform: ToolPlatform
+        get() = ToolPlatform.DotnetCore
+
     override val executableFile: File
         get() {
             try {

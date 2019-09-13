@@ -31,6 +31,7 @@
   <bean class="jetbrains.buildServer.agent.runner.VirtualContextImpl" scope="prototype"/>
 
   <!-- dotnet -->
+  <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
@@ -65,7 +66,9 @@
   <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
   </bean>

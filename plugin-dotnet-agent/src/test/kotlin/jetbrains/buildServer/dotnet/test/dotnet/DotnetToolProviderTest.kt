@@ -26,7 +26,7 @@ class DotnetToolProviderTest {
     private lateinit var _toolSearchService: ToolSearchService
     private lateinit var _environment: Environment
     private lateinit var _parametersService: ParametersService
-    private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
+    private lateinit var _dotnetSdksProvider: DotnetSdksProvider
 
     @BeforeMethod
     fun setUp() {
@@ -35,7 +35,7 @@ class DotnetToolProviderTest {
         _toolSearchService = _ctx.mock(ToolSearchService::class.java)
         _environment = _ctx.mock(Environment::class.java)
         _parametersService = _ctx.mock(ParametersService::class.java)
-        _dotnetCliToolInfo = _ctx.mock(DotnetCliToolInfo::class.java)
+        _dotnetSdksProvider = _ctx.mock(DotnetSdksProvider::class.java)
     }
 
     @DataProvider
@@ -114,7 +114,7 @@ class DotnetToolProviderTest {
                 will(returnValue("D:\\Program Files\\"))
 
                 if(files.any()) {
-                    allowing(_dotnetCliToolInfo).getSdks(files.first())
+                    allowing(_dotnetSdksProvider).getSdks(files.first())
                     will(returnValue(sdks))
                 }
             }
@@ -226,5 +226,5 @@ class DotnetToolProviderTest {
                     _toolProvidersRegistry,
                     ToolSearchServiceStub(files),
                     _environment,
-                    _dotnetCliToolInfo)
+                    _dotnetSdksProvider)
 }

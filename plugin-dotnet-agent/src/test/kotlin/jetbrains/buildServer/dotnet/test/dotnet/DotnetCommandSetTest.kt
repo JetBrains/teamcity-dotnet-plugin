@@ -50,7 +50,7 @@ class DotnetCommandSetTest {
                 will(returnValue(DotnetCommandType.Build))
 
                 allowing<DotnetCommand>(_buildCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(File("dotnet"), false)))
+                will(returnValue(DotnetToolResolverStub(ToolPlatform.DotnetCore, File("dotnet"), false)))
 
                 allowing<DotnetCommand>(_buildCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
@@ -65,7 +65,7 @@ class DotnetCommandSetTest {
                 will(returnValue(DotnetCommandType.Clean))
 
                 allowing<DotnetCommand>(_cleanCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(File("dotnet"), true)))
+                will(returnValue(DotnetToolResolverStub(ToolPlatform.DotnetCore, File("dotnet"), true)))
 
                 allowing<DotnetCommand>(_cleanCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))

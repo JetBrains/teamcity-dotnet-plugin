@@ -93,7 +93,7 @@ class MSBuildCommandTest {
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(File("msbuild.exe"), true),
+                DotnetToolResolverStub(ToolPlatform.Windows, File("msbuild.exe"), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 }

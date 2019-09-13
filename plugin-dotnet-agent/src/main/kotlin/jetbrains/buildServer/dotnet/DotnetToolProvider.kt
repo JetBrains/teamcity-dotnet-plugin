@@ -19,7 +19,7 @@ class DotnetToolProvider(
         toolProvidersRegistry: ToolProvidersRegistry,
         private val _toolSearchService: ToolSearchService,
         private val _environment: Environment,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo)
+        private val _dotnetSdksProviderImpl: DotnetSdksProvider)
     : ToolProvider {
     init {
         toolProvidersRegistry.registerToolProvider(this)
@@ -48,7 +48,7 @@ class DotnetToolProvider(
         val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME, sequenceOf(additionalPath)).distinct()
         var dotnetRuntime: File? = null
         for (dotnetExecutable in executables) {
-            if (_dotnetCliToolInfo.getSdks(dotnetExecutable).any()) {
+            if (_dotnetSdksProviderImpl.getSdks(dotnetExecutable).any()) {
                 return@lazy dotnetExecutable
             }
             else {
