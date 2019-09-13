@@ -47,6 +47,7 @@ class DotnetWorkflowComposerTest {
     private lateinit var _buildContext1: DotnetBuildContext
     private lateinit var _buildContext2: DotnetBuildContext
     private lateinit var _versionParser: VersionParser
+    private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
@@ -75,6 +76,7 @@ class DotnetWorkflowComposerTest {
         _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, DotnetSdk(File("dotnet"), Version(1)))
         _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, DotnetSdk(File("dotnet"), Version(2)))
         _versionParser = _ctx.mock(VersionParser::class.java)
+        _parametersService = _ctx.mock(ParametersService::class.java)
     }
 
     @Test
@@ -237,6 +239,7 @@ class DotnetWorkflowComposerTest {
                 _targetRegistry,
                 _commandRegistry,
                 _buildContextFactory,
-                _versionParser)
+                _versionParser,
+                _parametersService)
     }
 }

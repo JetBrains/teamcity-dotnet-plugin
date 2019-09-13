@@ -19,35 +19,56 @@ class DotnetWorkflowComposer(
         private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
         private val _contextFactory: DotnetBuildContextFactory,
-        private val _versionParser: VersionParser)
+        private val _versionParser: VersionParser,
+        private val _parametersService: ParametersService)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
             Workflow(sequence {
+                val verbosity = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
+                    Verbosity.tryParse(it)
+                }
+
+                val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
-                var dotNetVersion = Version.Empty
+                var dotnetSdk: DotnetSdk? = null
                 for (command in _commandSet.commands) {
-                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore && dotNetVersion == Version.Empty) {
-                        val dotnetExecutableFile = command.toolResolver.executableFile
-                        val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-                        context.subscribe {
-                            when {
-                                it is CommandResultOutput -> {
-                                    _versionParser.tryParse(sequenceOf(it.output))?.let {
-                                        dotNetVersion = Version.parse(it)
+                    val executableFile = command.toolResolver.executableFile
+
+                    // Try get dotnet version
+                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore) {
+                        if (dotnetSdk == null) {
+                            context.subscribe {
+                                when {
+                                    it is CommandResultOutput -> {
+                                        _versionParser.tryParse(sequenceOf(it.output))?.let {
+                                            dotnetSdk = DotnetSdk(executableFile, Version.parse(it))
+                                        }
+                                    }
+                                    it is CommandResultExitCode -> {
                                     }
                                 }
-                                it is CommandResultExitCode -> { }
+                            }.use {
+                                yield(CommandLine(TargetType.SystemDiagnostics, executableFile, workingDirectory, versionArgs, emptyList()))
                             }
-                        }.use {
-                            yield(CommandLine(TargetType.SystemDiagnostics, dotnetExecutableFile, workingDirectory, versionArgs, emptyList()))
+                        }
+
+                        if (dotnetSdk == null) {
+                            dotnetSdk = DotnetSdk(executableFile, Version.Empty)
                         }
                     }
 
                     LOG.debug("Create the build context.")
-                    val dotnetBuildContext = _contextFactory.create(command)
+                    val dotnetBuildContext = DotnetBuildContext(
+                            workingDirectory,
+                            command,
+                            dotnetSdk ?: DotnetSdk(executableFile, Version.Empty),
+                            verbosity,
+                            emptySet())
+
                     val result = EnumSet.noneOf(CommandResult::class.java)
 
                     LOG.debug("Build the environment.")
@@ -57,7 +78,6 @@ class DotnetWorkflowComposer(
                     }
 
                     try {
-                        val executableFile = command.toolResolver.executableFile
                         val args = command.getArguments(dotnetBuildContext).toList()
                         val commandHeader = _argumentsService.combine(sequenceOf(executableFile.name).plus(args.map { it.value }))
                         _loggerService.writeStandardOutput(
