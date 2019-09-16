@@ -7,12 +7,12 @@ class DotnetVersionParser : VersionParser {
     /**
      * Returns cleaned .net core sdk version.
      * **/
-    override fun tryParse(output: Sequence<String>): String? =
+    override fun parse(output: Sequence<String>): Version =
             output
                     .map { VersionPattern.matcher(it) }
                     .filter { it.find() }
                     .map { it.group(1).trim() }
-                    .firstOrNull()
+                    .firstOrNull()?.let { Version.parse(it) } ?: Version.Empty
 
     companion object {
         private val VersionPattern = Pattern.compile("^.*(\\d+\\.\\d+\\.\\d+[^\\s]*)")

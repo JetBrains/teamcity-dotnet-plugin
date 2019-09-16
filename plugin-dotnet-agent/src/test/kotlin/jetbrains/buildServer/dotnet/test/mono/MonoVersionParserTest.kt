@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test.mono
 
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.mono.MonoVersionParser
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -15,7 +16,7 @@ class MonoVersionParserTest {
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
-                        "5.2.0"),
+                        Version(5, 2,0)),
                 arrayOf(sequenceOf(
                         "Mono version 5.0.1234",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com"),
@@ -26,7 +27,7 @@ class MonoVersionParserTest {
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
-                        null),
+                        Version.Empty),
                 arrayOf(sequenceOf("   "), null),
                 arrayOf(sequenceOf(""), null),
                 arrayOf(emptySequence<String>(), null),
@@ -36,16 +37,16 @@ class MonoVersionParserTest {
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
-                        null))
+                        Version.Empty))
     }
 
     @Test(dataProvider = "versionCases")
-    fun shouldParseVersion(output: Sequence<String>, expectedVersion: String?) {
+    fun shouldParseVersion(output: Sequence<String>, expectedVersion: Version) {
         // Given
         val parser = MonoVersionParser()
 
         // When
-        val actualVersion = parser.tryParse(output)
+        val actualVersion = parser.parse(output)
 
         // Then
         Assert.assertEquals(actualVersion, expectedVersion)

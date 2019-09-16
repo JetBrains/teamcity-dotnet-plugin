@@ -1,6 +1,7 @@
 package jetbrains.buildServer.agent
 
-interface VersionParser {
+import jetbrains.buildServer.dotnet.Version
 
-    fun tryParse(output: Sequence<String>): String?
+interface VersionParser {
+    fun parse(output: Sequence<String>): Version
 }

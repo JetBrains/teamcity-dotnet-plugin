@@ -58,20 +58,20 @@ class DotnetVersionProviderTest {
                 oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
                 will(returnValue(getVersionResult))
 
-                allowing<VersionParser>(_versionParser).tryParse(stdOutVersion)
-                will(returnValue("2.2.202"))
+                allowing<VersionParser>(_versionParser).parse(stdOutVersion)
+                will(returnValue(Version(2, 2, 202)))
             }
         })
 
         val fileSystemService = VirtualFileSystemService()
-        val dotnetCliToolInfo = createInstance(fileSystemService)
+        val dotnetVersionProvider = createInstance(fileSystemService)
 
         // When
-        val actualInfo = dotnetCliToolInfo.getVersion(toolPath, workingDirectoryPath)
+        val actualVersion = dotnetVersionProvider.getVersion(toolPath, workingDirectoryPath)
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(actualInfo, expectedVersion)
+        Assert.assertEquals(actualVersion, expectedVersion)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =

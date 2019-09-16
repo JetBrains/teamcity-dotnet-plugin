@@ -58,8 +58,8 @@ class DotnetWorkflowComposer(
                 workflowContext.subscribe {
                     when {
                         it is CommandResultOutput -> {
-                            _versionParser.tryParse(sequenceOf(it.output))?.let {
-                                versions.add(Version.parse(it))
+                            _versionParser.parse(sequenceOf(it.output))?.let {
+                                versions.add(it)
                             }
                         }
                     }
