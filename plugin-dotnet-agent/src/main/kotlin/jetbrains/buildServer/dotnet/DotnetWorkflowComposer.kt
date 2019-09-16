@@ -43,7 +43,7 @@ class DotnetWorkflowComposer(
                             yieldAll(yieldDotnetVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
                         }
 
-                        val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, DotnetSdk(executableFile, dotnetVersions.lastOrNull() ?: Version.Empty), verbosity, emptySet())
+                        val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
                         yieldAll(yieldDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile))
                     }
                 }
@@ -104,7 +104,7 @@ class DotnetWorkflowComposer(
                     executableFile,
                     dotnetBuildContext.workingDirectory,
                     args,
-                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.currentSdk.version).toList()))
+                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList()))
         }
     }
 

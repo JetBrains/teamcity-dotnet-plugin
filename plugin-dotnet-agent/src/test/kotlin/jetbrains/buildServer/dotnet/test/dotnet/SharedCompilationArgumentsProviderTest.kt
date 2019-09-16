@@ -1,18 +1,13 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import java.io.File
-import java.io.InputStreamReader
 
 class SharedCompilationArgumentsProviderTest {
     private lateinit var _ctx: Mockery
@@ -27,7 +22,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldProvideNodeReuseArgumentsWhenSharedCompilationRequiresSuppressing() {
         // Given
-        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1, 2)), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), Version(1, 2), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
@@ -47,7 +42,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldNotProvideNodeReuseArgumentsWhenSharedCompilationDoesNotRequireSuppressing() {
         // Given
-        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1,2,3)), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), Version(1,2,3), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {

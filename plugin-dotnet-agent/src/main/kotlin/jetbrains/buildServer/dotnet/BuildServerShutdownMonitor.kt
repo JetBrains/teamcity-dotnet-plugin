@@ -46,9 +46,9 @@ class BuildServerShutdownMonitor(
     override fun register(context: DotnetBuildContext) {
         if (
                 buildCommands.contains(context.command.commandType)
-                && context.currentSdk.version > Version.LastVersionWithoutSharedCompilation
+                && context.toolVersion > Version.LastVersionWithoutSharedCompilation
                 && _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
-            _workingDirectories.getOrPut(context.currentSdk.version) { context.workingDirectory }
+            _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory }
         }
     }
 

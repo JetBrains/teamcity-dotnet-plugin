@@ -4,7 +4,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.*
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.Disposable
@@ -70,8 +69,8 @@ class DotnetWorkflowComposerTest {
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
         _commandRegistry = _ctx.mock(CommandRegistry::class.java)
-        _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, DotnetSdk(File("dotnet"), Version(1)))
-        _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, DotnetSdk(File("dotnet"), Version(2)))
+        _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, Version(1))
+        _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, Version(2))
         _versionParser = _ctx.mock(VersionParser::class.java)
         _parametersService = _ctx.mock(ParametersService::class.java)
     }

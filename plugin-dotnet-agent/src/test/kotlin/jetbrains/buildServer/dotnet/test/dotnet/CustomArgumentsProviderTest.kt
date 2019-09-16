@@ -25,7 +25,7 @@ class CustomArgumentsProviderTest {
         // Given
         val argumentsProvider = CustomArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
         val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
+        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()

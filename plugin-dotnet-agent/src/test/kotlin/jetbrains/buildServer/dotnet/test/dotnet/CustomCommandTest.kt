@@ -25,7 +25,7 @@ class CustomCommandTest {
         val command = createCommand(arguments = arguments)
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(File("wd"), command, DotnetSdk(File("dotnet"), Version.Empty))).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(File("wd"), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

@@ -22,7 +22,7 @@ class SystemParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
+        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
         val provider = SystemParametersProvider(parametersService)
 
         // When

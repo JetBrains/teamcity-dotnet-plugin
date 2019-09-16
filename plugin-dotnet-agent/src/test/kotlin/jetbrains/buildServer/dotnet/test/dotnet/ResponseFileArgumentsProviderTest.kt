@@ -45,7 +45,7 @@ class ResponseFileArgumentsProviderTest {
         val buildParameter2 = MSBuildParameter("param2", "val2")
         val parametersProvider2 = _ctx.mock(MSBuildParametersProvider::class.java, "parametersProvider2")
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
-        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version(1, 2)), Verbosity.Detailed)
+        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), Version(1, 2), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {

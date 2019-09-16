@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.mock
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -39,7 +38,7 @@ class VSTestLoggerArgumentsProviderTest {
             expectedArguments: List<String>) {
         // Given
         val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
+        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
         val loggerParameters = ctx.mock(LoggerParameters::class.java)
         val argumentsProvider = VSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile), loggerParameters)
 
