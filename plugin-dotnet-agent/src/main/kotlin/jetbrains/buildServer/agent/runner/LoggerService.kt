@@ -2,6 +2,7 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.rx.Disposable
 import java.io.Closeable
 
 interface LoggerService {
@@ -15,5 +16,5 @@ interface LoggerService {
 
     fun writeErrorOutput(text: String)
 
-    fun writeBlock(blockName: String, description: String = ""): Closeable
+    fun writeBlock(blockName: String, description: String = ""): Disposable
 }

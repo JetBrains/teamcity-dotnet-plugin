@@ -28,7 +28,7 @@ class TargetRegistryTest {
         val targetRegistry = TargetRegistryImpl()
 
         // When
-        val tokens = targetsToActivate.map { targetRegistry.activate(it) }.toList()
+        val tokens = targetsToActivate.map { targetRegistry.register(it) }.toList()
         val actualActiveTargets = targetRegistry.activeTargets.toSet()
         tokens.reversed().forEach { it.dispose() }
 
@@ -42,8 +42,8 @@ class TargetRegistryTest {
         val targetRegistry = TargetRegistryImpl()
 
         // When
-        targetRegistry.activate(TargetType.CodeCoverageProfiler).use {
-            targetRegistry.activate(TargetType.Tool).use {
+        targetRegistry.register(TargetType.CodeCoverageProfiler).use {
+            targetRegistry.register(TargetType.Tool).use {
             }
 
             // Then

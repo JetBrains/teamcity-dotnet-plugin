@@ -11,6 +11,8 @@ inline fun disposableOf(crossinline action: () -> Unit): Disposable = object : D
     }
 }
 
+fun disposableOf(disposables: Sequence<Disposable>): Disposable = disposableOf { disposables.forEach { it.dispose() } }
+
 fun disposableOf(vararg disposables: Disposable): Disposable = disposableOf { disposables.forEach { it.dispose() } }
 
 fun emptyDisposable(): Disposable = object : Disposable {

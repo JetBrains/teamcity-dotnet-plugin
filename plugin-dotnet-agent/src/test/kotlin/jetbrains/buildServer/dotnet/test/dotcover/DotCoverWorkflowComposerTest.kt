@@ -133,7 +133,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
@@ -295,7 +295,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
@@ -381,7 +381,7 @@ class DotCoverWorkflowComposerTest {
                 never<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 never<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
@@ -470,7 +470,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
@@ -560,7 +560,7 @@ class DotCoverWorkflowComposerTest {
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.CodeCoverageProfiler)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()

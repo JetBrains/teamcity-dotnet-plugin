@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.runner.TargetRegistry
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.util.OSType
@@ -19,18 +20,20 @@ class EnvironmentVariablesTest {
     private lateinit var _ctx: Mockery
     private lateinit var _environment: Environment
     private lateinit var _sharedCompilation: SharedCompilation
+    private lateinit var _pathsService: PathsService
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _environment = _ctx.mock<Environment>(Environment::class.java)
         _sharedCompilation = _ctx.mock<SharedCompilation>(SharedCompilation::class.java)
+        _pathsService = _ctx.mock<PathsService>(PathsService::class.java)
     }
 
     @Test
     fun shouldProvideDefaultVars() {
         // Given
-        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
 
         // When
         _ctx.checking(object : Expectations() {
@@ -55,7 +58,7 @@ class EnvironmentVariablesTest {
     @Test
     fun shouldUseSharedCompilation() {
         // Given
-        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation)
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
 
         // When
         _ctx.checking(object : Expectations() {

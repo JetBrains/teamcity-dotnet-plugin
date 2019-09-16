@@ -6,5 +6,5 @@ import jetbrains.buildServer.rx.Disposable
 interface TargetRegistry {
     val activeTargets: Sequence<TargetType>
 
-    fun activate(targetType: TargetType): Disposable
+    fun register(targetType: TargetType): Disposable
 }

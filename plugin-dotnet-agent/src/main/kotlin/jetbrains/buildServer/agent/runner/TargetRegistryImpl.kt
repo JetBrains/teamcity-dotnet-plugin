@@ -10,7 +10,7 @@ class TargetRegistryImpl : TargetRegistry {
     override val activeTargets: Sequence<TargetType>
         get() = _activeTargets.map { it.targetType }.distinct().asSequence()
 
-    override fun activate(targetType: TargetType): Disposable {
+    override fun register(targetType: TargetType): Disposable {
         val holder = TargetHolder(targetType)
         _activeTargets.add(holder)
         return disposableOf { _activeTargets.remove(holder) }

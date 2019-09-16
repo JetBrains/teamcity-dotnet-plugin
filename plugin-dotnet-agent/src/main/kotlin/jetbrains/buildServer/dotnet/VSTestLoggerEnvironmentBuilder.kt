@@ -5,6 +5,9 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import org.apache.log4j.Logger
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.emptyDisposable
 import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter
@@ -18,16 +21,16 @@ class VSTestLoggerEnvironmentBuilder(
         private val _environmentCleaner: EnvironmentCleaner,
         private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
     : EnvironmentBuilder {
-    override fun build(context: DotnetBuildContext): Closeable {
+    override fun build(context: DotnetBuildContext): Disposable {
         val testReportingMode = _testReportingParameters.getMode(context)
         LOG.debug("Test reporting mode: $testReportingMode")
 
         if (testReportingMode.contains(TestReportingMode.Off)) {
-            return EmptyClosable
+            return emptyDisposable()
         }
 
         if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
-            return EmptyClosable
+            return emptyDisposable()
         }
 
         val targets = context.command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
@@ -57,8 +60,8 @@ class VSTestLoggerEnvironmentBuilder(
                 _loggerService.writeErrorOutput("Failed to create logger directory \"$loggerDirectory\"")
             }
 
-            return Closeable { _fileSystemService.remove(loggerDirectory) }
-        } ?: EmptyClosable
+            return disposableOf { _fileSystemService.remove(loggerDirectory) }
+        } ?: emptyDisposable()
     }
 
     companion object {

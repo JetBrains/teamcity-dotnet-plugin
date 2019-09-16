@@ -49,7 +49,7 @@ class VisualStudioWorkflowComposer(
                 val executableFile = _toolResolver.executableFile
 
                 for ((targetFile) in _targetService.targets) {
-                    _targetRegistry.activate(target).use {
+                    _targetRegistry.register(target).use {
                         yield(CommandLine(
                                 TargetType.Tool,
                                 executableFile,

@@ -110,7 +110,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             Assert.assertEquals(fileSystemService.isExists(expectedDir), true)
         }
 
-        ticket.close()
+        ticket.dispose()
         for (expectedDir in expectedDirs) {
             val dir = File(expectedDir, uniqueName)
             Assert.assertEquals(fileSystemService.isExists(dir), false)
@@ -161,7 +161,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             }
         })
 
-        loggerEnvironment.build(context).close()
+        loggerEnvironment.build(context).dispose()
 
         // Then
         _ctx.assertIsSatisfied()

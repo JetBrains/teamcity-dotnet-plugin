@@ -136,7 +136,7 @@ class VisualStudioWorkflowComposerTest {
                 allowing<WorkflowContext>(_workflowContext).lastResult
                 will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
 
-                allowing<TargetRegistry>(_targetRegistry).activate(TargetType.Tool)
+                allowing<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
                 will(returnValue(_targetRegistrationToken))
 
                 allowing<Disposable>(_targetRegistrationToken).dispose()
@@ -201,7 +201,7 @@ class VisualStudioWorkflowComposerTest {
 
                 oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
 
-                oneOf<TargetRegistry>(_targetRegistry).activate(TargetType.Tool)
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()

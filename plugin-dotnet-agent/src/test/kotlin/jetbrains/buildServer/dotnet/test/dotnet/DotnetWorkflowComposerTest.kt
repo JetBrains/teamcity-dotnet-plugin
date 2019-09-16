@@ -194,7 +194,7 @@ class DotnetWorkflowComposerTest {
                         ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0))
                 oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
 
-                exactly(2).of(_targetRegistry).activate(TargetType.Tool)
+                exactly(2).of(_targetRegistry).register(TargetType.Tool)
                 will(returnValue(_targetRegistrationToken))
 
                 exactly(2).of(_targetRegistrationToken).dispose()

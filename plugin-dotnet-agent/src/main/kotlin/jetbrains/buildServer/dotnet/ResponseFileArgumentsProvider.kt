@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
+import jetbrains.buildServer.rx.use
 import java.io.File
 import java.io.OutputStreamWriter
 

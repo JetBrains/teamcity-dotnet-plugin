@@ -63,7 +63,7 @@ class DotCoverWorkflowComposer(
         return Workflow(sequence {
             var deferredServiceMessages: DeferredServiceMessages? = null
 
-            _targetRegistry.activate(target).use {
+            _targetRegistry.register(target).use {
                 for (commandLineToGetCoverage in workflow.commandLines) {
                     sendServiceMessages(context, deferredServiceMessages)
 

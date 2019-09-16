@@ -5,6 +5,8 @@ import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.messages.serviceMessages.BlockClosed
 import jetbrains.buildServer.messages.serviceMessages.BlockOpened
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.disposableOf
 import java.io.Closeable
 
 class LoggerServiceImpl(
@@ -30,9 +32,9 @@ class LoggerServiceImpl(
 
     override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
 
-    override fun writeBlock(blockName: String, description: String): Closeable {
+    override fun writeBlock(blockName: String, description: String): Disposable {
         buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
-        return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
+        return disposableOf { buildLogger.message(BlockClosed(blockName).toString()) }
     }
 
     private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
