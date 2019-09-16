@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.runner.TargetRegistry
 import jetbrains.buildServer.dotnet.*
@@ -34,6 +35,8 @@ class EnvironmentVariablesTest {
     fun shouldProvideDefaultVars() {
         // Given
         val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
+        val systemPath = File("system")
+        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
         _ctx.checking(object : Expectations() {
@@ -46,19 +49,24 @@ class EnvironmentVariablesTest {
 
                 oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
                 will(returnValue(false))
+
+                oneOf<PathsService>(_pathsService).getPath(PathType.System);
+                will(returnValue(systemPath))
             }
         })
 
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", nugetPath))).toList())
     }
 
     @Test
     fun shouldUseSharedCompilation() {
         // Given
         val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
+        val systemPath = File("system")
+        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
         _ctx.checking(object : Expectations() {
@@ -71,12 +79,15 @@ class EnvironmentVariablesTest {
 
                 oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
                 will(returnValue(true))
+
+                oneOf<PathsService>(_pathsService).getPath(PathType.System);
+                will(returnValue(systemPath))
             }
         })
 
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", nugetPath)) + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())
     }
 }
