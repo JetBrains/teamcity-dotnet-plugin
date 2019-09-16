@@ -5,7 +5,6 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
-import jetbrains.buildServer.util.OSType
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.annotations.BeforeMethod
@@ -17,7 +16,8 @@ class DotnetPropertiesExtensionTest {
     private lateinit var _ctx: Mockery
     private lateinit var _agentLifeCycleEventSources: AgentLifeCycleEventSources
     private lateinit var _pathsService: PathsService
-    private lateinit var _dotnetCliToolInfo: DotnetCliToolInfo
+    private lateinit var _dotnetVersionProvider: DotnetVersionProvider
+    private lateinit var _dotnetSdksProvider: DotnetSdksProvider
     private lateinit var _toolProvider: ToolProvider
     private lateinit var _buildAgent: BuildAgent
     private lateinit var _buildAgentConfiguration: BuildAgentConfiguration
@@ -27,7 +27,8 @@ class DotnetPropertiesExtensionTest {
         _ctx = Mockery()
         _agentLifeCycleEventSources = _ctx.mock(AgentLifeCycleEventSources::class.java)
         _pathsService = _ctx.mock(PathsService::class.java)
-        _dotnetCliToolInfo = _ctx.mock(DotnetCliToolInfo::class.java)
+        _dotnetVersionProvider = _ctx.mock(DotnetVersionProvider::class.java)
+        _dotnetSdksProvider = _ctx.mock(DotnetSdksProvider::class.java)
         _toolProvider = _ctx.mock(ToolProvider::class.java)
         _buildAgent = _ctx.mock(BuildAgent::class.java)
         _buildAgentConfiguration = _ctx.mock(BuildAgentConfiguration::class.java)
@@ -77,7 +78,6 @@ class DotnetPropertiesExtensionTest {
             expectedSdks: Sequence<Pair<String, String>>) {
         // Given
         val toolPath = File("dotnet")
-        val info = DotnetInfo(Version(1, 0, 1), originSdks.toList())
         val workPath = File("work")
 
         val beforeAgentConfigurationLoadedSource = subjectOf<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>()
@@ -92,13 +92,16 @@ class DotnetPropertiesExtensionTest {
                 oneOf<PathsService>(_pathsService).getPath(PathType.Work)
                 will(returnValue(workPath))
 
-                oneOf<DotnetCliToolInfo>(_dotnetCliToolInfo).getInfo(toolPath, workPath)
-                will(returnValue(info))
+                oneOf<DotnetVersionProvider>(_dotnetVersionProvider).getVersion(toolPath, workPath)
+                will(returnValue(Version(1, 0, 1)))
+
+                oneOf<DotnetSdksProvider>(_dotnetSdksProvider).getSdks(toolPath)
+                will(returnValue(originSdks))
 
                 oneOf<BuildAgent>(_buildAgent).configuration
                 will(returnValue(_buildAgentConfiguration))
 
-                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_NAME, info.version.toString())
+                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_NAME, Version(1, 0, 1).toString())
                 oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_PATH, toolPath.absolutePath)
 
                 for ((version, path) in expectedSdks) {
@@ -120,6 +123,7 @@ class DotnetPropertiesExtensionTest {
             DotnetPropertiesExtension(
                     _agentLifeCycleEventSources,
                     _toolProvider,
-                    _dotnetCliToolInfo,
+                    _dotnetVersionProvider,
+                    _dotnetSdksProvider,
                     _pathsService)
 }

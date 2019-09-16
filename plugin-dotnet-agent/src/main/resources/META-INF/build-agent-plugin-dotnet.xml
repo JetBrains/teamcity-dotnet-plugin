@@ -32,7 +32,7 @@
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl">
+  <bean class="jetbrains.buildServer.dotnet.DotnetVersionProviderImpl">
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>

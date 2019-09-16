@@ -21,7 +21,8 @@ import java.io.File
 class DotnetPropertiesExtension(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _toolProvider: ToolProvider,
-        private val _dotnetCliToolInfo: DotnetCliToolInfo,
+        private val _dotnetVersionProvider: DotnetVersionProvider,
+        private val _dotnetSdksProvider: DotnetSdksProvider,
         private val _pathsService: PathsService)
     : AgentLifeCycleAdapter() {
 
@@ -40,12 +41,13 @@ class DotnetPropertiesExtension(
                 LOG.info(".NET CLI $event found at \"${dotnetPath.absolutePath}\"")
 
                 // Detect .NET CLI version
-                val dotnetInfo = _dotnetCliToolInfo.getInfo(dotnetPath, _pathsService.getPath(PathType.Work))
-                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, dotnetInfo.version.toString())
-                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"${dotnetInfo.version}\"")
+                val version = _dotnetVersionProvider.getVersion(dotnetPath, _pathsService.getPath(PathType.Work))
+                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, version.toString())
+                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"${version}\"")
 
                 LOG.debug("Locating .NET Core SDKs")
-                for ((version, path) in enumerateSdk(dotnetInfo.sdks)) {
+                val sdks = _dotnetSdksProvider.getSdks(dotnetPath).toList()
+                for ((version, path) in enumerateSdk(sdks)) {
                     val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
                     configuration.addConfigurationParameter(paramName, path)
                     LOG.debug("Add configuration parameter \"$paramName\": \"$path\"")
