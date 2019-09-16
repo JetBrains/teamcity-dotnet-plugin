@@ -82,7 +82,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
-                                TargetType.Tool,
+                                TargetType.CodeCoverageProfiler,
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
@@ -98,6 +98,9 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)))
+
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(coverageType))
 
@@ -216,7 +219,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
-                TargetType.Tool,
+                TargetType.CodeCoverageProfiler,
                 executableFile,
                 workingDirectory,
                 args,
@@ -226,7 +229,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
-                                TargetType.Tool,
+                                TargetType.CodeCoverageProfiler,
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
@@ -243,6 +246,9 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)))
+
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
 
@@ -319,7 +325,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
-                TargetType.Tool,
+                TargetType.CodeCoverageProfiler,
                 executableFile,
                 workingDirectory,
                 args,
@@ -329,7 +335,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
-                                TargetType.Tool,
+                                TargetType.CodeCoverageProfiler,
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
@@ -346,6 +352,9 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
+                allowing<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)))
+
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
 
@@ -415,7 +424,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
-                                TargetType.Tool,
+                                TargetType.CodeCoverageProfiler,
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
@@ -435,6 +444,9 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)))
+
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
 
@@ -504,7 +516,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
-                                TargetType.Tool,
+                                TargetType.CodeCoverageProfiler,
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
@@ -525,6 +537,9 @@ class DotCoverWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)))
+
                 oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
                 will(returnValue(CoverageConstants.PARAM_DOTCOVER))
 

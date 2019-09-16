@@ -66,6 +66,11 @@ class DotCoverWorkflowComposer(
             _targetRegistry.register(target).use {
                 for (commandLineToGetCoverage in workflow.commandLines) {
                     sendServiceMessages(context, deferredServiceMessages)
+                    deferredServiceMessages = null
+
+                    if (!_targetRegistry.activeTargets.contains(TargetType.Tool)) {
+                        yield(commandLineToGetCoverage)
+                    }
 
                     val dotCoverProject = DotCoverProject(
                             commandLineToGetCoverage,
@@ -95,7 +100,7 @@ class DotCoverWorkflowComposer(
                     }
 
                     yield(CommandLine(
-                            TargetType.Tool,
+                            target,
                             dotCoverExecutableFile,
                             commandLineToGetCoverage.workingDirectory,
                             createArguments(dotCoverProject).toList(),
