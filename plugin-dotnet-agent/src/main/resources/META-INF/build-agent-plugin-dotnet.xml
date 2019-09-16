@@ -32,9 +32,6 @@
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl">
-    <constructor-arg ref="dotnetToolProvider"/>
-  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetCliToolInfoImpl">
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>

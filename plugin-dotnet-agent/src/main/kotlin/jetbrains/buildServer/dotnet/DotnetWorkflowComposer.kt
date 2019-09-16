@@ -7,19 +7,18 @@ import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import org.apache.log4j.Logger
 import java.io.Closeable
+import java.io.File
 import java.util.*
 
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
         private val _loggerService: LoggerService,
-        private val _argumentsService: ArgumentsService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
         private val _commandSet: CommandSet,
         private val _failedTestSource: FailedTestSource,
         private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
-        private val _contextFactory: DotnetBuildContextFactory,
         private val _versionParser: VersionParser,
         private val _parametersService: ParametersService)
     : WorkflowComposer {
@@ -34,93 +33,91 @@ class DotnetWorkflowComposer(
                         ?.let { Verbosity.tryParse(it) }
 
                 val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+                var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
-                var dotnetSdk: DotnetSdk? = null
-                for (command in _commandSet.commands) {
-                    val executableFile = command.toolResolver.executableFile
-                    if (command.toolResolver.paltform == ToolPlatform.DotnetCore) {
-                        // Getting .NET Core version
-                        if (dotnetSdk == null) {
-                            disposableOf (
-                                    _loggerService.writeBlock("Getting .NET Core version"),
-                                    context.subscribe {
-                                        when {
-                                            it is CommandResultOutput -> {
-                                                _versionParser.tryParse(sequenceOf(it.output))?.let {
-                                                    dotnetSdk = DotnetSdk(executableFile, Version.parse(it))
-                                                }
-                                            }
-                                        }
-                                }).use {
-                                    yield(
-                                            CommandLine(
-                                                    TargetType.SystemDiagnostics,
-                                                    executableFile,
-                                                    workingDirectory,
-                                                    versionArgs,
-                                                    _defaultEnvironmentVariables.getVariables(Version.Empty).toList()))
-                                }
+                try {
+                    for (command in _commandSet.commands) {
+                        val executableFile = command.toolResolver.executableFile
+                        if (command.toolResolver.paltform == ToolPlatform.DotnetCore && dotnetVersions.isEmpty()) {
+                            // Getting .NET Core version
+                            yieldAll(yieldDotnetVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
                         }
 
-                        if (dotnetSdk == null) {
-                            dotnetSdk = DotnetSdk(executableFile, Version.Empty)
-                        }
-                    }
-
-                    val dotnetBuildContext = DotnetBuildContext(
-                            workingDirectory,
-                            command,
-                            dotnetSdk ?: DotnetSdk(executableFile, Version.Empty),
-                            verbosity,
-                            emptySet())
-
-                    val args = command.getArguments(dotnetBuildContext).toList()
-
-                    // Define build log block name
-                    val commandType = command.commandType
-                    val commandName = commandType.id.replace('-', ' ')
-                    val blockName = if (commandName.isNotBlank()) {
-                        commandName
-                    } else {
-                        args.firstOrNull()?.value ?: ""
-                    }
-
-                    val result = EnumSet.noneOf(CommandResult::class.java)
-
-                    disposableOf(
-                            // Build an environment
-                            disposableOf(command.environmentBuilders.map { it.build(dotnetBuildContext) }),
-                            // Strart a build log block
-                            _loggerService.writeBlock(blockName),
-                            // Subscribe for failed tests
-                            _failedTestSource.subscribe { result += CommandResult.FailedTests },
-                            // Subscribe for an exit code
-                            context.subscribe {
-                                when {
-                                    it is CommandResultExitCode -> {
-                                        val commandResult = command.resultsAnalyzer.analyze(it.exitCode, result)
-                                        _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it.exitCode)
-                                        if (commandResult.contains(CommandResult.Fail)) {
-                                            context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                                        }
-                                    }
-                                }
-                            },
-                            // Register the current target
-                            _targetRegistry.register(target)
-                    ).use {
-                        _commandRegistry.register(dotnetBuildContext)
-                        yield(CommandLine(
-                                TargetType.Tool,
-                                executableFile,
-                                dotnetBuildContext.workingDirectory,
-                                args,
-                                _defaultEnvironmentVariables.getVariables(dotnetBuildContext.currentSdk.version).toList()))
+                        val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, DotnetSdk(executableFile, dotnetVersions.lastOrNull() ?: Version.Empty), verbosity, emptySet())
+                        yieldAll(yieldDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile))
                     }
                 }
-
-                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
+                finally {
+                    _dotnetWorkflowAnalyzer.summarize(analyzerContext)
+                }
             })
+
+    private fun yieldDotnetVersionCommands(workflowContext: WorkflowContext, executableFile: File, workingDirectory: File, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
+        disposableOf (
+                _loggerService.writeBlock("Getting .NET Core version"),
+                workflowContext.subscribe {
+                    when {
+                        it is CommandResultOutput -> {
+                            _versionParser.tryParse(sequenceOf(it.output))?.let {
+                                versions.add(Version.parse(it))
+                            }
+                        }
+                    }
+                }).use {
+            yield(
+                    CommandLine(
+                            TargetType.SystemDiagnostics,
+                            executableFile,
+                            workingDirectory,
+                            versionArgs,
+                            _defaultEnvironmentVariables.getVariables(Version.Empty).toList()))
+        }
+    }
+
+    private fun yieldDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File): Sequence<CommandLine> = sequence {
+        val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
+        val result = EnumSet.noneOf(CommandResult::class.java)
+
+        disposableOf(
+                // Build an environment
+                disposableOf(dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }),
+                // Strart a build log block
+                _loggerService.writeBlock(generateBlockName(dotnetBuildContext.command, args)),
+                // Subscribe for failed tests
+                _failedTestSource.subscribe { result += CommandResult.FailedTests },
+                // Subscribe for an exit code
+                workflowContext.subscribe {
+                    when {
+                        it is CommandResultExitCode -> {
+                            val commandResult = dotnetBuildContext.command.resultsAnalyzer.analyze(it.exitCode, result)
+                            _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it.exitCode)
+                            if (commandResult.contains(CommandResult.Fail)) {
+                                workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED)
+                            }
+                        }
+                    }
+                },
+                // Register the current target
+                _targetRegistry.register(target)
+        ).use {
+            _commandRegistry.register(dotnetBuildContext)
+            yield(CommandLine(
+                    TargetType.Tool,
+                    executableFile,
+                    dotnetBuildContext.workingDirectory,
+                    args,
+                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.currentSdk.version).toList()))
+        }
+    }
+
+    private fun generateBlockName(command: DotnetCommand, args: List<CommandLineArgument>): String {
+        val commandName = command.commandType.id.replace('-', ' ')
+        return if (commandName.isNotBlank()) {
+            commandName
+        } else {
+            args.firstOrNull()?.value ?: ""
+        }
+    }
 
     companion object {
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()

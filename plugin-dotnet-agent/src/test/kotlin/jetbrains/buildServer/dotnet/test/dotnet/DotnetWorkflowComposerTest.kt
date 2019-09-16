@@ -43,7 +43,6 @@ class DotnetWorkflowComposerTest {
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
     private lateinit var _commandRegistry: CommandRegistry
-    private lateinit var _buildContextFactory: DotnetBuildContextFactory
     private lateinit var _buildContext1: DotnetBuildContext
     private lateinit var _buildContext2: DotnetBuildContext
     private lateinit var _versionParser: VersionParser
@@ -72,7 +71,6 @@ class DotnetWorkflowComposerTest {
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
         _commandRegistry = _ctx.mock(CommandRegistry::class.java)
-        _buildContextFactory = _ctx.mock(DotnetBuildContextFactory::class.java)
         _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, DotnetSdk(File("dotnet"), Version(1)))
         _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, DotnetSdk(File("dotnet"), Version(2)))
         _versionParser = _ctx.mock(VersionParser::class.java)
@@ -91,9 +89,6 @@ class DotnetWorkflowComposerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand1)
-                will(returnValue(_buildContext1))
-
                 oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(1))
                 will(returnValue(envVars.asSequence()))
 
@@ -134,9 +129,6 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<ToolResolver>(_toolResolver1).executableFile
                 will(returnValue(File("dotnet.exe")))
-
-                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand2)
-                will(returnValue(_buildContext2))
 
                 oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(2))
                 will(returnValue(envVars.asSequence()))
@@ -231,14 +223,12 @@ class DotnetWorkflowComposerTest {
         return DotnetWorkflowComposer(
                 _pathService,
                 _loggerService,
-                ArgumentsServiceStub(),
                 _environmentVariables,
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
                 _failedTestSource,
                 _targetRegistry,
                 _commandRegistry,
-                _buildContextFactory,
                 _versionParser,
                 _parametersService)
     }
