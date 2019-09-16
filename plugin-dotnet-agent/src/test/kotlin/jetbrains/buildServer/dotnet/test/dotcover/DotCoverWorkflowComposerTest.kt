@@ -8,6 +8,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.rx.Disposable
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -23,7 +24,6 @@ class DotCoverWorkflowComposerTest {
     private lateinit var _parametersService: ParametersService
     private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
     private lateinit var _loggerService: LoggerService
-    private lateinit var _workflowContext: WorkflowContext
     private lateinit var _coverageFilterProvider: CoverageFilterProvider
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
@@ -35,7 +35,6 @@ class DotCoverWorkflowComposerTest {
         _parametersService = _ctx.mock<ParametersService>(ParametersService::class.java)
         _dotCoverProjectSerializer = _ctx.mock<DotCoverProjectSerializer>(DotCoverProjectSerializer::class.java)
         _loggerService = _ctx.mock<LoggerService>(LoggerService::class.java)
-        _workflowContext = _ctx.mock<WorkflowContext>(WorkflowContext::class.java)
         _coverageFilterProvider = _ctx.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
@@ -127,12 +126,6 @@ class DotCoverWorkflowComposerTest {
                     oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
                 }
 
-                allowing<WorkflowContext>(_workflowContext).status
-                will(returnValue(WorkflowStatus.Running))
-
-                oneOf<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
@@ -143,7 +136,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -195,7 +188,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualWorkflow = composer.compose(_workflowContext, baseWorkflow)
+        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow)
 
         // Then
         _ctx.assertIsSatisfied()
@@ -275,12 +268,6 @@ class DotCoverWorkflowComposerTest {
                     oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
                 }
 
-                allowing<WorkflowContext>(_workflowContext).status
-                will(returnValue(WorkflowStatus.Running))
-
-                oneOf<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 // Check diagnostics info
                 oneOf<LoggerService>(_loggerService).writeBlock("dotCover Settings")
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("Command line:")
@@ -308,7 +295,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -381,12 +368,6 @@ class DotCoverWorkflowComposerTest {
                     oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
                 }
 
-                allowing<WorkflowContext>(_workflowContext).status
-                will(returnValue(WorkflowStatus.Failed))
-
-                oneOf<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 never<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(File("dotCover").absoluteFile))
                 never<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
@@ -397,7 +378,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -473,12 +454,6 @@ class DotCoverWorkflowComposerTest {
                     oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
                 }
 
-                allowing<WorkflowContext>(_workflowContext).status
-                will(returnValue(WorkflowStatus.Running))
-
-                oneOf<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
@@ -489,7 +464,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -566,12 +541,6 @@ class DotCoverWorkflowComposerTest {
                     oneOf<DotCoverProjectSerializer>(_dotCoverProjectSerializer).serialize(dotCoverProject, it)
                 }
 
-                allowing<WorkflowContext>(_workflowContext).status
-                will(returnValue(WorkflowStatus.Running))
-
-                oneOf<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 oneOf<LoggerService>(_loggerService).writeMessage(DotCoverServiceMessage(dotCoverExecutableFile.parentFile))
                 oneOf<LoggerService>(_loggerService).writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
 
@@ -582,7 +551,7 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext, Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()

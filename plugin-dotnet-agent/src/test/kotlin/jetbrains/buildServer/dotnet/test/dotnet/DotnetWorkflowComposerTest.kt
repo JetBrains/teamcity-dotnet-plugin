@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
@@ -24,7 +25,6 @@ import java.util.*
 class DotnetWorkflowComposerTest {
     private lateinit var _ctx: Mockery
     private lateinit var _pathService: PathsService
-    private lateinit var _workflowContext: WorkflowContext
     private lateinit var _environmentBuilder1: EnvironmentBuilder
     private lateinit var _environmentVariables: EnvironmentVariables
     private lateinit var _commandSet: CommandSet
@@ -55,7 +55,6 @@ class DotnetWorkflowComposerTest {
         _failedTestSource = _ctx.mock(FailedTestSource::class.java)
         _dotnetWorkflowAnalyzer = _ctx.mock(DotnetWorkflowAnalyzer::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
-        _workflowContext = _ctx.mock(WorkflowContext::class.java)
         _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
         _commandSet = _ctx.mock(CommandSet::class.java)
         _dotnetCommand1 = _ctx.mock(DotnetCommand::class.java, "command1")
@@ -157,9 +156,6 @@ class DotnetWorkflowComposerTest {
                 oneOf<CommandSet>(_commandSet).commands
                 will(returnValue(sequenceOf(_dotnetCommand1, _dotnetCommand2)))
 
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(result))
-
                 oneOf<LoggerService>(_loggerService).writeStandardOutput(Pair(".NET Core SDK v1.0.0 ", Color.Default), Pair("dotnet.exe arg1 arg2", Color.Header))
 
                 oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.Build.id)
@@ -179,9 +175,6 @@ class DotnetWorkflowComposerTest {
 
                 oneOf<Closeable>(_closeable1).close()
 
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(result))
-
                 allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java))
                         ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0))
                 oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
@@ -197,7 +190,7 @@ class DotnetWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()

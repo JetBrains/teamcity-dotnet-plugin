@@ -9,6 +9,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.visualStudio.ToolResolver
 import jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer
@@ -23,7 +24,6 @@ import java.io.File
 class VisualStudioWorkflowComposerTest {
     private lateinit var _ctx: Mockery
     private lateinit var _pathService: PathsService
-    private lateinit var _workflowContext: WorkflowContext
     private lateinit var _targetService: TargetService
     private lateinit var _toolResolver: ToolResolver
     private lateinit var _loggerService: LoggerService
@@ -34,7 +34,6 @@ class VisualStudioWorkflowComposerTest {
     fun setUp() {
         _ctx = Mockery()
         _pathService = _ctx.mock(PathsService::class.java)
-        _workflowContext = _ctx.mock(WorkflowContext::class.java)
         _targetService = _ctx.mock(TargetService::class.java)
         _toolResolver = _ctx.mock(ToolResolver::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
@@ -133,9 +132,6 @@ class VisualStudioWorkflowComposerTest {
                 allowing<TargetService>(_targetService).targets
                 will(returnValue(targets))
 
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())))
-
                 allowing<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
                 will(returnValue(_targetRegistrationToken))
 
@@ -143,7 +139,7 @@ class VisualStudioWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0))).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -194,11 +190,6 @@ class VisualStudioWorkflowComposerTest {
                 allowing<TargetService>(_targetService).targets
                 will(returnValue(targets))
 
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(CommandLineResult(sequenceOf(exitCode), emptySequence(), emptySequence())))
-
-                oneOf<WorkflowContext>(_workflowContext).abort(BuildFinishedStatus.FINISHED_FAILED)
-
                 oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
 
                 oneOf<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
@@ -208,11 +199,13 @@ class VisualStudioWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        var context = WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(exitCode));
+        val actualCommandLines = composer.compose(context).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
         Assert.assertEquals(actualCommandLines, expectedCommandLines)
+        Assert.assertEquals(context.status, WorkflowStatus.Failed)
     }
 
     private fun createInstance(parameters: Map<String, String>): WorkflowComposer {

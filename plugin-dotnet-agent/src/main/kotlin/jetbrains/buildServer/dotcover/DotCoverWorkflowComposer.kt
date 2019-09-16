@@ -61,12 +61,12 @@ class DotCoverWorkflowComposer(
         }
 
         return Workflow(sequence {
-            var deferredServiceMessages: DeferredServiceMessages? = null
+            var deferredServiceMessages = mutableListOf<ServiceMessage>()
 
             _targetRegistry.register(target).use {
                 for (commandLineToGetCoverage in workflow.commandLines) {
                     sendServiceMessages(context, deferredServiceMessages)
-                    deferredServiceMessages = null
+                    deferredServiceMessages.clear()
 
                     if (!_targetRegistry.activeTargets.contains(TargetType.Tool)) {
                         yield(commandLineToGetCoverage)
@@ -106,12 +106,8 @@ class DotCoverWorkflowComposer(
                             createArguments(dotCoverProject).toList(),
                             commandLineToGetCoverage.environmentVariables))
 
-                    deferredServiceMessages =
-                            DeferredServiceMessages(
-                                    context.lastResult,
-                                    listOf(
-                                            DotCoverServiceMessage(File(dotCoverPath).absoluteFile),
-                                            ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile)))
+                    deferredServiceMessages.add(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
+                    deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
                 }
             }
 
@@ -150,13 +146,13 @@ class DotCoverWorkflowComposer(
         }
     }
 
-    private fun sendServiceMessages(context: WorkflowContext, deferredServiceMessages: DeferredServiceMessages?) {
+    private fun sendServiceMessages(context: WorkflowContext, deferredServiceMessages: List<ServiceMessage>) {
         if (context.status == WorkflowStatus.Failed) {
             return
         }
 
-        deferredServiceMessages?.let {
-            it.serviceMessages.forEach { _loggerService.writeMessage(it) }
+        for (serviceMessage in deferredServiceMessages) {
+            _loggerService.writeMessage(serviceMessage)
         }
     }
 
@@ -166,6 +162,4 @@ class DotCoverWorkflowComposer(
         internal const val DotCoverProjectExtension = ".dotCover"
         internal const val DotCoverSnapshotExtension = ".dcvr"
     }
-
-    private data class DeferredServiceMessages(val result: CommandLineResult, val serviceMessages: List<ServiceMessage>)
 }

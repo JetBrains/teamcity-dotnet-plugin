@@ -44,12 +44,8 @@ class WorkflowSessionImpl(
             return null
         }
 
-        val exitCode = ArrayList<Int>()
-        _lastResult = CommandLineResult(exitCode.asSequence(), emptySequence(), emptySequence())
-
         return CommandExecutionAdapter(
                 commandLinesIterator.next(),
-                exitCode,
                 _buildStepContext,
                 _loggerService,
                 _eventSource)
@@ -72,12 +68,8 @@ class WorkflowSessionImpl(
     override fun sessionFinished(): BuildFinishedStatus? =
             _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
 
-    override val lastResult: CommandLineResult
-        get() = _lastResult ?: throw RunBuildException("There are no any results yet")
-
     private class CommandExecutionAdapter(
             private val _commandLine: CommandLine,
-            private val _exitCode: MutableCollection<Int>,
             private val _buildStepContext: BuildStepContext,
             private val _loggerService: LoggerService,
             private val _eventSource: Observer<CommandResultEvent>) : CommandExecution {
@@ -88,7 +80,6 @@ class WorkflowSessionImpl(
 
         override fun processFinished(exitCode: Int) {
             _eventSource.onNext(CommandResultExitCode(exitCode))
-            _exitCode.add(exitCode)
         }
 
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(

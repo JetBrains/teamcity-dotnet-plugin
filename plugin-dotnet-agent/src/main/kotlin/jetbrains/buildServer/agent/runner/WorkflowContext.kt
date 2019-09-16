@@ -6,8 +6,6 @@ import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.rx.Observable
 
 interface WorkflowContext: Observable<CommandResultEvent> {
-    val lastResult: CommandLineResult
-
     val status: WorkflowStatus
 
     fun abort(buildFinishedStatus: BuildFinishedStatus)

@@ -4,9 +4,12 @@ import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotnet.CommandResult
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
+import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 
 class VisualStudioWorkflowComposer(
@@ -49,7 +52,21 @@ class VisualStudioWorkflowComposer(
                 val executableFile = _toolResolver.executableFile
 
                 for ((targetFile) in _targetService.targets) {
-                    _targetRegistry.register(target).use {
+                    disposableOf(
+                            // Subscribe for an exit code
+                            context.subscribe {
+                                when {
+                                    it is CommandResultExitCode -> {
+                                        if (it.exitCode != 0) {
+                                            _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${it.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${it.exitCode}"))
+                                            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                                        }
+                                    }
+                                }
+                            },
+                            // Register the current target
+                            _targetRegistry.register(target)
+                    ).use {
                         yield(CommandLine(
                                 TargetType.Tool,
                                 executableFile,
@@ -66,9 +83,8 @@ class VisualStudioWorkflowComposer(
                                 emptyList()))
                     }
 
-                    if (context.lastResult.exitCode != 0) {
-                        _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
-                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
+
+                    if (context.status != WorkflowStatus.Running) {
                         return@sequence
                     }
                 }
