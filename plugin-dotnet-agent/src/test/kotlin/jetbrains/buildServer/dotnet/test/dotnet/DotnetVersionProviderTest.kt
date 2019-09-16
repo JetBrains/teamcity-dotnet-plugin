@@ -31,17 +31,17 @@ class DotnetVersionProviderTest {
     @DataProvider
     fun testData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(sequenceOf("3.0.100-preview9-014004"), emptySequence<String>(), 0, Version(2,2,202)),
-                arrayOf(sequenceOf("3.0.100-preview9-014004"), emptySequence<String>(), 1, Version.Empty),
-                arrayOf(sequenceOf("3.0.100-preview9-014004"), emptySequence<String>(), -2, Version.Empty),
-                arrayOf(sequenceOf("3.0.100-preview9-014004"), sequenceOf("some error"), 0, Version.Empty),
-                arrayOf(emptySequence<String>(), sequenceOf("some error"), 0, Version.Empty),
-                arrayOf(emptySequence<String>(), sequenceOf("some error"), 1, Version.Empty)
+                arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), 0, Version(2,2,202)),
+                arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), 1, Version.Empty),
+                arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), -2, Version.Empty),
+                arrayOf(listOf("3.0.100-preview9-014004"), listOf("some error"), 0, Version.Empty),
+                arrayOf(emptyList<String>(), listOf("some error"), 0, Version.Empty),
+                arrayOf(emptyList<String>(), listOf("some error"), 1, Version.Empty)
                 )
     }
 
     @Test(dataProvider = "testData")
-    fun shouldGetDotnetVersion(stdOutVersion: Sequence<String>, stdErr: Sequence<String>, exitCode: Int, expectedVersion: Version) {
+    fun shouldGetDotnetVersion(stdOutVersion: Collection<String>, stdErr: Collection<String>, exitCode: Int, expectedVersion: Version) {
         // Given
         val workingDirectoryPath = File("wd")
         val toolPath = File("dotnet")
@@ -52,7 +52,7 @@ class DotnetVersionProviderTest {
                 DotnetVersionProviderImpl.versionArgs,
                 emptyList())
 
-        val getVersionResult = CommandLineResult(sequenceOf(exitCode), stdOutVersion, stdErr)
+        val getVersionResult = CommandLineResult(exitCode, stdOutVersion, stdErr)
         _ctx.checking(object : Expectations() {
             init {
                 oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)

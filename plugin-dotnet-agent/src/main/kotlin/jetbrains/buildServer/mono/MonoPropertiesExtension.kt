@@ -2,6 +2,7 @@ package jetbrains.buildServer.mono
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.MonoConstants
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.util.EventDispatcher
 import org.apache.log4j.Logger
 import java.io.File
@@ -27,9 +28,13 @@ class MonoPropertiesExtension(
                     listOf(CommandLineArgument("--version")),
                     emptyList())
             _commandLineExecutor.tryExecute(command)?.let {
-                _versionParser.parse(it.standardOutput)?.let {
+                val version = _versionParser.parse(it.standardOutput)
+                if(version != Version.Empty) {
                     agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.absolutePath)
                     LOG.info("Found Mono $it at ${command.executableFile.absolutePath}")
+                }
+                else {
+                    LOG.info("Mono not found")
                 }
             }
         } catch (e: ToolCannotBeFoundException) {

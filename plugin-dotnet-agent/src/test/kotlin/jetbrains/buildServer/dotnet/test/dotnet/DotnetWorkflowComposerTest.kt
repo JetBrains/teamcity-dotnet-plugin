@@ -83,7 +83,7 @@ class DotnetWorkflowComposerTest {
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
         val args1 = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
         val args2 = listOf(CommandLineArgument("arg3"))
-        val result = CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())
+        val result = CommandLineResult(0, emptyList(), emptyList())
 
         // When
         _ctx.checking(object : Expectations() {

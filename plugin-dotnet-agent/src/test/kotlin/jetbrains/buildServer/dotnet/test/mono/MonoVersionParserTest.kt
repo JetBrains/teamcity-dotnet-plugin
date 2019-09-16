@@ -10,28 +10,28 @@ class MonoVersionParserTest {
     @DataProvider
     fun versionCases(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(sequenceOf(
+                arrayOf(listOf(
                         "Mono JIT compiler version 5.2.0 (Visual Studio built mono)",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
                         Version(5, 2,0)),
-                arrayOf(sequenceOf(
+                arrayOf(listOf(
                         "Mono version 5.0.1234",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com"),
                         Version(5,0,1234)),
-                arrayOf(sequenceOf(
+                arrayOf(listOf(
                         "Mono JIT compiler 5.2.0 (Visual Studio built mono)",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
                         Version.Empty),
-                arrayOf(sequenceOf("   "), Version.Empty),
-                arrayOf(sequenceOf(""), Version.Empty),
-                arrayOf(emptySequence<String>(), Version.Empty),
-                arrayOf(sequenceOf(
+                arrayOf(listOf("   "), Version.Empty),
+                arrayOf(listOf(""), Version.Empty),
+                arrayOf(emptyList<String>(), Version.Empty),
+                arrayOf(listOf(
                         "Mono",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",
                         "        TLS:           normal",
@@ -41,7 +41,7 @@ class MonoVersionParserTest {
     }
 
     @Test(dataProvider = "versionCases")
-    fun shouldParseVersion(output: Sequence<String>, expectedVersion: Version) {
+    fun shouldParseVersion(output: Collection<String>, expectedVersion: Version) {
         // Given
         val parser = MonoVersionParser()
 

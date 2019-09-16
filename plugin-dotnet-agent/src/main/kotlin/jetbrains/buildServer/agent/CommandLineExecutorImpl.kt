@@ -23,9 +23,9 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
         return executor.runProcess(executionTimeoutSeconds)?.let {
             val result = CommandLineResult(
-                    sequenceOf(it.exitCode),
-                    it.outLines.asSequence(),
-                    it.stderr.split("\\r?\\n").asSequence())
+                    it.exitCode,
+                    it.outLines.toList(),
+                    it.stderr.split("\\r?\\n").toList())
 
             if (LOG.isDebugEnabled) {
                 val resultStr = StringBuilder()

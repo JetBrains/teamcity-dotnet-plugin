@@ -8,7 +8,7 @@ class MonoVersionParser : VersionParser {
     /**
      * Returns cleaned mono version.
      * **/
-    override fun parse(output: Sequence<String>): Version =
+    override fun parse(output: Collection<String>): Version =
             output
                     .map { VersionPattern.matcher(it) }
                     .filter { it.find() }

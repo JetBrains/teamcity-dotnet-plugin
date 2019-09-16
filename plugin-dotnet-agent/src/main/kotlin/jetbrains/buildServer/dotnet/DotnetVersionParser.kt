@@ -7,7 +7,7 @@ class DotnetVersionParser : VersionParser {
     /**
      * Returns cleaned .net core sdk version.
      * **/
-    override fun parse(output: Sequence<String>): Version =
+    override fun parse(output: Collection<String>): Version =
             output
                     .map { VersionPattern.matcher(it) }
                     .filter { it.find() }

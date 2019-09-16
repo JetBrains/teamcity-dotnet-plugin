@@ -22,7 +22,6 @@ class WorkflowSessionImpl(
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null
     private val _eventSource = subjectOf<CommandResultEvent>()
-    private var _lastResult: CommandLineResult? = CommandLineResult(emptySequence(), emptySequence(), emptySequence())
     private var _buildFinishedStatus: BuildFinishedStatus? = null
 
     override fun subscribe(observer: Observer<CommandResultEvent>) = _eventSource.subscribe(observer)
