@@ -20,7 +20,7 @@ class MonoVersionParserTest {
                 arrayOf(sequenceOf(
                         "Mono version 5.0.1234",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com"),
-                        "5.0.1234"),
+                        Version(5,0,1234)),
                 arrayOf(sequenceOf(
                         "Mono JIT compiler 5.2.0 (Visual Studio built mono)",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",
@@ -28,9 +28,9 @@ class MonoVersionParserTest {
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
                         Version.Empty),
-                arrayOf(sequenceOf("   "), null),
-                arrayOf(sequenceOf(""), null),
-                arrayOf(emptySequence<String>(), null),
+                arrayOf(sequenceOf("   "), Version.Empty),
+                arrayOf(sequenceOf(""), Version.Empty),
+                arrayOf(emptySequence<String>(), Version.Empty),
                 arrayOf(sequenceOf(
                         "Mono",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",
