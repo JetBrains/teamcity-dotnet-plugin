@@ -95,19 +95,19 @@ class DotnetWorkflowComposerTest {
 
         every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
-        every { _failedTestSource.subscribe(any()) } answers {
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
-        } andThen {
+        } /* dotnet build */ andThen {
             createToken()
         }
 
-        every { _workflowContext.subscribe(any()) } answers {
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
-        } andThen {
+        } /* dotnet --version */ andThen {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
             createToken()
-        } andThen {
+        } /* dotnet build */ andThen {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
         }
@@ -117,6 +117,186 @@ class DotnetWorkflowComposerTest {
 
         // Then
         verifyAllTokensWereDisposed()
+
+        Assert.assertEquals(
+                actualCommandLines,
+                listOf(
+                        CommandLine(
+                                TargetType.Tool,
+                                _msbuildExecutable,
+                                _workingDirectory,
+                                _msbuildArgs,
+                                _msbuildVars),
+                        CommandLine(
+                                TargetType.SystemDiagnostics,
+                                _dotnetExecutable,
+                                _workingDirectory,
+                                listOf(CommandLineArgument("--version")),
+                                _msbuildVars),
+                        CommandLine(
+                                TargetType.Tool,
+                                _dotnetExecutable,
+                                _workingDirectory,
+                                _dotnetArgs,
+                                _dotnetVars)
+                ))
+    }
+
+    @Test
+    fun shouldComposeForFailedTest() {
+        // Given
+        val composer = createInstance()
+
+        every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
+
+        val msbuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { executableFile } returns _msbuildExecutable
+                every { paltform } returns ToolPlatform.Windows
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } returns createToken()
+                        })
+                every { getArguments(any()) } returns _msbuildArgs.asSequence()
+                every { commandType } returns DotnetCommandType.MSBuild
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(1,  setOf(CommandResult.FailedTests)) } returns setOf(CommandResult.FailedTests)
+                }
+            }
+        }
+
+        val dotnetBuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { executableFile } returns _dotnetExecutable
+                every { paltform } returns ToolPlatform.DotnetCore
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } returns createToken()
+                        })
+                every { getArguments(any()) } returns _dotnetArgs.asSequence()
+                every { commandType } returns DotnetCommandType.Build
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(0, emptySet()) } returns emptySet()
+                }
+            }
+        }
+
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<Unit>>(0).onNext(Unit)
+            createToken()
+        } /* dotnet build */ andThen {
+            createToken()
+        }
+
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
+            createToken()
+        } /* dotnet --version */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
+            createToken()
+        } /* dotnet build */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        }
+
+        // When
+        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+
+        // Then
+        verifyAllTokensWereDisposed()
+
+        Assert.assertEquals(
+                actualCommandLines,
+                listOf(
+                        CommandLine(
+                                TargetType.Tool,
+                                _msbuildExecutable,
+                                _workingDirectory,
+                                _msbuildArgs,
+                                _msbuildVars),
+                        CommandLine(
+                                TargetType.SystemDiagnostics,
+                                _dotnetExecutable,
+                                _workingDirectory,
+                                listOf(CommandLineArgument("--version")),
+                                _msbuildVars),
+                        CommandLine(
+                                TargetType.Tool,
+                                _dotnetExecutable,
+                                _workingDirectory,
+                                _dotnetArgs,
+                                _dotnetVars)
+                ))
+    }
+
+    @Test
+    fun shouldAbortBuildWhenFailed() {
+        // Given
+        val composer = createInstance()
+
+        every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
+
+        val msbuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { executableFile } returns _msbuildExecutable
+                every { paltform } returns ToolPlatform.Windows
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } returns createToken()
+                        })
+                every { getArguments(any()) } returns _msbuildArgs.asSequence()
+                every { commandType } returns DotnetCommandType.MSBuild
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(1,  emptySet()) } returns setOf(CommandResult.Fail)
+                }
+            }
+        }
+
+        val dotnetBuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { executableFile } returns _dotnetExecutable
+                every { paltform } returns ToolPlatform.DotnetCore
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } returns createToken()
+                        })
+                every { getArguments(any()) } returns _dotnetArgs.asSequence()
+                every { commandType } returns DotnetCommandType.Build
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(0, emptySet()) } returns emptySet()
+                }
+            }
+        }
+
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
+            createToken()
+        } /* dotnet build */ andThen {
+            createToken()
+        }
+
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
+            createToken()
+        } /* dotnet --version */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
+            createToken()
+        } /* dotnet build */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        }
+
+        every { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) } returns Unit
+
+        // When
+        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+
+        // Then
+        verifyAllTokensWereDisposed()
+        verify { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) }
 
         Assert.assertEquals(
                 actualCommandLines,
