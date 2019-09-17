@@ -3,11 +3,11 @@ package jetbrains.buildServer.dotnet
 import java.util.*
 
 class DotnetWorkflowAnalyzerContext {
-    private val _commandResults = mutableListOf<EnumSet<CommandResult>>()
+    private val _commandResults = mutableListOf<Set<CommandResult>>()
 
-    val results: Sequence<EnumSet<CommandResult>> get() = _commandResults.asSequence()
+    val results: Sequence<Set<CommandResult>> get() = _commandResults.asSequence()
 
-    fun addResult(result: EnumSet<CommandResult>) {
+    fun addResult(result: Set<CommandResult>) {
         _commandResults.add(result)
     }
 }

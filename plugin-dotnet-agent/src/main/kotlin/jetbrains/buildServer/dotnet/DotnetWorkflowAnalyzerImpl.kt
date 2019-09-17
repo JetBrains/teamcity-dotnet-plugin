@@ -7,7 +7,7 @@ import java.util.*
 class DotnetWorkflowAnalyzerImpl(private val _loggerService: LoggerService)
     : DotnetWorkflowAnalyzer {
 
-    override fun registerResult(context: DotnetWorkflowAnalyzerContext, result: EnumSet<CommandResult>, exitCode: Int) {
+    override fun registerResult(context: DotnetWorkflowAnalyzerContext, result: Set<CommandResult>, exitCode: Int) {
         if (result.contains(CommandResult.Fail)) {
             _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
         } else {

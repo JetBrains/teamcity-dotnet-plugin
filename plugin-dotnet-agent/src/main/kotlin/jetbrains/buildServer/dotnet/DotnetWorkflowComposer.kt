@@ -69,7 +69,7 @@ class DotnetWorkflowComposer(
 
     private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File): Sequence<CommandLine> = sequence {
         val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
-        val result = EnumSet.noneOf(CommandResult::class.java)
+        val result = mutableSetOf<CommandResult>()
 
         disposableOf(
                 // Build an environment

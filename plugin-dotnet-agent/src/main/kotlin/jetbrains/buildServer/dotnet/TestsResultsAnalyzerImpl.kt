@@ -3,25 +3,23 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.runner.BuildOptions
 import java.util.*
 
-
 class TestsResultsAnalyzerImpl(
         private val _buildOptions: BuildOptions)
     : ResultsAnalyzer {
 
-    override fun analyze(exitCode: Int, result: EnumSet<CommandResult>): EnumSet<CommandResult> {
+    override fun analyze(exitCode: Int, result: Set<CommandResult>): Set<CommandResult> {
         if (exitCode == 0) {
-            return EnumSet.of(CommandResult.Success)
+            return setOf(CommandResult.Success)
         }
 
         if (exitCode > 0 && result.contains(CommandResult.FailedTests)) {
-            result.add(CommandResult.Success)
-            return result
+            return result + CommandResult.Success
         }
 
         return if (!_buildOptions.failBuildOnExitCode) {
-            EnumSet.of(CommandResult.Success)
+            setOf(CommandResult.Success)
         } else {
-            EnumSet.of(CommandResult.Fail)
+            setOf(CommandResult.Fail)
         }
     }
 }

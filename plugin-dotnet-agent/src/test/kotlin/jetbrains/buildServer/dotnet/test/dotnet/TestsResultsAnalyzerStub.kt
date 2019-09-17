@@ -5,6 +5,6 @@ import jetbrains.buildServer.dotnet.ResultsAnalyzer
 import java.util.*
 
 class TestsResultsAnalyzerStub : ResultsAnalyzer {
-    override fun analyze(exitCode: Int, result: EnumSet<CommandResult>): EnumSet<CommandResult> =
-            EnumSet.of(CommandResult.Success)
+    override fun analyze(exitCode: Int, result: Set<CommandResult>): Set<CommandResult> =
+            setOf(CommandResult.Success)
 }
