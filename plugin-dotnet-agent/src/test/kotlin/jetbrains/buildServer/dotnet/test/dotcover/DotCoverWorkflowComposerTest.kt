@@ -66,7 +66,7 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
@@ -156,11 +156,11 @@ class DotCoverWorkflowComposerTest {
     }
 
     @Test(dataProvider = "notComposeCases")
-    fun shouldReturnsBaseWorkflowWhenCoverageDisabled(
+    fun shouldReturnBaseWorkflowWhenCoverageDisabled(
             coverageType: String?,
             dotCoverPath: String?) {
         // Given
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
@@ -188,11 +188,60 @@ class DotCoverWorkflowComposerTest {
             }
         })
 
-        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow)
+        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
-        Assert.assertEquals(actualWorkflow, baseWorkflow)
+        Assert.assertEquals(actualWorkflow, baseWorkflow.commandLines.toList())
+    }
+
+    @Test
+    fun shouldNotWrapNonToolTargetsByDotCover() {
+        // Given
+        val executableFile = File("dotnet", "dotnet.exe")
+        val workingDirectory = File("wd")
+        val args = listOf(CommandLineArgument("arg1"))
+        val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
+        val commandLine = CommandLine(
+                TargetType.Tool,
+                executableFile,
+                workingDirectory,
+                args,
+                envVars)
+
+        val composer = createInstance(VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile))
+        val baseWorkflow = Workflow(sequenceOf(commandLine))
+
+        // When
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<TargetRegistry>(_targetRegistry).activeTargets
+                will(returnValue(sequenceOf(TargetType.MemoryProfiler, TargetType.SystemDiagnostics)))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)
+                will(returnValue(CoverageConstants.PARAM_DOTCOVER))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled")
+                will(returnValue(null))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
+                will(returnValue("dotCover"))
+
+                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                will(returnValue(Verbosity.Quiet.id))
+
+                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.CodeCoverageProfiler)
+                will(returnValue(_targetRegistrationToken))
+
+                oneOf<Disposable>(_targetRegistrationToken).dispose()
+            }
+        })
+
+        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actualWorkflow, baseWorkflow.commandLines.toList())
     }
 
     @DataProvider(name = "showDiagnosticCases")
@@ -207,7 +256,7 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
@@ -271,7 +320,7 @@ class DotCoverWorkflowComposerTest {
                 // Check diagnostics info
                 oneOf<LoggerService>(_loggerService).writeBlock("dotCover Settings")
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("Command line:")
-                oneOf<LoggerService>(_loggerService).writeStandardOutput("  \"${File("sdk", "dotnet.exe").path}\" arg1", Color.Details)
+                oneOf<LoggerService>(_loggerService).writeStandardOutput("  \"${File("dotnet", "dotnet.exe").path}\" arg1", Color.Details)
                 oneOf<LoggerService>(_loggerService).writeStandardOutput("Filters:")
                 val filter1 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "abc")
                 val filter2 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "qwerty")
@@ -307,7 +356,7 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
@@ -390,7 +439,7 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
@@ -476,7 +525,7 @@ class DotCoverWorkflowComposerTest {
         // Given
         val dotCoverProjectUniqueName = "proj000"
         val dotCoverSnapshotUniqueName = "snapshot000"
-        val executableFile = File("sdk", "dotnet.exe")
+        val executableFile = File("dotnet", "dotnet.exe")
         val workingDirectory = File("wd")
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))

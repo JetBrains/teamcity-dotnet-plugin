@@ -64,8 +64,10 @@ class WorkflowSessionImpl(
 
     override fun sessionStarted() = Unit
 
-    override fun sessionFinished(): BuildFinishedStatus? =
-            _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
+    override fun sessionFinished(): BuildFinishedStatus? {
+        _eventSource.onComplete()
+        return _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
+    }
 
     private class CommandExecutionAdapter(
             private val _commandLine: CommandLine,

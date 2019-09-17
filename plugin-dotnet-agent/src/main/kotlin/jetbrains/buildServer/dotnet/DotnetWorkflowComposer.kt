@@ -40,11 +40,11 @@ class DotnetWorkflowComposer(
                         val executableFile = command.toolResolver.executableFile
                         if (command.toolResolver.paltform == ToolPlatform.DotnetCore && dotnetVersions.isEmpty()) {
                             // Getting .NET Core version
-                            yieldAll(yieldDotnetVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
+                            yieldAll(getDotnetSdkVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
                         }
 
                         val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
-                        yieldAll(yieldDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile))
+                        yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile))
                     }
                 }
                 finally {
@@ -52,16 +52,11 @@ class DotnetWorkflowComposer(
                 }
             })
 
-    private fun yieldDotnetVersionCommands(workflowContext: WorkflowContext, executableFile: File, workingDirectory: File, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
+    private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: File, workingDirectory: File, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
         disposableOf (
-                _loggerService.writeBlock("Getting .NET Core version"),
-                workflowContext.subscribe {
-                    when {
-                        it is CommandResultOutput -> {
-                            versions.add(_versionParser.parse(listOf(it.output)))
-                        }
-                    }
-                }).use {
+                _loggerService.writeBlock("Getting .NET Core SDK version"),
+                workflowContext.subscibeForOutput { versions.add(_versionParser.parse(listOf(it))) }
+        ).use {
             yield(
                     CommandLine(
                             TargetType.SystemDiagnostics,
@@ -72,7 +67,7 @@ class DotnetWorkflowComposer(
         }
     }
 
-    private fun yieldDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File): Sequence<CommandLine> = sequence {
+    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File): Sequence<CommandLine> = sequence {
         val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
         val result = EnumSet.noneOf(CommandResult::class.java)
 
@@ -84,15 +79,11 @@ class DotnetWorkflowComposer(
                 // Subscribe for failed tests
                 _failedTestSource.subscribe { result += CommandResult.FailedTests },
                 // Subscribe for an exit code
-                workflowContext.subscribe {
-                    when {
-                        it is CommandResultExitCode -> {
-                            val commandResult = dotnetBuildContext.command.resultsAnalyzer.analyze(it.exitCode, result)
-                            _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it.exitCode)
-                            if (commandResult.contains(CommandResult.Fail)) {
-                                workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED)
-                            }
-                        }
+                workflowContext.subscibeForExitCode {
+                    val commandResult = dotnetBuildContext.command.resultsAnalyzer.analyze(it, result)
+                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
+                    if (commandResult.contains(CommandResult.Fail)) {
+                        workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED)
                     }
                 },
                 // Register the current target

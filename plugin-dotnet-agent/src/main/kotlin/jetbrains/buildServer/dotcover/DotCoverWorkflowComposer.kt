@@ -70,6 +70,7 @@ class DotCoverWorkflowComposer(
 
                     if (!_targetRegistry.activeTargets.contains(TargetType.Tool)) {
                         yield(commandLineToGetCoverage)
+                        continue
                     }
 
                     val dotCoverProject = DotCoverProject(
