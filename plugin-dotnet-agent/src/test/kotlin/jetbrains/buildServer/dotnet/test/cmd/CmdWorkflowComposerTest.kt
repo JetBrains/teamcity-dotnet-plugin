@@ -1,5 +1,9 @@
 package jetbrains.buildServer.dotnet.test.cmd
 
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.agent.runner.WorkflowComposer
@@ -7,8 +11,6 @@ import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.cmd.CmdWorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.util.OSType
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -16,18 +18,17 @@ import org.testng.annotations.Test
 import java.io.File
 
 class CmdWorkflowComposerTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _environment: Environment
-    private lateinit var _workflowContext: WorkflowContext
+    @MockK private lateinit var _environment: Environment
+    @MockK private lateinit var _workflowContext: WorkflowContext
     private var _workflowCmd = createWorkflow(File("abc1", "my.cmd"))
     private var _workflowBat = createWorkflow(File("abc2", "my.bat"))
     private var _workflowOther = createWorkflow(File("abc3", "my.exe"))
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _environment = _ctx.mock(Environment::class.java)
-        _workflowContext = _ctx.mock(WorkflowContext::class.java)
+        MockKAnnotations.init(this)
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
     }
 
     @Test
@@ -62,7 +63,7 @@ class CmdWorkflowComposerTest {
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"")),
                                                 _workflowCmd.commandLines.single().environmentVariables
                                         )
                                 )
@@ -81,7 +82,7 @@ class CmdWorkflowComposerTest {
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"")),
                                                 _workflowBat.commandLines.single().environmentVariables
                                         )
                                 )
@@ -98,29 +99,22 @@ class CmdWorkflowComposerTest {
             expectedWorkflow: Workflow) {
         // Given
         val composer = createInstance()
+        every { _environment.os } returns osType
+        every { _environment.tryGetVariable(CmdWorkflowComposer.ComSpecEnvVarName) } returns cmdFile
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<Environment>(_environment).os
-                will(returnValue(osType))
-
-                allowing<Environment>(_environment).tryGetVariable(CmdWorkflowComposer.ComSpecEnvVarName)
-                will(returnValue(cmdFile))
-            }
-        })
-
         val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
 
         // Then
-        _ctx.assertIsSatisfied()
+        // verify { _virtualContext.resolvePath(any()) }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
     private fun createInstance(): WorkflowComposer {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
-                _environment)
+                _environment,
+                _virtualContext)
     }
 
     companion object {

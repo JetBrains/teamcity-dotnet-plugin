@@ -10,7 +10,8 @@ import java.io.File
 
 class CmdWorkflowComposer(
         private val _argumentsService: ArgumentsService,
-        private val _environment: Environment)
+        private val _environment: Environment,
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Host
@@ -41,7 +42,7 @@ class CmdWorkflowComposer(
     private fun getArguments(commandLine: CommandLine) = sequence {
         yield(CommandLineArgument("/D"))
         yield(CommandLineArgument("/C"))
-        val args = sequenceOf(commandLine.executableFile.absolutePath).plus(commandLine.arguments.map { it.value })
+        val args = sequenceOf(commandLine.executableFile.absolutePath).plus(commandLine.arguments.map { it.value }).map { _virtualContext.resolvePath(it) }
         yield(CommandLineArgument("\"${_argumentsService.combine(args)}\""))
     }
 
