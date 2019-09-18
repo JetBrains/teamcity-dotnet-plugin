@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
 import jetbrains.buildServer.rx.use
@@ -16,19 +17,16 @@ class ResponseFileArgumentsProvider(
         private val _loggerService: LoggerService,
         private val _msBuildParameterConverter: MSBuildParameterConverter,
         private val _argumentsProviders: List<ArgumentsProvider>,
-        private val _parametersProviders: List<MSBuildParametersProvider>)
+        private val _parametersProviders: List<MSBuildParametersProvider>,
+        private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
-        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }
+        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }.map { CommandLineArgument(_virtualContext.resolvePath(it.value)) }
+        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }.map { MSBuildParameter(it.name, _virtualContext.resolvePath(it.value)) }
 
         if (args.isEmpty() && params.isEmpty()) {
             return@sequence
         }
-
-        val argLine = _argumentsService.combine(args.map { it.value }.asSequence(), "\n")
-        val paramLines = params.map { _msBuildParameterConverter.convert(it) }
-        val lines = listOf(argLine) + paramLines
 
         context.verbosityLevel?.let {
             @Suppress("NON_EXHAUSTIVE_WHEN")
@@ -39,14 +37,15 @@ class ResponseFileArgumentsProvider(
                             _loggerService.writeStandardOutput(value, Color.Details)
                         }
 
-                        for (paramLine in paramLines) {
-                            _loggerService.writeStandardOutput(paramLine, Color.Details)
+                        for (param in params) {
+                            _loggerService.writeStandardOutput("/p:${param.name}=${param.value}", Color.Details)
                         }
                     }
                 }
             }
         }
 
+        val lines = args.map { it.value } + params.map { _msBuildParameterConverter.convert(it) }
         val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {

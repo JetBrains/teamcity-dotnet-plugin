@@ -1,14 +1,29 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.verify
+import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildLoggerArgumentsProviderTest {
+    @MockK private lateinit var _loggerParameters: LoggerParameters
+    @MockK private lateinit var _virtualContext: VirtualContext
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+    }
+
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
@@ -17,25 +32,25 @@ class MSBuildLoggerArgumentsProviderTest {
                         null,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;params")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Normal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=normal;params")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=normal;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Quiet,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=quiet;params")),
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=quiet;params")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Minimal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${File("logger.dll").absolutePath};TeamCity;verbosity=minimal;params")))
+                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=minimal;params")))
     }
 
     @Test(dataProvider = "testLoggerArgumentsData")
@@ -44,24 +59,16 @@ class MSBuildLoggerArgumentsProviderTest {
             verbosity: Verbosity?,
             expectedArguments: List<String>) {
         // Given
-        val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
-        val loggerParameters = ctx.mock(LoggerParameters::class.java)
-        val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")), loggerParameters)
+        val context = DotnetBuildContext(File("wd"), mockk<DotnetCommand>())
+        val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")),_loggerParameters, _virtualContext)
+        every { _loggerParameters.msBuildLoggerVerbosity } returns verbosity
+        every { _loggerParameters.msBuildParameters } returns "params"
 
         // When
-        ctx.checking(object : Expectations() {
-            init {
-                oneOf<LoggerParameters>(loggerParameters).msBuildLoggerVerbosity
-                will(returnValue(verbosity))
-
-                oneOf<LoggerParameters>(loggerParameters).msBuildParameters
-                will(returnValue("params"))
-            }
-        })
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
 
         // Then
+        verify { _virtualContext.resolvePath(any()) }
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 }

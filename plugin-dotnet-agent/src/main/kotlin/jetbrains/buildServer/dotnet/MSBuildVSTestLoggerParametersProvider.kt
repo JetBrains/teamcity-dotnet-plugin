@@ -1,13 +1,16 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import java.io.File
 
 class MSBuildVSTestLoggerParametersProvider(
         private val _pathsService: PathsService,
         private val _loggerResolver: LoggerResolver,
         private val _testReportingParameters: TestReportingParameters,
-        private val _loggerParameters: LoggerParameters)
+        private val _loggerParameters: LoggerParameters,
+        private val _virtualContext: VirtualContext)
     : MSBuildParametersProvider {
 
     override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {
@@ -19,9 +22,9 @@ class MSBuildVSTestLoggerParametersProvider(
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
             if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
-                yield(MSBuildParameter("VSTestTestAdapterPath", "${it.absolutePath};."))
+                yield(MSBuildParameter("VSTestTestAdapterPath", "${_virtualContext.resolvePath(it.canonicalPath)};."))
             } else {
-                yield(MSBuildParameter("VSTestTestAdapterPath", _pathsService.getPath(PathType.Checkout).absolutePath))
+                yield(MSBuildParameter("VSTestTestAdapterPath", _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)))
             }
         }
 

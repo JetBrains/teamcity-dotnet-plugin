@@ -1,14 +1,28 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.verify
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class VSTestLoggerArgumentsProviderTest {
+    @MockK private lateinit var _loggerParameters: LoggerParameters
+    @MockK private lateinit var _virtualContext: VirtualContext
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+    }
+
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
@@ -18,7 +32,7 @@ class VSTestLoggerArgumentsProviderTest {
                         Verbosity.Normal,
                         listOf(
                                 "/logger:logger://teamcity",
-                                "/TestAdapterPath:${File("loggerPath").absolutePath}",
+                                "/TestAdapterPath:v_${File("loggerPath").canonicalPath}",
                                 "/logger:console;verbosity=normal")),
 
                 arrayOf(
@@ -26,7 +40,7 @@ class VSTestLoggerArgumentsProviderTest {
                         Verbosity.Detailed,
                         listOf(
                                 "/logger:logger://teamcity",
-                                "/TestAdapterPath:${File("loggerPath").absolutePath}",
+                                "/TestAdapterPath:v_${File("loggerPath").canonicalPath}",
                                 "/logger:console;verbosity=detailed"))
         )
     }
@@ -37,21 +51,16 @@ class VSTestLoggerArgumentsProviderTest {
             verbosity: Verbosity,
             expectedArguments: List<String>) {
         // Given
-        val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
-        val loggerParameters = ctx.mock(LoggerParameters::class.java)
-        val argumentsProvider = VSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile), loggerParameters)
+
+        val context = DotnetBuildContext(File("wd"), mockk<DotnetCommand>())
+        val argumentsProvider = VSTestLoggerArgumentsProvider(LoggerResolverStub(File("msbuildlogger"), loggerFile), _loggerParameters, _virtualContext)
+        every { _loggerParameters.vsTestVerbosity } returns verbosity
 
         // When
-        ctx.checking(object : Expectations() {
-            init {
-                oneOf<LoggerParameters>(loggerParameters).vsTestVerbosity
-                will(returnValue(verbosity))
-            }
-        })
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()
 
         // Then
+        verify { _virtualContext.resolvePath(any()) }
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 }

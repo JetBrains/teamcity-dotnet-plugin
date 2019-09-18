@@ -1,17 +1,36 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.verify
+import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.dotnet.*
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 import java.util.*
 
 class MSBuildVSTestLoggerParametersProviderTest {
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _testReportingParameters: TestReportingParameters
+    @MockK private lateinit var _msBuildVSTestLoggerParameters: LoggerParameters
+    @MockK private lateinit var _virtualContext: VirtualContext
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+    }
+
     @DataProvider
     fun testLoggerArgumentsData(): Array<Array<Any?>> {
         return arrayOf(
@@ -21,7 +40,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         EnumSet.of(TestReportingMode.On),
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", File("CheckoutDir").absolutePath),
+                                MSBuildParameter("VSTestTestAdapterPath", "v_" + File("checkoutDir").canonicalPath),
                                 MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
 
                 // Supports mult VSTestTestAdapterPath (.NET Core SDK 2.1.102)
@@ -30,7 +49,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         EnumSet.of(TestReportingMode.MultiAdapterPath),
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", "${File("loggerPath").absolutePath};."),
+                                MSBuildParameter("VSTestTestAdapterPath", "v_" + "${File("loggerPath").canonicalPath};."),
                                 MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
 
                 // Reporting is off
@@ -47,30 +66,18 @@ class MSBuildVSTestLoggerParametersProviderTest {
             testReportingMode: EnumSet<TestReportingMode>,
             expectedParameters: List<MSBuildParameter>) {
         // Given
-        val ctx = Mockery()
-        val context = DotnetBuildContext(File("wd"), ctx.mock(DotnetCommand::class.java))
-        val pathsService = ctx.mock(PathsService::class.java)
-        val testReportingParameters = ctx.mock(TestReportingParameters::class.java)
-        val msBuildVSTestLoggerParameters = ctx.mock(LoggerParameters::class.java)
-        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile), testReportingParameters, msBuildVSTestLoggerParameters)
+        var checkoutDirection =  File("checkoutDir")
+        val context = DotnetBuildContext(File("wd"), mockk<DotnetCommand>())
+        val argumentsProvider = MSBuildVSTestLoggerParametersProvider(_pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile), _testReportingParameters, _msBuildVSTestLoggerParameters, _virtualContext)
+        every { _testReportingParameters.getMode(context) } returns testReportingMode
+        every { _pathsService.getPath(PathType.Checkout) } returns checkoutDirection
+        every { _msBuildVSTestLoggerParameters.vsTestVerbosity } returns Verbosity.Detailed
 
         // When
-        ctx.checking(object : Expectations() {
-            init {
-                oneOf<TestReportingParameters>(testReportingParameters).getMode(context)
-                will(returnValue(testReportingMode))
-
-                oneOf<PathsService>(pathsService).getPath(PathType.Checkout)
-                will(returnValue(File("CheckoutDir")))
-
-                oneOf<LoggerParameters>(msBuildVSTestLoggerParameters).vsTestVerbosity
-                will(returnValue(Verbosity.Detailed))
-            }
-        })
-
         val actualParameters = argumentsProvider.getParameters(context).toList()
 
         // Then
+        verify { _virtualContext.resolvePath(any()) }
         Assert.assertEquals(actualParameters, expectedParameters)
     }
 }
