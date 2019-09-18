@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
 class DotnetToolResolverImpl(
@@ -14,7 +13,7 @@ class DotnetToolResolverImpl(
         private val _parametersService: ParametersService)
     : DotnetToolResolver {
     override val paltform: ToolPlatform
-        get() = ToolPlatform.DotnetCore
+        get() = ToolPlatform.CrossPlatform
 
     override val executableFile: File
         get() {

@@ -63,6 +63,6 @@ class CustomCommandTest {
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.DotnetCore, File("dotnet"), true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, File("dotnet"), true))
     }
 }

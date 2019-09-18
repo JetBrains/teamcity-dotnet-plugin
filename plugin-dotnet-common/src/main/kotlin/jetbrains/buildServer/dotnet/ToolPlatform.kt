@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 enum class ToolPlatform {
-    DotnetCore,
+    CrossPlatform,
     Mono,
     Windows,
 }

@@ -14,7 +14,7 @@ class MSBuildToolResolver(
         private val _dotnetToolResolver: ToolResolver)
     : ToolResolver {
     override val paltform: ToolPlatform
-        get() = _currentTool?.platform ?: ToolPlatform.DotnetCore
+        get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
 
     override val executableFile: File
         get() =
@@ -52,7 +52,7 @@ class MSBuildToolResolver(
     override val isCommandRequired: Boolean
         get() =
             _currentTool?.let {
-                return it.platform == ToolPlatform.DotnetCore
+                return it.platform == ToolPlatform.CrossPlatform
             } ?: true
 
     private val _currentTool: Tool?

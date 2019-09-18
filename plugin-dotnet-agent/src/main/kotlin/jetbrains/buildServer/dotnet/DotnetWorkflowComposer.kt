@@ -8,7 +8,6 @@ import jetbrains.buildServer.rx.use
 import org.apache.log4j.Logger
 import java.io.Closeable
 import java.io.File
-import java.util.*
 
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
@@ -38,7 +37,7 @@ class DotnetWorkflowComposer(
                 try {
                     for (command in _commandSet.commands) {
                         val executableFile = command.toolResolver.executableFile
-                        if (command.toolResolver.paltform == ToolPlatform.DotnetCore && dotnetVersions.isEmpty()) {
+                        if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
                             // Getting .NET Core version
                             yieldAll(getDotnetSdkVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
                         }

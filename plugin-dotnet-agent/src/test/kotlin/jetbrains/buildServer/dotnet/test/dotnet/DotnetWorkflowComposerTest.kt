@@ -80,7 +80,7 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { executableFile } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.DotnetCore
+                every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } returns createToken()
@@ -168,7 +168,7 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { executableFile } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.DotnetCore
+                every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } returns createToken()
@@ -257,7 +257,7 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { executableFile } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.DotnetCore
+                every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } returns createToken()

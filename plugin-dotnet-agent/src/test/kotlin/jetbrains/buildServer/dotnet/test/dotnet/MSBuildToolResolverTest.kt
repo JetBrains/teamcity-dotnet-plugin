@@ -88,6 +88,6 @@ class MSBuildToolResolverTest {
         return MSBuildToolResolver(
                 _environment,
                 ParametersServiceStub(parameters),
-                DotnetToolResolverStub(ToolPlatform.DotnetCore, executableFile, true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, executableFile, true))
     }
 }

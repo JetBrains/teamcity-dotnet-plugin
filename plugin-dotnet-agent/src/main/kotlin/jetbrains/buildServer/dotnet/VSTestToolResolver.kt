@@ -11,7 +11,7 @@ class VSTestToolResolver(
         private val _dotnetToolResolver: ToolResolver)
     : ToolResolver {
     override val paltform: ToolPlatform
-        get() = _currentTool?.platform ?: ToolPlatform.DotnetCore
+        get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
 
     override val executableFile: File
         get() {
@@ -32,7 +32,7 @@ class VSTestToolResolver(
     override val isCommandRequired: Boolean
         get() {
             _currentTool?.let {
-                return it.platform == ToolPlatform.DotnetCore
+                return it.platform == ToolPlatform.CrossPlatform
             }
 
             return true
