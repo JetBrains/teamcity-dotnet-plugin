@@ -81,8 +81,8 @@ class WorkflowSessionImpl(
         override fun beforeProcessStarted() {
             val executableFilePresentation = _commandLinePresentationService.buildExecutableFilePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
-            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ")) + executableFilePresentation + argsPresentation).toTypedArray())
-            _loggerService.writeStandardOutput(StdOutText("in directory: "), StdOutText(_commandLine.workingDirectory.canonicalPath, Color.Header))
+            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
+            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(_commandLine.workingDirectory.canonicalPath, Color.Header))
         }
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit

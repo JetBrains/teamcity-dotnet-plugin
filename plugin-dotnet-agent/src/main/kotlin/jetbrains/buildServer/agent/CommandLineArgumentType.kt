@@ -1,7 +1,7 @@
 package jetbrains.buildServer.agent
 
 enum class CommandLineArgumentType {
-    // commands
+    // commands, targets
     Mandatory,
 
     // additinal arguments
