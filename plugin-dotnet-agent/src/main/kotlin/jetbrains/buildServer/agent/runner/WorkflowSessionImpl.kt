@@ -17,7 +17,8 @@ import java.io.File
 class WorkflowSessionImpl(
         private val _workflowComposer: WorkflowComposer,
         private val _buildStepContext: BuildStepContext,
-        private val _loggerService: LoggerService)
+        private val _loggerService: LoggerService,
+        private val _commandLinePresentationService: CommandLinePresentationService)
     : MultiCommandBuildSession, WorkflowContext {
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null
@@ -47,7 +48,8 @@ class WorkflowSessionImpl(
                 commandLinesIterator.next(),
                 _buildStepContext,
                 _loggerService,
-                _eventSource)
+                _eventSource,
+                _commandLinePresentationService)
     }
 
     override val status: WorkflowStatus
@@ -73,9 +75,15 @@ class WorkflowSessionImpl(
             private val _commandLine: CommandLine,
             private val _buildStepContext: BuildStepContext,
             private val _loggerService: LoggerService,
-            private val _eventSource: Observer<CommandResultEvent>) : CommandExecution {
+            private val _eventSource: Observer<CommandResultEvent>,
+            private val _commandLinePresentationService: CommandLinePresentationService) : CommandExecution {
 
-        override fun beforeProcessStarted() = Unit
+        override fun beforeProcessStarted() {
+            val executableFilePresentation = _commandLinePresentationService.buildExecutableFilePresentation(_commandLine.executableFile)
+            val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
+            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ")) + executableFilePresentation + argsPresentation).toTypedArray())
+            _loggerService.writeStandardOutput(StdOutText("in directory: "), StdOutText(_commandLine.workingDirectory.canonicalPath, Color.Header))
+        }
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit
 
@@ -99,7 +107,7 @@ class WorkflowSessionImpl(
 
         override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 
-        override fun isCommandLineLoggingEnabled(): Boolean = true
+        override fun isCommandLineLoggingEnabled(): Boolean = false
     }
 
     private class ProgramCommandLineAdapter(

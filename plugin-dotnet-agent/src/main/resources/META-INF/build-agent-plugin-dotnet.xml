@@ -15,6 +15,7 @@
   <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
+  <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
 
   <!-- common agent's runner services -->
   <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>

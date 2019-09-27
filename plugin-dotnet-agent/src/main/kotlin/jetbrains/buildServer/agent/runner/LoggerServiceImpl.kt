@@ -38,12 +38,16 @@ class LoggerServiceImpl(
     }
 
     private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
-        if (color == Color.Default)
-            if (color != prevColor)
+        if (color == prevColor) {
+            text
+        }
+        else {
+            if (color == Color.Default) {
                 "\u001B[0m$text"
-            else
-                text
-        else "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
+            } else {
+                "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
+            }
+        }
 
     private fun applyColor(vararg text: StdOutText): String =
             text.fold(DefaultStdOutText) {

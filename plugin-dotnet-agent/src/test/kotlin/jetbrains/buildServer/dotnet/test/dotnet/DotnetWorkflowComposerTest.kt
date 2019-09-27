@@ -24,6 +24,7 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
     private val _dotnetVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var3", "val3"))
@@ -51,6 +52,8 @@ class DotnetWorkflowComposerTest {
         every { _loggerService.writeBlock("msbuild")  } returns createToken()
         every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
         every { _loggerService.writeBlock("build")  } returns createToken()
+        every { _commandLinePresentationService.buildExecutableFilePresentation(any()) } answers { listOf(StdOutText(arg<File>(0).path, Color.Header)) }
+        every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
     }
 
     @Test
@@ -337,7 +340,8 @@ class DotnetWorkflowComposerTest {
                 _targetRegistry,
                 _commandRegistry,
                 _versionParser,
-                _parametersService)
+                _parametersService,
+                _commandLinePresentationService)
     }
 
     private fun createToken(): Disposable {

@@ -20,7 +20,8 @@ class DotnetWorkflowComposer(
         private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
         private val _versionParser: VersionParser,
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _commandLinePresentationService: CommandLinePresentationService)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -64,22 +65,8 @@ class DotnetWorkflowComposer(
             title.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Minor))
         }
 
-        title.add(StdOutText("${executableFile}", Color.Header))
-
-        title.addAll(
-                args.map {
-                    StdOutText(
-                            " ${it.value}",
-                            when (it.argumentType) {
-                                CommandLineArgumentType.Mandatory -> Color.Header
-                                CommandLineArgumentType.Secondary -> Color.Default
-                                CommandLineArgumentType.Custom -> Color.Details
-                                CommandLineArgumentType.Infrastructural -> Color.Minor
-                            }
-                    )
-                }
-        )
-
+        title.addAll(_commandLinePresentationService.buildExecutableFilePresentation(executableFile))
+        title.addAll(_commandLinePresentationService.buildArgsPresentation(args))
         _loggerService.writeStandardOutput(*title.toTypedArray())
     }
 
