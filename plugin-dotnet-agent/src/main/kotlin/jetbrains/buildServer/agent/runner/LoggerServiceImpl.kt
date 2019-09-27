@@ -27,7 +27,7 @@ class LoggerServiceImpl(
     override fun writeStandardOutput(text: String, color: Color) =
             listener.onStandardOutput(applyColor(text, color))
 
-    override fun writeStandardOutput(vararg text: Pair<String, Color>) =
+    override fun writeStandardOutput(vararg text: StdOutText) =
             listener.onStandardOutput(applyColor(*text))
 
     override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
@@ -45,8 +45,12 @@ class LoggerServiceImpl(
                 text
         else "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
 
-    private fun applyColor(vararg text: Pair<String, Color>): String =
-            text.fold(Pair<String, Color>("", Color.Default)) {
-                acc, (str, color) -> Pair<String, Color>(acc.first + applyColor(str, color, acc.second), color)
-            }.first
+    private fun applyColor(vararg text: StdOutText): String =
+            text.fold(DefaultStdOutText) {
+                acc, (text, color) -> StdOutText(acc.text + applyColor(text, color, acc.color), color)
+            }.text
+
+    companion object {
+        private val DefaultStdOutText = StdOutText("")
+    }
 }

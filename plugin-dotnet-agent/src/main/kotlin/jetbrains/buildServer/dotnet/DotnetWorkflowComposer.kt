@@ -53,22 +53,22 @@ class DotnetWorkflowComposer(
             })
 
     private fun showTitle(command: DotnetCommand, dotnetBuildContext: DotnetBuildContext, executableFile: File, args: List<CommandLineArgument>) {
-        var title = mutableListOf<Pair<String, Color>>()
+        var title = mutableListOf<StdOutText>()
         when (command.toolResolver.paltform) {
-            ToolPlatform.CrossPlatform -> title.add(Pair(".NET Core SDK ", Color.Minor))
-            ToolPlatform.Mono-> title.add(Pair("Mono ", Color.Minor))
-            ToolPlatform.Windows-> title.add(Pair("Windows ", Color.Minor))
+            ToolPlatform.CrossPlatform -> title.add(StdOutText(".NET Core SDK ", Color.Minor))
+            ToolPlatform.Mono-> title.add(StdOutText("Mono ", Color.Minor))
+            ToolPlatform.Windows-> title.add(StdOutText("Windows ", Color.Minor))
         }
 
         if (dotnetBuildContext.toolVersion != Version.Empty) {
-            title.add(Pair("${dotnetBuildContext.toolVersion} ", Color.Minor))
+            title.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Minor))
         }
 
-        title.add(Pair("${executableFile}", Color.Header))
+        title.add(StdOutText("${executableFile}", Color.Header))
 
         title.addAll(
                 args.map {
-                    Pair(
+                    StdOutText(
                             " ${it.value}",
                             when (it.argumentType) {
                                 CommandLineArgumentType.Mandatory -> Color.Header

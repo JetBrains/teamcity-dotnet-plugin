@@ -58,8 +58,8 @@ class DotnetWorkflowComposerTest {
         // Given
         val composer = createInstance()
 
-        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText(".NET Core SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -148,8 +148,8 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
-        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText(".NET Core SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -239,8 +239,8 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
-        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(StdOutText(".NET Core SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {

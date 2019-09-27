@@ -12,7 +12,7 @@ interface LoggerService {
 
     fun writeStandardOutput(text: String, color: Color = Color.Default)
 
-    fun writeStandardOutput(vararg text: Pair<String, Color>)
+    fun writeStandardOutput(vararg text: StdOutText)
 
     fun writeErrorOutput(text: String)
 
