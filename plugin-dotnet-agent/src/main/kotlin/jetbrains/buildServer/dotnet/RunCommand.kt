@@ -8,6 +8,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class RunCommand(
@@ -23,7 +24,7 @@ class RunCommand(
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map {
-            TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path)))
+            TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path, CommandLineArgumentType.Mandatory)))
         }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {

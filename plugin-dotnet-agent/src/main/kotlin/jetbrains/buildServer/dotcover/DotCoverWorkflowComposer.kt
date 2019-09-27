@@ -130,19 +130,19 @@ class DotCoverWorkflowComposer(
         }
 
     private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
-        yield(CommandLineArgument("cover"))
-        yield(CommandLineArgument(dotCoverProject.configFile.absolutePath))
+        yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
+        yield(CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory))
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
             val logFileName = _fileSystemService.generateTempFile(File(it), "dotCover", ".log")
-            yield(CommandLineArgument("/LogFile=${logFileName}"))
+            yield(CommandLineArgument("/LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
             StringUtil.split(it).forEach {
-                yield(CommandLineArgument(it))
+                yield(CommandLineArgument(it, CommandLineArgumentType.Custom))
             }
         }
     }

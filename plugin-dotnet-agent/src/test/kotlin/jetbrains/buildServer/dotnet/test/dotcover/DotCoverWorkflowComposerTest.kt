@@ -85,8 +85,8 @@ class DotCoverWorkflowComposerTest {
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
-                                        CommandLineArgument("cover"),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -275,8 +275,8 @@ class DotCoverWorkflowComposerTest {
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
-                                        CommandLineArgument("cover"),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -375,8 +375,8 @@ class DotCoverWorkflowComposerTest {
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
-                                        CommandLineArgument("cover"),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -458,13 +458,13 @@ class DotCoverWorkflowComposerTest {
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
-                                        CommandLineArgument("cover"),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
-                                        CommandLineArgument("/ProcessFilters=-:sqlservr.exe"),
-                                        CommandLineArgument("/arg")
+                                        CommandLineArgument("/ProcessFilters=-:sqlservr.exe", CommandLineArgumentType.Custom),
+                                        CommandLineArgument("/arg", CommandLineArgumentType.Custom)
                                 ),
                                 envVars)))
 
@@ -544,14 +544,14 @@ class DotCoverWorkflowComposerTest {
                                 dotCoverExecutableFile,
                                 workingDirectory,
                                 listOf(
-                                        CommandLineArgument("cover"),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath),
+                                        CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
-                                        CommandLineArgument("/LogFile=${File("logPath", "dotCover99.log")}"),
-                                        CommandLineArgument("/ProcessFilters=-:sqlservr.exe"),
-                                        CommandLineArgument("/arg")
+                                        CommandLineArgument("/LogFile=${File("logPath", "dotCover99.log")}", CommandLineArgumentType.Infrastructural),
+                                        CommandLineArgument("/ProcessFilters=-:sqlservr.exe", CommandLineArgumentType.Custom),
+                                        CommandLineArgument("/arg", CommandLineArgumentType.Custom)
                                 ),
                                 envVars)))
 

@@ -63,7 +63,7 @@ class CmdWorkflowComposerTest {
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
                                                 _workflowCmd.commandLines.single().environmentVariables
                                         )
                                 )
@@ -82,7 +82,7 @@ class CmdWorkflowComposerTest {
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
                                                 _workflowBat.commandLines.single().environmentVariables
                                         )
                                 )

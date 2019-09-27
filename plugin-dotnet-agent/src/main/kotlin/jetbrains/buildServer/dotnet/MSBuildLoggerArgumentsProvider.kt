@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.VirtualContext
 import java.io.File
 
@@ -30,6 +31,6 @@ class MSBuildLoggerArgumentsProvider(
             }
         }
 
-        yield(CommandLineArgument(parameters.joinToString(";")))
+        yield(CommandLineArgument(parameters.joinToString(";"), CommandLineArgumentType.Infrastructural))
     }
 }

@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 
@@ -16,7 +17,7 @@ class CustomArgumentsProvider(
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it) })
+            yieldAll(_argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) })
         }
     }
 

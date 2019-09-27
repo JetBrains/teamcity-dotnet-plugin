@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.VirtualContext
 import java.io.File
 
@@ -16,9 +17,9 @@ class VSTestLoggerArgumentsProvider(
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
-            yield(CommandLineArgument("/logger:logger://teamcity"))
-            yield(CommandLineArgument("/TestAdapterPath:${_virtualContext.resolvePath(it.canonicalPath)}"))
-            yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}"))
+            yield(CommandLineArgument("/logger:logger://teamcity", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("/TestAdapterPath:${_virtualContext.resolvePath(it.canonicalPath)}", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}", CommandLineArgumentType.Infrastructural))
         }
     }
 }

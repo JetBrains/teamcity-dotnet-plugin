@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.verify
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
@@ -20,6 +17,7 @@ class VSTestLoggerArgumentsProviderTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
     }
 

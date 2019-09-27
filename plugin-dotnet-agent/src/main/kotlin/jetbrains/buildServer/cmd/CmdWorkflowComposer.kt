@@ -43,7 +43,7 @@ class CmdWorkflowComposer(
         yield(CommandLineArgument("/D"))
         yield(CommandLineArgument("/C"))
         val args = sequenceOf(commandLine.executableFile.absolutePath).plus(commandLine.arguments.map { it.value }).map { _virtualContext.resolvePath(it) }
-        yield(CommandLineArgument("\"${_argumentsService.combine(args)}\""))
+        yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Mandatory))
     }
 
     companion object {

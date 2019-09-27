@@ -7,6 +7,7 @@ class DefaultColorTheme : ColorTheme {
         Color.Warning -> "33;1"
         Color.Error -> "31;1"
         Color.Details -> "34"
+        Color.Minor -> "30"
         else -> ""
     }
 }

@@ -58,22 +58,22 @@ class VisualStudioWorkflowComposerTest {
                                         File("tool"),
                                         File("wd"),
                                         listOf(
-                                                CommandLineArgument(File("my1.sln").absolutePath),
-                                                CommandLineArgument("/build"),
+                                                CommandLineArgument(File("my1.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
-                                                CommandLineArgument("arg1"),
-                                                CommandLineArgument("arg2")),
+                                                CommandLineArgument("arg1", CommandLineArgumentType.Custom),
+                                                CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
                                         emptyList()),
                                 CommandLine(
                                         TargetType.Tool,
                                         File("tool"),
                                         File("wd"),
                                         listOf(
-                                                CommandLineArgument(File("my2.sln").absolutePath),
-                                                CommandLineArgument("/build"),
+                                                CommandLineArgument(File("my2.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
-                                                CommandLineArgument("arg1"),
-                                                CommandLineArgument("arg2")),
+                                                CommandLineArgument("arg1", CommandLineArgumentType.Custom),
+                                                CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
                                         emptyList()))),
                 arrayOf(
                         mapOf(
@@ -88,10 +88,10 @@ class VisualStudioWorkflowComposerTest {
                                         File("tool"),
                                         File("wd"),
                                         listOf(
-                                                CommandLineArgument(File("my1.csproj").absolutePath),
-                                                CommandLineArgument("/rebuild"),
+                                                CommandLineArgument(File("my1.csproj").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("release"),
-                                                CommandLineArgument("arg1")),
+                                                CommandLineArgument("arg1", CommandLineArgumentType.Custom)),
                                         emptyList()))),
                 arrayOf(
                         mapOf(
@@ -168,11 +168,11 @@ class VisualStudioWorkflowComposerTest {
                         File("tool"),
                         File("wDir"),
                         listOf(
-                                CommandLineArgument(File("my1.sln").absolutePath),
-                                CommandLineArgument("/build"),
+                                CommandLineArgument(File("my1.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("\"Debug|x86\""),
-                                CommandLineArgument("arg1"),
-                                CommandLineArgument("arg2")),
+                                CommandLineArgument("arg1", CommandLineArgumentType.Custom),
+                                CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
                         emptyList()))
 
         val workingDirectory = File("wDir")

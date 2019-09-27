@@ -11,5 +11,7 @@ enum class Color {
 
     Error,
 
-    Details
+    Details,
+
+    Minor
 }

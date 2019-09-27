@@ -46,7 +46,7 @@ class VisualStudioWorkflowComposer(
                 }
 
                 val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-                    _argumentsService.split(it).map { CommandLineArgument(it) }.toList()
+                    _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }.toList()
                 } ?: emptyList()
 
                 val executableFile = _toolResolver.executableFile
@@ -72,8 +72,8 @@ class VisualStudioWorkflowComposer(
                                 executableFile,
                                 workingDirectory,
                                 sequence {
-                                    yield(CommandLineArgument(targetFile.absolutePath))
-                                    yield(CommandLineArgument("/$action"))
+                                    yield(CommandLineArgument(targetFile.absolutePath, CommandLineArgumentType.Mandatory))
+                                    yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))
                                     }

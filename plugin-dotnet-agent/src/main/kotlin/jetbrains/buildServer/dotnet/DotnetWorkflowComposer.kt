@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.rx.toDisposable
 import jetbrains.buildServer.rx.use
 import org.apache.log4j.Logger
 import java.io.Closeable
@@ -34,22 +35,53 @@ class DotnetWorkflowComposer(
                 val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
                 var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
-                try {
-                    for (command in _commandSet.commands) {
-                        val executableFile = command.toolResolver.executableFile
-                        if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
-                            // Getting .NET Core version
-                            yieldAll(getDotnetSdkVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
-                        }
-
-                        val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
-                        yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile))
+                for (command in _commandSet.commands) {
+                    val executableFile = command.toolResolver.executableFile
+                    if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
+                        // Getting .NET Core version
+                        yieldAll(getDotnetSdkVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
                     }
+
+                    val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
+
+                    val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
+                    showTitle(command, dotnetBuildContext, executableFile, args)
+                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile, args))
                 }
-                finally {
-                    _dotnetWorkflowAnalyzer.summarize(analyzerContext)
-                }
+
+                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             })
+
+    private fun showTitle(command: DotnetCommand, dotnetBuildContext: DotnetBuildContext, executableFile: File, args: List<CommandLineArgument>) {
+        var title = mutableListOf<Pair<String, Color>>()
+        when (command.toolResolver.paltform) {
+            ToolPlatform.CrossPlatform -> title.add(Pair(".NET Core SDK ", Color.Minor))
+            ToolPlatform.Mono-> title.add(Pair("Mono ", Color.Minor))
+            ToolPlatform.Windows-> title.add(Pair("Windows ", Color.Minor))
+        }
+
+        if (dotnetBuildContext.toolVersion != Version.Empty) {
+            title.add(Pair("${dotnetBuildContext.toolVersion} ", Color.Minor))
+        }
+
+        title.add(Pair("${executableFile}", Color.Header))
+
+        title.addAll(
+                args.map {
+                    Pair(
+                            " ${it.value}",
+                            when (it.argumentType) {
+                                CommandLineArgumentType.Mandatory -> Color.Header
+                                CommandLineArgumentType.Secondary -> Color.Default
+                                CommandLineArgumentType.Custom -> Color.Details
+                                CommandLineArgumentType.Infrastructural -> Color.Minor
+                            }
+                    )
+                }
+        )
+
+        _loggerService.writeStandardOutput(*title.toTypedArray())
+    }
 
     private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: File, workingDirectory: File, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
         disposableOf (
@@ -66,13 +98,12 @@ class DotnetWorkflowComposer(
         }
     }
 
-    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File): Sequence<CommandLine> = sequence {
-        val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
+    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File, args: List<CommandLineArgument>): Sequence<CommandLine> = sequence {
         val result = mutableSetOf<CommandResult>()
 
         disposableOf(
                 // Build an environment
-                disposableOf(dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }),
+                dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }.toDisposable(),
                 // Strart a build log block
                 _loggerService.writeBlock(generateBlockName(dotnetBuildContext.command, args)),
                 // Subscribe for failed tests

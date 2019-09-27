@@ -1,11 +1,9 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.verify
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.*
@@ -31,6 +29,7 @@ class ResponseFileArgumentsProviderTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { arg<String>(0)}
     }
 
@@ -70,7 +69,7 @@ class ResponseFileArgumentsProviderTest {
 
         // Then
         verify { blockToken.dispose() }
-        Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}")))
+        Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}", CommandLineArgumentType.Infrastructural)))
         fileSystemService.read(rspFile) {
             InputStreamReader(it).use {
                 Assert.assertEquals(it.readLines(), listOf("arg1", "arg2", "arg3", "par1", "par2"))

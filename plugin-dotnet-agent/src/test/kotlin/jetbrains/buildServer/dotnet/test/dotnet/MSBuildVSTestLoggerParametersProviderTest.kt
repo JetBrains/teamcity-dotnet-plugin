@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.verify
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -28,6 +25,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
     }
 
@@ -77,7 +75,10 @@ class MSBuildVSTestLoggerParametersProviderTest {
         val actualParameters = argumentsProvider.getParameters(context).toList()
 
         // Then
-        verify { _virtualContext.resolvePath(any()) }
+        if (expectedParameters.any()) {
+            verify { _virtualContext.resolvePath(any()) }
+        }
+
         Assert.assertEquals(actualParameters, expectedParameters)
     }
 }

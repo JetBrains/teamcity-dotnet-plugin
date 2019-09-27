@@ -1,10 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
@@ -41,7 +38,7 @@ class DotnetWorkflowComposerTest {
     fun setUp() {
         _tokens.clear()
         MockKAnnotations.init(this)
-
+        clearAllMocks()
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Detailed.toString()
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
         every { _loggerService.writeBlock("Getting .NET Core SDK version")  } returns createToken()
@@ -60,6 +57,9 @@ class DotnetWorkflowComposerTest {
     fun shouldCompose() {
         // Given
         val composer = createInstance()
+
+        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -148,6 +148,8 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
+        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -237,6 +239,8 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
+        every { _loggerService.writeStandardOutput(Pair("Windows ", Color.Minor), Pair("msbuild.exe", Color.Header), Pair(" arg3", Color.Default)) } returns Unit
+        every { _loggerService.writeStandardOutput(Pair(".NET Core SDK ", Color.Minor), Pair("3.0.0 ", Color.Minor), Pair("dotnet.exe", Color.Header), Pair(" arg1", Color.Default), Pair(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {

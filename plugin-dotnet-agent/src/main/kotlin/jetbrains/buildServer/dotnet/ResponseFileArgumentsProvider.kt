@@ -1,9 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
 import jetbrains.buildServer.rx.use
@@ -21,7 +18,7 @@ class ResponseFileArgumentsProvider(
         private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }.map { CommandLineArgument(_virtualContext.resolvePath(it.value)) }
+        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }.map { CommandLineArgument(_virtualContext.resolvePath(it.value), CommandLineArgumentType.Infrastructural) }
         val params = _parametersProviders.flatMap { it.getParameters(context).toList() }.map { MSBuildParameter(it.name, _virtualContext.resolvePath(it.value)) }
 
         if (args.isEmpty() && params.isEmpty()) {
@@ -55,12 +52,12 @@ class ResponseFileArgumentsProvider(
             }
         }
 
-        yield(CommandLineArgument("@${msBuildResponseFile.path}"))
+        yield(CommandLineArgument("@${msBuildResponseFile.path}", CommandLineArgumentType.Infrastructural))
     }
 
     companion object {
         internal const val ResponseFileExtension = ".rsp"
         internal const val BlockName = "MSBuild Response File"
-        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false")
+        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false", CommandLineArgumentType.Infrastructural)
     }
 }

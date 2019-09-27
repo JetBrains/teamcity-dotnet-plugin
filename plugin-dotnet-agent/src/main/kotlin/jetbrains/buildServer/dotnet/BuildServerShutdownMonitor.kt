@@ -54,7 +54,7 @@ class BuildServerShutdownMonitor(
 
     companion object {
         private val LOG = Logger.getLogger(BuildServerShutdownMonitor::class.java)
-        internal val shutdownArgs = listOf(CommandLineArgument("build-server"), CommandLineArgument("shutdown"))
+        internal val shutdownArgs = listOf(CommandLineArgument("build-server", CommandLineArgumentType.Mandatory), CommandLineArgument("shutdown", CommandLineArgumentType.Mandatory))
         internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
         private val buildCommands = setOf(
                 DotnetCommandType.Build,

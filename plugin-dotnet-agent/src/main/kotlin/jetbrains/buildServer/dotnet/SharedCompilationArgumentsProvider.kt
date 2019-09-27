@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 
 class SharedCompilationArgumentsProvider(
         private val _sharedCompilation: SharedCompilation): ArgumentsProvider {
@@ -11,6 +12,6 @@ class SharedCompilationArgumentsProvider(
     }
 
     companion object {
-        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false")
+        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false", CommandLineArgumentType.Infrastructural)
     }
 }

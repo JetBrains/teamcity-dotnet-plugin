@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 
@@ -50,7 +51,7 @@ class DotnetCommandSet(
                         // command
                         yieldAll(_command.commandType.id.split('-')
                                 .filter { it.isNotEmpty() }
-                                .map { CommandLineArgument(it) })
+                                .map { CommandLineArgument(it,  CommandLineArgumentType.Mandatory) })
                     }
 
                     // projects
