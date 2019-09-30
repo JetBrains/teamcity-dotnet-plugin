@@ -1,10 +1,9 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.Path
-import java.io.File
+import jetbrains.buildServer.agent.ToolPath
 
 data class DotnetBuildContext(
-        val workingDirectory: Path,
+        val workingDirectory: ToolPath,
         val command: DotnetCommand,
         val toolVersion: Version = Version.Empty,
         val verbosityLevel: Verbosity? = null)

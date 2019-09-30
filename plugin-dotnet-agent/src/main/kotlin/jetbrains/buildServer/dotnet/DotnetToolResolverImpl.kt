@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.VirtualContext
@@ -18,7 +18,7 @@ class DotnetToolResolverImpl(
     override val paltform: ToolPlatform
         get() = ToolPlatform.CrossPlatform
 
-    override val executableFile: Path
+    override val executable: ToolPath
         get() {
             try {
                 var dotnetPath = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
@@ -31,7 +31,7 @@ class DotnetToolResolverImpl(
                         throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
                     }
                 }
-                return Path(File(dotnetPath), if (_virtualContext.isVirtual) File("dotnet") else File(dotnetPath))
+                return ToolPath(File(dotnetPath), if (_virtualContext.isVirtual) File("dotnet") else File(dotnetPath))
             } catch (e: ToolCannotBeFoundException) {
                 val exception = RunBuildException(e)
                 exception.isLogStacktrace = false

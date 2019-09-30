@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.util.OSType
@@ -66,9 +66,9 @@ class MSBuildToolResolverTest {
 
 
         var actualIsCommandRequired: Boolean? = null
-        var actualExecutableFile: Path? = null
+        var actualExecutable: ToolPath? = null
         try {
-            actualExecutableFile = instance.executableFile
+            actualExecutable = instance.executable
             actualIsCommandRequired = instance.isCommandRequired
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
@@ -80,7 +80,7 @@ class MSBuildToolResolverTest {
 
         // Then
         if (exceptionPattern == null) {
-            Assert.assertEquals(actualExecutableFile, Path(expectedExecutableFile))
+            Assert.assertEquals(actualExecutable, ToolPath(expectedExecutableFile))
             Assert.assertEquals(actualIsCommandRequired, expectedIsCommandRequired)
         }
     }
@@ -89,6 +89,6 @@ class MSBuildToolResolverTest {
         return MSBuildToolResolver(
                 _environment,
                 ParametersServiceStub(parameters),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, Path(executableFile), true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(executableFile), true))
     }
 }

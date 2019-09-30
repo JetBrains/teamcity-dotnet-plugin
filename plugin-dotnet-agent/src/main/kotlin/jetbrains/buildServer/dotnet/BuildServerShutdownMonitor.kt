@@ -24,13 +24,13 @@ class BuildServerShutdownMonitor(
             if (_workingDirectories.isNotEmpty()) {
                 try {
                     LOG.debug("Shared compilation service shutdown.")
-                    val executableFile = _dotnetToolResolver.executableFile
+                    val executable = _dotnetToolResolver.executable
                     for ((sdkVersion, workingDirectory) in _workingDirectories) {
                         val envVariables = _environmentVariables.getVariables(sdkVersion).toList()
                         _commandLineExecutor.tryExecute(
                                 CommandLine(
                                         TargetType.Tool,
-                                        executableFile.path,
+                                        executable.path,
                                         workingDirectory,
                                         shutdownArgs,
                                         envVariables)

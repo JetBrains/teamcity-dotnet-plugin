@@ -1,12 +1,11 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.Path
-import java.io.File
+import jetbrains.buildServer.agent.ToolPath
 
 interface ToolResolver {
     val paltform: ToolPlatform
 
-    val executableFile: Path
+    val executable: ToolPath
 
     val isCommandRequired: Boolean
 }

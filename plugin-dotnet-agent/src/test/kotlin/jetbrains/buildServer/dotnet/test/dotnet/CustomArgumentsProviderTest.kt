@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -26,7 +26,7 @@ class CustomArgumentsProviderTest {
         // Given
         val argumentsProvider = CustomArgumentsProvider(ParametersServiceStub(parameters), ArgumentsServiceStub())
         val ctx = Mockery()
-        val context = DotnetBuildContext(Path(File("wd")), ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(ToolPath(File("wd")), ctx.mock(DotnetCommand::class.java))
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()

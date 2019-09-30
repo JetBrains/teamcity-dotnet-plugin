@@ -39,17 +39,17 @@ class DotnetWorkflowComposer(
                 var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
-                    val executableFile = command.toolResolver.executableFile
+                    val executable = command.toolResolver.executable
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
                         // Getting .NET Core version
-                        yieldAll(getDotnetSdkVersionCommands(context, executableFile.virtualPath, virtualWorkingDirectory, dotnetVersions))
+                        yieldAll(getDotnetSdkVersionCommands(context, executable.virtualPath, virtualWorkingDirectory, dotnetVersions))
                     }
 
-                    val dotnetBuildContext = DotnetBuildContext(Path(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
+                    val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
 
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
-                    showTitle(command, dotnetBuildContext, executableFile.virtualPath, args)
-                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile.virtualPath, args))
+                    showTitle(command, dotnetBuildContext, executable.virtualPath, args)
+                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executable.virtualPath, args))
                 }
 
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)

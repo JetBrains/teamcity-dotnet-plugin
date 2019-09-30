@@ -33,8 +33,8 @@ class DotnetWorkflowComposerTest {
     private val _msbuildArgs = listOf(CommandLineArgument("arg3"))
     private val _workingDirectory = File("wd")
     private val _virtualizedWorkingDirectory = File("wd")
-    private val _msbuildExecutable = Path(File("msbuild.exe"))
-    private val _dotnetExecutable = Path(File("dotnet.exe"))
+    private val _msbuildExecutable = ToolPath(File("msbuild.exe"))
+    private val _dotnetExecutable = ToolPath(File("dotnet.exe"))
     private val _tokens = mutableListOf<Disposable>()
 
     @BeforeMethod
@@ -69,7 +69,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns Path(_msbuildExecutable.path)
+                every { executable } returns ToolPath(_msbuildExecutable.path)
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -85,7 +85,7 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _dotnetExecutable
+                every { executable } returns _dotnetExecutable
                 every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -159,7 +159,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _msbuildExecutable
+                every { executable } returns _msbuildExecutable
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -175,7 +175,7 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _dotnetExecutable
+                every { executable } returns _dotnetExecutable
                 every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -250,7 +250,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _msbuildExecutable
+                every { executable } returns _msbuildExecutable
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -266,7 +266,7 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _dotnetExecutable
+                every { executable } returns _dotnetExecutable
                 every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {

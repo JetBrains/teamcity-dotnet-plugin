@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
@@ -65,7 +65,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             fileSystemService: VirtualFileSystemService,
             expectedDirs: List<File>) {
         // Given
-        val context = DotnetBuildContext(Path(File("wd")), _dotnetCommand)
+        val context = DotnetBuildContext(ToolPath(File("wd")), _dotnetCommand)
         val loggerFile = File("vstest15", "logger.dll")
         fileSystemService.addFile(loggerFile.absoluteFile)
 
@@ -131,7 +131,7 @@ class VSTestLoggerEnvironmentBuilderTest {
     @Test(dataProvider = "testDataNotBuildEnv")
     fun shouldNotBuildEnvWhenSpecificTestReportingMode(modes: EnumSet<TestReportingMode>) {
         // Given
-        val context = DotnetBuildContext(Path(File("wd")), _dotnetCommand)
+        val context = DotnetBuildContext(ToolPath(File("wd")), _dotnetCommand)
         val targetFiles = listOf(File("dir", "my.proj"))
         val loggerEnvironment = VSTestLoggerEnvironmentBuilder(
                 _pathService,

@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
@@ -26,7 +26,7 @@ class CustomCommandTest {
         val command = createCommand(arguments = arguments)
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(Path(File("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(File("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -50,10 +50,10 @@ class CustomCommandTest {
         val command = createCommand()
 
         // When
-        val actualToolExecutableFile = command.toolResolver.executableFile
+        val actualExecutable = command.toolResolver.executable
 
         // Then
-        Assert.assertEquals(actualToolExecutableFile, Path(File("dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(File("dotnet")))
     }
 
     fun createCommand(
@@ -64,6 +64,6 @@ class CustomCommandTest {
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, Path(File("dotnet")),true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(File("dotnet")),true))
     }
 }

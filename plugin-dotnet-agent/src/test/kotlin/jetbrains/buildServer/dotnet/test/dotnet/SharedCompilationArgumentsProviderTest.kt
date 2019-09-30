@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -23,7 +23,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldProvideNodeReuseArgumentsWhenSharedCompilationRequiresSuppressing() {
         // Given
-        val context = DotnetBuildContext(Path(File("wd")), _ctx.mock(DotnetCommand::class.java), Version(1, 2), Verbosity.Detailed)
+        val context = DotnetBuildContext(ToolPath(File("wd")), _ctx.mock(DotnetCommand::class.java), Version(1, 2), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {
@@ -43,7 +43,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun shouldNotProvideNodeReuseArgumentsWhenSharedCompilationDoesNotRequireSuppressing() {
         // Given
-        val context = DotnetBuildContext(Path(File("wd")), _ctx.mock(DotnetCommand::class.java), Version(1,2,3), Verbosity.Detailed)
+        val context = DotnetBuildContext(ToolPath(File("wd")), _ctx.mock(DotnetCommand::class.java), Version(1,2,3), Verbosity.Detailed)
 
         // When
         _ctx.checking(object : Expectations() {

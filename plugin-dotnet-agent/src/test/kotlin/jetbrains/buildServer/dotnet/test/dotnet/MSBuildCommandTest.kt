@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
@@ -33,7 +33,7 @@ class MSBuildCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(Path(File("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(File("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -77,10 +77,10 @@ class MSBuildCommandTest {
         val command = createCommand()
 
         // When
-        val actualToolExecutableFile = command.toolResolver.executableFile
+        val actualExecutable = command.toolResolver.executable
 
         // Then
-        Assert.assertEquals(actualToolExecutableFile, Path(File("msbuild.exe")))
+        Assert.assertEquals(actualExecutable, ToolPath(File("msbuild.exe")))
     }
 
     fun createCommand(
@@ -94,7 +94,7 @@ class MSBuildCommandTest {
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.Windows, Path(File("msbuild.exe")), true),
+                DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(File("msbuild.exe")), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 }

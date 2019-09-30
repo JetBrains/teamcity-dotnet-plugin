@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -23,7 +23,7 @@ class SystemParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         val ctx = Mockery()
-        val context = DotnetBuildContext(Path(File("wd")), ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(ToolPath(File("wd")), ctx.mock(DotnetCommand::class.java))
         val provider = SystemParametersProvider(parametersService)
 
         // When
