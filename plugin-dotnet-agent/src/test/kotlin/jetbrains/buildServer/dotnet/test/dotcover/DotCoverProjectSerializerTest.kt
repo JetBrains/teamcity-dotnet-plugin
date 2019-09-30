@@ -3,10 +3,7 @@ package jetbrains.buildServer.dotnet.test.dotcover
 import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.XmlDocumentServiceImpl
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
@@ -47,13 +44,13 @@ class DotCoverProjectSerializerTest {
         val outputStream = ByteArrayOutputStream()
         val document = _realXmlDocumentService.create()
         val tempDir = File("temp")
-        val workingDirectory = File("workDir")
-        val tool = File("wd", "tool")
+        val workingDirectory = Path(File("workDir").path)
+        val tool = Path(File("wd", "tool").path)
         val expectedContent = "<CoverageParams xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                "<Executable>" + tool.absolutePath + "</Executable>" +
+                "<Executable>" + tool.path + "</Executable>" +
                 "<Arguments>arg1</Arguments>" +
-                "<WorkingDir>" + workingDirectory.absolutePath + "</WorkingDir>" +
-                "<Output>" + File(tempDir, "snapshot.dcvr").absolutePath + "</Output>" +
+                "<WorkingDir>" + workingDirectory.path + "</WorkingDir>" +
+                "<Output>" + File(tempDir, "snapshot.dcvr").path + "</Output>" +
                 "<Filters>" +
                 "<IncludeFilters>" +
                 "<FilterEntry>" +
@@ -113,8 +110,8 @@ class DotCoverProjectSerializerTest {
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
                 CommandLine(TargetType.Tool, tool, workingDirectory, listOf(CommandLineArgument("arg1")), emptyList()),
-                File(tempDir, "config.dotCover"),
-                File(tempDir, "snapshot.dcvr"))
+                Path(File(tempDir, "config.dotCover").path),
+                Path(File(tempDir, "snapshot.dcvr").path))
 
         // When
         instance.serialize(dotCoverProject, outputStream)
@@ -132,13 +129,13 @@ class DotCoverProjectSerializerTest {
         val outputStream = ByteArrayOutputStream()
         val document = _realXmlDocumentService.create()
         val tempDir = File("temp")
-        val workingDirectory = File("workDir")
-        val tool = File("wd", "tool")
+        val workingDirectory = Path("workDir")
+        val tool = Path(File("wd", "tool").path)
         val expectedContent = "<CoverageParams xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                "<Executable>" + tool.absolutePath + "</Executable>" +
+                "<Executable>" + tool.path + "</Executable>" +
                 "<Arguments/>" +
-                "<WorkingDir>" + workingDirectory.absolutePath + "</WorkingDir>" +
-                "<Output>" + File(tempDir, "snapshot.dcvr").absolutePath + "</Output>" +
+                "<WorkingDir>" + workingDirectory.path + "</WorkingDir>" +
+                "<Output>" + File(tempDir, "snapshot.dcvr").path + "</Output>" +
                 "</CoverageParams>"
 
         _ctx.checking(object : Expectations() {
@@ -166,8 +163,8 @@ class DotCoverProjectSerializerTest {
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
                 CommandLine(TargetType.Tool, tool, workingDirectory, emptyList(), emptyList()),
-                File(tempDir, "config.dotCover"),
-                File(tempDir, "snapshot.dcvr"))
+                Path(File(tempDir, "config.dotCover").path),
+                Path(File(tempDir, "snapshot.dcvr").path))
 
         // When
         instance.serialize(dotCoverProject, outputStream)

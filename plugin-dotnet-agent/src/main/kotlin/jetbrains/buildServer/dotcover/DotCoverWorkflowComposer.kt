@@ -38,7 +38,7 @@ class DotCoverWorkflowComposer(
                 return workflow
             }
 
-            dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile).absoluteFile
+            dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile)
         } catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)
             exception.isLogStacktrace = false
@@ -74,12 +74,15 @@ class DotCoverWorkflowComposer(
                         continue
                     }
 
+                    val configFile = _pathsService.getTempFileName(DotCoverConfigExtension)
+                    val snapshotFile = _pathsService.getTempFileName(DotCoverSnapshotExtension)
+
                     val dotCoverProject = DotCoverProject(
                             commandLineToGetCoverage,
-                            _pathsService.getTempFileName(DotCoverProjectExtension),
-                            _pathsService.getTempFileName(DotCoverSnapshotExtension))
+                            Path(_virtualContext.resolvePath(configFile.path)),
+                            Path(_virtualContext.resolvePath(snapshotFile.path)))
 
-                    _fileSystemService.write(dotCoverProject.configFile) {
+                    _fileSystemService.write(configFile) {
                         _dotCoverProjectSerializer.serialize(dotCoverProject, it)
                     }
 
@@ -103,13 +106,13 @@ class DotCoverWorkflowComposer(
 
                     yield(CommandLine(
                             target,
-                            File(_virtualContext.resolvePath(dotCoverExecutableFile.canonicalPath)),
-                            File(_virtualContext.resolvePath(commandLineToGetCoverage.workingDirectory.canonicalPath)),
+                            Path(_virtualContext.resolvePath(dotCoverExecutableFile.path)),
+                            Path(commandLineToGetCoverage.workingDirectory.path),
                             createArguments(dotCoverProject).toList(),
                             commandLineToGetCoverage.environmentVariables))
 
-                    deferredServiceMessages.add(DotCoverServiceMessage(File(dotCoverPath).absoluteFile))
-                    deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, dotCoverProject.snapshotFile.absoluteFile))
+                    deferredServiceMessages.add(DotCoverServiceMessage(File(dotCoverPath).canonicalFile))
+                    deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, snapshotFile.canonicalFile))
                 }
             }
 
@@ -132,7 +135,7 @@ class DotCoverWorkflowComposer(
 
     private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
         yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(_virtualContext.resolvePath(dotCoverProject.configFile.canonicalPath), CommandLineArgumentType.Mandatory))
+        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Mandatory))
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
@@ -161,7 +164,7 @@ class DotCoverWorkflowComposer(
     companion object {
         internal const val DotCoverExecutableFile = "dotCover.exe"
         internal const val DotCoverToolName = "dotcover"
-        internal const val DotCoverProjectExtension = ".dotCover"
+        internal const val DotCoverConfigExtension = ".dotCover"
         internal const val DotCoverSnapshotExtension = ".dcvr"
     }
 }

@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -44,14 +45,14 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        val context = DotnetBuildContext(ToolPath(File("wd")), _ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(ToolPath(Path("wd")), _ctx.mock(DotnetCommand::class.java))
         _ctx.checking(object : Expectations() {
             init {
                 allowing<DotnetCommand>(_buildCommand).commandType
                 will(returnValue(DotnetCommandType.Build))
 
                 allowing<DotnetCommand>(_buildCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(File("dotnet")),false)))
+                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)))
 
                 allowing<DotnetCommand>(_buildCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
@@ -66,7 +67,7 @@ class DotnetCommandSetTest {
                 will(returnValue(DotnetCommandType.Clean))
 
                 allowing<DotnetCommand>(_cleanCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(File("dotnet")),true)))
+                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true)))
 
                 allowing<DotnetCommand>(_cleanCommand).getArguments(context)
                 will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))

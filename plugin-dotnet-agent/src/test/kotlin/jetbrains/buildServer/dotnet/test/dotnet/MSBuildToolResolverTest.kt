@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -80,7 +81,7 @@ class MSBuildToolResolverTest {
 
         // Then
         if (exceptionPattern == null) {
-            Assert.assertEquals(actualExecutable, ToolPath(expectedExecutableFile))
+            Assert.assertEquals(actualExecutable, ToolPath(Path(expectedExecutableFile.path)))
             Assert.assertEquals(actualIsCommandRequired, expectedIsCommandRequired)
         }
     }
@@ -89,6 +90,6 @@ class MSBuildToolResolverTest {
         return MSBuildToolResolver(
                 _environment,
                 ParametersServiceStub(parameters),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(executableFile), true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)), true))
     }
 }

@@ -23,15 +23,15 @@ class MonoPropertiesExtension(
         try {
             val command = CommandLine(
                     TargetType.Tool,
-                    File(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
-                    File("."),
+                    Path(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
+                    Path("."),
                     listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                     emptyList())
             _commandLineExecutor.tryExecute(command)?.let {
                 val version = _versionParser.parse(it.standardOutput)
                 if (version != Version.Empty) {
-                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.absolutePath)
-                    LOG.info("Found Mono $it at ${command.executableFile.absolutePath}")
+                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.path)
+                    LOG.info("Found Mono $it at ${command.executableFile.path}")
                 }
                 else {
                     LOG.info("Mono not found")

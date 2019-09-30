@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
-import java.io.File
 
 class DotnetVersionProviderImpl(
         private val _buildStepContext: BuildStepContext,
@@ -13,13 +12,13 @@ class DotnetVersionProviderImpl(
         private val _dotnetToolResolver: DotnetToolResolver)
     : DotnetVersionProvider {
 
-    override fun getVersion(dotnetExecutable: File, path: File): Version {
-        LOG.info("Try getting the dotnet CLI version for directory \"$path\".")
+    override fun getVersion(dotnetExecutable: Path, workingDirectory: Path): Version {
+        LOG.info("Try getting the dotnet CLI version for directory \"$workingDirectory\".")
         val versionResult = _commandLineExecutor.tryExecute(
                 CommandLine(
                         TargetType.Tool,
                         dotnetExecutable,
-                        path,
+                        workingDirectory,
                         versionArgs,
                         emptyList()))
 

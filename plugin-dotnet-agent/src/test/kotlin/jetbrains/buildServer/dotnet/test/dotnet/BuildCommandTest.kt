@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -33,7 +34,7 @@ class BuildCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(File("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -80,7 +81,7 @@ class BuildCommandTest {
         val actualExecutable = command.toolResolver.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(File("dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet")))
     }
 
     fun createCommand(
@@ -94,7 +95,7 @@ class BuildCommandTest {
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(File("dotnet")), true),
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 }

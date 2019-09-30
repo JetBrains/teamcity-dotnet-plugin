@@ -34,8 +34,8 @@ class DotnetWorkflowComposer(
                         ?.trim()
                         ?.let { Verbosity.tryParse(it) }
 
-                val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-                val virtualWorkingDirectory = File(_virtualContext.resolvePath(workingDirectory.canonicalPath))
+                val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
+                val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
                 var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
@@ -55,7 +55,7 @@ class DotnetWorkflowComposer(
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             })
 
-    private fun showTitle(command: DotnetCommand, dotnetBuildContext: DotnetBuildContext, executableFile: File, args: List<CommandLineArgument>) {
+    private fun showTitle(command: DotnetCommand, dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>) {
         var title = mutableListOf<StdOutText>()
         when (command.toolResolver.paltform) {
             ToolPlatform.CrossPlatform -> title.add(StdOutText(".NET Core SDK ", Color.Minor))
@@ -67,12 +67,12 @@ class DotnetWorkflowComposer(
             title.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Minor))
         }
 
-        title.addAll(_commandLinePresentationService.buildExecutableFilePresentation(executableFile))
+        title.addAll(_commandLinePresentationService.buildExecutablePresentation(executableFile))
         title.addAll(_commandLinePresentationService.buildArgsPresentation(args))
         _loggerService.writeStandardOutput(*title.toTypedArray())
     }
 
-    private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: File, workingDirectory: File, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
+    private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: Path, workingDirectory: Path, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
         disposableOf (
                 _loggerService.writeBlock("Getting .NET Core SDK version"),
                 workflowContext.subscibeForOutput { versions.add(_versionParser.parse(listOf(it))) }
@@ -87,7 +87,7 @@ class DotnetWorkflowComposer(
         }
     }
 
-    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: File, args: List<CommandLineArgument>): Sequence<CommandLine> = sequence {
+    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: Path, args: List<CommandLineArgument>): Sequence<CommandLine> = sequence {
         val result = mutableSetOf<CommandResult>()
 
         disposableOf(

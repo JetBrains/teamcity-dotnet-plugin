@@ -32,9 +32,9 @@ class DotnetWorkflowComposerTest {
     private val _dotnetArgs = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
     private val _msbuildArgs = listOf(CommandLineArgument("arg3"))
     private val _workingDirectory = File("wd")
-    private val _virtualizedWorkingDirectory = File("wd")
-    private val _msbuildExecutable = ToolPath(File("msbuild.exe"))
-    private val _dotnetExecutable = ToolPath(File("dotnet.exe"))
+    private val _virtualizedWorkingDirectory = Path("wd")
+    private val _msbuildExecutable = ToolPath(Path("msbuild.exe"))
+    private val _dotnetExecutable = ToolPath(Path("dotnet.exe"))
     private val _tokens = mutableListOf<Disposable>()
 
     @BeforeMethod
@@ -54,7 +54,7 @@ class DotnetWorkflowComposerTest {
         every { _loggerService.writeBlock("msbuild")  } returns createToken()
         every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
         every { _loggerService.writeBlock("build")  } returns createToken()
-        every { _commandLinePresentationService.buildExecutableFilePresentation(any()) } answers { listOf(StdOutText(arg<File>(0).path, Color.Header)) }
+        every { _commandLinePresentationService.buildExecutablePresentation(any()) } answers { listOf(StdOutText(arg<Path>(0).path, Color.Header)) }
         every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
     }

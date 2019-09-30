@@ -3,12 +3,14 @@ package jetbrains.buildServer.agent
 import com.intellij.execution.configurations.GeneralCommandLine
 import jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl
 import org.apache.log4j.Logger
+import com.intellij.openapi.diagnostic.Logger
+import java.io.File
 
 class CommandLineExecutorImpl : CommandLineExecutor {
     override fun tryExecute(commandLine: CommandLine, executionTimeoutSeconds: Int): CommandLineResult? {
         val cmd = GeneralCommandLine()
         cmd.exePath = commandLine.executableFile.path
-        cmd.setWorkingDirectory(commandLine.workingDirectory)
+        cmd.setWorkingDirectory(File(commandLine.workingDirectory.path))
         cmd.addParameters(commandLine.arguments.map { it.value })
 
         val currentEnvironment = System.getenv().toMutableMap()

@@ -18,20 +18,20 @@ class PathsServiceImpl(
         get() = UUID.randomUUID().toString().replace("-", "")
 
     override fun getPath(pathType: PathType) = when (pathType) {
-        PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory
-        PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory
-        PathType.AgentTemp -> _buildAgentConfigurablePaths.agentTempDirectory
-        PathType.BuildTemp -> _buildAgentConfigurablePaths.buildTempDirectory
-        PathType.GlobalTemp -> _buildAgentConfigurablePaths.cacheDirectory
-        PathType.Plugins -> _buildAgentConfiguration.agentPluginsDirectory
-        PathType.Plugin -> _pluginDescriptor.pluginRoot
-        PathType.Tools -> _buildAgentConfiguration.agentToolsDirectory
-        PathType.Lib -> _buildAgentConfiguration.agentLibDirectory
-        PathType.Work -> _buildAgentConfiguration.workDirectory
-        PathType.System -> _buildAgentConfiguration.systemDirectory
-        PathType.Bin -> File(_buildAgentConfiguration.agentHomeDirectory, "bin")
-        PathType.Config -> _buildAgentConfigurablePaths.agentConfDirectory
-        PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory
+        PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory.canonicalFile
+        PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory.canonicalFile
+        PathType.AgentTemp -> _buildAgentConfigurablePaths.agentTempDirectory.canonicalFile
+        PathType.BuildTemp -> _buildAgentConfigurablePaths.buildTempDirectory.canonicalFile
+        PathType.GlobalTemp -> _buildAgentConfigurablePaths.cacheDirectory.canonicalFile
+        PathType.Plugins -> _buildAgentConfiguration.agentPluginsDirectory.canonicalFile
+        PathType.Plugin -> _pluginDescriptor.pluginRoot.canonicalFile
+        PathType.Tools -> _buildAgentConfiguration.agentToolsDirectory.canonicalFile
+        PathType.Lib -> _buildAgentConfiguration.agentLibDirectory.canonicalFile
+        PathType.Work -> _buildAgentConfiguration.workDirectory.canonicalFile
+        PathType.System -> _buildAgentConfiguration.systemDirectory.canonicalFile
+        PathType.Bin -> File(_buildAgentConfiguration.agentHomeDirectory, "bin").canonicalFile
+        PathType.Config -> _buildAgentConfigurablePaths.agentConfDirectory.canonicalFile
+        PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory.canonicalFile
     }
 
     override fun getTempFileName(extension: String): File {

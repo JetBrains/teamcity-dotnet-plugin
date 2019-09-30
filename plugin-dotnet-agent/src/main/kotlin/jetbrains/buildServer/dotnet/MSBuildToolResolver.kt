@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -63,18 +64,18 @@ class MSBuildToolResolver(
                 return Tool.tryParse(it)
             }
 
-    private fun tryGetWindowsTool(parameterName: String): File? =
+    private fun tryGetWindowsTool(parameterName: String): Path? =
             _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-                return File(it, MSBuildWindowsTooName).absoluteFile
+                return Path(File(it, MSBuildWindowsTooName).canonicalPath)
             }
 
 
-    private fun tryGetMonoTool(parameterName: String): File? =
+    private fun tryGetMonoTool(parameterName: String): Path? =
             _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-                val baseDirectory = File(it).absoluteFile.parent
+                val baseDirectory = File(it).canonicalFile.parent
                 return when (_environment.os) {
-                    OSType.WINDOWS -> File(baseDirectory, MSBuildMonoWindowsToolName).absoluteFile
-                    else -> File(baseDirectory, MSBuildMonoToolName).absoluteFile
+                    OSType.WINDOWS -> Path(File(baseDirectory, MSBuildMonoWindowsToolName).canonicalPath)
+                    else -> Path(File(baseDirectory, MSBuildMonoToolName).canonicalPath)
                 }
             }
 

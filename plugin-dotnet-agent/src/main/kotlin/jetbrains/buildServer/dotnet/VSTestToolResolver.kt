@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -48,9 +49,9 @@ class VSTestToolResolver(
             return null
         }
 
-    private fun tryGetTool(parameterName: String): File? {
+    private fun tryGetTool(parameterName: String): Path? {
         _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-            return File(it).absoluteFile
+            return Path(File(it).canonicalPath)
         }
 
         return null

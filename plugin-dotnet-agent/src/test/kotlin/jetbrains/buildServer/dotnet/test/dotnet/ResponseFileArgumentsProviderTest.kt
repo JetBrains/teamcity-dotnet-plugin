@@ -42,7 +42,7 @@ class ResponseFileArgumentsProviderTest {
         val buildParameter2 = MSBuildParameter("param2", "val2")
         val parametersProvider2 = mockk<MSBuildParametersProvider>()
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
-        val context = DotnetBuildContext(ToolPath(File("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
 
         every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1)
         every { _msBuildParameterConverter.convert(buildParameter1) } returns "par1"

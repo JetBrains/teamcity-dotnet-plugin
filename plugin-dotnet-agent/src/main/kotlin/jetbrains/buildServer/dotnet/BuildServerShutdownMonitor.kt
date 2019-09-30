@@ -17,7 +17,7 @@ class BuildServerShutdownMonitor(
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
-    private var _workingDirectories = mutableMapOf<Version, File>()
+    private var _workingDirectories = mutableMapOf<Version, Path>()
 
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {

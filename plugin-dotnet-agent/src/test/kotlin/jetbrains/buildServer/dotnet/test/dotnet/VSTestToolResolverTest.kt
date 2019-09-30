@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -43,11 +44,11 @@ class VSTestToolResolverTest {
 
         // Then
         if (exceptionPattern == null) {
-            Assert.assertEquals(actualExecutable, ToolPath(expectedExecutableFile))
+            Assert.assertEquals(actualExecutable, ToolPath(Path(expectedExecutableFile.path)))
         }
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(executableFile),true))
+        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)),true))
     }
 }

@@ -5,10 +5,14 @@ import jetbrains.buildServer.agent.runner.StdOutText
 import java.io.File
 
 class CommandLinePresentationServiceImpl : CommandLinePresentationService {
-    override fun buildExecutableFilePresentation(executableFile: File): List<StdOutText> {
+    override fun buildExecutablePresentation(executableFile: Path): List<StdOutText> {
         val output = mutableListOf<StdOutText>()
-        executableFile.parent?.let { output.add(StdOutText(it + File.separator, Color.Minor)) }
-        output.add(StdOutText(executableFile.name, Color.Header))
+        val lastSeparatorIndex = executableFile.path.indexOfLast { it == File.separatorChar || it == '\\' || it == '/' }
+        if (lastSeparatorIndex >= 0) {
+            output.add(StdOutText(executableFile.path.substring(0 .. lastSeparatorIndex - 1) + File.separatorChar, Color.Minor))
+        }
+
+        output.add(StdOutText(executableFile.path.substring(lastSeparatorIndex + 1), Color.Header))
         return output
     }
 

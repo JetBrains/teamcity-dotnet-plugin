@@ -77,8 +77,8 @@ class DotnetPropertiesExtensionTest {
             originSdks: Sequence<DotnetSdk>,
             expectedSdks: Sequence<Pair<String, String>>) {
         // Given
-        val toolPath = File("dotnet")
-        val workPath = File("work")
+        val toolPath = Path("dotnet")
+        val workPath = Path("work")
 
         val beforeAgentConfigurationLoadedSource = subjectOf<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>()
         _ctx.checking(object : Expectations() {
@@ -90,19 +90,19 @@ class DotnetPropertiesExtensionTest {
                 will(returnValue(toolPath.path))
 
                 oneOf<PathsService>(_pathsService).getPath(PathType.Work)
-                will(returnValue(workPath))
+                will(returnValue(File(workPath.path)))
 
                 oneOf<DotnetVersionProvider>(_dotnetVersionProvider).getVersion(toolPath, workPath)
                 will(returnValue(Version(1, 0, 1)))
 
-                oneOf<DotnetSdksProvider>(_dotnetSdksProvider).getSdks(toolPath)
+                oneOf<DotnetSdksProvider>(_dotnetSdksProvider).getSdks(File(toolPath.path))
                 will(returnValue(originSdks))
 
                 oneOf<BuildAgent>(_buildAgent).configuration
                 will(returnValue(_buildAgentConfiguration))
 
                 oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_NAME, Version(1, 0, 1).toString())
-                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_PATH, toolPath.absolutePath)
+                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_PATH, File(toolPath.path).canonicalPath)
 
                 for ((version, path) in expectedSdks) {
                     oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path)

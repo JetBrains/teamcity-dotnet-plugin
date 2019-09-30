@@ -36,14 +36,14 @@ class DotnetPropertiesExtension(
 
                 // Detect .NET CLI path
                 val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
-                configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.absolutePath)
-                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.absolutePath}\"")
+                configuration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, dotnetPath.canonicalPath)
+                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_PATH}\": \"${dotnetPath.canonicalPath}\"")
                 LOG.info(".NET CLI $event found at \"${dotnetPath.absolutePath}\"")
 
                 // Detect .NET CLI version
-                val version = _dotnetVersionProvider.getVersion(dotnetPath, _pathsService.getPath(PathType.Work))
-                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, version.toString())
-                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"${version}\"")
+                val sdkVersion = _dotnetVersionProvider.getVersion(Path(dotnetPath.path), Path(_pathsService.getPath(PathType.Work).path))
+                configuration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, sdkVersion.toString())
+                LOG.debug("Add configuration parameter \"${DotnetConstants.CONFIG_NAME}\": \"${sdkVersion}\"")
 
                 LOG.debug("Locating .NET Core SDKs")
                 val sdks = _dotnetSdksProvider.getSdks(dotnetPath).toList()

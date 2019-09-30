@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -36,7 +37,7 @@ class VSTestCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(File("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -83,7 +84,7 @@ class VSTestCommandTest {
         val actualExecutable = command.toolResolver.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(File("vstest.console.exe")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("vstest.console.exe")))
     }
 
     fun createCommand(
@@ -97,5 +98,5 @@ class VSTestCommandTest {
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(File("vstest.console.exe")), true))
+                    DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true))
 }

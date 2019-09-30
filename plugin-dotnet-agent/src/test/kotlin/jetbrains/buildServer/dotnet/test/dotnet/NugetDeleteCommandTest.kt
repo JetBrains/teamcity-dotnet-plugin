@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -41,7 +42,7 @@ class NugetDeleteCommandTest {
         val command = createCommand(parameters = parameters, arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(File("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -68,7 +69,7 @@ class NugetDeleteCommandTest {
         val actualExecutable = command.toolResolver.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(File("dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet")))
     }
 
     fun createCommand(
@@ -78,5 +79,5 @@ class NugetDeleteCommandTest {
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(File("dotnet")),true))
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true))
 }

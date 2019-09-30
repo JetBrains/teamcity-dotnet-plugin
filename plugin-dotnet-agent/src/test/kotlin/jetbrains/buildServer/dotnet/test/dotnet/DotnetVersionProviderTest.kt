@@ -43,8 +43,8 @@ class DotnetVersionProviderTest {
     @Test(dataProvider = "testData")
     fun shouldGetDotnetVersion(stdOutVersion: Collection<String>, stdErr: Collection<String>, exitCode: Int, expectedVersion: Version) {
         // Given
-        val workingDirectoryPath = File("wd")
-        val toolPath = File("dotnet")
+        val workingDirectoryPath = Path("wd")
+        val toolPath = Path("dotnet")
         val versionCommandline = CommandLine(
                 TargetType.Tool,
                 toolPath,

@@ -20,9 +20,9 @@ import java.io.File
 class CmdWorkflowComposerTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _workflowContext: WorkflowContext
-    private var _workflowCmd = createWorkflow(File("abc1", "my.cmd"))
-    private var _workflowBat = createWorkflow(File("abc2", "my.bat"))
-    private var _workflowOther = createWorkflow(File("abc3", "my.exe"))
+    private var _workflowCmd = createWorkflow(Path(File("abc1", "my.cmd").path))
+    private var _workflowBat = createWorkflow(Path(File("abc2", "my.bat").path))
+    private var _workflowOther = createWorkflow(Path(File("abc3", "my.exe").path))
     @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
@@ -58,12 +58,12 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                File("v_" + File("win", "cmd.exe").canonicalFile),
-                                                File("v_" + _workflowBat.commandLines.single().workingDirectory.canonicalFile),
+                                                Path("v_" + File("win", "cmd.exe").path),
+                                                Path("v_" + _workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
+                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.path} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
                                                 _workflowCmd.commandLines.single().environmentVariables
                                         )
                                 )
@@ -77,12 +77,12 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                File("v_" + File("win", "cmd.exe").canonicalFile),
-                                                File("v_" + _workflowBat.commandLines.single().workingDirectory.canonicalFile),
+                                                Path("v_" + File("win", "cmd.exe").path),
+                                                Path("v_" + _workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
+                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.path} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Mandatory)),
                                                 _workflowBat.commandLines.single().environmentVariables
                                         )
                                 )
@@ -118,8 +118,8 @@ class CmdWorkflowComposerTest {
     }
 
     companion object {
-        private fun createWorkflow(executableFile: File): Workflow {
-            val workingDirectory = File("wd")
+        private fun createWorkflow(executableFile: Path): Workflow {
+            val workingDirectory = Path("wd")
             val args = listOf(CommandLineArgument("arg1"))
             val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
             val commandLine = CommandLine(

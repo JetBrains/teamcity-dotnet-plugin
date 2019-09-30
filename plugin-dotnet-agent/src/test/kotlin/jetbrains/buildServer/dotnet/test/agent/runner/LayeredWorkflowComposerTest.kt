@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.agent.runner
 
 import jetbrains.buildServer.agent.CommandLine
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.LayeredWorkflowComposer
 import jetbrains.buildServer.agent.runner.Workflow
@@ -11,11 +12,10 @@ import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class LayeredWorkflowComposerTest {
     private val _toolWorkflow: Workflow = Workflow(emptySequence())
-    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(sequenceOf(CommandLine(TargetType.Tool, File("tool"), File("wd"), emptyList(), emptyList())))
+    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(sequenceOf(CommandLine(TargetType.Tool, Path("tool"), Path("wd"), emptyList(), emptyList())))
     private val _baseWorkflow: Workflow = Workflow(emptySequence())
 
     @DataProvider(name = "composeCases")

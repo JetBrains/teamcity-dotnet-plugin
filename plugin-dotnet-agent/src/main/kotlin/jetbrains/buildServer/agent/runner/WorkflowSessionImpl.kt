@@ -7,9 +7,7 @@
 
 package jetbrains.buildServer.agent.runner
 
-import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.subjectOf
 import java.io.File
@@ -79,10 +77,10 @@ class WorkflowSessionImpl(
             private val _commandLinePresentationService: CommandLinePresentationService) : CommandExecution {
 
         override fun beforeProcessStarted() {
-            val executableFilePresentation = _commandLinePresentationService.buildExecutableFilePresentation(_commandLine.executableFile)
+            val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
             _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
-            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(_commandLine.workingDirectory.canonicalPath, Color.Header))
+            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(_commandLine.workingDirectory.path, Color.Header))
         }
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit
@@ -115,10 +113,10 @@ class WorkflowSessionImpl(
             private val _environmentVariables: Map<String, String>) : ProgramCommandLine {
 
         override fun getExecutablePath(): String =
-                _commandLine.executableFile.absolutePath
+                File(_commandLine.executableFile.path).canonicalPath
 
         override fun getWorkingDirectory(): String =
-                _commandLine.workingDirectory.absolutePath
+                File(_commandLine.workingDirectory.path).canonicalPath
 
         override fun getArguments(): MutableList<String> =
                 _commandLine.arguments.map { it.value }.toMutableList()

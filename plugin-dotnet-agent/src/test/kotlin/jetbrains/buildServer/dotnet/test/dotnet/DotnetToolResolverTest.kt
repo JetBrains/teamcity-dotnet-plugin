@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.VirtualContext
@@ -42,7 +43,7 @@ class DotnetToolResolverTest {
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(File(toolFile)))
+        Assert.assertEquals(actualExecutable, ToolPath(Path(toolFile)))
     }
 
     @Test
@@ -59,14 +60,14 @@ class DotnetToolResolverTest {
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(File("dotnet.exe"), File("dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet.exe"), Path("dotnet")))
     }
 
     @Test
     fun shouldProvideExecutableFileWhenParameterWasOverridedByConfigParameter() {
         // Given
         val instance = createInstance()
-        val toolFile = File("dotnet.exe")
+        val toolFile = Path("dotnet.exe")
 
         // When
         every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns toolFile.path

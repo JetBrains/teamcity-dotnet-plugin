@@ -57,8 +57,8 @@ class VisualStudioWorkflowComposerTest {
                         listOf(
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("v_tool"),
-                                        File("v_wd"),
+                                        Path("v_tool"),
+                                        Path("v_wd"),
                                         listOf(
                                                 CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
@@ -68,8 +68,8 @@ class VisualStudioWorkflowComposerTest {
                                         emptyList()),
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("v_tool"),
-                                        File("v_wd"),
+                                        Path("v_tool"),
+                                        Path("v_wd"),
                                         listOf(
                                                 CommandLineArgument("v_my2.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
@@ -87,8 +87,8 @@ class VisualStudioWorkflowComposerTest {
                         listOf(
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("v_tool"),
-                                        File("v_wd"),
+                                        Path("v_tool"),
+                                        Path("v_wd"),
                                         listOf(
                                                 CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
@@ -182,8 +182,8 @@ class VisualStudioWorkflowComposerTest {
         val expectedCommandLines = listOf(
                 CommandLine(
                         TargetType.Tool,
-                        File("v_tool"),
-                        File("v_wDir"),
+                        Path("v_tool"),
+                        Path("v_wDir"),
                         listOf(
                                 CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
