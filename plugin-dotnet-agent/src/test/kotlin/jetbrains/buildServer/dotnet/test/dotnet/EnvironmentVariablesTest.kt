@@ -1,16 +1,15 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
-import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.TargetType
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.runner.TargetRegistry
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.util.OSType
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -18,76 +17,53 @@ import org.testng.annotations.Test
 import java.io.File
 
 class EnvironmentVariablesTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _environment: Environment
-    private lateinit var _sharedCompilation: SharedCompilation
-    private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _environment: Environment
+    @MockK private lateinit var _sharedCompilation: SharedCompilation
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _environment = _ctx.mock<Environment>(Environment::class.java)
-        _sharedCompilation = _ctx.mock<SharedCompilation>(SharedCompilation::class.java)
-        _pathsService = _ctx.mock<PathsService>(PathsService::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
     }
 
     @Test
     fun shouldProvideDefaultVars() {
         // Given
-        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService, _virtualContext)
         val systemPath = File("system")
         val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<Environment>(_environment).os
-                will(returnValue(OSType.WINDOWS))
-
-                oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
-                will(returnValue("path"))
-
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
-                will(returnValue(false))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.System);
-                will(returnValue(systemPath))
-            }
-        })
+        every { _environment.os } returns OSType.WINDOWS
+        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
+        every { _sharedCompilation.requireSuppressing(Version(1, 2, 3)) } returns false
+        every { _pathsService.getPath(PathType.System) } returns systemPath
 
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", nugetPath))).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath))).toList())
     }
 
     @Test
     fun shouldUseSharedCompilation() {
         // Given
-        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService)
+        val environmentVariables = EnvironmentVariablesImpl(_environment, _sharedCompilation, _pathsService, _virtualContext)
         val systemPath = File("system")
         val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<Environment>(_environment).os
-                will(returnValue(OSType.WINDOWS))
-
-                oneOf<Environment>(_environment).tryGetVariable("USERPROFILE")
-                will(returnValue("path"))
-
-                oneOf<SharedCompilation>(_sharedCompilation).requireSuppressing(Version(1, 2, 3))
-                will(returnValue(true))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.System);
-                will(returnValue(systemPath))
-            }
-        })
+        every { _environment.os } returns OSType.WINDOWS
+        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
+        every { _sharedCompilation.requireSuppressing(Version(1, 2, 3)) } returns true
+        every { _pathsService.getPath(PathType.System) } returns systemPath
 
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", nugetPath)) + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath)) + sequenceOf(EnvironmentVariablesImpl.useSharedCompilationEnvironmentVariable)).toList())
     }
 }

@@ -26,8 +26,8 @@ class CmdWorkflowComposer(
                                 "cmd", "bat" -> {
                                     yield(CommandLine(
                                             TargetType.Host,
-                                            File(cmdExecutable),
-                                            commandLine.workingDirectory,
+                                            File(_virtualContext.resolvePath(File(cmdExecutable).canonicalPath)),
+                                            File(_virtualContext.resolvePath(commandLine.workingDirectory.canonicalPath)),
                                             getArguments(commandLine).toList(),
                                             commandLine.environmentVariables))
                                 }

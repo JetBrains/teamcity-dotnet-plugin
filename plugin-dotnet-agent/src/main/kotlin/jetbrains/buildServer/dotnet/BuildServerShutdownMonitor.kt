@@ -30,7 +30,7 @@ class BuildServerShutdownMonitor(
                         _commandLineExecutor.tryExecute(
                                 CommandLine(
                                         TargetType.Tool,
-                                        executableFile,
+                                        executableFile.path,
                                         workingDirectory,
                                         shutdownArgs,
                                         envVariables)
@@ -48,7 +48,7 @@ class BuildServerShutdownMonitor(
                 buildCommands.contains(context.command.commandType)
                 && context.toolVersion > Version.LastVersionWithoutSharedCompilation
                 && _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
-            _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory }
+            _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory.path }
         }
     }
 

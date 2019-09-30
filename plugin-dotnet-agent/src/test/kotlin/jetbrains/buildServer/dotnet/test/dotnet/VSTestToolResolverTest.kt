@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
@@ -29,7 +30,7 @@ class VSTestToolResolverTest {
         val instance = createInstance(parameters, File("dotnet"))
 
         // When
-        var actualExecutableFile: File? = null
+        var actualExecutableFile: Path? = null
         try {
             actualExecutableFile = instance.executableFile
             exceptionPattern?.let {
@@ -42,11 +43,11 @@ class VSTestToolResolverTest {
 
         // Then
         if (exceptionPattern == null) {
-            Assert.assertEquals(actualExecutableFile, expectedExecutableFile)
+            Assert.assertEquals(actualExecutableFile, Path(expectedExecutableFile))
         }
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, executableFile, true))
+        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, Path(executableFile),true))
     }
 }

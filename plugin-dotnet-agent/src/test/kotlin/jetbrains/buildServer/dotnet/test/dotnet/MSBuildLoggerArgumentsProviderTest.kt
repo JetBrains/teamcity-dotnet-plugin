@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -57,7 +58,7 @@ class MSBuildLoggerArgumentsProviderTest {
             verbosity: Verbosity?,
             expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(File("wd"), mockk<DotnetCommand>())
+        val context = DotnetBuildContext(Path(File("wd")), mockk<DotnetCommand>())
         val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")),_loggerParameters, _virtualContext)
         every { _loggerParameters.msBuildLoggerVerbosity } returns verbosity
         every { _loggerParameters.msBuildParameters } returns "params"

@@ -2,26 +2,28 @@ package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.ToolProvider
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
 class DotnetToolResolverImpl(
         private val _toolProvider: ToolProvider,
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _virtualContext: VirtualContext)
     : DotnetToolResolver {
     override val paltform: ToolPlatform
         get() = ToolPlatform.CrossPlatform
 
-    override val executableFile: File
+    override val executableFile: Path
         get() {
             try {
                 var dotnetPath = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
                 LOG.debug("${DotnetConstants.CONFIG_PATH} is \"$dotnetPath\"")
                 if (dotnetPath.isNullOrBlank()) {
-                    // Detect .NET CLI path in place (in the case of docker wrapping).
                     LOG.debug("Try to find ${DotnetConstants.EXECUTABLE} executable.")
                     dotnetPath = _toolProvider.getPath(DotnetConstants.EXECUTABLE)
                     LOG.debug("${DotnetConstants.EXECUTABLE} is \"$dotnetPath\"")
@@ -29,7 +31,7 @@ class DotnetToolResolverImpl(
                         throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
                     }
                 }
-                return File(dotnetPath)
+                return Path(File(dotnetPath), if (_virtualContext.isVirtual) File("dotnet") else File(dotnetPath))
             } catch (e: ToolCannotBeFoundException) {
                 val exception = RunBuildException(e)
                 exception.isLogStacktrace = false

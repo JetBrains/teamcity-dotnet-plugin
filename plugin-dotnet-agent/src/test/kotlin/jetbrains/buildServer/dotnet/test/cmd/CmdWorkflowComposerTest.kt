@@ -58,8 +58,8 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                File("win", "cmd.exe"),
-                                                _workflowCmd.commandLines.single().workingDirectory,
+                                                File("v_" + File("win", "cmd.exe").canonicalFile),
+                                                File("v_" + _workflowBat.commandLines.single().workingDirectory.canonicalFile),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
@@ -77,8 +77,8 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                File("win", "cmd.exe"),
-                                                _workflowBat.commandLines.single().workingDirectory,
+                                                File("v_" + File("win", "cmd.exe").canonicalFile),
+                                                File("v_" + _workflowBat.commandLines.single().workingDirectory.canonicalFile),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),

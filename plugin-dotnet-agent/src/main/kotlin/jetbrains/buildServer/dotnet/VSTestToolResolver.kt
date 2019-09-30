@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -13,13 +14,13 @@ class VSTestToolResolver(
     override val paltform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
 
-    override val executableFile: File
+    override val executableFile: Path
         get() {
             _currentTool?.let {
                 when (it.platform) {
                     ToolPlatform.Windows -> {
                         val vstestTool = "teamcity.dotnet.vstest.${it.version}.0"
-                        return tryGetTool(vstestTool) ?: throw RunBuildException(ToolCannotBeFoundException(vstestTool))
+                        return Path(tryGetTool(vstestTool) ?: throw RunBuildException(ToolCannotBeFoundException(vstestTool)))
                     }
                     else -> {
                     }

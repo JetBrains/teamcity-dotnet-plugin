@@ -29,6 +29,7 @@ class VisualStudioWorkflowComposerTest {
     private lateinit var _loggerService: LoggerService
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
+    private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
@@ -39,6 +40,7 @@ class VisualStudioWorkflowComposerTest {
         _loggerService = _ctx.mock(LoggerService::class.java)
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
+        _virtualContext = _ctx.mock(VirtualContext::class.java)
     }
 
     @DataProvider(name = "composeCases")
@@ -55,10 +57,10 @@ class VisualStudioWorkflowComposerTest {
                         listOf(
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("tool"),
-                                        File("wd"),
+                                        File("v_tool"),
+                                        File("v_wd"),
                                         listOf(
-                                                CommandLineArgument(File("my1.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -66,10 +68,10 @@ class VisualStudioWorkflowComposerTest {
                                         emptyList()),
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("tool"),
-                                        File("wd"),
+                                        File("v_tool"),
+                                        File("v_wd"),
                                         listOf(
-                                                CommandLineArgument(File("my2.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my2.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -85,10 +87,10 @@ class VisualStudioWorkflowComposerTest {
                         listOf(
                                 CommandLine(
                                         TargetType.Tool,
-                                        File("tool"),
-                                        File("wd"),
+                                        File("v_tool"),
+                                        File("v_wd"),
                                         listOf(
-                                                CommandLineArgument(File("my1.csproj").absolutePath, CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("release"),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom)),
@@ -136,6 +138,21 @@ class VisualStudioWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 allowing<Disposable>(_targetRegistrationToken).dispose()
+
+                allowing<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
+                will(returnValue("v_tool"))
+
+                allowing<VirtualContext>(_virtualContext).resolvePath(File("wd").canonicalPath)
+                will(returnValue("v_wd"))
+
+                allowing<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
+                will(returnValue("v_my1.sln"))
+
+                allowing<VirtualContext>(_virtualContext).resolvePath(File("my2.sln").canonicalPath)
+                will(returnValue("v_my2.sln"))
+
+                allowing<VirtualContext>(_virtualContext).resolvePath(File("my1.csproj").canonicalPath)
+                will(returnValue("v_my1.csproj"))
             }
         })
 
@@ -165,10 +182,10 @@ class VisualStudioWorkflowComposerTest {
         val expectedCommandLines = listOf(
                 CommandLine(
                         TargetType.Tool,
-                        File("tool"),
-                        File("wDir"),
+                        File("v_tool"),
+                        File("v_wDir"),
                         listOf(
-                                CommandLineArgument(File("my1.sln").absolutePath, CommandLineArgumentType.Mandatory),
+                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("\"Debug|x86\""),
                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -189,6 +206,15 @@ class VisualStudioWorkflowComposerTest {
 
                 allowing<TargetService>(_targetService).targets
                 will(returnValue(targets))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
+                will(returnValue("v_tool"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File("wDir").canonicalPath)
+                will(returnValue("v_wDir"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
+                will(returnValue("v_my1.sln"))
 
                 oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
 
@@ -216,6 +242,7 @@ class VisualStudioWorkflowComposerTest {
                 _loggerService,
                 _targetService,
                 _toolResolver,
-                _targetRegistry)
+                _targetRegistry,
+                _virtualContext)
     }
 }

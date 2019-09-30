@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
@@ -10,11 +11,12 @@ import java.io.File
 class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _sharedCompilation: SharedCompilation,
-        private val _pathsService: PathsService)
+        private val _pathsService: PathsService,
+        private val _virtualContext: VirtualContext)
     : EnvironmentVariables {
     override fun getVariables(toolVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
-        yield(CommandLineEnvironmentVariable("NUGET_PACKAGES", File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").absolutePath))
+        yield(CommandLineEnvironmentVariable("NUGET_PACKAGES", _virtualContext.resolvePath(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)))
 
         if (_sharedCompilation.requireSuppressing(toolVersion)) {
             yield(useSharedCompilationEnvironmentVariable)

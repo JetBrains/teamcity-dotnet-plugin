@@ -27,6 +27,7 @@ class DotCoverWorkflowComposerTest {
     private lateinit var _coverageFilterProvider: CoverageFilterProvider
     private lateinit var _targetRegistry: TargetRegistry
     private lateinit var _targetRegistrationToken: Disposable
+    private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
@@ -38,6 +39,7 @@ class DotCoverWorkflowComposerTest {
         _coverageFilterProvider = _ctx.mock<CoverageFilterProvider>(CoverageFilterProvider::class.java)
         _targetRegistry = _ctx.mock(TargetRegistry::class.java)
         _targetRegistrationToken = _ctx.mock(Disposable::class.java)
+        _virtualContext = _ctx.mock(VirtualContext::class.java)
     }
 
     @Test
@@ -76,17 +78,17 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile).absoluteFile
+        val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile)
         val dotCoverProject = DotCoverProject(commandLine, File(dotCoverProjectUniqueName), File(dotCoverSnapshotUniqueName))
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
                                 TargetType.CodeCoverageProfiler,
-                                dotCoverExecutableFile,
-                                workingDirectory,
+                                File("v_dotCover"),
+                                File("v_wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -133,6 +135,15 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(dotCoverExecutableFile.canonicalPath)
+                will(returnValue("v_dotCover"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(workingDirectory.canonicalPath)
+                will(returnValue("v_wd"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File(dotCoverProjectUniqueName).canonicalPath)
+                will(returnValue("v_proj"))
             }
         })
 
@@ -272,11 +283,11 @@ class DotCoverWorkflowComposerTest {
                 sequenceOf(
                         CommandLine(
                                 TargetType.CodeCoverageProfiler,
-                                dotCoverExecutableFile,
-                                workingDirectory,
+                                File("v_dotCover"),
+                                File("v_wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -341,6 +352,15 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(dotCoverExecutableFile.canonicalPath)
+                will(returnValue("v_dotCover"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(workingDirectory.canonicalPath)
+                will(returnValue("v_wd"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File(dotCoverProjectUniqueName).canonicalPath)
+                will(returnValue("v_proj"))
             }
         })
 
@@ -372,11 +392,11 @@ class DotCoverWorkflowComposerTest {
                 sequenceOf(
                         CommandLine(
                                 TargetType.CodeCoverageProfiler,
-                                dotCoverExecutableFile,
-                                workingDirectory,
+                                File("v_dotCover"),
+                                File("v_wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -424,6 +444,15 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(dotCoverExecutableFile.canonicalPath)
+                will(returnValue("v_dotCover"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(workingDirectory.canonicalPath)
+                will(returnValue("v_wd"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File(dotCoverProjectUniqueName).canonicalPath)
+                will(returnValue("v_proj"))
             }
         })
 
@@ -455,11 +484,11 @@ class DotCoverWorkflowComposerTest {
                 sequenceOf(
                         CommandLine(
                                 TargetType.CodeCoverageProfiler,
-                                dotCoverExecutableFile,
-                                workingDirectory,
+                                File("v_dotCover"),
+                                File("v_wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
@@ -510,6 +539,15 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(dotCoverExecutableFile.canonicalPath)
+                will(returnValue("v_dotCover"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(workingDirectory.canonicalPath)
+                will(returnValue("v_wd"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File(dotCoverProjectUniqueName).canonicalPath)
+                will(returnValue("v_proj"))
             }
         })
 
@@ -541,15 +579,15 @@ class DotCoverWorkflowComposerTest {
                 sequenceOf(
                         CommandLine(
                                 TargetType.CodeCoverageProfiler,
-                                dotCoverExecutableFile,
-                                workingDirectory,
+                                File("v_dotCover"),
+                                File("v_wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
-                                        CommandLineArgument("/LogFile=${File("logPath", "dotCover99.log")}", CommandLineArgumentType.Infrastructural),
+                                        CommandLineArgument("/LogFile=v_log", CommandLineArgumentType.Infrastructural),
                                         CommandLineArgument("/ProcessFilters=-:sqlservr.exe", CommandLineArgumentType.Custom),
                                         CommandLineArgument("/arg", CommandLineArgumentType.Custom)
                                 ),
@@ -597,6 +635,18 @@ class DotCoverWorkflowComposerTest {
                 will(returnValue(_targetRegistrationToken))
 
                 oneOf<Disposable>(_targetRegistrationToken).dispose()
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(dotCoverExecutableFile.canonicalPath)
+                will(returnValue("v_dotCover"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(workingDirectory.canonicalPath)
+                will(returnValue("v_wd"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File(dotCoverProjectUniqueName).canonicalPath)
+                will(returnValue("v_proj"))
+
+                oneOf<VirtualContext>(_virtualContext).resolvePath(File("logPath", "dotCover99.log").canonicalPath)
+                will(returnValue("v_log"))
             }
         })
 
@@ -616,6 +666,7 @@ class DotCoverWorkflowComposerTest {
                 _loggerService,
                 ArgumentsServiceStub(),
                 _coverageFilterProvider,
-                _targetRegistry)
+                _targetRegistry,
+                _virtualContext)
     }
 }

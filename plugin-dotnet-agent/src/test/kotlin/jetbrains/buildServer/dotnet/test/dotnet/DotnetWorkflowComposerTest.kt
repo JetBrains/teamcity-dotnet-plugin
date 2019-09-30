@@ -25,14 +25,16 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
     private val _dotnetVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var3", "val3"))
     private val _dotnetArgs = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
     private val _msbuildArgs = listOf(CommandLineArgument("arg3"))
     private val _workingDirectory = File("wd")
-    private val _msbuildExecutable = File("msbuild.exe")
-    private val _dotnetExecutable = File("dotnet.exe")
+    private val _virtualizedWorkingDirectory = File("wd")
+    private val _msbuildExecutable = Path(File("msbuild.exe"))
+    private val _dotnetExecutable = Path(File("dotnet.exe"))
     private val _tokens = mutableListOf<Disposable>()
 
     @BeforeMethod
@@ -54,6 +56,7 @@ class DotnetWorkflowComposerTest {
         every { _loggerService.writeBlock("build")  } returns createToken()
         every { _commandLinePresentationService.buildExecutableFilePresentation(any()) } answers { listOf(StdOutText(arg<File>(0).path, Color.Header)) }
         every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
+        every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
     }
 
     @Test
@@ -66,7 +69,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
-                every { executableFile } returns _msbuildExecutable
+                every { executableFile } returns Path(_msbuildExecutable.path)
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
@@ -126,20 +129,20 @@ class DotnetWorkflowComposerTest {
                 listOf(
                         CommandLine(
                                 TargetType.Tool,
-                                _msbuildExecutable,
-                                _workingDirectory,
+                                _msbuildExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
-                                _dotnetExecutable,
-                                _workingDirectory,
-                                listOf(CommandLineArgument("--version")),
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
+                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
-                                _dotnetExecutable,
-                                _workingDirectory,
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))
@@ -217,20 +220,20 @@ class DotnetWorkflowComposerTest {
                 listOf(
                         CommandLine(
                                 TargetType.Tool,
-                                _msbuildExecutable,
-                                _workingDirectory,
+                                _msbuildExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
-                                _dotnetExecutable,
-                                _workingDirectory,
-                                listOf(CommandLineArgument("--version")),
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
+                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
-                                _dotnetExecutable,
-                                _workingDirectory,
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))
@@ -310,20 +313,20 @@ class DotnetWorkflowComposerTest {
                 listOf(
                         CommandLine(
                                 TargetType.Tool,
-                                _msbuildExecutable,
-                                _workingDirectory,
+                                _msbuildExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
-                                _dotnetExecutable,
-                                _workingDirectory,
-                                listOf(CommandLineArgument("--version")),
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
+                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
-                                _dotnetExecutable,
-                                _workingDirectory,
+                                _dotnetExecutable.path,
+                                _virtualizedWorkingDirectory,
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))
@@ -341,7 +344,8 @@ class DotnetWorkflowComposerTest {
                 _commandRegistry,
                 _versionParser,
                 _parametersService,
-                _commandLinePresentationService)
+                _commandLinePresentationService,
+                _virtualContext)
     }
 
     private fun createToken(): Disposable {

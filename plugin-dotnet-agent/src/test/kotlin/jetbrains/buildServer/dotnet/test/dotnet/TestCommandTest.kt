@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
@@ -35,7 +36,7 @@ class TestCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(File("wd"), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(Path(File("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -84,7 +85,7 @@ class TestCommandTest {
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, File("dotnet"), true),
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, Path(File("dotnet")), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 

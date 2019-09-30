@@ -61,7 +61,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val executableFile = File("dotnet")
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(File("wd"), command, toolVersion)
+        val context = DotnetBuildContext(Path(File("wd")), command, toolVersion)
 
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
@@ -76,7 +76,7 @@ class BuildServerShutdownMonitorTest {
                 will(returnValue(dotnetCommandType))
 
                 allowing<DotnetToolResolver>(_dotnetToolResolver).executableFile
-                will(returnValue(executableFile))
+                will(returnValue(Path(executableFile)))
 
                 if (expectedShutdown) {
                     if (toolVersion > Version.LastVersionWithoutSharedCompilation ) {

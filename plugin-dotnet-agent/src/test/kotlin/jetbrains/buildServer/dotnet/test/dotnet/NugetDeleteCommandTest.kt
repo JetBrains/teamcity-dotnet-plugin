@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
@@ -40,7 +41,7 @@ class NugetDeleteCommandTest {
         val command = createCommand(parameters = parameters, arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(File("wd"), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(Path(File("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -67,7 +68,7 @@ class NugetDeleteCommandTest {
         val actualToolExecutableFile = command.toolResolver.executableFile
 
         // Then
-        Assert.assertEquals(actualToolExecutableFile, File("dotnet"))
+        Assert.assertEquals(actualToolExecutableFile, Path(File("dotnet")))
     }
 
     fun createCommand(
@@ -77,5 +78,5 @@ class NugetDeleteCommandTest {
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, File("dotnet"), true))
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, Path(File("dotnet")),true))
 }

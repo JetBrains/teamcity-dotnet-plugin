@@ -11,6 +11,7 @@ import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
+import java.io.File
 
 class VisualStudioWorkflowComposer(
         private val _parametersService: ParametersService,
@@ -19,7 +20,8 @@ class VisualStudioWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver,
-        private val _targetRegistry: TargetRegistry)
+        private val _targetRegistry: TargetRegistry,
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -32,7 +34,7 @@ class VisualStudioWorkflowComposer(
                     }
                 } ?: return@sequence
 
-                val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+                val workingDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath))
                 val action = parameters(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION)
                         ?: throw RunBuildException("Parameter \"${DotnetConstants.PARAM_VISUAL_STUDIO_ACTION}\" was not found")
 
@@ -49,7 +51,7 @@ class VisualStudioWorkflowComposer(
                     _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }.toList()
                 } ?: emptyList()
 
-                val executableFile = _toolResolver.executableFile
+                val executableFile = File(_virtualContext.resolvePath(_toolResolver.executableFile.canonicalPath))
 
                 for ((targetFile) in _targetService.targets) {
                     disposableOf(
@@ -72,7 +74,7 @@ class VisualStudioWorkflowComposer(
                                 executableFile,
                                 workingDirectory,
                                 sequence {
-                                    yield(CommandLineArgument(targetFile.absolutePath, CommandLineArgumentType.Mandatory))
+                                    yield(CommandLineArgument(_virtualContext.resolvePath(targetFile.canonicalPath), CommandLineArgumentType.Mandatory))
                                     yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))

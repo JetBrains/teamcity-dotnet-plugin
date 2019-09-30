@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -16,7 +17,7 @@ class MSBuildToolResolver(
     override val paltform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
 
-    override val executableFile: File
+    override val executableFile: Path
         get() =
             _currentTool?.let {
                 when (it.platform) {
@@ -25,29 +26,30 @@ class MSBuildToolResolver(
                         val x64Tool = "MSBuildTools${it.version}.0_x64_Path"
                         when (it.bitness) {
                             ToolBitness.X64 -> {
-                                return tryGetWindowsTool(x64Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x64Tool))
+                                return Path(tryGetWindowsTool(x64Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x64Tool)))
                             }
                             ToolBitness.X86 -> {
-                                return tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x86Tool))
+                                return Path(tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x86Tool)))
                             }
                             else -> {
                                 tryGetWindowsTool(x64Tool)?.let {
-                                    return it
+                                    return Path(it)
                                 }
 
-                                return tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x64Tool))
+                                return Path(tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x64Tool)))
                             }
                         }
                     }
                     ToolPlatform.Mono -> {
                         val monoTool = MonoConstants.CONFIG_PATH
-                        return tryGetMonoTool(monoTool) ?: throw RunBuildException(ToolCannotBeFoundException(monoTool))
+                        return Path(tryGetMonoTool(monoTool) ?: throw RunBuildException(ToolCannotBeFoundException(monoTool)))
                     }
                     else -> {
                         return _dotnetToolResolver.executableFile
                     }
                 }
             } ?: _dotnetToolResolver.executableFile
+
 
     override val isCommandRequired: Boolean
         get() =

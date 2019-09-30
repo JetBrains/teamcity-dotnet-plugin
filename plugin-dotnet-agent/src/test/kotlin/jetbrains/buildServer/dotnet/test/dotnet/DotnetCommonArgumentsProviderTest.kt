@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Expectations
@@ -34,7 +35,7 @@ class DotnetCommonArgumentsProviderTest {
     @Test(dataProvider = "testData")
     fun shouldGetArguments(parameters: Map<String, String>, expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(Path(File("wd")), _ctx.mock(DotnetCommand::class.java))
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
         _ctx.checking(object : Expectations() {
             init {

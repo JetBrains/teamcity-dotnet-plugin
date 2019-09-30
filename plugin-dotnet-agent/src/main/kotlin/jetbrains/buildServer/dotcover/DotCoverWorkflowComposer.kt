@@ -19,7 +19,8 @@ class DotCoverWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider,
-        private val _targetRegistry: TargetRegistry)
+        private val _targetRegistry: TargetRegistry,
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
@@ -102,8 +103,8 @@ class DotCoverWorkflowComposer(
 
                     yield(CommandLine(
                             target,
-                            dotCoverExecutableFile,
-                            commandLineToGetCoverage.workingDirectory,
+                            File(_virtualContext.resolvePath(dotCoverExecutableFile.canonicalPath)),
+                            File(_virtualContext.resolvePath(commandLineToGetCoverage.workingDirectory.canonicalPath)),
                             createArguments(dotCoverProject).toList(),
                             commandLineToGetCoverage.environmentVariables))
 
@@ -131,12 +132,12 @@ class DotCoverWorkflowComposer(
 
     private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
         yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(dotCoverProject.configFile.absolutePath, CommandLineArgumentType.Mandatory))
+        yield(CommandLineArgument(_virtualContext.resolvePath(dotCoverProject.configFile.canonicalPath), CommandLineArgumentType.Mandatory))
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            val logFileName = _fileSystemService.generateTempFile(File(it), "dotCover", ".log")
+            val logFileName = _virtualContext.resolvePath(_fileSystemService.generateTempFile(File(it), "dotCover", ".log").canonicalPath)
             yield(CommandLineArgument("/LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
         }
 

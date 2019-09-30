@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -65,7 +66,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
             expectedParameters: List<MSBuildParameter>) {
         // Given
         var checkoutDirection =  File("checkoutDir")
-        val context = DotnetBuildContext(File("wd"), mockk<DotnetCommand>())
+        val context = DotnetBuildContext(Path(File("wd")), mockk<DotnetCommand>())
         val argumentsProvider = MSBuildVSTestLoggerParametersProvider(_pathsService, LoggerResolverStub(File("msbuildlogger"), loggerFile), _testReportingParameters, _msBuildVSTestLoggerParameters, _virtualContext)
         every { _testReportingParameters.getMode(context) } returns testReportingMode
         every { _pathsService.getPath(PathType.Checkout) } returns checkoutDirection

@@ -21,7 +21,8 @@ class DotnetWorkflowComposer(
         private val _commandRegistry: CommandRegistry,
         private val _versionParser: VersionParser,
         private val _parametersService: ParametersService,
-        private val _commandLinePresentationService: CommandLinePresentationService)
+        private val _commandLinePresentationService: CommandLinePresentationService,
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -34,20 +35,21 @@ class DotnetWorkflowComposer(
                         ?.let { Verbosity.tryParse(it) }
 
                 val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+                val virtualWorkingDirectory = File(_virtualContext.resolvePath(workingDirectory.canonicalPath))
                 var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
                     val executableFile = command.toolResolver.executableFile
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
                         // Getting .NET Core version
-                        yieldAll(getDotnetSdkVersionCommands(context, executableFile, workingDirectory, dotnetVersions))
+                        yieldAll(getDotnetSdkVersionCommands(context, executableFile.virtualPath, virtualWorkingDirectory, dotnetVersions))
                     }
 
-                    val dotnetBuildContext = DotnetBuildContext(workingDirectory, command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
+                    val dotnetBuildContext = DotnetBuildContext(Path(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
 
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
-                    showTitle(command, dotnetBuildContext, executableFile, args)
-                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile, args))
+                    showTitle(command, dotnetBuildContext, executableFile.virtualPath, args)
+                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executableFile.virtualPath, args))
                 }
 
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
@@ -80,7 +82,7 @@ class DotnetWorkflowComposer(
                             TargetType.SystemDiagnostics,
                             executableFile,
                             workingDirectory,
-                            versionArgs,
+                            VersionArgs,
                             _defaultEnvironmentVariables.getVariables(Version.Empty).toList()))
         }
     }
@@ -110,7 +112,7 @@ class DotnetWorkflowComposer(
             yield(CommandLine(
                     TargetType.Tool,
                     executableFile,
-                    dotnetBuildContext.workingDirectory,
+                    dotnetBuildContext.workingDirectory.virtualPath,
                     args,
                     _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList()))
         }
@@ -129,6 +131,6 @@ class DotnetWorkflowComposer(
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
-        internal val versionArgs = listOf(CommandLineArgument("--version"))
+        internal val VersionArgs = listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory))
     }
 }
