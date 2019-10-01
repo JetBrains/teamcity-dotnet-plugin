@@ -58,7 +58,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         Path("v_tool"),
-                                        Path("v_wd"),
+                                        Path("wd"),
                                         listOf(
                                                 CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
@@ -69,7 +69,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         Path("v_tool"),
-                                        Path("v_wd"),
+                                        Path("wd"),
                                         listOf(
                                                 CommandLineArgument("v_my2.sln", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
@@ -88,7 +88,7 @@ class VisualStudioWorkflowComposerTest {
                                 CommandLine(
                                         TargetType.Tool,
                                         Path("v_tool"),
-                                        Path("v_wd"),
+                                        Path("wd"),
                                         listOf(
                                                 CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
@@ -183,7 +183,7 @@ class VisualStudioWorkflowComposerTest {
                 CommandLine(
                         TargetType.Tool,
                         Path("v_tool"),
-                        Path("v_wDir"),
+                        Path("wDir"),
                         listOf(
                                 CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
@@ -209,9 +209,6 @@ class VisualStudioWorkflowComposerTest {
 
                 oneOf<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
                 will(returnValue("v_tool"))
-
-                oneOf<VirtualContext>(_virtualContext).resolvePath(File("wDir").canonicalPath)
-                will(returnValue("v_wDir"))
 
                 oneOf<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
                 will(returnValue("v_my1.sln"))

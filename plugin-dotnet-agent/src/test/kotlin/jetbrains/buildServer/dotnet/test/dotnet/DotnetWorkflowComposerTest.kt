@@ -130,19 +130,19 @@ class DotnetWorkflowComposerTest {
                         CommandLine(
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))
@@ -221,19 +221,19 @@ class DotnetWorkflowComposerTest {
                         CommandLine(
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))
@@ -314,19 +314,19 @@ class DotnetWorkflowComposerTest {
                         CommandLine(
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.SystemDiagnostics,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
-                                _virtualizedWorkingDirectory,
+                                Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars)
                 ))

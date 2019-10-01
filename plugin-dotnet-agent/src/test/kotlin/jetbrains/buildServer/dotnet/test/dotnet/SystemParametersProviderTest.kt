@@ -1,21 +1,38 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Mockery
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class SystemParametersProviderTest {
+    @MockK
+    private lateinit var _virtualContext: VirtualContext
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+    }
+
     @DataProvider
     fun testData(): Array<Array<out Any>> {
         return arrayOf(
-                arrayOf(ParametersServiceStub(mapOf("arg1" to "val1")), listOf(MSBuildParameter("arg1", "val1"))))
+                arrayOf(ParametersServiceStub(mapOf("arg1" to "val1")), listOf(MSBuildParameter("arg1", "v_val1"))))
     }
 
     @Test(dataProvider = "testData")
@@ -23,9 +40,8 @@ class SystemParametersProviderTest {
             parametersService: ParametersService,
             expectedParameters: List<MSBuildParameter>) {
         // Given
-        val ctx = Mockery()
-        val context = DotnetBuildContext(ToolPath(Path("wd")), ctx.mock(DotnetCommand::class.java))
-        val provider = SystemParametersProvider(parametersService)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val provider = SystemParametersProvider(parametersService, _virtualContext)
 
         // When
         val actualParameters = provider.getParameters(context).toList()

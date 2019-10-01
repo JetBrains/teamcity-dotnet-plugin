@@ -16,7 +16,8 @@ class WorkflowSessionImpl(
         private val _workflowComposer: WorkflowComposer,
         private val _buildStepContext: BuildStepContext,
         private val _loggerService: LoggerService,
-        private val _commandLinePresentationService: CommandLinePresentationService)
+        private val _commandLinePresentationService: CommandLinePresentationService,
+        private val _virtualContext: VirtualContext)
     : MultiCommandBuildSession, WorkflowContext {
 
     private var _commandLinesIterator: Iterator<CommandLine>? = null
@@ -47,7 +48,8 @@ class WorkflowSessionImpl(
                 _buildStepContext,
                 _loggerService,
                 _eventSource,
-                _commandLinePresentationService)
+                _commandLinePresentationService,
+                _virtualContext)
     }
 
     override val status: WorkflowStatus
@@ -74,13 +76,15 @@ class WorkflowSessionImpl(
             private val _buildStepContext: BuildStepContext,
             private val _loggerService: LoggerService,
             private val _eventSource: Observer<CommandResultEvent>,
-            private val _commandLinePresentationService: CommandLinePresentationService) : CommandExecution {
+            private val _commandLinePresentationService: CommandLinePresentationService,
+            private val _virtualContext: VirtualContext) : CommandExecution {
 
         override fun beforeProcessStarted() {
             val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
             _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
-            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(_commandLine.workingDirectory.path, Color.Header))
+            val workingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
+            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(workingDirectory, Color.Header))
         }
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit
@@ -110,16 +114,14 @@ class WorkflowSessionImpl(
 
     private class ProgramCommandLineAdapter(
             private val _commandLine: CommandLine,
-            private val _environmentVariables: Map<String, String>) : ProgramCommandLine {
+            private val _environmentVariables: Map<String, String>)
+        : ProgramCommandLine {
 
-        override fun getExecutablePath(): String =
-                File(_commandLine.executableFile.path).canonicalPath
+        override fun getExecutablePath(): String = _commandLine.executableFile.path
 
-        override fun getWorkingDirectory(): String =
-                File(_commandLine.workingDirectory.path).canonicalPath
+        override fun getWorkingDirectory(): String = _commandLine.workingDirectory.path
 
-        override fun getArguments(): MutableList<String> =
-                _commandLine.arguments.map { it.value }.toMutableList()
+        override fun getArguments(): MutableList<String> = _commandLine.arguments.map { it.value }.toMutableList()
 
         override fun getEnvironment(): MutableMap<String, String> {
             val environmentVariables = _environmentVariables.toMutableMap()

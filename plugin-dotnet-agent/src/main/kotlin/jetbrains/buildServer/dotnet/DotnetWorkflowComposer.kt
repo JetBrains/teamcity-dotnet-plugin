@@ -42,7 +42,7 @@ class DotnetWorkflowComposer(
                     val executable = command.toolResolver.executable
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
                         // Getting .NET Core version
-                        yieldAll(getDotnetSdkVersionCommands(context, executable.virtualPath, virtualWorkingDirectory, dotnetVersions))
+                        yieldAll(getDotnetSdkVersionCommands(context, executable.virtualPath, workingDirectory, dotnetVersions))
                     }
 
                     val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
@@ -112,7 +112,7 @@ class DotnetWorkflowComposer(
             yield(CommandLine(
                     TargetType.Tool,
                     executableFile,
-                    dotnetBuildContext.workingDirectory.virtualPath,
+                    dotnetBuildContext.workingDirectory.path,
                     args,
                     _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList()))
         }

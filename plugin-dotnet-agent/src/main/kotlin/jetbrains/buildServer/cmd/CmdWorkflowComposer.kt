@@ -27,7 +27,7 @@ class CmdWorkflowComposer(
                                     yield(CommandLine(
                                             TargetType.Host,
                                             Path(_virtualContext.resolvePath(cmdExecutable)),
-                                            Path(_virtualContext.resolvePath(commandLine.workingDirectory.path)),
+                                            commandLine.workingDirectory,
                                             getArguments(commandLine).toList(),
                                             commandLine.environmentVariables))
                                 }

@@ -34,7 +34,7 @@ class VisualStudioWorkflowComposer(
                     }
                 } ?: return@sequence
 
-                val workingDirectory = Path(_virtualContext.resolvePath(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath))
+                val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
                 val action = parameters(DotnetConstants.PARAM_VISUAL_STUDIO_ACTION)
                         ?: throw RunBuildException("Parameter \"${DotnetConstants.PARAM_VISUAL_STUDIO_ACTION}\" was not found")
 
@@ -72,7 +72,7 @@ class VisualStudioWorkflowComposer(
                         yield(CommandLine(
                                 TargetType.Tool,
                                 executableFile,
-                                workingDirectory,
+                                Path(workingDirectory.path),
                                 sequence {
                                     yield(CommandLineArgument(_virtualContext.resolvePath(targetFile.canonicalPath), CommandLineArgumentType.Mandatory))
                                     yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))

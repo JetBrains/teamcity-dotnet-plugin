@@ -59,7 +59,7 @@ class CmdWorkflowComposerTest {
                                         CommandLine(
                                                 TargetType.Host,
                                                 Path("v_" + File("win", "cmd.exe").path),
-                                                Path("v_" + _workflowBat.commandLines.single().workingDirectory.path),
+                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
@@ -78,7 +78,7 @@ class CmdWorkflowComposerTest {
                                         CommandLine(
                                                 TargetType.Host,
                                                 Path("v_" + File("win", "cmd.exe").path),
-                                                Path("v_" + _workflowBat.commandLines.single().workingDirectory.path),
+                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),

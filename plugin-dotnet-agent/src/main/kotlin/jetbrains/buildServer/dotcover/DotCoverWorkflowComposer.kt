@@ -107,7 +107,7 @@ class DotCoverWorkflowComposer(
                     yield(CommandLine(
                             target,
                             Path(_virtualContext.resolvePath(dotCoverExecutableFile.path)),
-                            Path(commandLineToGetCoverage.workingDirectory.path),
+                            commandLineToGetCoverage.workingDirectory,
                             createArguments(dotCoverProject).toList(),
                             commandLineToGetCoverage.environmentVariables))
 

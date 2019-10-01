@@ -4,7 +4,8 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.StdOutText
 import java.io.File
 
-class CommandLinePresentationServiceImpl : CommandLinePresentationService {
+class CommandLinePresentationServiceImpl
+    : CommandLinePresentationService {
     override fun buildExecutablePresentation(executableFile: Path): List<StdOutText> {
         val output = mutableListOf<StdOutText>()
         val lastSeparatorIndex = executableFile.path.indexOfLast { it == File.separatorChar || it == '\\' || it == '/' }

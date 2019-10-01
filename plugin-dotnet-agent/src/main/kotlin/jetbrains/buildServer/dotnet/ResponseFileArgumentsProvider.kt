@@ -18,8 +18,8 @@ class ResponseFileArgumentsProvider(
         private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }.map { CommandLineArgument(_virtualContext.resolvePath(it.value), CommandLineArgumentType.Infrastructural) }
-        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }.map { MSBuildParameter(it.name, _virtualContext.resolvePath(it.value)) }
+        val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
+        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }
 
         if (args.isEmpty() && params.isEmpty()) {
             return@sequence
@@ -52,7 +52,7 @@ class ResponseFileArgumentsProvider(
             }
         }
 
-        yield(CommandLineArgument("@${msBuildResponseFile.path}", CommandLineArgumentType.Infrastructural))
+        yield(CommandLineArgument("@${_virtualContext.resolvePath(msBuildResponseFile.path)}", CommandLineArgumentType.Infrastructural))
     }
 
     companion object {
