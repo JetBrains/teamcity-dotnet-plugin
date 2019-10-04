@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
 import org.jmock.Mockery
+import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -20,6 +21,7 @@ class BuildServerShutdownMonitorTest {
     private lateinit var _agentRunningBuild: AgentRunningBuild
     private lateinit var _parametersService: ParametersService
     private lateinit var _environmentVariables: EnvironmentVariables
+    private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
@@ -30,6 +32,7 @@ class BuildServerShutdownMonitorTest {
         _agentRunningBuild = _ctx.mock(AgentRunningBuild::class.java)
         _parametersService = _ctx.mock(ParametersService::class.java)
         _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
+        _virtualContext = _ctx.mock(VirtualContext::class.java)
     }
 
     @DataProvider
@@ -66,6 +69,9 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(false))
+
                 allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
                 will(returnValue(useSharedCompilationParam))
 
@@ -129,11 +135,177 @@ class BuildServerShutdownMonitorTest {
         _ctx.assertIsSatisfied()
     }
 
+    @Test
+    fun shouldShouldRegisterCommandForShotdown() {
+        // Given
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(false))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue(null))
+
+                allowing<DotnetCommand>(command).commandType
+                will(returnValue(DotnetCommandType.Test))
+
+                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                will(returnValue(buildFinishedSource))
+            }
+        })
+
+        val monitor = createInstance()
+
+        // When
+        monitor.register(context)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(monitor.count, 1)
+    }
+
+    @Test
+    fun shouldShouldNotRegisterCommandForShotdownWhenVirtualContext() {
+        // Given
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(true))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue(null))
+
+                allowing<DotnetCommand>(command).commandType
+                will(returnValue(DotnetCommandType.Test))
+
+                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                will(returnValue(buildFinishedSource))
+            }
+        })
+
+        val monitor = createInstance()
+
+        // When
+        monitor.register(context)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(monitor.count, 0)
+    }
+
+    @Test
+    fun shouldShouldNotRegisterCommandForShotdownWhenUseSharedCompilationEnvVarIsFalse() {
+        // Given
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(false))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue("false"))
+
+                allowing<DotnetCommand>(command).commandType
+                will(returnValue(DotnetCommandType.Test))
+
+                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                will(returnValue(buildFinishedSource))
+            }
+        })
+
+        val monitor = createInstance()
+
+        // When
+        monitor.register(context)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(monitor.count, 0)
+    }
+
+    @Test
+    fun shouldShouldNotRegisterCommandForShotdownWhenToolIsNotSupportingShutdown() {
+        // Given
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 105))
+        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(false))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue(null))
+
+                allowing<DotnetCommand>(command).commandType
+                will(returnValue(DotnetCommandType.Test))
+
+                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                will(returnValue(buildFinishedSource))
+            }
+        })
+
+        val monitor = createInstance()
+
+        // When
+        monitor.register(context)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(monitor.count, 0)
+    }
+
+    @Test
+    fun shouldShouldNotRegisterCommandForShotdownWhenCommandDoesNotStartCompilationService() {
+        // Given
+        val command = _ctx.mock(DotnetCommand::class.java)
+        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<VirtualContext>(_virtualContext).isVirtual
+                will(returnValue(false))
+
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                will(returnValue(null))
+
+                allowing<DotnetCommand>(command).commandType
+                will(returnValue(DotnetCommandType.NuGetPush))
+
+                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                will(returnValue(buildFinishedSource))
+            }
+        })
+
+        val monitor = createInstance()
+
+        // When
+        monitor.register(context)
+
+        // Then
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(monitor.count, 0)
+    }
+
     private fun createInstance() =
             BuildServerShutdownMonitor(
                     _agentLifeCycleEventSources,
                     _commandLineExecutor,
                     _dotnetToolResolver,
                     _parametersService,
-                    _environmentVariables)
+                    _environmentVariables,
+                    _virtualContext)
 }

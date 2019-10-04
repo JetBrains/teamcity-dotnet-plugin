@@ -13,11 +13,13 @@ class BuildServerShutdownMonitor(
         private val _commandLineExecutor: CommandLineExecutor,
         private val _dotnetToolResolver: DotnetToolResolver,
         private val _parametersService: ParametersService,
-        private val _environmentVariables: EnvironmentVariables)
+        private val _environmentVariables: EnvironmentVariables,
+        private val _virtualContext: VirtualContext)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable
     private var _workingDirectories = mutableMapOf<Version, Path>()
+    internal val count get() = _workingDirectories.size
 
     init {
         _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
@@ -45,7 +47,8 @@ class BuildServerShutdownMonitor(
 
     override fun register(context: DotnetBuildContext) {
         if (
-                buildCommands.contains(context.command.commandType)
+                !_virtualContext.isVirtual
+                && buildCommands.contains(context.command.commandType)
                 && context.toolVersion > Version.LastVersionWithoutSharedCompilation
                 && _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
             _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory.path }
