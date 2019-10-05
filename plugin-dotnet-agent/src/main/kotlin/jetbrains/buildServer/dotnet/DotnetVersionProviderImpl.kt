@@ -23,13 +23,13 @@ class DotnetVersionProviderImpl(
                         emptyList()))
 
         if (versionResult == null || versionResult.exitCode !=0 || versionResult.errorOutput.filter { it.isNotBlank() }.any()) {
-            LOG.error("The error occurred getting the dotnet CLI version.")
+            LOG.warn("The error occurred getting the dotnet CLI version.")
             return Version.Empty
         }
         else {
             val version = _versionParser.parse(versionResult.standardOutput)
             if (version == Version.Empty) {
-                LOG.error("The error occurred parsing the dotnet CLI version.")
+                LOG.warn("The error occurred parsing the dotnet CLI version.")
             }
 
             return version
