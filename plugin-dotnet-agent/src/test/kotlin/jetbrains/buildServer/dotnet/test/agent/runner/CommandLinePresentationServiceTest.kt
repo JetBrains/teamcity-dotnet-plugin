@@ -35,6 +35,7 @@ class CommandLinePresentationServiceTest {
     fun testArgsPresentation(): Array<Array<out Any?>> {
         return arrayOf(
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory)), listOf(StdOutText(" Arg1", Color.Header))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Target)), listOf(StdOutText(" Arg1", Color.Header))),
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Secondary)), listOf(StdOutText(" Arg1", Color.Default))),
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Custom)), listOf(StdOutText(" Arg1", Color.Details))),
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Infrastructural)), listOf(StdOutText(" Arg1", Color.Minor))),

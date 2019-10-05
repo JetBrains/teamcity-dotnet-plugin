@@ -88,7 +88,7 @@ class DotCoverWorkflowComposerTest {
                                 Path("wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -286,7 +286,7 @@ class DotCoverWorkflowComposerTest {
                                 Path("wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -394,7 +394,7 @@ class DotCoverWorkflowComposerTest {
                                 Path("wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
@@ -485,7 +485,7 @@ class DotCoverWorkflowComposerTest {
                                 Path("wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
@@ -579,7 +579,7 @@ class DotCoverWorkflowComposerTest {
                                 Path("wd"),
                                 listOf(
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
-                                        CommandLineArgument("v_proj", CommandLineArgumentType.Mandatory),
+                                        CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),

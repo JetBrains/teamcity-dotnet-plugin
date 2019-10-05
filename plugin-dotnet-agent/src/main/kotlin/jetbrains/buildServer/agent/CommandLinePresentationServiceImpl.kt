@@ -23,6 +23,7 @@ class CommandLinePresentationServiceImpl
                         " ${it.value}",
                         when (it.argumentType) {
                             CommandLineArgumentType.Mandatory -> Color.Header
+                            CommandLineArgumentType.Target -> Color.Header
                             CommandLineArgumentType.Custom -> Color.Details
                             CommandLineArgumentType.Infrastructural -> Color.Minor
                             else -> Color.Default

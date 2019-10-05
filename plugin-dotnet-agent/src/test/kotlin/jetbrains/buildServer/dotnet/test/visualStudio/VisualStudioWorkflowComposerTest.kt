@@ -60,23 +60,25 @@ class VisualStudioWorkflowComposerTest {
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
                                                 CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
-                                        emptyList()),
+                                        emptyList(),
+                                        DotnetCommandType.VisualStudio.id),
                                 CommandLine(
                                         TargetType.Tool,
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my2.sln", CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my2.sln", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
                                                 CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
-                                        emptyList()))),
+                                        emptyList(),
+                                        DotnetCommandType.VisualStudio.id))),
                 arrayOf(
                         mapOf(
                                 DotnetConstants.PARAM_COMMAND to DotnetCommandType.VisualStudio.id,
@@ -90,11 +92,12 @@ class VisualStudioWorkflowComposerTest {
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Mandatory),
+                                                CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("release"),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom)),
-                                        emptyList()))),
+                                        emptyList(),
+                                        DotnetCommandType.VisualStudio.id))),
                 arrayOf(
                         mapOf(
                                 DotnetConstants.PARAM_COMMAND to "abc",
@@ -185,12 +188,13 @@ class VisualStudioWorkflowComposerTest {
                         Path("v_tool"),
                         Path("wDir"),
                         listOf(
-                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Mandatory),
+                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Target),
                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("\"Debug|x86\""),
                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
                                 CommandLineArgument("arg2", CommandLineArgumentType.Custom)),
-                        emptyList()))
+                        emptyList(),
+                        DotnetCommandType.VisualStudio.id))
 
         val workingDirectory = File("wDir")
         val composer = createInstance(parameters)

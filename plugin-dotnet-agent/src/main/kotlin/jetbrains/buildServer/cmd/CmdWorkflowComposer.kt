@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.agent.runner.WorkflowComposer
 import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.util.OSType
-import java.io.File
 
 class CmdWorkflowComposer(
         private val _argumentsService: ArgumentsService,
@@ -21,17 +20,19 @@ class CmdWorkflowComposer(
                 OSType.WINDOWS -> {
                     Workflow(sequence {
                         val cmdExecutable = _environment.tryGetVariable(ComSpecEnvVarName) ?: throw RunBuildException("Environment variable \"$ComSpecEnvVarName\" was not found")
-                        for (commandLine in workflow.commandLines) {
-                            when (commandLine.executableFile.extension().toLowerCase()) {
+                        for (originalCommandLine in workflow.commandLines) {
+                            when (originalCommandLine.executableFile.extension().toLowerCase()) {
                                 "cmd", "bat" -> {
                                     yield(CommandLine(
                                             TargetType.Host,
                                             Path(_virtualContext.resolvePath(cmdExecutable)),
-                                            commandLine.workingDirectory,
-                                            getArguments(commandLine).toList(),
-                                            commandLine.environmentVariables))
+                                            originalCommandLine.workingDirectory,
+                                            getArguments(originalCommandLine).toList(),
+                                            originalCommandLine.environmentVariables,
+                                            originalCommandLine.title,
+                                            originalCommandLine.description))
                                 }
-                                else -> yield(commandLine)
+                                else -> yield(originalCommandLine)
                             }
                         }
                     })
@@ -43,7 +44,7 @@ class CmdWorkflowComposer(
         yield(CommandLineArgument("/D"))
         yield(CommandLineArgument("/C"))
         val args = sequenceOf(commandLine.executableFile.path).plus(commandLine.arguments.map { it.value }).map { _virtualContext.resolvePath(it) }
-        yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Mandatory))
+        yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Target))
     }
 
     companion object {

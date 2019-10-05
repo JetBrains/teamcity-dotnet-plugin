@@ -6,8 +6,11 @@ import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.toDisposable
 import jetbrains.buildServer.rx.use
+<<<<<<< HEAD
 import org.apache.log4j.Logger
 import java.io.Closeable
+=======
+>>>>>>> TW-61085 Make build log simpler
 import java.io.File
 
 class DotnetWorkflowComposer(
@@ -48,33 +51,14 @@ class DotnetWorkflowComposer(
                     val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
 
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
-                    showTitle(command, dotnetBuildContext, executable.virtualPath, args)
                     yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executable.virtualPath, args))
                 }
 
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             })
 
-    private fun showTitle(command: DotnetCommand, dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>) {
-        var title = mutableListOf<StdOutText>()
-        when (command.toolResolver.paltform) {
-            ToolPlatform.CrossPlatform -> title.add(StdOutText(".NET Core SDK ", Color.Minor))
-            ToolPlatform.Mono-> title.add(StdOutText("Mono ", Color.Minor))
-            ToolPlatform.Windows-> title.add(StdOutText("Windows ", Color.Minor))
-        }
-
-        if (dotnetBuildContext.toolVersion != Version.Empty) {
-            title.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Minor))
-        }
-
-        title.addAll(_commandLinePresentationService.buildExecutablePresentation(executableFile))
-        title.addAll(_commandLinePresentationService.buildArgsPresentation(args))
-        _loggerService.writeStandardOutput(*title.toTypedArray())
-    }
-
     private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: Path, workingDirectory: Path, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
         disposableOf (
-                _loggerService.writeBlock("Getting .NET Core SDK version"),
                 workflowContext.subscibeForOutput { versions.add(_versionParser.parse(listOf(it))) }
         ).use {
             yield(
@@ -83,7 +67,9 @@ class DotnetWorkflowComposer(
                             executableFile,
                             workingDirectory,
                             VersionArgs,
-                            _defaultEnvironmentVariables.getVariables(Version.Empty).toList()))
+                            _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
+                            getTitle(executableFile, false, "", VersionArgs),
+                            listOf(StdOutText("Getting .NET SDK version", Color.Header))))
         }
     }
 
@@ -93,8 +79,6 @@ class DotnetWorkflowComposer(
         disposableOf(
                 // Build an environment
                 dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }.toDisposable(),
-                // Strart a build log block
-                _loggerService.writeBlock(generateBlockName(dotnetBuildContext.command, args)),
                 // Subscribe for failed tests
                 _failedTestSource.subscribe { result += CommandResult.FailedTests },
                 // Subscribe for an exit code
@@ -114,17 +98,37 @@ class DotnetWorkflowComposer(
                     executableFile,
                     dotnetBuildContext.workingDirectory.path,
                     args,
-                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList()))
+                    _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList(),
+                    getTitle(executableFile, dotnetBuildContext.command.toolResolver.isCommandRequired, dotnetBuildContext.command.commandType.id, args),
+                    getDescription(dotnetBuildContext, executableFile, args)))
         }
     }
 
-    private fun generateBlockName(command: DotnetCommand, args: List<CommandLineArgument>): String {
-        val commandName = command.commandType.id.replace('-', ' ')
-        return if (commandName.isNotBlank()) {
-            commandName
+    private fun getTitle(executableFile: Path, isCommandRequired: Boolean, command: String, args: List<CommandLineArgument>): String {
+        val executable = File(executableFile.path).nameWithoutExtension
+        val commandName = command.replace('-', ' ')
+        return if (isCommandRequired && commandName.isNotBlank()) {
+            "$executable $commandName"
         } else {
-            args.firstOrNull()?.value ?: ""
+            args.firstOrNull()?.let { "$executable ${it.value}" } ?: executable
         }
+    }
+
+    private fun getDescription(dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>): List<StdOutText> {
+        var description = mutableListOf<StdOutText>()
+        when (dotnetBuildContext.command.toolResolver.paltform) {
+            ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Minor))
+            ToolPlatform.Mono-> description.add(StdOutText("Mono ", Color.Minor))
+            ToolPlatform.Windows-> description.add(StdOutText("Windows ", Color.Minor))
+        }
+
+        if (dotnetBuildContext.toolVersion != Version.Empty) {
+            description.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Header))
+        }
+
+        description.addAll(_commandLinePresentationService.buildExecutablePresentation(executableFile))
+        description.addAll(_commandLinePresentationService.buildArgsPresentation(args))
+        return description
     }
 
     companion object {

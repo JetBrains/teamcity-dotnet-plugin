@@ -74,7 +74,7 @@ class VisualStudioWorkflowComposer(
                                 executableFile,
                                 Path(workingDirectory.path),
                                 sequence {
-                                    yield(CommandLineArgument(_virtualContext.resolvePath(targetFile.canonicalPath), CommandLineArgumentType.Mandatory))
+                                    yield(CommandLineArgument(_virtualContext.resolvePath(targetFile.canonicalPath), CommandLineArgumentType.Target))
                                     yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))
@@ -82,7 +82,8 @@ class VisualStudioWorkflowComposer(
 
                                     yieldAll(args)
                                 }.toList(),
-                                emptyList()))
+                                emptyList(),
+                                DotnetCommandType.VisualStudio.id))
                     }
 
 

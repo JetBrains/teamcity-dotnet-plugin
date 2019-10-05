@@ -8,7 +8,9 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.rx.subjectOf
 import java.io.File
 
@@ -79,18 +81,30 @@ class WorkflowSessionImpl(
             private val _commandLinePresentationService: CommandLinePresentationService,
             private val _virtualContext: VirtualContext) : CommandExecution {
 
-        override fun beforeProcessStarted() {
+        private var _blockToken: Disposable = emptyDisposable()
+
+        override fun beforeProcessStarted() = Unit
+
+        override fun processStarted(programCommandLine: String, workingDirectory: File) {
+            if (_commandLine.title != "") {
+                _blockToken = _loggerService.writeBlock(_commandLine.title)
+            }
+
+            if (_commandLine.description.any()) {
+               _loggerService.writeStandardOutput(*_commandLine.description.toTypedArray())
+            }
+
             val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
-            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
-            val workingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
-            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(workingDirectory, Color.Header))
-        }
 
-        override fun processStarted(programCommandLine: String, workingDirectory: File) = Unit
+            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
+            val virtualWorkingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
+            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(virtualWorkingDirectory, Color.Header))
+        }
 
         override fun processFinished(exitCode: Int) {
             _eventSource.onNext(CommandResultExitCode(exitCode))
+            _blockToken.dispose()
         }
 
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(

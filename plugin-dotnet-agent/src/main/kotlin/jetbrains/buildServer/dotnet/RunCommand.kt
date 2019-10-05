@@ -24,7 +24,7 @@ class RunCommand(
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map {
-            TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path, CommandLineArgumentType.Mandatory)))
+            TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.targetFile.path, CommandLineArgumentType.Target)))
         }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {

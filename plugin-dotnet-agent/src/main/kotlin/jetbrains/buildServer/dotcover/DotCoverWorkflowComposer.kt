@@ -65,12 +65,12 @@ class DotCoverWorkflowComposer(
             var deferredServiceMessages = mutableListOf<ServiceMessage>()
 
             _targetRegistry.register(target).use {
-                for (commandLineToGetCoverage in workflow.commandLines) {
+                for (commandLineToCover in workflow.commandLines) {
                     sendServiceMessages(context, deferredServiceMessages)
                     deferredServiceMessages.clear()
 
                     if (!_targetRegistry.activeTargets.contains(TargetType.Tool)) {
-                        yield(commandLineToGetCoverage)
+                        yield(commandLineToCover)
                         continue
                     }
 
@@ -78,7 +78,7 @@ class DotCoverWorkflowComposer(
                     val snapshotFile = _pathsService.getTempFileName(DotCoverSnapshotExtension)
 
                     val dotCoverProject = DotCoverProject(
-                            commandLineToGetCoverage,
+                            commandLineToCover,
                             Path(_virtualContext.resolvePath(configFile.path)),
                             Path(_virtualContext.resolvePath(snapshotFile.path)))
 
@@ -88,9 +88,9 @@ class DotCoverWorkflowComposer(
 
                     if (showDiagnostics) {
                         _loggerService.writeBlock("dotCover Settings").use {
-                            val args = _argumentsService.combine(commandLineToGetCoverage.arguments.map { it.value }.asSequence())
+                            val args = _argumentsService.combine(commandLineToCover.arguments.map { it.value }.asSequence())
                             _loggerService.writeStandardOutput("Command line:")
-                            _loggerService.writeStandardOutput("  \"${commandLineToGetCoverage.executableFile.path}\" $args", Color.Details)
+                            _loggerService.writeStandardOutput("  \"${commandLineToCover.executableFile.path}\" $args", Color.Details)
 
                             _loggerService.writeStandardOutput("Filters:")
                             for (filter in _coverageFilterProvider.filters) {
@@ -107,9 +107,11 @@ class DotCoverWorkflowComposer(
                     yield(CommandLine(
                             target,
                             Path(_virtualContext.resolvePath(dotCoverExecutableFile.path)),
-                            commandLineToGetCoverage.workingDirectory,
+                            commandLineToCover.workingDirectory,
                             createArguments(dotCoverProject).toList(),
-                            commandLineToGetCoverage.environmentVariables))
+                            commandLineToCover.environmentVariables,
+                            commandLineToCover.title,
+                            commandLineToCover.description))
 
                     deferredServiceMessages.add(DotCoverServiceMessage(File(dotCoverPath).canonicalFile))
                     deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, snapshotFile.canonicalFile))
@@ -135,7 +137,7 @@ class DotCoverWorkflowComposer(
 
     private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
         yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Mandatory))
+        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
         yield(CommandLineArgument("/ReturnTargetExitCode"))
         yield(CommandLineArgument("/NoCheckForUpdates"))
         yield(CommandLineArgument("/AnalyzeTargetArguments=false"))
