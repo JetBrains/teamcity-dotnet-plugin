@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 import jetbrains.buildServer.util.FileUtil
 import java.io.File

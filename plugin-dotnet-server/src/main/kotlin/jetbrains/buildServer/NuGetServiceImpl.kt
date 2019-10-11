@@ -1,7 +1,8 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 import com.google.gson.JsonParser
 import com.intellij.openapi.diagnostic.Logger
+import jetbrains.buildServer.dotnet.SemanticVersionParser
 import org.springframework.cache.annotation.Cacheable
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

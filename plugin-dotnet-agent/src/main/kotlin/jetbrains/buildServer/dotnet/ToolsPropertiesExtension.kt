@@ -41,8 +41,8 @@ class ToolsPropertiesExtension(
         }
 
         val default = packages.first()
-        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.DEFAULT", default.absolutePath)
-        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.PACKAGE_TYPE}.BUNDLED", default.absolutePath)
+        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.INTEGRATION_PACKAGE_TYPE}.DEFAULT", default.absolutePath)
+        agent.configuration.addConfigurationParameter("$ToolPrefix.${DotnetConstants.INTEGRATION_PACKAGE_TYPE}.BUNDLED", default.absolutePath)
         agent.configuration.addConfigurationParameter("$ToolPrefix.${default.name}", default.absolutePath)
     }
 

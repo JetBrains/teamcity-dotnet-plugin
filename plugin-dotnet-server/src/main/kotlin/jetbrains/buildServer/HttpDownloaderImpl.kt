@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 import java.io.OutputStream
 import java.net.HttpURLConnection

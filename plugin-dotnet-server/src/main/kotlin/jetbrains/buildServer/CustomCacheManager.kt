@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager

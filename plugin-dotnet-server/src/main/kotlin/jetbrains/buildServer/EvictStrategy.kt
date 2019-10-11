@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 interface EvictStrategy {
     val isEvicting: Boolean

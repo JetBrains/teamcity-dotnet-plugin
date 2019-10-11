@@ -125,7 +125,7 @@ class DotnetParametersProvider {
         get() = DotnetConstants.INTEGRATION_PACKAGE_HOME
 
     val integrationPackageToolTypeKey: String
-        get() = DotnetConstants.PACKAGE_TYPE
+        get() = DotnetConstants.INTEGRATION_PACKAGE_TYPE
 
     // Coverage keys
 

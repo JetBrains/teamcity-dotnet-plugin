@@ -65,11 +65,19 @@ object DotnetConstants {
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
-    // Integration package
+    // Tool çroviders
     const val PACKAGE_NUGET_EXTENSION = "nupkg"
-    const val PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
-    const val PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"
-    const val PACKAGE_SHORT_TOOL_TYPE_NAME = "Dotnet Integration"
-    const val PACKAGE_TARGET_FILE_DISPLAY_NAME = "Dotnet Integration Home Directory"
-    const val PACKAGE_BINARY_NUPKG_PATH = "build/_common"
+
+    // Integration package
+    const val INTEGRATION_PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
+    const val INTEGRATION_PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val INTEGRATION_PACKAGE_SHORT_TOOL_TYPE_NAME = "Dotnet Integration"
+    const val INTEGRATION_PACKAGE_TARGET_FILE_DISPLAY_NAME = "Dotnet Integration Home Directory"
+
+    // Cross-platform dotCover
+    const val DOTCOVER_PACKAGE_TYPE = "jetbrains.dotcover.dotnetclitool"
+    const val DOTCOVER_WIN_PACKAGE_TYPE = "jetbrains.dotcover.commandlinetools"
+    const val DOTCOVER_PACKAGE_TOOL_TYPE_NAME = "Cross-platform dotCover"
+    const val DOTCOVER_PACKAGE_SHORT_TOOL_TYPE_NAME = "Cross-platform dotCover"
+    const val DOTCOVER_PACKAGE_TARGET_FILE_DISPLAY_NAME = "DotCover Home Directory"
 }
