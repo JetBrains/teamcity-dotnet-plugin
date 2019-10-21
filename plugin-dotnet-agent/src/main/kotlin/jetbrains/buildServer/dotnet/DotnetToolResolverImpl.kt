@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetToolResolverImpl(
@@ -41,6 +41,6 @@ class DotnetToolResolverImpl(
         get() = true
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetToolResolverImpl::class.java.name)
+        private val LOG = Logger.getLogger(DotnetToolResolverImpl::class.java)
     }
 }

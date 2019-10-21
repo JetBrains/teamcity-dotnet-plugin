@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.FileSystemService
+import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetSdksProviderImpl(
@@ -18,6 +18,6 @@ class DotnetSdksProviderImpl(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetSdksProviderImpl::class.java.name)
+        private val LOG = Logger.getLogger(DotnetSdksProviderImpl::class.java.name)
     }
 }

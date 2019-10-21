@@ -6,11 +6,8 @@ import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.toDisposable
 import jetbrains.buildServer.rx.use
-<<<<<<< HEAD
 import org.apache.log4j.Logger
 import java.io.Closeable
-=======
->>>>>>> TW-61085 Make build log simpler
 import java.io.File
 
 class DotnetWorkflowComposer(
@@ -132,7 +129,6 @@ class DotnetWorkflowComposer(
     }
 
     companion object {
-        private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         internal val VersionArgs = listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory))

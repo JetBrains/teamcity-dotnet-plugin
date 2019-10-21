@@ -1,9 +1,7 @@
 package jetbrains.buildServer.agent
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl
 import org.apache.log4j.Logger
-import com.intellij.openapi.diagnostic.Logger
 import java.io.File
 
 class CommandLineExecutorImpl : CommandLineExecutor {
