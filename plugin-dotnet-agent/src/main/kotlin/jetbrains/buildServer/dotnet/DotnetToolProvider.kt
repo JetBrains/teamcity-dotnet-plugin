@@ -7,9 +7,9 @@
 
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.util.OSType
+import org.apache.log4j.Logger
 import java.io.File
 
 /**
@@ -74,6 +74,6 @@ class DotnetToolProvider(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetToolProvider::class.java.name)
+        private val LOG = Logger.getLogger(DotnetToolProvider::class.java)
     }
 }

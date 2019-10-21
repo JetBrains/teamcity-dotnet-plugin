@@ -1,11 +1,11 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.messages.serviceMessages.Message
+import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetBuildContextFactoryImpl(
@@ -51,6 +51,6 @@ class DotnetBuildContextFactoryImpl(
             }
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetBuildContextFactoryImpl::class.java.name)
+        private val LOG = Logger.getLogger(DotnetBuildContextFactoryImpl::class.java)
     }
 }

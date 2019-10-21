@@ -1,9 +1,9 @@
 package jetbrains.buildServer.mono
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.util.EventDispatcher
+import org.apache.log4j.Logger
 import java.io.File
 
 class MonoPropertiesExtension(
@@ -39,6 +39,6 @@ class MonoPropertiesExtension(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(MonoPropertiesExtension::class.java.name)
+        private val LOG = Logger.getLogger(MonoPropertiesExtension::class.java)
     }
 }

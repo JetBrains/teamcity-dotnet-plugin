@@ -1,11 +1,11 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
+import org.apache.log4j.Logger
 import java.io.File
 
 class BuildServerShutdownMonitor(
@@ -53,7 +53,7 @@ class BuildServerShutdownMonitor(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(BuildServerShutdownMonitor::class.java.name)
+        private val LOG = Logger.getLogger(BuildServerShutdownMonitor::class.java)
         internal val shutdownArgs = listOf(CommandLineArgument("build-server"), CommandLineArgument("shutdown"))
         internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
         private val buildCommands = setOf(

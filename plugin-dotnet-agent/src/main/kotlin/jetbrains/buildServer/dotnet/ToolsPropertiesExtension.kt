@@ -1,12 +1,12 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.AgentLifeCycleAdapter
 import jetbrains.buildServer.agent.AgentLifeCycleListener
 import jetbrains.buildServer.agent.BuildAgent
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
 import jetbrains.buildServer.util.EventDispatcher
+import org.apache.log4j.Logger
 import java.io.File
 
 /**
@@ -47,7 +47,7 @@ class ToolsPropertiesExtension(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(ToolsPropertiesExtension::class.java.name)
+        private val LOG = Logger.getLogger(ToolsPropertiesExtension::class.java)
         private const val ToolPrefix = "teamcity.tool"
     }
 }

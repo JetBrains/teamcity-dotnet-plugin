@@ -1,7 +1,8 @@
 package jetbrains.buildServer.agent
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.diagnostic.Logger
+import jetbrains.buildServer.dotnet.DotnetBuildContextFactoryImpl
+import org.apache.log4j.Logger
 
 class CommandLineExecutorImpl : CommandLineExecutor {
     override fun tryExecute(commandLine: CommandLine, executionTimeoutSeconds: Int): CommandLineResult? {
@@ -41,6 +42,6 @@ class CommandLineExecutorImpl : CommandLineExecutor {
     }
 
     companion object {
-        private val LOG = Logger.getInstance(CommandLineExecutorImpl::class.java.name)
+        private val LOG = Logger.getLogger(CommandLineExecutorImpl::class.java)
     }
 }

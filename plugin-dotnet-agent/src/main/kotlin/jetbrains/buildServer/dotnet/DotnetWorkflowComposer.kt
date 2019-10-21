@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandLine
@@ -8,6 +7,7 @@ import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
+import org.apache.log4j.Logger
 import java.io.Closeable
 import java.util.*
 
@@ -92,6 +92,6 @@ class DotnetWorkflowComposer(
             })
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetWorkflowComposer::class.java.name)
+        private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
     }
 }
