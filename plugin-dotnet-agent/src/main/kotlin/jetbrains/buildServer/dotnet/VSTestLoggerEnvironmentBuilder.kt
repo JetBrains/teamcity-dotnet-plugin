@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import org.apache.log4j.Logger
 import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter
@@ -62,7 +62,7 @@ class VSTestLoggerEnvironmentBuilder(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(VSTestLoggerEnvironmentBuilder::class.java.name)
+        private val LOG = Logger.getLogger(VSTestLoggerEnvironmentBuilder::class.java)
         internal const val directoryPrefix = "teamcity.logger."
         internal const val readmeFileName = "readme.txt"
         internal const val readmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."

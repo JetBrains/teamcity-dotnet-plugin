@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import org.apache.log4j.Logger
 
 class VSTestLoggerEnvironmentCleaner(
         private val _pathsService: PathsService,
@@ -26,7 +26,7 @@ class VSTestLoggerEnvironmentCleaner(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(EnvironmentCleaner::class.java.name)
+        private val LOG = Logger.getLogger(EnvironmentCleaner::class.java)
     }
 
 }

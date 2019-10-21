@@ -7,12 +7,12 @@
 
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
+import org.apache.log4j.Logger
 import java.io.File
 
 /**`
@@ -60,7 +60,7 @@ class DotnetPropertiesExtension(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetPropertiesExtension::class.java.name)
+        private val LOG = Logger.getLogger(DotnetPropertiesExtension::class.java)
 
         internal fun enumerateSdk(versions: List<DotnetSdk>): Sequence<Pair<String, String>> = sequence {
             val groupedVersions = versions.filter { it.version != Version.Empty }.groupBy { Version(it.version.major, it.version.minor) }

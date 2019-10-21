@@ -1,8 +1,8 @@
 package jetbrains.buildServer.dotnet
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
+import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetCliToolInfoImpl(
@@ -94,7 +94,7 @@ class DotnetCliToolInfoImpl(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(DotnetCliToolInfoImpl::class.java.name)
+        private val LOG = Logger.getLogger(DotnetCliToolInfoImpl::class.java)
         private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         internal val versionArgs = listOf(CommandLineArgument("--version"))
         internal val listSdksArgs = listOf(CommandLineArgument("--list-sdks"))

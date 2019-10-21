@@ -9,6 +9,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.util.OSType
+import org.apache.log4j.Logger
 import java.io.File
 
 /**
@@ -53,5 +54,9 @@ class DotnetToolProvider(
         } else {
             getPath(toolName)
         }
+    }
+
+    companion object {
+        private val LOG = Logger.getLogger(DotnetToolProvider::class.java)
     }
 }
