@@ -20,9 +20,9 @@ class DotCoverProjectSerializerImpl(
         coverageParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
         doc.appendChild(coverageParamsElement)
 
-        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, project.commandLineToGetCoverage.executableFile.path))
-        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToGetCoverage.arguments.map { it.value }.asSequence())))
-        val workingDirectory = project.commandLineToGetCoverage.workingDirectory
+        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, project.commandLineToCover.executableFile.path))
+        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToCover.arguments.map { it.value }.asSequence())))
+        val workingDirectory = project.commandLineToCover.workingDirectory
         coverageParamsElement.appendChild(createSimpleElement(doc, WORKING_DIR_ELEMENT, workingDirectory.path))
         coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, project.snapshotFile.path))
 

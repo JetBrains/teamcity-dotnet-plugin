@@ -22,10 +22,10 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _commandSet: CommandSet
     @MockK private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
-    @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _pathResolverWorkflowFactory: PathResolverWorkflowFactory
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
     private val _dotnetVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var3", "val3"))
@@ -44,7 +44,6 @@ class DotnetWorkflowComposerTest {
         clearAllMocks()
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Detailed.toString()
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
-        every { _loggerService.writeStandardOutput(StdOutText("Getting .NET SDK version", Color.Minor))  } returns Unit
         every { _versionParser.parse(listOf("3.0.0")) } returns Version(3, 0, 0)
         every { _environmentVariables.getVariables(Version(3, 0, 0)) } returns _dotnetVars.asSequence()
         every { _dotnetWorkflowAnalyzer.summarize(any()) } returns Unit
@@ -61,9 +60,6 @@ class DotnetWorkflowComposerTest {
     fun shouldCompose() {
         // Given
         val composer = createInstance()
-
-        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -160,8 +156,6 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
-        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -259,8 +253,6 @@ class DotnetWorkflowComposerTest {
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
-        every { _loggerService.writeStandardOutput(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3", Color.Default)) } returns Unit
-        every { _loggerService.writeStandardOutput(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1", Color.Default), StdOutText(" arg2", Color.Default)) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
@@ -357,7 +349,6 @@ class DotnetWorkflowComposerTest {
     private fun createInstance(): DotnetWorkflowComposer {
         return DotnetWorkflowComposer(
                 _pathsService,
-                _loggerService,
                 _environmentVariables,
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
@@ -367,7 +358,8 @@ class DotnetWorkflowComposerTest {
                 _versionParser,
                 _parametersService,
                 _commandLinePresentationService,
-                _virtualContext)
+                _virtualContext,
+                _pathResolverWorkflowFactory)
     }
 
     private fun createToken(): Disposable {

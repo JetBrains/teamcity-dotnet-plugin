@@ -3,8 +3,8 @@ package jetbrains.buildServer.dotnet.test.cmd
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.verify
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.PathResolverWorkflowFactory
 import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.agent.runner.WorkflowComposer
 import jetbrains.buildServer.agent.runner.WorkflowContext
@@ -24,6 +24,7 @@ class CmdWorkflowComposerTest {
     private var _workflowBat = createWorkflow(Path(File("abc2", "my.bat").path))
     private var _workflowOther = createWorkflow(Path(File("abc3", "my.exe").path))
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _pathResolverWorkflowFactory: PathResolverWorkflowFactory
 
     @BeforeMethod
     fun setUp() {
@@ -100,7 +101,6 @@ class CmdWorkflowComposerTest {
         // Given
         val composer = createInstance()
         every { _environment.os } returns osType
-        every { _environment.tryGetVariable(CmdWorkflowComposer.ComSpecEnvVarName) } returns cmdFile
 
         // When
         val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
@@ -114,7 +114,8 @@ class CmdWorkflowComposerTest {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
                 _environment,
-                _virtualContext)
+                _virtualContext,
+                _pathResolverWorkflowFactory)
     }
 
     companion object {

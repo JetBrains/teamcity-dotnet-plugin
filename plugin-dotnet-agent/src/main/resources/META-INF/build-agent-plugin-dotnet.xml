@@ -18,6 +18,7 @@
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
 
   <!-- common agent's runner services -->
+  <bean class="jetbrains.buildServer.agent.runner.PathResolverWorkflowFactoryImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
@@ -171,6 +172,9 @@
 
   <!-- Cmd -->
   <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
+
+  <!-- Sh -->
+  <bean class="jetbrains.buildServer.sh.ShWorkflowComposer" id="shWorkflowComposer"/>
 
   <!-- Visual Studio -->
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer"/>

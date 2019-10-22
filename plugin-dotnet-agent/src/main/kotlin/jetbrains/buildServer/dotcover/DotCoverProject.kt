@@ -5,6 +5,6 @@ import jetbrains.buildServer.agent.Path
 import java.io.File
 
 data class DotCoverProject(
-        val commandLineToGetCoverage: CommandLine,
+        val commandLineToCover: CommandLine,
         val configFile: Path,
         val snapshotFile: Path)

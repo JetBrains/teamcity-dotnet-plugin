@@ -8,6 +8,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.use
+import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.util.StringUtil
 import java.io.File
 
@@ -31,22 +32,22 @@ class DotCoverWorkflowComposer(
         }
 
         val dotCoverPath: String?
-        val dotCoverExecutableFile: File
+        val dotCoverExecutablePath: File
         try {
             dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             if (dotCoverPath.isNullOrBlank()) {
                 return workflow
             }
 
-            dotCoverExecutableFile = File(dotCoverPath, DotCoverExecutableFile)
+            dotCoverExecutablePath = File(dotCoverPath, dotCoverExecutableFile)
         } catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)
             exception.isLogStacktrace = false
             throw exception
         }
 
-        if (!_fileSystemService.isExists(dotCoverExecutableFile)) {
-            throw RunBuildException("dotCover was not found: $dotCoverExecutableFile")
+        if (!_fileSystemService.isExists(dotCoverExecutablePath)) {
+            throw RunBuildException("dotCover was not found: $dotCoverExecutablePath")
         }
 
         var showDiagnostics = false
@@ -106,7 +107,7 @@ class DotCoverWorkflowComposer(
 
                     yield(CommandLine(
                             target,
-                            Path(_virtualContext.resolvePath(dotCoverExecutableFile.path)),
+                            Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
                             commandLineToCover.workingDirectory,
                             createArguments(dotCoverProject).toList(),
                             commandLineToCover.environmentVariables,
@@ -163,8 +164,13 @@ class DotCoverWorkflowComposer(
         }
     }
 
+    private val dotCoverExecutableFile get() =
+        when(_virtualContext.targetOSType) {
+            OSType.WINDOWS -> "dotCover.exe"
+            else -> "dotCover.sh"
+        }
+
     companion object {
-        internal const val DotCoverExecutableFile = "dotCover.exe"
         internal const val DotCoverToolName = "dotcover"
         internal const val DotCoverConfigExtension = ".dotCover"
         internal const val DotCoverSnapshotExtension = ".dcvr"

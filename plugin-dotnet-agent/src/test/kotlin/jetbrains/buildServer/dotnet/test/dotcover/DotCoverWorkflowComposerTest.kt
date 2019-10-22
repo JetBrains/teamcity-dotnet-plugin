@@ -56,8 +56,8 @@ class DotCoverWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))),
-                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))))
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))),
+                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))))
     }
 
     @Test(dataProvider = "composeCases")
@@ -78,7 +78,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File(dotCoverPath, DotCoverWorkflowComposer.DotCoverExecutableFile)
+        val dotCoverExecutableFile = File(dotCoverPath, "dotCover.exe")
         val dotCoverProject = DotCoverProject(commandLine, Path("v_proj"), Path ("v_snap"))
         val expectedWorkflow = Workflow(
                 sequenceOf(
@@ -219,7 +219,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars)
 
-        val composer = createInstance(VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile)))
+        val composer = createInstance(VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe")))
         val baseWorkflow = Workflow(sequenceOf(commandLine))
 
         // When
@@ -276,7 +276,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile)
+        val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(commandLine, Path("v_proj"), Path ("v_snap"))
         val expectedWorkflow = Workflow(
                 sequenceOf(
@@ -292,7 +292,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars)))
-        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))
+        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
         // When
@@ -384,7 +384,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile)
+        val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(commandLine, Path("v_proj"), Path ("v_snap"))
         val expectedWorkflow = Workflow(
                 sequenceOf(
@@ -400,7 +400,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars)))
-        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))
+        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
         // When
@@ -475,7 +475,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile)
+        val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(commandLine, Path("v_proj"), Path ("v_snap"))
         val expectedWorkflow = Workflow(
                 sequenceOf(
@@ -494,7 +494,7 @@ class DotCoverWorkflowComposerTest {
                                 ),
                                 envVars)))
 
-        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))
+        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
         // When
@@ -569,7 +569,7 @@ class DotCoverWorkflowComposerTest {
                 workingDirectory,
                 args,
                 envVars)
-        val dotCoverExecutableFile = File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile)
+        val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(commandLine, Path("v_proj"), Path ("v_snap"))
         val expectedWorkflow = Workflow(
                 sequenceOf(
@@ -589,7 +589,7 @@ class DotCoverWorkflowComposerTest {
                                 ),
                                 envVars)))
 
-        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", DotCoverWorkflowComposer.DotCoverExecutableFile))
+        val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
         // When

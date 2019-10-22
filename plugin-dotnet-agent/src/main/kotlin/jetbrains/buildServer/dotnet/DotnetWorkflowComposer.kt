@@ -7,12 +7,10 @@ import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.toDisposable
 import jetbrains.buildServer.rx.use
 import org.apache.log4j.Logger
-import java.io.Closeable
 import java.io.File
 
 class DotnetWorkflowComposer(
         private val _pathsService: PathsService,
-        private val _loggerService: LoggerService,
         private val _defaultEnvironmentVariables: EnvironmentVariables,
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
         private val _commandSet: CommandSet,
@@ -22,7 +20,8 @@ class DotnetWorkflowComposer(
         private val _versionParser: VersionParser,
         private val _parametersService: ParametersService,
         private val _commandLinePresentationService: CommandLinePresentationService,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _pathResolverWorkflowFactory: PathResolverWorkflowFactory)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -40,15 +39,24 @@ class DotnetWorkflowComposer(
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
                     val executable = command.toolResolver.executable
+                    var virtualPath = executable.virtualPath
+
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
+                        if (_virtualContext.isVirtual) {
+                            // Getting dotnet executable
+                            var state = PathResolverState(executable.virtualPath)
+                            yieldAll(_pathResolverWorkflowFactory.create(context, state).commandLines)
+                            virtualPath = state.resolvedPath ?: virtualPath
+                        }
+
                         // Getting .NET Core version
-                        yieldAll(getDotnetSdkVersionCommands(context, executable.virtualPath, workingDirectory, dotnetVersions))
+                        yieldAll(getDotnetSdkVersionCommands(context, virtualPath, workingDirectory, dotnetVersions))
                     }
 
                     val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
 
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
-                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, executable.virtualPath, args))
+                    yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, virtualPath, args))
                 }
 
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
@@ -66,7 +74,7 @@ class DotnetWorkflowComposer(
                             VersionArgs,
                             _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
                             getTitle(executableFile, false, "", VersionArgs),
-                            listOf(StdOutText("Getting .NET SDK version", Color.Header))))
+                            listOf(StdOutText("Getting the .NET SDK version", Color.Header))))
         }
     }
 
@@ -130,7 +138,6 @@ class DotnetWorkflowComposer(
 
     companion object {
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
-        private val sdkInfoRegex = "^(.+)\\s*\\[(.+)\\]$".toRegex()
         internal val VersionArgs = listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory))
     }
 }
