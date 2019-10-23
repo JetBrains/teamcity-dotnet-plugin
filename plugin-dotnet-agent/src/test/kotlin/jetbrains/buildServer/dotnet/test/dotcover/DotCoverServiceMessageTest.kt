@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotcover.DotCoverServiceMessage
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -10,13 +11,13 @@ class DotCoverServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(File("dotCoverHome"), "##teamcity[dotNetCoverage dotcover_home='dotCoverHome']"),
-                arrayOf(File("dotCover Home"), "##teamcity[dotNetCoverage dotcover_home='dotCover Home']"),
-                arrayOf(File(""), "##teamcity[dotNetCoverage dotcover_home='']"))
+                arrayOf(Path("dotCoverHome"), "##teamcity[dotNetCoverage dotcover_home='dotCoverHome']"),
+                arrayOf(Path("dotCover Home"), "##teamcity[dotNetCoverage dotcover_home='dotCover Home']"),
+                arrayOf(Path(""), "##teamcity[dotNetCoverage dotcover_home='']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")
-    fun shouldProduceServiceMessage(dotCoverHomePath: File, expectedMessage: String) {
+    fun shouldProduceServiceMessage(dotCoverHomePath: Path, expectedMessage: String) {
         // Given
         val serviceMessage = DotCoverServiceMessage(dotCoverHomePath)
 

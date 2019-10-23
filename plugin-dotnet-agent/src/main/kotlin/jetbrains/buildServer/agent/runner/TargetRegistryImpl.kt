@@ -13,7 +13,9 @@ class TargetRegistryImpl : TargetRegistry {
     override fun register(targetType: TargetType): Disposable {
         val holder = TargetHolder(targetType)
         _activeTargets.add(holder)
-        return disposableOf { _activeTargets.remove(holder) }
+        return disposableOf {
+            _activeTargets.remove(holder)
+        }
     }
 
     private class TargetHolder(val targetType: TargetType)

@@ -53,7 +53,13 @@ class DotnetWorkflowComposerTest {
         every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
         every { _commandLinePresentationService.buildExecutablePresentation(any()) } answers { listOf(StdOutText(arg<Path>(0).path, Color.Header)) }
         every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
+        every { _virtualContext.isVirtual } returns true
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
+        every { _pathResolverWorkflowFactory.create(any(), any()) } answers {
+            arg<PathResolverState>(1).onNext(arg<PathResolverState>(1).pathToResolve)
+            Workflow()
+        }
+        every { _workflowContext.status } returns WorkflowStatus.Running
     }
 
     @Test
@@ -138,7 +144,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting .NET SDK version", Color.Header))),
+                                listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
@@ -235,7 +241,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting .NET SDK version", Color.Header))),
+                                listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
@@ -334,7 +340,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting .NET SDK version", Color.Header))),
+                                listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
                         CommandLine(
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
@@ -359,7 +365,7 @@ class DotnetWorkflowComposerTest {
                 _parametersService,
                 _commandLinePresentationService,
                 _virtualContext,
-                _pathResolverWorkflowFactory)
+                listOf(_pathResolverWorkflowFactory))
     }
 
     private fun createToken(): Disposable {

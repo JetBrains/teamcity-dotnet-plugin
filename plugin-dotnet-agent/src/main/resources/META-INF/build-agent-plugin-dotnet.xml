@@ -18,7 +18,13 @@
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
 
   <!-- common agent's runner services -->
-  <bean class="jetbrains.buildServer.agent.runner.PathResolverWorkflowFactoryImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowFactory" id="basePathResolverWorkflowFactory"/>
+  <bean class="jetbrains.buildServer.agent.runner.UnixPathResolverWorkflowFactory" id="unixPathResolverWorkflowFactory">
+    <constructor-arg ref="basePathResolverWorkflowFactory"/>
+  </bean>
+  <bean class="jetbrains.buildServer.agent.runner.WindowsPathResolverWorkflowFactory" id="windowsPathResolverWorkflowFactory">
+    <constructor-arg ref="basePathResolverWorkflowFactory"/>
+  </bean>
   <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
@@ -52,6 +58,12 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
     <constructor-arg ref="dotnetVersionParser"/>
+    <constructor-arg>
+      <list>
+        <ref bean="unixPathResolverWorkflowFactory"/>
+        <ref bean="windowsPathResolverWorkflowFactory"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationImpl"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>

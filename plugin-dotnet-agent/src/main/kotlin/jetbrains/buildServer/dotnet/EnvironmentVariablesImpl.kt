@@ -14,17 +14,21 @@ class EnvironmentVariablesImpl(
         private val _pathsService: PathsService,
         private val _virtualContext: VirtualContext)
     : EnvironmentVariables {
-    override fun getVariables(toolVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
+    override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
         yield(CommandLineEnvironmentVariable("NUGET_PACKAGES", _virtualContext.resolvePath(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)))
 
-        if (_sharedCompilation.requireSuppressing(toolVersion)) {
+        if (_sharedCompilation.requireSuppressing(sdkVersion)) {
             yield(useSharedCompilationEnvironmentVariable)
         }
 
         val home = if (_environment.os == OSType.WINDOWS) "USERPROFILE" else "HOME"
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
             yield(CommandLineEnvironmentVariable(home, System.getProperty("user.home")))
+        }
+
+        if (_virtualContext.isVirtual && _virtualContext.targetOSType != OSType.WINDOWS) {
+            yieldAll(tempDirVariables)
         }
     }
 
@@ -36,5 +40,10 @@ class EnvironmentVariablesImpl(
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
 
         internal val useSharedCompilationEnvironmentVariable = CommandLineEnvironmentVariable("UseSharedCompilation", "false")
+
+        internal val tempDirVariables = sequenceOf(
+                CommandLineEnvironmentVariable("TEMP", ""),
+                CommandLineEnvironmentVariable("TMP", ""),
+                CommandLineEnvironmentVariable("TMPDIR", ""))
     }
 }

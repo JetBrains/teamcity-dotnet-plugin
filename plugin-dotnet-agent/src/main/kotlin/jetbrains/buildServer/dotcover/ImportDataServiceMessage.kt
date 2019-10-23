@@ -6,7 +6,7 @@ import java.io.File
 
 class ImportDataServiceMessage(
         coverageToolName: String,
-        artifactPath: File)
+        artifactPath: Path)
     : ServiceMessage(
         "importData",
         mapOf(

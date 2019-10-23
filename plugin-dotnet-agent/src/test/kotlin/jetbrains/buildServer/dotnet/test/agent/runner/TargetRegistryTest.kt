@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.agent.runner
 
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.TargetRegistryImpl
+import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.use
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -42,12 +43,15 @@ class TargetRegistryTest {
         val targetRegistry = TargetRegistryImpl()
 
         // When
-        targetRegistry.register(TargetType.CodeCoverageProfiler).use {
-            targetRegistry.register(TargetType.Tool).use {
+        disposableOf(targetRegistry.register(TargetType.CodeCoverageProfiler))
+        .use {
+            disposableOf(targetRegistry.register(TargetType.Tool)).use {
             }
 
             // Then
             Assert.assertEquals(targetRegistry.activeTargets.count(), 1)
         }
+
+        Assert.assertEquals(targetRegistry.activeTargets.count(), 0)
     }
 }

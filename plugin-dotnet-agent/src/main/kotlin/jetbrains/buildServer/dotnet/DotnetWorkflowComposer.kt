@@ -2,10 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.disposableOf
-import jetbrains.buildServer.rx.subscribe
-import jetbrains.buildServer.rx.toDisposable
-import jetbrains.buildServer.rx.use
+import jetbrains.buildServer.rx.*
 import org.apache.log4j.Logger
 import java.io.File
 
@@ -21,7 +18,7 @@ class DotnetWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _commandLinePresentationService: CommandLinePresentationService,
         private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowFactory: PathResolverWorkflowFactory)
+        private val _pathResolverWorkflowFactories: List<PathResolverWorkflowFactory>)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -38,22 +35,48 @@ class DotnetWorkflowComposer(
                 var dotnetVersions = mutableListOf<Version>()
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
+                    if (context.status != WorkflowStatus.Running) {
+                        break
+                    }
+
                     val executable = command.toolResolver.executable
                     var virtualPath = executable.virtualPath
 
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform && dotnetVersions.isEmpty()) {
                         if (_virtualContext.isVirtual) {
                             // Getting dotnet executable
-                            var state = PathResolverState(executable.virtualPath)
-                            yieldAll(_pathResolverWorkflowFactory.create(context, state).commandLines)
-                            virtualPath = state.resolvedPath ?: virtualPath
+                            var resolved = false
+                            val state = PathResolverState(
+                                    executable.virtualPath,
+                                    observer<Path> {
+                                        value -> if (!resolved) {
+                                            resolved = true
+                                            virtualPath = value
+                                        }
+                                    })
+
+                            for (pathResolverWorkflowFactory in _pathResolverWorkflowFactories) {
+                                yieldAll(pathResolverWorkflowFactory.create(context, state).commandLines)
+                            }
+
+                            if (context.status != WorkflowStatus.Running) {
+                                break
+                            }
                         }
 
                         // Getting .NET Core version
                         yieldAll(getDotnetSdkVersionCommands(context, virtualPath, workingDirectory, dotnetVersions))
                     }
 
+                    if (context.status != WorkflowStatus.Running) {
+                        break
+                    }
+
                     val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
+
+                    if (context.status != WorkflowStatus.Running) {
+                        break
+                    }
 
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
                     yieldAll(getDotnetCommands(context, dotnetBuildContext, analyzerContext, virtualPath, args))
@@ -62,9 +85,9 @@ class DotnetWorkflowComposer(
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             })
 
-    private fun getDotnetSdkVersionCommands(workflowContext: WorkflowContext, executableFile: Path, workingDirectory: Path, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
+    private fun getDotnetSdkVersionCommands(context: WorkflowContext, executableFile: Path, workingDirectory: Path, versions: MutableCollection<Version>): Sequence<CommandLine> =  sequence {
         disposableOf (
-                workflowContext.subscibeForOutput { versions.add(_versionParser.parse(listOf(it))) }
+                context.subscibeForOutput { versions.add(_versionParser.parse(listOf(it))) }
         ).use {
             yield(
                     CommandLine(
@@ -78,7 +101,7 @@ class DotnetWorkflowComposer(
         }
     }
 
-    private fun getDotnetCommands(workflowContext: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: Path, args: List<CommandLineArgument>): Sequence<CommandLine> = sequence {
+    private fun getDotnetCommands(context: WorkflowContext, dotnetBuildContext: DotnetBuildContext, analyzerContext: DotnetWorkflowAnalyzerContext, executableFile: Path, args: List<CommandLineArgument>): Sequence<CommandLine> = sequence {
         val result = mutableSetOf<CommandResult>()
 
         disposableOf(
@@ -87,11 +110,11 @@ class DotnetWorkflowComposer(
                 // Subscribe for failed tests
                 _failedTestSource.subscribe { result += CommandResult.FailedTests },
                 // Subscribe for an exit code
-                workflowContext.subscibeForExitCode {
+                context.subscibeForExitCode {
                     val commandResult = dotnetBuildContext.command.resultsAnalyzer.analyze(it, result)
                     _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
                     if (commandResult.contains(CommandResult.Fail)) {
-                        workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED)
+                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
                     }
                 },
                 // Register the current target

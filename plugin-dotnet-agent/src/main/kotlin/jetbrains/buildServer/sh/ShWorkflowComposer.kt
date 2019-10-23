@@ -2,13 +2,13 @@ package jetbrains.buildServer.sh
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.rx.observer
 import jetbrains.buildServer.util.OSType
 
 class ShWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _environment: Environment,
-        private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowFactory: PathResolverWorkflowFactory)
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Host
@@ -18,15 +18,9 @@ class ShWorkflowComposer(
                 OSType.UNIX, OSType.MAC -> {
                     Workflow(sequence {
                         var shExecutable: Path? = null
-                        for (originalCommandLine in workflow.commandLines) {
+                            for (originalCommandLine in workflow.commandLines) {
                             when (originalCommandLine.executableFile.extension().toLowerCase()) {
                                 "sh" -> {
-                                    if (shExecutable == null ) {
-                                        var state = PathResolverState(Path("sh"))
-                                        yieldAll(_pathResolverWorkflowFactory.create(context, state).commandLines)
-                                        shExecutable = state.resolvedPath
-                                    }
-
                                     yield(CommandLine(
                                             TargetType.Host,
                                             shExecutable ?: Path( "sh"),

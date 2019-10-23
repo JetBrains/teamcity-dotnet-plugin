@@ -13,8 +13,15 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetToolResolverImpl
+import jetbrains.buildServer.dotnet.test.rx.ObservablesTest
+import jetbrains.buildServer.rx.NotificationCompleted
+import jetbrains.buildServer.rx.NotificationError
+import jetbrains.buildServer.rx.NotificationNext
+import jetbrains.buildServer.rx.observableOf
+import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -46,8 +53,17 @@ class DotnetToolResolverTest {
         Assert.assertEquals(actualExecutable, ToolPath(Path(toolFile)))
     }
 
-    @Test
-    fun shouldProvideExecutableFileWhenVirtualContext() {
+    @DataProvider
+    fun osSpecificDotnet(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(OSType.WINDOWS, "dotnet.exe"),
+                arrayOf(OSType.UNIX, "dotnet"),
+                arrayOf(OSType.MAC, "dotnet")
+        )
+    }
+
+    @Test(dataProvider = "osSpecificDotnet")
+    fun shouldProvideExecutableFileWhenVirtualContext(os: OSType, expectedVirtualExecutable: String) {
         // Given
         val instance = createInstance()
         val toolFile = "dotnet.exe"
@@ -56,11 +72,12 @@ class DotnetToolResolverTest {
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns toolFile
         every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
         every { _virtualContext.isVirtual } returns true
+        every { _virtualContext.targetOSType } returns os
 
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet.exe"), Path("dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet.exe"), Path(expectedVirtualExecutable)))
     }
 
     @Test

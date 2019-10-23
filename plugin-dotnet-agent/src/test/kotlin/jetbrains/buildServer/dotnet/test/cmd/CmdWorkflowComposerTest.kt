@@ -3,13 +3,12 @@ package jetbrains.buildServer.dotnet.test.cmd
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathResolverWorkflowFactory
-import jetbrains.buildServer.agent.runner.Workflow
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.cmd.CmdWorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -24,7 +23,6 @@ class CmdWorkflowComposerTest {
     private var _workflowBat = createWorkflow(Path(File("abc2", "my.bat").path))
     private var _workflowOther = createWorkflow(Path(File("abc3", "my.exe").path))
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _pathResolverWorkflowFactory: PathResolverWorkflowFactory
 
     @BeforeMethod
     fun setUp() {
@@ -45,21 +43,21 @@ class CmdWorkflowComposerTest {
 
 
     @DataProvider(name = "composeCases")
-    fun getComposeCases(): Array<Array<Any>> {
+    fun getComposeCases(): Array<Array<Any?>> {
         return arrayOf(
-                arrayOf(OSType.MAC, "cmd", _workflowCmd, _workflowCmd),
-                arrayOf(OSType.UNIX, "cmd", _workflowBat, _workflowBat),
-                arrayOf(OSType.UNIX, "cmd", _workflowOther, _workflowOther),
+                arrayOf(OSType.MAC, "cmd" as String?, _workflowCmd, _workflowCmd),
+                arrayOf(OSType.UNIX, "cmd" as String?, _workflowBat, _workflowBat),
+                arrayOf(OSType.UNIX, "cmd" as String?, _workflowOther, _workflowOther),
                 arrayOf(OSType.WINDOWS, File("win", "cmd.exe").path, _workflowOther, _workflowOther),
                 arrayOf(
                         OSType.WINDOWS,
-                        File("win", "cmd.exe").path,
+                        null,
                         _workflowCmd,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                Path("v_" + File("win", "cmd.exe").path),
+                                                Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
@@ -72,13 +70,13 @@ class CmdWorkflowComposerTest {
                 ),
                 arrayOf(
                         OSType.WINDOWS,
-                        File("win", "cmd.exe").path,
+                        "resolved_cmd" as String?,
                         _workflowBat,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 TargetType.Host,
-                                                Path("v_" + File("win", "cmd.exe").path),
+                                                Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
@@ -100,7 +98,9 @@ class CmdWorkflowComposerTest {
             expectedWorkflow: Workflow) {
         // Given
         val composer = createInstance()
-        every { _environment.os } returns osType
+        val pathObserver = mockk<Observer<Path>>()
+        every { pathObserver.onNext(any()) } returns Unit
+        every { _virtualContext.targetOSType } returns osType
 
         // When
         val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
@@ -114,8 +114,7 @@ class CmdWorkflowComposerTest {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
                 _environment,
-                _virtualContext,
-                _pathResolverWorkflowFactory)
+                _virtualContext)
     }
 
     companion object {

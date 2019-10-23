@@ -2,13 +2,13 @@ package jetbrains.buildServer.cmd
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.rx.*
 import jetbrains.buildServer.util.OSType
 
 class CmdWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _environment: Environment,
-        private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowFactory: PathResolverWorkflowFactory)
+        private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.Host
@@ -21,15 +21,9 @@ class CmdWorkflowComposer(
                         for (originalCommandLine in workflow.commandLines) {
                             when (originalCommandLine.executableFile.extension().toLowerCase()) {
                                 "cmd", "bat" -> {
-                                    if (cmdExecutable == null ) {
-                                        var state = PathResolverState(Path("cmd"))
-                                        yieldAll(_pathResolverWorkflowFactory.create(context, state).commandLines)
-                                        cmdExecutable = state.resolvedPath
-                                    }
-
                                     yield(CommandLine(
                                             TargetType.Host,
-                                            cmdExecutable ?: Path( "cmd"),
+                                            cmdExecutable ?: Path( "cmd.exe"),
                                             originalCommandLine.workingDirectory,
                                             getArguments(originalCommandLine).toList(),
                                             originalCommandLine.environmentVariables,

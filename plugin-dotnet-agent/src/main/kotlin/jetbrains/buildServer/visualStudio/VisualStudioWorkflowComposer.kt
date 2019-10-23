@@ -28,6 +28,10 @@ class VisualStudioWorkflowComposer(
 
     override fun compose(context: WorkflowContext, workflow: Workflow) =
             Workflow(sequence {
+                if (context.status != WorkflowStatus.Running) {
+                    return@sequence
+                }
+
                 parameters(DotnetConstants.PARAM_COMMAND)?.let {
                     if (!DotnetCommandType.VisualStudio.id.equals(it, true)) {
                         return@sequence
@@ -54,6 +58,10 @@ class VisualStudioWorkflowComposer(
                 val executableFile = Path(_virtualContext.resolvePath(_toolResolver.executableFile.canonicalPath))
 
                 for ((targetFile) in _targetService.targets) {
+                    if (context.status != WorkflowStatus.Running) {
+                        break
+                    }
+
                     disposableOf(
                             // Subscribe for an exit code
                             context.subscribe {
@@ -84,11 +92,6 @@ class VisualStudioWorkflowComposer(
                                 }.toList(),
                                 emptyList(),
                                 DotnetCommandType.VisualStudio.id))
-                    }
-
-
-                    if (context.status != WorkflowStatus.Running) {
-                        return@sequence
                     }
                 }
             })

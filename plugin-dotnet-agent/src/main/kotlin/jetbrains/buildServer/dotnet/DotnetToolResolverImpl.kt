@@ -4,6 +4,7 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.util.OSType
 import org.apache.log4j.Logger
 import java.io.File
 
@@ -29,7 +30,13 @@ class DotnetToolResolverImpl(
                     }
                 }
 
-                return ToolPath(Path(dotnetPath), if (_virtualContext.isVirtual) Path("dotnet") else Path(dotnetPath))
+                val virtualPath = when {
+                    !_virtualContext.isVirtual -> Path(dotnetPath)
+                    _virtualContext.targetOSType == OSType.WINDOWS -> Path("dotnet.exe")
+                    else -> Path("dotnet")
+                }
+
+                return ToolPath(Path(dotnetPath), virtualPath)
             } catch (e: ToolCannotBeFoundException) {
                 val exception = RunBuildException(e)
                 exception.isLogStacktrace = false
