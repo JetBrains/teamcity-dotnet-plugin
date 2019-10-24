@@ -5,7 +5,6 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert
@@ -20,12 +19,14 @@ class ResponseFileArgumentsProviderTest {
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
     @MockK private lateinit var _sharedCompilation: SharedCompilation
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _argumentsService: ArgumentsService
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { arg<String>(0)}
+        every { _argumentsService.normalize(any()) }answers { "\"${arg<String>(0)}\""}
     }
 
     @Test
@@ -67,7 +68,7 @@ class ResponseFileArgumentsProviderTest {
         Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}", CommandLineArgumentType.Infrastructural)))
         fileSystemService.read(rspFile) {
             InputStreamReader(it).use {
-                Assert.assertEquals(it.readLines(), listOf("arg1", "arg2", "arg3", "par1", "par2"))
+                Assert.assertEquals(it.readLines(), listOf("\"arg1\"", "\"arg2\"", "\"arg3\"", "par1", "par2"))
             }
         }
     }
@@ -78,7 +79,7 @@ class ResponseFileArgumentsProviderTest {
             parametersProvider: List<MSBuildParametersProvider>): ArgumentsProvider {
         return ResponseFileArgumentsProvider(
                 _pathService,
-                ArgumentsServiceStub(),
+                _argumentsService,
                 fileSystemService,
                 _loggerService,
                 _msBuildParameterConverter,

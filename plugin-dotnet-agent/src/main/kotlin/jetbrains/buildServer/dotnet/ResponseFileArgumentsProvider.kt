@@ -42,7 +42,7 @@ class ResponseFileArgumentsProvider(
             }
         }
 
-        val lines = args.map { it.value } + params.map { _msBuildParameterConverter.convert(it) }
+        val lines = args.map { _argumentsService.normalize(it.value) } + params.map { _msBuildParameterConverter.convert(it) }
         val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {

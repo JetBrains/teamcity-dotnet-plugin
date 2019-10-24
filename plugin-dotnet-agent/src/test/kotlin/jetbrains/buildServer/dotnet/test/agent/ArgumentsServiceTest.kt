@@ -7,6 +7,35 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class ArgumentsServiceTest {
+    @DataProvider(name = "normalizeCases")
+    fun getNormalizeCases(): Array<Array<String>> {
+        return arrayOf(
+                arrayOf("arg1", "arg1"),
+                arrayOf("\"Arg1\"", "\"Arg1\""),
+                arrayOf("\"Ar\"g1\"", "\"Ar\"g1\""),
+                arrayOf("  ", "  "),
+                arrayOf("", ""),
+                arrayOf("arg 1", "\"arg 1\""),
+                arrayOf("Arg Sss", "\"Arg Sss\""),
+                arrayOf("Arg \"Sss", "\"Arg \"Sss\""),
+                arrayOf("\"Arg Sss\"", "\"Arg Sss\""),
+                arrayOf("\"Arg Sss\"\"", "\"Arg Sss\"\""),
+                arrayOf("\"\"Arg Sss\"", "\"\"Arg Sss\""),
+                arrayOf("\"Arg \"Sss\"", "\"Arg \"Sss\""))
+    }
+
+    @Test(dataProvider = "normalizeCases")
+    fun shouldNormalize(arg: String, expectedArg: String) {
+        // Given
+        val argumentsService = createInstance()
+
+        // When
+        val actualArg = argumentsService.normalize(arg)
+
+        // Then
+        Assert.assertEquals(actualArg, expectedArg)
+    }
+
     @DataProvider(name = "splitCases")
     fun getSplitCases(): Array<Array<Any>> {
         return arrayOf(

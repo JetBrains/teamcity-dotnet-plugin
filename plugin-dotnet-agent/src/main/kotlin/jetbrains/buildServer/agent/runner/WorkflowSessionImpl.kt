@@ -19,25 +19,26 @@ class WorkflowSessionImpl(
         private val _buildStepContext: BuildStepContext,
         private val _loggerService: LoggerService,
         private val _commandLinePresentationService: CommandLinePresentationService,
+        private val _argumentsService: ArgumentsService,
         private val _virtualContext: VirtualContext)
     : MultiCommandBuildSession, WorkflowContext {
 
-    private var _commandLinesIterator: Iterator<CommandLine>? = null
+    private val _commandLinesIterator = lazy { _workflowComposer.compose(this).commandLines.iterator() }
     private val _eventSource = subjectOf<CommandResultEvent>()
     private var _buildFinishedStatus: BuildFinishedStatus? = null
 
     override fun subscribe(observer: Observer<CommandResultEvent>) = _eventSource.subscribe(observer)
 
     override fun getNextCommand(): CommandExecution? {
-        val commandLinesIterator: Iterator<CommandLine> = _commandLinesIterator ?: _workflowComposer.compose(this).commandLines.iterator()
-        _commandLinesIterator = commandLinesIterator
-
         if (status != WorkflowStatus.Running) {
+            @Suppress("ControlFlowWithEmptyBody")
+            // It is required to run code after yields
+            while (_commandLinesIterator.value.hasNext()) {}
             return null
         }
 
         // yield command here
-        if (!commandLinesIterator.hasNext()) {
+        if (!_commandLinesIterator.value.hasNext()) {
             if (_buildFinishedStatus == null) {
                 _buildFinishedStatus = BuildFinishedStatus.FINISHED_SUCCESS
             }
@@ -45,12 +46,15 @@ class WorkflowSessionImpl(
             return null
         }
 
+        var nextCommand = _commandLinesIterator.value.next()
+
         return CommandExecutionAdapter(
-                commandLinesIterator.next(),
+                nextCommand,
                 _buildStepContext,
                 _loggerService,
                 _eventSource,
                 _commandLinePresentationService,
+                _argumentsService,
                 _virtualContext)
     }
 
@@ -79,6 +83,7 @@ class WorkflowSessionImpl(
             private val _loggerService: LoggerService,
             private val _eventSource: Observer<CommandResultEvent>,
             private val _commandLinePresentationService: CommandLinePresentationService,
+            private val _argumentsService: ArgumentsService,
             private val _virtualContext: VirtualContext) : CommandExecution {
 
         private var _blockToken: Disposable = emptyDisposable()
@@ -91,15 +96,15 @@ class WorkflowSessionImpl(
             }
 
             if (_commandLine.description.any()) {
-               _loggerService.writeStandardOutput(*_commandLine.description.toTypedArray())
+                _loggerService.writeStandardOutput(*_commandLine.description.toTypedArray())
             }
 
             val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
 
-            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ", Color.Header)) + executableFilePresentation + argsPresentation).toTypedArray())
+            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ")) + executableFilePresentation + argsPresentation).toTypedArray())
             val virtualWorkingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
-            _loggerService.writeStandardOutput(StdOutText("in directory: ", Color.Header), StdOutText(virtualWorkingDirectory, Color.Header))
+            _loggerService.writeStandardOutput(StdOutText("in directory: "), StdOutText(virtualWorkingDirectory))
         }
 
         override fun processFinished(exitCode: Int) {
@@ -108,6 +113,7 @@ class WorkflowSessionImpl(
         }
 
         override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(
+                _argumentsService,
                 _commandLine,
                 _buildStepContext.runnerContext.buildParameters.environmentVariables)
 
@@ -127,6 +133,7 @@ class WorkflowSessionImpl(
     }
 
     private class ProgramCommandLineAdapter(
+            private val _argumentsService: ArgumentsService,
             private val _commandLine: CommandLine,
             private val _environmentVariables: Map<String, String>)
         : ProgramCommandLine {
@@ -135,7 +142,7 @@ class WorkflowSessionImpl(
 
         override fun getWorkingDirectory(): String = _commandLine.workingDirectory.path
 
-        override fun getArguments(): MutableList<String> = _commandLine.arguments.map { it.value }.toMutableList()
+        override fun getArguments(): MutableList<String> = _commandLine.arguments.map { _argumentsService.normalize(it.value) }.toMutableList()
 
         override fun getEnvironment(): MutableMap<String, String> {
             val environmentVariables = _environmentVariables.toMutableMap()
