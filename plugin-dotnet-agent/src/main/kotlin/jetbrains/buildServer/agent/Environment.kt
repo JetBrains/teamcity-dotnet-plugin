@@ -6,7 +6,7 @@ import java.io.File
 interface Environment {
     fun tryGetVariable(name: String): String?
 
-    val paths: Sequence<File>
+    val paths: Sequence<Path>
 
     val os: OSType
 }

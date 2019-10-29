@@ -4,20 +4,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.agent.ToolProvider
-import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetToolResolverImpl
-import jetbrains.buildServer.dotnet.test.rx.ObservablesTest
-import jetbrains.buildServer.rx.NotificationCompleted
-import jetbrains.buildServer.rx.NotificationError
-import jetbrains.buildServer.rx.NotificationNext
-import jetbrains.buildServer.rx.observableOf
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -26,7 +18,10 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetToolResolverTest {
-    @MockK private lateinit var _toolProvider: ToolProvider
+    private val _toolFile = Path("dotnet.exe")
+    @MockK private lateinit var _environment: Environment
+    @MockK private lateinit var _toolSearchService: ToolSearchService
+    @MockK private lateinit var _toolEnvironment: ToolEnvironment
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _virtualContext: VirtualContext
 
@@ -34,6 +29,10 @@ class DotnetToolResolverTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _toolSearchService.find(DotnetConstants.EXECUTABLE, emptySequence()) } returns emptySequence()
+        every { _toolEnvironment.homePaths } returns emptySequence()
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
+        every { _virtualContext.isVirtual } returns false
     }
 
     @Test
@@ -43,14 +42,26 @@ class DotnetToolResolverTest {
         val toolFile = "dotnet.exe"
 
         // When
-        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns toolFile
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
-        every { _virtualContext.isVirtual } returns false
-
         val actualExecutable = instance.executable
 
         // Then
         Assert.assertEquals(actualExecutable, ToolPath(Path(toolFile)))
+    }
+
+    @Test
+    fun shouldProvideExecutableFileFromHomeEnvVarWhenItWasSpecified() {
+        // Given
+        val instance = createInstance()
+        val homePaths = sequenceOf(Path("home"))
+
+        // When
+        every { _toolEnvironment.homePaths } returns homePaths
+        every { _toolSearchService.find(DotnetConstants.EXECUTABLE, homePaths) } returns sequenceOf(File("home_dotnet.exe"))
+
+        val actualExecutable = instance.executable
+
+        // Then
+        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe")))
     }
 
     @DataProvider
@@ -66,11 +77,8 @@ class DotnetToolResolverTest {
     fun shouldProvideExecutableFileWhenVirtualContext(os: OSType, expectedVirtualExecutable: String) {
         // Given
         val instance = createInstance()
-        val toolFile = "dotnet.exe"
 
         // When
-        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns toolFile
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns os
 
@@ -84,19 +92,16 @@ class DotnetToolResolverTest {
     fun shouldProvideExecutableFileWhenParameterWasOverridedByConfigParameter() {
         // Given
         val instance = createInstance()
-        val toolFile = Path("dotnet.exe")
+
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns toolFile.path
-        every { _virtualContext.isVirtual } returns false
-
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(toolFile))
+        Assert.assertEquals(actualExecutable, ToolPath(_toolFile))
     }
 
     private fun createInstance(): DotnetToolResolver {
-        return DotnetToolResolverImpl(_toolProvider, _parametersService, _virtualContext)
+        return DotnetToolResolverImpl(_parametersService, _toolEnvironment, _toolSearchService, _environment, _virtualContext)
     }
 }

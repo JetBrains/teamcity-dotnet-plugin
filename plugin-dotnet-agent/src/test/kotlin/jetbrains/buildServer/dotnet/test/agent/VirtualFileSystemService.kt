@@ -84,7 +84,7 @@ class VirtualFileSystemService : FileSystemService {
         }
     }
 
-    override fun list(file: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
+    override fun list(path: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == path }
 
     override fun createDirectory(path: File): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

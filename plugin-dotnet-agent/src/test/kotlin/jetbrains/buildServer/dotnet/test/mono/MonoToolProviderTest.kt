@@ -1,10 +1,14 @@
 package jetbrains.buildServer.dotnet.test.mono
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.mono.MonoToolProvider
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -12,15 +16,15 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MonoToolProviderTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _toolProvidersRegistry: ToolProvidersRegistry
-    private lateinit var _toolSearchService: ToolSearchService
+    @MockK private lateinit var _toolProvidersRegistry: ToolProvidersRegistry
+    @MockK private lateinit var _toolSearchService: ToolSearchService
+    @MockK private lateinit var _toolEnvironment: ToolEnvironment
+    @MockK private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _toolProvidersRegistry = _ctx.mock(ToolProvidersRegistry::class.java)
-        _toolSearchService = _ctx.mock(ToolSearchService::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -39,95 +43,59 @@ class MonoToolProviderTest {
     @Test(dataProvider = "supportToolCases")
     fun shouldSupportTool(toolName: String, expectedResult: Boolean) {
         // Given
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
-            }
-        })
-        val toolProvider = createInstance(emptySequence())
+        every { _toolProvidersRegistry.registerToolProvider(any()) } returns Unit
+        val toolProvider = createInstance()
 
         // When
         val actualResult = toolProvider.supports(toolName)
 
         // Then
-        _ctx.assertIsSatisfied()
         Assert.assertEquals(actualResult, expectedResult)
     }
 
-    @DataProvider
-    fun getPathCases(): Array<Array<Any?>> {
-        return arrayOf(
-                arrayOf(
-                        sequenceOf(File("path1"), File("path1")),
-                        File("path1").absoluteFile,
-                        false),
-                arrayOf(
-                        sequenceOf(File("path2")),
-                        File("path2").absoluteFile,
-                        false),
-                arrayOf(
-                        emptySequence<File>(),
-                        File("a").absoluteFile,
-                        true))
-    }
 
-    @Test(dataProvider = "getPathCases")
-    fun shouldGetPath(
-            files: Sequence<File>,
-            expectedPath: File,
-            expectedToolCannotBeFoundException: Boolean) {
+    @Test
+    fun shouldGetPath() {
         // Given
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(ToolProvider::class.java)))
-            }
-        })
-        val toolProvider = createInstance(files)
+        every { _toolProvidersRegistry.registerToolProvider(any()) } returns Unit
 
-        var actualToolCannotBeFoundException = false
+        val toolProvider = createInstance()
+        val homePaths = sequenceOf(Path("a"))
+        val defaultPaths = sequenceOf(Path("b"))
+        val environmentPaths = sequenceOf(Path("c"))
+        val paths = mutableListOf<Sequence<Path>>()
 
         // When
-        var actualPath = ""
-        try {
-            actualPath = toolProvider.getPath("tool")
-        } catch (ex: ToolCannotBeFoundException) {
-            actualToolCannotBeFoundException = true
-        }
-
+        every { _toolEnvironment.homePaths } returns homePaths
+        every { _toolEnvironment.defaultPaths } returns defaultPaths
+        every { _toolEnvironment.environmentPaths } returns environmentPaths
+        every { _toolSearchService.find(MonoConstants.RUNNER_TYPE, capture(paths)) } returns sequenceOf(File("mono"))
+        val actualPath = toolProvider.getPath(MonoConstants.RUNNER_TYPE)
 
         // Then
-        if (!expectedToolCannotBeFoundException) {
-            Assert.assertEquals(actualPath, expectedPath.absolutePath)
-        }
-
-        Assert.assertEquals(actualToolCannotBeFoundException, expectedToolCannotBeFoundException)
+        Assert.assertEquals(paths[0].toList(), (homePaths + defaultPaths + environmentPaths).toList())
+        Assert.assertEquals(actualPath, File("mono").canonicalPath)
     }
 
     @Test
     fun shouldNotSearchToolInVirtualContext() {
-        val build = _ctx.mock(AgentRunningBuild::class.java)
-        val context = _ctx.mock(BuildRunnerContext::class.java)
-        val virtualContext = _ctx.mock(VirtualContext::class.java)
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ToolProvidersRegistry>(_toolProvidersRegistry).registerToolProvider(with(any(MonoToolProvider::class.java)))
-
-                allowing(context).virtualContext
-                will(returnValue(virtualContext))
-
-                allowing(virtualContext).isVirtual
-                will(returnValue(true))
+        // Given
+        every { _toolProvidersRegistry.registerToolProvider(any()) } returns Unit
+        val context = mockk<BuildRunnerContext>() {
+            every { virtualContext } returns mockk<VirtualContext>() {
+                every { isVirtual } returns true
             }
-        })
+        }
 
-        val toolProvider = createInstance(emptySequence())
-        val path = toolProvider.getPath("mono", build, context)
+        val toolProvider = createInstance()
+        val path = toolProvider.getPath("mono", mockk<AgentRunningBuild>(), context)
 
         Assert.assertEquals(path, "mono")
     }
 
-    private fun createInstance(files: Sequence<File>): ToolProvider =
+    private fun createInstance(): ToolProvider =
             MonoToolProvider(
                     _toolProvidersRegistry,
-                    ToolSearchServiceStub(files))
+                    _toolSearchService,
+                    _toolEnvironment)
 }

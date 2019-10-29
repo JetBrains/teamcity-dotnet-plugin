@@ -8,7 +8,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.util.OSType
 import org.apache.log4j.Logger
 import java.io.File
 
@@ -18,7 +17,7 @@ import java.io.File
 class DotnetToolProvider(
         toolProvidersRegistry: ToolProvidersRegistry,
         private val _toolSearchService: ToolSearchService,
-        private val _environment: Environment,
+        private val _toolEnvironment: ToolEnvironment,
         private val _dotnetSdksProviderImpl: DotnetSdksProvider)
     : ToolProvider {
     init {
@@ -34,19 +33,9 @@ class DotnetToolProvider(
                         Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
                         .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
 
-    val additionalPath: File get() = when(_environment.os) {
-        OSType.WINDOWS -> _environment.tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
-                ?.let {
-                    File(it, DotnetConstants.DOTNET_DEFAULT_DIRECTORY)
-                }
-                ?: File("C:\\Program Files\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
-        OSType.UNIX -> File("/usr/share/dotnet")
-        OSType.MAC -> File("/usr/local/share/dotnet")
-    }
-
     private val executablePath: File? by lazy {
-        val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, DotnetConstants.TOOL_HOME, sequenceOf(additionalPath)).distinct()
         var dotnetRuntime: File? = null
+        val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths + _toolEnvironment.defaultPaths + _toolEnvironment.environmentPaths)
         for (dotnetExecutable in executables) {
             if (_dotnetSdksProviderImpl.getSdks(dotnetExecutable).any()) {
                 return@lazy dotnetExecutable

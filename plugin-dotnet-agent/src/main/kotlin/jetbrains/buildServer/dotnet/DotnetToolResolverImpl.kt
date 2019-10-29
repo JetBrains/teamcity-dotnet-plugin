@@ -9,8 +9,10 @@ import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetToolResolverImpl(
-        private val _toolProvider: ToolProvider,
         private val _parametersService: ParametersService,
+        private val _toolEnvironment: ToolEnvironment,
+        private val _toolSearchService: ToolSearchService,
+        private val _environment: Environment,
         private val _virtualContext: VirtualContext)
     : DotnetToolResolver {
     override val paltform: ToolPlatform
@@ -19,24 +21,15 @@ class DotnetToolResolverImpl(
     override val executable: ToolPath
         get() {
             try {
-                var dotnetPath = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
-                LOG.debug("${DotnetConstants.CONFIG_PATH} is \"$dotnetPath\"")
-                if (dotnetPath.isNullOrBlank()) {
-                    LOG.debug("Try to find ${DotnetConstants.EXECUTABLE} executable.")
-                    dotnetPath = _toolProvider.getPath(DotnetConstants.EXECUTABLE)
-                    LOG.debug("${DotnetConstants.EXECUTABLE} is \"$dotnetPath\"")
-                    if (dotnetPath.isNullOrBlank()) {
-                        throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
-                    }
-                }
-
+                val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths).map { Path(it.path) } + tryFinding(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                val dotnetPath = executables.firstOrNull() ?: throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
                 val virtualPath = when {
-                    !_virtualContext.isVirtual -> Path(dotnetPath)
+                    !_virtualContext.isVirtual -> dotnetPath
                     _virtualContext.targetOSType == OSType.WINDOWS -> Path("dotnet.exe")
                     else -> Path("dotnet")
                 }
 
-                return ToolPath(Path(dotnetPath), virtualPath)
+                return ToolPath(dotnetPath, virtualPath)
             } catch (e: ToolCannotBeFoundException) {
                 val exception = RunBuildException(e)
                 exception.isLogStacktrace = false
@@ -46,6 +39,12 @@ class DotnetToolResolverImpl(
 
     override val isCommandRequired: Boolean
         get() = true
+
+    private fun tryFinding(parameterType: ParameterType, parameterName: String): Sequence<Path> {
+        val dotnetPath = _parametersService.tryGetParameter(parameterType, parameterName)
+        LOG.debug("$parameterType variable \"$parameterName\" is \"$dotnetPath\"")
+        return if (!dotnetPath.isNullOrBlank()) sequenceOf(Path(dotnetPath)) else emptySequence<Path>()
+    }
 
     companion object {
         private val LOG = Logger.getLogger(DotnetToolResolverImpl::class.java)

@@ -19,7 +19,7 @@ class FileSystemServiceImpl: FileSystemService {
 
     override fun remove(file: File) = FileUtils.deleteDirectory(file)
 
-    override fun list(file: File): Sequence<File> = file.listFiles()?.asSequence() ?: emptySequence()
+    override fun list(path: File): Sequence<File> = path.listFiles()?.asSequence() ?: emptySequence()
 
     override fun createDirectory(path: File) = path.mkdirs()
 

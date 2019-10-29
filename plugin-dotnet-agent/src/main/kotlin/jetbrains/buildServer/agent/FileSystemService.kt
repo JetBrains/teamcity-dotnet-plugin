@@ -19,7 +19,7 @@ interface FileSystemService {
 
     fun remove(file: File)
 
-    fun list(file: File): Sequence<File>
+    fun list(path: File): Sequence<File>
 
     fun createDirectory(path: File): Boolean
 

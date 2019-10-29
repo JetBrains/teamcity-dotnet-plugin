@@ -49,7 +49,10 @@
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
     <constructor-arg value="dotnet.cli"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider">
+    <constructor-arg ref="dotnetToolEnvironment"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
   <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
@@ -79,7 +82,7 @@
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver">
-    <constructor-arg ref="dotnetToolProvider"/>
+    <constructor-arg ref="dotnetToolEnvironment"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
@@ -175,7 +178,10 @@
   <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
 
   <!-- Mono -->
-  <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider"/>
+  <bean class="jetbrains.buildServer.mono.MonoToolEnvironment" id="monoToolEnvironment"/>
+  <bean class="jetbrains.buildServer.mono.MonoToolProvider" id="monoToolProvider">
+    <constructor-arg ref="monoToolEnvironment"/>
+  </bean>
   <bean class="jetbrains.buildServer.mono.MonoVersionParser" id="monoVersionParser"/>
   <bean class="jetbrains.buildServer.mono.MonoPropertiesExtension">
     <constructor-arg ref="monoToolProvider"/>
