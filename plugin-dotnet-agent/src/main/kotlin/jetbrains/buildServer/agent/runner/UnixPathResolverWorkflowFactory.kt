@@ -19,7 +19,7 @@ class UnixPathResolverWorkflowFactory(
     : PathResolverWorkflowFactory {
     override fun create(context: WorkflowContext, state: PathResolverState) =
                 if (context.status == WorkflowStatus.Running && _virtualContext.targetOSType != OSType.WINDOWS) {
-                    _baseResolverWorkflowFactory.create(context, PathResolverState(state.pathToResolve, state, commandToResolve))
+                    _baseResolverWorkflowFactory.create(context, PathResolverState(state.pathToResolve, state.virtualPathObserver, commandToResolve))
                 }
                 else {
                     Workflow()

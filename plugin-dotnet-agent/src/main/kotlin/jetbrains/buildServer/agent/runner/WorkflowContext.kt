@@ -1,9 +1,7 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.rx.Disposable
-import jetbrains.buildServer.rx.Observable
-import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.rx.*
 
 interface WorkflowContext: Observable<CommandResultEvent> {
     val status: WorkflowStatus
@@ -11,17 +9,8 @@ interface WorkflowContext: Observable<CommandResultEvent> {
     fun abort(buildFinishedStatus: BuildFinishedStatus)
 }
 
-fun WorkflowContext.subscibeForExitCode(handler: (Int) -> Unit ) =
-        this.subscribe {
-            if (it is CommandResultExitCode) handler(it.exitCode)
-        }
+fun Observable<CommandResultEvent>.toExitCodes(): Observable<Int> = this.ofType<CommandResultEvent, CommandResultExitCode>().map { it.exitCode }
 
-fun WorkflowContext.subscibeForOutput(handler: (String) -> Unit ) =
-    this.subscribe {
-        if (it is CommandResultOutput) handler(it.output)
-    }
+fun Observable<CommandResultEvent>.toOutput(): Observable<String> = this.ofType<CommandResultEvent, CommandResultOutput>().map { it.output }
 
-fun WorkflowContext.subscibeForErrors(handler: (String) -> Unit ) =
-        this.subscribe { it ->
-            if (it is CommandResultError) handler(it.error)
-        }
+fun Observable<CommandResultEvent>.toErrors(): Observable<String> = this.ofType<CommandResultEvent, CommandResultError>().map { it.error }

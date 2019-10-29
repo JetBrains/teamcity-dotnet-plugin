@@ -31,6 +31,14 @@ inline fun <T, R> Observable<T>.map(crossinline map: (T) -> R): Observable<R> =
                     { onComplete() })
         }
 
+inline fun <T, reified R: T> Observable<T>.ofType(): Observable<R> =
+        observable {
+            subscribe(
+                    { if (it is R) onNext(it) },
+                    { onError(it) },
+                    { onComplete() })
+        }
+
 inline fun <T, R> Observable<T>.reduce(initialValue: R, crossinline operation: (acc: R, T) -> R): Observable<R> =
         observable {
             var accumulator: R = initialValue

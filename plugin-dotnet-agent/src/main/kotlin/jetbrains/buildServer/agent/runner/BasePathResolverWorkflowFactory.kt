@@ -10,22 +10,11 @@ class BasePathResolverWorkflowFactory(
     : PathResolverWorkflowFactory {
     override fun create(context: WorkflowContext, state: PathResolverState) = Workflow (
             sequence {
-                val pathSource = observable<Path> {
-                        context
-                                .distinct()
-                                .subscribe(
-                                    { event ->
-                                        when {
-                                            event is CommandResultOutput -> onNext(Path(event.output))
-                                            event is CommandResultExitCode -> if (event.exitCode == 0) onComplete() else onError(Exception("Error"))
-                                        }
-                                    },
-                                    { onError(it) },
-                                    { onComplete() })
-                }
-
-                pathSource
-                        .subscribe(state)
+                context
+                        .toOutput()
+                        .distinct()
+                        .map { Path(it) }
+                        .subscribe(state.virtualPathObserver)
                         .use {
                             yield(CommandLine(
                                     TargetType.SystemDiagnostics,

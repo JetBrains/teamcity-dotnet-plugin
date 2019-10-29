@@ -37,7 +37,7 @@ class DotnetToolResolverImpl(
                     else -> dotnetPath
                 }
 
-                return ToolPath(dotnetPath, virtualPath)
+                return ToolPath(dotnetPath, virtualPath, homePaths)
             } catch (e: ToolCannotBeFoundException) {
                 val exception = RunBuildException(e)
                 exception.isLogStacktrace = false

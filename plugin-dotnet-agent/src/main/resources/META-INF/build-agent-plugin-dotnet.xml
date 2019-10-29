@@ -58,8 +58,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-    <constructor-arg ref="dotnetCommandSet"/>
+  <bean class="jetbrains.buildServer.dotnet.CrossPlatformWorkflowFactory" id="crossPlatformWorkflowFactory">
     <constructor-arg ref="dotnetVersionParser"/>
     <constructor-arg>
       <list>
@@ -67,6 +66,10 @@
         <ref bean="windowsPathResolverWorkflowFactory"/>
       </list>
     </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
+    <constructor-arg ref="dotnetCommandSet"/>
+    <constructor-arg ref="crossPlatformWorkflowFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationImpl"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>

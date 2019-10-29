@@ -26,7 +26,7 @@ class WindowsPathResolverWorkflowFactory(
                         }
                     }
 
-                    _baseResolverWorkflowFactory.create(context, PathResolverState(state.pathToResolve, state, command))
+                    _baseResolverWorkflowFactory.create(context, PathResolverState(state.pathToResolve, state.virtualPathObserver, command))
                 }
                 else {
                     Workflow()

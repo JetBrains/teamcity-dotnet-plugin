@@ -63,7 +63,7 @@ class DotnetToolResolverTest {
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe"), Path("home_dotnet.exe"), listOf(Path("home"))))
     }
 
     @DataProvider
@@ -94,12 +94,12 @@ class DotnetToolResolverTest {
     @DataProvider(name = "osVariants")
     fun osVariants(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(OSType.WINDOWS, OSType.UNIX, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"))),
-                arrayOf(OSType.WINDOWS, OSType.MAC, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"))),
-                arrayOf(OSType.UNIX, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"))),
-                arrayOf(OSType.MAC, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"))),
-                arrayOf(OSType.WINDOWS, OSType.WINDOWS, ToolPath(Path("home\\dotnet.exe"), Path("home\\dotnet.exe"))),
-                arrayOf(OSType.MAC, OSType.MAC, ToolPath(Path("home/dotnet"), Path("home/dotnet")))
+                arrayOf(OSType.WINDOWS, OSType.UNIX, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"), listOf(Path("home")))),
+                arrayOf(OSType.WINDOWS, OSType.MAC, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"), listOf(Path("home")))),
+                arrayOf(OSType.UNIX, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"), listOf(Path("home")))),
+                arrayOf(OSType.MAC, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"), listOf(Path("home")))),
+                arrayOf(OSType.WINDOWS, OSType.WINDOWS, ToolPath(Path("home\\dotnet.exe"), Path("home\\dotnet.exe"), listOf(Path("home")))),
+                arrayOf(OSType.MAC, OSType.MAC, ToolPath(Path("home/dotnet"), Path("home/dotnet"), listOf(Path("home"))))
         )
     }
 
@@ -138,7 +138,7 @@ class DotnetToolResolverTest {
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe"), Path("home/dotnet")))
+        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe"), Path("home/dotnet"), listOf(Path("home"))))
     }
 
     private fun createInstance(): DotnetToolResolver {

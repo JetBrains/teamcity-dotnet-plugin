@@ -414,6 +414,35 @@ class ObservablesTest {
         assertEquals(actual, expectedNotifications.dematerialize())
     }
 
+    @DataProvider
+    fun testTypeOf(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(
+                        observableOf(NotificationNext<Any>(1), NotificationNext<Any>("2"), NotificationNext<Any>(3), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(3), completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationNext("1"), NotificationNext("2"), completed()),
+                        observableOf(completed<Int>())),
+                arrayOf(
+                        observableOf(completed()),
+                        observableOf(completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))))
+    }
+
+    @Test(dataProvider = "testTypeOf")
+    fun shouldTypeOf(data: Observable<Notification<Any>>, expectedNotifications: Observable<Notification<Int>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual = source.ofType<Any, Int>()
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
+    }
+
     companion object {
         private val error = Exception()
     }

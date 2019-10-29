@@ -5,9 +5,8 @@ import jetbrains.buildServer.rx.Observer
 
  data class PathResolverState(
          public val pathToResolve: Path,
-         private val _destination: Observer<Path>,
-         public val commandToResolve: Path = Path(""))
-  : Observer<Path> by _destination {
+         public val virtualPathObserver: Observer<Path>,
+         public val commandToResolve: Path = Path("")) {
   override fun equals(other: Any?): Boolean {
    if (this === other) return true
    if (javaClass != other?.javaClass) return false
