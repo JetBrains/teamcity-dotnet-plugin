@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -31,7 +32,6 @@ class DotnetToolResolverTest {
         clearAllMocks()
         every { _toolSearchService.find(DotnetConstants.EXECUTABLE, emptySequence()) } returns emptySequence()
         every { _toolEnvironment.homePaths } returns emptySequence()
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
         every { _virtualContext.isVirtual } returns false
     }
 
@@ -42,6 +42,7 @@ class DotnetToolResolverTest {
         val toolFile = "dotnet.exe"
 
         // When
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
         val actualExecutable = instance.executable
 
         // Then
@@ -55,6 +56,7 @@ class DotnetToolResolverTest {
         val homePaths = sequenceOf(Path("home"))
 
         // When
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
         every { _toolEnvironment.homePaths } returns homePaths
         every { _toolSearchService.find(DotnetConstants.EXECUTABLE, homePaths) } returns sequenceOf(File("home_dotnet.exe"))
 
@@ -74,11 +76,12 @@ class DotnetToolResolverTest {
     }
 
     @Test(dataProvider = "osSpecificDotnet")
-    fun shouldProvideExecutableFileWhenVirtualContext(os: OSType, expectedVirtualExecutable: String) {
+    fun shouldProvideExecutableFileWhenInVirtualContext(os: OSType, expectedVirtualExecutable: String) {
         // Given
         val instance = createInstance()
 
         // When
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns os
 
@@ -88,17 +91,54 @@ class DotnetToolResolverTest {
         Assert.assertEquals(actualExecutable, ToolPath(Path("dotnet.exe"), Path(expectedVirtualExecutable)))
     }
 
-    @Test
-    fun shouldProvideExecutableFileWhenParameterWasOverridedByConfigParameter() {
+    @DataProvider(name = "osVariants")
+    fun osVariants(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(OSType.WINDOWS, OSType.UNIX, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"))),
+                arrayOf(OSType.WINDOWS, OSType.MAC, ToolPath(Path("home\\dotnet.exe"), Path("home/dotnet"))),
+                arrayOf(OSType.UNIX, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"))),
+                arrayOf(OSType.MAC, OSType.WINDOWS, ToolPath(Path("home/dotnet"), Path("home\\dotnet.exe"))),
+                arrayOf(OSType.WINDOWS, OSType.WINDOWS, ToolPath(Path("home\\dotnet.exe"), Path("home\\dotnet.exe"))),
+                arrayOf(OSType.MAC, OSType.MAC, ToolPath(Path("home/dotnet"), Path("home/dotnet")))
+        )
+    }
+
+    @Test(dataProvider = "osVariants")
+    fun shouldProvideExecutableFileFromHomeEnvVarWhenItWasSpecifiedWhenInVirtualContext(hostOs: OSType, containerOs: OSType, expectedTool: ToolPath) {
         // Given
         val instance = createInstance()
-
+        val homePaths = sequenceOf(Path("home"))
 
         // When
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
+        every { _virtualContext.isVirtual } returns true
+        every { _environment.os } returns hostOs
+        every { _virtualContext.targetOSType } returns containerOs
+        every { _toolEnvironment.homePaths } returns homePaths
+        every { _toolSearchService.find(DotnetConstants.EXECUTABLE, homePaths) } returns emptySequence()
         val actualExecutable = instance.executable
 
         // Then
-        Assert.assertEquals(actualExecutable, ToolPath(_toolFile))
+                //Path("home_dotnet.exe")
+        Assert.assertEquals(actualExecutable, expectedTool)
+    }
+
+    @Test
+    fun shouldProvideExecutableFileFromHomeEnvVarWhenItWasSpecifiedWhenInVirtualContextAndHasOnTheHost() {
+        // Given
+        val instance = createInstance()
+        val homePaths = sequenceOf(Path("home"))
+
+        // When
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
+        every { _virtualContext.isVirtual } returns true
+        every { _virtualContext.targetOSType } returns OSType.UNIX
+        every { _toolEnvironment.homePaths } returns homePaths
+        every { _toolSearchService.find(DotnetConstants.EXECUTABLE, homePaths) } returns sequenceOf(File("home_dotnet.exe"))
+        val actualExecutable = instance.executable
+
+        // Then
+        Assert.assertEquals(actualExecutable, ToolPath(Path("home_dotnet.exe"), Path("home/dotnet")))
     }
 
     private fun createInstance(): DotnetToolResolver {

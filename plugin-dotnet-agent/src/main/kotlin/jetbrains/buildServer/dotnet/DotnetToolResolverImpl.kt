@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.OSType
 import org.apache.log4j.Logger
-import java.io.File
 
 class DotnetToolResolverImpl(
         private val _parametersService: ParametersService,
@@ -21,12 +20,21 @@ class DotnetToolResolverImpl(
     override val executable: ToolPath
         get() {
             try {
+                val homePaths = _toolEnvironment.homePaths.toList()
                 val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths).map { Path(it.path) } + tryFinding(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
-                val dotnetPath = executables.firstOrNull() ?: throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
+                var dotnetPath = executables.firstOrNull()
+                if (dotnetPath == null) {
+                    if(_virtualContext.isVirtual) {
+                        dotnetPath = getHomePath(_environment.os, homePaths)
+                    }
+                    else {
+                        throw RunBuildException("Cannot find the ${DotnetConstants.EXECUTABLE} executable.")
+                    }
+                }
+
                 val virtualPath = when {
-                    !_virtualContext.isVirtual -> dotnetPath
-                    _virtualContext.targetOSType == OSType.WINDOWS -> Path("dotnet.exe")
-                    else -> Path("dotnet")
+                    _virtualContext.isVirtual -> getHomePath(_virtualContext.targetOSType, homePaths)
+                    else -> dotnetPath
                 }
 
                 return ToolPath(dotnetPath, virtualPath)
@@ -39,6 +47,21 @@ class DotnetToolResolverImpl(
 
     override val isCommandRequired: Boolean
         get() = true
+
+    private fun getHomePath(os: OSType, homePaths: List<Path>) = when {
+        homePaths.isNotEmpty() -> Path("${homePaths[0].path}${separator(os)}${defaultExecutable(os).path}")
+        else -> defaultExecutable(os)
+    }
+
+    private fun separator(os: OSType) = when {
+        os == OSType.WINDOWS -> '\\'
+        else -> '/'
+    }
+
+    private fun defaultExecutable(os: OSType) = when {
+        os == OSType.WINDOWS -> Path("dotnet.exe")
+        else -> Path("dotnet")
+    }
 
     private fun tryFinding(parameterType: ParameterType, parameterName: String): Sequence<Path> {
         val dotnetPath = _parametersService.tryGetParameter(parameterType, parameterName)
