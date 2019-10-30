@@ -12,7 +12,6 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.rx.subjectOf
-import org.jetbrains.kotlin.utils.join
 import java.io.File
 
 class WorkflowSessionImpl(
@@ -157,7 +156,7 @@ class WorkflowSessionImpl(
                 _loggerService.writeStandardOutput(*text)
             }
             else {
-                _loggerService.writeTrace(join(text.map { it.text }, " "))
+                _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
             }
         }
 
