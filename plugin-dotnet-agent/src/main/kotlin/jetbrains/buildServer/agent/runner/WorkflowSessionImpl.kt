@@ -12,6 +12,7 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.rx.subjectOf
+import org.jetbrains.kotlin.utils.join
 import java.io.File
 
 class WorkflowSessionImpl(
@@ -84,27 +85,34 @@ class WorkflowSessionImpl(
             private val _eventSource: Observer<CommandResultEvent>,
             private val _commandLinePresentationService: CommandLinePresentationService,
             private val _argumentsService: ArgumentsService,
-            private val _virtualContext: VirtualContext) : CommandExecution {
+            private val _virtualContext: VirtualContext) : CommandExecution, BuildProgressLoggerAware {
 
+        private val _logger = SuppressingLogger(_buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
         private var _blockToken: Disposable = emptyDisposable()
 
         override fun beforeProcessStarted() = Unit
 
         override fun processStarted(programCommandLine: String, workingDirectory: File) {
-            if (_commandLine.title != "") {
-                _blockToken = _loggerService.writeBlock(_commandLine.title)
+            if (!_commandLine.title.isNullOrBlank())
+            {
+                if (_isHiddenInBuidLog) {
+                    _loggerService.writeStandardOutput(_commandLine.title)
+                }
+                else {
+                    _blockToken = _loggerService.writeBlock(_commandLine.title)
+                }
             }
 
             if (_commandLine.description.any()) {
-                _loggerService.writeStandardOutput(*_commandLine.description.toTypedArray())
+                writeStandardOutput(*_commandLine.description.toTypedArray())
             }
 
             val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
             val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
 
-            _loggerService.writeStandardOutput(*(listOf(StdOutText("Starting: ")) + executableFilePresentation + argsPresentation).toTypedArray())
+            writeStandardOutput(*(listOf(StdOutText("Starting: ")) + executableFilePresentation + argsPresentation).toTypedArray())
             val virtualWorkingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
-            _loggerService.writeStandardOutput(StdOutText("in directory: "), StdOutText(virtualWorkingDirectory))
+            writeStandardOutput(StdOutText("in directory: "), StdOutText(virtualWorkingDirectory))
         }
 
         override fun processFinished(exitCode: Int) {
@@ -119,7 +127,7 @@ class WorkflowSessionImpl(
 
         override fun onStandardOutput(text: String) {
             _eventSource.onNext(CommandResultOutput(text))
-            _loggerService.writeStandardOutput(text)
+            writeStandardOutput(text)
         }
 
         override fun onErrorOutput(error: String) {
@@ -130,6 +138,46 @@ class WorkflowSessionImpl(
         override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 
         override fun isCommandLineLoggingEnabled(): Boolean = false
+
+        override fun getLogger(): BuildProgressLogger = _logger
+
+        private val _isHiddenInBuidLog get() = _commandLine.target == TargetType.SystemDiagnostics
+
+        private fun writeStandardOutput(text: String) {
+            if (!_isHiddenInBuidLog) {
+                _loggerService.writeStandardOutput(text)
+            }
+            else {
+                _loggerService.writeTrace(text)
+            }
+        }
+
+        private fun writeStandardOutput(vararg text: StdOutText) {
+            if (!_isHiddenInBuidLog) {
+                _loggerService.writeStandardOutput(*text)
+            }
+            else {
+                _loggerService.writeTrace(join(text.map { it.text }, " "))
+            }
+        }
+
+        class SuppressingLogger(
+                private val _baseLogger: BuildProgressLogger,
+                private val _isHiddenInBuidLog: Boolean):
+                BuildProgressLogger by _baseLogger {
+
+            override fun warning(message: String?) {
+                _baseLogger.debug(message)
+            }
+
+            override fun message(message: String?) {
+                if (!_isHiddenInBuidLog) {
+                    _baseLogger.message(message)
+                } else {
+                    _baseLogger.debug(message)
+                }
+            }
+        }
     }
 
     private class ProgramCommandLineAdapter(
