@@ -42,12 +42,17 @@ class DotCoverCoverageType: CommandType() {
         val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
         val projectManager = factory.getBean(ProjectManager::class.java)
         val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject()) ?: return@sequence
+
         if (VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0) {
             requirements.clear()
             requirements.add(OUR_NET_461_REQUIREMENT)
         }
 
-        requirements.forEach { yield(it) }
+        if (VersionComparatorUtil.compare("2019.2.2", toolVersion.getVersion()) <= 0) {
+            requirements.clear()
+        }
+
+        yieldAll(requirements)
     }
 
     companion object {
