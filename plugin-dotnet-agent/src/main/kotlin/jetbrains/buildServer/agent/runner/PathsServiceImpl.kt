@@ -17,6 +17,17 @@ class PathsServiceImpl(
     override val uniqueName: String
         get() = UUID.randomUUID().toString().replace("-", "")
 
+    override fun uniqueName(basePath: File, extension: String): File {
+        for (num in 1..Int.MAX_VALUE) {
+            val file = File(basePath, "$num$extension")
+            if (!_fileSystemService.isExists(file)) {
+                return file
+            }
+        }
+
+        throw RunBuildException("Cannot generate unique name in $basePath for $extension.");
+    }
+
     override fun getPath(pathType: PathType) = when (pathType) {
         PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory.canonicalFile
         PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory.canonicalFile
@@ -34,15 +45,6 @@ class PathsServiceImpl(
         PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory.canonicalFile
     }
 
-    override fun getTempFileName(extension: String): File {
-        val tempDir = getPath(PathType.AgentTemp)
-        for (num in 1 .. Int.MAX_VALUE) {
-            val file = File(tempDir, "$num$extension")
-            if (!_fileSystemService.isExists(file)) {
-               return file
-            }
-        }
-
-        throw RunBuildException("Cannot generate temp file name for $extension.");
-    }
+    override fun getTempFileName(extension: String): File =
+        uniqueName(getPath(PathType.AgentTemp), extension)
 }
