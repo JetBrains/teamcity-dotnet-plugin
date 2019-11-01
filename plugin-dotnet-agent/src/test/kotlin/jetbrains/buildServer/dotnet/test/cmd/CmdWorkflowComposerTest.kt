@@ -19,9 +19,12 @@ import java.io.File
 class CmdWorkflowComposerTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _workflowContext: WorkflowContext
-    private var _workflowCmd = createWorkflow(Path(File("abc1", "my.cmd").path))
-    private var _workflowBat = createWorkflow(Path(File("abc2", "my.bat").path))
-    private var _workflowOther = createWorkflow(Path(File("abc3", "my.exe").path))
+    private var _baseCommandLineCmd = createBaseCommandLine(Path(File("abc1", "my.cmd").path))
+    private var _workflowCmd = createWorkflow(_baseCommandLineCmd)
+    private var _baseCommandLineBat = createBaseCommandLine(Path(File("abc2", "my.bat").path))
+    private var _workflowBat = createWorkflow(_baseCommandLineBat)
+    private var _baseCommandLineOther = createBaseCommandLine(Path(File("abc3", "my.exe").path))
+    private var _workflowOther = createWorkflow(_baseCommandLineOther)
     @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
@@ -56,6 +59,7 @@ class CmdWorkflowComposerTest {
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
+                                                _baseCommandLineCmd,
                                                 TargetType.Host,
                                                 Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
@@ -75,6 +79,7 @@ class CmdWorkflowComposerTest {
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
+                                                _baseCommandLineBat,
                                                 TargetType.Host,
                                                 Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
@@ -118,18 +123,21 @@ class CmdWorkflowComposerTest {
     }
 
     companion object {
-        private fun createWorkflow(executableFile: Path): Workflow {
+        private fun createWorkflow(baseCommandLine: CommandLine) =
+            Workflow(sequenceOf(baseCommandLine))
+
+        private fun createBaseCommandLine(executableFile: Path): CommandLine {
             val workingDirectory = Path("wd")
             val args = listOf(CommandLineArgument("arg1"))
             val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
             val commandLine = CommandLine(
+                    null,
                     TargetType.Tool,
                     executableFile,
                     workingDirectory,
                     args,
                     envVars)
-
-            return Workflow(sequenceOf(commandLine))
+            return commandLine
         }
     }
 }

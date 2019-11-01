@@ -27,8 +27,6 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
-    @MockK private lateinit var _targetRegistry: TargetRegistry
-    @MockK private lateinit var _targetRegistrationToken: Disposable
     @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
@@ -68,6 +66,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -76,6 +75,7 @@ class DotCoverWorkflowComposerTest {
         val dotCoverExecutableFile = File(dotCoverPath, "dotCover.exe")
         val dotCoverProject = DotCoverProject(
                 CommandLine(
+                        commandLine,
                         TargetType.Tool,
                         executableFile,
                         Path("v_wd"),
@@ -86,6 +86,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
+                                commandLine,
                                 TargetType.CodeCoverageProfiler,
                                 Path("v_dotCover"),
                                 Path("wd"),
@@ -101,7 +102,6 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns coverageType
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns dotCoverPath
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Quiet.id
@@ -112,8 +112,6 @@ class DotCoverWorkflowComposerTest {
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath!!))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
-        every { _targetRegistry.register(TargetType.CodeCoverageProfiler) } returns _targetRegistrationToken
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -122,7 +120,6 @@ class DotCoverWorkflowComposerTest {
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        verify { _targetRegistrationToken.dispose() }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -148,6 +145,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -176,7 +174,8 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
-                TargetType.Tool,
+                null,
+                TargetType.SystemDiagnostics,
                 executableFile,
                 workingDirectory,
                 args,
@@ -187,12 +186,10 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.SystemDiagnostics)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled") } returns null
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Quiet.id
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
 
         val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
@@ -218,6 +215,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -226,6 +224,7 @@ class DotCoverWorkflowComposerTest {
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
                 CommandLine(
+                        commandLine,
                         TargetType.Tool,
                         executableFile,
                         Path("v_wd"),
@@ -236,6 +235,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
+                                commandLine,
                                 TargetType.CodeCoverageProfiler,
                                 Path("v_dotCover"),
                                 Path("wd"),
@@ -252,7 +252,6 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns verbosity.id
@@ -263,8 +262,6 @@ class DotCoverWorkflowComposerTest {
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path(dotCoverSnapshotUniqueName.path))) } returns Unit
-        every { _targetRegistry.register(TargetType.CodeCoverageProfiler) } returns _targetRegistrationToken
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -306,6 +303,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1", CommandLineArgumentType.Secondary))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -314,6 +312,7 @@ class DotCoverWorkflowComposerTest {
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
                 CommandLine(
+                        commandLine,
                         TargetType.Tool,
                         executableFile,
                         Path("v_wd"),
@@ -324,6 +323,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
+                                commandLine,
                                 TargetType.CodeCoverageProfiler,
                                 Path("v_dotCover"),
                                 Path("wd"),
@@ -340,7 +340,6 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
@@ -349,8 +348,6 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
-        every { _targetRegistry.register(TargetType.CodeCoverageProfiler) } returns _targetRegistrationToken
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -359,7 +356,6 @@ class DotCoverWorkflowComposerTest {
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        verify { _targetRegistrationToken.dispose() }
         verify(exactly = 0) { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
         verify(exactly = 0) { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path(dotCoverSnapshotUniqueName.path))) }
 
@@ -376,6 +372,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -384,6 +381,7 @@ class DotCoverWorkflowComposerTest {
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
                 CommandLine(
+                        commandLine,
                         TargetType.Tool,
                         executableFile,
                         Path("v_wd"),
@@ -394,6 +392,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
+                                commandLine,
                                 TargetType.CodeCoverageProfiler,
                                 Path("v_dotCover"),
                                 Path("wd"),
@@ -413,7 +412,6 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
@@ -424,8 +422,6 @@ class DotCoverWorkflowComposerTest {
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
-        every { _targetRegistry.register(TargetType.CodeCoverageProfiler) } returns _targetRegistrationToken
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -447,6 +443,7 @@ class DotCoverWorkflowComposerTest {
         val args = listOf(CommandLineArgument("arg1"))
         val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
         val commandLine = CommandLine(
+                null,
                 TargetType.Tool,
                 executableFile,
                 workingDirectory,
@@ -455,6 +452,7 @@ class DotCoverWorkflowComposerTest {
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
                 CommandLine(
+                        commandLine,
                         TargetType.Tool,
                         executableFile,
                         Path("v_wd"),
@@ -465,6 +463,7 @@ class DotCoverWorkflowComposerTest {
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
+                                commandLine,
                                 TargetType.CodeCoverageProfiler,
                                 Path("v_dotCover"),
                                 Path("wd"),
@@ -483,7 +482,6 @@ class DotCoverWorkflowComposerTest {
 
         // When
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _targetRegistry.activeTargets } returns sequenceOf(TargetType.MemoryProfiler, TargetType.Tool)
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
@@ -494,8 +492,6 @@ class DotCoverWorkflowComposerTest {
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
-        every { _targetRegistry.register(TargetType.CodeCoverageProfiler) } returns _targetRegistrationToken
-        every { _targetRegistrationToken.dispose() } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -517,7 +513,6 @@ class DotCoverWorkflowComposerTest {
                 _loggerService,
                 ArgumentsServiceStub(),
                 _coverageFilterProvider,
-                _targetRegistry,
                 _virtualContext)
     }
 }

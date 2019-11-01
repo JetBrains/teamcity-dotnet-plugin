@@ -17,6 +17,7 @@ class BasePathResolverWorkflowFactory(
                         .subscribe(state.virtualPathObserver)
                         .use {
                             yield(CommandLine(
+                                    null,
                                     TargetType.SystemDiagnostics,
                                     state.commandToResolve,
                                     Path(_pathsService.getPath(PathType.WorkingDirectory).path),

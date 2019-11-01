@@ -27,8 +27,6 @@ class VisualStudioWorkflowComposerTest {
     private lateinit var _targetService: TargetService
     private lateinit var _toolResolver: ToolResolver
     private lateinit var _loggerService: LoggerService
-    private lateinit var _targetRegistry: TargetRegistry
-    private lateinit var _targetRegistrationToken: Disposable
     private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
@@ -38,8 +36,6 @@ class VisualStudioWorkflowComposerTest {
         _targetService = _ctx.mock(TargetService::class.java)
         _toolResolver = _ctx.mock(ToolResolver::class.java)
         _loggerService = _ctx.mock(LoggerService::class.java)
-        _targetRegistry = _ctx.mock(TargetRegistry::class.java)
-        _targetRegistrationToken = _ctx.mock(Disposable::class.java)
         _virtualContext = _ctx.mock(VirtualContext::class.java)
     }
 
@@ -56,6 +52,7 @@ class VisualStudioWorkflowComposerTest {
                         sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln"))),
                         listOf(
                                 CommandLine(
+                                        null,
                                         TargetType.Tool,
                                         Path("v_tool"),
                                         Path("wd"),
@@ -68,6 +65,7 @@ class VisualStudioWorkflowComposerTest {
                                         emptyList(),
                                         DotnetCommandType.VisualStudio.id),
                                 CommandLine(
+                                        null,
                                         TargetType.Tool,
                                         Path("v_tool"),
                                         Path("wd"),
@@ -88,6 +86,7 @@ class VisualStudioWorkflowComposerTest {
                         sequenceOf(CommandTarget(File("my1.csproj"))),
                         listOf(
                                 CommandLine(
+                                        null,
                                         TargetType.Tool,
                                         Path("v_tool"),
                                         Path("wd"),
@@ -137,11 +136,6 @@ class VisualStudioWorkflowComposerTest {
                 allowing<TargetService>(_targetService).targets
                 will(returnValue(targets))
 
-                allowing<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
-                will(returnValue(_targetRegistrationToken))
-
-                allowing<Disposable>(_targetRegistrationToken).dispose()
-
                 allowing<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
                 will(returnValue("v_tool"))
 
@@ -184,6 +178,7 @@ class VisualStudioWorkflowComposerTest {
         val targets = sequenceOf(CommandTarget(File("my1.sln")), CommandTarget(File("my2.sln")))
         val expectedCommandLines = listOf(
                 CommandLine(
+                        null,
                         TargetType.Tool,
                         Path("v_tool"),
                         Path("wDir"),
@@ -218,11 +213,6 @@ class VisualStudioWorkflowComposerTest {
                 will(returnValue("v_my1.sln"))
 
                 oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
-
-                oneOf<TargetRegistry>(_targetRegistry).register(TargetType.Tool)
-                will(returnValue(_targetRegistrationToken))
-
-                oneOf<Disposable>(_targetRegistrationToken).dispose()
             }
         })
 
@@ -243,7 +233,6 @@ class VisualStudioWorkflowComposerTest {
                 _loggerService,
                 _targetService,
                 _toolResolver,
-                _targetRegistry,
                 _virtualContext)
     }
 }

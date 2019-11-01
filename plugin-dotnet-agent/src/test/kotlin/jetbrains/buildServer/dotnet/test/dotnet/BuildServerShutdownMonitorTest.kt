@@ -91,6 +91,7 @@ class BuildServerShutdownMonitorTest {
                         will(returnValue(envVars))
 
                         val buildServerShutdownCommandline = CommandLine(
+                                null,
                                 TargetType.Tool,
                                 executableFile,
                                 Path("wd"),

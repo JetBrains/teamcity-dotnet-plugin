@@ -9,7 +9,6 @@ import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.agent.runner.TargetRegistryImpl
 import jetbrains.buildServer.agent.runner.VirtualContextImpl
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

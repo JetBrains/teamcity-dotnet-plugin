@@ -20,7 +20,6 @@ class DotCoverWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider,
-        private val _targetRegistry: TargetRegistry,
         private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
@@ -64,30 +63,31 @@ class DotCoverWorkflowComposer(
 
         return Workflow(sequence {
             var deferredServiceMessages = mutableListOf<ServiceMessage>()
-            for (commandLineToCover in workflow.commandLines) {
+            for (baseCommandLine in workflow.commandLines) {
                 sendServiceMessages(context, deferredServiceMessages)
                 deferredServiceMessages.clear()
 
-                if (!_targetRegistry.activeTargets.contains(TargetType.Tool)) {
-                    yield(commandLineToCover)
+                if (!baseCommandLine.chain.filter { it.target == TargetType.Tool }.any()) {
+                    yield(baseCommandLine)
                     continue
                 }
 
                 val configFile = _pathsService.getTempFileName(DotCoverConfigExtension)
                 val snapshotFile = _pathsService.getTempFileName(DotCoverSnapshotExtension)
-                val virtualWorkingDirectory = Path(_virtualContext.resolvePath(commandLineToCover.workingDirectory.path))
+                val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
                 val virtualconfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
                 val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
 
                 val dotCoverProject = DotCoverProject(
                         CommandLine(
-                                commandLineToCover.target,
-                                commandLineToCover.executableFile,
+                                baseCommandLine,
+                                baseCommandLine.target,
+                                baseCommandLine.executableFile,
                                 virtualWorkingDirectory,
-                                commandLineToCover.arguments,
-                                commandLineToCover.environmentVariables,
-                                commandLineToCover.title,
-                                commandLineToCover.description
+                                baseCommandLine.arguments,
+                                baseCommandLine.environmentVariables,
+                                baseCommandLine.title,
+                                baseCommandLine.description
                         ),
                         virtualconfigFilePath,
                         virtualSnapshotFilePath)
@@ -98,9 +98,9 @@ class DotCoverWorkflowComposer(
 
                 if (showDiagnostics) {
                     _loggerService.writeBlock("dotCover Settings").use {
-                        val args = _argumentsService.combine(commandLineToCover.arguments.map { it.value }.asSequence())
+                        val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
                         _loggerService.writeStandardOutput("Command line:")
-                        _loggerService.writeStandardOutput("  \"${commandLineToCover.executableFile.path}\" $args", Color.Details)
+                        _loggerService.writeStandardOutput("  \"${baseCommandLine.executableFile.path}\" $args", Color.Details)
 
                         _loggerService.writeStandardOutput("Filters:")
                         for (filter in _coverageFilterProvider.filters) {
@@ -114,16 +114,15 @@ class DotCoverWorkflowComposer(
                     }
                 }
 
-                _targetRegistry.register(target).use {
-                    yield(CommandLine(
-                            target,
-                            Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
-                            commandLineToCover.workingDirectory,
-                            createArguments(dotCoverProject).toList(),
-                            commandLineToCover.environmentVariables,
-                            commandLineToCover.title,
-                            commandLineToCover.description))
-                }
+                yield(CommandLine(
+                        baseCommandLine,
+                        target,
+                        Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
+                        baseCommandLine.workingDirectory,
+                        createArguments(dotCoverProject).toList(),
+                        baseCommandLine.environmentVariables,
+                        baseCommandLine.title,
+                        baseCommandLine.description))
 
                 deferredServiceMessages.add(DotCoverServiceMessage(Path((dotCoverPath))))
                 deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, virtualSnapshotFilePath))

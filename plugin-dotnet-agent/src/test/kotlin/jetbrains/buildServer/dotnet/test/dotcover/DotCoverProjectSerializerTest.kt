@@ -109,7 +109,7 @@ class DotCoverProjectSerializerTest {
 
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
-                CommandLine(TargetType.Tool, tool, workingDirectory, listOf(CommandLineArgument("arg1")), emptyList()),
+                CommandLine(null, TargetType.Tool, tool, workingDirectory, listOf(CommandLineArgument("arg1")), emptyList()),
                 Path(File(tempDir, "config.dotCover").path),
                 Path(File(tempDir, "snapshot.dcvr").path))
 
@@ -162,7 +162,7 @@ class DotCoverProjectSerializerTest {
 
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
-                CommandLine(TargetType.Tool, tool, workingDirectory, emptyList(), emptyList()),
+                CommandLine(null, TargetType.Tool, tool, workingDirectory, emptyList(), emptyList()),
                 Path(File(tempDir, "config.dotCover").path),
                 Path(File(tempDir, "snapshot.dcvr").path))
 

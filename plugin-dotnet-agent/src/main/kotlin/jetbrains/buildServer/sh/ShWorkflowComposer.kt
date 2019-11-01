@@ -18,21 +18,22 @@ class ShWorkflowComposer(
                 OSType.UNIX, OSType.MAC -> {
                     Workflow(sequence {
                         var shExecutable: Path? = null
-                            for (originalCommandLine in workflow.commandLines) {
-                            when (originalCommandLine.executableFile.extension().toLowerCase()) {
-                                "sh" -> {
-                                    yield(CommandLine(
-                                            TargetType.Host,
-                                            shExecutable ?: Path( "sh"),
-                                            originalCommandLine.workingDirectory,
-                                            getArguments(originalCommandLine).toList(),
-                                            originalCommandLine.environmentVariables,
-                                            originalCommandLine.title,
-                                            originalCommandLine.description))
+                            for (baseCommandLine in workflow.commandLines) {
+                                when (baseCommandLine.executableFile.extension().toLowerCase()) {
+                                    "sh" -> {
+                                        yield(CommandLine(
+                                                baseCommandLine,
+                                                TargetType.Host,
+                                                shExecutable ?: Path( "sh"),
+                                                baseCommandLine.workingDirectory,
+                                                getArguments(baseCommandLine).toList(),
+                                                baseCommandLine.environmentVariables,
+                                                baseCommandLine.title,
+                                                baseCommandLine.description))
+                                    }
+                                    else -> yield(baseCommandLine)
                                 }
-                                else -> yield(originalCommandLine)
                             }
-                        }
                     })
                 }
                 else -> workflow

@@ -3,10 +3,9 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 
-class SharedCompilationArgumentsProvider(
-        private val _sharedCompilation: SharedCompilation): ArgumentsProvider {
+class SharedCompilationArgumentsProvider: ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        if (_sharedCompilation.requireSuppressing(context.toolVersion)) {
+        if(context.toolVersion > Version.LastVersionWithoutSharedCompilation) {
             yield(nodeReuseArgument)
         }
     }

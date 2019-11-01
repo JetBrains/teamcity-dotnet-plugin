@@ -17,7 +17,6 @@ class ResponseFileArgumentsProviderTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
-    @MockK private lateinit var _sharedCompilation: SharedCompilation
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _argumentsService: ArgumentsService
 
@@ -58,7 +57,6 @@ class ResponseFileArgumentsProviderTest {
 
         every { _loggerService.writeBlock(ResponseFileArgumentsProvider.BlockName) } returns blockToken
         every { _loggerService.writeStandardOutput(any(), Color.Details) } returns Unit
-        every { _sharedCompilation.requireSuppressing(Version(1, 2)) } returns true
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).toList()

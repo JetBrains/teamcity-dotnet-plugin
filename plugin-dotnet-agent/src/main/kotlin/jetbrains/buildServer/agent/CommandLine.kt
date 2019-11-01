@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.runner.StdOutText
 import java.io.File
 
 data class CommandLine(
+        val baseCommandLine: CommandLine?,
         val target: TargetType,
         val executableFile: Path,
         val workingDirectory: Path,
@@ -11,3 +12,13 @@ data class CommandLine(
         val environmentVariables: List<CommandLineEnvironmentVariable> = emptyList(),
         val title: String = "",
         val description: List<StdOutText> = emptyList())
+
+val CommandLine.chain: Sequence<CommandLine> get() {
+    var cur: CommandLine? = this
+    return sequence {
+        while (cur != null) {
+            yield(cur!!)
+            cur = cur?.baseCommandLine
+        }
+    }
+}

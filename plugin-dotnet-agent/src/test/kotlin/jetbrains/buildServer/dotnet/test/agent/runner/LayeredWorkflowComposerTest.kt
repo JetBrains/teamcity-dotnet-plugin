@@ -15,7 +15,7 @@ import org.testng.annotations.Test
 
 class LayeredWorkflowComposerTest {
     private val _toolWorkflow: Workflow = Workflow(emptySequence())
-    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(sequenceOf(CommandLine(TargetType.Tool, Path("tool"), Path("wd"), emptyList(), emptyList())))
+    private val _profilerOfCodeCoverageWorkflow: Workflow = Workflow(sequenceOf(CommandLine(null, TargetType.Tool, Path("tool"), Path("wd"), emptyList(), emptyList())))
     private val _baseWorkflow: Workflow = Workflow(emptySequence())
 
     @DataProvider(name = "composeCases")

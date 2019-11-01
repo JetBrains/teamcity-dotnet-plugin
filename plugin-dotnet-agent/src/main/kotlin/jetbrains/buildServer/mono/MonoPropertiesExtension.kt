@@ -22,6 +22,7 @@ class MonoPropertiesExtension(
         LOG.debug("Locating Mono")
         try {
             val command = CommandLine(
+                    null,
                     TargetType.Tool,
                     Path(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
                     Path("."),

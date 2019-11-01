@@ -20,7 +20,6 @@ class VisualStudioWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver,
-        private val _targetRegistry: TargetRegistry,
         private val _virtualContext: VirtualContext)
     : WorkflowComposer {
 
@@ -73,11 +72,10 @@ class VisualStudioWorkflowComposer(
                                         }
                                     }
                                 }
-                            },
-                            // Register the current target
-                            _targetRegistry.register(target)
+                            }
                     ).use {
                         yield(CommandLine(
+                                null,
                                 TargetType.Tool,
                                 executableFile,
                                 Path(workingDirectory.path),

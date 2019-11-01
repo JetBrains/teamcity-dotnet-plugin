@@ -18,19 +18,20 @@ class CmdWorkflowComposer(
                 OSType.WINDOWS -> {
                     Workflow(sequence {
                         var cmdExecutable: Path? = null
-                        for (originalCommandLine in workflow.commandLines) {
-                            when (originalCommandLine.executableFile.extension().toLowerCase()) {
+                        for (baseCommandLine in workflow.commandLines) {
+                            when (baseCommandLine.executableFile.extension().toLowerCase()) {
                                 "cmd", "bat" -> {
                                     yield(CommandLine(
+                                            baseCommandLine,
                                             TargetType.Host,
                                             cmdExecutable ?: Path( "cmd.exe"),
-                                            originalCommandLine.workingDirectory,
-                                            getArguments(originalCommandLine).toList(),
-                                            originalCommandLine.environmentVariables,
-                                            originalCommandLine.title,
-                                            originalCommandLine.description))
+                                            baseCommandLine.workingDirectory,
+                                            getArguments(baseCommandLine).toList(),
+                                            baseCommandLine.environmentVariables,
+                                            baseCommandLine.title,
+                                            baseCommandLine.description))
                                 }
-                                else -> yield(originalCommandLine)
+                                else -> yield(baseCommandLine)
                             }
                         }
                     })

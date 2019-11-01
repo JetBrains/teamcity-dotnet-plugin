@@ -26,7 +26,6 @@
     <constructor-arg ref="basePathResolverWorkflowFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
-  <bean class="jetbrains.buildServer.agent.runner.TargetRegistryImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
   <bean class="jetbrains.buildServer.agent.runner.ParametersServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
@@ -71,7 +70,6 @@
     <constructor-arg ref="dotnetCommandSet"/>
     <constructor-arg ref="crossPlatformWorkflowFactory"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.SharedCompilationImpl"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>

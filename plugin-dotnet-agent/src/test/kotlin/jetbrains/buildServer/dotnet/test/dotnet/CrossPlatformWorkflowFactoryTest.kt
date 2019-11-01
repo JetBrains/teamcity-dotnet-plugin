@@ -86,6 +86,7 @@ class CrossPlatformWorkflowFactoryTest {
                 actualWorkflow.commandLines.toList(),
                 listOf(
                         CommandLine(
+                                null,
                                 TargetType.SystemDiagnostics,
                                 executable.virtualPath,
                                 Path(File("wd").canonicalPath),
@@ -102,6 +103,7 @@ class CrossPlatformWorkflowFactoryTest {
     fun shouldResolveVirtualPathWhenInVirtualContextAndHomePathsAreEmpty() {
         // Given
         val whichCommandline = CommandLine(
+                null,
                 TargetType.SystemDiagnostics,
                 Path("which"),
                 Path(File("wd").canonicalPath),
@@ -147,6 +149,7 @@ class CrossPlatformWorkflowFactoryTest {
                 listOf(
                         whichCommandline,
                         CommandLine(
+                                null,
                                 TargetType.SystemDiagnostics,
                                 Path("resolved_dotnet"),
                                 Path(File("wd").canonicalPath),

@@ -42,6 +42,7 @@ class CrossPlatformWorkflowFactory(
                         .use {
                             yield(
                                     CommandLine(
+                                            null,
                                         TargetType.SystemDiagnostics,
                                         virtualPath ?: executable.virtualPath,
                                         workingDirectory,

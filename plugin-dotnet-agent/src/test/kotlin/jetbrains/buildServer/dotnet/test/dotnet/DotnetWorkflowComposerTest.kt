@@ -16,7 +16,6 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _workflowContext: WorkflowContext
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _commandRegistry: CommandRegistry
-    @MockK private lateinit var _targetRegistry: TargetRegistry
     @MockK private lateinit var _failedTestSource: FailedTestSource
     @MockK private lateinit var _commandSet: CommandSet
     @MockK private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
@@ -36,6 +35,7 @@ class DotnetWorkflowComposerTest {
     private val _dotnetExecutable = ToolPath(Path("dotnet.exe"))
     private val _tokens = mutableListOf<Disposable>()
     private val _versionCmd = CommandLine(
+            null,
             TargetType.SystemDiagnostics,
             _dotnetExecutable.path,
             Path(_workingDirectory.canonicalPath),
@@ -53,7 +53,6 @@ class DotnetWorkflowComposerTest {
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
         every { _environmentVariables.getVariables(Version(3, 0, 0)) } returns _dotnetVars.asSequence()
         every { _dotnetWorkflowAnalyzer.summarize(any()) } returns Unit
-        every { _targetRegistry.register(TargetType.Tool) } answers { createToken() }
         every { _commandRegistry.register(any()) } returns Unit
         every { _dotnetWorkflowAnalyzer.registerResult(any(), emptySet(), 0) } returns Unit
         every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
@@ -136,6 +135,7 @@ class DotnetWorkflowComposerTest {
                 actualCommandLines,
                 listOf(
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -145,6 +145,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
                         _versionCmd,
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -226,6 +227,7 @@ class DotnetWorkflowComposerTest {
                 actualCommandLines,
                 listOf(
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -234,6 +236,7 @@ class DotnetWorkflowComposerTest {
                                 "msbuild arg3",
                                 listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
                         CommandLine(
+                                null,
                                 TargetType.SystemDiagnostics,
                                 _dotnetExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -242,6 +245,7 @@ class DotnetWorkflowComposerTest {
                                 "dotnet --version",
                                 listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -325,6 +329,7 @@ class DotnetWorkflowComposerTest {
                 actualCommandLines,
                 listOf(
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _msbuildExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -333,6 +338,7 @@ class DotnetWorkflowComposerTest {
                                 "msbuild arg3",
                                 listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
                         CommandLine(
+                                null,
                                 TargetType.SystemDiagnostics,
                                 _dotnetExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -341,6 +347,7 @@ class DotnetWorkflowComposerTest {
                                 "dotnet --version",
                                 listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
                         CommandLine(
+                                null,
                                 TargetType.Tool,
                                 _dotnetExecutable.path,
                                 Path(_workingDirectory.canonicalPath),
@@ -358,7 +365,6 @@ class DotnetWorkflowComposerTest {
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
                 _failedTestSource,
-                _targetRegistry,
                 _commandRegistry,
                 _parametersService,
                 _commandLinePresentationService,

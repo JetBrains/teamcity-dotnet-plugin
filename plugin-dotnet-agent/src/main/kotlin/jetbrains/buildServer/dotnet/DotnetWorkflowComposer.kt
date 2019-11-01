@@ -12,7 +12,6 @@ class DotnetWorkflowComposer(
         private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
         private val _commandSet: CommandSet,
         private val _failedTestSource: FailedTestSource,
-        private val _targetRegistry: TargetRegistry,
         private val _commandRegistry: CommandRegistry,
         private val _parametersService: ParametersService,
         private val _commandLinePresentationService: CommandLinePresentationService,
@@ -72,12 +71,11 @@ class DotnetWorkflowComposer(
                                 if (commandResult.contains(CommandResult.Fail)) {
                                     context.abort(BuildFinishedStatus.FINISHED_FAILED)
                                 }
-                            },
-                            // Register the current target
-                            _targetRegistry.register(target)
+                            }
                     ).use {
                         _commandRegistry.register(dotnetBuildContext)
                         yield(CommandLine(
+                                null,
                                 TargetType.Tool,
                                 virtualPath,
                                 dotnetBuildContext.workingDirectory.path,

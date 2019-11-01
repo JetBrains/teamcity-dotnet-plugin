@@ -16,6 +16,7 @@ class DotnetVersionProviderImpl(
         LOG.info("Try getting the dotnet CLI version for directory \"$workingDirectory\".")
         val versionResult = _commandLineExecutor.tryExecute(
                 CommandLine(
+                        null,
                         TargetType.Tool,
                         dotnetExecutable,
                         workingDirectory,

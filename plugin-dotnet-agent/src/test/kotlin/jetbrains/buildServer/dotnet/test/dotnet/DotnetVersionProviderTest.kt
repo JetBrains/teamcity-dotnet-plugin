@@ -46,6 +46,7 @@ class DotnetVersionProviderTest {
         val workingDirectoryPath = Path("wd")
         val toolPath = Path("dotnet")
         val versionCommandline = CommandLine(
+                null,
                 TargetType.Tool,
                 toolPath,
                 workingDirectoryPath,

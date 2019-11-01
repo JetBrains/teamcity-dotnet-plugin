@@ -31,6 +31,7 @@ class BuildServerShutdownMonitor(
                         val envVariables = _environmentVariables.getVariables(sdkVersion).toList()
                         _commandLineExecutor.tryExecute(
                                 CommandLine(
+                                        null,
                                         TargetType.Tool,
                                         executable.path,
                                         workingDirectory,
