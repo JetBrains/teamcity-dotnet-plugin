@@ -10,11 +10,12 @@ package jetbrains.buildServer.agent.runner
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.rx.emptySubject
 import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(
         private val _workflowComposer: WorkflowComposer,
-        private val _commandExecutionAdapter: CommandExecutionAdapter)
+        private val _commandExecutionFactory: CommandExecutionFactory)
     : MultiCommandBuildSession, WorkflowContext {
 
     private val _commandLinesIterator = lazy { _workflowComposer.compose(this).commandLines.iterator() }
@@ -24,24 +25,19 @@ class WorkflowSessionImpl(
     override fun subscribe(observer: Observer<CommandResultEvent>) = _eventSubject.subscribe(observer)
 
     override fun getNextCommand(): CommandExecution? {
-        if (status != WorkflowStatus.Running) {
-            @Suppress("ControlFlowWithEmptyBody")
-            // It is required to run code after yields
-            while (_commandLinesIterator.value.hasNext()) {}
-            return null
-        }
+        val iterator = _commandLinesIterator.value
 
         // yield command here
-        if (!_commandLinesIterator.value.hasNext()) {
+        if (!iterator.hasNext()) {
             if (_buildFinishedStatus == null) {
                 _buildFinishedStatus = BuildFinishedStatus.FINISHED_SUCCESS
             }
 
+            _eventSubject.onComplete()
             return null
         }
 
-        _commandExecutionAdapter.initialize(_commandLinesIterator.value.next(), _eventSubject)
-        return _commandExecutionAdapter
+        return _commandExecutionFactory.create(iterator.next(), _eventSubject)
     }
 
     override val status: WorkflowStatus

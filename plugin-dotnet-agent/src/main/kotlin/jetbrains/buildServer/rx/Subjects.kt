@@ -51,3 +51,10 @@ fun <T> subjectOf(): Subject<T> = object : Subject<T> {
         isCompleted = true
     }
 }
+
+fun <T> emptySubject(): Subject<T> = object : Subject<T> {
+    override fun subscribe(observer: Observer<T>): Disposable = emptyDisposable()
+    override fun onNext(value: T) = Unit
+    override fun onError(error: Exception) = Unit
+    override fun onComplete() = Unit
+}
