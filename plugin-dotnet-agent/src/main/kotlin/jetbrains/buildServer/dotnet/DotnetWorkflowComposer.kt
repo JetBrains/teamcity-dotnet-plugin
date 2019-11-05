@@ -43,7 +43,7 @@ class DotnetWorkflowComposer(
                     var virtualPath = executable.virtualPath
 
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform) {
-                        if (virtualDotnetExecutable == null) {
+                        if (dotnetVersions.isEmpty()) {
                             var state = CrossPlatformWorkflowState(
                                     executable,
                                     observer<Path> { virtualDotnetExecutable = it },

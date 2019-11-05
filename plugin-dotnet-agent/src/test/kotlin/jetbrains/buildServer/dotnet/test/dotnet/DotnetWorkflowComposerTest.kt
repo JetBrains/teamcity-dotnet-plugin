@@ -89,24 +89,10 @@ class DotnetWorkflowComposerTest {
             }
         }
 
-        val dotnetBuildCommand = mockk<DotnetCommand>() {
-            every { toolResolver } returns mockk<ToolResolver>() {
-                every { executable } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.CrossPlatform
-                every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
-                every { getArguments(any()) } returns _dotnetArgs.asSequence()
-                every { commandType } returns DotnetCommandType.Build
-                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
-                    every { analyze(0, emptySet()) } returns emptySet()
-                }
-                every { isCommandRequired } returns true
-            }
-        }
+        val dotnetBuildCommand = createDotnetCommand()
+        val dotnetBuildCommand2 = createDotnetCommand()
 
-        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
@@ -152,8 +138,36 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet build",
+                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2"))),
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _dotnetArgs,
+                                _dotnetVars,
+                                "dotnet build",
                                 listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
+    }
+
+    private fun createDotnetCommand(): DotnetCommand {
+        return mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { executable } returns _dotnetExecutable
+                every { paltform } returns ToolPlatform.CrossPlatform
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any()) } answers { createToken() }
+                        })
+                every { getArguments(any()) } returns _dotnetArgs.asSequence()
+                every { commandType } returns DotnetCommandType.Build
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(0, emptySet()) } returns emptySet()
+                }
+                every { isCommandRequired } returns true
+            }
+        }
     }
 
     @Test
@@ -180,22 +194,7 @@ class DotnetWorkflowComposerTest {
             }
         }
 
-        val dotnetBuildCommand = mockk<DotnetCommand>() {
-            every { toolResolver } returns mockk<ToolResolver>() {
-                every { executable } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.CrossPlatform
-                every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
-                every { getArguments(any()) } returns _dotnetArgs.asSequence()
-                every { commandType } returns DotnetCommandType.Build
-                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
-                    every { analyze(0, emptySet()) } returns emptySet()
-                }
-                every { isCommandRequired } returns true
-            }
-        }
+        val dotnetBuildCommand = createDotnetCommand()
 
         every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
@@ -280,22 +279,7 @@ class DotnetWorkflowComposerTest {
             }
         }
 
-        val dotnetBuildCommand = mockk<DotnetCommand>() {
-            every { toolResolver } returns mockk<ToolResolver>() {
-                every { executable } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.CrossPlatform
-                every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
-                every { getArguments(any()) } returns _dotnetArgs.asSequence()
-                every { commandType } returns DotnetCommandType.Build
-                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
-                    every { analyze(0, emptySet()) } returns emptySet()
-                }
-                every { isCommandRequired } returns true
-            }
-        }
+        val dotnetBuildCommand = createDotnetCommand()
 
         every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
