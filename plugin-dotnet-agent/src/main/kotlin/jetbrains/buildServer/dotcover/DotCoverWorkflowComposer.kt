@@ -67,7 +67,7 @@ class DotCoverWorkflowComposer(
                 sendServiceMessages(context, deferredServiceMessages)
                 deferredServiceMessages.clear()
 
-                if (!baseCommandLine.chain.filter { it.target == TargetType.Tool }.any()) {
+                if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
                     yield(baseCommandLine)
                     continue
                 }
@@ -154,8 +154,13 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("${argumentPrefix}NoCheckForUpdates"))
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
+            var argPrefix = when(_virtualContext.targetOSType) {
+                OSType.WINDOWS -> "/"
+                else -> "--"
+            }
+
             val logFileName = _virtualContext.resolvePath(_fileSystemService.generateTempFile(File(it), "dotCover", ".log").canonicalPath)
-            yield(CommandLineArgument("/LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("${argPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
