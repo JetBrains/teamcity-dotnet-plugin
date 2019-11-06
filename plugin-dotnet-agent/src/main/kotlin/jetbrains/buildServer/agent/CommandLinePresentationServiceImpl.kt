@@ -14,10 +14,10 @@ class CommandLinePresentationServiceImpl(
         val output = mutableListOf<StdOutText>()
         val lastSeparatorIndex = executableFile.path.indexOfLast { it == File.separatorChar || it == '\\' || it == '/' }
         if (lastSeparatorIndex >= 0) {
-            output.add(StdOutText(executableFile.path.substring(0 .. lastSeparatorIndex - 1) + separatorChar, Color.Minor))
+            output.add(StdOutText(executableFile.path.substring(0 .. lastSeparatorIndex - 1) + separatorChar))
         }
 
-        output.add(StdOutText(executableFile.path.substring(lastSeparatorIndex + 1), Color.Header))
+        output.add(StdOutText(executableFile.path.substring(lastSeparatorIndex + 1)))
         return output
     }
 
@@ -26,10 +26,10 @@ class CommandLinePresentationServiceImpl(
                 StdOutText(
                         " ${_argumentsService.normalize(it.value)}",
                         when (it.argumentType) {
-                            CommandLineArgumentType.Mandatory -> Color.Header
-                            CommandLineArgumentType.Target -> Color.Header
-                            CommandLineArgumentType.Custom -> Color.Details
-                            CommandLineArgumentType.Infrastructural -> Color.Minor
+                            CommandLineArgumentType.Mandatory -> Color.Default
+                            CommandLineArgumentType.Target -> Color.Default
+                            CommandLineArgumentType.Custom -> Color.Default
+                            CommandLineArgumentType.Infrastructural -> Color.Default
                             else -> Color.Default
                         }
                 )

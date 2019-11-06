@@ -102,13 +102,13 @@ class DotnetWorkflowComposer(
     private fun getDescription(dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>): List<StdOutText> {
         var description = mutableListOf<StdOutText>()
         when (dotnetBuildContext.command.toolResolver.paltform) {
-            ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Minor))
-            ToolPlatform.Mono-> description.add(StdOutText("Mono ", Color.Minor))
-            ToolPlatform.Windows-> description.add(StdOutText("Windows ", Color.Minor))
+            ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK "))
+            ToolPlatform.Mono-> description.add(StdOutText("Mono "))
+            ToolPlatform.Windows-> description.add(StdOutText("Windows "))
         }
 
         if (dotnetBuildContext.toolVersion != Version.Empty) {
-            description.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Header))
+            description.add(StdOutText("${dotnetBuildContext.toolVersion} "))
         }
 
         description.addAll(_commandLinePresentationService.buildExecutablePresentation(executableFile))
@@ -118,6 +118,6 @@ class DotnetWorkflowComposer(
 
     companion object {
         private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
-        internal val VersionArgs = listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory))
+        internal val VersionArgs = listOf(CommandLineArgument("--version"))
     }
 }

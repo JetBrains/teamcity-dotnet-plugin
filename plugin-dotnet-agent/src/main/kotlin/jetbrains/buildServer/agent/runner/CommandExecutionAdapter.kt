@@ -1,7 +1,9 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.dotnet.DotnetWorkflowComposer
 import jetbrains.buildServer.rx.*
+import org.apache.log4j.Logger
 import java.io.File
 
 class CommandExecutionAdapter(
@@ -13,7 +15,6 @@ class CommandExecutionAdapter(
     : CommandExecutionFactory, CommandExecution, BuildProgressLoggerAware {
     private var _eventObserver: Observer<CommandResultEvent> = emptyObserver<CommandResultEvent>()
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))
-    private val _logger = SuppressingLogger(_buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
     private var _blockToken: Disposable = emptyDisposable()
 
     override fun create(commandLine: CommandLine, eventObserver: Observer<CommandResultEvent>): CommandExecution {
@@ -28,7 +29,12 @@ class CommandExecutionAdapter(
         if (!_commandLine.title.isNullOrBlank())
         {
             if (_isHiddenInBuidLog) {
-                _loggerService.writeStandardOutput(_commandLine.title)
+                if (_virtualContext.isVirtual) {
+                    _loggerService.writeStandardOutput(_commandLine.title)
+                }
+                else {
+                    writeStandardOutput(_commandLine.title)
+                }
             }
             else {
                 _blockToken = _loggerService.writeBlock(_commandLine.title)
@@ -71,16 +77,16 @@ class CommandExecutionAdapter(
 
     override fun isCommandLineLoggingEnabled(): Boolean = false
 
-    override fun getLogger(): BuildProgressLogger = _logger
+    override fun getLogger(): BuildProgressLogger = SuppressingLogger(_buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
 
-    private val _isHiddenInBuidLog get() = _commandLine.target == TargetType.SystemDiagnostics
+    private val _isHiddenInBuidLog get() = _commandLine.chain.any { it.target == TargetType.SystemDiagnostics }
 
     private fun writeStandardOutput(text: String) {
         if (!_isHiddenInBuidLog) {
             _loggerService.writeStandardOutput(text)
         }
         else {
-            _loggerService.writeTrace(text)
+            LOG.info(text)
         }
     }
 
@@ -89,7 +95,7 @@ class CommandExecutionAdapter(
             _loggerService.writeStandardOutput(*text)
         }
         else {
-            _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
+            LOG.info(text.map { it.text }.joinToString(" "))
         }
     }
 
@@ -99,14 +105,14 @@ class CommandExecutionAdapter(
             BuildProgressLogger by _baseLogger {
 
         override fun warning(message: String?) {
-            _baseLogger.debug(message)
+            LOG.warn(message)
         }
 
         override fun message(message: String?) {
             if (!_isHiddenInBuidLog) {
                 _baseLogger.message(message)
             } else {
-                _baseLogger.debug(message)
+                LOG.info(message)
             }
         }
     }
@@ -128,5 +134,9 @@ class CommandExecutionAdapter(
             _commandLine.environmentVariables.forEach { environmentVariables[it.name] = it.value }
             return environmentVariables
         }
+    }
+
+    companion object {
+        private val LOG = Logger.getLogger(CommandExecutionAdapter::class.java)
     }
 }

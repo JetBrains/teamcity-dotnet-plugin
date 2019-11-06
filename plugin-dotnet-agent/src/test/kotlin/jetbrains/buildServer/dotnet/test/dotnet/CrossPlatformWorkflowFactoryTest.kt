@@ -93,7 +93,7 @@ class CrossPlatformWorkflowFactoryTest {
                                 DotnetWorkflowComposer.VersionArgs,
                                 _envVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting the .NET SDK version", Color.Header)))
+                                listOf(StdOutText("Getting the .NET SDK version")))
                 ))
 
         Assert.assertEquals(_versions, listOf(Version(3)))
@@ -156,7 +156,7 @@ class CrossPlatformWorkflowFactoryTest {
                                 DotnetWorkflowComposer.VersionArgs,
                                 _envVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting the .NET SDK version", Color.Header)))
+                                listOf(StdOutText("Getting the .NET SDK version")))
                 ))
 
         Assert.assertEquals(_versions, listOf(Version(3)))

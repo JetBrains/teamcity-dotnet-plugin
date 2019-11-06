@@ -42,7 +42,7 @@ class DotnetWorkflowComposerTest {
             listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
             _msbuildVars,
             "dotnet --version",
-            listOf(StdOutText("Getting the .NET SDK version", Color.Header)))
+            listOf(StdOutText("Getting the .NET SDK version")))
 
     @BeforeMethod
     fun setUp() {
@@ -56,7 +56,7 @@ class DotnetWorkflowComposerTest {
         every { _commandRegistry.register(any()) } returns Unit
         every { _dotnetWorkflowAnalyzer.registerResult(any(), emptySet(), 0) } returns Unit
         every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
-        every { _commandLinePresentationService.buildExecutablePresentation(any()) } answers { listOf(StdOutText(arg<Path>(0).path, Color.Header)) }
+        every { _commandLinePresentationService.buildExecutablePresentation(any()) } answers { listOf(StdOutText(arg<Path>(0).path)) }
         every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
@@ -128,7 +128,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild arg3",
-                                listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
+                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         _versionCmd,
                         CommandLine(
                                 null,
@@ -138,7 +138,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet build",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2"))),
+                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2"))),
                         CommandLine(
                                 null,
                                 TargetType.Tool,
@@ -147,7 +147,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet build",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
 
@@ -233,7 +233,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild arg3",
-                                listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
+                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         CommandLine(
                                 null,
                                 TargetType.SystemDiagnostics,
@@ -242,7 +242,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
+                                listOf(StdOutText("Getting the .NET SDK version"))),
                         CommandLine(
                                 null,
                                 TargetType.Tool,
@@ -251,7 +251,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet build",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
 
@@ -320,7 +320,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild arg3",
-                                listOf(StdOutText("Windows ", Color.Minor), StdOutText("msbuild.exe", Color.Header), StdOutText(" arg3"))),
+                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         CommandLine(
                                 null,
                                 TargetType.SystemDiagnostics,
@@ -329,7 +329,7 @@ class DotnetWorkflowComposerTest {
                                 listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                                 _msbuildVars,
                                 "dotnet --version",
-                                listOf(StdOutText("Getting the .NET SDK version", Color.Header))),
+                                listOf(StdOutText("Getting the .NET SDK version"))),
                         CommandLine(
                                 null,
                                 TargetType.Tool,
@@ -338,7 +338,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet build",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Header), StdOutText("dotnet.exe", Color.Header), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
 

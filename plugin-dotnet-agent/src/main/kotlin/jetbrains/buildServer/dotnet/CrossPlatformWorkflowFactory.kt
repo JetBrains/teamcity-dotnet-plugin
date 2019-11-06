@@ -49,7 +49,7 @@ class CrossPlatformWorkflowFactory(
                                         DotnetWorkflowComposer.VersionArgs,
                                         _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
                                     "dotnet --version",
-                                        listOf(StdOutText("Getting the .NET SDK version", Color.Header))))
+                                        listOf(StdOutText("Getting the .NET SDK version"))))
                         }
             }
     )

@@ -30,8 +30,8 @@ class CommandLinePresentationServiceTest {
     @DataProvider
     fun testExecutableFilePresentation(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(Path("Dotnet.exe"), listOf(StdOutText("Dotnet.exe", Color.Header))),
-                arrayOf(Path(File("Dir", "Dotnet.exe").path), listOf(StdOutText("Dir/", Color.Minor), StdOutText("Dotnet.exe", Color.Header))))
+                arrayOf(Path("Dotnet.exe"), listOf(StdOutText("Dotnet.exe"))),
+                arrayOf(Path(File("Dir", "Dotnet.exe").path), listOf(StdOutText("Dir/"), StdOutText("Dotnet.exe"))))
     }
 
     @Test(dataProvider = "testExecutableFilePresentation")
@@ -49,12 +49,12 @@ class CommandLinePresentationServiceTest {
     @DataProvider
     fun testArgsPresentation(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory)), listOf(StdOutText(" \"Arg1\"", Color.Header))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Target)), listOf(StdOutText(" \"Arg1\"", Color.Header))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Secondary)), listOf(StdOutText(" \"Arg1\"", Color.Default))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\"", Color.Details))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Infrastructural)), listOf(StdOutText(" \"Arg1\"", Color.Minor))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory), CommandLineArgument("Arg2", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\"", Color.Header), StdOutText(" \"Arg2\"", Color.Details))))
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory)), listOf(StdOutText(" \"Arg1\""))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Target)), listOf(StdOutText(" \"Arg1\""))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Secondary)), listOf(StdOutText(" \"Arg1\""))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\""))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Infrastructural)), listOf(StdOutText(" \"Arg1\""))),
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory), CommandLineArgument("Arg2", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\""), StdOutText(" \"Arg2\""))))
     }
 
     @Test(dataProvider = "testArgsPresentation")
