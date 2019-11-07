@@ -17,8 +17,7 @@ import org.testng.annotations.Test
 import java.io.File
 
 class VirtualContextTest {
-    @MockK
-    private lateinit var _baseVirtualContext: VirtualContext
+    @MockK private lateinit var _baseVirtualContext: VirtualContext
     private lateinit var _buildStepContext: BuildStepContext
 
     @BeforeMethod

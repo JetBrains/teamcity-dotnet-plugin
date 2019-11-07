@@ -1,9 +1,6 @@
 package jetbrains.buildServer.dotnet.test.rx
 
-import jetbrains.buildServer.rx.emptyDisposable
-import jetbrains.buildServer.rx.observable
-import jetbrains.buildServer.rx.observableOf
-import jetbrains.buildServer.rx.observer
+import jetbrains.buildServer.rx.*
 import org.testng.Assert
 import org.testng.annotations.Test
 
@@ -46,5 +43,34 @@ class ObserversTest {
 
         // Then
         Assert.assertEquals(completed, true)
+    }
+
+    @Test
+    fun shouldConvertCollectionToObsever() {
+        // Given
+        val values = mutableListOf<Int>()
+
+        // When
+        val observer = values.toObserver()
+        observer.onNext(1)
+        observer.onNext(2)
+        observer.onComplete()
+
+        // Then
+        Assert.assertEquals(values, listOf(1, 2))
+    }
+
+    @Test
+    fun shouldDematerialize() {
+        // Given
+        val values = mutableListOf<Notification<Int>>()
+
+        // When
+        val observer = values.toObserver().dematerialize()
+        observer.onNext(1)
+        observer.onNext(2)
+
+        // Then
+        Assert.assertEquals(values, listOf(NotificationNext(1), NotificationNext(2)))
     }
 }

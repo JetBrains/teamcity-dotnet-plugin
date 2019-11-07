@@ -13,6 +13,7 @@ class BasePathResolverWorkflowFactory(
                 context
                         .toOutput()
                         .distinct()
+                        .filter { it.endsWith(state.pathToResolve.path) }
                         .map { Path(it) }
                         .subscribe(state.virtualPathObserver)
                         .use {
