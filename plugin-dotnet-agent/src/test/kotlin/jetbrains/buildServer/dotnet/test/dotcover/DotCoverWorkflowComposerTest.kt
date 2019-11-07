@@ -28,6 +28,8 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
     @BeforeMethod
     fun setUp() {
@@ -83,6 +85,7 @@ class DotCoverWorkflowComposerTest {
                         envVars),
                 Path("v_proj"),
                 Path ("v_snap"))
+
         val expectedWorkflow = Workflow(
                 sequenceOf(
                         CommandLine(
@@ -97,7 +100,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
-                                envVars)))
+                                envVars + _defaultVariables)))
         val composer = createInstance(fileSystemService)
 
         // When
@@ -116,6 +119,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -246,7 +250,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
-                                envVars)))
+                                envVars + _defaultVariables)))
         val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
@@ -283,8 +287,8 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeStandardOutput("  $attributeFilter", Color.Details) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
-
         every { blockToken.dispose() } returns Unit
+        every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -334,7 +338,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
-                                envVars)))
+                                envVars + _defaultVariables)))
         val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
 
@@ -352,6 +356,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -405,7 +410,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/ProcessFilters=-:sqlservr.exe", CommandLineArgumentType.Custom),
                                         CommandLineArgument("/arg", CommandLineArgumentType.Custom)
                                 ),
-                                envVars)))
+                                envVars + _defaultVariables)))
 
         val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
@@ -426,6 +431,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -475,7 +481,7 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
                                         CommandLineArgument("/LogFile=v_log", CommandLineArgumentType.Infrastructural)
                                 ),
-                                envVars)))
+                                envVars + _defaultVariables)))
 
         val fileSystemService = VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))
         val composer = createInstance(fileSystemService)
@@ -497,6 +503,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath(File("logPath", "dotCover99.log").canonicalPath) } returns "v_log"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -513,6 +520,7 @@ class DotCoverWorkflowComposerTest {
                 _loggerService,
                 ArgumentsServiceStub(),
                 _coverageFilterProvider,
-                _virtualContext)
+                _virtualContext,
+                _environmentVariables)
     }
 }

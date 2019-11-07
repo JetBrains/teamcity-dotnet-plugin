@@ -178,6 +178,7 @@
   <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
   <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.EnvironmentVariablesImpl"/>
 
   <!-- Mono -->
   <bean class="jetbrains.buildServer.mono.MonoToolEnvironment" id="monoToolEnvironment"/>

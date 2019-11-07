@@ -20,7 +20,8 @@ class DotCoverWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _environmentVariables: EnvironmentVariables)
     : WorkflowComposer {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
@@ -120,7 +121,7 @@ class DotCoverWorkflowComposer(
                         Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
                         baseCommandLine.workingDirectory,
                         createArguments(dotCoverProject).toList(),
-                        baseCommandLine.environmentVariables,
+                        baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
                         baseCommandLine.title,
                         baseCommandLine.description))
 
