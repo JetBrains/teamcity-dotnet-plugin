@@ -32,6 +32,8 @@ class LoggerServiceImpl(
 
     override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
 
+    override fun writeWarning(text: String) = _buildLogger.warning(text)
+
     override fun writeBlock(blockName: String, description: String): Disposable {
         _buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
         return disposableOf { _buildLogger.message(BlockClosed(blockName).toString()) }

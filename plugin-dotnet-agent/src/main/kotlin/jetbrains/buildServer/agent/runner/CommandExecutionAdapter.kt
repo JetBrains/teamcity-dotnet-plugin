@@ -10,8 +10,8 @@ class CommandExecutionAdapter(
         private val _buildStepContext: BuildStepContext,
         private val _loggerService: LoggerService,
         private val _commandLinePresentationService: CommandLinePresentationService,
-        private val _argumentsService: ArgumentsService,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _programCommandLineFactory: ProgramCommandLineFactory)
     : CommandExecutionFactory, CommandExecution, BuildProgressLoggerAware {
     private var _eventObserver: Observer<CommandResultEvent> = emptyObserver<CommandResultEvent>()
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))
@@ -58,10 +58,7 @@ class CommandExecutionAdapter(
         _blockToken.dispose()
     }
 
-    override fun makeProgramCommandLine(): ProgramCommandLine = ProgramCommandLineAdapter(
-            _argumentsService,
-            _commandLine,
-            _buildStepContext.runnerContext.buildParameters.environmentVariables)
+    override fun makeProgramCommandLine(): ProgramCommandLine = _programCommandLineFactory.create(_commandLine)
 
     override fun onStandardOutput(text: String) {
         _eventObserver.onNext(CommandResultOutput(text))
@@ -70,14 +67,14 @@ class CommandExecutionAdapter(
 
     override fun onErrorOutput(error: String) {
         _eventObserver.onNext(CommandResultOutput(error))
-        _loggerService.writeErrorOutput(error)
+        _loggerService.writeWarning(error)
     }
 
     override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
 
     override fun isCommandLineLoggingEnabled(): Boolean = false
 
-    override fun getLogger(): BuildProgressLogger = SuppressingLogger(_buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
+    override fun getLogger(): BuildProgressLogger = SuppressingLogger(_loggerService, _buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
 
     private val _isHiddenInBuidLog get() = _commandLine.chain.any { it.target == TargetType.SystemDiagnostics }
 
@@ -86,7 +83,7 @@ class CommandExecutionAdapter(
             _loggerService.writeStandardOutput(text)
         }
         else {
-            LOG.info(text)
+            _loggerService.writeTrace(text)
         }
     }
 
@@ -95,48 +92,30 @@ class CommandExecutionAdapter(
             _loggerService.writeStandardOutput(*text)
         }
         else {
-            LOG.info(text.map { it.text }.joinToString(" "))
+            _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
         }
     }
 
     class SuppressingLogger(
+            private val _loggerService: LoggerService,
             private val _baseLogger: BuildProgressLogger,
             private val _isHiddenInBuidLog: Boolean):
             BuildProgressLogger by _baseLogger {
 
         override fun warning(message: String?) {
-            LOG.warn(message)
+            if (message != null) {
+                _loggerService.writeTrace(message)
+            }
         }
 
         override fun message(message: String?) {
             if (!_isHiddenInBuidLog) {
                 _baseLogger.message(message)
             } else {
-                LOG.info(message)
+                if (message != null) {
+                    _loggerService.writeTrace(message)
+                }
             }
         }
-    }
-
-    private class ProgramCommandLineAdapter(
-            private val _argumentsService: ArgumentsService,
-            private val _commandLine: CommandLine,
-            private val _environmentVariables: Map<String, String>)
-        : ProgramCommandLine {
-
-        override fun getExecutablePath(): String = _commandLine.executableFile.path
-
-        override fun getWorkingDirectory(): String = _commandLine.workingDirectory.path
-
-        override fun getArguments(): MutableList<String> = _commandLine.arguments.map { _argumentsService.normalize(it.value) }.toMutableList()
-
-        override fun getEnvironment(): MutableMap<String, String> {
-            val environmentVariables = _environmentVariables.toMutableMap()
-            _commandLine.environmentVariables.forEach { environmentVariables[it.name] = it.value }
-            return environmentVariables
-        }
-    }
-
-    companion object {
-        private val LOG = Logger.getLogger(CommandExecutionAdapter::class.java)
     }
 }
