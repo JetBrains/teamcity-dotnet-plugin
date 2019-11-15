@@ -1,12 +1,11 @@
 package jetbrains.buildServer.agent.runner
 
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.CommandLine
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.TargetType
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.util.OSType
 
 class ProgramCommandLineAdapter(
         private val _argumentsService: ArgumentsService,
+        private val _environment: Environment,
         private val _buildStepContext: BuildStepContext)
     : ProgramCommandLine, ProgramCommandLineFactory {
 
@@ -16,7 +15,9 @@ class ProgramCommandLineAdapter(
 
     override fun getWorkingDirectory(): String = _commandLine.workingDirectory.path
 
-    override fun getArguments(): MutableList<String> = _commandLine.arguments.map { _argumentsService.normalize(it.value) }.toMutableList()
+    override fun getArguments(): MutableList<String> = _commandLine.arguments.map {
+        if(_environment.os == OSType.WINDOWS) _argumentsService.normalize(it.value) else it.value
+    }.toMutableList()
 
     override fun getEnvironment(): MutableMap<String, String> {
         val environmentVariables = _buildStepContext.runnerContext.buildParameters.environmentVariables.toMutableMap()
