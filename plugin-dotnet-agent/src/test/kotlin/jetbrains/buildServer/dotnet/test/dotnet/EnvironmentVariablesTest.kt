@@ -76,15 +76,15 @@ class EnvironmentVariablesTest {
     }
 
     @Test(dataProvider = "osTypesData")
-    fun shouldProvideDefaultVarsWhenVirtualContext(os: OSType) {
+    fun shouldProvideDefaultVarsWhenVirtualContextFromWindows(os: OSType) {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
         val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
-        every { _environment.os } returns os
-        every { _environment.tryGetVariable("HOME") } returns "path"
+        every { _environment.os } returns OSType.WINDOWS
+        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
         every { _pathsService.getPath(PathType.System) } returns systemPath
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns os

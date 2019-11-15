@@ -26,7 +26,7 @@ class EnvironmentVariablesImpl(
         }
 
         if (_virtualContext.targetOSType != OSType.WINDOWS) {
-            if (_virtualContext.isVirtual) {
+            if (_virtualContext.isVirtual && _environment.os == OSType.WINDOWS) {
                 LOG.debug("Override environment variable like 'TMP' by empty values")
                 yieldAll(getTempDirVariables())
             } else {
