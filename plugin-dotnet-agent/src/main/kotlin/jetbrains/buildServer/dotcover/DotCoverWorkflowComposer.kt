@@ -40,6 +40,9 @@ class DotCoverWorkflowComposer(
             }
 
             dotCoverExecutablePath = File(dotCoverPath, dotCoverExecutableFile)
+            if (_virtualContext.targetOSType != OSType.WINDOWS && !_fileSystemService.isExists(dotCoverExecutablePath)) {
+                throw RunBuildException("Cross-Platform dotCover is required.")
+            }
         } catch (e: ToolCannotBeFoundException) {
             val exception = RunBuildException(e)
             exception.isLogStacktrace = false

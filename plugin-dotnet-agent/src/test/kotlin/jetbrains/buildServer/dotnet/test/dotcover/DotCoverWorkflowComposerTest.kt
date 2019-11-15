@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotcover
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.*
@@ -13,8 +14,6 @@ import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.util.OSType
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -509,6 +508,34 @@ class DotCoverWorkflowComposerTest {
 
         // Then
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
+    }
+
+    @Test
+    fun shouldThrowExceptionWhenRequiredCrossPlatformDotCoverButCannotFindIt() {
+        // Given
+        val commandLine = CommandLine(
+                null,
+                TargetType.Tool,
+                Path(File("dotnet", "dotnet").path),
+                Path("wd"),
+                listOf(CommandLineArgument("arg1", CommandLineArgumentType.Secondary)),
+                listOf(CommandLineEnvironmentVariable("var1", "val1")))
+        val fileSystemService = VirtualFileSystemService()
+        val composer = createInstance(fileSystemService)
+
+        // When
+        every { _virtualContext.targetOSType } returns OSType.UNIX
+        every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
+        every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
+
+        // Then
+        try {
+            composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+            Assert.fail("Eception is required.")
+        }
+        catch (ex: RunBuildException) {
+            Assert.assertEquals(ex.message, "Cross-Platform dotCover is required.")
+        }
     }
 
     private fun createInstance(fileSystemService: FileSystemService): WorkflowComposer {
