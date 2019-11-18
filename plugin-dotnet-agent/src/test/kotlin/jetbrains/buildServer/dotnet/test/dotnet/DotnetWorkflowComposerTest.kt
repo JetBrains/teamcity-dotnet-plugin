@@ -24,6 +24,7 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _crossPlatformWorkflowFactory: WorkflowFactory<CrossPlatformWorkflowState>
+    @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
     private val _dotnetVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var3", "val3"))
@@ -65,6 +66,7 @@ class DotnetWorkflowComposerTest {
             arg<CrossPlatformWorkflowState>(1).versionObserver.onNext(Version(3))
             Workflow(_versionCmd)
         }
+        every { _resultsObserver.onNext(any()) } returns Unit
     }
 
     @Test
@@ -86,6 +88,7 @@ class DotnetWorkflowComposerTest {
                     every { analyze(0,  emptySet()) } returns emptySet()
                 }
                 every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
             }
         }
 
@@ -166,6 +169,7 @@ class DotnetWorkflowComposerTest {
                     every { analyze(0, emptySet()) } returns emptySet()
                 }
                 every { isCommandRequired } returns true
+                every { resultsObserver } returns _resultsObserver
             }
         }
     }
@@ -191,6 +195,7 @@ class DotnetWorkflowComposerTest {
                     every { analyze(1,  setOf(CommandResult.FailedTests)) } returns setOf(CommandResult.FailedTests)
                 }
                 every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
             }
         }
 
@@ -276,6 +281,7 @@ class DotnetWorkflowComposerTest {
                     every { analyze(1,  emptySet()) } returns setOf(CommandResult.Fail)
                 }
                 every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
             }
         }
 
@@ -289,13 +295,17 @@ class DotnetWorkflowComposerTest {
             createToken()
         }
 
+        // Subscribe command results observer
         every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            createToken()
+        } andThen
+        /* // Subscribe for an exit code for msbuild */ {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
             createToken()
-        } /* dotnet --version */ andThen {
+        } /* Subscribe for an exit code for dotnet --version */ andThen {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
             createToken()
-        } /* dotnet build */ andThen {
+        } /* Subscribe for an exit code for dotnet build */ andThen {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
         }

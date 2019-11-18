@@ -43,7 +43,7 @@ class VSTestLoggerEnvironmentAnalyzerImpl(
             val targetType = if (useWorkingDirectory) "directory \"$invalidTargetsList\" is" else "file(s) \"$invalidTargetsList\" are"
             val warning = "The $targetType located outside of the build checkout directory: \"$checkoutDir\". In this case there can be problems with running this build tests on TeamCity agent. Please refer to this issue for details: https://youtrack.jetbrains.com/issue/TW-52485"
             LOG.warn(warning)
-            _loggerService.writeErrorOutput(warning)
+            _loggerService.writeWarning(warning)
         }
     }
 

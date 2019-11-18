@@ -212,7 +212,7 @@ class VisualStudioWorkflowComposerTest {
                 oneOf<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
                 will(returnValue("v_my1.sln"))
 
-                oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode"))
+                oneOf<LoggerService>(_loggerService).writeBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode")
             }
         })
 

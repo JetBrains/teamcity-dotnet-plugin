@@ -75,6 +75,7 @@
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.NugetResultsObserver" id="nugetResultsObserver"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
@@ -127,9 +128,11 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    <constructor-arg ref="nugetResultsObserver"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    <constructor-arg ref="nugetResultsObserver"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
   <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>

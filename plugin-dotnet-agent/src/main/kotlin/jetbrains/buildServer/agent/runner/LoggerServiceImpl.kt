@@ -22,7 +22,8 @@ class LoggerServiceImpl(
 
     override fun writeMessage(serviceMessage: ServiceMessage) = _buildLogger.message(serviceMessage.toString())
 
-    override fun writeBuildProblem(buildProblem: BuildProblemData) = _buildLogger.logBuildProblem(buildProblem)
+    override fun writeBuildProblem(identity: String, type: String, description: String) =
+            _buildLogger.logBuildProblem(BuildProblemData.createBuildProblem(identity.substring(0 .. Integer.min(identity.length, 60) - 1), type, description))
 
     override fun writeStandardOutput(text: String, color: Color) =
             listener.onStandardOutput(applyColor(text, color))
@@ -30,7 +31,7 @@ class LoggerServiceImpl(
     override fun writeStandardOutput(vararg text: StdOutText) =
             listener.onStandardOutput(applyColor(*text))
 
-    override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
+    override fun writeErrorOutput(text: String) = _buildLogger.error(text)
 
     override fun writeWarning(text: String) = _buildLogger.warning(text)
 

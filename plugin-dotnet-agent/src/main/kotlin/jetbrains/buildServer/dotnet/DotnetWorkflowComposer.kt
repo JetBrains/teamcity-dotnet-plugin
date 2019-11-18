@@ -60,6 +60,8 @@ class DotnetWorkflowComposer(
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
                     val result = mutableSetOf<CommandResult>()
                     disposableOf(
+                            // Subscribe command results observer
+                            context.subscribe(command.resultsObserver),
                             // Build an environment
                             dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }.toDisposable(),
                             // Subscribe for failed tests

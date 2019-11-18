@@ -67,7 +67,7 @@ class VisualStudioWorkflowComposer(
                                 when {
                                     it is CommandResultExitCode -> {
                                         if (it.exitCode != 0) {
-                                            _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${it.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${it.exitCode}"))
+                                            _loggerService.writeBuildProblem("visual_studio_exit_code${it.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${it.exitCode}")
                                             context.abort(BuildFinishedStatus.FINISHED_FAILED)
                                         }
                                     }

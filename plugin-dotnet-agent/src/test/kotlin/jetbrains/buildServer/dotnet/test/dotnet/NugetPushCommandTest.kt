@@ -1,10 +1,15 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.rx.Observer
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -14,13 +19,15 @@ import java.io.File
 
 class NugetPushCommandTest {
     private lateinit var _ctx: Mockery
-    private lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK private lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _resultsAnalyzer = _ctx.mock<ResultsAnalyzer>(ResultsAnalyzer::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
+
 
     @DataProvider
     fun testNugetPushArgumentsData(): Array<Array<Any>> {
@@ -29,11 +36,11 @@ class NugetPushCommandTest {
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
-                        listOf("--api-key", "key", "--source", "http://jb.com", "customArg1")),
+                        listOf("--api-key", "key", "--source", "http://jb.com", "--force-english-output", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_NO_SYMBOLS to "true"),
-                        listOf("--no-symbols", "true", "customArg1"))
+                        listOf("--no-symbols", "true", "--force-english-output", "customArg1"))
         )
     }
 
@@ -104,5 +111,6 @@ class NugetPushCommandTest {
                     _resultsAnalyzer,
                     TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true))
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true),
+                    _resultsObserver)
 }

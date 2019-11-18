@@ -138,7 +138,7 @@ class VSTestLoggerEnvironmentAnalyzerTest {
 
                 // Then
                 for (expectedMessage in expectedMessages) {
-                    oneOf<LoggerService>(_loggerService).writeErrorOutput(expectedMessage)
+                    oneOf<LoggerService>(_loggerService).writeWarning(expectedMessage)
                 }
             }
         })

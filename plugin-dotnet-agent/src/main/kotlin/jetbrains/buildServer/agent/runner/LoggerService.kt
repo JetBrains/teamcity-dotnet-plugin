@@ -8,7 +8,7 @@ import java.io.Closeable
 interface LoggerService {
     fun writeMessage(serviceMessage: ServiceMessage)
 
-    fun writeBuildProblem(buildProblem: BuildProblemData)
+    fun writeBuildProblem(identity: String, type: String, description: String)
 
     fun writeStandardOutput(text: String, color: Color = Color.Default)
 

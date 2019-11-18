@@ -8,15 +8,19 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.util.StringUtil
 
 class NugetDeleteCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: DotnetToolResolver)
-    : DotnetCommandBase(_parametersService) {
+        override val toolResolver: DotnetToolResolver,
+        private val _resultsObserver: Observer<CommandResultEvent>)
+    : DotnetCommandBase(_parametersService, _resultsObserver) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.NuGetDelete
@@ -45,7 +49,8 @@ class NugetDeleteCommand(
             }
         }
 
-        yield(CommandLineArgument("--non-interactive"))
+        yield(CommandLineArgument("--non-interactive", CommandLineArgumentType.Infrastructural))
+        yield(CommandLineArgument("--force-english-output", CommandLineArgumentType.Infrastructural))
 
         yieldAll(_customArgumentsProvider.getArguments(context))
     }

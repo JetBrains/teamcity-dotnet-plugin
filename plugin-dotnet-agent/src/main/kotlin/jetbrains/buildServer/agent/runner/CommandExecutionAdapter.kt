@@ -61,13 +61,19 @@ class CommandExecutionAdapter(
     override fun makeProgramCommandLine(): ProgramCommandLine = _programCommandLineFactory.create(_commandLine)
 
     override fun onStandardOutput(text: String) {
-        _eventObserver.onNext(CommandResultOutput(text))
-        writeStandardOutput(text)
+        val event = CommandResultOutput(text)
+        _eventObserver.onNext(event)
+        if (!event.attributes.contains(CommandResultAttribute.Suppressed)) {
+            writeStandardOutput(text)
+        }
     }
 
     override fun onErrorOutput(error: String) {
+        val event = CommandResultOutput(error)
         _eventObserver.onNext(CommandResultOutput(error))
-        _loggerService.writeWarning(error)
+        if (!event.attributes.contains(CommandResultAttribute.Suppressed)) {
+            _loggerService.writeWarning(error)
+        }
     }
 
     override fun interruptRequested(): TerminationAction = TerminationAction.KILL_PROCESS_TREE
@@ -101,12 +107,6 @@ class CommandExecutionAdapter(
             private val _baseLogger: BuildProgressLogger,
             private val _isHiddenInBuidLog: Boolean):
             BuildProgressLogger by _baseLogger {
-
-        override fun warning(message: String?) {
-            if (message != null) {
-                _loggerService.writeTrace(message)
-            }
-        }
 
         override fun message(message: String?) {
             if (!_isHiddenInBuidLog) {

@@ -1,10 +1,16 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
+import jetbrains.buildServer.rx.Observer
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -14,12 +20,13 @@ import java.io.File
 
 class NugetDeleteCommandTest {
     private lateinit var _ctx: Mockery
-    private lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK private lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _resultsAnalyzer = _ctx.mock<ResultsAnalyzer>(ResultsAnalyzer::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -30,7 +37,7 @@ class NugetDeleteCommandTest {
                         DotnetConstants.PARAM_NUGET_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
                         listOf("id", "version", "--api-key", "key",
-                                "--source", "http://jb.com", "--non-interactive", "customArg1"))
+                                "--source", "http://jb.com", "--non-interactive", "--force-english-output", "customArg1"))
         )
     }
 
@@ -79,5 +86,6 @@ class NugetDeleteCommandTest {
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true))
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true),
+                    _resultsObserver)
 }
