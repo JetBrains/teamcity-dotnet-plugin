@@ -23,6 +23,7 @@ class ProgramCommandLineAdapterTest {
     @MockK private lateinit var _argumentsService: ArgumentsService
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _buildStepContext: BuildStepContext
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     private val _executable = Path("executable")
     private val _workingDirecory = Path("wd")
@@ -83,6 +84,7 @@ class ProgramCommandLineAdapterTest {
 
         // When
         every { _environment.os } returns os
+        every { _virtualContext.isVirtual } returns false
         val programCommandLine = createInstance(_commandLine)
 
         // Then
@@ -97,11 +99,12 @@ class ProgramCommandLineAdapterTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldAddEnvVar_TEAMCITY_DOCKER_QUIET_MODE_WhenSystemDiagnosticsCommand(os: OSType, expectedArgs: List<String>) {
+    fun shouldAddEnvVar_TEAMCITY_DOCKER_QUIET_MODE_WhenVirtaulContextAndSystemDiagnosticsCommand(os: OSType, expectedArgs: List<String>) {
         // Given
 
         // When
         every { _environment.os } returns os
+        every { _virtualContext.isVirtual } returns true
         val programCommandLine = createInstance(_systemDiagnosticsCommandLine)
 
         // Then
@@ -114,5 +117,6 @@ class ProgramCommandLineAdapterTest {
     }
 
     private fun createInstance(commandLine: CommandLine): ProgramCommandLine =
-            ProgramCommandLineAdapter(_argumentsService, _environment, _buildStepContext).create(commandLine)
+            ProgramCommandLineAdapter(_argumentsService, _environment, _buildStepContext, _virtualContext)
+                    .create(commandLine)
 }

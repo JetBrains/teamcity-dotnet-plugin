@@ -6,7 +6,8 @@ import jetbrains.buildServer.util.OSType
 class ProgramCommandLineAdapter(
         private val _argumentsService: ArgumentsService,
         private val _environment: Environment,
-        private val _buildStepContext: BuildStepContext)
+        private val _buildStepContext: BuildStepContext,
+        private val _virtualContext: VirtualContext)
     : ProgramCommandLine, ProgramCommandLineFactory {
 
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))
@@ -22,7 +23,7 @@ class ProgramCommandLineAdapter(
     override fun getEnvironment(): MutableMap<String, String> {
         val environmentVariables = _buildStepContext.runnerContext.buildParameters.environmentVariables.toMutableMap()
         _commandLine.environmentVariables.forEach { environmentVariables[it.name] = it.value }
-        if (_commandLine.chain.any { it.target == TargetType.SystemDiagnostics }) {
+        if (_virtualContext.isVirtual && _commandLine.chain.any { it.target == TargetType.SystemDiagnostics }) {
             // Hides docker build log messages
             environmentVariables[ENV_DOCKER_QUIET_MODE] = "true";
         }
