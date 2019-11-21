@@ -9,6 +9,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ProgramCommandLine
 import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter
+import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter.Companion.ENV_DOCKER_QUIET_MODE
 import jetbrains.buildServer.agent.runner.VirtualContextImpl
 import jetbrains.buildServer.dotcover.EnvironmentVariablesImpl
 import jetbrains.buildServer.util.OSType
@@ -40,6 +41,14 @@ class ProgramCommandLineAdapterTest {
     private val _commandLine = CommandLine(
             null,
             TargetType.Tool,
+            _executable,
+            _workingDirecory,
+            _args,
+            _envVars)
+
+    private val _systemDiagnosticsCommandLine = CommandLine(
+            null,
+            TargetType.SystemDiagnostics,
             _executable,
             _workingDirecory,
             _args,
@@ -84,6 +93,23 @@ class ProgramCommandLineAdapterTest {
                 "Var1" to "Val1",
                 "Var 3" to "Val 3",
                 "Var 2" to "Val 2"
+        ))
+    }
+
+    @Test(dataProvider = "testData")
+    fun shouldAddEnvVar_TEAMCITY_DOCKER_QUIET_MODE_WhenSystemDiagnosticsCommand(os: OSType, expectedArgs: List<String>) {
+        // Given
+
+        // When
+        every { _environment.os } returns os
+        val programCommandLine = createInstance(_systemDiagnosticsCommandLine)
+
+        // Then
+        Assert.assertEquals(programCommandLine.environment, mapOf(
+                "Var1" to "Val1",
+                "Var 3" to "Val 3",
+                "Var 2" to "Val 2",
+                ENV_DOCKER_QUIET_MODE to "true"
         ))
     }
 
