@@ -93,7 +93,7 @@ class BuildCommandTest {
         return BuildCommand(
                 ParametersServiceStub(parameters),
                 testsResultsAnalyzer,
-                TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
                 DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))

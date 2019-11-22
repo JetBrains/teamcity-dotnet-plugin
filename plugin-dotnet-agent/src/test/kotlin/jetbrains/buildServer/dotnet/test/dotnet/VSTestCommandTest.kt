@@ -95,7 +95,7 @@ class VSTestCommandTest {
             VSTestCommand(
                     ParametersServiceStub(parameters),
                     testsResultsAnalyzer,
-                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     ArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true))

@@ -56,7 +56,7 @@ class VisualStudioWorkflowComposer(
 
                 val executableFile = Path(_virtualContext.resolvePath(_toolResolver.executableFile.canonicalPath))
 
-                for ((targetFile) in _targetService.targets) {
+                for ((target) in _targetService.targets) {
                     if (context.status != WorkflowStatus.Running) {
                         break
                     }
@@ -80,7 +80,7 @@ class VisualStudioWorkflowComposer(
                                 executableFile,
                                 Path(workingDirectory.path),
                                 sequence {
-                                    yield(CommandLineArgument(_virtualContext.resolvePath(targetFile.canonicalPath), CommandLineArgumentType.Target))
+                                    yield(CommandLineArgument(target.path, CommandLineArgumentType.Target))
                                     yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))

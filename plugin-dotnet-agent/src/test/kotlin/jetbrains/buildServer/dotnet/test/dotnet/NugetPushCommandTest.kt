@@ -109,7 +109,7 @@ class NugetPushCommandTest {
             NugetPushCommand(
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
-                    TargetServiceStub(targets.map { CommandTarget(File(it)) }.asSequence()),
+                    TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(arguments),
                     DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true),
                     _resultsObserver)

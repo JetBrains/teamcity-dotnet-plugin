@@ -11,7 +11,6 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.rx.Observable
 import jetbrains.buildServer.rx.Observer
 
 class NugetPushCommand(
@@ -27,7 +26,7 @@ class NugetPushCommand(
         get() = DotnetCommandType.NuGetPush
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path, CommandLineArgumentType.Target))) }
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {

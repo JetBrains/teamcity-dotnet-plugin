@@ -23,7 +23,7 @@ class PackCommand(
         get() = DotnetCommandType.Pack
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path, CommandLineArgumentType.Target))) }
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
