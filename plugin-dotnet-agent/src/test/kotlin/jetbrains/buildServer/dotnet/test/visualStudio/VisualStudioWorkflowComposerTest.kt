@@ -57,7 +57,7 @@ class VisualStudioWorkflowComposerTest {
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Target),
+                                                CommandLineArgument("my1.sln", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -70,7 +70,7 @@ class VisualStudioWorkflowComposerTest {
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my2.sln", CommandLineArgumentType.Target),
+                                                CommandLineArgument("my2.sln", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("\"Debug|x86\""),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -91,7 +91,7 @@ class VisualStudioWorkflowComposerTest {
                                         Path("v_tool"),
                                         Path("wd"),
                                         listOf(
-                                                CommandLineArgument("v_my1.csproj", CommandLineArgumentType.Target),
+                                                CommandLineArgument("my1.csproj", CommandLineArgumentType.Target),
                                                 CommandLineArgument("/rebuild", CommandLineArgumentType.Mandatory),
                                                 CommandLineArgument("release"),
                                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom)),
@@ -138,18 +138,6 @@ class VisualStudioWorkflowComposerTest {
 
                 allowing<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
                 will(returnValue("v_tool"))
-
-                allowing<VirtualContext>(_virtualContext).resolvePath(File("wd").canonicalPath)
-                will(returnValue("v_wd"))
-
-                allowing<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
-                will(returnValue("v_my1.sln"))
-
-                allowing<VirtualContext>(_virtualContext).resolvePath(File("my2.sln").canonicalPath)
-                will(returnValue("v_my2.sln"))
-
-                allowing<VirtualContext>(_virtualContext).resolvePath(File("my1.csproj").canonicalPath)
-                will(returnValue("v_my1.csproj"))
             }
         })
 
@@ -183,7 +171,7 @@ class VisualStudioWorkflowComposerTest {
                         Path("v_tool"),
                         Path("wDir"),
                         listOf(
-                                CommandLineArgument("v_my1.sln", CommandLineArgumentType.Target),
+                                CommandLineArgument("my1.sln", CommandLineArgumentType.Target),
                                 CommandLineArgument("/build", CommandLineArgumentType.Mandatory),
                                 CommandLineArgument("\"Debug|x86\""),
                                 CommandLineArgument("arg1", CommandLineArgumentType.Custom),
@@ -208,9 +196,6 @@ class VisualStudioWorkflowComposerTest {
 
                 oneOf<VirtualContext>(_virtualContext).resolvePath(File("tool").canonicalPath)
                 will(returnValue("v_tool"))
-
-                oneOf<VirtualContext>(_virtualContext).resolvePath(File("my1.sln").canonicalPath)
-                will(returnValue("v_my1.sln"))
 
                 oneOf<LoggerService>(_loggerService).writeBuildProblem("visual_studio_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode")
             }
