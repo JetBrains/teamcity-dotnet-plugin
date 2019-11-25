@@ -1,11 +1,8 @@
 package jetbrains.buildServer.dotCover
 
-import jetbrains.buildServer.NuGetTool
 import jetbrains.buildServer.ToolService
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.DOTCOVER_PACKAGE_TYPE
 import jetbrains.buildServer.dotnet.DotnetConstants.DOTCOVER_WIN_PACKAGE_TYPE
-import jetbrains.buildServer.dotnet.DotnetToolTypeAdapter
 import jetbrains.buildServer.tools.ServerToolProviderAdapter
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion

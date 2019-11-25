@@ -1,8 +1,10 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.rx.*
-import java.lang.Exception
+import jetbrains.buildServer.rx.distinct
+import jetbrains.buildServer.rx.filter
+import jetbrains.buildServer.rx.map
+import jetbrains.buildServer.rx.use
 
 class BasePathResolverWorkflowFactory(
         private val _pathsService: PathsService,

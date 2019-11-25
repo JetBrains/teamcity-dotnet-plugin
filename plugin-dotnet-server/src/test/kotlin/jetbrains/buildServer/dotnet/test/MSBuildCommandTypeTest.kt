@@ -4,7 +4,6 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
-import jetbrains.buildServer.dotnet.discovery.SolutionDiscover
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType

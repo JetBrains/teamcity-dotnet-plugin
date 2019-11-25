@@ -3,8 +3,8 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.OSType

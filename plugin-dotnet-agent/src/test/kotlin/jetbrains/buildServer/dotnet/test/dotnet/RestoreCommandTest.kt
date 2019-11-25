@@ -11,7 +11,6 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class RestoreCommandTest {
     private lateinit var _ctx: Mockery

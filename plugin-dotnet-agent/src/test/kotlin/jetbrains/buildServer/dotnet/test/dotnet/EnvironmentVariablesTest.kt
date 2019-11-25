@@ -4,10 +4,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
+import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

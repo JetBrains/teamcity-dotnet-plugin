@@ -5,12 +5,12 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.WorkflowComposer
+import jetbrains.buildServer.agent.AgentLifeCycleEventSources
+import jetbrains.buildServer.agent.BuildAgent
+import jetbrains.buildServer.agent.BuildAgentConfiguration
+import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.dotcover.DotCoverPropertiesExtension
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.rx.Observable
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.subjectOf

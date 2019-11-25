@@ -1,15 +1,11 @@
 package jetbrains.buildServer.agent.runner
 
-import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder
-import jetbrains.buildServer.rx.*
-import jetbrains.buildServer.rx.Observable
-import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.util.OSType
 import java.io.File
 import java.io.OutputStreamWriter
-import java.lang.Exception
-import java.util.*
 
 class WindowsPathResolverWorkflowFactory(
         private val _pathsService: PathsService,

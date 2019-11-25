@@ -5,7 +5,6 @@ import jetbrains.buildServer.dotcover.ImportDataServiceMessage
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class ImportDataServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")

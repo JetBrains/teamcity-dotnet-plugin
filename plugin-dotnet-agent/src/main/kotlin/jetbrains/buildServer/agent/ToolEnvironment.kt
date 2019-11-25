@@ -1,7 +1,5 @@
 package jetbrains.buildServer.agent
 
-import jetbrains.buildServer.agent.Path
-
 interface ToolEnvironment {
     val homePaths: Sequence<Path>
 

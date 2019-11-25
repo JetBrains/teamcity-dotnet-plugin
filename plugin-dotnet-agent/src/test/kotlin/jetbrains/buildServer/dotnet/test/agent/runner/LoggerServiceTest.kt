@@ -13,7 +13,6 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class LoggerServiceTest {
     @MockK private lateinit var _buildStepContext: BuildStepContext

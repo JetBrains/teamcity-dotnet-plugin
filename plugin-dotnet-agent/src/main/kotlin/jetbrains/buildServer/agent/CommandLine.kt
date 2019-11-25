@@ -1,7 +1,6 @@
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.agent.runner.StdOutText
-import java.io.File
 
 data class CommandLine(
         val baseCommandLine: CommandLine?,

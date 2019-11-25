@@ -2,7 +2,10 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.filter
+import jetbrains.buildServer.rx.map
+import jetbrains.buildServer.rx.observer
+import jetbrains.buildServer.rx.use
 
 class CrossPlatformWorkflowFactory(
         private val _pathsService: PathsService,

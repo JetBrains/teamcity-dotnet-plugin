@@ -2,14 +2,16 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.CustomArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class CustomArgumentsProviderTest {
     @DataProvider

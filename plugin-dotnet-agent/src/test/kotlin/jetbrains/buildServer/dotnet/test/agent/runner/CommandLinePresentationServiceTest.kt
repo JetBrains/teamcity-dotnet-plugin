@@ -1,11 +1,9 @@
 package jetbrains.buildServer.dotnet.test.agent.runner
 
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.StdOutText
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert

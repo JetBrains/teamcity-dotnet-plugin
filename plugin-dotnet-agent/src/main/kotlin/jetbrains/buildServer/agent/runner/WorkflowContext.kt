@@ -1,7 +1,9 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.Observable
+import jetbrains.buildServer.rx.map
+import jetbrains.buildServer.rx.ofType
 
 interface WorkflowContext: Observable<CommandResultEvent> {
     val status: WorkflowStatus

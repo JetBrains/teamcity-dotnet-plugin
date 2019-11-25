@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import java.util.*
-
 class DotnetWorkflowAnalyzerContext {
     private val _commandResults = mutableListOf<Set<CommandResult>>()
 

@@ -10,14 +10,11 @@ import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ProgramCommandLine
 import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter
 import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter.Companion.ENV_DOCKER_QUIET_MODE
-import jetbrains.buildServer.agent.runner.VirtualContextImpl
-import jetbrains.buildServer.dotcover.EnvironmentVariablesImpl
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class ProgramCommandLineAdapterTest {
     @MockK private lateinit var _argumentsService: ArgumentsService

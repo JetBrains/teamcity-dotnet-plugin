@@ -5,7 +5,6 @@ import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.util.EventDispatcher
 import org.apache.log4j.Logger
-import java.io.File
 
 class MonoPropertiesExtension(
         events: EventDispatcher<AgentLifeCycleListener>,

@@ -2,7 +2,6 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.util.OSType
-import org.springframework.beans.factory.BeanFactory
 import java.io.File
 
 class VirtualContextImpl(private val _buildStepContext: BuildStepContext): VirtualContext {

@@ -1,7 +1,10 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.rx.emptyDisposable
+import jetbrains.buildServer.rx.emptyObserver
 import org.apache.log4j.Logger
 import java.io.File
 

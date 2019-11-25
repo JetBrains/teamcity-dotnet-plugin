@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.runner.BuildOptions
-import java.util.*
 
 class TestsResultsAnalyzerImpl(
         private val _buildOptions: BuildOptions)

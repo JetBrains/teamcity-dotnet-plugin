@@ -1,13 +1,12 @@
 package jetbrains.buildServer.dotnet
 
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.*
+import jetbrains.buildServer.FileSystemService
+import jetbrains.buildServer.ToolService
 import jetbrains.buildServer.tools.*
-import jetbrains.buildServer.util.ArchiveUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import java.io.File
 import java.io.FileFilter
-import java.net.URL
 
 class DotnetToolProviderAdapter(
         private val _toolService: ToolService,

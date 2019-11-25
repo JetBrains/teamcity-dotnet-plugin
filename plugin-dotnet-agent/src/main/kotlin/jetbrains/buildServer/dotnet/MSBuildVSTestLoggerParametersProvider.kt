@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import java.io.File
 
 class MSBuildVSTestLoggerParametersProvider(
         private val _pathsService: PathsService,

@@ -4,10 +4,10 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import org.apache.log4j.Logger
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.emptyDisposable
+import org.apache.log4j.Logger
 import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter

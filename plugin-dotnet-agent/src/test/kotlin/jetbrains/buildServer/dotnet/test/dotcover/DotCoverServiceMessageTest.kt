@@ -5,7 +5,6 @@ import jetbrains.buildServer.dotcover.DotCoverServiceMessage
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class DotCoverServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")

@@ -10,7 +10,6 @@ import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
-import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.visualStudio.ToolResolver
 import jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer
 import org.jmock.Expectations

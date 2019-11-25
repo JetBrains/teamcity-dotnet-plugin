@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger
-import java.io.File
 
 class BuildServerShutdownMonitor(
         agentLifeCycleEventSources: AgentLifeCycleEventSources,

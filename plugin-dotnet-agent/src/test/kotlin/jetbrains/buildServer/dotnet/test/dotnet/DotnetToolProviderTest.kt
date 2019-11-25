@@ -11,9 +11,13 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolEnvironment
+import jetbrains.buildServer.agent.ToolProvidersRegistry
+import jetbrains.buildServer.agent.ToolSearchService
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetSdksProvider
+import jetbrains.buildServer.dotnet.DotnetToolProvider
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

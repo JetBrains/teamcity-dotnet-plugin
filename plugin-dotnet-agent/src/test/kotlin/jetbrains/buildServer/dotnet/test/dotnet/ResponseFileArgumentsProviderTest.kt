@@ -3,7 +3,9 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.agent.runner.Color
+import jetbrains.buildServer.agent.runner.LoggerService
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.rx.Disposable

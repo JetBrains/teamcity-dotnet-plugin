@@ -1,9 +1,7 @@
 package jetbrains.buildServer.dotnet.commands
 
-import jetbrains.buildServer.dotNet.DotNetConstants
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.CROSS_PALTFORM_PATTERN
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_CROSS_PLATFORM_REQUIREMENT
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_4_6_1
 import jetbrains.buildServer.dotnet.DotnetConstants

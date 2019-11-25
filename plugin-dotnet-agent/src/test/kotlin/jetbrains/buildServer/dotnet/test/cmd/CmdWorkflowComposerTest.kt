@@ -5,7 +5,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.agent.runner.Workflow
+import jetbrains.buildServer.agent.runner.WorkflowComposer
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.cmd.CmdWorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.rx.Observer

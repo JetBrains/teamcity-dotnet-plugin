@@ -7,7 +7,6 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.rx.Observer
@@ -16,7 +15,6 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class NugetDeleteCommandTest {
     private lateinit var _ctx: Mockery

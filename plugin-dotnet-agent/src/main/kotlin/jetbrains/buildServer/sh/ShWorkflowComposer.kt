@@ -1,8 +1,9 @@
 package jetbrains.buildServer.sh
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.observer
+import jetbrains.buildServer.agent.runner.Workflow
+import jetbrains.buildServer.agent.runner.WorkflowComposer
+import jetbrains.buildServer.agent.runner.WorkflowContext
 import jetbrains.buildServer.util.OSType
 
 class ShWorkflowComposer(

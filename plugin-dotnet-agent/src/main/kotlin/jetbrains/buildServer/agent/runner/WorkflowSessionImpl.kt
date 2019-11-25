@@ -10,7 +10,6 @@ package jetbrains.buildServer.agent.runner
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.rx.Observer
-import jetbrains.buildServer.rx.emptySubject
 import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(

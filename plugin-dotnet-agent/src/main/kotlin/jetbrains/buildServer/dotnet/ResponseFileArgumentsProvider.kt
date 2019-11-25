@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
+import jetbrains.buildServer.agent.runner.Color
+import jetbrains.buildServer.agent.runner.LoggerService
+import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.use
-import java.io.File
 import java.io.OutputStreamWriter
 
 class ResponseFileArgumentsProvider(

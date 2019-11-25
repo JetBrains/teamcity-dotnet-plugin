@@ -9,7 +9,6 @@ import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class BuildCommandTest {
     @DataProvider

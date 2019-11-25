@@ -1,13 +1,11 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.dotnet.DotnetSdk
+import jetbrains.buildServer.dotnet.DotnetSdksProviderImpl
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
-import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import java.io.File
 

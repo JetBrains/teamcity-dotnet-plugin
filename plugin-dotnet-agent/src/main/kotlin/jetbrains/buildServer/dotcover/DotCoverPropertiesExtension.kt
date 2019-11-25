@@ -5,7 +5,6 @@ import jetbrains.buildServer.agent.AgentLifeCycleEventSources
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_CROSS_PLATFORM_REQUIREMENT
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.util.OSType

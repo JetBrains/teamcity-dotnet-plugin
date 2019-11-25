@@ -1,10 +1,7 @@
 package jetbrains.buildServer.mono
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.MonoConstants
-import java.io.File
 
 /**
  * Lookups for Mono.

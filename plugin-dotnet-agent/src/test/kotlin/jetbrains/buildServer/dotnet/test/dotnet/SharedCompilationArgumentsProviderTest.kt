@@ -6,9 +6,7 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
-import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import java.io.File
 
 class SharedCompilationArgumentsProviderTest {
     @Test

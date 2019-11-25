@@ -9,13 +9,15 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.MSBuildParameter
+import jetbrains.buildServer.dotnet.SystemParametersProvider
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class SystemParametersProviderTest {
     @MockK

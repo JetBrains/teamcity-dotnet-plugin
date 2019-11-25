@@ -4,9 +4,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.*
-import org.jmock.Expectations
-import org.jmock.Mockery
+import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolSearchService
+import jetbrains.buildServer.agent.ToolSearchServiceImpl
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

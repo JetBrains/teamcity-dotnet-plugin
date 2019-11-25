@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.runner.LoggerService
-import java.util.*
 
 class DotnetWorkflowAnalyzerImpl(private val _loggerService: LoggerService)
     : DotnetWorkflowAnalyzer {

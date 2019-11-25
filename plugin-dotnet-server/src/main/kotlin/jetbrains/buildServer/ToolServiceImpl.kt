@@ -2,7 +2,6 @@ package jetbrains.buildServer
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetToolProviderAdapter
 import jetbrains.buildServer.dotnet.SemanticVersionParser
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil

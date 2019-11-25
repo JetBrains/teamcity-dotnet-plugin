@@ -1,14 +1,11 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.BuildProblemTypes.TC_ERROR_MESSAGE_TYPE
 import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.agent.runner.StdOutText
 import jetbrains.buildServer.rx.Observer
-import java.lang.Integer.min
 
 class NugetResultsObserver(
         private val _loggerService: LoggerService)

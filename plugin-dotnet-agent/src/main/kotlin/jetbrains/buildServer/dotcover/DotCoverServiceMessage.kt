@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import java.io.File
 
 class DotCoverServiceMessage(
         dotCoverPath: Path)
