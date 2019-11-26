@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.CoverageConstants.CROSS_PALTFORM_PATTERN
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_4_6_1
 import jetbrains.buildServer.dotnet.DotnetConstants
@@ -48,7 +47,6 @@ class DotCoverCoverageType: CommandType() {
             val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
             if (crossPaltform) {
                 requirements.clear()
-                requirements.add(OUR_CROSS_PLATFORM_REQUIREMENT)
             }
             else {
                 val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
@@ -65,6 +63,5 @@ class DotCoverCoverageType: CommandType() {
     companion object {
         private val OUR_MINIMAL_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_3_5 + ")", null, RequirementType.EXISTS)
         private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_4_6_1 + ")", null, RequirementType.EXISTS)
-        private val OUR_CROSS_PLATFORM_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + CROSS_PALTFORM_PATTERN + ")", null, RequirementType.EXISTS)
     }
 }
