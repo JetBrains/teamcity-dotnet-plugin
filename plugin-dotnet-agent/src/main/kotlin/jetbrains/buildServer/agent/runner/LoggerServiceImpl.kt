@@ -35,14 +35,22 @@ class LoggerServiceImpl(
 
     override fun writeWarning(text: String) = _buildLogger.warning(text)
 
-    override fun writeBlock(blockName: String, description: String): Disposable {
-        _buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
-        return disposableOf { _buildLogger.message(BlockClosed(blockName).toString()) }
-    }
+    override fun writeBlock(blockName: String, description: String) = writeBlock(blockName, description, false)
 
     override fun writeTrace(text: String) =
         _buildLogger.logMessage(DefaultMessagesInfo.internalize(DefaultMessagesInfo.createTextMessage(text)))
 
+    override fun writeTraceBlock(blockName: String, description: String) = writeBlock(blockName, description, true)
+
+    private fun writeBlock(blockName: String, description: String, trace: Boolean): Disposable {
+        val blockOpened = BlockOpened(blockName, if (description.isBlank()) null else description)
+        if (trace) {
+            blockOpened.addTag(DefaultMessagesInfo.TAG_INTERNAL)
+        }
+
+        _buildLogger.message(blockOpened.toString())
+        return disposableOf { _buildLogger.message(BlockClosed(blockName).toString()) }
+    }
     private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
         if (color == prevColor) {
             text

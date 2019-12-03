@@ -54,20 +54,7 @@ class DotCoverWorkflowComposer(
             throw RunBuildException("dotCover was not found: $dotCoverExecutablePath")
         }
 
-        var showDiagnostics = false
-        _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)?.trim()?.let {
-            Verbosity.tryParse(it)?.let {
-                @Suppress("NON_EXHAUSTIVE_WHEN")
-                when (it) {
-                    Verbosity.Detailed, Verbosity.Diagnostic -> {
-                        showDiagnostics = true
-                    }
-                }
-            }
-        }
-
         return Workflow(sequence {
-            var deferredServiceMessages = mutableListOf<ServiceMessage>()
             var dotCoverHome = false
             for (baseCommandLine in workflow.commandLines) {
                 if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
@@ -99,21 +86,19 @@ class DotCoverWorkflowComposer(
                     _dotCoverProjectSerializer.serialize(dotCoverProject, it)
                 }
 
-                if (showDiagnostics) {
-                    _loggerService.writeBlock("dotCover Settings").use {
-                        val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
-                        _loggerService.writeStandardOutput("Command line:")
-                        _loggerService.writeStandardOutput("  \"${baseCommandLine.executableFile.path}\" $args", Color.Details)
+                _loggerService.writeTraceBlock("dotCover settings").use {
+                    val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
+                    _loggerService.writeTrace("Command line:")
+                    _loggerService.writeTrace("  \"${baseCommandLine.executableFile.path}\" $args")
 
-                        _loggerService.writeStandardOutput("Filters:")
-                        for (filter in _coverageFilterProvider.filters) {
-                            _loggerService.writeStandardOutput("  $filter", Color.Details)
-                        }
+                    _loggerService.writeTrace("Filters:")
+                    for (filter in _coverageFilterProvider.filters) {
+                        _loggerService.writeTrace("  $filter")
+                    }
 
-                        _loggerService.writeStandardOutput("Attribute Filters:")
-                        for (filter in _coverageFilterProvider.attributeFilters) {
-                            _loggerService.writeStandardOutput("  $filter", Color.Details)
-                        }
+                    _loggerService.writeTrace("Attribute Filters:")
+                    for (filter in _coverageFilterProvider.attributeFilters) {
+                        _loggerService.writeTrace("  $filter")
                     }
                 }
 

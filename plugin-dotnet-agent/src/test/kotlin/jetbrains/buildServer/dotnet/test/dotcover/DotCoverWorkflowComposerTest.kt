@@ -28,12 +28,14 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    @MockK private lateinit var _blockToken: Disposable
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _blockToken.dispose() } returns Unit
     }
 
     @Test
@@ -110,7 +112,6 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns coverageType
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns dotCoverPath
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Quiet.id
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
@@ -123,10 +124,15 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
         every { _environmentVariables.getVariables() } returns _defaultVariables
+        every { _coverageFilterProvider.attributeFilters } returns emptySequence()
+        every { _coverageFilterProvider.filters } returns emptySequence()
+        every { _loggerService.writeTraceBlock(any()) } returns _blockToken
+        every { _loggerService.writeTrace(any()) } returns Unit
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
+        verify { _blockToken.dispose() }
         verify { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
         verify { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -198,7 +204,6 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled") } returns null
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Quiet.id
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
 
         val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
@@ -263,7 +268,6 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns verbosity.id
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
@@ -276,29 +280,26 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
 
-        val blockToken = mockk<Disposable>()
-        every { _loggerService.writeBlock("dotCover Settings") } returns blockToken
-        every { _loggerService.writeStandardOutput("Command line:") } returns Unit
-        every { _loggerService.writeStandardOutput("  \"${File("dotnet", "dotnet.exe").path}\" arg1", Color.Details) } returns Unit
-        every { _loggerService.writeStandardOutput("Filters:") } returns Unit
+        every { _loggerService.writeTraceBlock("dotCover settings") } returns _blockToken
+        every { _loggerService.writeTrace("Command line:") } returns Unit
+        every { _loggerService.writeTrace("  \"${File("dotnet", "dotnet.exe").path}\" arg1") } returns Unit
+        every { _loggerService.writeTrace("Filters:") } returns Unit
         val filter1 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "abc")
         val filter2 = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "qwerty")
         every { _coverageFilterProvider.filters } returns sequenceOf(filter1, filter2)
-        every { _loggerService.writeStandardOutput("  $filter1", Color.Details) } returns Unit
-        every { _loggerService.writeStandardOutput("  $filter2", Color.Details) } returns Unit
-        every { _loggerService.writeStandardOutput("Attribute Filters:") } returns Unit
+        every { _loggerService.writeTrace("  $filter1") } returns Unit
+        every { _loggerService.writeTrace("  $filter2") } returns Unit
+        every { _loggerService.writeTrace("Attribute Filters:") } returns Unit
         val attributeFilter = CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, "xyz")
         every { _coverageFilterProvider.attributeFilters } returns sequenceOf(attributeFilter)
-        every { _loggerService.writeStandardOutput("  $attributeFilter", Color.Details) } returns Unit
+        every { _loggerService.writeTrace("  $attributeFilter") } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
-        every { blockToken.dispose() } returns Unit
         every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
-        verify { blockToken.dispose() }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -351,7 +352,6 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
@@ -362,6 +362,10 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
         every { _environmentVariables.getVariables() } returns _defaultVariables
+        every { _coverageFilterProvider.attributeFilters } returns emptySequence()
+        every { _coverageFilterProvider.filters } returns emptySequence()
+        every { _loggerService.writeTraceBlock(any()) } returns _blockToken
+        every { _loggerService.writeTrace(any()) } returns Unit
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -424,7 +428,6 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns "/ProcessFilters=-:sqlservr.exe /arg"
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
@@ -437,6 +440,10 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
         every { _environmentVariables.getVariables() } returns _defaultVariables
+        every { _coverageFilterProvider.attributeFilters } returns emptySequence()
+        every { _coverageFilterProvider.filters } returns emptySequence()
+        every { _loggerService.writeTraceBlock(any()) } returns _blockToken
+        every { _loggerService.writeTrace(any()) } returns Unit
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -495,7 +502,6 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Normal.id
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns "logPath"
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
@@ -509,6 +515,10 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(File("logPath", "dotCover99.log").canonicalPath) } returns "v_log"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
         every { _environmentVariables.getVariables() } returns _defaultVariables
+        every { _coverageFilterProvider.attributeFilters } returns emptySequence()
+        every { _coverageFilterProvider.filters } returns emptySequence()
+        every { _loggerService.writeTraceBlock(any()) } returns _blockToken
+        every { _loggerService.writeTrace(any()) } returns Unit
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
