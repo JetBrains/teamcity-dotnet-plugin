@@ -188,7 +188,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        for (envVar in EnvironmentVariablesImpl.getTempDirVariables(EnvironmentVariablesImpl.customTeamCityTemp.canonicalPath)) {
+        for (envVar in EnvironmentVariablesImpl.getTempDirVariables(EnvironmentVariablesImpl.customTeamCityTemp.path)) {
             Assert.assertTrue(actualVariables.contains(envVar))
         }
     }

@@ -27,17 +27,17 @@ class EnvironmentVariablesImpl(
 
         if (_virtualContext.targetOSType != OSType.WINDOWS) {
             if (_virtualContext.isVirtual && _environment.os == OSType.WINDOWS) {
-                LOG.debug("Override environment variable like 'TMP' by empty values")
+                LOG.debug("Override temp environment variables by empty values")
                 yieldAll(getTempDirVariables())
             } else {
                 val tempPath = _pathsService.getPath(PathType.BuildTemp).path
                 if (tempPath.length <= 60) {
-                    LOG.debug("Do not override environment variable like 'TMP'")
+                    LOG.debug("Do not override temp environment variables")
                 }
                 else {
                     // try to find default /tmp
                     if (_fileSystemService.isExists(defaultTemp) && _fileSystemService.isDirectory(defaultTemp)) {
-                        LOG.debug("Override environment variable like 'TMP' by '${defaultTemp.path}'")
+                        LOG.debug("Override temp environment variables by '${defaultTemp.path}'")
                         yieldAll(getTempDirVariables(defaultTemp.path))
                     } else {
                         // create short TemamCity temp
@@ -45,8 +45,8 @@ class EnvironmentVariablesImpl(
                             _fileSystemService.createDirectory(customTeamCityTemp)
                         }
 
-                        LOG.debug("Override environment variable like 'TMP' by '${customTeamCityTemp.canonicalPath}'")
-                        yieldAll(getTempDirVariables(customTeamCityTemp.canonicalPath))
+                        LOG.debug("Override temp environment variables by '${customTeamCityTemp}'")
+                        yieldAll(getTempDirVariables(customTeamCityTemp.path))
                     }
                 }
             }
