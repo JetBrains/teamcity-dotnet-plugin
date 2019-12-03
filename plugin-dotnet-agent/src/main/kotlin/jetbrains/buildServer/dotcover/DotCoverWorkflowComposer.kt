@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
+import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.util.StringUtil
@@ -67,10 +68,8 @@ class DotCoverWorkflowComposer(
 
         return Workflow(sequence {
             var deferredServiceMessages = mutableListOf<ServiceMessage>()
+            var dotCoverHome = false
             for (baseCommandLine in workflow.commandLines) {
-                sendServiceMessages(context, deferredServiceMessages)
-                deferredServiceMessages.clear()
-
                 if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
                     yield(baseCommandLine)
                     continue
@@ -118,22 +117,28 @@ class DotCoverWorkflowComposer(
                     }
                 }
 
-                yield(CommandLine(
-                        baseCommandLine,
-                        target,
-                        Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
-                        baseCommandLine.workingDirectory,
-                        createArguments(dotCoverProject).toList(),
-                        baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                        baseCommandLine.title,
-                        baseCommandLine.description))
+                context.toExitCodes().subscribe {
+                    if (_fileSystemService.isExists(snapshotFile)) {
+                        // Overrides the dotCover home path once
+                        if (!dotCoverHome) {
+                            _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath)))
+                            dotCoverHome = true
+                        }
 
-                deferredServiceMessages.add(DotCoverServiceMessage(Path((dotCoverPath))))
-                deferredServiceMessages.add(ImportDataServiceMessage(DotCoverToolName, virtualSnapshotFilePath))
-            }
-
-            if (context.status == WorkflowStatus.Running) {
-                sendServiceMessages(context, deferredServiceMessages)
+                        // The snapshot path should be virtual because of the docker wrapper converts it back
+                        _loggerService.writeMessage(ImportDataServiceMessage(DotCoverToolName, virtualSnapshotFilePath))
+                    }
+                }.use {
+                    yield(CommandLine(
+                            baseCommandLine,
+                            target,
+                            Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
+                            baseCommandLine.workingDirectory,
+                            createArguments(dotCoverProject).toList(),
+                            baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
+                            baseCommandLine.title,
+                            baseCommandLine.description))
+                }
             }
         })
     }
@@ -171,16 +176,6 @@ class DotCoverWorkflowComposer(
             StringUtil.split(it).forEach {
                 yield(CommandLineArgument(it, CommandLineArgumentType.Custom))
             }
-        }
-    }
-
-    private fun sendServiceMessages(context: WorkflowContext, deferredServiceMessages: List<ServiceMessage>) {
-        if (context.status == WorkflowStatus.Failed) {
-            return
-        }
-
-        for (serviceMessage in deferredServiceMessages) {
-            _loggerService.writeMessage(serviceMessage)
         }
     }
 

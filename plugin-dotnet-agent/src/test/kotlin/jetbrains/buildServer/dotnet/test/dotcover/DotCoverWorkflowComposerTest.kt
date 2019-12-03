@@ -50,8 +50,12 @@ class DotCoverWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))),
-                arrayOf(CoverageConstants.PARAM_DOTCOVER, "dotCover", VirtualFileSystemService().addFile(File("dotCover", "dotCover.exe"))))
+                arrayOf(
+                        CoverageConstants.PARAM_DOTCOVER,
+                        "dotCover",
+                        VirtualFileSystemService()
+                                .addFile(File("dotCover", "dotCover.exe"))
+                                .addFile(File("snapshot000"))))
     }
 
     @Test(dataProvider = "composeCases")
@@ -123,6 +127,8 @@ class DotCoverWorkflowComposerTest {
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
+        verify { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
+        verify { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -361,7 +367,7 @@ class DotCoverWorkflowComposerTest {
 
         // Then
         verify(exactly = 0) { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
-        verify(exactly = 0) { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path(dotCoverSnapshotUniqueName.path))) }
+        verify(exactly = 0) { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
