@@ -1,14 +1,17 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.util.StringUtil
+
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     override fun convert(source: MSBuildParameter): String = "/p:${toString(normalizeName(source.name))}=${normalizeValue(source.value)}"
 
     private fun normalizeValue(value: String): String {
-        if (value.isEmpty()) {
-            return "\"\""
+        val str = toString(escapeSymbols(value.asSequence()))
+        if (str.isBlank() || str.contains(';')) {
+            return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
 
-        return toString(escape(value))
+        return str
     }
 
     private fun normalizeName(name: String): Sequence<Char> = sequence {
@@ -21,9 +24,9 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         }
     }
 
-    private fun escape(name: String): Sequence<Char> = sequence {
-        for (char in name.asSequence()) {
-            if (char.isLetterOrDigit()) {
+    private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
+        for (char in chars) {
+            if (char.isLetterOrDigit() || char == ';' || char == '%') {
                 yield(char)
             } else {
                 yield('%')
