@@ -15,8 +15,6 @@ class DotnetCommonArgumentsProviderImpl(
         private val _msBuildParameterConverter: MSBuildParameterConverter)
     : DotnetCommonArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        yieldAll(_customArgumentsProvider.getArguments(context))
-
         val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
         if (!avoidUsingRspFiles) {
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
@@ -25,5 +23,7 @@ class DotnetCommonArgumentsProviderImpl(
             yieldAll(_msBuildVSTestLoggerParametersProvider.getParameters(context).map { CommandLineArgument(_msBuildParameterConverter.convert(it)) })
             yieldAll(_sharedCompilationArgumentsProvider.getArguments(context))
         }
+
+        yieldAll(_customArgumentsProvider.getArguments(context))
     }
 }

@@ -27,9 +27,9 @@ class DotnetCommonArgumentsProviderTest {
     @DataProvider
     fun testData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(emptyMap<String, String>(), listOf("customArg", "rspArg")),
-                arrayOf(mapOf(DotnetConstants.PARAM_RSP to "true"), listOf("customArg", "rspArg")),
-                arrayOf(mapOf(DotnetConstants.PARAM_RSP to "false"), listOf("customArg", "l:/logger", "/p:param=value", "/nodeReuse:false")))
+                arrayOf(emptyMap<String, String>(), listOf("rspArg", "customArg")),
+                arrayOf(mapOf(DotnetConstants.PARAM_RSP to "true"), listOf("rspArg", "customArg")),
+                arrayOf(mapOf(DotnetConstants.PARAM_RSP to "false"), listOf("l:/logger", "/p:param=value", "/nodeReuse:false", "customArg")))
     }
 
     @Test(dataProvider = "testData")
