@@ -15,14 +15,14 @@ class MSBuildCommandTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("customArg1")),
+                        listOf("respArgs", "customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TARGETS, "restore;build"),
                         Pair(DotnetConstants.PARAM_RUNTIME, "osx.10.11-x64"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:RuntimeIdentifiers=osx.10.11-x64", "customArg1")),
+                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore, build;pack")),
-                        listOf("/t:clean;restore;build;pack", "customArg1")))
+                        listOf("/t:clean;restore;build;pack", "respArgs", "customArg1")))
     }
 
     @Test(dataProvider = "argumentsData")
@@ -30,7 +30,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
@@ -86,14 +86,16 @@ class MSBuildCommandTest {
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence(),
+            respArguments: Sequence<CommandLineArgument> = emptySequence(),
+            customArguments: Sequence<CommandLineArgument> = emptySequence(),
             testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
         val ctx = Mockery()
         return MSBuildCommand(
                 ParametersServiceStub(parameters),
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
-                ArgumentsProviderStub(arguments),
+                ArgumentsProviderStub(respArguments),
+                ArgumentsProviderStub(customArguments),
                 DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }

@@ -154,7 +154,6 @@
     <constructor-arg>
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>
-        <ref bean="dotnetCustomArgumentsProvider"/>
         <ref bean="sharedCompilationArgumentsProvider"/>
       </list>
     </constructor-arg>
@@ -168,6 +167,7 @@
   <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
     <constructor-arg ref="testsResultsAnalyzer"/>
     <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="msbuildToolResolver"/>
   </bean>
 
