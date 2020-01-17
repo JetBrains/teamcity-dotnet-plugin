@@ -188,6 +188,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
+    <constructor-arg ref="testsResultsAnalyzer"/>
     <constructor-arg ref="vstestLoggerArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="vstestToolResolver"/>
