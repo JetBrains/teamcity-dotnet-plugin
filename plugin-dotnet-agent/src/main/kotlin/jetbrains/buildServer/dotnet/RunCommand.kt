@@ -58,6 +58,13 @@ class RunCommand(
             }
         }
 
-        yieldAll(_customArgumentsProvider.getArguments(context))
+        var customArgs = _customArgumentsProvider.getArguments(context).toList()
+        if (customArgs.any()) {
+            if (customArgs[0].value.trim() != "--") {
+               yield(CommandLineArgument("--"))
+            }
+
+            yieldAll(_customArgumentsProvider.getArguments(context))
+        }
     }
 }

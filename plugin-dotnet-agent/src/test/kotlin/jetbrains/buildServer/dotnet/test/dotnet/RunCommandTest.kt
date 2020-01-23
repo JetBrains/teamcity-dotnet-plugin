@@ -41,23 +41,50 @@ class RunCommandTest {
     fun testRunArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(
+                            DotnetConstants.PARAM_PATHS to "path/"),
+                        sequenceOf(CommandLineArgument("customArg1")),
+                        listOf("--", "customArg1")),
+                arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "path/"),
-                        listOf("customArg1")),
+                        sequenceOf(CommandLineArgument("--"), CommandLineArgument("customArg1")),
+                        listOf("--", "customArg1")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_PATHS to "path/"),
+                        sequenceOf(CommandLineArgument("   -- "), CommandLineArgument("customArg1")),
+                        listOf("   -- ", "customArg1")),
+                arrayOf(mapOf(
+                            DotnetConstants.PARAM_FRAMEWORK to "dotcore",
+                            DotnetConstants.PARAM_CONFIG to "Release"),
+                        sequenceOf(CommandLineArgument("customArg1"), CommandLineArgument("customArg2")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", "--", "customArg1", "customArg2")),
+                arrayOf(mapOf(
+                            DotnetConstants.PARAM_FRAMEWORK to "dotcore",
+                            DotnetConstants.PARAM_CONFIG to "Release"),
+                        sequenceOf(CommandLineArgument("--"), CommandLineArgument("customArg1"), CommandLineArgument("customArg2")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", "--", "customArg1", "customArg2")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_FRAMEWORK to "dotcore",
                         DotnetConstants.PARAM_CONFIG to "Release"),
-                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
+                        sequenceOf(CommandLineArgument(" --  "), CommandLineArgument("customArg1"), CommandLineArgument("customArg2")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", " --  ", "customArg1", "customArg2")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_RUNTIME, "win")),
-                        listOf("--runtime", "win", "customArg1")))
+                        DotnetConstants.PARAM_FRAMEWORK to "dotcore",
+                        DotnetConstants.PARAM_CONFIG to "Release"),
+                        sequenceOf(CommandLineArgument(" --  "), CommandLineArgument("customArg1"), CommandLineArgument("--"), CommandLineArgument("customArg2")),
+                        listOf("--framework", "dotcore", "--configuration", "Release", " --  ", "customArg1", "--", "customArg2")),
+                arrayOf(mapOf(
+                            Pair(DotnetConstants.PARAM_RUNTIME, "win")),
+                        sequenceOf(CommandLineArgument("customArg1")),
+                        listOf("--runtime", "win", "--", "customArg1")))
     }
 
     @Test(dataProvider = "testRunArgumentsData")
     fun shouldGetArguments(
             parameters: Map<String, String>,
+            customArguments: Sequence<CommandLineArgument>,
             expectedArguments: List<String>) {
         // Given
-        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = customArguments)
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
