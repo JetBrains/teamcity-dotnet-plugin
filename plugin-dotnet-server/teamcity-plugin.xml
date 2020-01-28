@@ -8,7 +8,7 @@
         <description>Allows building projects via .NET CLI toolchain</description>
         <download-url>https://github.com/JetBrains/teamcity-dotnet-plugin</download-url>
         <vendor>
-            <name>JetBrains, s.r.o.</name>
+            <name>JetBrains</name>
             <url>http://www.jetbrains.com/</url>
         </vendor>
     </info>
