@@ -172,7 +172,7 @@
   <th class="noBorder"></th>
   <td>
     <span class="smallNote">
-    Successful step execution is reported when all the tests have run even if some have failed. Use failure conditions to fail the build on test failures. Use <b>"If all previous steps finished successfully"</b> execution policy in the following steps to prevent them from executing after test failures.
+    Successful step execution is reported when all the tests have run even if some have failed. Use failure conditions to fail the build on test failures. Use <b>"Only if build status is successful"</b> execution policy in the following steps to prevent them from executing after test failures.
     </span>
   </td>
 </tr>
