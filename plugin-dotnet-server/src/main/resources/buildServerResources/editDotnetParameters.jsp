@@ -168,6 +168,15 @@
   });
 </script>
 
+<tr class="dotnet test vstest msbuild">
+  <th class="noBorder"></th>
+  <td>
+    <span class="smallNote">
+    Successful step execution is reported when all the tests have run even if some have failed. Use failure conditions to fail the build on test failures. Use <b>"If all previous steps finished successfully"</b> execution policy in the following steps to prevent them from executing after test failures.
+    </span>
+  </td>
+</tr>
+
 <c:set var="commandTitle">Command:<bs:help urlPrefix="https://docs.microsoft.com/en-us/dotnet/core/tools/" file=""/></c:set>
 <props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
   <c:forEach items="${params.commands}" var="type">
