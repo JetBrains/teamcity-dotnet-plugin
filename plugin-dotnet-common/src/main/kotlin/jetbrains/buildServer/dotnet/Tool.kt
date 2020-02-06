@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet
 
 enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String) {
     // Visual Studio
+    VisualStudio2019(2019, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2019"),
     VisualStudio2017(2017, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2017"),
     VisualStudio2015(2015, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2015"),
     VisualStudio2013(2013, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2013"),
@@ -25,20 +26,28 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VisualStudio2010(2010, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2010"),
 
     // MSBuild
-    MSBuild15DotnetCore(15, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, ".NET Core"),
-    MSBuild15Mono(15, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "Mono"),
+    MSBuildDotnetCore(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, ".NET Core"),
+    MSBuildMono(0, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "Mono"),
+
+    MSBuild16Windows(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "16.0"),
+    MSBuild16WindowsX64(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "16.0 64-bit"),
+    MSBuild16WindowsX86(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "16.0 32-bit"),
+
     MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "15.0"),
     MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "15.0 64-bit"),
     MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "15.0 32-bit"),
+
     MSBuild14Windows(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "14.0"),
     MSBuild14WindowsX64(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "14.0 64-bit"),
     MSBuild14WindowsX86(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "14.0 32-bit"),
+
     MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "12.0"),
     MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "12.0 64-bit"),
     MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "12.0 32-bit"),
 
     // VSTest
-    VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform"),
+    VSTestCrossPlatform(0, ToolType.VSTest, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform"),
+    VSTest16Windows(16, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "16"),
     VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "15"),
     VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "14"),
     VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "12");

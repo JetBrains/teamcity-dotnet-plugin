@@ -59,7 +59,7 @@ class LoggerResolverImpl(
     }
 
     private fun getLogger(versionParameterNames: Sequence<String>): Logger? {
-        val currentTool = versionParameterNames.map { getCurrentTool(it) }.filter { it != null }.firstOrNull() ?: Tool.MSBuild15DotnetCore
+        val currentTool = versionParameterNames.map { getCurrentTool(it) }.filter { it != null }.firstOrNull() ?: Tool.MSBuildDotnetCore
         return Logger.values().firstOrNull { it.msbuildTool == currentTool || it.vstestTool == currentTool }
     }
 

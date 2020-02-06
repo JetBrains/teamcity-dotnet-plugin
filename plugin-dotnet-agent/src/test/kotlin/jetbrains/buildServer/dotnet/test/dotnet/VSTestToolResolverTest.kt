@@ -34,7 +34,7 @@ class VSTestToolResolverTest {
                 arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest12Windows.id, "teamcity.dotnet.vstest.12.0" to "vstest.console.exe"), File("vstest.console.exe").absoluteFile, null),
                 arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest14Windows.id, "teamcity.dotnet.vstest.14.0" to "vstest.console.exe"), File("vstest.console.exe").absoluteFile, null),
                 arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id, "teamcity.dotnet.vstest.15.0" to "vstest.console.exe"), File("vstest.console.exe").absoluteFile, null),
-                arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15CrossPlatform.id), File("dotnet"), null),
+                arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTestCrossPlatform.id), File("dotnet"), null),
                 arrayOf(mapOf(DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id), File(""), Regex("jetbrains.buildServer.agent.ToolCannotBeFoundException: teamcity.dotnet.vstest.15.0")))
     }
 
