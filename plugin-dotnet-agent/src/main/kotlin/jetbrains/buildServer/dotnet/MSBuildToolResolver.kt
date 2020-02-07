@@ -17,17 +17,14 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class MSBuildToolResolver(
-        private val _environment: Environment,
+        private val _virualContext: VirtualContext,
         private val _parametersService: ParametersService,
         private val _dotnetToolResolver: ToolResolver)
     : ToolResolver {
@@ -85,15 +82,22 @@ class MSBuildToolResolver(
                 return Path(File(it, MSBuildWindowsTooName).canonicalPath)
             }
 
+    private fun tryGetMonoTool(parameterName: String): Path? {
+        return _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
+            val baseDirectory = File(it).canonicalFile.parent
 
-    private fun tryGetMonoTool(parameterName: String): Path? =
-            _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-                val baseDirectory = File(it).canonicalFile.parent
-                return when (_environment.os) {
-                    OSType.WINDOWS -> Path(File(baseDirectory, MSBuildMonoWindowsToolName).canonicalPath)
-                    else -> Path(File(baseDirectory, MSBuildMonoToolName).canonicalPath)
-                }
+            val executable =  when (_virualContext.targetOSType) {
+                OSType.WINDOWS -> MSBuildMonoWindowsToolName
+                else -> MSBuildMonoToolName
             }
+
+            if (_virualContext.isVirtual) {
+               return Path(executable)
+            }
+
+            return Path(File(baseDirectory, executable).canonicalPath)
+        }
+    }
 
     companion object {
         const val MSBuildWindowsTooName = "MSBuild.exe"
