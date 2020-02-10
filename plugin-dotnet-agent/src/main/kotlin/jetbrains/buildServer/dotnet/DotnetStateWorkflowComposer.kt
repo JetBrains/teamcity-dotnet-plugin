@@ -23,14 +23,18 @@ import jetbrains.buildServer.rx.map
 import jetbrains.buildServer.rx.observer
 import jetbrains.buildServer.rx.use
 
-class CrossPlatformWorkflowFactory(
+class DotnetStateWorkflowComposer(
         private val _pathsService: PathsService,
         private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowFactories: List<PathResolverWorkflowFactory>,
+        private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
         private val _versionParser: VersionParser,
         private val _defaultEnvironmentVariables: EnvironmentVariables)
-    : WorkflowFactory<CrossPlatformWorkflowState> {
-    override fun create(context: WorkflowContext, state: CrossPlatformWorkflowState): Workflow = Workflow(
+    : ToolStateWorkflowComposer {
+
+    override val target: TargetType
+        get() = TargetType.SystemDiagnostics
+
+    override fun compose(context: WorkflowContext, state: ToolState, workflow: Workflow): Workflow = Workflow(
             sequence {
                 val executable = state.executable
                 var virtualPath: Path? = null
@@ -47,8 +51,8 @@ class CrossPlatformWorkflowFactory(
                             }
                     )
 
-                    for (pathResolverWorkflowFactory in _pathResolverWorkflowFactories) {
-                        yieldAll(pathResolverWorkflowFactory.create(context, pathResolverState).commandLines)
+                    for (pathResolverWorkflowFactory in _pathResolverWorkflowComposers) {
+                        yieldAll(pathResolverWorkflowFactory.compose(context, pathResolverState).commandLines)
                     }
                 }
 

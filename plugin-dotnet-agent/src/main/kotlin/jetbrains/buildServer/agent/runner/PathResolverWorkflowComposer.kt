@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.agent.runner
 
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.rx.Observer
-
-class CrossPlatformWorkflowState(
-        public val executable: ToolPath,
-        val virtualPathObserver: Observer<Path>,
-        val versionObserver: Observer<Version>)
+interface PathResolverWorkflowComposer: WorkflowComposer<PathResolverState>

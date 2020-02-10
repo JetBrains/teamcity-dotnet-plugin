@@ -17,6 +17,7 @@
 package jetbrains.buildServer.sh
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.SimpleWorkflowComposer
 import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.agent.runner.WorkflowComposer
 import jetbrains.buildServer.agent.runner.WorkflowContext
@@ -26,7 +27,7 @@ class ShWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _environment: Environment,
         private val _virtualContext: VirtualContext)
-    : WorkflowComposer<Unit> {
+    : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Host
 

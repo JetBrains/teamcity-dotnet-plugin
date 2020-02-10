@@ -34,12 +34,12 @@
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
 
   <!-- common agent's runner services -->
-  <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowFactory" id="basePathResolverWorkflowFactory"/>
-  <bean class="jetbrains.buildServer.agent.runner.UnixPathResolverWorkflowFactory" id="unixPathResolverWorkflowFactory">
-    <constructor-arg ref="basePathResolverWorkflowFactory"/>
+  <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.agent.runner.UnixPathResolverWorkflowComposer" id="unixPathResolverWorkflowComposer">
+    <constructor-arg ref="basePathResolverWorkflowComposer"/>
   </bean>
-  <bean class="jetbrains.buildServer.agent.runner.WindowsPathResolverWorkflowFactory" id="windowsPathResolverWorkflowFactory">
-    <constructor-arg ref="basePathResolverWorkflowFactory"/>
+  <bean class="jetbrains.buildServer.agent.runner.WindowsPathResolverWorkflowComposer" id="windowsPathResolverWorkflowComposer">
+    <constructor-arg ref="basePathResolverWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.agent.runner.ServiceMessageSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.DefaultColorTheme"/>
@@ -75,18 +75,18 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.CrossPlatformWorkflowFactory" id="crossPlatformWorkflowFactory">
+  <bean class="jetbrains.buildServer.dotnet.DotnetStateWorkflowComposer" id="dotnetStateWorkflowComposer">
     <constructor-arg ref="dotnetVersionParser"/>
     <constructor-arg>
       <list>
-        <ref bean="unixPathResolverWorkflowFactory"/>
-        <ref bean="windowsPathResolverWorkflowFactory"/>
+        <ref bean="unixPathResolverWorkflowComposer"/>
+        <ref bean="windowsPathResolverWorkflowComposer"/>
       </list>
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
-    <constructor-arg ref="crossPlatformWorkflowFactory"/>
+    <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>

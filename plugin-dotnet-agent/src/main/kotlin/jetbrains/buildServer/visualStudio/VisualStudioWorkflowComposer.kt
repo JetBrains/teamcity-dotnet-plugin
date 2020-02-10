@@ -35,7 +35,7 @@ class VisualStudioWorkflowComposer(
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver,
         private val _virtualContext: VirtualContext)
-    : WorkflowComposer<Unit> {
+    : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 

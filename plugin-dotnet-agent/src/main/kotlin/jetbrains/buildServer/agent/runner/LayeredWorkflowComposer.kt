@@ -19,8 +19,8 @@ package jetbrains.buildServer.agent.runner
 import jetbrains.buildServer.agent.TargetType
 
 class LayeredWorkflowComposer(
-        private val _workflowComposers: List<WorkflowComposer<Unit>>)
-    : WorkflowComposer<Unit> {
+        private val _workflowComposers: List<SimpleWorkflowComposer>)
+    : SimpleWorkflowComposer {
     override val target: TargetType = TargetType.NotApplicable
 
     override fun compose(

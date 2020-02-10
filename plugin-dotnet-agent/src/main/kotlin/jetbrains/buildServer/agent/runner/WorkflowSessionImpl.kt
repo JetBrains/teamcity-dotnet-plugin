@@ -22,7 +22,7 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(
-        private val _workflowComposer: WorkflowComposer<Unit>,
+        private val _workflowComposer: SimpleWorkflowComposer,
         private val _commandExecutionFactory: CommandExecutionFactory)
     : MultiCommandBuildSession, WorkflowContext {
 

@@ -32,8 +32,8 @@ class DotnetWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _commandLinePresentationService: CommandLinePresentationService,
         private val _virtualContext: VirtualContext,
-        private val _crossPlatformWorkflowState: WorkflowFactory<CrossPlatformWorkflowState>)
-    : WorkflowComposer<Unit> {
+        private val _toolStateWorkflowComposer: ToolStateWorkflowComposer)
+    : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
@@ -60,13 +60,13 @@ class DotnetWorkflowComposer(
 
                     if (command.toolResolver.paltform == ToolPlatform.CrossPlatform) {
                         if (dotnetVersions.isEmpty()) {
-                            var state = CrossPlatformWorkflowState(
+                            var state = ToolState(
                                     executable,
                                     observer<Path> { virtualDotnetExecutable = it },
                                     observer<Version> { dotnetVersions.add(it) }
                             )
 
-                            yieldAll(_crossPlatformWorkflowState.create(context, state).commandLines)
+                            yieldAll(_toolStateWorkflowComposer.compose(context, state).commandLines)
                         }
 
                         virtualPath = virtualDotnetExecutable ?: virtualPath

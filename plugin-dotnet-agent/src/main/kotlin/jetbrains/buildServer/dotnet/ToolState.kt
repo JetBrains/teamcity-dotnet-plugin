@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent.runner
+package jetbrains.buildServer.dotnet
 
-interface PathResolverWorkflowFactory: WorkflowFactory<PathResolverState>
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.rx.Observer
+
+class ToolState(
+        public val executable: ToolPath,
+        val virtualPathObserver: Observer<Path>,
+        val versionObserver: Observer<Version>)

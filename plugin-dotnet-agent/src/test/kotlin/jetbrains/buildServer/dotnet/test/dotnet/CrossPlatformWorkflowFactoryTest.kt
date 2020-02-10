@@ -35,7 +35,7 @@ import java.io.File
 class CrossPlatformWorkflowFactoryTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _pathResolverWorkflowFactory: PathResolverWorkflowFactory
+    @MockK private lateinit var my_pathResolverWorkflowComposer: PathResolverWorkflowComposer
     @MockK private lateinit var _versionParser: VersionParser
     @MockK private lateinit var _defaultEnvironmentVariables: EnvironmentVariables
     @MockK private lateinit var _context: WorkflowContext
@@ -90,12 +90,12 @@ class CrossPlatformWorkflowFactoryTest {
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns File("wd")
         every { _defaultEnvironmentVariables.getVariables(Version.Empty) } returns _envVars.asSequence()
 
-        val factory = createInstance()
+        val composer = createInstance()
         val executable = ToolPath(Path("dotnet"), Path("v_dotnet"), homePaths)
-        val state = CrossPlatformWorkflowState(executable, _pathSubject, _versionSubject)
+        val state = ToolState(executable, _pathSubject, _versionSubject)
 
         // When
-        val actualWorkflow = factory.create(_context, state)
+        val actualWorkflow = composer.compose(_context, state)
 
         // Then
         Assert.assertEquals(
@@ -150,14 +150,14 @@ class CrossPlatformWorkflowFactoryTest {
             whichCommandline
         }
         every { commandLines.iterator() } returns commandLineIterator
-        every { _pathResolverWorkflowFactory.create(_context, capture(pathResolverStates)) } answers { Workflow(commandLines) }
+        every { my_pathResolverWorkflowComposer.compose(_context, capture(pathResolverStates)) } answers { Workflow(commandLines) }
 
-        val factory = createInstance()
+        val composer = createInstance()
         val executable = ToolPath(Path("dotnet"), Path("v_dotnet"), emptyList())
-        val state = CrossPlatformWorkflowState(executable, _pathSubject, _versionSubject)
+        val state = ToolState(executable, _pathSubject, _versionSubject)
 
         // When
-        val actualWorkflow = factory.create(_context, state)
+        val actualWorkflow = composer.compose(_context, state)
 
         // Then
         Assert.assertEquals(
@@ -180,10 +180,10 @@ class CrossPlatformWorkflowFactoryTest {
     }
 
     private fun createInstance() =
-            CrossPlatformWorkflowFactory(
+            DotnetStateWorkflowComposer(
                     _pathsService,
                     _virtualContext,
-                    listOf(_pathResolverWorkflowFactory),
+                    listOf(my_pathResolverWorkflowComposer),
                     _versionParser,
                     _defaultEnvironmentVariables)
 }

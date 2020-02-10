@@ -39,7 +39,7 @@ class DotCoverWorkflowComposer(
         private val _coverageFilterProvider: CoverageFilterProvider,
         private val _virtualContext: VirtualContext,
         private val _environmentVariables: EnvironmentVariables)
-    : WorkflowComposer<Unit> {
+    : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
 

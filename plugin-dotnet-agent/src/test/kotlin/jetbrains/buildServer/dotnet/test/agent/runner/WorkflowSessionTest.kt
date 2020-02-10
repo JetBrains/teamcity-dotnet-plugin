@@ -31,7 +31,7 @@ import org.testng.annotations.Test
 class WorkflowSessionTest {
     private val _events = mutableListOf<Notification<CommandResultEvent>>()
     private var _subscriptionToken = emptyDisposable()
-    @MockK private lateinit var _workflowComposer: WorkflowComposer<Unit>
+    @MockK private lateinit var _workflowComposer: SimpleWorkflowComposer
     @MockK private lateinit var _commandExecutionFactory: CommandExecutionFactory
     private val _commandLine1 = CommandLine(null, TargetType.Tool, Path("dotnet 1"), Path("wd1"))
     private val _commandLine2 = CommandLine(null, TargetType.CodeCoverageProfiler, Path("dotnet 2"), Path("wd2"))

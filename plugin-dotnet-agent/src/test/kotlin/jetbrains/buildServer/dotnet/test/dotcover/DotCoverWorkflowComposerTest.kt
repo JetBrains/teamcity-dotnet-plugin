@@ -570,7 +570,7 @@ class DotCoverWorkflowComposerTest {
         }
     }
 
-    private fun createInstance(fileSystemService: FileSystemService): WorkflowComposer<Unit> {
+    private fun createInstance(fileSystemService: FileSystemService): SimpleWorkflowComposer {
         return DotCoverWorkflowComposer(
                 _pathService,
                 _parametersService,

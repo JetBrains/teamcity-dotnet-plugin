@@ -50,11 +50,11 @@ class BasePathResolverWorkflowFactoryTest {
     @Test
     fun shouldProvideCommandToResolvePath() {
         // Given
-        val factory = createInstance()
+        val composer = createInstance()
         val state = PathResolverState(Path("dotnet"), _pathEvents.toObserver().dematerialize(), Path("where"))
 
         // When
-        var actualCommandLines = factory.create(_workflowContext, state).commandLines.toList()
+        var actualCommandLines = composer.compose(_workflowContext, state).commandLines.toList()
 
         // Then
         Assert.assertEquals(
@@ -91,11 +91,11 @@ class BasePathResolverWorkflowFactoryTest {
     @Test(dataProvider = "paths")
     fun shouldResolvePath(output: Sequence<CommandResultEvent>, expectedPaths: List<NotificationNext<Path>>) {
         // Given
-        val factory = createInstance()
+        val composer = createInstance()
         val state = PathResolverState(Path("dotnet"), _pathEvents.toObserver().dematerialize(), Path("where"))
 
         // When
-        val iterator = factory.create(_workflowContext, state).commandLines.iterator()
+        val iterator = composer.compose(_workflowContext, state).commandLines.iterator()
         iterator.hasNext()
         output.toObservable().subscribe(_commandSubject);
         iterator.hasNext()
@@ -104,5 +104,5 @@ class BasePathResolverWorkflowFactoryTest {
         Assert.assertEquals(_pathEvents, expectedPaths)
     }
 
-    private fun createInstance() = BasePathResolverWorkflowFactory(_pathsService, _virtualContext)
+    private fun createInstance() = BasePathResolverWorkflowComposer(_pathsService, _virtualContext)
 }

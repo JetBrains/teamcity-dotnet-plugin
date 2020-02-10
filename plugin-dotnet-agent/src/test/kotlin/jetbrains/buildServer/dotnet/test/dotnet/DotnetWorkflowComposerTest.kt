@@ -39,7 +39,7 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _crossPlatformWorkflowFactory: WorkflowFactory<CrossPlatformWorkflowState>
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
@@ -78,8 +78,8 @@ class DotnetWorkflowComposerTest {
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
         every { _workflowContext.status } returns WorkflowStatus.Running
-        every { _crossPlatformWorkflowFactory.create(any(), any()) } answers {
-            arg<CrossPlatformWorkflowState>(1).versionObserver.onNext(Version(3))
+        every { _toolStateWorkflowComposer.compose(any(), any()) } answers {
+            arg<ToolState>(1).versionObserver.onNext(Version(3))
             Workflow(_versionCmd)
         }
         every { _resultsObserver.onNext(any()) } returns Unit
@@ -379,7 +379,7 @@ class DotnetWorkflowComposerTest {
                 _parametersService,
                 _commandLinePresentationService,
                 _virtualContext,
-                _crossPlatformWorkflowFactory)
+                _toolStateWorkflowComposer)
     }
 
     private fun createToken(): Disposable {

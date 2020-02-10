@@ -22,11 +22,15 @@ import jetbrains.buildServer.rx.filter
 import jetbrains.buildServer.rx.map
 import jetbrains.buildServer.rx.use
 
-class BasePathResolverWorkflowFactory(
+class BasePathResolverWorkflowComposer(
         private val _pathsService: PathsService,
         private val _virtualContext: VirtualContext)
-    : PathResolverWorkflowFactory {
-    override fun create(context: WorkflowContext, state: PathResolverState) = Workflow (
+    : PathResolverWorkflowComposer {
+
+    override val target: TargetType
+        get() = TargetType.SystemDiagnostics
+
+    override fun compose(context: WorkflowContext, state: PathResolverState, workflow: Workflow) = Workflow (
             sequence {
                 context
                         .toOutput()

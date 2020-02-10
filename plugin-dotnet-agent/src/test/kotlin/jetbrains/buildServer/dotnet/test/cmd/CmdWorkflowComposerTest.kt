@@ -21,6 +21,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.SimpleWorkflowComposer
 import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.agent.runner.WorkflowComposer
 import jetbrains.buildServer.agent.runner.WorkflowContext
@@ -133,7 +134,7 @@ class CmdWorkflowComposerTest {
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
-    private fun createInstance(): WorkflowComposer<Unit> {
+    private fun createInstance(): SimpleWorkflowComposer {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
                 _environment,

@@ -21,10 +21,7 @@ import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
-import jetbrains.buildServer.agent.runner.LayeredWorkflowComposer
-import jetbrains.buildServer.agent.runner.Workflow
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import org.jmock.Expectations
 import org.jmock.Mockery
 import org.testng.Assert
@@ -40,9 +37,9 @@ class LayeredWorkflowComposerTest {
     fun getComposeCases(): Array<Array<Any>> {
         // Given
         val workflowContext = mockk<WorkflowContext>()
-        val toolWorkflowComposer = mockk<WorkflowComposer<Unit>>()
-        val notApplicableWorkflowComposer = mockk<WorkflowComposer<Unit>>()
-        val profilerOfCodeCoverageWorkflowComposer = mockk<WorkflowComposer<Unit>>()
+        val toolWorkflowComposer = mockk<SimpleWorkflowComposer>()
+        val notApplicableWorkflowComposer = mockk<SimpleWorkflowComposer>()
+        val profilerOfCodeCoverageWorkflowComposer = mockk<SimpleWorkflowComposer>()
 
         // When
         every { toolWorkflowComposer.target } returns TargetType.Tool
@@ -51,9 +48,9 @@ class LayeredWorkflowComposerTest {
         every { profilerOfCodeCoverageWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) } returns _profilerOfCodeCoverageWorkflow
         every { notApplicableWorkflowComposer.target } returns TargetType.NotApplicable
 
-        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _toolWorkflow)
-        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _baseWorkflow)
-        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _profilerOfCodeCoverageWorkflow)
+        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _toolWorkflow)
+        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _baseWorkflow)
+        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _profilerOfCodeCoverageWorkflow)
 
         return arrayOf(
                 arrayOf(workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
@@ -66,7 +63,7 @@ class LayeredWorkflowComposerTest {
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
             workflowContext: WorkflowContext,
-            composers: List<WorkflowComposer<Unit>>,
+            composers: List<SimpleWorkflowComposer>,
             expectedWorkflows: Sequence<Workflow>) {
         // Given
         val composer = createInstance(composers)
@@ -78,7 +75,7 @@ class LayeredWorkflowComposerTest {
         Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflows.flatMap { it.commandLines }.toList())
     }
 
-    private fun createInstance(composers: List<WorkflowComposer<Unit>>): WorkflowComposer<Unit> {
+    private fun createInstance(composers: List<SimpleWorkflowComposer>): SimpleWorkflowComposer {
         return LayeredWorkflowComposer(composers)
     }
 }
