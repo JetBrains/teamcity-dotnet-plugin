@@ -18,12 +18,11 @@ package jetbrains.buildServer.dotnet.test.agent.runner
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.runner.*
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -48,9 +47,10 @@ class LayeredWorkflowComposerTest {
         every { profilerOfCodeCoverageWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) } returns _profilerOfCodeCoverageWorkflow
         every { notApplicableWorkflowComposer.target } returns TargetType.NotApplicable
 
-        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _toolWorkflow)
-        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _baseWorkflow)
-        // never<SimpleWorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _profilerOfCodeCoverageWorkflow)
+        verify(exactly = 0) { notApplicableWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) }
+        verify(exactly = 0) { notApplicableWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) }
+        verify(exactly = 0) { notApplicableWorkflowComposer.compose(workflowContext, Unit, _baseWorkflow) }
+        verify(exactly = 0) { notApplicableWorkflowComposer.compose(workflowContext, Unit, _profilerOfCodeCoverageWorkflow) }
 
         return arrayOf(
                 arrayOf(workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
