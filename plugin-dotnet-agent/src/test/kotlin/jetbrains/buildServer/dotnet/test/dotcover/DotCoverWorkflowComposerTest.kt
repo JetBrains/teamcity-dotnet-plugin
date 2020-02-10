@@ -145,7 +145,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeTraceBlock(any()) } returns _blockToken
         every { _loggerService.writeTrace(any()) } returns Unit
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         verify { _blockToken.dispose() }
@@ -191,7 +191,7 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns dotCoverPath
         every { _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled") } returns null
 
-        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
+        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, baseWorkflow).commandLines.toList()
 
         // Then
         Assert.assertEquals(actualWorkflow, baseWorkflow.commandLines.toList())
@@ -222,7 +222,7 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
 
-        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), baseWorkflow).commandLines.toList()
+        val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, baseWorkflow).commandLines.toList()
 
         // Then
         Assert.assertEquals(actualWorkflow, baseWorkflow.commandLines.toList())
@@ -313,7 +313,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
         every { _environmentVariables.getVariables() } returns _defaultVariables
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -383,7 +383,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeTraceBlock(any()) } returns _blockToken
         every { _loggerService.writeTrace(any()) } returns Unit
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         verify(exactly = 0) { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
@@ -461,7 +461,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeTraceBlock(any()) } returns _blockToken
         every { _loggerService.writeTrace(any()) } returns Unit
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -536,7 +536,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeTraceBlock(any()) } returns _blockToken
         every { _loggerService.writeTrace(any()) } returns Unit
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
         // Then
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -562,7 +562,7 @@ class DotCoverWorkflowComposerTest {
 
         // Then
         try {
-            composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Workflow(sequenceOf(commandLine))).commandLines.toList()
+            composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
             Assert.fail("Eception is required.")
         }
         catch (ex: RunBuildException) {
@@ -570,7 +570,7 @@ class DotCoverWorkflowComposerTest {
         }
     }
 
-    private fun createInstance(fileSystemService: FileSystemService): WorkflowComposer {
+    private fun createInstance(fileSystemService: FileSystemService): WorkflowComposer<Unit> {
         return DotCoverWorkflowComposer(
                 _pathService,
                 _parametersService,

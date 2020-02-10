@@ -22,11 +22,11 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(
-        private val _workflowComposer: WorkflowComposer,
+        private val _workflowComposer: WorkflowComposer<Unit>,
         private val _commandExecutionFactory: CommandExecutionFactory)
     : MultiCommandBuildSession, WorkflowContext {
 
-    private val _commandLinesIterator = lazy { _workflowComposer.compose(this).commandLines.iterator() }
+    private val _commandLinesIterator = lazy { _workflowComposer.compose(this, Unit).commandLines.iterator() }
     private val _eventSubject = subjectOf<CommandResultEvent>()
     private var _buildFinishedStatus: BuildFinishedStatus? = null
 

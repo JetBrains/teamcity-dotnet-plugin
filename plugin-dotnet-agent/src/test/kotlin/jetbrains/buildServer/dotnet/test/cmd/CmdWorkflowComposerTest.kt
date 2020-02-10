@@ -126,14 +126,14 @@ class CmdWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns osType
 
         // When
-        val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit, baseWorkflow).commandLines.toList()
 
         // Then
         // verify { _virtualContext.resolvePath(any()) }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
-    private fun createInstance(): WorkflowComposer {
+    private fun createInstance(): WorkflowComposer<Unit> {
         return CmdWorkflowComposer(
                 ArgumentsServiceStub(),
                 _environment,

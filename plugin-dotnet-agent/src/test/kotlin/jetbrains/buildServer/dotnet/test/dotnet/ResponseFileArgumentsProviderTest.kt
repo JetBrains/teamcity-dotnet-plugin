@@ -43,7 +43,7 @@ class ResponseFileArgumentsProviderTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { arg<String>(0)}
-        every { _argumentsService.normalize(any()) }answers { "\"${arg<String>(0)}\""}
+        every { _argumentsService.normalize(any()) } answers { "\"${arg<String>(0)}\""}
     }
 
     @Test

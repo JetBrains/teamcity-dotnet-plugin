@@ -156,7 +156,7 @@ class VisualStudioWorkflowComposerTest {
             }
         })
 
-        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0))).commandLines.toList()
+        val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -217,7 +217,7 @@ class VisualStudioWorkflowComposerTest {
         })
 
         var context = WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(exitCode));
-        val actualCommandLines = composer.compose(context).commandLines.toList()
+        val actualCommandLines = composer.compose(context, Unit).commandLines.toList()
 
         // Then
         _ctx.assertIsSatisfied()
@@ -225,7 +225,7 @@ class VisualStudioWorkflowComposerTest {
         Assert.assertEquals(context.status, WorkflowStatus.Failed)
     }
 
-    private fun createInstance(parameters: Map<String, String>): WorkflowComposer {
+    private fun createInstance(parameters: Map<String, String>): WorkflowComposer<Unit> {
         return VisualStudioWorkflowComposer(
                 ParametersServiceStub(parameters),
                 ArgumentsServiceStub(),

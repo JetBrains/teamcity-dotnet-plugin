@@ -31,7 +31,7 @@ import org.testng.annotations.Test
 class WorkflowSessionTest {
     private val _events = mutableListOf<Notification<CommandResultEvent>>()
     private var _subscriptionToken = emptyDisposable()
-    @MockK private lateinit var _workflowComposer: WorkflowComposer
+    @MockK private lateinit var _workflowComposer: WorkflowComposer<Unit>
     @MockK private lateinit var _commandExecutionFactory: CommandExecutionFactory
     private val _commandLine1 = CommandLine(null, TargetType.Tool, Path("dotnet 1"), Path("wd1"))
     private val _commandLine2 = CommandLine(null, TargetType.CodeCoverageProfiler, Path("dotnet 2"), Path("wd2"))
@@ -56,7 +56,7 @@ class WorkflowSessionTest {
     fun shouldProvideCommandsToExecute() {
         // Given
         val session = createInstance()
-        every { _workflowComposer.compose(session) } returns Workflow(_commandLine1, _commandLine2)
+        every { _workflowComposer.compose(session, Unit) } returns Workflow(_commandLine1, _commandLine2)
 
         // When
         val commands = session.toSequence().toList()
@@ -75,7 +75,7 @@ class WorkflowSessionTest {
         // When
 
         // Then
-        every { _workflowComposer.compose(session) } returns Workflow(
+        every { _workflowComposer.compose(session, Unit) } returns Workflow(
                 sequence {
                     yield(_commandLine1)
                     Assert.assertEquals(session.status, WorkflowStatus.Running)
@@ -91,7 +91,7 @@ class WorkflowSessionTest {
         val session = createInstance()
 
         // When
-        every { _workflowComposer.compose(session) } returns Workflow(
+        every { _workflowComposer.compose(session, Unit) } returns Workflow(
                 sequence {
                     yield(_commandLine1)
                     session.abort(BuildFinishedStatus.FINISHED_FAILED)
@@ -111,7 +111,7 @@ class WorkflowSessionTest {
         val session = createInstance()
 
         // When
-        every { _workflowComposer.compose(session) } returns Workflow(
+        every { _workflowComposer.compose(session, Unit) } returns Workflow(
                 sequence {
                     yield(_commandLine1)
                     session.sessionFinished()

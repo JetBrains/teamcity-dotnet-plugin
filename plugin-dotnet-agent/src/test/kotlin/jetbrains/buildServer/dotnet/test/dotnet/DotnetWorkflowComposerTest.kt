@@ -131,7 +131,7 @@ class DotnetWorkflowComposerTest {
         }
 
         // When
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
         // Then
         verifyAllTokensWereDisposed()
@@ -238,7 +238,7 @@ class DotnetWorkflowComposerTest {
         }
 
         // When
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
         // Then
         verifyAllTokensWereDisposed()
@@ -329,7 +329,7 @@ class DotnetWorkflowComposerTest {
         every { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) } returns Unit
 
         // When
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
         // Then
         verifyAllTokensWereDisposed()

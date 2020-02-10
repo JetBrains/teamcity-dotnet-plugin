@@ -35,11 +35,11 @@ class VisualStudioWorkflowComposer(
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver,
         private val _virtualContext: VirtualContext)
-    : WorkflowComposer {
+    : WorkflowComposer<Unit> {
 
     override val target: TargetType = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, workflow: Workflow) =
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
                 if (context.status != WorkflowStatus.Running) {
                     return@sequence

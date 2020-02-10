@@ -16,6 +16,8 @@
 
 package jetbrains.buildServer.dotnet.test.agent.runner
 
+import io.mockk.every
+import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLine
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
@@ -36,61 +38,47 @@ class LayeredWorkflowComposerTest {
 
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
-        val ctx = Mockery()
-        val workflowContext = ctx.mock<WorkflowContext>(WorkflowContext::class.java)
-        val toolWorkflowComposer = ctx.mock<WorkflowComposer>(WorkflowComposer::class.java, "Tool")
-        val notApplicableWorkflowComposer = ctx.mock<WorkflowComposer>(WorkflowComposer::class.java, "NotApplicable")
-        val profilerOfCodeCoverageWorkflowComposer = ctx.mock<WorkflowComposer>(WorkflowComposer::class.java, "ProfilerOfCodeCoverage")
-        ctx.checking(object : Expectations() {
-            init {
-                allowing<WorkflowComposer>(toolWorkflowComposer).target
-                will(returnValue(TargetType.Tool))
+        // Given
+        val workflowContext = mockk<WorkflowContext>()
+        val toolWorkflowComposer = mockk<WorkflowComposer<Unit>>()
+        val notApplicableWorkflowComposer = mockk<WorkflowComposer<Unit>>()
+        val profilerOfCodeCoverageWorkflowComposer = mockk<WorkflowComposer<Unit>>()
 
-                allowing<WorkflowComposer>(toolWorkflowComposer).compose(workflowContext!!, _baseWorkflow)
-                will(returnValue(_toolWorkflow))
+        // When
+        every { toolWorkflowComposer.target } returns TargetType.Tool
+        every { toolWorkflowComposer.compose(workflowContext!!, Unit, _baseWorkflow) } returns _toolWorkflow
+        every { profilerOfCodeCoverageWorkflowComposer.target } returns TargetType.CodeCoverageProfiler
+        every { profilerOfCodeCoverageWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) } returns _profilerOfCodeCoverageWorkflow
+        every { notApplicableWorkflowComposer.target } returns TargetType.NotApplicable
 
-                allowing<WorkflowComposer>(profilerOfCodeCoverageWorkflowComposer).target
-                will(returnValue(TargetType.CodeCoverageProfiler))
-
-                allowing<WorkflowComposer>(profilerOfCodeCoverageWorkflowComposer).compose(workflowContext, _toolWorkflow)
-                will(returnValue(_profilerOfCodeCoverageWorkflow))
-
-                allowing<WorkflowComposer>(notApplicableWorkflowComposer).target
-                will(returnValue(TargetType.NotApplicable))
-
-                never<WorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, _toolWorkflow)
-                never<WorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, _baseWorkflow)
-                never<WorkflowComposer>(notApplicableWorkflowComposer).compose(workflowContext, _profilerOfCodeCoverageWorkflow)
-            }
-        })
+        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _toolWorkflow)
+        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _baseWorkflow)
+        // never<WorkflowComposer<Unit>>(notApplicableWorkflowComposer).compose(workflowContext, Unit, _profilerOfCodeCoverageWorkflow)
 
         return arrayOf(
-                arrayOf(ctx, workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
-                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer, toolWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
-                arrayOf(ctx, workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
-                arrayOf(ctx, workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow, _profilerOfCodeCoverageWorkflow)),
-                arrayOf(ctx, workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)))
+                arrayOf(workflowContext, listOf(notApplicableWorkflowComposer, toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer, toolWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)),
+                arrayOf(workflowContext, listOf(toolWorkflowComposer, profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow, _profilerOfCodeCoverageWorkflow)),
+                arrayOf(workflowContext, listOf(profilerOfCodeCoverageWorkflowComposer, toolWorkflowComposer, notApplicableWorkflowComposer) as Any, sequenceOf(_profilerOfCodeCoverageWorkflow)))
     }
 
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
-            ctx: Mockery,
             workflowContext: WorkflowContext,
-            composers: List<WorkflowComposer>,
+            composers: List<WorkflowComposer<Unit>>,
             expectedWorkflows: Sequence<Workflow>) {
         // Given
-
         val composer = createInstance(composers)
 
         // When
-        val actualWorkflow = composer.compose(workflowContext, _baseWorkflow)
+        val actualWorkflow = composer.compose(workflowContext, Unit, _baseWorkflow)
 
         // Then
-        ctx.assertIsSatisfied()
         Assert.assertEquals(actualWorkflow.commandLines.toList(), expectedWorkflows.flatMap { it.commandLines }.toList())
     }
 
-    private fun createInstance(composers: List<WorkflowComposer>): WorkflowComposer {
+    private fun createInstance(composers: List<WorkflowComposer<Unit>>): WorkflowComposer<Unit> {
         return LayeredWorkflowComposer(composers)
     }
 }

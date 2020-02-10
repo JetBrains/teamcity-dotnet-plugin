@@ -39,11 +39,11 @@ class DotCoverWorkflowComposer(
         private val _coverageFilterProvider: CoverageFilterProvider,
         private val _virtualContext: VirtualContext,
         private val _environmentVariables: EnvironmentVariables)
-    : WorkflowComposer {
+    : WorkflowComposer<Unit> {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
-    override fun compose(context: WorkflowContext, workflow: Workflow): Workflow {
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow {
         if (!dotCoverEnabled) {
             return workflow
         }

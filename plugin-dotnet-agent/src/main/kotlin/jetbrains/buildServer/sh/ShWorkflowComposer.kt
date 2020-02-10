@@ -26,11 +26,11 @@ class ShWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _environment: Environment,
         private val _virtualContext: VirtualContext)
-    : WorkflowComposer {
+    : WorkflowComposer<Unit> {
 
     override val target: TargetType = TargetType.Host
 
-    override fun compose(context: WorkflowContext, workflow: Workflow) =
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             when (_virtualContext.targetOSType) {
                 OSType.UNIX, OSType.MAC -> {
                     Workflow(sequence {

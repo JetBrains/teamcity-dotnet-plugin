@@ -33,11 +33,11 @@ class DotnetWorkflowComposer(
         private val _commandLinePresentationService: CommandLinePresentationService,
         private val _virtualContext: VirtualContext,
         private val _crossPlatformWorkflowState: WorkflowFactory<CrossPlatformWorkflowState>)
-    : WorkflowComposer {
+    : WorkflowComposer<Unit> {
 
     override val target: TargetType = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, workflow: Workflow): Workflow =
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow =
             Workflow(sequence {
                 val verbosity = _parametersService
                         .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)

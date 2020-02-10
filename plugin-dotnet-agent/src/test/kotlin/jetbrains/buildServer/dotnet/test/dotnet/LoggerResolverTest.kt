@@ -115,16 +115,16 @@ class LoggerResolverTest {
 
                 arrayOf(
                         ToolType.VSTest,
-                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id),
-                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
                         ToolType.VSTest,
-                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id, DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id),
-                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
