@@ -29,7 +29,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class BasePathResolverWorkflowFactoryTest {
+class BasePathResolverWorkflowComposerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _workflowContext: WorkflowContext
