@@ -26,7 +26,8 @@ import java.io.File
 class MSBuildToolResolver(
         private val _virualContext: VirtualContext,
         private val _parametersService: ParametersService,
-        private val _dotnetToolResolver: ToolResolver)
+        private val _dotnetToolResolver: ToolResolver,
+        override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
     : ToolResolver {
     override val paltform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
@@ -77,15 +78,19 @@ class MSBuildToolResolver(
                 return Tool.tryParse(it)
             }
 
-    private fun tryGetWindowsTool(parameterName: String): Path? =
-            _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-                return Path(File(it, MSBuildWindowsTooName).canonicalPath)
-            }
+    private fun tryGetWindowsTool(parameterName: String): Path? {
+        val executable =  MSBuildWindowsTooName
+        if (_virualContext.isVirtual) {
+            return Path(executable)
+        }
+
+        return _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
+            return Path(File(it, executable).canonicalPath)
+        }
+    }
 
     private fun tryGetMonoTool(parameterName: String): Path? {
         return _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-            val baseDirectory = File(it).canonicalFile.parent
-
             val executable =  when (_virualContext.targetOSType) {
                 OSType.WINDOWS -> MSBuildMonoWindowsToolName
                 else -> MSBuildMonoToolName
@@ -95,6 +100,7 @@ class MSBuildToolResolver(
                return Path(executable)
             }
 
+            val baseDirectory = File(it).canonicalFile.parent
             return Path(File(baseDirectory, executable).canonicalPath)
         }
     }

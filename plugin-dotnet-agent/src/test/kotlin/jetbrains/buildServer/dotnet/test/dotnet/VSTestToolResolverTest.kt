@@ -16,17 +16,29 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class VSTestToolResolverTest {
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+    }
 
     @DataProvider
     fun testData(): Array<Array<out Any?>> {
@@ -65,6 +77,6 @@ class VSTestToolResolverTest {
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)),true))
+        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)),true, _toolStateWorkflowComposer), _toolStateWorkflowComposer)
     }
 }

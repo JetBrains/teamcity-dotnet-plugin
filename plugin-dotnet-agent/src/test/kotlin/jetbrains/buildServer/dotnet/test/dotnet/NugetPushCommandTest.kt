@@ -36,13 +36,13 @@ class NugetPushCommandTest {
     private lateinit var _ctx: Mockery
     @MockK private lateinit var _resultsAnalyzer: ResultsAnalyzer
     @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
     }
-
 
     @DataProvider
     fun testNugetPushArgumentsData(): Array<Array<Any>> {
@@ -126,6 +126,6 @@ class NugetPushCommandTest {
                     _resultsAnalyzer,
                     TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true),
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                     _resultsObserver)
 }

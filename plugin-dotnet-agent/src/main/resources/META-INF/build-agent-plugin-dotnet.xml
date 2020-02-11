@@ -69,6 +69,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider">
     <constructor-arg ref="dotnetToolEnvironment"/>
+    <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
   <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
@@ -77,6 +78,14 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetStateWorkflowComposer" id="dotnetStateWorkflowComposer">
     <constructor-arg ref="dotnetVersionParser"/>
+    <constructor-arg>
+      <list>
+        <ref bean="unixPathResolverWorkflowComposer"/>
+        <ref bean="windowsPathResolverWorkflowComposer"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.SimpleStateWorkflowComposer" id="simpleStateWorkflowComposer">
     <constructor-arg>
       <list>
         <ref bean="unixPathResolverWorkflowComposer"/>
@@ -103,12 +112,15 @@
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver">
     <constructor-arg ref="dotnetToolEnvironment"/>
+    <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
+    <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.VSTestToolResolver" id="vstestToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
+    <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl"/>

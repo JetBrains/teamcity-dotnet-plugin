@@ -378,8 +378,7 @@ class DotnetWorkflowComposerTest {
                 _commandRegistry,
                 _parametersService,
                 _commandLinePresentationService,
-                _virtualContext,
-                _toolStateWorkflowComposer)
+                _virtualContext)
     }
 
     private fun createToken(): Disposable {

@@ -36,6 +36,7 @@ class NugetDeleteCommandTest {
     private lateinit var _ctx: Mockery
     @MockK private lateinit var _resultsAnalyzer: ResultsAnalyzer
     @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
@@ -100,6 +101,6 @@ class NugetDeleteCommandTest {
                     ParametersServiceStub(parameters),
                     _resultsAnalyzer,
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true),
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer),
                     _resultsObserver)
 }

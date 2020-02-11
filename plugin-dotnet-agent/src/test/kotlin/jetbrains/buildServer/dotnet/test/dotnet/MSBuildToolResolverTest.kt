@@ -34,11 +34,14 @@ import java.io.File
 class MSBuildToolResolverTest {
     private lateinit var _ctx: Mockery
     private lateinit var _virtualContext: VirtualContext
+    private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
         _virtualContext = _ctx.mock(VirtualContext::class.java)
+        _virtualContext = _ctx.mock(VirtualContext::class.java)
+        _toolStateWorkflowComposer = _ctx.mock(ToolStateWorkflowComposer::class.java)
     }
 
     @DataProvider
@@ -118,6 +121,6 @@ class MSBuildToolResolverTest {
         return MSBuildToolResolver(
                 _virtualContext,
                 ParametersServiceStub(parameters),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)), true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)), true, _toolStateWorkflowComposer), _toolStateWorkflowComposer)
     }
 }

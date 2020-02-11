@@ -31,8 +31,7 @@ class DotnetWorkflowComposer(
         private val _commandRegistry: CommandRegistry,
         private val _parametersService: ParametersService,
         private val _commandLinePresentationService: CommandLinePresentationService,
-        private val _virtualContext: VirtualContext,
-        private val _toolStateWorkflowComposer: ToolStateWorkflowComposer)
+        private val _virtualContext: VirtualContext)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -47,7 +46,7 @@ class DotnetWorkflowComposer(
                 val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
                 val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
 
-                var dotnetVersions = mutableListOf<Version>()
+                var version: Version? = null
                 var virtualDotnetExecutable: Path? = null
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
@@ -58,21 +57,19 @@ class DotnetWorkflowComposer(
                     val executable = command.toolResolver.executable
                     var virtualPath = executable.virtualPath
 
-                    if (command.toolResolver.paltform == ToolPlatform.CrossPlatform) {
-                        if (dotnetVersions.isEmpty()) {
-                            var state = ToolState(
-                                    executable,
-                                    observer<Path> { virtualDotnetExecutable = it },
-                                    observer<Version> { dotnetVersions.add(it) }
-                            )
+                    if (version == null) {
+                        var state = ToolState(
+                                executable,
+                                observer<Path> { virtualDotnetExecutable = it },
+                                observer<Version> { version = it }
+                        )
 
-                            yieldAll(_toolStateWorkflowComposer.compose(context, state).commandLines)
-                        }
-
-                        virtualPath = virtualDotnetExecutable ?: virtualPath
+                        yieldAll(command.toolResolver.toolStateWorkflowComposer.compose(context, state).commandLines)
                     }
 
-                    val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, dotnetVersions.lastOrNull() ?: Version.Empty, verbosity)
+                    virtualPath = virtualDotnetExecutable ?: virtualPath
+
+                    val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, version ?: Version.Empty, verbosity)
                     val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
                     val result = mutableSetOf<CommandResult>()
                     disposableOf(

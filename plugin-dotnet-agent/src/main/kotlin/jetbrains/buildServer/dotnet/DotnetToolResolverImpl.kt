@@ -28,7 +28,8 @@ class DotnetToolResolverImpl(
         private val _toolEnvironment: ToolEnvironment,
         private val _toolSearchService: ToolSearchService,
         private val _environment: Environment,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
     : DotnetToolResolver {
     override val paltform: ToolPlatform
         get() = ToolPlatform.CrossPlatform

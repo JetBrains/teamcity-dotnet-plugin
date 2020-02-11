@@ -16,16 +16,28 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class VSTestCommandTest {
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+    }
+
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -113,5 +125,5 @@ class VSTestCommandTest {
                     TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true))
+                    DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer))
 }

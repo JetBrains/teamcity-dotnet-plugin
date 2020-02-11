@@ -16,25 +16,27 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class CleanCommandTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK lateinit var _resultsAnalyzer: ResultsAnalyzer
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _resultsAnalyzer = _ctx.mock<ResultsAnalyzer>(ResultsAnalyzer::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -119,5 +121,5 @@ class CleanCommandTest {
                     _resultsAnalyzer,
                     TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(arguments),
-                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true))
+                    DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer))
 }

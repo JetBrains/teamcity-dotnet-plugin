@@ -16,16 +16,28 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class CustomCommandTest {
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+    }
+
     @DataProvider
     fun testCustomArgumentsData(): Array<Array<Any>> {
         return arrayOf(
@@ -80,6 +92,6 @@ class CustomCommandTest {
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true))
+                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer))
     }
 }

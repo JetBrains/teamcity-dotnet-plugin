@@ -24,4 +24,6 @@ interface ToolResolver {
     val executable: ToolPath
 
     val isCommandRequired: Boolean
+
+    val toolStateWorkflowComposer: ToolStateWorkflowComposer
 }

@@ -26,6 +26,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetToolResolverImpl
+import jetbrains.buildServer.dotnet.ToolStateWorkflowComposer
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -40,6 +41,7 @@ class DotnetToolResolverTest {
     @MockK private lateinit var _toolEnvironment: ToolEnvironment
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
@@ -157,6 +159,6 @@ class DotnetToolResolverTest {
     }
 
     private fun createInstance(): DotnetToolResolver {
-        return DotnetToolResolverImpl(_parametersService, _toolEnvironment, _toolSearchService, _environment, _virtualContext)
+        return DotnetToolResolverImpl(_parametersService, _toolEnvironment, _toolSearchService, _environment, _virtualContext, _toolStateWorkflowComposer)
     }
 }

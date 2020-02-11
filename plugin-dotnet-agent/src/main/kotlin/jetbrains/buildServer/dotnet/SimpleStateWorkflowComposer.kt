@@ -23,12 +23,9 @@ import jetbrains.buildServer.rx.map
 import jetbrains.buildServer.rx.observer
 import jetbrains.buildServer.rx.use
 
-class DotnetStateWorkflowComposer(
-        private val _pathsService: PathsService,
+class SimpleStateWorkflowComposer(
         private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
-        private val _versionParser: VersionParser,
-        private val _defaultEnvironmentVariables: EnvironmentVariables)
+        private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>)
     : ToolStateWorkflowComposer {
 
     override val target: TargetType
@@ -39,7 +36,7 @@ class DotnetStateWorkflowComposer(
                 val executable = state.executable
                 var virtualPath: Path? = null
                 if (_virtualContext.isVirtual && executable.homePaths.isEmpty()) {
-                    // Getting dotnet executable
+                    // Getting executable
                     val pathResolverState = PathResolverState(
                             executable.virtualPath,
                             observer<Path> {
@@ -55,26 +52,7 @@ class DotnetStateWorkflowComposer(
                     }
                 }
 
-                // Getting .NET Core version
-                val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
-
-                context
-                        .toOutput()
-                        .map { _versionParser.parse(listOf(it)) }
-                        .filter { it != Version.Empty }
-                        .subscribe(state.versionObserver)
-                        .use {
-                            yield(
-                                    CommandLine(
-                                            null,
-                                        TargetType.SystemDiagnostics,
-                                        virtualPath ?: executable.virtualPath,
-                                        workingDirectory,
-                                        DotnetWorkflowComposer.VersionArgs,
-                                        _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
-                                    "dotnet --version",
-                                        listOf(StdOutText("Getting the .NET SDK version"))))
-                        }
+                state.versionObserver.onNext(Version.Empty)
             }
     )
 }

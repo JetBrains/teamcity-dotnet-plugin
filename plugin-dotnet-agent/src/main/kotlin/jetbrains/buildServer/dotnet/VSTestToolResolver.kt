@@ -26,7 +26,8 @@ import java.io.File
 
 class VSTestToolResolver(
         private val _parametersService: ParametersService,
-        private val _dotnetToolResolver: ToolResolver)
+        private val _dotnetToolResolver: ToolResolver,
+        override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
     : ToolResolver {
     override val paltform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
