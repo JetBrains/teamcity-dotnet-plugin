@@ -33,6 +33,7 @@ import java.io.File
 
 class VSTestToolResolverTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
@@ -77,6 +78,6 @@ class VSTestToolResolverTest {
     }
 
     private fun createInstance(parameters: Map<String, String>, executableFile: File): ToolResolver {
-        return VSTestToolResolver(ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)),true, _toolStateWorkflowComposer), _toolStateWorkflowComposer)
+        return VSTestToolResolver(_virtualContext, ParametersServiceStub(parameters), DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path(executableFile.path)),true, _toolStateWorkflowComposer), _toolStateWorkflowComposer)
     }
 }

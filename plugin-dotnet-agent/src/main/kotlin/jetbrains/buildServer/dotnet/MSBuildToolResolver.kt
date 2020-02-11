@@ -24,7 +24,7 @@ import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class MSBuildToolResolver(
-        private val _virualContext: VirtualContext,
+        private val _virtualContext: VirtualContext,
         private val _parametersService: ParametersService,
         private val _dotnetToolResolver: ToolResolver,
         override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
@@ -80,7 +80,7 @@ class MSBuildToolResolver(
 
     private fun tryGetWindowsTool(parameterName: String): Path? {
         val executable =  MSBuildWindowsTooName
-        if (_virualContext.isVirtual) {
+        if (_virtualContext.isVirtual) {
             return Path(executable)
         }
 
@@ -90,16 +90,16 @@ class MSBuildToolResolver(
     }
 
     private fun tryGetMonoTool(parameterName: String): Path? {
+        val executable =  when (_virtualContext.targetOSType) {
+            OSType.WINDOWS -> MSBuildMonoWindowsToolName
+            else -> MSBuildMonoToolName
+        }
+
+        if (_virtualContext.isVirtual) {
+            return Path(executable)
+        }
+
         return _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-            val executable =  when (_virualContext.targetOSType) {
-                OSType.WINDOWS -> MSBuildMonoWindowsToolName
-                else -> MSBuildMonoToolName
-            }
-
-            if (_virualContext.isVirtual) {
-               return Path(executable)
-            }
-
             val baseDirectory = File(it).canonicalFile.parent
             return Path(File(baseDirectory, executable).canonicalPath)
         }

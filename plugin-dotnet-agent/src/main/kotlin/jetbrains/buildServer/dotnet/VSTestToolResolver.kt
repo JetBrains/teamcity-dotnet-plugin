@@ -20,11 +20,13 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
 class VSTestToolResolver(
+        private val _virtualContext: VirtualContext,
         private val _parametersService: ParametersService,
         private val _dotnetToolResolver: ToolResolver,
         override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
@@ -67,10 +69,12 @@ class VSTestToolResolver(
         }
 
     private fun tryGetTool(parameterName: String): Path? {
-        _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
-            return Path(File(it).canonicalPath)
+        if (_virtualContext.isVirtual) {
+            return Path("vstest.console.exe")
         }
 
-        return null
+        return _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)?.let {
+            return Path(File(it).canonicalPath)
+        }
     }
 }
