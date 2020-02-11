@@ -102,7 +102,7 @@ class CommandExecutionAdapter(
             _loggerService.writeStandardOutput(text)
         }
         else {
-            LOG.info(text)
+            _loggerService.writeTrace(text)
         }
     }
 
@@ -111,7 +111,7 @@ class CommandExecutionAdapter(
             _loggerService.writeStandardOutput(*text)
         }
         else {
-            LOG.info(text.map { it.text }.joinToString(" "))
+            _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
         }
     }
 
@@ -126,13 +126,9 @@ class CommandExecutionAdapter(
                 _baseLogger.message(message)
             } else {
                 if (message != null) {
-                    LOG.info(message)
+                    _loggerService.writeTrace(message)
                 }
             }
         }
-    }
-
-    companion object {
-        private val LOG = Logger.getLogger(CommandExecutionAdapter::class.java)
     }
 }
