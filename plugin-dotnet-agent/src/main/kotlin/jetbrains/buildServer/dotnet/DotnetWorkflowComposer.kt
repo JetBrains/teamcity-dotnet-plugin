@@ -46,7 +46,7 @@ class DotnetWorkflowComposer(
                 val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
                 val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
 
-                var version: Version? = null
+                var versions = mutableMapOf<String, Version>()
                 var virtualDotnetExecutable: Path? = null
                 val analyzerContext = DotnetWorkflowAnalyzerContext()
                 for (command in _commandSet.commands) {
@@ -57,11 +57,15 @@ class DotnetWorkflowComposer(
                     val executable = command.toolResolver.executable
                     var virtualPath = executable.virtualPath
 
+                    var version: Version? = versions[executable.path.path];
                     if (version == null) {
                         var state = ToolState(
                                 executable,
                                 observer<Path> { virtualDotnetExecutable = it },
-                                observer<Version> { version = it }
+                                observer<Version> {
+                                    version = it
+                                    versions[executable.path.path] = it;
+                                }
                         )
 
                         yieldAll(command.toolResolver.toolStateWorkflowComposer.compose(context, state).commandLines)

@@ -16,6 +16,10 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
@@ -23,8 +27,6 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.util.OSType
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -32,16 +34,13 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildToolResolverTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _virtualContext: VirtualContext
-    private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _virtualContext = _ctx.mock(VirtualContext::class.java)
-        _virtualContext = _ctx.mock(VirtualContext::class.java)
-        _toolStateWorkflowComposer = _ctx.mock(ToolStateWorkflowComposer::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -86,16 +85,8 @@ class MSBuildToolResolverTest {
         val instance = createInstance(parameters, File("dotnet"))
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<VirtualContext>(_virtualContext).isVirtual
-                will(returnValue(isVirual))
-
-                oneOf<VirtualContext>(_virtualContext).targetOSType
-                will(returnValue(targetOSType))
-            }
-        })
-
+        every { _virtualContext.isVirtual } returns isVirual
+        every { _virtualContext.targetOSType } returns targetOSType
 
         var actualIsCommandRequired: Boolean? = null
         var actualExecutable: ToolPath? = null
@@ -108,7 +99,6 @@ class MSBuildToolResolverTest {
         } catch (ex: RunBuildException) {
             Assert.assertEquals(exceptionPattern!!.containsMatchIn(ex.message!!), true)
         }
-
 
         // Then
         if (exceptionPattern == null) {

@@ -39,7 +39,8 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _dotnetToolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _msbuildToolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
 
     private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
@@ -78,9 +79,13 @@ class DotnetWorkflowComposerTest {
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
         every { _workflowContext.status } returns WorkflowStatus.Running
-        every { _toolStateWorkflowComposer.compose(any(), any()) } answers {
+        every { _dotnetToolStateWorkflowComposer.compose(any(), any()) } answers {
             arg<ToolState>(1).versionObserver.onNext(Version(3))
             Workflow(_versionCmd)
+        }
+        every { _msbuildToolStateWorkflowComposer.compose(any(), any()) } answers {
+            arg<ToolState>(1).versionObserver.onNext(Version.Empty)
+            Workflow()
         }
         every { _resultsObserver.onNext(any()) } returns Unit
     }
@@ -92,6 +97,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns ToolPath(_msbuildExecutable.path)
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
@@ -173,6 +179,7 @@ class DotnetWorkflowComposerTest {
     private fun createDotnetCommand(): DotnetCommand {
         return mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
                 every { executable } returns _dotnetExecutable
                 every { paltform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
@@ -199,6 +206,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
@@ -285,6 +293,7 @@ class DotnetWorkflowComposerTest {
 
         val msbuildCommand = mockk<DotnetCommand>() {
             every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { paltform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
