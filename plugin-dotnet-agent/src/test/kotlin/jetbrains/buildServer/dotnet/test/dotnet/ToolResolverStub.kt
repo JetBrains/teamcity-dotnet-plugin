@@ -21,7 +21,7 @@ import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.ToolPlatform
 import jetbrains.buildServer.dotnet.ToolStateWorkflowComposer
 
-class DotnetToolResolverStub(
+class ToolResolverStub(
         override val paltform:ToolPlatform,
         override val executable: ToolPath,
         override val isCommandRequired: Boolean,

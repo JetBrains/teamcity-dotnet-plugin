@@ -122,7 +122,7 @@ class BuildCommandTest {
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
+                ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 }

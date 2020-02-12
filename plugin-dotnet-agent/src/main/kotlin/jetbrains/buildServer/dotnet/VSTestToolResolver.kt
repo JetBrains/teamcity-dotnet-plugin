@@ -29,10 +29,18 @@ class VSTestToolResolver(
         private val _virtualContext: VirtualContext,
         private val _parametersService: ParametersService,
         private val _dotnetToolResolver: ToolResolver,
-        override val toolStateWorkflowComposer: ToolStateWorkflowComposer)
+        private val _stateWorkflowComposer: ToolStateWorkflowComposer)
     : ToolResolver {
     override val paltform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
+
+    override val toolStateWorkflowComposer: ToolStateWorkflowComposer
+        get() = _currentTool?.let {
+            when (it.platform) {
+                ToolPlatform.CrossPlatform -> _dotnetToolResolver.toolStateWorkflowComposer
+                else -> _stateWorkflowComposer
+            }
+        } ?: _dotnetToolResolver.toolStateWorkflowComposer
 
     override val executable: ToolPath
         get() {

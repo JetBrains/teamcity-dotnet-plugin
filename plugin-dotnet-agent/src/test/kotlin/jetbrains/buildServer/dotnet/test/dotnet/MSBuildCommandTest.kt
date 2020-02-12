@@ -124,7 +124,7 @@ class MSBuildCommandTest {
                 TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                 ArgumentsProviderStub(respArguments),
                 ArgumentsProviderStub(customArguments),
-                DotnetToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
+                ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
     }
 }

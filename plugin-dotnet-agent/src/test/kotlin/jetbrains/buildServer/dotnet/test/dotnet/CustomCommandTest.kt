@@ -92,6 +92,6 @@ class CustomCommandTest {
                 ParametersServiceStub(parameters),
                 resultsAnalyzer,
                 ArgumentsProviderStub(arguments),
-                DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer))
+                ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer))
     }
 }

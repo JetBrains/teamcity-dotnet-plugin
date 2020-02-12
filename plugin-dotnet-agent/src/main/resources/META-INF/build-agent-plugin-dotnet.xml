@@ -95,7 +95,6 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
-    <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
