@@ -194,6 +194,13 @@
     <constructor-arg ref="vstestToolResolver"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.dotnet.TestAssemblyCommand" id="testAssemblyCommand">
+    <constructor-arg ref="testsResultsAnalyzer"/>
+    <constructor-arg ref="vstestLoggerArgumentsProvider"/>
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+    <constructor-arg ref="vstestToolResolver"/>
+  </bean>
+
   <!-- dotCover workflow composer -->
   <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>

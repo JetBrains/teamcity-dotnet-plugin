@@ -16,31 +16,40 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class DotnetCommandSetTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _buildCommand: DotnetCommand
-    private lateinit var _cleanCommand: DotnetCommand
-    private lateinit var _environmentBuilder: EnvironmentBuilder
+    private lateinit var _context: DotnetBuildContext
+    @MockK private lateinit var _environmentBuilder: EnvironmentBuilder
+    @MockK private lateinit var _buildCommand: DotnetCommand
+    @MockK private lateinit var _cleanCommand: DotnetCommand
+    @MockK private lateinit var _dotnetCommand: DotnetCommand
+    @MockK private lateinit var _testCommand: TestCommand
+    @MockK private lateinit var _testAssemblyCommand: TestAssemblyCommand
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _buildCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
-        _cleanCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
-        _environmentBuilder = _ctx.mock(EnvironmentBuilder::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
+        every { _buildCommand.commandType } returns DotnetCommandType.Build
+        every { _cleanCommand.commandType } returns DotnetCommandType.Clean
+        every { _testCommand.commandType } returns DotnetCommandType.Test
+        every { _testAssemblyCommand.commandType } returns DotnetCommandType.TestAssembly
+        _context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
     }
 
     @DataProvider
@@ -60,49 +69,24 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), _ctx.mock(DotnetCommand::class.java))
-        _ctx.checking(object : Expectations() {
-            init {
-                allowing<DotnetCommand>(_buildCommand).commandType
-                will(returnValue(DotnetCommandType.Build))
+        every { _buildCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _buildCommand.getArguments(_context) } returns sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))
+        every { _buildCommand.targetArguments } returns sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog", CommandLineArgumentType.Target))))
+        every { _buildCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
 
-                allowing<DotnetCommand>(_buildCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)))
-
-                allowing<DotnetCommand>(_buildCommand).getArguments(context)
-                will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
-
-                allowing<DotnetCommand>(_buildCommand).targetArguments
-                will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
-
-                allowing<DotnetCommand>(_buildCommand).environmentBuilders
-                will(returnValue(sequenceOf(_environmentBuilder)))
-
-                allowing<DotnetCommand>(_cleanCommand).commandType
-                will(returnValue(DotnetCommandType.Clean))
-
-                allowing<DotnetCommand>(_cleanCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true)))
-
-                allowing<DotnetCommand>(_cleanCommand).getArguments(context)
-                will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
-
-                allowing<DotnetCommand>(_cleanCommand).targetArguments
-                will(returnValue(emptySequence<TargetArguments>()))
-
-                allowing<DotnetCommand>(_cleanCommand).environmentBuilders
-                will(returnValue(emptySequence<EnvironmentBuilder>()))
-            }
-        })
+        every { _cleanCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true)
+        every { _cleanCommand.getArguments(_context) } returns sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))
+        every { _cleanCommand.targetArguments } returns emptySequence<TargetArguments>()
+        every { _cleanCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
 
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
-                listOf(_buildCommand, _cleanCommand))
+                listOf(_buildCommand, _cleanCommand, _testAssemblyCommand))
 
         // When
         var actualArguments: List<String> = emptyList()
         try {
-            actualArguments = dotnetCommandSet.commands.flatMap { it.getArguments(context) }.map { it.value }.toList()
+            actualArguments = dotnetCommandSet.commands.flatMap { it.getArguments(_context) }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
@@ -112,8 +96,38 @@ class DotnetCommandSetTest {
 
         // Then
         if (exceptionPattern == null) {
-            _ctx.assertIsSatisfied()
             Assert.assertEquals(actualArguments, expectedArguments)
         }
+    }
+
+    // https://github.com/JetBrains/teamcity-dotnet-plugin/issues/146
+    @Test
+    fun shouldReplaceTestCommandByTesstAssemblyForDllWhenTargetsContainsDll() {
+        // Given
+        val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
+
+        every { _testCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _testCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
+        every { _testCommand.targetArguments } returns sequenceOf(
+                TargetArguments(sequenceOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target)))
+        )
+
+        every { _testAssemblyCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _testAssemblyCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2"))
+
+        every { _testCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
+
+        val dotnetCommandSet = DotnetCommandSet(
+                ParametersServiceStub(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "test"))),
+                listOf(_testCommand, _cleanCommand, _testAssemblyCommand, _buildCommand))
+
+        // When
+        val actualCommands = dotnetCommandSet.commands.toList()
+
+        // Then
+        Assert.assertEquals(actualCommands.size, 2)
+        Assert.assertEquals(actualCommands[0].getArguments(_context).toList(), listOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
+        Assert.assertEquals(actualCommands[1].getArguments(_context).toList(), listOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
     }
 }

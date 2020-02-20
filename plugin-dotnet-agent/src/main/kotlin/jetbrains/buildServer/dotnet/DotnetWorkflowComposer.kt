@@ -99,7 +99,7 @@ class DotnetWorkflowComposer(
                                 dotnetBuildContext.workingDirectory.path,
                                 args,
                                 _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList(),
-                                getTitle(virtualPath, dotnetBuildContext.command.toolResolver.isCommandRequired, dotnetBuildContext.command.commandType.id, args),
+                                getTitle(virtualPath, args),
                                 getDescription(dotnetBuildContext, virtualPath, args)))
                     }
                 }
@@ -107,15 +107,8 @@ class DotnetWorkflowComposer(
                 _dotnetWorkflowAnalyzer.summarize(analyzerContext)
             })
 
-    private fun getTitle(executableFile: Path, isCommandRequired: Boolean, command: String, args: List<CommandLineArgument>): String {
-        val executable = File(executableFile.path).nameWithoutExtension
-        val commandName = command.replace('-', ' ')
-        return if (isCommandRequired && commandName.isNotBlank()) {
-            "$executable $commandName"
-        } else {
-            args.firstOrNull()?.let { "$executable ${it.value}" } ?: executable
-        }
-    }
+    private fun getTitle(executableFile: Path, args: List<CommandLineArgument>) =
+        (sequenceOf(File(executableFile.path).nameWithoutExtension) + args.filter { i -> i.argumentType == CommandLineArgumentType.Mandatory }.map { it.value }).joinToString(" ")
 
     private fun getDescription(dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>): List<StdOutText> {
         var description = mutableListOf<StdOutText>()

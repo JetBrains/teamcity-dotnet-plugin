@@ -22,6 +22,7 @@ import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Observer
+import java.io.File
 
 class DotnetCommandSet(
         private val _parametersService: ParametersService,
@@ -29,45 +30,39 @@ class DotnetCommandSet(
     : CommandSet {
 
     private val _knownCommands: Map<String, DotnetCommand> = commands.associateBy({ it.commandType.id }, { it })
+    private val _knownTestAssemblyCommand: DotnetCommand = _knownCommands[DotnetCommandType.TestAssembly.id]!!
 
     override val commands: Sequence<DotnetCommand>
         get() = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
             _knownCommands[it]?.let { command ->
                 getTargetArguments(command).asSequence().map {
                     val targetArguments = TargetArguments(it.arguments.toList().asSequence())
-                    CompositeCommand(command, targetArguments)
+
+                    if (    command.commandType == DotnetCommandType.Test
+                            && targetArguments.arguments.filter { it.argumentType == CommandLineArgumentType.Target && "dll".equals(File(it.value).extension, true) }.any()) {
+                        CompositeCommand(command.commandType.id, _knownTestAssemblyCommand, targetArguments)
+                    }
+                    else {
+                        CompositeCommand(command.commandType.id, command, targetArguments)
+                    }
                 }
             }
         } ?: emptySequence()
 
-    private fun getTargetArguments(command: DotnetCommand) = sequence {
-        var hasTargets = false
-        for (targetArguments in command.targetArguments) {
-            yield(targetArguments)
-            hasTargets = true
-        }
-
-        if (!hasTargets) {
-            yield(TargetArguments(emptySequence()))
-        }
-    }
+    private fun getTargetArguments(command: DotnetCommand): Sequence<TargetArguments> =
+            command.targetArguments.ifEmpty { sequenceOf(TargetArguments(emptySequence())) }
 
     class CompositeCommand(
+            private val commandId: String,
             private val _command: DotnetCommand,
             private val _targetArguments: TargetArguments)
-        : DotnetCommand {
-
-        override val commandType: DotnetCommandType
-            get() = _command.commandType
-
-        override val toolResolver: ToolResolver
-            get() = _command.toolResolver
+        : DotnetCommand by _command {
 
         override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
                 sequence {
                     if (_command.toolResolver.isCommandRequired) {
                         // command
-                        yieldAll(_command.commandType.id.split('-')
+                        yieldAll(commandId.split('-')
                                 .filter { it.isNotEmpty() }
                                 .map { CommandLineArgument(it,  CommandLineArgumentType.Mandatory) })
                     }
@@ -80,14 +75,5 @@ class DotnetCommandSet(
 
         override val targetArguments: Sequence<TargetArguments>
             get() = sequenceOf(_targetArguments)
-
-        override val environmentBuilders: Sequence<EnvironmentBuilder>
-            get() = _command.environmentBuilders
-
-        override val resultsAnalyzer: ResultsAnalyzer
-            get() = _command.resultsAnalyzer
-
-        override val resultsObserver: Observer<CommandResultEvent>
-            get() = _command.resultsObserver
     }
 }

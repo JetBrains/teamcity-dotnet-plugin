@@ -146,7 +146,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars,
-                                "msbuild arg3",
+                                "msbuild",
                                 listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         _versionCmd,
                         CommandLine(
@@ -156,7 +156,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars,
-                                "dotnet build",
+                                "dotnet",
                                 listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2"))),
                         CommandLine(
                                 null,
@@ -165,7 +165,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars,
-                                "dotnet build",
+                                "dotnet",
                                 listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
@@ -253,7 +253,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars,
-                                "msbuild arg3",
+                                "msbuild",
                                 listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         CommandLine(
                                 null,
@@ -271,7 +271,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars,
-                                "dotnet build",
+                                "dotnet",
                                 listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
@@ -345,7 +345,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _msbuildArgs,
                                 _msbuildVars,
-                                "msbuild arg3",
+                                "msbuild",
                                 listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
                         CommandLine(
                                 null,
@@ -363,7 +363,7 @@ class DotnetWorkflowComposerTest {
                                 Path(_workingDirectory.canonicalPath),
                                 _dotnetArgs,
                                 _dotnetVars,
-                                "dotnet build",
+                                "dotnet",
                                 listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
                 ))
     }
