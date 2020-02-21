@@ -35,6 +35,7 @@ import org.testng.annotations.Test
 class DotnetCommandSetTest {
     private lateinit var _context: DotnetBuildContext
     @MockK private lateinit var _environmentBuilder: EnvironmentBuilder
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _buildCommand: DotnetCommand
     @MockK private lateinit var _cleanCommand: DotnetCommand
     @MockK private lateinit var _dotnetCommand: DotnetCommand
@@ -69,12 +70,12 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        every { _buildCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _buildCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
         every { _buildCommand.getArguments(_context) } returns sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))
         every { _buildCommand.targetArguments } returns sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog", CommandLineArgumentType.Target))))
         every { _buildCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
 
-        every { _cleanCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true)
+        every { _cleanCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
         every { _cleanCommand.getArguments(_context) } returns sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))
         every { _cleanCommand.targetArguments } returns emptySequence<TargetArguments>()
         every { _cleanCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
@@ -106,14 +107,14 @@ class DotnetCommandSetTest {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
 
-        every { _testCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
         every { _testCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
         every { _testCommand.targetArguments } returns sequenceOf(
                 TargetArguments(sequenceOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target))),
                 TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target)))
         )
 
-        every { _testAssemblyCommand.toolResolver } returns DotnetToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false)
+        every { _testAssemblyCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
         every { _testAssemblyCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2"))
 
         every { _testCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
