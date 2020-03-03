@@ -61,22 +61,20 @@ project.tasks.nugetRestore.doLast {
   }
 
   def nuGetPackageId = path.first().name
-
   println 'Use .NET integration package: ' + nuGetPackageId
 
   path = ant.path {
     dirset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/build/_common/**')
-    fileset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.nuspec')
   }
 
   def contentPath = path.list().first()
 
-  ant.move(todir: './tools/' + nuGetPackageId, overwrite: 'true', force: 'true') {
+  ant.move(todir: './tools', overwrite: 'true', force: 'true') {
     fileset(dir: contentPath, includes: '**/*')
   }
 
   path = ant.path {
-    fileset(dir: './tools/' + nuGetPackageId, includes: '**/*')
+    fileset(dir: './tools', includes: '**/*')
   }
 
   path.list().each { println it }

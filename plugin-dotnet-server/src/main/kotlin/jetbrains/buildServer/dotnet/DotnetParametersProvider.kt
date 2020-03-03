@@ -47,7 +47,7 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_MSBUILD_VERSION
 
     val msbuildVersions: List<Tool>
-        get() = Tool.values().filter { it.type == ToolType.MSBuild }
+        get() = Tool.values().filter { it.type == ToolType.MSBuild && (!experimentalMode || it.platform != ToolPlatform.Mono) }
 
     val nugetApiKey: String
         get() = DotnetConstants.PARAM_NUGET_API_KEY
@@ -127,15 +127,6 @@ class DotnetParametersProvider {
     val vstestVersions: List<Tool>
         get() = Tool.values().filter { it.type == ToolType.VSTest }
 
-
-    // Integration package
-
-    val integrationPackagePathKey: String
-        get() = DotnetConstants.INTEGRATION_PACKAGE_HOME
-
-    val integrationPackageToolTypeKey: String
-        get() = DotnetConstants.INTEGRATION_PACKAGE_TYPE
-
     // Coverage keys
 
     val coverageTypeKey: String
@@ -157,9 +148,6 @@ class DotnetParametersProvider {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
 
         private val experimentalCommandTypes: Sequence<CommandType> =
-                if (experimentalMode)
-                    sequenceOf(VisualStudioCommandType())
-                else
                     emptySequence()
 
         val commandTypes
@@ -174,7 +162,8 @@ class DotnetParametersProvider {
                     CleanCommandType(),
                     RunCommandType(),
                     MSBuildCommandType(),
-                    VSTestCommandType()
+                    VSTestCommandType(),
+                    VisualStudioCommandType()
             ).plus(experimentalCommandTypes)
                     .sortedBy { it.description }
                     //.plus(CustomCommandType())

@@ -177,6 +177,15 @@
   </td>
 </tr>
 
+<c:if test="${params.experimentalMode == true}">
+  <tr class="advancedSetting">
+    <th><label>Experimental Mode: </label></th>
+    <td>
+      <label>on</label>
+    </td>
+  </tr>
+</c:if>
+
 <c:set var="commandTitle">Command:<bs:help urlPrefix="https://docs.microsoft.com/en-us/dotnet/core/tools/" file=""/></c:set>
 <props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
   <c:forEach items="${params.commands}" var="type">
@@ -210,33 +219,31 @@
 
 <props:workingDirectory/>
 
-<c:if test="${params.experimentalMode == true}">
-  <tr class="advancedSetting dotnet msbuild">
-    <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
-    <td>
-      <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
-        <props:option value="">&lt;Default&gt;</props:option>
-        <c:forEach var="item" items="${params.msbuildVersions}">
-          <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-        </c:forEach>
-      </props:selectProperty>
-      <span class="error" id="error_${params.msbuildVersionKey}"></span>
-    </td>
-  </tr>
+<tr class="advancedSetting dotnet msbuild">
+  <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
+  <td>
+    <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Default&gt;</props:option>
+      <c:forEach var="item" items="${params.msbuildVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.msbuildVersionKey}"></span>
+  </td>
+</tr>
 
-  <tr class="advancedSetting dotnet vstest">
-    <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
-    <td>
-      <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
-        <props:option value="">&lt;Default&gt;</props:option>
-        <c:forEach var="item" items="${params.vstestVersions}">
-          <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-        </c:forEach>
-      </props:selectProperty>
-      <span class="error" id="error_${params.vstestVersionKey}"></span>
-    </td>
-  </tr>
-</c:if>
+<tr class="advancedSetting dotnet vstest">
+  <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
+  <td>
+    <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Default&gt;</props:option>
+      <c:forEach var="item" items="${params.vstestVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.vstestVersionKey}"></span>
+  </td>
+</tr>
 
 <tr class="advancedSetting dotnet vstest">
   <th><label for="${params.testFilterKey}">Tests filtration:</label></th>
@@ -537,15 +544,6 @@
 <button id="queryString" style="display: none"></button>
 
 <tbody>
-
-<c:if test="${params.experimentalMode == true}">
-<tr class="advancedSetting">
-  <th><label for="${params.integrationPackagePathKey}">Integration package: </label></th>
-  <td>
-    <jsp:include page="/tools/selector.html?toolType=${params.integrationPackageToolTypeKey}&versionParameterName=${params.integrationPackagePathKey}&class=${clazz}"/>
-  </td>
-</tr>
-</c:if>
 
 <script type="text/javascript">
   BS.DotnetParametersForm.updateElements();

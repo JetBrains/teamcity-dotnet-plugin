@@ -41,9 +41,9 @@ class LoggerResolverTest {
                 arrayOf(
                         ToolType.MSBuild,
                         VirtualFileSystemService()
-                                .addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
+                                .addFile(File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         emptyMap<String, String>(),
-                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
                         null),
 
                 // when bundled was not found
@@ -52,7 +52,7 @@ class LoggerResolverTest {
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
-                        ".NET integration package was not found at .+" as String?),
+                        "Path \"plugin\\\\tools\\\\msbuild15\\\\TeamCity.MSBuild.Logger.dll\" to MSBuild logger was not found"),
 
                 // Success scenario for defaults
                 arrayOf(
@@ -145,9 +145,9 @@ class LoggerResolverTest {
                 // Use bundled when has no directory
                 arrayOf(
                         ToolType.MSBuild,
-                        VirtualFileSystemService().addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
+                        VirtualFileSystemService().addFile(File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
-                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
                         null)
         )
     }

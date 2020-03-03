@@ -47,7 +47,7 @@ class LoggerResolverImpl(
                         throw RunBuildException("Unknown tool $toolType")
                     }
                 }
-            } ?: bundledLoggerHome
+            } ?: defaultLoggerHome
 
     private fun getLoggerAssembly(toolType: ToolType, home: File, path: String): File {
         val loggerAssemblyPath = File(home, path)
@@ -67,23 +67,19 @@ class LoggerResolverImpl(
         get() {
             val loggerHome = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)
             if (loggerHome.isNullOrBlank()) {
-                return bundledLoggerHome
+                return defaultLoggerHome
             }
 
             val loggerHomePath = File(loggerHome)
             if (!_fileSystemService.isExists(loggerHomePath)) {
-                return bundledLoggerHome
+                return defaultLoggerHome
             }
 
             return loggerHomePath
         }
 
-    private val bundledLoggerHome: File
-        get() {
-            val toolsPath = File(_pathsService.getPath(PathType.Plugin), ToolsDirectoryName)
-            return _fileSystemService.list(toolsPath).firstOrNull()
-                    ?: throw RunBuildException(".NET integration package was not found at \"${toolsPath.absolutePath}\"")
-        }
+    private val defaultLoggerHome: File
+        get() = File(_pathsService.getPath(PathType.Plugin), ToolsDirectoryName)
 
     private fun getCurrentTool(versionParameterName: String): Tool? {
         _parametersService.tryGetParameter(ParameterType.Runner, versionParameterName)?.let {

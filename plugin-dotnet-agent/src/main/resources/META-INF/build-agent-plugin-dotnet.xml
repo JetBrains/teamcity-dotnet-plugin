@@ -72,7 +72,6 @@
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
-  <bean class="jetbrains.buildServer.dotnet.ToolsPropertiesExtension" id="toolsPropertiesExtension"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>

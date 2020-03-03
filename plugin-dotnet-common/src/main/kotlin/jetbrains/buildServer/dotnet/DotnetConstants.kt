@@ -74,14 +74,8 @@ object DotnetConstants {
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
 
-    // Tool �roviders
+    // Tool providers
     const val PACKAGE_NUGET_EXTENSION = "nupkg"
-
-    // Integration package
-    const val INTEGRATION_PACKAGE_TYPE = "TeamCity.Dotnet.Integration"
-    const val INTEGRATION_PACKAGE_TOOL_TYPE_NAME = "Dotnet Integration"
-    const val INTEGRATION_PACKAGE_SHORT_TOOL_TYPE_NAME = "Dotnet Integration"
-    const val INTEGRATION_PACKAGE_TARGET_FILE_DISPLAY_NAME = "Dotnet Integration Home Directory"
 
     // Cross-platform dotCover
     const val DOTCOVER_PACKAGE_TYPE = "jetbrains.dotcover.dotnetclitool"
