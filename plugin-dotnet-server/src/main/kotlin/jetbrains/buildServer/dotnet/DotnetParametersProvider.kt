@@ -47,7 +47,7 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_MSBUILD_VERSION
 
     val msbuildVersions: List<Tool>
-        get() = Tool.values().filter { it.type == ToolType.MSBuild && (!experimentalMode || it.platform != ToolPlatform.Mono) }
+        get() = Tool.values().filter { it.type == ToolType.MSBuild && (experimentalMode || it.platform != ToolPlatform.Mono) }
 
     val nugetApiKey: String
         get() = DotnetConstants.PARAM_NUGET_API_KEY
