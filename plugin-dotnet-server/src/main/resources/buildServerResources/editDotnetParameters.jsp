@@ -232,6 +232,17 @@
   </td>
 </tr>
 
+<tr class="advancedSetting dotnet msbuild">
+  <th><label for="${bean.runPlatformKey}">Run platform: </label></th>
+  <td>
+    <props:selectProperty name="${bean.runPlatformKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${bean.runPlatforms}">
+        <props:option value="${item.value}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+  </td>
+</tr>
+
 <tr class="advancedSetting dotnet vstest">
   <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
   <td>
