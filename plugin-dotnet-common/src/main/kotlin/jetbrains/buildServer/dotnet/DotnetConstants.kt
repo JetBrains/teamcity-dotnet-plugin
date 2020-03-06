@@ -70,6 +70,7 @@ object DotnetConstants {
     const val PARAM_VERBOSITY = "verbosity"
     const val PARAM_VERSION_SUFFIX = "versionSuffix"
     const val PARAM_VSTEST_VERSION = "vstest.version"
+    const val PARAM_VSTEST_IN_ISOLATION = "vstest.InIsolation"
     const val PARAM_MSBUILD_LOGGER_PARAMS = "msbuild.logger.params"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"

@@ -232,17 +232,6 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet msbuild">
-  <th><label for="${bean.runPlatformKey}">Run platform: </label></th>
-  <td>
-    <props:selectProperty name="${bean.runPlatformKey}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${bean.runPlatforms}">
-        <props:option value="${item.value}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-  </td>
-</tr>
-
 <tr class="advancedSetting dotnet vstest">
   <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
   <td>
@@ -253,6 +242,28 @@
       </c:forEach>
     </props:selectProperty>
     <span class="error" id="error_${params.vstestVersionKey}"></span>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet vstest">
+  <th class="noBorder"><label for="${params.platformKey}">Platform:</label></th>
+  <td>
+    <props:selectProperty name="${params.platformKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Default&gt;</props:option>
+      <c:forEach var="item" items="${params.vstestPlatforms}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.platformKey}"></span>
+    <span class="smallNote">Specify the target platform.</span>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet vstest">
+  <th><label for="${params.vstestInIsolation}">Run in isolation:</label></th>
+  <td>
+    <props:checkboxProperty name="${params.vstestInIsolation}"/>
+    <label for="${params.vstestInIsolation}">Run the tests in an isolated process</label>
   </td>
 </tr>
 
@@ -360,20 +371,6 @@
     </div>
     <span class="error" id="error_${params.configKey}"></span>
     <span class="smallNote">Specify the target configuration.</span>
-  </td>
-</tr>
-
-<tr class="advancedSetting dotnet devenv">
-  <th class="noBorder"><label for="${params.platformKey}">Platform:</label></th>
-  <td>
-    <div class="position-relative">
-      <props:textProperty name="${params.platformKey}" className="longField"/>
-      <bs:projectData type="DotnetRuntimes" sourceFieldId="${params.pathsKey}"
-                      targetFieldId="${params.platformKey}" popupTitle="Select platform"
-                      selectionMode="single"/>
-    </div>
-    <span class="error" id="error_${params.platformKey}"></span>
-    <span class="smallNote">Specify the target platform.</span>
   </td>
 </tr>
 

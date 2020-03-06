@@ -72,6 +72,10 @@ class VSTestCommand(
             }
         }
 
+        if (parameters(DotnetConstants.PARAM_VSTEST_IN_ISOLATION, "").trim().toBoolean()) {
+            yield(CommandLineArgument("/InIsolation"))
+        }
+
         yieldAll(_vstestLoggerArgumentsProvider.getArguments(context))
         yieldAll(_customArgumentsProvider.getArguments(context))
     }
