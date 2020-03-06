@@ -24,7 +24,7 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VisualStudio2013(12, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2013"),
 
     // MSBuild
-    MSBuildDotnetCore(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform MSBuild"),
+    MSBuildCrossPlatform(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform MSBuild"),
     MSBuildMono(0, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "Mono MSBuild"),
 
     MSBuild16WindowsX64(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "MSBuild 2019 x64"),

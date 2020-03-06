@@ -26,7 +26,7 @@ private const val VSTestSubDir = "vstest"
 
 enum class Logger(val msbuildTool: Tool, val vstestTool: Tool, val msbuildLogger: File, val vstestLogger: File) {
     // MSBuild loggers
-    DotnetCore(Tool.MSBuildDotnetCore, Tool.VSTestCrossPlatform, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
+    DotnetCore(Tool.MSBuildCrossPlatform, Tool.VSTestCrossPlatform, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
     Mono(Tool.MSBuildMono, Tool.VSTestCrossPlatform, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
 
     V12WindowsX64(Tool.MSBuild12WindowsX64, Tool.VSTest12Windows, File("${MSBuildLoggerSubDir}12", MSBuildLoggerAssemblyName), File("${VSTestSubDir}12", VSTestLoggerAssemblyName)),

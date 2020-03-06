@@ -109,7 +109,7 @@ class LoggerResolverTest {
                 arrayOf(
                         ToolType.VSTest,
                         VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
-                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildDotnetCore.id),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id),
                         File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 

@@ -68,9 +68,9 @@ class MSBuildToolResolverTest {
                 arrayOf(true, OSType.UNIX, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildMono.id, MonoConstants.CONFIG_PATH to "mono"), File(MSBuildToolResolver.MSBuildMonoToolName), false, null, _msbuildStateWorkflowComposer),
                 arrayOf(true, OSType.MAC, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildMono.id, MonoConstants.CONFIG_PATH to "mono"), File(MSBuildToolResolver.MSBuildMonoToolName), false, null, _msbuildStateWorkflowComposer),
 
-                arrayOf(false, OSType.WINDOWS, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildDotnetCore.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
-                arrayOf(false, OSType.UNIX, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildDotnetCore.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
-                arrayOf(false, OSType.MAC, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildDotnetCore.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
+                arrayOf(false, OSType.WINDOWS, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
+                arrayOf(false, OSType.UNIX, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
+                arrayOf(false, OSType.MAC, mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
                 arrayOf(false, OSType.WINDOWS, emptyMap<String, String>(), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
                 arrayOf(false, OSType.UNIX, emptyMap<String, String>(), File("dotnet"), true, null, _dotnetStateWorkflowComposer),
                 arrayOf(false, OSType.MAC, emptyMap<String, String>(), File("dotnet"), true, null, _dotnetStateWorkflowComposer),

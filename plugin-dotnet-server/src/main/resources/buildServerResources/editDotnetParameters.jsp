@@ -223,7 +223,6 @@
   <th><label for="${params.msbuildVersionKey}">MSBuild version:</label></th>
   <td>
     <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Default&gt;</props:option>
       <c:forEach var="item" items="${params.msbuildVersions}">
         <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
       </c:forEach>
@@ -236,7 +235,6 @@
   <th><label for="${params.vstestVersionKey}">VSTest version:</label></th>
   <td>
     <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Default&gt;</props:option>
       <c:forEach var="item" items="${params.vstestVersions}">
         <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
       </c:forEach>

@@ -21,7 +21,6 @@ import jetbrains.buildServer.dotnet.MonoConstants
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
 import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import org.jmock.Mockery
 import org.springframework.beans.factory.BeanFactory
@@ -39,7 +38,7 @@ class MSBuildCommandTypeTest {
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id), sequenceOf(Requirement("MSBuildTools15.0_x64_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX86.id), sequenceOf(Requirement("MSBuildTools15.0_x86_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(emptyMap<String, String>(), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))),
-                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildDotnetCore.id), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))))
+                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))))
     }
 
     @Test(dataProvider = "testRequirementsData")
