@@ -82,7 +82,10 @@ class DotnetRunnerDiscoveryExtension(
     private fun createCommands(solution: Solution): Sequence<Command> = sequence {
         if (!solution.solution.isBlank()) {
             val solutionPath = normalizePath(solution.solution)
-            yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
+            if (solution.projects.any { requiresRestoreCommand(it) }) {
+                yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
+            }
+
             yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
 
             // If all projects contain tests
@@ -96,7 +99,10 @@ class DotnetRunnerDiscoveryExtension(
                 }
 
                 val projectPath = normalizePath(project.project)
-                yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
+                if (requiresRestoreCommand(project)) {
+                    yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
+                }
+
                 val projectTypes = _projectTypeSelector.select(project)
                 if (projectTypes.contains(ProjectType.Unknown)) {
                     yield(createSimpleCommand(DotnetCommandType.Build, projectPath))
@@ -123,6 +129,9 @@ class DotnetRunnerDiscoveryExtension(
             }
         }
     }
+
+    private fun requiresRestoreCommand(project: Project) =
+         project.frameworks.map { it.name.toLowerCase() }.all { it.startsWith("netcoreapp1")}
 
     private fun createSimpleCommand(commandType: DotnetCommandType, path: String): Command =
             Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))

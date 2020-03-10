@@ -46,6 +46,16 @@ class DotnetRunnerDiscoveryExtensionTest {
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
                         listOf(restore1, build1)),
+                // Does not genere Restore when >= netcoreapp2*
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp2.1")), emptyList(), emptyList())))),
+                        defaultProjectTypeMap,
+                        listOf(build1)),
+                // Does not genere Restore when >= netcoreapp2*
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp3.0")), emptyList(), emptyList())), "abc.sln")),
+                        defaultProjectTypeMap,
+                        listOf(createCommand(DotnetCommandType.Build, "abc.sln"))),
                 // Distinct similar default
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
