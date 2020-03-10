@@ -50,7 +50,7 @@ class VisualStudioCommandType : CommandType() {
         parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.VisualStudio) {
-                    yield(Requirement("VS${it.version}_Path", null, RequirementType.EXISTS))
+                    yield(Requirement("VS${it.vsVersion}_Path", null, RequirementType.EXISTS))
                     hasRequirements = true
                 }
             }
