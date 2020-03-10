@@ -28,6 +28,9 @@ class MSBuildProjectDeserializerTest {
     fun testDeserializeData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(
+                        "/Bank.Test.csproj",
+                        Solution(listOf(Project("projectPath", listOf(Configuration("Debug"), Configuration("Release")), listOf(Framework("net452")), emptyList(), listOf(Reference("System"), Reference("Microsoft.VisualStudio.QualityTools.UnitTestFramework"), Reference("Microsoft.VisualStudio.QualityTools.CodedUITestFramework")))))),
+                arrayOf(
                         "/project-runtime.csproj",
                         Solution(listOf(Project("projectPath", emptyList(), emptyList(), listOf(Runtime("win7-x64"), Runtime("win-7x86"), Runtime("ubuntu.16.10-x64")), emptyList())))),
                 arrayOf(
@@ -35,7 +38,7 @@ class MSBuildProjectDeserializerTest {
                         Solution(listOf(Project("projectPath", emptyList(), listOf(Framework("netstandard2.0")), emptyList(), emptyList(), emptyList(), true)))),
                 arrayOf(
                         "/project14.csproj",
-                        Solution(listOf(Project("projectPath", listOf(Configuration("Debug"), Configuration("Release")), emptyList(), emptyList(), listOf(Reference("nunit.engine.api"), Reference("System"), Reference("System.Data"), Reference("System.Xml")))))),
+                        Solution(listOf(Project("projectPath", listOf(Configuration("Debug"), Configuration("Release")), listOf(Framework("net20")), emptyList(), listOf(Reference("nunit.engine.api"), Reference("System"), Reference("System.Data"), Reference("System.Xml")))))),
                 arrayOf(
                         "/project.csproj",
                         Solution(listOf(Project("projectPath", listOf(Configuration("Core")), listOf(Framework("netcoreapp1.0")), emptyList(), listOf(Reference("Microsoft.NET.Sdk"), Reference("Microsoft.NET.Test.Sdk")))))),

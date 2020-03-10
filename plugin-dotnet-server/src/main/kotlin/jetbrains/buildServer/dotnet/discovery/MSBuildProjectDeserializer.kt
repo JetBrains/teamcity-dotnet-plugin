@@ -39,29 +39,31 @@ class MSBuildProjectDeserializer(
                             .map { it?.let { it.groupValues[2] } }
                             .filter { !it.isNullOrBlank() }
                             .map { it as String }
-                            .plus(getContents(doc, "/Project/PropertyGroup/Configuration"))
+                            .plus(getContents(doc, "//PropertyGroup/Configuration"))
                             .distinct()
                             .map { Configuration(it) }
                             .toList()
 
-                    val frameworks = getContents(doc, "/Project/PropertyGroup/TargetFrameworks")
+
+                    val frameworks = getContents(doc, "//PropertyGroup/TargetFrameworks")
                             .flatMap { it.split(';').asSequence() }
                             .plus(getContents(doc, "/Project/PropertyGroup/TargetFramework"))
+                            .plus(getContents(doc, "/Project/PropertyGroup/TargetFrameworkVersion").map { it.replace("v", "net").replace(".", "") })
                             .distinct()
                             .map { Framework(it) }
                             .toList()
 
-                    val runtimes = getContents(doc, "/Project/PropertyGroup/RuntimeIdentifiers")
+                    val runtimes = getContents(doc, "//PropertyGroup/RuntimeIdentifiers")
                             .flatMap { it.split(';').asSequence() }
                             .plus(getContents(doc, "/Project/PropertyGroup/RuntimeIdentifier"))
                             .distinct()
                             .map { Runtime(it) }
                             .toList()
 
-                    val references = getAttributes(doc, "/Project/ItemGroup/PackageReference[@Include]", "Include")
+                    val references = getAttributes(doc, "//ItemGroup/PackageReference[@Include]", "Include")
                             .filter { !it.isBlank() }
                             .plus(
-                                    getAttributes(doc, "/Project/ItemGroup/Reference[@Include]", "Include")
+                                    getAttributes(doc, "//ItemGroup/Reference[@Include]", "Include")
                                             .map { it.split(',').firstOrNull() }
                                             .filter { !it.isNullOrBlank() })
                             .distinct()
