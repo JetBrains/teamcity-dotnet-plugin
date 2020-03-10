@@ -44,7 +44,6 @@ class MSBuildProjectDeserializer(
                             .map { Configuration(it) }
                             .toList()
 
-
                     val frameworks = getContents(doc, "//PropertyGroup/TargetFrameworks")
                             .flatMap { it.split(';').asSequence() }
                             .plus(getContents(doc, "/Project/PropertyGroup/TargetFramework"))
@@ -79,7 +78,14 @@ class MSBuildProjectDeserializer(
                             .filter { "true".equals(it.trim(), true) }
                             .any()
 
-                    Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets, generatePackageOnBuild)))
+                    val properties =
+                            getContents(doc, "/Project/PropertyGroup/AssemblyName").map { Property("AssemblyName", it) }
+                            .plus(getContents(doc, "/Project/PropertyGroup/TestProjectType").map { Property("TestProjectType", it) })
+                            .plus(getContents(doc, "/Project/PropertyGroup/OutputType").map { Property("OutputType", it) })
+                            .plus(getAttributes(doc, "/Project", "Sdk").map { Property("Sdk", it) })
+                            .toList()
+
+                    Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets, generatePackageOnBuild, properties)))
                 }
             } ?: Solution(emptyList())
 

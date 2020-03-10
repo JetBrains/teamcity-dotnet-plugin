@@ -16,8 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.discovery.*
 import jetbrains.buildServer.serverSide.BuildTypeSettings
 import jetbrains.buildServer.serverSide.PropertiesProcessor
@@ -35,7 +34,9 @@ class DotnetRunnerDiscoveryExtensionTest {
     fun testGenerateCommandsData(): Array<Array<Any>> {
         val restore1 = createCommand(DotnetCommandType.Restore, "dir/mypro.proj")
         val build1 = createCommand(DotnetCommandType.Build, "dir/mypro.proj")
+        val msbuild1 = createMSBuildCommand("dir/mypro.proj")
         val test1 = createCommand(DotnetCommandType.Test, "dir/mypro.proj")
+        val vstest1 = createVSTestCommand("dir/bin/**/abc.dll")
         val restore2 = createCommand(DotnetCommandType.Restore, "dir2/My.sln")
         val build2 = createCommand(DotnetCommandType.Build, "dir2/My.sln")
         val publish1 = createCommand(DotnetCommandType.Publish, "dir/mypro.proj")
@@ -43,15 +44,25 @@ class DotnetRunnerDiscoveryExtensionTest {
         return arrayOf(
                 // Default project command is build
                 arrayOf(
-                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), false)))),
                         defaultProjectTypeMap,
                         listOf(restore1, build1)),
+                // Native msbuild
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), false, emptyList())))),
+                        defaultProjectTypeMap,
+                        listOf(restore1, msbuild1, build1)),
+                // Only native msbuild
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("net35")), emptyList(), emptyList(), emptyList(), false, emptyList())))),
+                        defaultProjectTypeMap,
+                        listOf(msbuild1)),
                 // Does not genere Restore when >= netcoreapp2*
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
                         listOf(build1)),
-                // Does not genere Restore when >= netcoreapp2*
+                // Does not genere Restore when >= netcoreapp2* for solution
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp3.0")), emptyList(), emptyList())), "abc.sln")),
                         defaultProjectTypeMap,
@@ -81,6 +92,16 @@ class DotnetRunnerDiscoveryExtensionTest {
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))))),
                         mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
                         listOf(restore1, test1)),
+                // Native test project
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")), emptyList(), false, listOf(Property("AssemblyName", "abc")))))),
+                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
+                        listOf(restore1, msbuild1, test1, vstest1)),
+                // Only native test project
+                arrayOf(
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("net20")), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")), emptyList(), false, listOf(Property("AssemblyName", "abc")))))),
+                        mapOf<String, Set<ProjectType>>("dir/mypro.proj" to setOf<ProjectType>(ProjectType.Test)),
+                        listOf(msbuild1, vstest1)),
                 // Distinct similar tests
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk"), Reference("Abc"))), Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), listOf(Reference("Microsoft.NET.Test.Sdk")))))),
@@ -318,6 +339,8 @@ class DotnetRunnerDiscoveryExtensionTest {
     }
 
     private fun createCommand(commandType: DotnetCommandType, path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
+    private fun createMSBuildCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_ARGUMENTS to "/r", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
+    private fun createVSTestCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.VSTest.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_VSTEST_VERSION to Tool.values().filter { it.type == ToolType.VSTest }.sortedBy { it.version }.reversed().first().id))
 
     private class MyRunType(private val type: String) : RunType() {
         override fun getViewRunnerParamsJspFilePath(): String? {

@@ -29,6 +29,10 @@ class ProjectTypeSelectorImpl : ProjectTypeSelector {
             projectTypes.add(ProjectType.Test)
         }
 
+        if (isVSTestProject(project)) {
+            projectTypes.add(ProjectType.Test)
+        }
+
         if (projectTypes.size == 0) {
             projectTypes.add(ProjectType.Unknown)
         }
@@ -37,7 +41,10 @@ class ProjectTypeSelectorImpl : ProjectTypeSelector {
     }
 
     private fun isTestProject(project: Project): Boolean =
-            project.references.filter { TestReferencePattern.matcher(it.id).find() }.any()
+            project.references.filter { TestReferencePattern.matcher(it.id).find() }.any() || isVSTestProject(project)
+
+    private fun isVSTestProject(project: Project): Boolean =
+            project.properties.any { "TestProjectType".equals(it.name, true) && "UnitTest".equals(it.value, true) } && project.properties.any { "OutputType".equals(it.name, true) && "Library".equals(it.value, true)}
 
     private fun isPublishProject(project: Project): Boolean =
             project.generatePackageOnBuild || project.references.filter { PublishReferencePattern.matcher(it.id).find() }.any()

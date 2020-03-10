@@ -16,10 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.discovery.Project
-import jetbrains.buildServer.dotnet.discovery.ProjectType
-import jetbrains.buildServer.dotnet.discovery.ProjectTypeSelectorImpl
-import jetbrains.buildServer.dotnet.discovery.Reference
+import jetbrains.buildServer.dotnet.discovery.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -31,6 +28,7 @@ class ProjectTypeSelectorTest {
                 // Test
                 arrayOf(create(false, "Microsoft.NET.Test.Sdk"), setOf(ProjectType.Test)),
                 arrayOf(create(false, "microsofT.net.test.SDK"), setOf(ProjectType.Test)),
+                arrayOf(createNativeTest(false), setOf(ProjectType.Test)),
                 arrayOf(create(false, "Microsoft.NET.Test.Sdk", "abc"), setOf(ProjectType.Test)),
                 arrayOf(create(false, "abc.Microsoft.NET.Test.Sdk"), setOf(ProjectType.Unknown)),
                 arrayOf(create(false, "abcMicrosoft.NET.Test.Sdk"), setOf(ProjectType.Unknown)),
@@ -72,4 +70,7 @@ class ProjectTypeSelectorTest {
 
     private fun create(generatePackageOnBuild: Boolean = false, vararg references: String): Project =
             Project("abc.proj", emptyList(), emptyList(), emptyList(), references.map { Reference(it) }, emptyList(), generatePackageOnBuild)
+
+    private fun createNativeTest(generatePackageOnBuild: Boolean = false, vararg references: String): Project =
+            Project("abc.proj", emptyList(), emptyList(), emptyList(), references.map { Reference(it) }, emptyList(), generatePackageOnBuild, listOf(Property("TestProjectType", "UnitTest"), Property("OutputType", "Library")))
 }
