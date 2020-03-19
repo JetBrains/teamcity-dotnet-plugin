@@ -510,7 +510,7 @@
     <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
     <span class="error" id="error_${params.argumentsKey}"></span>
     <span class="smallNote">
-            Enter additional command line parameters for dotnet. <a
+            Enter additional command line parameters. <a
         id="dotnet-help" target="_blank" rel="noreferrer" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
         </span>
   </td>
