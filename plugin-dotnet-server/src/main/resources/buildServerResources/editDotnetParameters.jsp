@@ -277,7 +277,7 @@
 </tr>
 
 <c:set var="testNamesHint">
-  Run tests with names that match the provided values.
+  Run tests with names that match the values in the provided newline-separated list.
   <bs:help urlPrefix="https://msdn.microsoft.com/en-us/library/jj155796.aspx" file=""/>
 </c:set>
 <tr class="advancedSetting dotnet vstest">
@@ -315,7 +315,7 @@
                       selectionMode="single"/>
     </div>
     <span class="error" id="error_${params.frameworkKey}"></span>
-    <span class="smallNote">Specify the target framework.</span>
+    <span class="smallNote">Target .NET Framework version to be used for test execution.</span>
   </td>
 </tr>
 
@@ -333,7 +333,7 @@
 </tr>
 
 <tr class="dotnet devenv">
-  <th><label for="${params.visualStudioActionKey}">Build Action: <l:star/></label></th>
+  <th><label for="${params.visualStudioActionKey}">Build action: <l:star/></label></th>
   <td>
     <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
       <props:option value="">&lt;Select&gt;</props:option>
@@ -346,7 +346,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet devenv">
-  <th><label for="${params.visualStudioVersionKey}">Visual Studio Version:</label></th>
+  <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
   <td>
     <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
       <props:option value="">&lt;Default&gt;</props:option>
