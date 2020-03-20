@@ -18,16 +18,19 @@ package jetbrains.buildServer.dotnet
 
 class Version private constructor(val major: Int,
                                   val minor: Int,
+                                  val digits: Int,
                                   private val patch: Int,
                                   private val build: Int = 0,
                                   private val release: String? = null,
                                   private val metadata: String? = null) : Comparable<Version> {
 
-    constructor(major: Int) : this(major, 0)
+    constructor(major: Int) : this(major, 0, 1)
 
-    constructor(major: Int, minor: Int) : this(major, minor, 0)
+    constructor(major: Int, minor: Int) : this(major, minor, 2, 0)
 
-    constructor(major: Int, minor: Int, patch: Int) : this(major, minor, patch, 0)
+    constructor(major: Int, minor: Int, patch: Int) : this(major, minor, 3, patch, 0)
+
+    constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor,4, patch, 0, release)
 
     private val versionString: String = buildString {
         append(major)
@@ -65,19 +68,38 @@ class Version private constructor(val major: Int,
     }
 
     companion object {
-        private val VERSION_PATTERN = Regex("^([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?$", RegexOption.IGNORE_CASE)
+        private val VERSION_PATTERN = Regex("^[^\\d]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d]*$", RegexOption.IGNORE_CASE)
         val Empty: Version = Version(0, 0, 0, 0)
 
         fun parse(text: String): Version {
             VERSION_PATTERN.matchEntire(text)?.let {
+
                 val (majorStr, minorStr, patchStr, buildStr, releaseStr, metadataStr) = it.destructured
-                val major = majorStr.toIntOrNull() ?: 0
-                val minor = minorStr.toIntOrNull() ?: 0
-                val patch = patchStr.toIntOrNull() ?: 0
-                val build = buildStr.toIntOrNull() ?: 0
+                var digits = 0
+
+                val major = majorStr.toIntOrNull()?.let {
+                    digits++
+                    it
+                } ?: 0
+
+                val minor = minorStr.toIntOrNull()?.let {
+                    digits++
+                    it
+                } ?: 0
+
+                val patch = patchStr.toIntOrNull()?.let {
+                    digits++
+                    it
+                } ?: 0
+
+                val build = buildStr.toIntOrNull()?.let {
+                    digits++
+                    it
+                } ?: 0
+
                 val release = if (releaseStr.isEmpty()) null else releaseStr
                 val metadata = if (metadataStr.isEmpty()) null else metadataStr
-                return Version(major, minor, patch, build, release, metadata)
+                return Version(major, minor, digits, patch, build, release, metadata)
             }
 
             return Empty
