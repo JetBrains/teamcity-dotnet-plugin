@@ -339,7 +339,7 @@ class DotnetRunnerDiscoveryExtensionTest {
     }
 
     private fun createCommand(commandType: DotnetCommandType, path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
-    private fun createMSBuildCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_ARGUMENTS to "/r", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
+    private fun createMSBuildCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_ARGUMENTS to "-restore -noLogo", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
     private fun createVSTestCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.VSTest.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_VSTEST_VERSION to Tool.values().filter { it.type == ToolType.VSTest }.sortedBy { it.version }.reversed().first().id))
 
     private class MyRunType(private val type: String) : RunType() {

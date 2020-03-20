@@ -62,7 +62,8 @@ class DotnetRunnerDiscoveryExtension(
         val complexSolutions = solutions.asSequence().filter { !it.isSimple }.toList()
         val complexSolutionProjects = complexSolutions.flatMap { it.projects }.toSet()
         val simpleSolutions = solutions.asSequence().filter { it.isSimple && !complexSolutionProjects.containsAll(it.projects) }
-        return complexSolutions.asSequence().plus(simpleSolutions).flatMap { createCommands(it) }.distinct().map { createTarget(it) }
+        val commands = complexSolutions.asSequence().plus(simpleSolutions).flatMap { createCommands(it) }.distinct().toList()
+        return commands.asSequence().map { createTarget(it) }
     }
 
     private fun extractParameters(parameters: Map<String, String>): List<Parameter> =
@@ -92,7 +93,7 @@ class DotnetRunnerDiscoveryExtension(
             }
 
             if (isNativeOnly || solution.projects.any { isNative(it) }) {
-                yield(createMSBuildNativeCommand(solutionPath))
+                yield(createMSBuildNativeCommand(DotnetCommandType.MSBuild, solutionPath))
             }
 
             // If all projects contain tests
@@ -113,7 +114,7 @@ class DotnetRunnerDiscoveryExtension(
 
                 val projectTypes = _projectTypeSelector.select(project)
                 if (isNativeOnly || isNative(project)) {
-                    yield(createMSBuildNativeCommand(projectPath))
+                    yield(createMSBuildNativeCommand(DotnetCommandType.MSBuild, projectPath))
                 }
 
                 if (!isNativeOnly && projectTypes.contains(ProjectType.Unknown)) {
@@ -152,7 +153,7 @@ class DotnetRunnerDiscoveryExtension(
         }
 
         if (testAssemblies.any()) {
-            yield(createTestNativeCommand(testAssemblies.joinToString(";")))
+            yield(createTestNativeCommand(DotnetCommandType.MSBuild, testAssemblies.joinToString(";")))
         }
     }
 
@@ -162,16 +163,16 @@ class DotnetRunnerDiscoveryExtension(
     private fun createSimpleCommand(commandType: DotnetCommandType, path: String): Command =
             Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
 
-    private fun createMSBuildNativeCommand(path: String): Command =
+    private fun createMSBuildNativeCommand(commandType: DotnetCommandType, path: String): Command =
             Command(
                     createDefaultName(DotnetCommandType.MSBuild, path),
                     listOf(
                             Parameter(DotnetConstants.PARAM_COMMAND, DotnetCommandType.MSBuild.id),
                             Parameter(DotnetConstants.PARAM_PATHS, path),
-                            Parameter(DotnetConstants.PARAM_ARGUMENTS, "/r"),
+                            Parameter(DotnetConstants.PARAM_ARGUMENTS, "-restore -noLogo"),
                             Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id)))
 
-    private fun createTestNativeCommand(path: String): Command =
+    private fun createTestNativeCommand(commandType: DotnetCommandType, path: String): Command =
             Command(
                     createDefaultName(DotnetCommandType.VSTest, path),
                     listOf(
@@ -186,7 +187,7 @@ class DotnetRunnerDiscoveryExtension(
             !project.properties.any { "Sdk".equals(it.name, true) && "Microsoft.NET.Sdk".equals(it.value, true)}
 
     private fun isNativeOnly(project: Project): Boolean =
-            project.frameworks.any { "net11".equals(it.name, true) || "net20".equals(it.name, true) || "net35".equals(it.name, true)}
+            project.frameworks.any { "net11".equals(it.name, true) || "net20".equals(it.name, true) || "net30".equals(it.name, true) || "net35".equals(it.name, true)}
 
     private fun normalizePath(path: String): String = path.replace('\\', '/')
 
