@@ -58,7 +58,7 @@
           return;
         }
         var changed = false;
-        if (element.name === "select") {
+        if (element.name === "select" || element.name === "prop:msbuild.version" || element.name === "prop:vstest.version") {
           changed = element.selectedIndex !== 0;
           element.selectedIndex = 0;
         } else if (element.type === "checkbox") {
