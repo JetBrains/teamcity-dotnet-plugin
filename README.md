@@ -1,17 +1,17 @@
-## .NET CLI Plugin for [<img src="https://cdn.worldvectorlogo.com/logos/teamcity.svg" height="20" align="center" alt="TeamCity" />](https://www.jetbrains.com/teamcity/)
+## .NET Plugin for [<img src="https://cdn.worldvectorlogo.com/logos/teamcity.svg" height="20" align="center" alt="TeamCity" />](https://www.jetbrains.com/teamcity/)
 
 [![official JetBrains project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The TeamCity .NET plugin provides support for [.NET CLI](https://www.microsoft.com/net/download/core) in TeamCity.
+The TeamCity .NET plugin provides support for .NET tools in TeamCity.
 
 It simplifies building Windows and cross-platform applications that use .NET frameworks and libraries.
 
 # Features
 
 The plugin provides the following features for .NET project building:
-* .NET CLI (dotnet) build runner
-* .NET CLI & .NET Core SDK detection on TeamCity build agents
+* .NET build runner
+* .NET SDK and tools detection on TeamCity build agents
 * Auto-discovery of build steps
 * On-the-fly test reporting
 * Supports code coverage tools

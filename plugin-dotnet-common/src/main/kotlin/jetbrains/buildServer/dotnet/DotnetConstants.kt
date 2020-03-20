@@ -26,8 +26,8 @@ object DotnetConstants {
     const val EXECUTABLE = "dotnet"
     const val DOTNET_DEFAULT_DIRECTORY = "dotnet"
     const val PROGRAM_FILES_ENV_VAR = "ProgramW6432"
-    const val RUNNER_DISPLAY_NAME = ".NET CLI (dotnet)"
-    const val RUNNER_DESCRIPTION = "Provides .NET CLI toolchain support for .NET projects"
+    const val RUNNER_DISPLAY_NAME = ".NET"
+    const val RUNNER_DESCRIPTION = "Provides .NET toolchain support for .NET projects"
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
@@ -37,7 +37,9 @@ object DotnetConstants {
     const val CONFIG_SDK_NAME = "DotNetCoreSDK"
     const val PARAM_DOCKER_IMAGE = "plugin.docker.imageId"
 
-    const val PARAM_EXPERIMENTAL = "teamcity.dotnet.cli.experimental"
+    const val PARAM_EXPERIMENTAL = "teamcity.dotnet.experimental"
+
+    // Set to On, MultiAdapterPath or Off
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
 
     // Set to false to not use .rsp files

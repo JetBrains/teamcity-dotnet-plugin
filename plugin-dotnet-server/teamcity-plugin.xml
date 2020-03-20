@@ -19,9 +19,9 @@
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
         <name>dotnet.cli</name>
-        <display-name>.NET CLI Support</display-name>
+        <display-name>.NET Support</display-name>
         <version>@Plugin_Version@</version>
-        <description>Allows building projects via .NET CLI toolchain</description>
+        <description>Allows building projects via .NET toolchain</description>
         <vendor>
             <name>JetBrains</name>
             <url>http://www.jetbrains.com/</url>
