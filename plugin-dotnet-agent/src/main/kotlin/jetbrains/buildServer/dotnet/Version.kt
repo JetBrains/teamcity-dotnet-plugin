@@ -24,9 +24,9 @@ class Version private constructor(val major: Int,
                                   private val release: String? = null,
                                   private val metadata: String? = null) : Comparable<Version> {
 
-    constructor(major: Int) : this(major, 0, 1)
+    constructor(major: Int) : this(major, 0, 1, 0, 0)
 
-    constructor(major: Int, minor: Int) : this(major, minor, 2, 0)
+    constructor(major: Int, minor: Int) : this(major, minor, 2, 0, 0)
 
     constructor(major: Int, minor: Int, patch: Int) : this(major, minor, 3, patch, 0)
 
@@ -68,7 +68,7 @@ class Version private constructor(val major: Int,
     }
 
     companion object {
-        private val VERSION_PATTERN = Regex("^[^\\d]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d]*$", RegexOption.IGNORE_CASE)
+        private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
         val Empty: Version = Version(0, 0, 0, 0)
 
         fun parse(text: String): Version {

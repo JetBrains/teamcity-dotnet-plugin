@@ -41,7 +41,7 @@ class VisualStudioToolResolver(private val _parametersService: ParametersService
     private val selectedVersion: Int?
         get() =
             _parametersService.tryGetParameter(ParameterType.Runner, PARAM_VISUAL_STUDIO_VERSION)?.let {
-                Tool.tryParse(it)?.version
+                Tool.tryParse(it)?.vsVersion
                         ?: throw RunBuildException("Can't parse visual studio version from \"$PARAM_VISUAL_STUDIO_VERSION\" value \"$it\"")
             }
 
