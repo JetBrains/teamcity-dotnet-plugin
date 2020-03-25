@@ -21,6 +21,7 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.use
+import org.apache.log4j.Logger
 import java.io.OutputStreamWriter
 
 class ResponseFileArgumentsProvider(
@@ -31,11 +32,21 @@ class ResponseFileArgumentsProvider(
         private val _msBuildParameterConverter: MSBuildParameterConverter,
         private val _argumentsProviders: List<ArgumentsProvider>,
         private val _parametersProviders: List<MSBuildParametersProvider>,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _msBuildParameterValidator: MSBuildParameterValidator)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
-        val params = _parametersProviders.flatMap { it.getParameters(context).toList() }
+        val params = sequence<MSBuildParameter> {
+            for (param in _parametersProviders.flatMap { it.getParameters(context).toList() }) {
+                if (_msBuildParameterValidator.isValid(param)) {
+                    yield(param)
+                } else {
+                    LOG.debug("Invalid MSBuild parameter $param.")
+                }
+            }
+        }.toList()
+
 
         if (args.isEmpty() && params.isEmpty()) {
             return@sequence
@@ -72,6 +83,8 @@ class ResponseFileArgumentsProvider(
     }
 
     companion object {
+        private val LOG = Logger.getLogger(ResponseFileArgumentsProvider::class.java)
+
         internal const val ResponseFileExtension = ".rsp"
         internal const val BlockName = "MSBuild Response File"
         val nodeReuseArgument = CommandLineArgument("/nodeReuse:false", CommandLineArgumentType.Infrastructural)

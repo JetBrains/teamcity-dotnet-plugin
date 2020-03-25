@@ -16,4 +16,6 @@
 
 package jetbrains.buildServer.dotnet
 
-data class MSBuildParameter(val name: String, val value: String)
+data class MSBuildParameter(val name: String, val value: String) {
+    override fun toString() = "[$name]=[$value]"
+}

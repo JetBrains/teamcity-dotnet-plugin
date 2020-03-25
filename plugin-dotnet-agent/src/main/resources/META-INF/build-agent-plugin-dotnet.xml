@@ -100,6 +100,7 @@
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.NugetResultsObserver" id="nugetResultsObserver"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildParameterValidatorImpl"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>

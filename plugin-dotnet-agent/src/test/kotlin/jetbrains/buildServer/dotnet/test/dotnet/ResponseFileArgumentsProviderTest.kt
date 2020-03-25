@@ -37,6 +37,7 @@ class ResponseFileArgumentsProviderTest {
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _argumentsService: ArgumentsService
+    @MockK private lateinit var _msBuildParameterValidator: MSBuildParameterValidator
 
     @BeforeMethod
     fun setUp() {
@@ -61,11 +62,15 @@ class ResponseFileArgumentsProviderTest {
         val parametersProvider2 = mockk<MSBuildParametersProvider>()
         val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
+        val buildParameterInvalid = MSBuildParameter("#$%", "*((val1")
 
-        every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1)
+        every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1, buildParameterInvalid)
+        every { _msBuildParameterValidator.isValid(buildParameter1) } returns true
+        every { _msBuildParameterValidator.isValid(buildParameterInvalid) } returns false
         every { _msBuildParameterConverter.convert(buildParameter1) } returns "par1"
 
         every { parametersProvider2.getParameters(context) } returns sequenceOf(buildParameter2)
+        every { _msBuildParameterValidator.isValid(buildParameter2) } returns true
         every { _msBuildParameterConverter.convert(buildParameter2) } returns "par2"
 
         every { _pathService.getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension) } returns File(rspFileName)
@@ -101,6 +106,7 @@ class ResponseFileArgumentsProviderTest {
                 _msBuildParameterConverter,
                 argumentsProviders,
                 parametersProvider,
-                _virtualContext)
+                _virtualContext,
+                _msBuildParameterValidator)
     }
 }
