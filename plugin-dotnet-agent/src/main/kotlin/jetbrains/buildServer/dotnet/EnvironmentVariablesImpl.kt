@@ -20,6 +20,8 @@ import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
@@ -30,13 +32,26 @@ class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
-        private val _virtualContext: VirtualContext)
+        private val _parametersService: ParametersService,
+        private val _virtualContext: VirtualContext,
+        private val _credentialProviderSelector: NugetCredentialProviderSelector)
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
-        yield(CommandLineEnvironmentVariable("NUGET_PACKAGES", _virtualContext.resolvePath(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)))
 
-        val home = if (_environment.os == OSType.WINDOWS) "USERPROFILE" else "HOME"
+        val nugetPackagesPath = _parametersService.tryGetParameter(ParameterType.Environment, NUGET_PACKAGES_ENV_VAR)
+        if (nugetPackagesPath == null) {
+            yield(CommandLineEnvironmentVariable(NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)))
+        } else {
+            yield(CommandLineEnvironmentVariable(NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(nugetPackagesPath)))
+        }
+
+        _credentialProviderSelector.trySelect(sdkVersion)?.let {
+            LOG.debug("Set credentials plugin paths to $it")
+            yield(CommandLineEnvironmentVariable(NUGET_PLUGIN_PATH_ENV_VAR, it))
+        }
+
+        val home = if (_environment.os == OSType.WINDOWS) USERPROFILE_ENV_VAR else HOME_ENV_VAR
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
             yield(CommandLineEnvironmentVariable(home, System.getProperty("user.home")))
         }
@@ -71,6 +86,11 @@ class EnvironmentVariablesImpl(
 
     companion object {
         private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
+
+        private const val NUGET_PACKAGES_ENV_VAR = "NUGET_PACKAGES"
+        private const val NUGET_PLUGIN_PATH_ENV_VAR = "NUGET_PLUGIN_PATHS"
+        private const val USERPROFILE_ENV_VAR = "USERPROFILE"
+        private const val HOME_ENV_VAR = "HOME"
 
         internal val defaultVariables = sequenceOf(
                 CommandLineEnvironmentVariable("UseSharedCompilation", "false"),

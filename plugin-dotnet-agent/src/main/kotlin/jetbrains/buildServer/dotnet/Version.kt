@@ -107,5 +107,6 @@ class Version private constructor(val major: Int,
 
         val LastVersionWithoutSharedCompilation: Version = Version(2, 1, 105)
         val MultiAdapterPathVersion: Version = Version(2, 1, 102)
+        val CredentialProviderVersion: Version = Version(2, 1, 400)
     }
 }

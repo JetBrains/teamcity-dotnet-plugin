@@ -24,9 +24,12 @@ import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
+import jetbrains.buildServer.dotnet.NugetCredentialProviderSelector
 import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -39,13 +42,17 @@ class EnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystemService: FileSystemService
+    @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _nugetCredentialProviderSelector: NugetCredentialProviderSelector
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _parametersService.tryGetParameter(ParameterType.Environment, "NUGET_PACKAGES") } returns null
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
+        every { _nugetCredentialProviderSelector.trySelect(any()) } returns null
     }
 
     @Test
@@ -61,11 +68,12 @@ class EnvironmentVariablesTest {
         every { _pathsService.getPath(PathType.System) } returns systemPath
         every { _virtualContext.isVirtual } returns false
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
+        every { _nugetCredentialProviderSelector.trySelect(any()) } returns "CredentilProvider.dll"
 
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath))).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath), CommandLineEnvironmentVariable("NUGET_PLUGIN_PATHS", "CredentilProvider.dll"))).toList())
     }
 
     @Test
@@ -209,5 +217,31 @@ class EnvironmentVariablesTest {
         }
     }
 
-    private fun createInstance() = EnvironmentVariablesImpl(_environment, _pathsService, _fileSystemService, _virtualContext)
+    @Test
+    fun shouldOverrideDefaultNugetPackagesPathWhenSpecifiedAsEnvVar() {
+        // Given
+        val environmentVariables = createInstance()
+        val systemPath = File("system")
+
+        // When
+        every { _parametersService.tryGetParameter(ParameterType.Environment, "NUGET_PACKAGES") } returns "custom_nuget_packages_path"
+        every { _environment.os } returns OSType.WINDOWS
+        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
+        every { _pathsService.getPath(PathType.System) } returns systemPath
+        every { _virtualContext.isVirtual } returns false
+        every { _virtualContext.targetOSType } returns OSType.WINDOWS
+
+        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
+
+        // Then
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_custom_nuget_packages_path"))).toList())
+    }
+
+    private fun createInstance() = EnvironmentVariablesImpl(
+            _environment,
+            _pathsService,
+            _fileSystemService,
+            _parametersService,
+            _virtualContext,
+            _nugetCredentialProviderSelector)
 }
