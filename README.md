@@ -9,9 +9,9 @@ It simplifies building Windows and cross-platform applications that use .NET fra
 
 # Features
 
-The plugin provides the following features for .NET project building:
-* .NET build runner
-* .NET SDK and tools detection on TeamCity build agents
+The plugin provides the following features:
+* .NET build runner for [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet), [MSBuild](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild), [Visual Studio Test](https://docs.microsoft.com/en-us/visualstudio/test/vstest-console-options) and [Visual Studio Devenv](https://docs.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches)
+* [.NET SDK](https://docs.microsoft.com/en-us/dotnet/core/sdk) and .NET tools detection on TeamCity build agents
 * Auto-discovery of build steps
 * On-the-fly test reporting
 * Supports code coverage tools
@@ -21,23 +21,27 @@ The plugin provides the following features for .NET project building:
 
 You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://www.jetbrains.com/help/teamcity/?Installing+Additional+Plugins). The latest plugin builds:
 
-| Branch | Status | Download | TeamCity |
-|--------|--------|----------|----------|
-| Master | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetCliFor20181&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetCliFor20181),branch:master/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCorePlugin_NetCliFor20181/.lastSuccessful/dotnet.cli.zip?branch=master&guest=1)| master |
-| Indore-2017.2.x | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCLI_20172&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCLI_20172),branch:Indore-2017.2.x/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20172/.lastSuccessful/dotnet.cli.zip?branch=Indore-2017.2.x&guest=1)| 2017.2.x |
-| Indore-2017.1.x | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityDotnetCorePluginBuild&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityDotnetCorePluginBuild),branch:Indore-2017.1.x/statusIcon.svg" alt=""/></a> | [Download](https://teamcity.jetbrains.com/repository/download/TeamCityDotnetCorePluginBuild/.lastSuccessful/dotnet-cli.zip?branch=Indore-2017.1.x&guest=1)| 2017.1.x |
+|        |        |
+|--------|--------|
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetDev&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetDev),branch:master/statusIcon.svg" alt=""/></a> | [Dev](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCorePlugin_NetDev/.lastSuccessful/dotnet.cli.zip?branch=master&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20192&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20192),branch:Kanpur-2019.2.x/statusIcon.svg" alt=""/></a> | [2019.2](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20192/.lastSuccessful/dotnet.cli.zip?branch=Kanpur-2019.2.x&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20191&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20191),branch:Kanpur-2019.1.x/statusIcon.svg" alt=""/></a> | [2019.1](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20191/.lastSuccessful/dotnet.cli.zip?branch=Kanpur-2019.1.x&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20182&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20182),branch:Jaipur-2018.2.x/statusIcon.svg" alt=""/></a> | [2018.2](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20182/.lastSuccessful/dotnet.cli.zip?branch=Kanpur-2018.2.x&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20181&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20181),branch:Jaipur-2018.1.x/statusIcon.svg" alt=""/></a> | [2018.1](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20181/.lastSuccessful/dotnet.cli.zip?branch=Kanpur-2018.1.x&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20172&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20172),branch:Indore-2017.2.x/statusIcon.svg" alt=""/></a> | [2017.2](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20172/.lastSuccessful/dotnet.cli.zip?branch=Indore-2017.2.x&guest=1) |
+| <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20171&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20171),branch:Indore-2017.1.x/statusIcon.svg" alt=""/></a> | [2017.1](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCLI_20171/.lastSuccessful/dotnet-cli.zip?branch=Indore-2017.1.x&guest=1) |
 
 # Compatibility
 
 **Note**: This plugin is [bundled in TeamCity 2017.2+](https://www.jetbrains.com/help/teamcity/?Upgrade+Notes)
 
-The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://www.microsoft.com/net/download/core).
+The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://dotnet.microsoft.com/download/dotnet-core/).
 
 # Configuration
 
 ## .NET CLI toolkit
 
-To use the `dotnet` build runner, install [.NET CLI](https://www.microsoft.com/net/core) and add the .NET CLI tools path to the `PATH` environment variable.
+To use the `dotnet` build runner, install [.NET CLI](https://dotnet.microsoft.com/download/dotnet-core/) and add the .NET CLI tools path to the `PATH` environment variable.
 
 You can also configure the `DOTNET_HOME` environment variable for your TeamCity build agent user, for instance:
 
