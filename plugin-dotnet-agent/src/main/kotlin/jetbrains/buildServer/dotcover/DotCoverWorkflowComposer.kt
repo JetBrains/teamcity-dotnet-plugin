@@ -161,7 +161,6 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
         yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
         yield(CommandLineArgument("${argumentPrefix}ReturnTargetExitCode"))
-        yield(CommandLineArgument("${argumentPrefix}NoCheckForUpdates"))
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
             var argPrefix = when(_virtualContext.targetOSType) {

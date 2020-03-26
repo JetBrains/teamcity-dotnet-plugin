@@ -118,7 +118,6 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars + _defaultVariables)))
@@ -273,7 +272,6 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars + _defaultVariables)))
@@ -357,7 +355,6 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false")
                                 ),
                                 envVars + _defaultVariables)))
@@ -430,7 +427,6 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
                                         CommandLineArgument("/ProcessFilters=-:sqlservr.exe", CommandLineArgumentType.Custom),
                                         CommandLineArgument("/arg", CommandLineArgumentType.Custom)
@@ -505,7 +501,6 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/NoCheckForUpdates"),
                                         CommandLineArgument("/AnalyzeTargetArguments=false"),
                                         CommandLineArgument("/LogFile=v_log", CommandLineArgumentType.Infrastructural)
                                 ),
