@@ -16,6 +16,8 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.every
+import io.mockk.mockk
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
@@ -26,8 +28,6 @@ import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -52,7 +52,7 @@ class LoggerResolverTest {
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
-                        "Path \"plugin\\\\tools\\\\msbuild15\\\\TeamCity.MSBuild.Logger.dll\" to MSBuild logger was not found"),
+                        "Path \"plugin\\${File.separator}tools\\${File.separator}msbuild15\\${File.separator}TeamCity.MSBuild.Logger.dll\" to MSBuild logger was not found"),
 
                 // Success scenario for defaults
                 arrayOf(
@@ -161,14 +161,9 @@ class LoggerResolverTest {
             expectedErrorPattern: String?) {
         // Given
         val pluginPath = File("plugin")
-        val ctx = Mockery()
-        val pathsService = ctx.mock(PathsService::class.java)
-        ctx.checking(object : Expectations() {
-            init {
-                allowing<PathsService>(pathsService).getPath(PathType.Plugin)
-                will(returnValue(pluginPath))
-            }
-        })
+        val pathsService = mockk<PathsService> {
+            every { getPath(PathType.Plugin) } returns pluginPath
+        }
 
         val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService, pathsService)
 
