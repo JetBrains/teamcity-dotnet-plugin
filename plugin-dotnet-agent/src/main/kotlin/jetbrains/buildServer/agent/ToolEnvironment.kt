@@ -22,4 +22,6 @@ interface ToolEnvironment {
     val defaultPaths: Sequence<Path>
 
     val environmentPaths: Sequence<Path>
+
+    val cachePaths: Sequence<Path>
 }

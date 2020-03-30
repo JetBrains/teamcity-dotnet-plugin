@@ -20,12 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
-import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.VirtualContext
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
@@ -42,7 +37,7 @@ class EnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystemService: FileSystemService
-    @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _dotnetToolEnvironment: ToolEnvironment
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _nugetCredentialProviderSelector: NugetCredentialProviderSelector
 
@@ -50,7 +45,7 @@ class EnvironmentVariablesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        every { _parametersService.tryGetParameter(ParameterType.Environment, "NUGET_PACKAGES") } returns null
+        every { _dotnetToolEnvironment.cachePaths } returns emptySequence()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
         every { _nugetCredentialProviderSelector.trySelect(any()) } returns null
     }
@@ -66,6 +61,7 @@ class EnvironmentVariablesTest {
         every { _environment.os } returns OSType.WINDOWS
         every { _environment.tryGetVariable("USERPROFILE") } returns "path"
         every { _pathsService.getPath(PathType.System) } returns systemPath
+        every { _dotnetToolEnvironment.cachePaths } returns sequenceOf(Path(nugetPath))
         every { _virtualContext.isVirtual } returns false
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         every { _nugetCredentialProviderSelector.trySelect(any()) } returns "CredentilProvider.dll"
@@ -93,7 +89,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath))).toList())
+        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
     }
 
     @DataProvider(name = "osTypesData")
@@ -120,7 +116,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath)) + EnvironmentVariablesImpl.getTempDirVariables()).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + EnvironmentVariablesImpl.getTempDirVariables()).toList())
     }
 
     @Test
@@ -140,7 +136,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_PACKAGES", "v_" + nugetPath))).toList())
+        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
     }
 
     @Test(dataProvider = "osTypesData")
@@ -224,7 +220,7 @@ class EnvironmentVariablesTest {
         val systemPath = File("system")
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Environment, "NUGET_PACKAGES") } returns "custom_nuget_packages_path"
+        every { _dotnetToolEnvironment.cachePaths } returns sequenceOf(Path("custom_nuget_packages_path"))
         every { _environment.os } returns OSType.WINDOWS
         every { _environment.tryGetVariable("USERPROFILE") } returns "path"
         every { _pathsService.getPath(PathType.System) } returns systemPath
@@ -241,7 +237,7 @@ class EnvironmentVariablesTest {
             _environment,
             _pathsService,
             _fileSystemService,
-            _parametersService,
+            _dotnetToolEnvironment,
             _virtualContext,
             _nugetCredentialProviderSelector)
 }

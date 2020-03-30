@@ -16,12 +16,7 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
-import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.VirtualContext
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
@@ -32,18 +27,15 @@ class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
-        private val _parametersService: ParametersService,
+        private val _dotnetToolEnvironment: ToolEnvironment,
         private val _virtualContext: VirtualContext,
         private val _credentialProviderSelector: NugetCredentialProviderSelector)
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
 
-        val nugetPackagesPath = _parametersService.tryGetParameter(ParameterType.Environment, NUGET_PACKAGES_ENV_VAR)
-        if (nugetPackagesPath == null) {
-            yield(CommandLineEnvironmentVariable(NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)))
-        } else {
-            yield(CommandLineEnvironmentVariable(NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(nugetPackagesPath)))
+        _dotnetToolEnvironment.cachePaths.firstOrNull()?.let {
+            yield(CommandLineEnvironmentVariable(DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(it.path)))
         }
 
         _credentialProviderSelector.trySelect(sdkVersion)?.let {
@@ -87,7 +79,6 @@ class EnvironmentVariablesImpl(
     companion object {
         private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
 
-        private const val NUGET_PACKAGES_ENV_VAR = "NUGET_PACKAGES"
         private const val NUGET_PLUGIN_PATH_ENV_VAR = "NUGET_PLUGIN_PATHS"
         private const val USERPROFILE_ENV_VAR = "USERPROFILE"
         private const val HOME_ENV_VAR = "HOME"

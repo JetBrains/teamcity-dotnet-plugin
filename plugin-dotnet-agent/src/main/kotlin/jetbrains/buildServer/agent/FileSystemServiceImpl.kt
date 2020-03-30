@@ -31,13 +31,13 @@ class FileSystemServiceImpl: FileSystemService {
 
     override fun read(file: File, reader: (InputStream) -> Unit) = FileInputStream(file).use(reader)
 
-    override fun copy(source: File, destination: File) = FileUtils.copyDirectory(source, destination)
+    override fun copy(sourceDirectory: File, destinationDirectory: File) = FileUtils.copyDirectory(sourceDirectory, destinationDirectory)
 
-    override fun remove(file: File) = FileUtils.deleteDirectory(file)
+    override fun remove(fileOrDirectory: File) = FileUtil.delete(fileOrDirectory)
 
-    override fun list(path: File): Sequence<File> = path.listFiles()?.asSequence() ?: emptySequence()
+    override fun list(directory: File): Sequence<File> = directory.listFiles()?.asSequence() ?: emptySequence()
 
-    override fun createDirectory(path: File) = path.mkdirs()
+    override fun createDirectory(directory: File) = directory.mkdirs()
 
     override fun sanitizeFileName(name: String) = FileUtil.sanitizeFileName(name)
 

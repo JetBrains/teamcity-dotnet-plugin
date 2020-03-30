@@ -22,9 +22,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetToolEnvironment
 import jetbrains.buildServer.util.OSType
@@ -38,6 +36,7 @@ class DotnetToolEnvironmentTest {
     @MockK private lateinit var _buildStepContext: BuildStepContext
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _pathsService: PathsService
 
     @BeforeMethod
     fun setUp() {
@@ -112,6 +111,32 @@ class DotnetToolEnvironmentTest {
         Assert.assertEquals(actualPaths, listOf(Path("a"), Path("B")))
     }
 
+    @Test
+    fun shouldProvideDefaultCachePaths() {
+        // Given
+        val systemPath = File("System")
+
+        // When
+        every { _parametersService.tryGetParameter(ParameterType.Environment, DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR) } returns null
+        every { _pathsService.getPath(PathType.System) } returns systemPath
+        val actualPaths = createInstance().cachePaths.toList()
+
+        // Then
+        Assert.assertEquals(actualPaths, listOf(Path(File(File(systemPath, "dotnet"), ".nuget").canonicalPath)))
+    }
+
+    @Test
+    fun shouldProvideCachePathsWhenItWasOverridedByEnvVar() {
+        // Given
+
+        // When
+        every { _parametersService.tryGetParameter(ParameterType.Environment, DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
+        val actualPaths = createInstance().cachePaths.toList()
+
+        // Then
+        Assert.assertEquals(actualPaths, listOf(Path("custom_path")))
+    }
+
     private fun createInstance() =
-            DotnetToolEnvironment(_buildStepContext, _environment, _parametersService)
+            DotnetToolEnvironment(_buildStepContext, _environment, _parametersService, _pathsService)
 }

@@ -66,43 +66,47 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
-    override fun copy(source: File, destination: File) {
-        if (!isDirectory(source)) {
-            val sourceFile = _files[source]!!
-            addFile(destination, sourceFile.attributes)
-            _files[destination] = sourceFile
+    override fun copy(sourceDirectory: File, destinationDirectory: File) {
+        if (!isDirectory(sourceDirectory)) {
+            val sourceFile = _files[sourceDirectory]!!
+            addFile(destinationDirectory, sourceFile.attributes)
+            _files[destinationDirectory] = sourceFile
         } else {
-            val sourceDir = _directories[source]!!
-            addDirectory(destination, sourceDir.attributes)
-            _directories[destination] = sourceDir
+            val sourceDir = _directories[sourceDirectory]!!
+            addDirectory(destinationDirectory, sourceDir.attributes)
+            _directories[destinationDirectory] = sourceDir
         }
     }
 
-    override fun remove(file: File) {
-        val fileInfo = _files[file]
+    override fun remove(fileOrDirectory: File): Boolean {
+        val fileInfo = _files[fileOrDirectory]
         if (fileInfo != null) {
             val errorOnRemove = fileInfo.attributes.errorOnRemove
             if (errorOnRemove != null) {
                 throw errorOnRemove
             }
 
-            _files.remove(file)
+            _files.remove(fileOrDirectory)
+            return true
         }
 
-        val dirInfo = _directories[file]
+        val dirInfo = _directories[fileOrDirectory]
         if (dirInfo != null) {
             val errorOnRemove = dirInfo.attributes.errorOnRemove
             if (errorOnRemove != null) {
                 throw errorOnRemove
             }
 
-            _directories.remove(file)
+            _directories.remove(fileOrDirectory)
+            return true
         }
+
+        return false
     }
 
-    override fun list(path: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == path }
+    override fun list(directory: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == directory }
 
-    override fun createDirectory(path: File): Boolean {
+    override fun createDirectory(directory: File): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

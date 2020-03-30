@@ -31,13 +31,13 @@ interface FileSystemService {
 
     fun read(file: File, reader: (InputStream) -> Unit)
 
-    fun copy(source: File, destination: File)
+    fun copy(sourceDirectory: File, destinationDirectory: File)
 
-    fun remove(file: File)
+    fun remove(fileOrDirectory: File): Boolean
 
-    fun list(path: File): Sequence<File>
+    fun list(directory: File): Sequence<File>
 
-    fun createDirectory(path: File): Boolean
+    fun createDirectory(directory: File): Boolean
 
     fun sanitizeFileName(name: String): String
 

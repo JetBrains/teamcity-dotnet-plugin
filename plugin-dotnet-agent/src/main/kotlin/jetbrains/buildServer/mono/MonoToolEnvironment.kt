@@ -46,5 +46,8 @@ class MonoToolEnvironment(
     override val environmentPaths: Sequence<Path>
         get() = extendByBin(_environment.paths)
 
+    override val cachePaths: Sequence<Path>
+        get() = emptySequence()
+
     private fun extendByBin(paths: Sequence<Path>) = paths + paths.map { Path("${it.path}${File.separatorChar}bin") }
 }
