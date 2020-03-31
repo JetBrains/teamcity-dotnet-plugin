@@ -17,20 +17,26 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.AgentBuildRunnerInfo
-import jetbrains.buildServer.agent.BuildAgentConfiguration
-import jetbrains.buildServer.agent.BuildRunnerContext
+import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.dotnet.DotnetConstants
 import org.springframework.beans.factory.BeanFactory
 
 class WorkflowBuildServiceFactory(
-        private val runnerType: String,
-        private val beanFactory: BeanFactory)
-    : MultiCommandBuildSessionFactory, BuildStepContext {
+        private val _runnerType: String,
+        private val _beanFactory: BeanFactory)
+    : MultiCommandBuildSessionFactory, BuildStepContext, DirectoryCleanersProvider {
     private var _runnerContext: BuildRunnerContext? = null
 
     override fun createSession(runnerContext: BuildRunnerContext): MultiCommandBuildSession {
         _runnerContext = runnerContext
-        return beanFactory.getBean(WorkflowSessionImpl::class.java)
+        return _beanFactory.getBean(WorkflowSessionImpl::class.java)
+    }
+
+    override fun getCleanerName() = DotnetConstants.CLEANER_NAME
+
+    override fun registerDirectoryCleaners(context: DirectoryCleanersProviderContext, registry: DirectoryCleanersRegistry) {
+        _runnerContext = (context.runningBuild as AgentRunningBuildEx).currentRunnerContext
+        (_beanFactory.getBean(CacheCleanerSession::class.java) as CacheCleanerSession).create(registry)
     }
 
     override val isAvailable: Boolean
@@ -40,7 +46,7 @@ class WorkflowBuildServiceFactory(
         get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 
     override fun getBuildRunnerInfo(): AgentBuildRunnerInfo = object : AgentBuildRunnerInfo {
-        override fun getType(): String = runnerType
+        override fun getType(): String = _runnerType
 
         override fun canRun(config: BuildAgentConfiguration): Boolean = true
     }

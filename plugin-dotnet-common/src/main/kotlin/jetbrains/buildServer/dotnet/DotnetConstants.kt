@@ -28,6 +28,7 @@ object DotnetConstants {
     const val PROGRAM_FILES_ENV_VAR = "ProgramW6432"
     const val RUNNER_DISPLAY_NAME = ".NET"
     const val RUNNER_DESCRIPTION = "Provides .NET toolchain support for .NET projects"
+    const val CLEANER_NAME = "$RUNNER_DISPLAY_NAME Cleaner"
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
