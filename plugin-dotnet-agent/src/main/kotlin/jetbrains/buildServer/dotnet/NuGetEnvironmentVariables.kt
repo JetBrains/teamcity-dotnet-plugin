@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.VirtualContext
@@ -37,6 +38,13 @@ class NuGetEnvironmentVariables(
             }
         }
 
+        _parametersService
+                .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+                ?.trim()
+                ?.let { Verbosity.tryParse(it) }
+                ?.let {
+                    yieldEnvVar(varsToOverride, NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR) { it.id }
+                }
     }
 
     private suspend fun SequenceScope<CommandLineEnvironmentVariable>.yieldEnvVar(
@@ -54,5 +62,6 @@ class NuGetEnvironmentVariables(
         internal const val NUGET_HTTP_CACHE_PATH_ENV_VAR = "NUGET_HTTP_CACHE_PATH"
         internal const val NUGET_PACKAGES_ENV_VAR = "NUGET_PACKAGES"
         internal const val NUGET_PLUGIN_PATH_ENV_VAR = "NUGET_PLUGIN_PATHS"
+        internal const val NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR = "NUGET_RESTORE_MSBUILD_VERBOSITY"
     }
 }
