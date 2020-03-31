@@ -41,7 +41,7 @@ class ObserversTest {
 
         // When
         val someError = Exception("test")
-        val observer = observer<Int> ({v:Int -> Unit}, { e:Exception -> exception = e }, {})
+        val observer = observer<Int> ({ _:Int -> Unit}, { e:Exception -> exception = e }, {})
         observer.onError(someError)
 
         // Then
@@ -54,7 +54,7 @@ class ObserversTest {
         var completed: Boolean? = null
 
         // When
-        val observer = observer<Int> ({v:Int -> Unit}, { e:Exception -> Unit }, { completed = true })
+        val observer = observer<Int> ({ _:Int -> Unit}, { _:Exception -> Unit }, { completed = true })
         observer.onComplete()
 
         // Then

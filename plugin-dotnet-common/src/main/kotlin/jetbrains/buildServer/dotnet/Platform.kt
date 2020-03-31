@@ -7,7 +7,7 @@ enum class Platform(val id: String, val description: String) {
 
     companion object {
         fun tryParse(id: String): Platform? {
-            return Platform.values().singleOrNull()
+            return Platform.values().singleOrNull() { it.id.equals(id, true) }
         }
     }
 }

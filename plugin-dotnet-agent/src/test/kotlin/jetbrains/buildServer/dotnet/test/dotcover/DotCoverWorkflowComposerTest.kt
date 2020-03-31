@@ -234,8 +234,8 @@ class DotCoverWorkflowComposerTest {
                 arrayOf(Verbosity.Diagnostic))
     }
 
-    @Test(dataProvider = "showDiagnosticCases")
-    fun shouldShowDiagnostic(verbosity: Verbosity) {
+    @Test
+    fun shouldShowDiagnostic() {
         // Given
         val dotCoverProjectUniqueName = Path("proj000")
         val dotCoverSnapshotUniqueName = Path("snapshot000")

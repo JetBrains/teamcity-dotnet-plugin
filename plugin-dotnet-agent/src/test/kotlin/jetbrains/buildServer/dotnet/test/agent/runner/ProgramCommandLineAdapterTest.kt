@@ -111,8 +111,16 @@ class ProgramCommandLineAdapterTest {
         ))
     }
 
-    @Test(dataProvider = "testData")
-    fun shouldAddEnvVar_TEAMCITY_DOCKER_QUIET_MODE_WhenVirtaulContextAndSystemDiagnosticsCommand(os: OSType, expectedArgs: List<String>) {
+    @DataProvider(name = "osData")
+    fun osData(): Array<Array<OSType>> {
+        return arrayOf(
+                arrayOf(OSType.UNIX),
+                arrayOf(OSType.MAC),
+                arrayOf(OSType.WINDOWS))
+    }
+
+    @Test(dataProvider = "osData")
+    fun shouldAddEnvVar_TEAMCITY_DOCKER_QUIET_MODE_WhenVirtaulContextAndSystemDiagnosticsCommand(os: OSType) {
         // Given
 
         // When

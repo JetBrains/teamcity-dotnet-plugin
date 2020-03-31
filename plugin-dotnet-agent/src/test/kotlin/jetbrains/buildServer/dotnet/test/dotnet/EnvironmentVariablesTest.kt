@@ -77,7 +77,6 @@ class EnvironmentVariablesTest {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
-        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
         every { _environment.os } returns OSType.WINDOWS
@@ -104,7 +103,6 @@ class EnvironmentVariablesTest {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
-        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
 
         // When
         every { _environment.os } returns OSType.WINDOWS
@@ -124,8 +122,7 @@ class EnvironmentVariablesTest {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
-        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
-
+        
         // When
         every { _environment.os } returns OSType.WINDOWS
         every { _environment.tryGetVariable("USERPROFILE") } returns "path"

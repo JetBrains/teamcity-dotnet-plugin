@@ -82,7 +82,7 @@ class WorkflowSessionTest {
                     yield(_commandLine2)
                 })
 
-        val commands = session.toSequence().toList()
+        session.toSequence().toList()
     }
 
     @Test
@@ -133,12 +133,12 @@ class WorkflowSessionTest {
 }
 
 fun MultiCommandBuildSession.toSequence(): Sequence<CommandExecution> =
-    sequence {
+    sequence<CommandExecution> {
         var nextCommand: CommandExecution?
         do {
             nextCommand = this@toSequence.nextCommand
             if (nextCommand != null) {
-                yield(nextCommand!!)
+                yield(nextCommand)
             }
         } while (nextCommand != null)
     }

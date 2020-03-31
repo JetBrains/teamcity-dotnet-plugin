@@ -93,7 +93,7 @@ class DotnetRunnerDiscoveryExtension(
             }
 
             if (isNativeOnly || solution.projects.any { isNative(it) }) {
-                yield(createMSBuildNativeCommand(DotnetCommandType.MSBuild, solutionPath))
+                yield(createMSBuildNativeCommand(solutionPath))
             }
 
             // If all projects contain tests
@@ -114,7 +114,7 @@ class DotnetRunnerDiscoveryExtension(
 
                 val projectTypes = _projectTypeSelector.select(project)
                 if (isNativeOnly || isNative(project)) {
-                    yield(createMSBuildNativeCommand(DotnetCommandType.MSBuild, projectPath))
+                    yield(createMSBuildNativeCommand(projectPath))
                 }
 
                 if (!isNativeOnly && projectTypes.contains(ProjectType.Unknown)) {
@@ -153,7 +153,7 @@ class DotnetRunnerDiscoveryExtension(
         }
 
         if (testAssemblies.any()) {
-            yield(createTestNativeCommand(DotnetCommandType.MSBuild, testAssemblies.joinToString(";")))
+            yield(createTestNativeCommand(testAssemblies.joinToString(";")))
         }
     }
 
@@ -163,7 +163,7 @@ class DotnetRunnerDiscoveryExtension(
     private fun createSimpleCommand(commandType: DotnetCommandType, path: String): Command =
             Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
 
-    private fun createMSBuildNativeCommand(commandType: DotnetCommandType, path: String): Command =
+    private fun createMSBuildNativeCommand(path: String): Command =
             Command(
                     createDefaultName(DotnetCommandType.MSBuild, path),
                     listOf(
@@ -172,7 +172,7 @@ class DotnetRunnerDiscoveryExtension(
                             Parameter(DotnetConstants.PARAM_ARGUMENTS, "-restore -noLogo"),
                             Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id)))
 
-    private fun createTestNativeCommand(commandType: DotnetCommandType, path: String): Command =
+    private fun createTestNativeCommand(path: String): Command =
             Command(
                     createDefaultName(DotnetCommandType.VSTest, path),
                     listOf(

@@ -65,15 +65,14 @@ class CmdWorkflowComposerTest {
 
 
     @DataProvider(name = "composeCases")
-    fun getComposeCases(): Array<Array<Any?>> {
+    fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.MAC, "cmd" as String?, _workflowCmd, _workflowCmd),
-                arrayOf(OSType.UNIX, "cmd" as String?, _workflowBat, _workflowBat),
-                arrayOf(OSType.UNIX, "cmd" as String?, _workflowOther, _workflowOther),
-                arrayOf(OSType.WINDOWS, File("win", "cmd.exe").path, _workflowOther, _workflowOther),
+                arrayOf(OSType.MAC, _workflowCmd, _workflowCmd),
+                arrayOf(OSType.UNIX, _workflowBat, _workflowBat),
+                arrayOf(OSType.UNIX, _workflowOther, _workflowOther),
+                arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther),
                 arrayOf(
                         OSType.WINDOWS,
-                        null,
                         _workflowCmd,
                         Workflow(
                                 sequenceOf(
@@ -93,7 +92,6 @@ class CmdWorkflowComposerTest {
                 ),
                 arrayOf(
                         OSType.WINDOWS,
-                        "resolved_cmd" as String?,
                         _workflowBat,
                         Workflow(
                                 sequenceOf(
@@ -117,7 +115,6 @@ class CmdWorkflowComposerTest {
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
             osType: OSType,
-            cmdFile: String?,
             baseWorkflow: Workflow,
             expectedWorkflow: Workflow) {
         // Given

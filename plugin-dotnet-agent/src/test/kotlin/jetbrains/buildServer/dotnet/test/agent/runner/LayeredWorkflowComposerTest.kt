@@ -42,7 +42,7 @@ class LayeredWorkflowComposerTest {
 
         // When
         every { toolWorkflowComposer.target } returns TargetType.Tool
-        every { toolWorkflowComposer.compose(workflowContext!!, Unit, _baseWorkflow) } returns _toolWorkflow
+        every { toolWorkflowComposer.compose(workflowContext, Unit, _baseWorkflow) } returns _toolWorkflow
         every { profilerOfCodeCoverageWorkflowComposer.target } returns TargetType.CodeCoverageProfiler
         every { profilerOfCodeCoverageWorkflowComposer.compose(workflowContext, Unit, _toolWorkflow) } returns _profilerOfCodeCoverageWorkflow
         every { notApplicableWorkflowComposer.target } returns TargetType.NotApplicable

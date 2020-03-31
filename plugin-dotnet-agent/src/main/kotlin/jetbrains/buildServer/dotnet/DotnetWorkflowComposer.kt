@@ -59,7 +59,7 @@ class DotnetWorkflowComposer(
 
                     var version: Version? = versions[executable.path.path];
                     if (version == null) {
-                        var state = ToolState(
+                        var toolState = ToolState(
                                 executable,
                                 observer<Path> { virtualDotnetExecutable = it },
                                 observer<Version> {
@@ -68,7 +68,7 @@ class DotnetWorkflowComposer(
                                 }
                         )
 
-                        yieldAll(command.toolResolver.toolStateWorkflowComposer.compose(context, state).commandLines)
+                        yieldAll(command.toolResolver.toolStateWorkflowComposer.compose(context, toolState).commandLines)
                     }
 
                     virtualPath = virtualDotnetExecutable ?: virtualPath

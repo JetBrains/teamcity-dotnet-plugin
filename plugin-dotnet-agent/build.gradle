@@ -16,7 +16,7 @@
 
 plugins {
   id 'com.github.rodm.teamcity-agent' version "1.0"
-  id 'com.ullink.nuget' version '2.15'
+  id 'com.ullink.nuget' version '2.18'
 }
 
 teamcity {

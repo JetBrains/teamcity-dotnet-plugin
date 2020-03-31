@@ -58,7 +58,3 @@ subprojects {
     test.useTestNG()
     jar.version = null
 }
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '5.6.1'
-}
