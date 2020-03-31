@@ -16,16 +16,28 @@
 
 package jetbrains.buildServer.agent
 
+import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.runner.BuildStepContext
+import jetbrains.buildServer.rx.Observable
+import jetbrains.buildServer.rx.Subject
 import jetbrains.buildServer.rx.subjectOf
 import jetbrains.buildServer.util.EventDispatcher
 
 class AgentLifeCycleEventSourcesImpl(
         events: EventDispatcher<AgentLifeCycleListener>)
-    : AgentLifeCycleEventSources, AgentLifeCycleAdapter() {
+    : BuildStepContext, AgentLifeCycleEventSources, AgentLifeCycleAdapter() {
 
     init {
         events.addListener(this)
     }
+
+    private var _runnerContext: BuildRunnerContext? = null
+
+    override val isAvailable: Boolean
+        get() = _runnerContext != null
+
+    override val runnerContext: BuildRunnerContext
+        get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 
     override val beforeAgentConfigurationLoadedSource = subjectOf<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>()
 
@@ -34,10 +46,23 @@ class AgentLifeCycleEventSourcesImpl(
         super.beforeAgentConfigurationLoaded(agent)
     }
 
+    override val buildStartedSource: Subject<AgentLifeCycleEventSources.BuildStartedEvent> = subjectOf<AgentLifeCycleEventSources.BuildStartedEvent>()
+
+    override fun buildStarted(build: AgentRunningBuild) {
+        _runnerContext = (build as AgentRunningBuildEx).currentRunnerContext
+        buildStartedSource.onNext(AgentLifeCycleEventSources.BuildStartedEvent(build))
+        super.buildStarted(build)
+    }
+
     override val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
 
     override fun beforeBuildFinish(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
-        buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(build, buildStatus))
-        super.beforeBuildFinish(build, buildStatus)
+        try {
+            buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(build, buildStatus))
+            super.beforeBuildFinish(build, buildStatus)
+        }
+        finally {
+            _runnerContext = null
+        }
     }
 }

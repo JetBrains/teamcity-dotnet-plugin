@@ -24,26 +24,11 @@ import org.springframework.beans.factory.BeanFactory
 class WorkflowBuildServiceFactory(
         private val _runnerType: String,
         private val _beanFactory: BeanFactory)
-    : MultiCommandBuildSessionFactory, BuildStepContext, DirectoryCleanersProvider {
-    private var _runnerContext: BuildRunnerContext? = null
+    : MultiCommandBuildSessionFactory {
 
     override fun createSession(runnerContext: BuildRunnerContext): MultiCommandBuildSession {
-        _runnerContext = runnerContext
         return _beanFactory.getBean(WorkflowSessionImpl::class.java)
     }
-
-    override fun getCleanerName() = DotnetConstants.CLEANER_NAME
-
-    override fun registerDirectoryCleaners(context: DirectoryCleanersProviderContext, registry: DirectoryCleanersRegistry) {
-        _runnerContext = (context.runningBuild as AgentRunningBuildEx).currentRunnerContext
-        (_beanFactory.getBean(CacheCleanerSession::class.java) as CacheCleanerSession).create(registry)
-    }
-
-    override val isAvailable: Boolean
-        get() = _runnerContext != null
-
-    override val runnerContext: BuildRunnerContext
-        get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 
     override fun getBuildRunnerInfo(): AgentBuildRunnerInfo = object : AgentBuildRunnerInfo {
         override fun getType(): String = _runnerType

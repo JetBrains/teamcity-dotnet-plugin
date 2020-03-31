@@ -1,5 +1,7 @@
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.agent.DirectoryCleanersProvider
+import jetbrains.buildServer.agent.DirectoryCleanersProviderContext
 import jetbrains.buildServer.agent.DirectoryCleanersRegistry
 import jetbrains.buildServer.dotnet.DotnetConstants
 import org.apache.log4j.Logger
@@ -9,9 +11,11 @@ import java.util.*
 
 class CacheCleanerSessionImpl(
         private val _cleaners: List<CacheCleaner>)
-    : CacheCleanerSession {
+    : DirectoryCleanersProvider {
 
-    override fun create(registry: DirectoryCleanersRegistry) {
+    override fun getCleanerName() = DotnetConstants.CLEANER_NAME
+
+    override fun registerDirectoryCleaners(context: DirectoryCleanersProviderContext, registry: DirectoryCleanersRegistry) {
         val now = Instant.now() //current date
         for (cleaner in _cleaners) {
             val fullName = "${DotnetConstants.CLEANER_NAME} ${cleaner.name} as ${cleaner.type.name}"

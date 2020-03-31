@@ -19,9 +19,11 @@ package jetbrains.buildServer.agent
 import jetbrains.buildServer.rx.Observable
 
 interface AgentLifeCycleEventSources {
+    val buildStartedSource: Observable<AgentLifeCycleEventSources.BuildStartedEvent>
     val buildFinishedSource: Observable<AgentLifeCycleEventSources.BuildFinishedEvent>
     val beforeAgentConfigurationLoadedSource: Observable<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>
 
+    data class BuildStartedEvent(val build: AgentRunningBuild)
     data class BuildFinishedEvent(val build: AgentRunningBuild, val buildStatus: BuildFinishedStatus)
     data class BeforeAgentConfigurationLoadedEvent(val agent: BuildAgent)
 }
