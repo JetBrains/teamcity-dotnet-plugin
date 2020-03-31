@@ -36,7 +36,6 @@ class DotnetToolEnvironmentTest {
     @MockK private lateinit var _buildStepContext: BuildStepContext
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _parametersService: ParametersService
-    @MockK private lateinit var _pathsService: PathsService
 
     @BeforeMethod
     fun setUp() {
@@ -99,44 +98,6 @@ class DotnetToolEnvironmentTest {
         Assert.assertEquals(actualPaths, expectedPaths)
     }
 
-    @Test
-    fun shouldProvideEnvironmentPaths() {
-        // Given
-        every { _environment.paths } returns sequenceOf(Path("a"), Path("B"))
-
-        // When
-        val actualPaths = createInstance().environmentPaths.toList()
-
-        // Then
-        Assert.assertEquals(actualPaths, listOf(Path("a"), Path("B")))
-    }
-
-    @Test
-    fun shouldProvideDefaultCachePaths() {
-        // Given
-        val systemPath = File("System")
-
-        // When
-        every { _parametersService.tryGetParameter(ParameterType.Environment, DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR) } returns null
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        val actualPaths = createInstance().cachePaths.toList()
-
-        // Then
-        Assert.assertEquals(actualPaths, listOf(Path(File(File(systemPath, "dotnet"), ".nuget").canonicalPath)))
-    }
-
-    @Test
-    fun shouldProvideCachePathsWhenItWasOverridedByEnvVar() {
-        // Given
-
-        // When
-        every { _parametersService.tryGetParameter(ParameterType.Environment, DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
-        val actualPaths = createInstance().cachePaths.toList()
-
-        // Then
-        Assert.assertEquals(actualPaths, listOf(Path("custom_path")))
-    }
-
     private fun createInstance() =
-            DotnetToolEnvironment(_buildStepContext, _environment, _parametersService, _pathsService)
+            DotnetToolEnvironment(_buildStepContext, _environment, _parametersService)
 }

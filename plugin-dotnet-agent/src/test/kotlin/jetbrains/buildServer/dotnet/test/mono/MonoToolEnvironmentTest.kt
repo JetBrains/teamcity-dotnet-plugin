@@ -100,17 +100,6 @@ class MonoToolEnvironmentTest {
         Assert.assertEquals(actualPaths, listOf(Path("a"), Path("B"), Path("a${File.separatorChar}bin"), Path("B${File.separatorChar}bin")))
     }
 
-    @Test
-    fun shouldProvideEmptyCachePaths() {
-        // Given
-
-        // When
-        val actualPaths = createInstance().cachePaths.toList()
-
-        // Then
-        Assert.assertEquals(actualPaths, emptyList<Path>())
-    }
-
     private fun createInstance() =
             MonoToolEnvironment(_buildStepContext, _environment, _parametersService)
 }

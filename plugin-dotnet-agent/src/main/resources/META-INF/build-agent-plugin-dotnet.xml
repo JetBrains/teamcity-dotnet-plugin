@@ -114,8 +114,9 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl">
-    <constructor-arg ref="dotnetToolEnvironment"/>
+  <bean class="jetbrains.buildServer.dotnet.NuGetEnvironmentVariables" id="nuGetEnvironmentVariables"/>
+  <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" primary="true">
+    <constructor-arg ref="nuGetEnvironmentVariables"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>

@@ -21,13 +21,11 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolEnvironment
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.util.OSType
-import java.io.File
 
 class DotnetToolEnvironment(
         private val _buildStepContext: BuildStepContext,
         private val _environment: Environment,
-        private val _parametersService: ParametersService,
-        private val _pathsService: PathsService)
+        private val _parametersService: ParametersService)
     : ToolEnvironment {
 
     override val homePaths: Sequence<Path>
@@ -51,15 +49,4 @@ class DotnetToolEnvironment(
 
     override val environmentPaths: Sequence<Path>
         get() = _environment.paths
-
-    override val cachePaths: Sequence<Path>
-        get() = sequenceOf (
-            _parametersService.tryGetParameter(ParameterType.Environment, NUGET_PACKAGES_ENV_VAR)
-                    ?.let { Path(it) }
-                    ?: Path(File(File(_pathsService.getPath(PathType.System), "dotnet"), ".nuget").canonicalPath)
-        )
-
-    companion object {
-        internal const val NUGET_PACKAGES_ENV_VAR = "NUGET_PACKAGES"
-    }
 }

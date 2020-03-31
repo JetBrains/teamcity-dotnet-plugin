@@ -38,13 +38,15 @@ object DotnetConstants {
     const val CONFIG_SDK_NAME = "DotNetCoreSDK"
     const val PARAM_DOCKER_IMAGE = "plugin.docker.imageId"
 
+    // Internal configuration parameters:
+    // True or False (False by default) - allows experimental features
     const val PARAM_EXPERIMENTAL = "teamcity.dotnet.experimental"
-
-    // Set to On, MultiAdapterPath or Off
+    // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
-
-    // Set to false to not use .rsp files
+    // True or False (True by default) - set to False to not use .rsp files
     const val PARAM_RSP = "dotnet.cli.rsp"
+    // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS (All by default), the empty string to not override at all - allows overriding NuGet environment variables
+    const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.dotnet.override.nuget.vars"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"

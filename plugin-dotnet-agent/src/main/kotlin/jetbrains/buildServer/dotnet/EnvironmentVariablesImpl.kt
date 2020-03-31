@@ -27,21 +27,12 @@ class EnvironmentVariablesImpl(
         private val _environment: Environment,
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
-        private val _dotnetToolEnvironment: ToolEnvironment,
-        private val _virtualContext: VirtualContext,
-        private val _credentialProviderSelector: NugetCredentialProviderSelector)
+        private val _nugetEnvironmentVariables: EnvironmentVariables,
+        private val _virtualContext: VirtualContext)
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
-
-        _dotnetToolEnvironment.cachePaths.firstOrNull()?.let {
-            yield(CommandLineEnvironmentVariable(DotnetToolEnvironment.NUGET_PACKAGES_ENV_VAR, _virtualContext.resolvePath(it.path)))
-        }
-
-        _credentialProviderSelector.trySelect(sdkVersion)?.let {
-            LOG.debug("Set credentials plugin paths to $it")
-            yield(CommandLineEnvironmentVariable(NUGET_PLUGIN_PATH_ENV_VAR, it))
-        }
+        yieldAll(_nugetEnvironmentVariables.getVariables(sdkVersion))
 
         val home = if (_environment.os == OSType.WINDOWS) USERPROFILE_ENV_VAR else HOME_ENV_VAR
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
@@ -79,7 +70,6 @@ class EnvironmentVariablesImpl(
     companion object {
         private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
 
-        private const val NUGET_PLUGIN_PATH_ENV_VAR = "NUGET_PLUGIN_PATHS"
         private const val USERPROFILE_ENV_VAR = "USERPROFILE"
         private const val HOME_ENV_VAR = "HOME"
 
