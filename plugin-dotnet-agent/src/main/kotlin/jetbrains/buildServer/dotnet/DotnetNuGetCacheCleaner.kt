@@ -21,10 +21,9 @@ class DotnetNuGetCacheCleaner(
         get() = sequence {
             runDotnet(NUGET_ARG, LOCALS_ARG, _commandArg, LIST_ARG)?.let {
                 if (it.exitCode == 0) {
-                    val pathPattern = Regex("^.*$name:\\s*(?<path>.+)\$", RegexOption.IGNORE_CASE)
+                    val pathPattern = Regex("^.*$name:\\s*(.+)\$", RegexOption.IGNORE_CASE)
                     it.standardOutput
-                            .map { pathPattern.find(it) }
-                            .map { it?.groups?.get("path")?.value }
+                            .map { pathPattern.find(it)?.groups?.get(1)?.value }
                             .filter { it?.isNotBlank() ?: false }
                             .firstOrNull()
                             ?.let { yield(File(it)) }
