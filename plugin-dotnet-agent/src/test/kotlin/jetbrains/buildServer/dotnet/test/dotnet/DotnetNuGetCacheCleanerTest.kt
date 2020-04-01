@@ -10,7 +10,7 @@ import jetbrains.buildServer.agent.runner.CleanType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetNuGetCacheCleaner
+import jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner
 import jetbrains.buildServer.dotnet.EnvironmentVariables
 import jetbrains.buildServer.dotnet.Version
 import org.testng.Assert
@@ -103,10 +103,10 @@ class DotnetNuGetCacheCleanerTest {
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(createComandLine(listOf(DotnetNuGetCacheCleaner.NUGET_ARG, DotnetNuGetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNuGetCacheCleaner.CLEAR_ARG))) }
+        verify { _commandLineExecutor.tryExecute(createComandLine(listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.CLEAR_ARG))) }
     }
 
-    private fun createComandLine(args: List<CommandLineArgument> = listOf(DotnetNuGetCacheCleaner.NUGET_ARG, DotnetNuGetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNuGetCacheCleaner.LIST_ARG)) = CommandLine(
+    private fun createComandLine(args: List<CommandLineArgument> = listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.LIST_ARG)) = CommandLine(
             null,
             TargetType.SystemDiagnostics,
             Path(_dotnetExecutable),
@@ -114,7 +114,7 @@ class DotnetNuGetCacheCleanerTest {
             args,
             _envVars.toList())
 
-    private fun createInstance() = DotnetNuGetCacheCleaner(
+    private fun createInstance() = DotnetNugetCacheCleaner(
             "type",
             CleanType.Medium,
             _toolProvider,

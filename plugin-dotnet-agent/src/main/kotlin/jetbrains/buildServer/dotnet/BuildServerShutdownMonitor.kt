@@ -24,7 +24,7 @@ import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger
 
 class BuildServerShutdownMonitor(
-        agentLifeCycleEventSources: AgentLifeCycleEventSources,
+        eventSources: EventSources,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _dotnetToolResolver: DotnetToolResolver,
         private val _parametersService: ParametersService,
@@ -37,7 +37,7 @@ class BuildServerShutdownMonitor(
     internal val count get() = _workingDirectories.size
 
     init {
-        _subscriptionToken = agentLifeCycleEventSources.buildFinishedSource.subscribe {
+        _subscriptionToken = eventSources.buildFinishedSource.subscribe {
             if (_workingDirectories.isNotEmpty()) {
                 try {
                     LOG.debug("Shared compilation service shutdown.")

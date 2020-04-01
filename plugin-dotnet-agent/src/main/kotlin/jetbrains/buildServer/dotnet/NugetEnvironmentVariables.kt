@@ -10,12 +10,13 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
-class NuGetEnvironmentVariables(
+class NugetEnvironmentVariables(
         private val _environment: Environment,
         private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
         private val _virtualContext: VirtualContext,
-        private val _credentialProviderSelector: NugetCredentialProviderSelector)
+        private val _credentialProviderSelector: NugetCredentialProviderSelector,
+        private val _nugetEnvironment: NugetEnvironment)
     : EnvironmentVariables {
 
     private val _basePath get() = File(_pathsService.getPath(PathType.System), "dotnet")
@@ -29,8 +30,12 @@ class NuGetEnvironmentVariables(
                 ?: emptySet<String>()
 
         yieldEnvVar(varsToOverride, FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) { "" }
-        yieldEnvVar(varsToOverride, NUGET_HTTP_CACHE_PATH_ENV_VAR) { _virtualContext.resolvePath(File(_basePath, ".http").canonicalPath) }
-        yieldEnvVar(varsToOverride, NUGET_PACKAGES_ENV_VAR) { _virtualContext.resolvePath(File(_basePath, ".nuget").canonicalPath) }
+
+        if (_nugetEnvironment.allowInternalCaches) {
+            yieldEnvVar(varsToOverride, NUGET_HTTP_CACHE_PATH_ENV_VAR) { _virtualContext.resolvePath(File(_basePath, ".http").canonicalPath) }
+            yieldEnvVar(varsToOverride, NUGET_PACKAGES_ENV_VAR) { _virtualContext.resolvePath(File(_basePath, ".nuget").canonicalPath) }
+        }
+
         _credentialProviderSelector.trySelect(sdkVersion)?.let {
             val credentialProvider = it
                 yieldEnvVar(varsToOverride, NUGET_PLUGIN_PATH_ENV_VAR) {

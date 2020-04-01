@@ -18,20 +18,21 @@ package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.rx.Observable
-import jetbrains.buildServer.rx.Subject
-import jetbrains.buildServer.rx.subjectOf
+import jetbrains.buildServer.rx.*
 import jetbrains.buildServer.util.EventDispatcher
+import org.springframework.beans.factory.BeanFactory
 
-class AgentLifeCycleEventSourcesImpl(
-        events: EventDispatcher<AgentLifeCycleListener>)
-    : BuildStepContext, AgentLifeCycleEventSources, AgentLifeCycleAdapter() {
+class EventSourcesImpl(
+        events: EventDispatcher<AgentLifeCycleListener>,
+        private val _beanFactory: BeanFactory)
+    : BuildStepContext, EventSources, AgentLifeCycleAdapter() {
+
+    private var _subscription: Disposable? = null
+    private var _runnerContext: BuildRunnerContext? = null
 
     init {
         events.addListener(this)
     }
-
-    private var _runnerContext: BuildRunnerContext? = null
 
     override val isAvailable: Boolean
         get() = _runnerContext != null
@@ -39,30 +40,44 @@ class AgentLifeCycleEventSourcesImpl(
     override val runnerContext: BuildRunnerContext
         get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 
-    override val beforeAgentConfigurationLoadedSource = subjectOf<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>()
+    override val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoadedEvent>()
 
     override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
-        beforeAgentConfigurationLoadedSource.onNext(AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent(agent))
+        val observers = (_beanFactory.getBean(EventObservers::class.java) as EventObservers).toList()
+        val subscriptions = observers.map { it.subscribe(this) }.toTypedArray()
+        _subscription = disposableOf(*subscriptions)
+
+        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoadedEvent(agent))
         super.beforeAgentConfigurationLoaded(agent)
     }
 
-    override val buildStartedSource: Subject<AgentLifeCycleEventSources.BuildStartedEvent> = subjectOf<AgentLifeCycleEventSources.BuildStartedEvent>()
+    override fun agentShutdown() {
+        _subscription?.dispose()
+        super.agentShutdown()
+    }
+
+    override val buildStartedSource: Subject<EventSources.BuildStartedEvent> = subjectOf<EventSources.BuildStartedEvent>()
 
     override fun buildStarted(build: AgentRunningBuild) {
         _runnerContext = (build as AgentRunningBuildEx).currentRunnerContext
-        buildStartedSource.onNext(AgentLifeCycleEventSources.BuildStartedEvent(build))
+        buildStartedSource.onNext(EventSources.BuildStartedEvent(build))
         super.buildStarted(build)
     }
 
-    override val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+    override val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
     override fun beforeBuildFinish(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
         try {
-            buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(build, buildStatus))
+            buildFinishedSource.onNext(EventSources.BuildFinishedEvent(build, buildStatus))
             super.beforeBuildFinish(build, buildStatus)
         }
         finally {
             _runnerContext = null
         }
+    }
+
+    override fun beforeRunnerStart(runner: BuildRunnerContext) {
+        _runnerContext = runner
+        super.beforeRunnerStart(runner)
     }
 }

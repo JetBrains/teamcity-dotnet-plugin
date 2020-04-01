@@ -23,7 +23,8 @@
   <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml"/>
 
   <!-- common agent services -->
-  <bean class="jetbrains.buildServer.agent.AgentLifeCycleEventSourcesImpl"/>
+  <bean class="jetbrains.buildServer.agent.EventObservers"/>
+  <bean class="jetbrains.buildServer.agent.EventSourcesImpl"/>
   <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
   <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
@@ -57,19 +58,19 @@
   <bean class="jetbrains.buildServer.agent.runner.CacheCleanerSessionImpl"/>
 
   <!-- dotnet -->
-  <bean class="jetbrains.buildServer.dotnet.DotnetNuGetCacheCleaner" id="deepDotnetNuGetCacheCleaner">
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="deepDotnetNugetCacheCleaner">
     <constructor-arg type="String" name="name" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
     <constructor-arg ref="dotnetToolProvider" />
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.DotnetNuGetCacheCleaner" id="mediumDotnetNuGetCacheCleaner">
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="mediumDotnetNugetCacheCleaner">
     <constructor-arg type="String" name="name" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
     <constructor-arg ref="dotnetToolProvider" />
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.DotnetNuGetCacheCleaner" id="lightDotnetNuGetCacheCleaner">
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="lightDotnetNugetCacheCleaner">
     <constructor-arg type="String" name="name" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -114,9 +115,10 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NuGetEnvironmentVariables" id="nuGetEnvironmentVariables"/>
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentImpl" />
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="nugetEnvironmentVariables"/>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" primary="true">
-    <constructor-arg ref="nuGetEnvironmentVariables"/>
+    <constructor-arg ref="nugetEnvironmentVariables"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>

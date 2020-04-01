@@ -7,7 +7,7 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
-class DotnetNuGetCacheCleaner(
+class DotnetNugetCacheCleaner(
         override val name: String,
         override val type: CleanType,
         private val _toolProvider: ToolProvider,

@@ -30,7 +30,7 @@ import java.io.File
 
 class DotnetPropertiesExtensionTest {
     private lateinit var _ctx: Mockery
-    private lateinit var _agentLifeCycleEventSources: AgentLifeCycleEventSources
+    private lateinit var _eventSources: EventSources
     private lateinit var _pathsService: PathsService
     private lateinit var _dotnetVersionProvider: DotnetVersionProvider
     private lateinit var _dotnetSdksProvider: DotnetSdksProvider
@@ -41,7 +41,7 @@ class DotnetPropertiesExtensionTest {
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _agentLifeCycleEventSources = _ctx.mock(AgentLifeCycleEventSources::class.java)
+        _eventSources = _ctx.mock(EventSources::class.java)
         _pathsService = _ctx.mock(PathsService::class.java)
         _dotnetVersionProvider = _ctx.mock(DotnetVersionProvider::class.java)
         _dotnetSdksProvider = _ctx.mock(DotnetSdksProvider::class.java)
@@ -96,10 +96,10 @@ class DotnetPropertiesExtensionTest {
         val toolPath = Path("dotnet")
         val workPath = Path("work")
 
-        val beforeAgentConfigurationLoadedSource = subjectOf<AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent>()
+        val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoadedEvent>()
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).beforeAgentConfigurationLoadedSource
+                oneOf<EventSources>(_eventSources).beforeAgentConfigurationLoadedSource
                 will(returnValue(beforeAgentConfigurationLoadedSource))
 
                 oneOf<ToolProvider>(_toolProvider).getPath(DotnetConstants.EXECUTABLE)
@@ -129,17 +129,20 @@ class DotnetPropertiesExtensionTest {
         createInstance()
 
         // When
-        beforeAgentConfigurationLoadedSource.onNext(AgentLifeCycleEventSources.BeforeAgentConfigurationLoadedEvent(_buildAgent))
+        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoadedEvent(_buildAgent))
 
         // Then
         _ctx.assertIsSatisfied()
     }
 
-    private fun createInstance() =
-            DotnetPropertiesExtension(
-                    _agentLifeCycleEventSources,
-                    _toolProvider,
-                    _dotnetVersionProvider,
-                    _dotnetSdksProvider,
-                    _pathsService)
+    private fun createInstance(): DotnetPropertiesExtension {
+        val propertiesExtension = DotnetPropertiesExtension(
+                _toolProvider,
+                _dotnetVersionProvider,
+                _dotnetSdksProvider,
+                _pathsService)
+
+        propertiesExtension.subscribe(_eventSources)
+        return propertiesExtension
+    }
 }

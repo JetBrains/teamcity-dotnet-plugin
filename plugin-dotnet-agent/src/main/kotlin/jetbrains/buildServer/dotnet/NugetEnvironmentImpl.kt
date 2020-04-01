@@ -1,0 +1,40 @@
+package jetbrains.buildServer.dotnet
+
+import jetbrains.buildServer.agent.BuildRunnerSettings
+import jetbrains.buildServer.agent.EventObserver
+import jetbrains.buildServer.agent.EventSources
+import jetbrains.buildServer.agent.runner.BuildStepContext
+import jetbrains.buildServer.agent.runner.LoggerService
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.subscribe
+
+class NugetEnvironmentImpl(
+        private val _buildStepContext: BuildStepContext,
+        private val _loggerService: LoggerService)
+    : NugetEnvironment, EventObserver {
+
+    override val allowInternalCaches: Boolean get() =
+        if (_buildStepContext.isAvailable) _sameRunnersWithDockerWrapper.any() else false
+
+    override fun subscribe(sources: EventSources): Disposable =
+        sources.buildStartedSource.subscribe {
+            if (allowInternalCaches && _incompatibleRunners.any()) {
+                _loggerService.writeWarning(WARNING_MESSAGE)
+            }
+        }
+
+    private val _incompatibleRunners: List<BuildRunnerSettings> get() =
+        _buildStepContext.runnerContext.build.buildRunners
+                .filter { NugetRestoreRunners.contains(it.runType) }
+
+    private val _sameRunnersWithDockerWrapper: List<BuildRunnerSettings> get() =
+        _buildStepContext.runnerContext.build.buildRunners
+                .filter { DotnetConstants.RUNNER_TYPE.equals(it.runType, true) }
+                .filter { !it.runnerParameters[DOCKER_WRAPPER_IMAGE_PARAM].isNullOrBlank() }
+
+    companion object {
+        internal const val DOCKER_WRAPPER_IMAGE_PARAM = "plugin.docker.imageId"
+        internal val NugetRestoreRunners = setOf("MSBuild", "VS.Solution", "jb.nuget.installer")
+        internal val WARNING_MESSAGE = "One of ${DotnetConstants.RUNNER_DISPLAY_NAME} runner build step is running under the Docker wrapper. The path to global NuGet cache will be overridden. Some of other build step might use the standard NuGet global cache and might not work properly. Recomended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead."
+    }
+}

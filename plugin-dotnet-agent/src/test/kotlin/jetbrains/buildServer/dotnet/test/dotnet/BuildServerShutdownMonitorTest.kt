@@ -30,7 +30,7 @@ import org.testng.annotations.Test
 
 class BuildServerShutdownMonitorTest {
     private lateinit var _ctx: Mockery
-    private lateinit var _agentLifeCycleEventSources: AgentLifeCycleEventSources
+    private lateinit var eventSources: EventSources
     private lateinit var _commandLineExecutor: CommandLineExecutor
     private lateinit var _dotnetToolResolver: DotnetToolResolver
     private lateinit var _agentRunningBuild: AgentRunningBuild
@@ -41,7 +41,7 @@ class BuildServerShutdownMonitorTest {
     @BeforeMethod
     fun setUp() {
         _ctx = Mockery()
-        _agentLifeCycleEventSources = _ctx.mock(AgentLifeCycleEventSources::class.java)
+        eventSources = _ctx.mock(EventSources::class.java)
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
         _agentRunningBuild = _ctx.mock(AgentRunningBuild::class.java)
@@ -81,7 +81,7 @@ class BuildServerShutdownMonitorTest {
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, toolVersion)
 
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
@@ -90,7 +90,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
                 will(returnValue(useSharedCompilationParam))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
 
                 allowing<DotnetCommand>(command).commandType
@@ -123,7 +123,7 @@ class BuildServerShutdownMonitorTest {
 
         // When
         monitor.register(context)
-        buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
+        buildFinishedSource.onNext(EventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
 
         // Then
         _ctx.assertIsSatisfied()
@@ -132,12 +132,12 @@ class BuildServerShutdownMonitorTest {
     @Test
     fun shouldNotGetParameterOnBuildFinishedEvent() {
         // Given
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
         _ctx.checking(object : Expectations() {
             init {
                 never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -145,7 +145,7 @@ class BuildServerShutdownMonitorTest {
         createInstance()
 
         // When
-        buildFinishedSource.onNext(AgentLifeCycleEventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
+        buildFinishedSource.onNext(EventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
 
         // Then
         _ctx.assertIsSatisfied()
@@ -156,7 +156,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -169,7 +169,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<DotnetCommand>(command).commandType
                 will(returnValue(DotnetCommandType.Test))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -189,7 +189,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -202,7 +202,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<DotnetCommand>(command).commandType
                 will(returnValue(DotnetCommandType.Test))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -222,7 +222,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -235,7 +235,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<DotnetCommand>(command).commandType
                 will(returnValue(DotnetCommandType.Test))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -255,7 +255,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 105))
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -268,7 +268,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<DotnetCommand>(command).commandType
                 will(returnValue(DotnetCommandType.Test))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -288,7 +288,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<AgentLifeCycleEventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -301,7 +301,7 @@ class BuildServerShutdownMonitorTest {
                 allowing<DotnetCommand>(command).commandType
                 will(returnValue(DotnetCommandType.NuGetPush))
 
-                oneOf<AgentLifeCycleEventSources>(_agentLifeCycleEventSources).buildFinishedSource
+                oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
             }
         })
@@ -318,7 +318,7 @@ class BuildServerShutdownMonitorTest {
 
     private fun createInstance() =
             BuildServerShutdownMonitor(
-                    _agentLifeCycleEventSources,
+                    eventSources,
                     _commandLineExecutor,
                     _dotnetToolResolver,
                     _parametersService,

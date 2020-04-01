@@ -28,17 +28,16 @@ import java.io.File
  * Provides a list of available .NET CLI parameters.
  */
 class DotnetPropertiesExtension(
-        agentLifeCycleEventSources: AgentLifeCycleEventSources,
         private val _toolProvider: ToolProvider,
         private val _dotnetVersionProvider: DotnetVersionProvider,
         private val _dotnetSdksProvider: DotnetSdksProvider,
         private val _pathsService: PathsService)
-    : AgentLifeCycleAdapter() {
+    : EventObserver {
 
-    private var _subscriptionToken: Disposable
+    private var _subscriptionToken: Disposable? = null
 
-    init {
-        _subscriptionToken = agentLifeCycleEventSources.beforeAgentConfigurationLoadedSource.subscribe { event ->
+    override fun subscribe(sources: EventSources): Disposable =
+        sources.beforeAgentConfigurationLoadedSource.subscribe { event ->
             LOG.debug("Locating .NET CLI")
             try {
                 val configuration = event.agent.configuration
@@ -68,7 +67,6 @@ class DotnetPropertiesExtension(
                 LOG.debug(e)
             }
         }
-    }
 
     companion object {
         private val LOG = Logger.getLogger(DotnetPropertiesExtension::class.java)

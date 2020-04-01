@@ -26,11 +26,11 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.NuGetEnvironmentVariables.Companion.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR
-import jetbrains.buildServer.dotnet.NuGetEnvironmentVariables.Companion.NUGET_HTTP_CACHE_PATH_ENV_VAR
-import jetbrains.buildServer.dotnet.NuGetEnvironmentVariables.Companion.NUGET_PACKAGES_ENV_VAR
-import jetbrains.buildServer.dotnet.NuGetEnvironmentVariables.Companion.NUGET_PLUGIN_PATH_ENV_VAR
-import jetbrains.buildServer.dotnet.NuGetEnvironmentVariables.Companion.NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR
+import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR
+import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_HTTP_CACHE_PATH_ENV_VAR
+import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_PACKAGES_ENV_VAR
+import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_PLUGIN_PATH_ENV_VAR
+import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -42,6 +42,7 @@ class NuGetEnvironmentVariablesTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _nugetCredentialProviderSelector: NugetCredentialProviderSelector
+    @MockK private lateinit var _nugetEnvironment: NugetEnvironment
 
     @BeforeMethod
     fun setUp() {
@@ -51,6 +52,7 @@ class NuGetEnvironmentVariablesTest {
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
         every { _nugetCredentialProviderSelector.trySelect(any()) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS) } returns null
+        every { _nugetEnvironment.allowInternalCaches } returns true
 
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns null
         every { _environment.tryGetVariable(NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR) } returns null
@@ -93,6 +95,28 @@ class NuGetEnvironmentVariablesTest {
     }
 
     @Test
+    fun shouldSkipCachePathVarsWhenItIsNotAllowed() {
+        // Given
+        val systemPath = File("System")
+
+        // When
+        every { _pathsService.getPath(PathType.System) } returns systemPath
+        every { _nugetCredentialProviderSelector.trySelect(any()) } returns "CredentilProvider.dll"
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Detailed.id
+        every { _nugetEnvironment.allowInternalCaches } returns false
+
+        val actualPaths = createInstance().getVariables(Version.Empty).toList()
+
+        // Then
+        Assert.assertEquals(
+                actualPaths,
+                listOf(
+                        CommandLineEnvironmentVariable(FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR, ""),
+                        CommandLineEnvironmentVariable(NUGET_PLUGIN_PATH_ENV_VAR, "v_CredentilProvider.dll"),
+                        CommandLineEnvironmentVariable(NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR, Verbosity.Detailed.id)))
+    }
+
+    @Test
     fun shouldShouldNotProvideSomeVars() {
         // Given
         val systemPath = File("System")
@@ -116,9 +140,9 @@ class NuGetEnvironmentVariablesTest {
         // Given
 
         // When
-        every { _environment.tryGetVariable(NuGetEnvironmentVariables.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) } returns "custom_var"
-        every { _environment.tryGetVariable(NuGetEnvironmentVariables.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
-        every { _environment.tryGetVariable(NuGetEnvironmentVariables.NUGET_HTTP_CACHE_PATH_ENV_VAR) } returns "custom_path_http"
+        every { _environment.tryGetVariable(NugetEnvironmentVariables.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) } returns "custom_var"
+        every { _environment.tryGetVariable(NugetEnvironmentVariables.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
+        every { _environment.tryGetVariable(NugetEnvironmentVariables.NUGET_HTTP_CACHE_PATH_ENV_VAR) } returns "custom_path_http"
 
         val actualPaths = createInstance().getVariables(Version.Empty).toList()
 
@@ -131,9 +155,9 @@ class NuGetEnvironmentVariablesTest {
         // Given
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Environment, NuGetEnvironmentVariables.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) } returns "custom_var"
-        every { _parametersService.tryGetParameter(ParameterType.Environment, NuGetEnvironmentVariables.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
-        every { _parametersService.tryGetParameter(ParameterType.Environment, NuGetEnvironmentVariables.NUGET_HTTP_CACHE_PATH_ENV_VAR) } returns "custom_path_http"
+        every { _parametersService.tryGetParameter(ParameterType.Environment, NugetEnvironmentVariables.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) } returns "custom_var"
+        every { _parametersService.tryGetParameter(ParameterType.Environment, NugetEnvironmentVariables.NUGET_PACKAGES_ENV_VAR) } returns "custom_path"
+        every { _parametersService.tryGetParameter(ParameterType.Environment, NugetEnvironmentVariables.NUGET_HTTP_CACHE_PATH_ENV_VAR) } returns "custom_path_http"
 
         val actualPaths = createInstance().getVariables(Version.Empty).toList()
 
@@ -156,5 +180,11 @@ class NuGetEnvironmentVariablesTest {
     }
 
     private fun createInstance() =
-            NuGetEnvironmentVariables(_environment, _parametersService, _pathsService, _virtualContext, _nugetCredentialProviderSelector)
+            NugetEnvironmentVariables(
+                    _environment,
+                    _parametersService,
+                    _pathsService,
+                    _virtualContext,
+                    _nugetCredentialProviderSelector,
+                    _nugetEnvironment)
 }
