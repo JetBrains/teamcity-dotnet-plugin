@@ -19,11 +19,17 @@ package jetbrains.buildServer.agent
 import jetbrains.buildServer.rx.Observable
 
 interface EventSources {
-    val buildStartedSource: Observable<EventSources.BuildStartedEvent>
-    val buildFinishedSource: Observable<EventSources.BuildFinishedEvent>
-    val beforeAgentConfigurationLoadedSource: Observable<EventSources.BeforeAgentConfigurationLoadedEvent>
+    val buildStartedSource: Observable<Event>
+    val buildFinishedSource: Observable<BuildFinished>
+    val stepStartedSource: Observable<Event>
+    val beforeAgentConfigurationLoadedSource: Observable<EventSources.BeforeAgentConfigurationLoaded>
 
-    data class BuildStartedEvent(val build: AgentRunningBuild)
-    data class BuildFinishedEvent(val build: AgentRunningBuild, val buildStatus: BuildFinishedStatus)
-    data class BeforeAgentConfigurationLoadedEvent(val agent: BuildAgent)
+    class Event {
+        companion object {
+            public val Shared = Event()
+        }
+    }
+
+    data class BuildFinished(val buildStatus: BuildFinishedStatus)
+    data class BeforeAgentConfigurationLoaded(val agent: BuildAgent)
 }

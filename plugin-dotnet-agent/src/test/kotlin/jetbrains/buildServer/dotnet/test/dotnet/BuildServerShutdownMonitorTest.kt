@@ -81,7 +81,7 @@ class BuildServerShutdownMonitorTest {
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, toolVersion)
 
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
         _ctx.checking(object : Expectations() {
             init {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
@@ -123,7 +123,7 @@ class BuildServerShutdownMonitorTest {
 
         // When
         monitor.register(context)
-        buildFinishedSource.onNext(EventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
+        buildFinishedSource.onNext(EventSources.BuildFinished(BuildFinishedStatus.FINISHED_SUCCESS))
 
         // Then
         _ctx.assertIsSatisfied()
@@ -132,7 +132,7 @@ class BuildServerShutdownMonitorTest {
     @Test
     fun shouldNotGetParameterOnBuildFinishedEvent() {
         // Given
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
         _ctx.checking(object : Expectations() {
             init {
                 never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
@@ -145,7 +145,7 @@ class BuildServerShutdownMonitorTest {
         createInstance()
 
         // When
-        buildFinishedSource.onNext(EventSources.BuildFinishedEvent(_agentRunningBuild, BuildFinishedStatus.FINISHED_SUCCESS))
+        buildFinishedSource.onNext(EventSources.BuildFinished(BuildFinishedStatus.FINISHED_SUCCESS))
 
         // Then
         _ctx.assertIsSatisfied()
@@ -156,7 +156,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -189,7 +189,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -222,7 +222,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -255,7 +255,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 105))
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
             init {
@@ -288,7 +288,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
         val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
-        val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+        val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
             init {

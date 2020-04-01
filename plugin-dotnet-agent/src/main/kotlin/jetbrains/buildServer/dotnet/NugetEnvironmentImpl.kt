@@ -17,15 +17,17 @@ class NugetEnvironmentImpl(
         if (_buildStepContext.isAvailable) _sameRunnersWithDockerWrapper.any() else false
 
     override fun subscribe(sources: EventSources): Disposable =
-        sources.buildStartedSource.subscribe {
-            if (allowInternalCaches && _incompatibleRunners.any()) {
-                _loggerService.writeWarning(WARNING_MESSAGE)
+        sources.stepStartedSource.subscribe {
+            if (allowInternalCaches) {
+                if (RestoringRunners.contains(_buildStepContext.runnerContext.runType)) {
+                    _loggerService.writeWarning(WARNING_MESSAGE)
+                }
             }
         }
 
     private val _incompatibleRunners: List<BuildRunnerSettings> get() =
         _buildStepContext.runnerContext.build.buildRunners
-                .filter { NugetRestoreRunners.contains(it.runType) }
+                .filter { RestoringRunners.contains(it.runType) }
 
     private val _sameRunnersWithDockerWrapper: List<BuildRunnerSettings> get() =
         _buildStepContext.runnerContext.build.buildRunners
@@ -34,7 +36,7 @@ class NugetEnvironmentImpl(
 
     companion object {
         internal const val DOCKER_WRAPPER_IMAGE_PARAM = "plugin.docker.imageId"
-        internal val NugetRestoreRunners = setOf("MSBuild", "VS.Solution", "jb.nuget.installer")
-        internal val WARNING_MESSAGE = "One of ${DotnetConstants.RUNNER_DISPLAY_NAME} runner build step is running under the Docker wrapper. The path to global NuGet cache will be overridden. Some of other build step might use the standard NuGet global cache and might not work properly. Recomended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead."
+        internal val RestoringRunners = setOf("MSBuild", "VS.Solution", "jb.nuget.installer")
+        internal val WARNING_MESSAGE = "The NuGet global cache path was overridden by the ${DotnetConstants.RUNNER_TYPE} build step. Recomended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead."
     }
 }

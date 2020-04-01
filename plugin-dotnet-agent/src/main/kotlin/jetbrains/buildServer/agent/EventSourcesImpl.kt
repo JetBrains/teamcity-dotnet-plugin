@@ -40,14 +40,14 @@ class EventSourcesImpl(
     override val runnerContext: BuildRunnerContext
         get() = _runnerContext ?: throw RunBuildException("Runner session was not started")
 
-    override val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoadedEvent>()
+    override val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoaded>()
 
     override fun beforeAgentConfigurationLoaded(agent: BuildAgent) {
         val observers = (_beanFactory.getBean(EventObservers::class.java) as EventObservers).toList()
         val subscriptions = observers.map { it.subscribe(this) }.toTypedArray()
         _subscription = disposableOf(*subscriptions)
 
-        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoadedEvent(agent))
+        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoaded(agent))
         super.beforeAgentConfigurationLoaded(agent)
     }
 
@@ -56,19 +56,19 @@ class EventSourcesImpl(
         super.agentShutdown()
     }
 
-    override val buildStartedSource: Subject<EventSources.BuildStartedEvent> = subjectOf<EventSources.BuildStartedEvent>()
+    override val buildStartedSource: Subject<EventSources.Event> = subjectOf<EventSources.Event>()
 
     override fun buildStarted(build: AgentRunningBuild) {
         _runnerContext = (build as AgentRunningBuildEx).currentRunnerContext
-        buildStartedSource.onNext(EventSources.BuildStartedEvent(build))
+        buildStartedSource.onNext(EventSources.Event.Shared)
         super.buildStarted(build)
     }
 
-    override val buildFinishedSource = subjectOf<EventSources.BuildFinishedEvent>()
+    override val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
     override fun beforeBuildFinish(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
         try {
-            buildFinishedSource.onNext(EventSources.BuildFinishedEvent(build, buildStatus))
+            buildFinishedSource.onNext(EventSources.BuildFinished(buildStatus))
             super.beforeBuildFinish(build, buildStatus)
         }
         finally {
@@ -76,8 +76,11 @@ class EventSourcesImpl(
         }
     }
 
+    override val stepStartedSource = subjectOf<EventSources.Event>()
+
     override fun beforeRunnerStart(runner: BuildRunnerContext) {
         _runnerContext = runner
+        stepStartedSource.onNext(EventSources.Event.Shared)
         super.beforeRunnerStart(runner)
     }
 }

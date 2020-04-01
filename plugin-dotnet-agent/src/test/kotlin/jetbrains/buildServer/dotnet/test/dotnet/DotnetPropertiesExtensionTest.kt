@@ -96,7 +96,7 @@ class DotnetPropertiesExtensionTest {
         val toolPath = Path("dotnet")
         val workPath = Path("work")
 
-        val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoadedEvent>()
+        val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoaded>()
         _ctx.checking(object : Expectations() {
             init {
                 oneOf<EventSources>(_eventSources).beforeAgentConfigurationLoadedSource
@@ -129,7 +129,7 @@ class DotnetPropertiesExtensionTest {
         createInstance()
 
         // When
-        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoadedEvent(_buildAgent))
+        beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoaded(_buildAgent))
 
         // Then
         _ctx.assertIsSatisfied()

@@ -20,7 +20,7 @@ class NugetEnvironmentTest {
     @MockK private lateinit var _runnerContext: BuildRunnerContext
     @MockK private lateinit var _build: AgentRunningBuild
     @MockK private lateinit var _sources: EventSources
-    @MockK private lateinit var _buildStartedSource: Observable<EventSources.BuildStartedEvent>
+    @MockK private lateinit var _stepStartedSource: Observable<EventSources.Event>
 
     @BeforeMethod
     fun setUp() {
@@ -30,9 +30,9 @@ class NugetEnvironmentTest {
         every { _buildStepContext.runnerContext } returns _runnerContext
         every { _runnerContext.build } returns _build
         every { _loggerService.writeWarning(any()) } returns Unit
-        every { _sources.buildStartedSource } returns _buildStartedSource
-        every { _buildStartedSource.subscribe(any()) } answers {
-            arg<Observer<EventSources.BuildStartedEvent>>(0).onNext(EventSources.BuildStartedEvent(_build))
+        every { _sources.stepStartedSource } returns _stepStartedSource
+        every { _stepStartedSource.subscribe(any()) } answers {
+            arg<Observer<EventSources.Event>>(0).onNext(EventSources.Event.Shared)
             emptyDisposable()
         }
     }
@@ -67,17 +67,16 @@ class NugetEnvironmentTest {
         }
 
         return arrayOf(
-                arrayOf(emptyList<BuildRunnerSettings>(), false, false),
                 arrayOf(listOf(dotnet), false, false),
                 arrayOf(listOf(dotnetAndDocker), true, false),
                 arrayOf(listOf(dotnetAndDocker, dotnet), true, false),
-                arrayOf(listOf(dotnetAndDocker, msBuild, dotnet), true, true),
-                arrayOf(listOf(dotnetAndDocker, vs, dotnet), true, true),
-                arrayOf(listOf(dotnetAndDocker, nugetInstall, dotnet), true, true),
-                arrayOf(listOf(dotnetAndDocker, vs, nugetInstall, dotnet), true, true),
-                arrayOf(listOf(dotnetAndDocker, other), true, false),
-                arrayOf(listOf(dotnet, other), false, false),
-                arrayOf(listOf(dotnetAndDocker, other, dotnet), true, false))
+                arrayOf(listOf(msBuild, dotnetAndDocker, dotnet), true, true),
+                arrayOf(listOf(vs, dotnetAndDocker, dotnet), true, true),
+                arrayOf(listOf(nugetInstall, dotnetAndDocker, dotnet), true, true),
+                arrayOf(listOf(vs, dotnetAndDocker, nugetInstall, dotnet), true, true),
+                arrayOf(listOf(other, dotnetAndDocker), true, false),
+                arrayOf(listOf(other, dotnet), false, false),
+                arrayOf(listOf(other, dotnetAndDocker, dotnet), true, false))
     }
 
     @Test(dataProvider = "testData")
@@ -86,6 +85,7 @@ class NugetEnvironmentTest {
 
         // When
         every { _build.buildRunners } returns runners
+        every { _runnerContext.runType } returns runners.first().runType
         var env = createInstance()
         val actualAllowInternalCaches = env.allowInternalCaches
 
