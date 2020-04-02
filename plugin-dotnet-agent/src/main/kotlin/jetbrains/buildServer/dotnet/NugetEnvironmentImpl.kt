@@ -20,8 +20,8 @@ class NugetEnvironmentImpl(
         sources.stepStartedSource.subscribe {
             if (allowInternalCaches) {
                 if (RestoringRunners.contains(_buildStepContext.runnerContext.runType)) {
-                    val stepName = _sameRunnersWithDockerWrapper.map { it.name }.firstOrNull { !it.isNullOrBlank() } ?: DotnetConstants.RUNNER_DISPLAY_NAME
-                    _loggerService.writeWarning("The NuGet global cache path was overridden by the \"$stepName\" build step. Recommended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead.")
+                    val dotnetStepName = _sameRunnersWithDockerWrapper.map { it.name }.firstOrNull { !it.isNullOrBlank() } ?: DotnetConstants.RUNNER_DISPLAY_NAME
+                    _loggerService.writeWarning("The path to NuGet global cache was overridden by the \"$dotnetStepName\" build step. To prevent any issues with package restoration, use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead of the current runner.\n")
                 }
             }
         }
