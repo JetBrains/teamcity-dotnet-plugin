@@ -20,7 +20,8 @@ class NugetEnvironmentImpl(
         sources.stepStartedSource.subscribe {
             if (allowInternalCaches) {
                 if (RestoringRunners.contains(_buildStepContext.runnerContext.runType)) {
-                    _loggerService.writeWarning(WARNING_MESSAGE)
+                    val stepName = _sameRunnersWithDockerWrapper.map { it.name }.firstOrNull { !it.isNullOrBlank() } ?: DotnetConstants.RUNNER_DISPLAY_NAME
+                    _loggerService.writeWarning("The NuGet global cache path was overridden by the \"$stepName\" build step. Recommended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead.")
                 }
             }
         }
@@ -37,6 +38,5 @@ class NugetEnvironmentImpl(
     companion object {
         internal const val DOCKER_WRAPPER_IMAGE_PARAM = "plugin.docker.imageId"
         internal val RestoringRunners = setOf("MSBuild", "VS.Solution", "jb.nuget.installer")
-        internal val WARNING_MESSAGE = "The NuGet global cache path was overridden by the ${DotnetConstants.RUNNER_TYPE} build step. Recomended to use ${DotnetConstants.RUNNER_DISPLAY_NAME} runner instead."
     }
 }

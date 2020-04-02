@@ -41,29 +41,35 @@ class NugetEnvironmentTest {
     fun testData(): Array<Array<Any>> {
         val dotnet = mockk<BuildRunnerSettings>(".NET") {
             every { runType } returns DotnetConstants.RUNNER_TYPE
+            every { name } returns ".NET"
             every { runnerParameters } returns emptyMap()
         }
 
         val dotnetAndDocker = mockk<BuildRunnerSettings>(".NET with Docker") {
             every { runType } returns DotnetConstants.RUNNER_TYPE
+            every { name } returns ".NET with Docker"
             every { runnerParameters } returns mapOf(NugetEnvironmentImpl.DOCKER_WRAPPER_IMAGE_PARAM to "abc")
         }
 
         val msBuild = mockk<BuildRunnerSettings>("MSBuild") {
             every { runType } returns "MSBuild"
+            every { name } returns "MSBuild"
             every { runnerParameters } returns mapOf(NugetEnvironmentImpl.DOCKER_WRAPPER_IMAGE_PARAM to "abc")
         }
 
         val vs = mockk<BuildRunnerSettings>("VS") {
             every { runType } returns "VS.Solution"
+            every { name } returns "VS"
         }
 
         val nugetInstall = mockk<BuildRunnerSettings>("Nuget Install") {
             every { runType } returns "jb.nuget.installer"
+            every { name } returns "Nuget Install"
         }
 
         val other = mockk<BuildRunnerSettings>("Other") {
             every { runType } returns "xyz"
+            every { name } returns "Other"
         }
 
         return arrayOf(
