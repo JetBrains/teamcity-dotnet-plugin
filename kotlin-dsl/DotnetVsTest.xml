@@ -18,12 +18,12 @@
 <dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'vstest'">
     <class name="DotnetVsTestStep">
         <description>
-            A [dotnet vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            A [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
         </description>
     </class>
     <function name="dotnetVsTest">
         <description>
-            Adds a [dotnet vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            Adds a [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
             @see DotnetVsTestStep
         </description>
     </function>
@@ -40,6 +40,12 @@
                 script,
                 specify it if it is different from the [checkout
                 directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="vstest.version" dslName="version" type="VSTestVersion">
+            <description>
+                VSTest version to use
+                @see VSTestVersion
             </description>
         </param>
         <param name="test.filter" dslName="filter" type="compound">
@@ -72,6 +78,17 @@
                 @see Verbosity
             </description>
         </param>
+        <param name="vstest.InIsolation" dslName="runInIsolation" type="boolean" trueValue="true" falseValue="">
+            <description>
+                Whether TeamCity should run tests in an isolated process
+            </description>
+        </param>
+        <param name="platform" dslName="platform" type="Platform">
+            <description>
+                Target platform architecture to be used for test execution
+                @see Platform
+            </description>
+        </param>
     </params>
     <types>
         <enum name="Verbosity">
@@ -83,6 +100,30 @@
             <option name="Normal" value="Normal"/>
             <option name="Detailed" value="Detailed"/>
             <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+        <enum name="VSTestVersion">
+            <description>MSBuild version</description>
+            <option name="CrossPlatform" value="VSTest_0_CrossPlatform_Any">
+                <description>Cross-platform MSBuild</description>
+            </option>
+            <option name="V16" value="VSTest_16_Windows_Any">
+                <description>VSTest 2019</description>
+            </option>
+            <option name="V15" value="VSTest_15_Windows_Any">
+                <description>VSTest 2017</description>
+            </option>
+            <option name="V14" value="VSTest_14_Windows_Any">
+                <description>VSTest 2015</description>
+            </option>
+            <option name="V12" value="VSTest_12_Windows_Any">
+                <description>VSTest 2013</description>
+            </option>
+        </enum>
+        <enum name="Platform">
+            <description>Platform bitness</description>
+            <option name="x86" value="x86"/>
+            <option name="x64" value="x64"/>
+            <option name="ARM" value="ARM"/>
         </enum>
     </types>
 </dsl-extension>

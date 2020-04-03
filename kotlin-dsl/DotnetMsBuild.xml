@@ -18,12 +18,12 @@
 <dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'msbuild'">
     <class name="DotnetMsBuildStep">
         <description>
-            A [dotnet msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            A [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
         </description>
     </class>
     <function name="dotnetMsBuild">
         <description>
-            Adds a [dotnet msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            Adds a [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
             @see DotnetMsBuildStep
         </description>
     </function>
@@ -42,6 +42,12 @@
                 directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
             </description>
         </param>
+        <param name="msbuild.version" dslName="version" type="MSBuildVersion">
+            <description>
+                MSBuild version to use
+                @see MSBuildVersion
+            </description>
+        </param>
         <param name="targets">
             <description>Specify the list of build targets.</description>
         </param>
@@ -52,7 +58,7 @@
             <description>Target runtime to build for.</description>
         </param>
         <param name="args">
-            <description>Enter additional command line parameters for dotnet msbuild.</description>
+            <description>Enter additional command line parameters for .NET MSBuild.</description>
         </param>
         <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
@@ -71,6 +77,36 @@
             <option name="Normal" value="Normal"/>
             <option name="Detailed" value="Detailed"/>
             <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+        <enum name="MSBuildVersion">
+            <description>MSBuild version</description>
+            <option name="CrossPlatform" value="MSBuild_0_CrossPlatform_Any">
+                <description>Cross-platform MSBuild</description>
+            </option>
+            <option name="V16X64" value="MSBuild_16_Windows_X64">
+                <description>MSBuild 2019 x64</description>
+            </option>
+            <option name="V16X86" value="MSBuild_16_Windows_X86">
+                <description>MSBuild 2019 x86</description>
+            </option>
+            <option name="V15X64" value="MSBuild_15_Windows_X64">
+                <description>MSBuild 2017 x64</description>
+            </option>
+            <option name="V15X86" value="MSBuild_15_Windows_X86">
+                <description>MSBuild 2017 x86</description>
+            </option>
+            <option name="V14X64" value="MSBuild_14_Windows_X64">
+                <description>MSBuild 2015 x64</description>
+            </option>
+            <option name="V14X86" value="MSBuild_14_Windows_X86">
+                <description>MSBuild 2015 x86</description>
+            </option>
+            <option name="V12X64" value="MSBuild_12_Windows_X64">
+                <description>MSBuild 2013 x64</description>
+            </option>
+            <option name="V12X86" value="MSBuild_12_Windows_X86">
+                <description>MSBuild 2013 x86</description>
+            </option>
         </enum>
     </types>
 </dsl-extension>
