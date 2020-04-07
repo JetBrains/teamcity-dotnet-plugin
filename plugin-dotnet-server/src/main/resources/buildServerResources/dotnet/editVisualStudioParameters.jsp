@@ -19,4 +19,5 @@
   BS.DotnetParametersForm.pathHint["devenv"] = "Specify paths to projects and solutions";
   BS.DotnetParametersForm.coverageEnabled["devenv"] = true;
   BS.DotnetParametersForm.hideLogging["devenv"] = true;
+  BS.DotnetParametersForm.helpUrl["devenv"] = "https://docs.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches";
 </script>

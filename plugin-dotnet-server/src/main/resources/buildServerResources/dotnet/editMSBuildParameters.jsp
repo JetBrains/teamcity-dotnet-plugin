@@ -18,4 +18,5 @@
   BS.DotnetParametersForm.pathName["msbuild"] = "Projects";
   BS.DotnetParametersForm.pathHint["msbuild"] = "Specify paths to projects and solutions";
   BS.DotnetParametersForm.coverageEnabled["msbuild"] = true;
+  BS.DotnetParametersForm.helpUrl["msbuild"] = "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-msbuild";
 </script>

@@ -37,6 +37,7 @@
     projectArtifactsSelector: [],
     coverageEnabled: [],
     hideLogging: [],
+    helpUrl: [],
     hideWorkingDirectory: [],
     mandatoryPaths: [],
     initFunctions: [],
@@ -118,7 +119,7 @@
           BS.DotnetParametersForm.clearInputValues($coverageRow);
       }
 
-      var helpUrl = 'https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet' + (commandName !== '-' ? '-' + commandName : '');
+      var helpUrl = BS.DotnetParametersForm.helpUrl[commandName];
       $j(BS.Util.escapeId('dotnet-help')).attr('href', helpUrl);
 
       var hideWorkingDirectory = BS.DotnetParametersForm.hideWorkingDirectory[commandName];
