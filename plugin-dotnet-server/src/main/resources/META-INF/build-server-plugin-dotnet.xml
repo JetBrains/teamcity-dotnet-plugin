@@ -29,6 +29,7 @@
   <bean class="jetbrains.buildServer.NuGetServiceImpl"/>
   <bean class="jetbrains.buildServer.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.ToolServiceImpl"/>
+  <bean class="jetbrains.buildServer.DotnetUsageStatisticsProvider"/>
 
   <!--Dotnet-->
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>

@@ -48,13 +48,13 @@ class NugetEnvironmentTest {
         val dotnetAndDocker = mockk<BuildRunnerSettings>(".NET with Docker") {
             every { runType } returns DotnetConstants.RUNNER_TYPE
             every { name } returns ".NET with Docker"
-            every { runnerParameters } returns mapOf(NugetEnvironmentImpl.DOCKER_WRAPPER_IMAGE_PARAM to "abc")
+            every { runnerParameters } returns mapOf(DotnetConstants.PARAM_DOCKER_IMAGE to "abc")
         }
 
         val msBuild = mockk<BuildRunnerSettings>("MSBuild") {
             every { runType } returns "MSBuild"
             every { name } returns "MSBuild"
-            every { runnerParameters } returns mapOf(NugetEnvironmentImpl.DOCKER_WRAPPER_IMAGE_PARAM to "abc")
+            every { runnerParameters } returns mapOf(DotnetConstants.PARAM_DOCKER_IMAGE to "abc")
         }
 
         val vs = mockk<BuildRunnerSettings>("VS") {

@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.EventObserver
 import jetbrains.buildServer.agent.EventSources
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.LoggerService
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_DOCKER_IMAGE
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 
@@ -33,10 +34,9 @@ class NugetEnvironmentImpl(
     private val _sameRunnersWithDockerWrapper: List<BuildRunnerSettings> get() =
         _buildStepContext.runnerContext.build.buildRunners
                 .filter { DotnetConstants.RUNNER_TYPE.equals(it.runType, true) }
-                .filter { !it.runnerParameters[DOCKER_WRAPPER_IMAGE_PARAM].isNullOrBlank() }
+                .filter { !it.runnerParameters[PARAM_DOCKER_IMAGE].isNullOrBlank() }
 
     companion object {
-        internal const val DOCKER_WRAPPER_IMAGE_PARAM = "plugin.docker.imageId"
         internal val RestoringRunners = setOf("MSBuild", "VS.Solution", "jb.nuget.installer")
     }
 }
