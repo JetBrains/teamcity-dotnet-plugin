@@ -60,8 +60,8 @@
         }
         var changed = false;
         if (element.name === "select" || element.name === "prop:msbuild.version" || element.name === "prop:vstest.version") {
-          changed = element.selectedIndex !== 0;
-          element.selectedIndex = 0;
+          changed = element.selectedIndex !== -1;
+          element.selectedIndex = -1;
         } else if (element.type === "checkbox") {
           changed = $element.is(':checked');
           $element.removeAttr('checked');

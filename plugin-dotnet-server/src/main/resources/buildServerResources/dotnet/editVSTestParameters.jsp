@@ -31,6 +31,12 @@
     var optionId = BS.Util.escapeId('${params.testFilterKey}');
     var $testNames = $j('label[for="${params.testNamesKey}"]').closest('tr');
     var $testCaseFilter = $j('label[for="${params.testCaseFilterKey}"]').html('Test case filter: ${asterisk}').closest('tr');
+    var $version = $j(BS.Util.escapeId('${params.vstestVersionKey}'));
+
+    if ($version[0].selectedIndex === -1) {
+      $version[0].selectedIndex = 0;
+      $version.change();
+    }
 
     function updateElements() {
       var filter = $j(optionId).val();
