@@ -14,6 +14,8 @@
   ~ limitations under the License.
   --%>
 
+<jsp:useBean id="params" class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
+
 <script type="text/javascript">
   BS.DotnetParametersForm.pathName["devenv"] = "Projects";
   BS.DotnetParametersForm.pathHint["devenv"] = "Specify paths to projects and solutions";
@@ -21,4 +23,20 @@
   BS.DotnetParametersForm.hideLogging["devenv"] = true;
   BS.DotnetParametersForm.mandatoryPaths["devenv"] = true;
   BS.DotnetParametersForm.helpUrl["devenv"] = "https://docs.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches";
+  BS.DotnetParametersForm.initFunctions["devenv"] = function () {
+    var visualStudioVersionId = BS.Util.escapeId('${params.visualStudioVersionKey}');
+    var $defaultNote = $j(BS.Util.escapeId('defaultNote_${params.visualStudioVersionKey}'));
+
+    function updateElements() {
+      var version = $j(visualStudioVersionId).val();
+      $defaultNote[0].hidden = version !== ""
+      BS.MultilineProperties.updateVisible();
+    }
+
+    $j(document).on('change', $j(visualStudioVersionId), function () {
+      updateElements();
+    });
+
+    updateElements();
+  };
 </script>

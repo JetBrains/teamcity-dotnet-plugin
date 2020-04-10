@@ -333,19 +333,6 @@
   </td>
 </tr>
 
-<tr class="dotnet devenv">
-  <th><label for="${params.visualStudioActionKey}">Build action: <l:star/></label></th>
-  <td>
-    <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Select&gt;</props:option>
-      <c:forEach var="item" items="${params.visualStudioActions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.visualStudioActionKey}"></span>
-  </td>
-</tr>
-
 <tr class="advancedSetting dotnet devenv">
   <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
   <td>
@@ -356,6 +343,20 @@
       </c:forEach>
     </props:selectProperty>
     <span class="error" id="error_${params.visualStudioVersionKey}"></span>
+    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Run by any version of Visual Studio installed.</span>
+  </td>
+</tr>
+
+<tr class="dotnet devenv">
+  <th><label for="${params.visualStudioActionKey}">Build action: <l:star/></label></th>
+  <td>
+    <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Select&gt;</props:option>
+      <c:forEach var="item" items="${params.visualStudioActions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.visualStudioActionKey}"></span>
   </td>
 </tr>
 
