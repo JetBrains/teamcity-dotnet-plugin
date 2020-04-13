@@ -18,14 +18,17 @@ package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.runner.BuildStepContext
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.rx.*
 import jetbrains.buildServer.util.EventDispatcher
+import jetbrains.buildServer.util.positioning.PositionAware
+import jetbrains.buildServer.util.positioning.PositionConstraint
 import org.springframework.beans.factory.BeanFactory
 
 class EventSourcesImpl(
         events: EventDispatcher<AgentLifeCycleListener>,
         private val _beanFactory: BeanFactory)
-    : BuildStepContext, EventSources, AgentLifeCycleAdapter() {
+    : BuildStepContext, EventSources, AgentLifeCycleAdapter(), DirectoryCleanersProvider, PositionAware {
 
     private var _subscription: Disposable? = null
     private var _runnerContext: BuildRunnerContext? = null
@@ -33,6 +36,10 @@ class EventSourcesImpl(
     init {
         events.addListener(this)
     }
+
+    override fun getOrderId() = DotnetConstants.RUNNER_TYPE
+
+    override fun getConstraint() = PositionConstraint.first()
 
     override val isAvailable: Boolean
         get() = _runnerContext != null
@@ -82,5 +89,11 @@ class EventSourcesImpl(
         _runnerContext = runner
         stepStartedSource.onNext(EventSources.Event.Shared)
         super.beforeRunnerStart(runner)
+    }
+
+    override fun getCleanerName() = DotnetConstants.CLEANER_NAME + " initializer"
+
+    override fun registerDirectoryCleaners(context: DirectoryCleanersProviderContext, registry: DirectoryCleanersRegistry) {
+        _runnerContext = (context.runningBuild as AgentRunningBuildEx).currentRunnerContext
     }
 }
