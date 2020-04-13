@@ -23,6 +23,7 @@
   BS.DotnetParametersForm.hideLogging["devenv"] = true;
   BS.DotnetParametersForm.mandatoryPaths["devenv"] = true;
   BS.DotnetParametersForm.helpUrl["devenv"] = "https://docs.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches";
+  /*
   BS.DotnetParametersForm.initFunctions["devenv"] = function () {
     var visualStudioVersionId = BS.Util.escapeId('${params.visualStudioVersionKey}');
     var $defaultNote = $j(BS.Util.escapeId('defaultNote_${params.visualStudioVersionKey}'));
@@ -39,4 +40,5 @@
 
     updateElements();
   };
+  */
 </script>
