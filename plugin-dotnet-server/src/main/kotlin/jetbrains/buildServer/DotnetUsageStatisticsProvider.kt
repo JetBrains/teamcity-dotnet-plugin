@@ -57,7 +57,7 @@ class DotnetUsageStatisticsProvider(
             this.toStat {
                 sequence {
                     val runner = it
-                    val command = runner.parameters[PARAM_COMMAND]
+                    var command = runner.parameters[PARAM_COMMAND]
                     val tool = when (command) {
                         "devenv" -> runner.parameters[PARAM_VISUAL_STUDIO_VERSION] ?: DefaultVSVersion
                         "vstest" -> runner.parameters[PARAM_VISUAL_STUDIO_VERSION] ?: DefaultVSTestVersion
@@ -65,6 +65,10 @@ class DotnetUsageStatisticsProvider(
                         else -> null
                     }?.let {
                         Tool.tryParse(it)
+                    }
+
+                    if (command == "-") {
+                        command = "custom"
                     }
 
                     runner.parameters["plugin.docker.imageId"]?.let {
