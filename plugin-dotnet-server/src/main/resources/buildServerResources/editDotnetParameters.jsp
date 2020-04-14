@@ -331,7 +331,7 @@
                       targetFieldId="${params.targetsKey}" popupTitle="Select targets"/>
     </div
     <span class="error" id="error_${params.targetsKey}"></span>
-    <span class="smallNote">Enter the list of build targets.</span>
+    <span class="smallNote">Enter targets separated by space or semicolon.</span>
   </td>
 </tr>
 
