@@ -116,6 +116,7 @@ class DotnetNuGetCacheCleanerTest {
 
     private fun createInstance() = DotnetNugetCacheCleaner(
             "type",
+            "some description",
             CleanType.Medium,
             _toolProvider,
             _pathsService,

@@ -58,22 +58,52 @@
   <bean class="jetbrains.buildServer.agent.runner.CacheCleanerSessionImpl"/>
 
   <!-- dotnet -->
-  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="deepDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="http-cache"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdDeepDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="standard user http-cache"/>
+    <constructor-arg type="String" name="command" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
     <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="mediumDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="global-packages"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdMediumDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="standard user global-packages"/>
+    <constructor-arg type="String" name="command" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
     <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="lightDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="temp"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdLightDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="standard user temp nuget cache"/>
+    <constructor-arg type="String" name="command" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
     <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="stdEnvironmentVariables"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityDeepDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="teamcity system/.http http-cache"/>
+    <constructor-arg type="String" name="command" value="http-cache"/>
+    <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
+    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="teamcityEnvironmentVariables"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityMediumDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="teamcity system/.nuget global-packages"/>
+    <constructor-arg type="String" name="command" value="global-packages"/>
+    <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
+    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="teamcityEnvironmentVariables"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityLightDotnetNugetCacheCleaner">
+    <constructor-arg type="String" name="name" value="teamcity temp nuget cache"/>
+    <constructor-arg type="String" name="command" value="temp"/>
+    <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
+    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="teamcityEnvironmentVariables"/>
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
@@ -115,10 +145,28 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="dotnetCommandSet"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentImpl" />
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentImpl" primary="true" />
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
+    <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentPredefined" id="teamCityNugetEnvironment">
+    <constructor-arg name="allowInternalCaches" type="boolean" value="true"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="nugetEnvironmentVariables"/>
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="stdNugetEnvironmentVariables">
+    <constructor-arg ref="stdPathsNugetEnvironment"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="teamcityNugetEnvironmentVariables">
+    <constructor-arg ref="teamCityNugetEnvironment"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" primary="true">
     <constructor-arg ref="nugetEnvironmentVariables"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" id="stdEnvironmentVariables">
+    <constructor-arg ref="stdNugetEnvironmentVariables"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" id="teamcityEnvironmentVariables">
+    <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>

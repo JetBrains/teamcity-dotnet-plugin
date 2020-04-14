@@ -9,5 +9,5 @@ interface CacheCleaner {
 
     val targets: Sequence<File>
 
-    fun clean(target: File)
+    fun clean(target: File): Boolean
 }

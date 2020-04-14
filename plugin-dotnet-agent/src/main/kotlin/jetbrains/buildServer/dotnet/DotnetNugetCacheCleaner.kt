@@ -8,6 +8,7 @@ import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 
 class DotnetNugetCacheCleaner(
+        private val command: String,
         override val name: String,
         override val type: CleanType,
         private val _toolProvider: ToolProvider,
@@ -15,13 +16,13 @@ class DotnetNugetCacheCleaner(
         private val _environmentVariables: EnvironmentVariables,
         private val _commandLineExecutor: CommandLineExecutor): CacheCleaner {
 
-    private val _commandArg = CommandLineArgument(name)
+    private val _commandArg = CommandLineArgument(command)
 
     override val targets: Sequence<File>
         get() = sequence {
             runDotnet(NUGET_ARG, LOCALS_ARG, _commandArg, LIST_ARG)?.let {
                 if (it.exitCode == 0) {
-                    val pathPattern = Regex("^.*$name:\\s*(.+)\$", RegexOption.IGNORE_CASE)
+                    val pathPattern = Regex("^.*$command:\\s*(.+)\$", RegexOption.IGNORE_CASE)
                     it.standardOutput
                             .map { pathPattern.find(it)?.groups?.get(1)?.value }
                             .filter { it?.isNotBlank() ?: false }
@@ -31,9 +32,7 @@ class DotnetNugetCacheCleaner(
             }
         }
 
-    override fun clean(target: File) {
-        runDotnet(NUGET_ARG, LOCALS_ARG, _commandArg, CLEAR_ARG)
-    }
+    override fun clean(target: File) = (runDotnet(NUGET_ARG, LOCALS_ARG, _commandArg, CLEAR_ARG)?.exitCode ?: -1)  == 0
 
     private fun runDotnet(vararg args: CommandLineArgument) =
             dotnet?.let {
