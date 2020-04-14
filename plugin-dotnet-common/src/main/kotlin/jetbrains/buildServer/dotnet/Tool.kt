@@ -46,7 +46,7 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest 2015", 2015),
     VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "VSTest 2013", 2013);
 
-    val id: String get() = "${type}_${version}_${platform}_$bitness"
+    val id: String = "${type}${if (version != 0) "_${version}" else ""}_${platform}${if (bitness != ToolBitness.Any) "_${bitness}" else ""}"
 
     companion object {
         fun tryParse(id: String): Tool? {

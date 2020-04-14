@@ -64,16 +64,16 @@
     <types>
         <enum name="VSVersion">
             <description>MSBuild version</description>
-            <option name="V16" value="VisualStudio_16_Windows_Any">
+            <option name="V16" value="VisualStudio_16_Windows">
                 <description>Visual Studio 2019</description>
             </option>
-            <option name="V15" value="VisualStudio_15_Windows_Any">
+            <option name="V15" value="VisualStudio_15_Windows">
                 <description>Visual Studio 2017</description>
             </option>
-            <option name="V14" value="VisualStudio_14_Windows_Any">
+            <option name="V14" value="VisualStudio_14_Windows">
                 <description>Visual Studio 2015</description>
             </option>
-            <option name="V12" value="VisualStudio_12_Windows_Any">
+            <option name="V12" value="VisualStudio_12_Windows">
                 <description>Visual Studio 2013</description>
             </option>
         </enum>

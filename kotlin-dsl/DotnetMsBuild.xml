@@ -80,31 +80,31 @@
         </enum>
         <enum name="MSBuildVersion">
             <description>MSBuild version</description>
-            <option name="CrossPlatform" value="MSBuild_0_CrossPlatform_Any">
+            <option name="CrossPlatform" value="MSBuild_CrossPlatform">
                 <description>Cross-platform MSBuild</description>
             </option>
-            <option name="V16X64" value="MSBuild_16_Windows_X64">
+            <option name="V16x64" value="MSBuild_16_Windows_X64">
                 <description>MSBuild 2019 x64</description>
             </option>
-            <option name="V16X86" value="MSBuild_16_Windows_X86">
+            <option name="V16x86" value="MSBuild_16_Windows_X86">
                 <description>MSBuild 2019 x86</description>
             </option>
-            <option name="V15X64" value="MSBuild_15_Windows_X64">
+            <option name="V15x64" value="MSBuild_15_Windows_X64">
                 <description>MSBuild 2017 x64</description>
             </option>
-            <option name="V15X86" value="MSBuild_15_Windows_X86">
+            <option name="V15x86" value="MSBuild_15_Windows_X86">
                 <description>MSBuild 2017 x86</description>
             </option>
-            <option name="V14X64" value="MSBuild_14_Windows_X64">
+            <option name="V14x64" value="MSBuild_14_Windows_X64">
                 <description>MSBuild 2015 x64</description>
             </option>
-            <option name="V14X86" value="MSBuild_14_Windows_X86">
+            <option name="V14x86" value="MSBuild_14_Windows_X86">
                 <description>MSBuild 2015 x86</description>
             </option>
-            <option name="V12X64" value="MSBuild_12_Windows_X64">
+            <option name="V12x64" value="MSBuild_12_Windows_X64">
                 <description>MSBuild 2013 x64</description>
             </option>
-            <option name="V12X86" value="MSBuild_12_Windows_X86">
+            <option name="V12x86" value="MSBuild_12_Windows_X86">
                 <description>MSBuild 2013 x86</description>
             </option>
         </enum>

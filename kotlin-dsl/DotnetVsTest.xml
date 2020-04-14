@@ -103,19 +103,19 @@
         </enum>
         <enum name="VSTestVersion">
             <description>MSBuild version</description>
-            <option name="CrossPlatform" value="VSTest_0_CrossPlatform_Any">
+            <option name="CrossPlatform" value="VSTest_CrossPlatform">
                 <description>Cross-platform MSBuild</description>
             </option>
-            <option name="V16" value="VSTest_16_Windows_Any">
+            <option name="V16" value="VSTest_16_Windows">
                 <description>VSTest 2019</description>
             </option>
-            <option name="V15" value="VSTest_15_Windows_Any">
+            <option name="V15" value="VSTest_15_Windows">
                 <description>VSTest 2017</description>
             </option>
-            <option name="V14" value="VSTest_14_Windows_Any">
+            <option name="V14" value="VSTest_14_Windows">
                 <description>VSTest 2015</description>
             </option>
-            <option name="V12" value="VSTest_12_Windows_Any">
+            <option name="V12" value="VSTest_12_Windows">
                 <description>VSTest 2013</description>
             </option>
         </enum>
