@@ -42,13 +42,13 @@
                 directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
             </description>
         </param>
-        <param name="vs.version" dslName="version" type="VSVersion">
+        <param name="vs.version" dslName="version" type="VSVersion" mandatory="true">
             <description>
                 Visual Studio version to use
                 @see VSVersion
             </description>
         </param>
-        <param name="vs.action" dslName="action" type="VSAction">
+        <param name="vs.action" dslName="action" type="VSAction" mandatory="true">
             <description>
                 Visual Studio IDE command to execute
                 @see VSAction
@@ -63,7 +63,10 @@
     </params>
     <types>
         <enum name="VSVersion">
-            <description>MSBuild version</description>
+            <description>Visual Studio version</description>
+            <option name="Default" value="VisualStudio_Windows">
+                <description>Visual Studio 2019</description>
+            </option>
             <option name="V16" value="VisualStudio_16_Windows">
                 <description>Visual Studio 2019</description>
             </option>

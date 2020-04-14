@@ -39,11 +39,14 @@ class VisualStudioToolResolver(private val _parametersService: ParametersService
             ?: throw RunBuildException("Can't find any version of visual studio")
 
     private val selectedVersion: Int?
-        get() =
-            _parametersService.tryGetParameter(ParameterType.Runner, PARAM_VISUAL_STUDIO_VERSION)?.let {
+        get() {
+            val version =  _parametersService.tryGetParameter(ParameterType.Runner, PARAM_VISUAL_STUDIO_VERSION)?.let {
                 Tool.tryParse(it)?.vsVersion
                         ?: throw RunBuildException("Can't parse visual studio version from \"$PARAM_VISUAL_STUDIO_VERSION\" value \"$it\"")
             }
+
+            return if (version != null && version != Tool.VisualStudioDefault.version) version else null
+        }
 
     private val availableVersions: Sequence<Int>
         get() =

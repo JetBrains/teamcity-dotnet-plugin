@@ -61,6 +61,16 @@ class VisualStudioToolResolverTest {
                         mapOf(DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to "  "),
                         File("xxx"), Regex("Can't parse visual studio version from \"$PARAM_VISUAL_STUDIO_VERSION\" value \"  \"")),
 
+                // default version
+                arrayOf(
+                        mapOf(DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioDefault.id,
+                                "VS2013_Path" to "vs2013",
+                                "VS2019" to "vs2019",
+                                "VS2017_Path" to "vs2017",
+                                "VS" to "vs",
+                                "VS2015_Path" to "vs2015"),
+                        File("vs2017", VisualStudioToolResolver.VSToolName), null),
+
                 // Max available
                 arrayOf(
                         mapOf("VS2013_Path" to "vs2013",

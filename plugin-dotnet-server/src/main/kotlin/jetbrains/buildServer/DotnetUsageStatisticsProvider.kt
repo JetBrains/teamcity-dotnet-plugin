@@ -196,7 +196,7 @@ class DotnetUsageStatisticsProvider(
         private const val MSTESTS_RUNNER = "Visual Studio Tests MSTest"
 
         private val DefaultMSBuildVersion = Tool.MSBuildCrossPlatform.id
-        private val DefaultVSVersion by lazy { (Tool.values().filter { it.type == ToolType.VisualStudio }.sortedByDescending { it.version }.firstOrNull() ?: Tool.VisualStudio2019).id }
+        private val DefaultVSVersion = Tool.VisualStudioDefault.id
         private val DefaultVSTestVersion = Tool.VSTestCrossPlatform.id
         private val NugetInstallerToolDesc = sequenceOf(ToolDescriptor("nuget.installer", "NuGet: Installer"))
         private val NugetPublishToolDesc = sequenceOf(ToolDescriptor("nuget.publish", "NuGet: Publish"))

@@ -80,7 +80,11 @@ class DotnetRunnerRunType(
         return _pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
     }
 
-    override fun getDefaultRunnerProperties(): Map<String, String>? = emptyMap()
+    override fun getDefaultRunnerProperties(): Map<String, String>? {
+        return mapOf(
+                DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioDefault.id
+        )
+    }
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val paths = parameters[DotnetConstants.PARAM_PATHS] ?: ""

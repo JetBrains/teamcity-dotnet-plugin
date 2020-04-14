@@ -339,7 +339,6 @@
   <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
   <td>
     <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Default&gt;</props:option>
       <c:forEach var="item" items="${params.visualStudioVersions}">
         <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
       </c:forEach>
