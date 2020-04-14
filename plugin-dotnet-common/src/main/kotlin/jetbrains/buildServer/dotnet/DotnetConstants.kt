@@ -41,6 +41,8 @@ object DotnetConstants {
     // Internal configuration parameters:
     // True or False (False by default) - allows experimental features
     const val PARAM_EXPERIMENTAL = "teamcity.internal.dotnet.experimental"
+    // True or False (False by default) - allows experimental features
+    const val PARAM_SUPPORT_MSBUILD_BITNESS = "teamcity.internal.dotnet.msbuild.bitness"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
     // True or False (True by default) - set to False to not use .rsp files

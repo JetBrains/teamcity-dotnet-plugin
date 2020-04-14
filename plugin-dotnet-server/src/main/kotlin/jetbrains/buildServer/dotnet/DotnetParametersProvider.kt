@@ -47,7 +47,11 @@ class DotnetParametersProvider {
         get() = DotnetConstants.PARAM_MSBUILD_VERSION
 
     val msbuildVersions: List<Tool>
-        get() = Tool.values().filter { it.type == ToolType.MSBuild && (experimentalMode || it.platform != ToolPlatform.Mono) }
+        get() = Tool.values().filter {
+            it.type == ToolType.MSBuild
+            && (experimentalMode || it.platform != ToolPlatform.Mono)
+            && (supportMSBuildBitness || it.bitness == ToolBitness.Any)
+        }
 
     val nugetApiKey: String
         get() = DotnetConstants.PARAM_NUGET_API_KEY
@@ -152,6 +156,7 @@ class DotnetParametersProvider {
 
     companion object {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
+        private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
 
         private val experimentalCommandTypes: Sequence<CommandType> =
                     emptySequence()
