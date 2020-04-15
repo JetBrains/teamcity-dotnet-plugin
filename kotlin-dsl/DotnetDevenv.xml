@@ -21,7 +21,7 @@
             A [Visual Studio IDE step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run Visual Studio IDE command
         </description>
     </class>
-    <function name="devenv">
+    <function name="dotnetDevenv">
         <description>
             Adds a [Visual Studio IDE step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run Visual Studio IDE command
             @see DevenvBuildStep
