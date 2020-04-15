@@ -277,7 +277,6 @@
   <th class="noBorder"><label for="${params.platformKey}">Platform:<bs:help urlPrefix="${paramHelpUrl}vstest-platform" file=""/></label></th>
   <td>
     <props:selectProperty name="${params.platformKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Default&gt;</props:option>
       <c:forEach var="item" items="${params.vstestPlatforms}">
         <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
       </c:forEach>

@@ -82,7 +82,8 @@ class DotnetRunnerRunType(
 
     override fun getDefaultRunnerProperties(): Map<String, String>? {
         return mapOf(
-                DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioDefault.id
+                DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioDefault.id,
+                DotnetConstants.PARAM_PLATFORM to Platform.Default.id
         )
     }
 

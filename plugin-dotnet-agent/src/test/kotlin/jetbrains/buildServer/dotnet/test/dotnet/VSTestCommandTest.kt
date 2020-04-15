@@ -53,6 +53,13 @@ class VSTestCommandTest {
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                         DotnetConstants.PARAM_TEST_FILTER to "filter",
+                        DotnetConstants.PARAM_PLATFORM to Platform.Default.id,
+                        DotnetConstants.PARAM_FRAMEWORK to "net45",
+                        DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
+                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(mapOf(
+                        DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                        DotnetConstants.PARAM_TEST_FILTER to "filter",
                         DotnetConstants.PARAM_PLATFORM to "x64",
                         DotnetConstants.PARAM_FRAMEWORK to "net45",
                         DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "true",

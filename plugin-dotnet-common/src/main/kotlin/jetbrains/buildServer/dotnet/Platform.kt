@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 enum class Platform(val id: String, val description: String) {
+    Default("default", "Default"),
     x86("x86", "x86"),
     x64("x64", "x64"),
     ARM("ARM", "ARM");

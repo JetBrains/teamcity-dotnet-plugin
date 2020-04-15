@@ -62,7 +62,11 @@ class VSTestCommand(
 
         parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("/Platform:$it"))
+                Platform.tryParse(it)?.let {
+                    if( it != Platform.Default) {
+                        yield(CommandLineArgument("/Platform:${it.id}"))
+                    }
+                }
             }
         }
 
