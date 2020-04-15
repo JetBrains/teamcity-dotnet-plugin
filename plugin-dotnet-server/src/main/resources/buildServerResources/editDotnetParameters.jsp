@@ -246,6 +246,33 @@
   </td>
 </tr>
 
+<tr class="advancedSetting dotnet devenv">
+  <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
+  <td>
+    <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${params.visualStudioVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.visualStudioVersionKey}"></span>
+    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select any installed version of Visual Studio. By default, the latest installed version will be run.</span>
+  </td>
+</tr>
+
+<tr class="dotnet devenv">
+  <th><label for="${params.visualStudioActionKey}">Build action:<bs:help urlPrefix="${paramHelpUrl}devenv-build-action" file=""/> <l:star/></label></th>
+  <td>
+    <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Select&gt;</props:option>
+      <c:forEach var="item" items="${params.visualStudioActions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.visualStudioActionKey}"></span>
+    <span class="smallNote">Select a devenv command.</span>
+  </td>
+</tr>
+
 <tr class="advancedSetting dotnet vstest">
   <th class="noBorder"><label for="${params.platformKey}">Platform:<bs:help urlPrefix="${paramHelpUrl}vstest-platform" file=""/></label></th>
   <td>
@@ -332,32 +359,6 @@
     </div
     <span class="error" id="error_${params.targetsKey}"></span>
     <span class="smallNote">Enter targets separated by space or semicolon.</span>
-  </td>
-</tr>
-
-<tr class="advancedSetting dotnet devenv">
-  <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
-  <td>
-    <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${params.visualStudioVersions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.visualStudioVersionKey}"></span>
-    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select any installed version of Visual Studio. By default, the latest installed version will be run.</span>
-  </td>
-</tr>
-
-<tr class="dotnet devenv">
-  <th><label for="${params.visualStudioActionKey}">Build action:<bs:help urlPrefix="${paramHelpUrl}devenv-build-action" file=""/> <l:star/></label></th>
-  <td>
-    <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Select&gt;</props:option>
-      <c:forEach var="item" items="${params.visualStudioActions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.visualStudioActionKey}"></span>
   </td>
 </tr>
 
@@ -508,14 +509,11 @@
 </tr>
 
 <tr class="advancedSetting">
-  <th><label for="${params.argumentsKey}">Command line parameters:</label></th>
+  <th><label for="${params.argumentsKey}">Command line parameters: <a id="dotnet-help" target="_blank" rel="noreferrer" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a></label></th>
   <td>
     <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
     <span class="error" id="error_${params.argumentsKey}"></span>
-    <span class="smallNote">
-            Enter additional command line parameters. <a
-        id="dotnet-help" target="_blank" rel="noreferrer" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a>
-        </span>
+    <span class="smallNote">Enter additional command line parameters.</span>
   </td>
 </tr>
 
