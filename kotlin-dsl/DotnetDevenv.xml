@@ -42,7 +42,7 @@
                 directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
             </description>
         </param>
-        <param name="vs.version" dslName="version" type="VSVersion" mandatory="true">
+        <param name="vs.version" dslName="version" type="VSVersion">
             <description>
                 Visual Studio version to use
                 @see VSVersion
