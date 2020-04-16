@@ -121,7 +121,7 @@
         </enum>
         <enum name="Platform">
             <description>Platform bitness</description>
-            <option name="default" value="Default"/>
+            <option name="auto" value="Auto"/>
             <option name="x86" value="x86"/>
             <option name="x64" value="x64"/>
             <option name="ARM" value="ARM"/>

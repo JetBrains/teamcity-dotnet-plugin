@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet
 
 enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String, val vsVersion: Int = 0) {
     // Visual Studio
-    VisualStudioDefault(0, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Default", 0),
+    VisualStudioAny(0, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Any", 0),
     VisualStudio2019(16, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2019", 2019),
     VisualStudio2017(15, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2017", 2017),
     VisualStudio2015(14, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2015", 2015),

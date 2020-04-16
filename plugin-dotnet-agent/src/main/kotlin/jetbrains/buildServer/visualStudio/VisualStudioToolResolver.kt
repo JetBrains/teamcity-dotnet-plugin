@@ -45,7 +45,7 @@ class VisualStudioToolResolver(private val _parametersService: ParametersService
                         ?: throw RunBuildException("Can't parse visual studio version from \"$PARAM_VISUAL_STUDIO_VERSION\" value \"$it\"")
             }
 
-            return if (version != null && version != Tool.VisualStudioDefault.version) version else null
+            return if (version != null && version != Tool.VisualStudioAny.version) version else null
         }
 
     private val availableVersions: Sequence<Int>

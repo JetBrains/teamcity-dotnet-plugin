@@ -255,7 +255,7 @@
       </c:forEach>
     </props:selectProperty>
     <span class="error" id="error_${params.visualStudioVersionKey}"></span>
-    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select any installed version of Visual Studio. By default, the latest installed version will be run.</span>
+    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select a version of Visual Studio to run. Leave &lt;Any&gt; to use the latest installed version.</span>
   </td>
 </tr>
 
@@ -282,7 +282,7 @@
       </c:forEach>
     </props:selectProperty>
     <span class="error" id="error_${params.platformKey}"></span>
-    <span class="smallNote">Specify the target platform.</span>
+    <span class="smallNote">Change the target platform for testing if necessary. Leave &lt;Auto&gt; to use the platform selected by VSTest.</span>
   </td>
 </tr>
 

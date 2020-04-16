@@ -63,7 +63,7 @@ class VisualStudioToolResolverTest {
 
                 // default version
                 arrayOf(
-                        mapOf(DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioDefault.id,
+                        mapOf(DotnetConstants.PARAM_VISUAL_STUDIO_VERSION to Tool.VisualStudioAny.id,
                                 "VS2013_Path" to "vs2013",
                                 "VS2019" to "vs2019",
                                 "VS2017_Path" to "vs2017",

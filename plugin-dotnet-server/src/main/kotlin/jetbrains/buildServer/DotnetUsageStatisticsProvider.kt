@@ -5,7 +5,6 @@ import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_COMMAND
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_MSBUILD_VERSION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_VERSION
 import jetbrains.buildServer.dotnet.Tool
-import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor
 import jetbrains.buildServer.serverSide.SBuildServer
 import jetbrains.buildServer.usageStatistics.UsageStatisticsPublisher
@@ -196,7 +195,7 @@ class DotnetUsageStatisticsProvider(
         private const val MSTESTS_RUNNER = "Visual Studio Tests MSTest"
 
         private val DefaultMSBuildVersion = Tool.MSBuildCrossPlatform.id
-        private val DefaultVSVersion = Tool.VisualStudioDefault.id
+        private val DefaultVSVersion = Tool.VisualStudioAny.id
         private val DefaultVSTestVersion = Tool.VSTestCrossPlatform.id
         private val NugetInstallerToolDesc = sequenceOf(ToolDescriptor("nuget.installer", "NuGet: Installer"))
         private val NugetPublishToolDesc = sequenceOf(ToolDescriptor("nuget.publish", "NuGet: Publish"))

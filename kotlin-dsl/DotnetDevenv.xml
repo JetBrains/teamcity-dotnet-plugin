@@ -64,7 +64,7 @@
     <types>
         <enum name="VSVersion">
             <description>Visual Studio version</description>
-            <option name="Default" value="VisualStudio_Windows">
+            <option name="Any" value="VisualStudio_Windows">
                 <description>Visual Studio 2019</description>
             </option>
             <option name="V16" value="VisualStudio_16_Windows">
