@@ -20,7 +20,7 @@ class CacheCleanerSessionImpl(
         val now = Instant.now()
         val targets = mutableSetOf<File>()
         for (cleaner in _cleaners) {
-            val fullName = "${DotnetConstants.CLEANER_NAME} ${cleaner.name}"
+            val fullName = "${DotnetConstants.CLEANER_NAME} for ${cleaner.name}"
             val date = Date.from(now.minus(Duration.ofDays(cleaner.type.weight)))
             LOG.info("Register $fullName.")
             for (target in cleaner.targets) {
@@ -29,20 +29,20 @@ class CacheCleanerSessionImpl(
                             target,
                             date,
                             Runnable {
-                                LOG.info("Clearing \"$target\" by $fullName.")
+                                LOG.info("Cleaning \"$target\" by $fullName.")
                                 try {
                                     if (cleaner.clean(target)) {
-                                        LOG.info("Target \"$target\" has been cleared by $fullName.")
+                                        LOG.info("Path \"$target\" has been cleaned by $fullName.")
                                     } else {
-                                        LOG.warn("Target \"$target\" has not been cleared by $fullName.")                                    }
+                                        LOG.warn("Path \"$target\" has not been cleaned by $fullName.")                                    }
                                 } catch (error: Throwable) {
-                                    LOG.error("Target \"$target\" has not been cleared by $fullName.", error)
+                                    LOG.error("Path \"$target\" has not been cleaned by $fullName.", error)
                                 }
                             })
 
-                    LOG.info("\"$target\" added for cleaning by $fullName.")
+                    LOG.info("Path \"$target\" is added by $fullName.")
                 } else {
-                    LOG.info("\"$target\" already added for cleaning.")
+                    LOG.info("Path \"$target\" is already added.")
                 }
             }
         }

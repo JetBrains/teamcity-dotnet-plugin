@@ -59,7 +59,7 @@
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdDeepDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="standard user http-cache"/>
+    <constructor-arg type="String" name="name" value="http-cache in user directory"/>
     <constructor-arg type="String" name="command" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -67,7 +67,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdMediumDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="standard user global-packages"/>
+    <constructor-arg type="String" name="name" value="global-packages in user directory"/>
     <constructor-arg type="String" name="command" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -75,7 +75,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdLightDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="standard user temp nuget cache"/>
+    <constructor-arg type="String" name="name" value="temp-cache in user directory"/>
     <constructor-arg type="String" name="command" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -83,7 +83,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityDeepDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="teamcity system/.http http-cache"/>
+    <constructor-arg type="String" name="name" value="http-cache in 'system/dotnet/.http' directory"/>
     <constructor-arg type="String" name="command" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -91,7 +91,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityMediumDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="teamcity system/.nuget global-packages"/>
+    <constructor-arg type="String" name="name" value="global-packages in 'system/dotnet/.net' directory"/>
     <constructor-arg type="String" name="command" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
     <constructor-arg ref="dotnetToolProvider" />
@@ -99,7 +99,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="teamcityLightDotnetNugetCacheCleaner">
-    <constructor-arg type="String" name="name" value="teamcity temp nuget cache"/>
+    <constructor-arg type="String" name="name" value="temp-cache in 'temp/buildTmp' directory"/>
     <constructor-arg type="String" name="command" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
     <constructor-arg ref="dotnetToolProvider" />
