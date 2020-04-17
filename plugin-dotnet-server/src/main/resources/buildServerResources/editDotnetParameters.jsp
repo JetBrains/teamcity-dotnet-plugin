@@ -61,7 +61,7 @@
           return;
         }
         var changed = false;
-        if (element.name === "select" || element.name === "prop:msbuild.version" || element.name === "prop:vstest.version") {
+        if (element.name === "select") {
           changed = element.selectedIndex !== -1;
           element.selectedIndex = -1;
         } else if (element.type === "checkbox") {
@@ -103,10 +103,10 @@
       $j("tr.dotnet").each(function(id, element) {
         var $row = $j(element);
         if (!$row.hasClass(commandName)) {
-          $row.hide();
+          $row.addClass("hidden");
           BS.DotnetParametersForm.clearInputValues($row);
         } else {
-          $row.show();
+          $row.removeClass("hidden");
         }
       });
       $j(".runnerFormTable span.error").empty();
@@ -222,43 +222,6 @@
 
 <props:workingDirectory/>
 
-<tr class="advancedSetting dotnet msbuild">
-  <th><label for="${params.msbuildVersionKey}">MSBuild version:<bs:help urlPrefix="${paramHelpUrl}msbuild-version" file=""/></label></th>
-  <td>
-    <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${params.msbuildVersions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.msbuildVersionKey}"></span>
-  </td>
-</tr>
-
-<tr class="advancedSetting dotnet vstest">
-  <th><label for="${params.vstestVersionKey}">VSTest version:<bs:help urlPrefix="${paramHelpUrl}vstest-version" file=""/></label></th>
-  <td>
-    <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${params.vstestVersions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.vstestVersionKey}"></span>
-  </td>
-</tr>
-
-<tr class="advancedSetting dotnet devenv">
-  <th><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
-  <td>
-    <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${params.visualStudioVersions}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.visualStudioVersionKey}"></span>
-    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select a version of Visual Studio to run. Leave &lt;Any&gt; to use the latest installed version.</span>
-  </td>
-</tr>
-
 <tr class="dotnet devenv">
   <th><label for="${params.visualStudioActionKey}">Build action:<bs:help urlPrefix="${paramHelpUrl}devenv-build-action" file=""/> <l:star/></label></th>
   <td>
@@ -270,6 +233,43 @@
     </props:selectProperty>
     <span class="error" id="error_${params.visualStudioActionKey}"></span>
     <span class="smallNote">Select a devenv command.</span>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet msbuild">
+  <th class="noBorder"><label for="${params.msbuildVersionKey}">MSBuild version:<bs:help urlPrefix="${paramHelpUrl}msbuild-version" file=""/></label></th>
+  <td>
+    <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${params.msbuildVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.msbuildVersionKey}"></span>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet vstest">
+  <th class="noBorder"><label for="${params.vstestVersionKey}">VSTest version:<bs:help urlPrefix="${paramHelpUrl}vstest-version" file=""/></label></th>
+  <td>
+    <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${params.vstestVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.vstestVersionKey}"></span>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet devenv">
+  <th class="noBorder"><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
+  <td>
+    <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${params.visualStudioVersions}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.visualStudioVersionKey}"></span>
+    <span class="smallNote" id="defaultNote_${params.visualStudioVersionKey}">Select a version of Visual Studio to run. Leave &lt;Any&gt; to use the latest installed version.</span>
   </td>
 </tr>
 
@@ -287,7 +287,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet vstest">
-  <th><label for="${params.vstestInIsolation}">Run in isolation:<bs:help urlPrefix="${paramHelpUrl}vstest-isolation" file=""/></label></th>
+  <th class="noBorder"><label for="${params.vstestInIsolation}">Run in isolation:<bs:help urlPrefix="${paramHelpUrl}vstest-isolation" file=""/></label></th>
   <td>
     <props:checkboxProperty name="${params.vstestInIsolation}"/>
     <label for="${params.vstestInIsolation}">Run the tests in an isolated process</label>
@@ -295,7 +295,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet vstest">
-  <th><label for="${params.testFilterKey}">Tests filtration:</label></th>
+  <th class="noBorder"><label for="${params.testFilterKey}">Tests filtration:</label></th>
   <td>
     <props:selectProperty name="${params.testFilterKey}" enableFilter="true" className="mediumField">
       <props:option value="">&lt;Disabled&gt;</props:option>
@@ -335,7 +335,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet build clean publish run test vstest">
-  <th><label for="${params.frameworkKey}">Framework:</label></th>
+  <th class="noBorder"><label for="${params.frameworkKey}">Framework:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.frameworkKey}" className="longField"/>
@@ -349,7 +349,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet msbuild">
-  <th><label for="${params.targetsKey}">Targets:</label></th>
+  <th class="noBorder"><label for="${params.targetsKey}">Targets:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.targetsKey}" className="longField"/>
@@ -376,7 +376,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet restore">
-  <th><label for="${params.nugetPackageSourcesKey}">NuGet package sources:</label></th>
+  <th class="noBorder"><label for="${params.nugetPackageSourcesKey}">NuGet package sources:</label></th>
   <td>
     <c:set var="note">Specifies NuGet package sources to use during the restore.</c:set>
     <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
@@ -402,7 +402,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet build clean pack publish test">
-  <th><label for="${params.outputDirKey}">Output directory:</label></th>
+  <th class="noBorder"><label for="${params.outputDirKey}">Output directory:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.outputDirKey}" className="longField"/>
@@ -414,7 +414,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet build pack publish">
-  <th><label for="${params.versionSuffixKey}">Version suffix:</label></th>
+  <th class="noBorder"><label for="${params.versionSuffixKey}">Version suffix:</label></th>
   <td>
     <props:textProperty name="${params.versionSuffixKey}" className="longField" expandable="true"/>
     <span class="error" id="error_${params.versionSuffixKey}"></span>
@@ -423,7 +423,7 @@
 </tr>
 
 <tr class="dotnet nuget-delete nuget-push">
-  <th><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
+  <th class="noBorder"><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
   <td>
     <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
     <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString" selectionMode="single"
@@ -456,7 +456,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet restore">
-  <th><label for="${params.nugetPackagesDirKey}">Packages directory:</label></th>
+  <th class="noBorder"><label for="${params.nugetPackagesDirKey}">Packages directory:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.nugetPackagesDirKey}" className="longField"/>
@@ -468,7 +468,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet restore">
-  <th><label for="${params.nugetConfigFileKey}">Configuration file:</label></th>
+  <th class="noBorder"><label for="${params.nugetConfigFileKey}">Configuration file:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.nugetConfigFileKey}" className="longField"/>
@@ -480,7 +480,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet nuget-push">
-  <th>Options:</th>
+  <th class="noBorder">Options:</th>
   <td>
     <props:checkboxProperty name="${params.nugetNoSymbolsKey}"/>
     <label for="${params.nugetNoSymbolsKey}">Do not publish an existing nuget symbols packages</label>
@@ -488,7 +488,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet test vstest">
-  <th><label for="${params.testSettingsFileKey}">Settings file:</label></th>
+  <th class="noBorder"><label for="${params.testSettingsFileKey}">Settings file:</label></th>
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.testSettingsFileKey}" className="longField"/>
@@ -500,10 +500,23 @@
 </tr>
 
 <tr class="advancedSetting dotnet pack test">
-  <th>Options:</th>
+  <th class="noBorder">Options:</th>
   <td>
     <props:checkboxProperty name="${params.skipBuildKey}"/>
     <label for="${params.skipBuildKey}">Do not build the projects</label>
+  </td>
+</tr>
+
+<tr class="advancedSetting" id="logging">
+  <th class="noBorder"><label for="${params.verbosityKey}">Logging verbosity:</label></th>
+  <td>
+    <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
+      <props:option value="">&lt;Default&gt;</props:option>
+      <c:forEach var="item" items="${params.verbosityValues}">
+        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${params.verbosityKey}"></span>
   </td>
 </tr>
 
@@ -516,18 +529,6 @@
   </td>
 </tr>
 
-<tr class="advancedSetting" id="logging">
-  <th><label for="${params.verbosityKey}">Logging verbosity:</label></th>
-  <td>
-    <props:selectProperty name="${params.verbosityKey}" enableFilter="true" className="mediumField">
-      <props:option value="">&lt;Default&gt;</props:option>
-      <c:forEach var="item" items="${params.verbosityValues}">
-        <props:option value="${item.id}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${params.verbosityKey}"></span>
-  </td>
-</tr>
 </tbody>
 
 <tbody id="dotnet-coverage" class="hidden">
