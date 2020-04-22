@@ -16,38 +16,34 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.rx.subjectOf
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class DotnetPropertiesExtensionTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _eventSources: EventSources
-    private lateinit var _pathsService: PathsService
-    private lateinit var _dotnetVersionProvider: DotnetVersionProvider
-    private lateinit var _dotnetSdksProvider: DotnetSdksProvider
-    private lateinit var _toolProvider: ToolProvider
-    private lateinit var _buildAgent: BuildAgent
-    private lateinit var _buildAgentConfiguration: BuildAgentConfiguration
+    @MockK private lateinit var _eventSources: EventSources
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _dotnetVersionProvider: DotnetVersionProvider
+    @MockK private lateinit var _dotnetSdksProvider: DotnetSdksProvider
+    @MockK private lateinit var _toolProvider: ToolProvider
+    @MockK private lateinit var _buildAgent: BuildAgent
+    @MockK private lateinit var _buildAgentConfiguration: BuildAgentConfiguration
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _eventSources = _ctx.mock(EventSources::class.java)
-        _pathsService = _ctx.mock(PathsService::class.java)
-        _dotnetVersionProvider = _ctx.mock(DotnetVersionProvider::class.java)
-        _dotnetSdksProvider = _ctx.mock(DotnetSdksProvider::class.java)
-        _toolProvider = _ctx.mock(ToolProvider::class.java)
-        _buildAgent = _ctx.mock(BuildAgent::class.java)
-        _buildAgentConfiguration = _ctx.mock(BuildAgentConfiguration::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -97,34 +93,18 @@ class DotnetPropertiesExtensionTest {
         val workPath = Path("work")
 
         val beforeAgentConfigurationLoadedSource = subjectOf<EventSources.BeforeAgentConfigurationLoaded>()
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<EventSources>(_eventSources).beforeAgentConfigurationLoadedSource
-                will(returnValue(beforeAgentConfigurationLoadedSource))
+        every { _eventSources.beforeAgentConfigurationLoadedSource } returns beforeAgentConfigurationLoadedSource
+        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns toolPath.path
+        every { _pathsService.getPath(PathType.Work) } returns File(workPath.path)
+        every { _dotnetVersionProvider.getVersion(toolPath, workPath) } returns Version(1, 0, 1)
+        every { _dotnetSdksProvider.getSdks(File(toolPath.path)) } returns originSdks
+        every { _buildAgent.configuration } returns _buildAgentConfiguration
+        every { _buildAgentConfiguration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, Version(1, 0, 1).toString()) } returns Unit
+        every { _buildAgentConfiguration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, File(toolPath.path).canonicalPath) } returns Unit
 
-                oneOf<ToolProvider>(_toolProvider).getPath(DotnetConstants.EXECUTABLE)
-                will(returnValue(toolPath.path))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.Work)
-                will(returnValue(File(workPath.path)))
-
-                oneOf<DotnetVersionProvider>(_dotnetVersionProvider).getVersion(toolPath, workPath)
-                will(returnValue(Version(1, 0, 1)))
-
-                oneOf<DotnetSdksProvider>(_dotnetSdksProvider).getSdks(File(toolPath.path))
-                will(returnValue(originSdks))
-
-                oneOf<BuildAgent>(_buildAgent).configuration
-                will(returnValue(_buildAgentConfiguration))
-
-                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_NAME, Version(1, 0, 1).toString())
-                oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter(DotnetConstants.CONFIG_PATH, File(toolPath.path).canonicalPath)
-
-                for ((version, path) in expectedSdks) {
-                    oneOf<BuildAgentConfiguration>(_buildAgentConfiguration).addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path)
-                }
-            }
-        })
+        for ((version, path) in expectedSdks) {
+            every { _buildAgentConfiguration.addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path) } returns Unit
+        }
 
         createInstance()
 
@@ -132,7 +112,12 @@ class DotnetPropertiesExtensionTest {
         beforeAgentConfigurationLoadedSource.onNext(EventSources.BeforeAgentConfigurationLoaded(_buildAgent))
 
         // Then
-        _ctx.assertIsSatisfied()
+        verify { _buildAgentConfiguration.addConfigurationParameter(DotnetConstants.CONFIG_NAME, Version(1, 0, 1).toString()) }
+        verify { _buildAgentConfiguration.addConfigurationParameter(DotnetConstants.CONFIG_PATH, File(toolPath.path).canonicalPath) }
+
+        for ((version, path) in expectedSdks) {
+            verify { _buildAgentConfiguration.addConfigurationParameter("${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}", path) }
+        }
     }
 
     private fun createInstance(): DotnetPropertiesExtension {
