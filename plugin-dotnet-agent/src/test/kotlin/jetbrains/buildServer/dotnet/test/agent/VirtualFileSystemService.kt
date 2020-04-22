@@ -64,6 +64,8 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isDirectory(file: File): Boolean = _directories.contains(file)
 
+    override fun isFile(file: File): Boolean = _files.contains(file)
+
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
     override fun copy(sourceDirectory: File, destinationDirectory: File) {

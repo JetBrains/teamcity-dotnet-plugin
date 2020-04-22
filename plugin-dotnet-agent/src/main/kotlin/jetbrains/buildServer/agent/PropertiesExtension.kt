@@ -17,9 +17,9 @@ class PropertiesExtension(
                         for (property in agentPropertiesProvider.properties) {
                             val prevValue = configuration.configurationParameters.get(property.name)
                             if (prevValue != null) {
-                                LOG.warn("Update ${property.name} = \"${property.value}\". Previous value was \"$prevValue\".")
+                                LOG.warn("Update ${property.name}=\"${property.value}\". Previous value was \"$prevValue\".")
                             } else {
-                                LOG.info("Add ${property.name} = \"${property.value}\".")
+                                LOG.info("Add ${property.name}=\"${property.value}\".")
                             }
 
                             configuration.addConfigurationParameter(property.name, property.value)

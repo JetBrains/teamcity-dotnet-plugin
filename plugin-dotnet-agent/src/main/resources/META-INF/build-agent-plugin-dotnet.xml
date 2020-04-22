@@ -179,6 +179,7 @@
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
 
   <!--Dotnet arguments' providers-->

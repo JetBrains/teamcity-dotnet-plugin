@@ -25,6 +25,8 @@ class FileSystemServiceImpl: FileSystemService {
 
     override fun isDirectory(file: File): Boolean = file.isDirectory
 
+    override fun isFile(file: File): Boolean = file.isFile
+
     override fun isAbsolute(file: File): Boolean = file.isAbsolute
 
     override fun write(file: File, writer: (OutputStream) -> Unit) = FileOutputStream(file).use(writer)

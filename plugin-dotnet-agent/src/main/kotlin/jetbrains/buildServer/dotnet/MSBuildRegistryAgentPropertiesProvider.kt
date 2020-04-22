@@ -1,11 +1,12 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.util.Bitness
+import org.apache.log4j.Logger
 import java.io.File
 
 class MSBuildRegistryAgentPropertiesProvider(
-        private val _windowsRegistry: WindowsRegistry)
+        private val _windowsRegistry: WindowsRegistry,
+        private val _msuildValidator: MSBuildValidator)
     : AgentPropertiesProvider {
 
     override val desription = "MSBuild in registry"
@@ -23,7 +24,11 @@ class MSBuildRegistryAgentPropertiesProvider(
                             && "MSBuildToolsPath".equals(value.key.parts.lastOrNull(), true)) {
                         val versionStr = value.key.parts.dropLast(1).lastOrNull()
                         versionStr?.let { version ->
-                            props.add(AgentProperty("MSBuildTools${version}_${value.key.bitness.platform.id}_Path", value.text))
+                            if (_msuildValidator.isValide(File(value.text))) {
+                                props.add(AgentProperty("MSBuildTools${version}_${value.key.bitness.platform.id}_Path", value.text))
+                            } else {
+                                LOG.warn("Cannot find MSBuild in \"${value.text}\".")
+                            }
                         }
                     }
                 }
@@ -34,6 +39,8 @@ class MSBuildRegistryAgentPropertiesProvider(
     }
 
     companion object {
+        private val LOG = Logger.getLogger(MSBuildRegistryAgentPropertiesProvider::class.java)
+
         private val RegKeys = sequenceOf<WindowsRegistryKey>(
                 WindowsRegistryKey.create(
                         WindowsRegistryBitness.Bitness64,

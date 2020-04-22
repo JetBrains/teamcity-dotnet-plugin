@@ -24,7 +24,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.rx.subjectOf
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -91,7 +90,7 @@ class DotnetAgentPropertiesProviderTest {
     @Test(dataProvider = "testData")
     fun shouldProvideConfigParams(
             originSdks: List<DotnetSdk>,
-            expectedSdks: List<AgentProperty>) {
+            expectedProperties: List<AgentProperty>) {
         // Given
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns _toolPath.path
         every { _pathsService.getPath(PathType.Work) } returns File(_workPath.path)
@@ -102,7 +101,7 @@ class DotnetAgentPropertiesProviderTest {
 
         // When
         Assert.assertEquals(propertiesProvider.desription, ".NET CLI")
-        Assert.assertEquals(propertiesProvider.properties.toList(), expectedSdks)
+        Assert.assertEquals(propertiesProvider.properties.toList(), expectedProperties)
     }
 
     private fun createInstance() = DotnetAgentPropertiesProvider(
