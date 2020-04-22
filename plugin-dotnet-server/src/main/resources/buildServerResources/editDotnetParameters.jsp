@@ -24,8 +24,7 @@
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <c:set var="asterisk"><l:star/></c:set>
-<c:set var="baseHelpUrl">https://www.jetbrains.com/help/teamcity/2019.2/</c:set>
-<c:set var="paramHelpUrl">${baseHelpUrl}?.NET#</c:set>
+<c:set var="paramHelpUrl">net#</c:set>
 
 <script type="text/javascript">
   BS.LoadStyleSheetDynamically("<c:url value='${teamcityPluginResourcesPath}dotnet-settings.css'/>");
@@ -189,7 +188,7 @@
   </tr>
 </c:if>
 
-<c:set var="commandTitle">Command:<bs:help urlPrefix="${baseHelpUrl}teamcity-documentation.html#BuildRunnerOptions" file=""/></c:set>
+<c:set var="commandTitle">Command:<bs:help file="${paramHelpUrl}BuildRunnerOptions"/></c:set>
 <props:selectSectionProperty name="${params.commandKey}" title="${commandTitle}" note="">
   <c:forEach items="${params.commands}" var="type">
     <props:selectSectionPropertyContent value="${type.name}" caption="${type.description}">
@@ -223,7 +222,7 @@
 <props:workingDirectory/>
 
 <tr class="dotnet devenv">
-  <th><label for="${params.visualStudioActionKey}">Build action:<bs:help urlPrefix="${paramHelpUrl}devenv-build-action" file=""/> <l:star/></label></th>
+  <th><label for="${params.visualStudioActionKey}">Build action:<bs:help file="${paramHelpUrl}devenv-build-action"/> <l:star/></label></th>
   <td>
     <props:selectProperty name="${params.visualStudioActionKey}" enableFilter="true" className="mediumField">
       <props:option value="">&lt;Select&gt;</props:option>
@@ -237,7 +236,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet msbuild">
-  <th class="noBorder"><label for="${params.msbuildVersionKey}">MSBuild version:<bs:help urlPrefix="${paramHelpUrl}msbuild-version" file=""/></label></th>
+  <th class="noBorder"><label for="${params.msbuildVersionKey}">MSBuild version:<bs:help file="${paramHelpUrl}msbuild-version"/></label></th>
   <td>
     <props:selectProperty name="${params.msbuildVersionKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${params.msbuildVersions}">
@@ -249,7 +248,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet vstest">
-  <th class="noBorder"><label for="${params.vstestVersionKey}">VSTest version:<bs:help urlPrefix="${paramHelpUrl}vstest-version" file=""/></label></th>
+  <th class="noBorder"><label for="${params.vstestVersionKey}">VSTest version:<bs:help file="${paramHelpUrl}vstest-version"/></label></th>
   <td>
     <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${params.vstestVersions}">
@@ -274,7 +273,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet vstest">
-  <th class="noBorder"><label for="${params.platformKey}">Platform:<bs:help urlPrefix="${paramHelpUrl}vstest-platform" file=""/></label></th>
+  <th class="noBorder"><label for="${params.platformKey}">Platform:<bs:help file="${paramHelpUrl}vstest-platform"/></label></th>
   <td>
     <props:selectProperty name="${params.platformKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${params.vstestPlatforms}">
@@ -287,7 +286,7 @@
 </tr>
 
 <tr class="advancedSetting dotnet vstest">
-  <th class="noBorder"><label for="${params.vstestInIsolation}">Run in isolation:<bs:help urlPrefix="${paramHelpUrl}vstest-isolation" file=""/></label></th>
+  <th class="noBorder"><label for="${params.vstestInIsolation}">Run in isolation:<bs:help file="${paramHelpUrl}vstest-isolation"/></label></th>
   <td>
     <props:checkboxProperty name="${params.vstestInIsolation}"/>
     <label for="${params.vstestInIsolation}">Run the tests in an isolated process</label>
