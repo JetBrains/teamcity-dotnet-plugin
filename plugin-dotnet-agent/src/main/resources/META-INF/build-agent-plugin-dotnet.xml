@@ -34,6 +34,8 @@
   <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
+  <bean class="jetbrains.buildServer.agent.WindowsRegistryParserImpl"/>
+  <bean class="jetbrains.buildServer.agent.WindowsRegistryImpl"/>
 
   <!-- common agent's runner services -->
   <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
@@ -123,9 +125,6 @@
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider">
-    <constructor-arg ref="dotnetToolProvider"/>
-  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetStateWorkflowComposer" id="dotnetStateWorkflowComposer">
     <constructor-arg ref="dotnetVersionParser"/>
     <constructor-arg>
@@ -174,6 +173,13 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.NugetResultsObserver" id="nugetResultsObserver"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildParameterValidatorImpl"/>
+
+  <!--Dotnet agent properties providers-->
+  <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider" id="dotnetAgentPropertiesProvider">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
