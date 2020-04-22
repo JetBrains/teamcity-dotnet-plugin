@@ -33,6 +33,7 @@
   <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
 
   <!-- common agent's runner services -->
   <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
@@ -122,7 +123,7 @@
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetPropertiesExtension">
+  <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetStateWorkflowComposer" id="dotnetStateWorkflowComposer">
