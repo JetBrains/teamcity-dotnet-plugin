@@ -17,6 +17,7 @@
       <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/kotlin" isTestSource="true" />
       <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/kotlin" isTestSource="false" />
       <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />

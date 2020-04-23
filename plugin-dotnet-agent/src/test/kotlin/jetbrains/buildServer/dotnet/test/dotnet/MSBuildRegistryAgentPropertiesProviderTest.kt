@@ -76,7 +76,6 @@ class MSBuildRegistryAgentPropertiesProviderTest {
         )
 
         every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>()) } answers  {
-            val key = arg<WindowsRegistryKey>(0)
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (item in regItems) {
                 when (item) {

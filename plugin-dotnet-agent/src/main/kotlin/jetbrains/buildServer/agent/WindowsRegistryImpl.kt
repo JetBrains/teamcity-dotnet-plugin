@@ -9,6 +9,10 @@ class WindowsRegistryImpl(
     : WindowsRegistry {
 
     override fun get(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor) {
+        if (_environment.os != OSType.WINDOWS) {
+            return
+        }
+
         var curKey: WindowsRegistryKey = key;
         for (line in getLines(key)) {
             if (line.isBlank()) {
@@ -17,12 +21,17 @@ class WindowsRegistryImpl(
 
             val value = _windowsRegistryParser.tryParseValue(curKey, line)
             if (value != null) {
-                visitor.accept(value)
+                if (!visitor.accept(value)) {
+                   return
+                }
             }
             else {
                 val newKey = _windowsRegistryParser.tryParseKey(key, line)
                 if (newKey != null) {
-                    visitor.accept(newKey)
+                    if (!visitor.accept(newKey)) {
+                        return
+                    }
+
                     curKey = newKey;
                 }
             }
@@ -30,23 +39,18 @@ class WindowsRegistryImpl(
     }
 
     private fun getLines(key: WindowsRegistryKey) =
-            when(_environment.os) {
-                OSType.WINDOWS -> {
-                    _commandLineExecutor.tryExecute(
-                            createQueryCommand(
-                                    CommandLineArgument(key.regKey),
-                                    CommandLineArgument("/reg:${key.bitness.id}"),
-                                    CommandLineArgument("/s")
-                            ))?.let { result ->
-                        when (result.exitCode) {
-                            0 -> {
-                                result.standardOutput.asSequence()
-                            }
-                            else -> null
-                        }
+            _commandLineExecutor.tryExecute(
+                    createQueryCommand(
+                            CommandLineArgument(key.regKey),
+                            CommandLineArgument("/reg:${key.bitness.id}"),
+                            CommandLineArgument("/s")
+                    ))?.let { result ->
+                when (result.exitCode) {
+                    0 -> {
+                        result.standardOutput.asSequence()
                     }
+                    else -> null
                 }
-                else -> null
             } ?: emptySequence<String>()
 
     private fun createQueryCommand(vararg args: CommandLineArgument) = CommandLine(

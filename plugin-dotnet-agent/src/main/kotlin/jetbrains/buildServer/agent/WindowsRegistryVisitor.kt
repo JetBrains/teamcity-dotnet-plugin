@@ -1,7 +1,7 @@
 package jetbrains.buildServer.agent
 
 interface WindowsRegistryVisitor {
-    fun accept(key: WindowsRegistryKey)
+    fun accept(key: WindowsRegistryKey): Boolean
 
-    fun accept(value: WindowsRegistryValue)
+    fun accept(value: WindowsRegistryValue): Boolean
 }

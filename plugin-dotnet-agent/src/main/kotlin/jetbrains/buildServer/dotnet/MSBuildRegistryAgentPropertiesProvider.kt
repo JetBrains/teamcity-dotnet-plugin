@@ -16,8 +16,8 @@ class MSBuildRegistryAgentPropertiesProvider(
 
         for (key in RegKeys) {
             _windowsRegistry.get(key, object: WindowsRegistryVisitor {
-                override fun accept(key: WindowsRegistryKey) = Unit
-                override fun accept(value: WindowsRegistryValue) {
+                override fun accept(key: WindowsRegistryKey) = true
+                override fun accept(value: WindowsRegistryValue): Boolean {
                     if (
                             value.type == WindowsRegistryValueType.Str
                             && value.text.isNotBlank()
@@ -31,8 +31,10 @@ class MSBuildRegistryAgentPropertiesProvider(
                             }
                         }
                     }
+
+                    return true
                 }
-            } )
+            })
         }
 
         return props.asSequence()

@@ -36,6 +36,8 @@
   <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryParserImpl"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryImpl"/>
+  <bean class="jetbrains.buildServer.agent.PEReaderImpl"/>
+  <bean class="jetbrains.buildServer.agent.JsonParserImpl"/>
 
   <!-- common agent's runner services -->
   <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
@@ -179,8 +181,21 @@
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.dotnet.JsonVisualStudioInstanceParser"/>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioPackagesRegistryLocator" id="visualStudioPackagesRegistryLocator"/>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioPackagesEnvironmentLocator" id="visualStudioPackagesEnvironmentLocator"/>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioLocatorImpl">
+    <constructor-arg>
+      <list>
+        <ref bean="visualStudioPackagesRegistryLocator"/>
+        <ref bean="visualStudioPackagesEnvironmentLocator"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
