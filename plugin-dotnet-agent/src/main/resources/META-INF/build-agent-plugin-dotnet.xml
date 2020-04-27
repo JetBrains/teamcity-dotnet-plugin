@@ -23,6 +23,7 @@
   <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml"/>
 
   <!-- common agent services -->
+  <!--bean class="jetbrains.buildServer.agent.PropertiesExtension"/-->
   <bean class="jetbrains.buildServer.agent.EventObservers"/>
   <bean class="jetbrains.buildServer.agent.EventSourcesImpl"/>
   <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
@@ -33,7 +34,6 @@
   <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
-  <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryParserImpl"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryImpl"/>
   <bean class="jetbrains.buildServer.agent.PEReaderImpl"/>
@@ -119,7 +119,7 @@
   <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
-    <constructor-arg value="dotnet.cli"/>
+    <constructor-arg value="dotnet"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider">

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'publish'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'publish'">
     <class name="DotnetPublishStep">
         <description>
             A [dotnet publish step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command

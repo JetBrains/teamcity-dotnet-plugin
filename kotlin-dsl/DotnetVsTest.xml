@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'vstest'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'vstest'">
     <class name="DotnetVsTestStep">
         <description>
             A [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest

@@ -18,7 +18,7 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
-        <name>dotnet.cli</name>
+        <name>dotnet</name>
         <display-name>.NET Support</display-name>
         <version>@Plugin_Version@</version>
         <description>Allows building projects via .NET toolchain</description>

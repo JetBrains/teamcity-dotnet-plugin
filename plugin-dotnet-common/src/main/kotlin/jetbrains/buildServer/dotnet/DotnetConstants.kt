@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.Constants
  * Dotnet runner constants.
  */
 object DotnetConstants {
-    const val RUNNER_TYPE = "dotnet.cli"
+    const val RUNNER_TYPE = "dotnet"
     const val EXECUTABLE = "dotnet"
     const val DOTNET_DEFAULT_DIRECTORY = "dotnet"
     const val PROGRAM_FILES_ENV_VAR = "ProgramW6432"

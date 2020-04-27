@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'pack'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'pack'">
     <class name="DotnetPackStep">
         <description>
             A [dotnet pack step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
