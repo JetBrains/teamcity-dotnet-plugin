@@ -47,14 +47,16 @@ class VirtualFileSystemService : FileSystemService {
         return this
     }
 
-    fun addFile(file: File, attributes: Attributes = Attributes()): VirtualFileSystemService {
+    fun addFile(file: File, attributes: Attributes = Attributes(), inputStream: InputStream? = null, outputStream: OutputStream? = null): VirtualFileSystemService {
         val parent = file.parentFile
         if (parent != null) {
             addDirectory(parent)
         }
 
         if (!_files.containsKey(file)) {
-            _files[file] = FileInfo(attributes)
+            val curOutputStream = outputStream ?: PipedOutputStream()
+            val curInputStream = inputStream ?: PipedInputStream(curOutputStream as PipedOutputStream)
+            _files[file] = FileInfo(attributes, curInputStream, curOutputStream)
         }
 
         return this
@@ -116,15 +118,7 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun generateTempFile(path: File, prefix: String, extension: String) = File(path, "${prefix}99${extension}")
 
-    private data class FileInfo(val attributes: Attributes) {
-        val inputStream: InputStream
-        val outputStream: OutputStream
-
-        init {
-            outputStream = PipedOutputStream()
-            inputStream = PipedInputStream(outputStream)
-        }
-    }
+    private data class FileInfo(val attributes: Attributes, val inputStream: InputStream, val outputStream: OutputStream)
 
     private data class DirectoryInfo(val attributes: Attributes)
 

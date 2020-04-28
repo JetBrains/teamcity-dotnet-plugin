@@ -17,7 +17,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
 
     override val desription = "MSBuild in file system"
 
-    override val properties: Sequence<AgentProperty> =
+    override val properties get() =
         _visualStudioLocator.instances
                 // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
                 .map {
@@ -52,7 +52,10 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .flatMap {
                     msbuildPath -> sequence {
                         yield(MSBuildInfo(File(msbuildPath, "MSBuild.exe"), Platform.x86))
-                        yield(MSBuildInfo(File(File(msbuildPath, "amd64"), "MSBuild.exe"), Platform.x64))
+                        val amd64Directory = File(msbuildPath, "amd64")
+                        if(_fileSystemService.isExists(amd64Directory) && _fileSystemService.isDirectory(amd64Directory)) {
+                            yield(MSBuildInfo(File(amd64Directory, "MSBuild.exe"), Platform.x64))
+                        }
                     }
                 }
                 .filter {

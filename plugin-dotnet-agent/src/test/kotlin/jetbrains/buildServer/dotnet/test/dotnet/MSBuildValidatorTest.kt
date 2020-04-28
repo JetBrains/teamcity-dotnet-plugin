@@ -1,31 +1,14 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider
-import jetbrains.buildServer.dotnet.MSBuildValidator
 import jetbrains.buildServer.dotnet.MSBuildValidatorImpl
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.dotnet.test.agent.WindowsRegistryTest
-import jetbrains.buildServer.util.OSType
 import org.testng.Assert
-import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildValidatorTest {
-    @MockK private lateinit var _fileSystemService: FileSystemService
-
-    @BeforeMethod
-    fun setUp() {
-        MockKAnnotations.init(this)
-        clearAllMocks()
-    }
-
     @DataProvider
     fun testValidateData(): Array<Array<Any>> {
         return arrayOf(
@@ -74,10 +57,10 @@ class MSBuildValidatorTest {
         val validator = createInstance(fileSystemService)
 
         // When
-        val actulResult = validator.isValide(msbuildPath)
+        val actualResult = validator.isValide(msbuildPath)
 
         // Then
-        Assert.assertEquals(actulResult, expectedResult)
+        Assert.assertEquals(actualResult, expectedResult)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) = MSBuildValidatorImpl(fileSystemService)
