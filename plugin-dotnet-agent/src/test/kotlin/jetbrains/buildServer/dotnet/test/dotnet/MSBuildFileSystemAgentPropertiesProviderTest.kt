@@ -34,7 +34,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                 arrayOf(
                         VirtualFileSystemService()
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
-                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/msbuild.exe")),
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
@@ -83,7 +83,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                 arrayOf(
                         VirtualFileSystemService()
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
-                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/1abc6.0/Bin/amd64/msbuild.exe")),
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/1abc6.0/Bin/amd64/MSBuild.exe")),
                         listOf(
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
