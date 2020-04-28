@@ -93,9 +93,9 @@
         pathsRow.find('.vcsTreeSources').toggleClass('hidden', !!artifactsSelector);
         pathsRow.find('.vcsTreeFiles').toggleClass('hidden', !artifactsSelector);
 
-        pathsRow.show()
+        pathsRow.removeClass("hidden");
       } else {
-        pathsRow.hide();
+        pathsRow.addClass("hidden");
         BS.DotnetParametersForm.clearInputValues(pathsRow);
       }
 
@@ -247,7 +247,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet vstest">
+<tr class="dotnet vstest">
   <th class="noBorder"><label for="${params.vstestVersionKey}">VSTest version:<bs:help file="${paramHelpUrl}vstest-version"/></label></th>
   <td>
     <props:selectProperty name="${params.vstestVersionKey}" enableFilter="true" className="mediumField">
@@ -259,7 +259,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet devenv">
+<tr class="dotnet devenv">
   <th class="noBorder"><label for="${params.visualStudioVersionKey}">Visual Studio version:</label></th>
   <td>
     <props:selectProperty name="${params.visualStudioVersionKey}" enableFilter="true" className="mediumField">
@@ -272,7 +272,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet vstest">
+<tr class="dotnet vstest">
   <th class="noBorder"><label for="${params.platformKey}">Platform:<bs:help file="${paramHelpUrl}vstest-platform"/></label></th>
   <td>
     <props:selectProperty name="${params.platformKey}" enableFilter="true" className="mediumField">
