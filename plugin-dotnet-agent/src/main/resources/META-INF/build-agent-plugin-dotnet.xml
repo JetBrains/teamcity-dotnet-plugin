@@ -23,7 +23,7 @@
   <import resource="classpath*:META-INF/build-common-plugin-dotnet.xml"/>
 
   <!-- common agent services -->
-  <!--bean class="jetbrains.buildServer.agent.PropertiesExtension"/-->
+  <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
   <bean class="jetbrains.buildServer.agent.EventObservers"/>
   <bean class="jetbrains.buildServer.agent.EventSourcesImpl"/>
   <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
@@ -194,8 +194,8 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/>
+  <!--bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/-->
+  <!--bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/-->
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
