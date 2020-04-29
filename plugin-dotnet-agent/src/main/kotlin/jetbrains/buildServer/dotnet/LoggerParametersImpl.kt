@@ -20,7 +20,8 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class LoggerParametersImpl(
-        private val _parametersService: ParametersService)
+        private val _parametersService: ParametersService,
+        private val _customArgumentsProvider: ArgumentsProvider)
     : LoggerParameters {
 
     override val paramVerbosity: Verbosity?
@@ -45,7 +46,16 @@ class LoggerParametersImpl(
     override val msBuildParameters: String
         get() = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS) ?: defaultMsBuildLoggerParams
 
+    override fun getAdditionalLoggerParameters(context: DotnetBuildContext) =
+            _customArgumentsProvider
+                    .getArguments(context)
+                    .mapNotNull { LoggerParamRegex.find(it.value) }
+                    .map { it.groupValues[2] }
+                    .flatMap { it.split(';').asSequence() }
+                    .filter { !it.isNullOrBlank() }
+
     companion object {
         const val defaultMsBuildLoggerParams = "plain";
+        private val LoggerParamRegex = Regex("^\\s*([-/]consoleloggerparameters|[-/]clp):(.+?)\\s*\$", RegexOption.IGNORE_CASE)
     }
 }

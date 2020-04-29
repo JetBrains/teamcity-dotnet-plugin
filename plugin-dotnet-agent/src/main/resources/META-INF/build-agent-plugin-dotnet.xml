@@ -218,7 +218,9 @@
     <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl">
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationArgumentsProvider" id="sharedCompilationArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
