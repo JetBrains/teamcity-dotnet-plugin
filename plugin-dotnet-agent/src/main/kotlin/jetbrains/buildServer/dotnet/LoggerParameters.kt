@@ -24,4 +24,6 @@ interface LoggerParameters {
     val vsTestVerbosity: Verbosity
 
     val msBuildParameters: String
+
+    fun getAdditionalLoggerParameters(context: DotnetBuildContext): Sequence<String>
 }
