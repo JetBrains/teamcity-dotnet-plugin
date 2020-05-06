@@ -18,7 +18,7 @@
 
 <script type="text/javascript">
   BS.DotnetParametersForm.pathName["test"] = "Projects";
-  BS.DotnetParametersForm.pathHint["test"] = "Specify paths to projects and solutions (and paths to test assemblies since .NET SDK 3.1)";
+  BS.DotnetParametersForm.pathHint["test"] = "Specify paths to projects, solutions, and (since .NET SDK 3.1) test assemblies";
   BS.DotnetParametersForm.coverageEnabled["test"] = true;
   BS.DotnetParametersForm.helpUrl["test"] = "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test";
   BS.DotnetParametersForm.initFunctions["test"] = function () {
