@@ -198,6 +198,7 @@
   <!--bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/-->
 
   <!--Dotnet arguments' providers-->
+  <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>

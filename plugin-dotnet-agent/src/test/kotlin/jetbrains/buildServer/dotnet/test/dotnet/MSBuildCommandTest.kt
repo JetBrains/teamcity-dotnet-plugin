@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
@@ -32,11 +33,13 @@ import org.testng.annotations.Test
 
 class MSBuildCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _targetsParser: TargetsParser
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _targetsParser.parse(any()) } answers { arg<String>(0).split(' ').joinToString(";") }
     }
 
     @DataProvider
@@ -45,11 +48,11 @@ class MSBuildCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("respArgs", "customArg1")),
                 arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_TARGETS, "restore;build"),
+                        Pair(DotnetConstants.PARAM_TARGETS, "restore build"),
                         Pair(DotnetConstants.PARAM_RUNTIME, "osx.10.11-x64"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
                         listOf("/t:restore;build", "/p:Configuration=Release", "/p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore, build;pack")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore build pack")),
                         listOf("/t:clean;restore;build;pack", "respArgs", "customArg1")))
     }
 
@@ -125,6 +128,7 @@ class MSBuildCommandTest {
                 ArgumentsProviderStub(respArguments),
                 ArgumentsProviderStub(customArguments),
                 ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
-                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java),
+                _targetsParser)
     }
 }

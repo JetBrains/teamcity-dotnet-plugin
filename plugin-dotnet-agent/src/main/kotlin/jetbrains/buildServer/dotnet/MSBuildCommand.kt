@@ -28,7 +28,8 @@ class MSBuildCommand(
         private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: ToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder)
+        private val _vstestLoggerEnvironment: EnvironmentBuilder,
+        private val _targetsParser: TargetsParser)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -39,8 +40,9 @@ class MSBuildCommand(
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TARGETS)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("/t:${StringUtil.split(it).joinToString(";")}"))
+            val targets = _targetsParser.parse(it)
+            if (targets.isNotBlank()) {
+                yield(CommandLineArgument("/t:$targets"))
             }
         }
 
