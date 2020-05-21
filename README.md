@@ -16,7 +16,8 @@ The plugin provides the following features:
 * On-the-fly test reporting
 * Supports code coverage tools
 * Cleanup of NuGet caches to meet the agent [free space requirements](https://www.jetbrains.com/help/teamcity/?Free+disk+space)
- 
+* Supports [TeamCity Docker Wrapper](https://www.jetbrains.com/help/teamcity/docker-wrapper.html)
+
 # Download
 
 You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://www.jetbrains.com/help/teamcity/?Installing+Additional+Plugins). The latest plugin builds:
@@ -33,9 +34,15 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 # Compatibility
 
-**Note**: This plugin is [bundled in TeamCity 2017.2+](https://www.jetbrains.com/help/teamcity/?Upgrade+Notes)
+The plugin is compatible with
 
-The current version of plugin is compatible with [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/) and [.NET CLI 1.0+](https://dotnet.microsoft.com/download/dotnet-core/).
+- [TeamCity 2017.1+](https://www.jetbrains.com/teamcity/download/)
+- [.NET CLI 1.0+](https://dotnet.microsoft.com/download/dotnet-core/)
+- Visual Studio 2013+
+- MSBuild 12+
+- VSTest console 12+
+
+**Note**: This plugin is [bundled in TeamCity 2017.2+](https://www.jetbrains.com/help/teamcity/?Upgrade+Notes)
 
 # Configuration
 
