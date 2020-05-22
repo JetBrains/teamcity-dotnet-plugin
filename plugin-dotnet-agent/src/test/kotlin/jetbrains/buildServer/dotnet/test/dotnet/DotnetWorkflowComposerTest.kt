@@ -153,7 +153,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild",
-                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
+                                emptyList()),
                         _versionCmd,
                         CommandLine(
                                 null,
@@ -163,7 +163,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2"))),
+                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor))),
                         CommandLine(
                                 null,
                                 TargetType.Tool,
@@ -172,7 +172,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
                 ))
     }
 
@@ -262,7 +262,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild",
-                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
+                                emptyList()),
                         CommandLine(
                                 null,
                                 TargetType.SystemDiagnostics,
@@ -280,7 +280,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
                 ))
     }
 
@@ -355,7 +355,7 @@ class DotnetWorkflowComposerTest {
                                 _msbuildArgs,
                                 _msbuildVars,
                                 "msbuild",
-                                listOf(StdOutText("Windows "), StdOutText("msbuild.exe"), StdOutText(" arg3"))),
+                                emptyList()),
                         CommandLine(
                                 null,
                                 TargetType.SystemDiagnostics,
@@ -373,7 +373,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK "), StdOutText("3.0.0 "), StdOutText("dotnet.exe"), StdOutText(" arg1"), StdOutText(" arg2")))
+                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
                 ))
     }
 

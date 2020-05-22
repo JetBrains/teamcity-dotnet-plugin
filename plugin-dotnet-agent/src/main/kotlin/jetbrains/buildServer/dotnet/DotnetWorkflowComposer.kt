@@ -101,7 +101,7 @@ class DotnetWorkflowComposer(
                                 args,
                                 _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList(),
                                 getTitle(virtualPath, args),
-                                getDescription(dotnetBuildContext, virtualPath, args)))
+                                getDescription(dotnetBuildContext)))
                     }
                 }
 
@@ -111,20 +111,16 @@ class DotnetWorkflowComposer(
     private fun getTitle(executableFile: Path, args: List<CommandLineArgument>) =
         (sequenceOf(File(executableFile.path).nameWithoutExtension) + args.filter { i -> i.argumentType == CommandLineArgumentType.Mandatory }.map { it.value }).joinToString(" ")
 
-    private fun getDescription(dotnetBuildContext: DotnetBuildContext, executableFile: Path, args: List<CommandLineArgument>): List<StdOutText> {
+    private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
         var description = mutableListOf<StdOutText>()
         when (dotnetBuildContext.command.toolResolver.paltform) {
-            ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK "))
-            ToolPlatform.Mono-> description.add(StdOutText("Mono "))
-            ToolPlatform.Windows-> description.add(StdOutText("Windows "))
+            ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Minor))
         }
 
         if (dotnetBuildContext.toolVersion != Version.Empty) {
-            description.add(StdOutText("${dotnetBuildContext.toolVersion} "))
+            description.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Minor))
         }
 
-        description.addAll(_commandLinePresentationService.buildExecutablePresentation(executableFile))
-        description.addAll(_commandLinePresentationService.buildArgsPresentation(args))
         return description
     }
 
