@@ -360,7 +360,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet build clean msbuild pack publish run test devenv">
+<tr class="dotnet build clean msbuild pack publish run test devenv">
   <th class="noBorder"><label for="${params.configKey}">Configuration:</label></th>
   <td>
     <div class="position-relative">
@@ -386,7 +386,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet build clean msbuild pack publish restore run">
+<tr class="dotnet build clean msbuild pack publish restore run">
   <th class="noBorder"><label for="${params.runtimeKey}">Runtime:</label></th>
   <td>
     <div class="position-relative">
