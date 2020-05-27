@@ -37,7 +37,6 @@ class ResponseFileArgumentsProviderTest {
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _argumentsService: ArgumentsService
-    @MockK private lateinit var _msBuildParameterValidator: MSBuildParameterValidator
 
     @BeforeMethod
     fun setUp() {
@@ -65,13 +64,8 @@ class ResponseFileArgumentsProviderTest {
         val buildParameterInvalid = MSBuildParameter("#$%", "*((val1")
 
         every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1, buildParameterInvalid)
-        every { _msBuildParameterValidator.isValid(buildParameter1) } returns true
-        every { _msBuildParameterValidator.isValid(buildParameterInvalid) } returns false
-        every { _msBuildParameterConverter.convert(buildParameter1) } returns "par1"
-
         every { parametersProvider2.getParameters(context) } returns sequenceOf(buildParameter2)
-        every { _msBuildParameterValidator.isValid(buildParameter2) } returns true
-        every { _msBuildParameterConverter.convert(buildParameter2) } returns "par2"
+        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(buildParameter1, buildParameterInvalid, buildParameter2)) }) } returns sequenceOf("par1", "par2")
 
         every { _pathService.getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension) } returns File(rspFileName)
         val blockToken = mockk<Disposable> {
@@ -106,7 +100,6 @@ class ResponseFileArgumentsProviderTest {
                 _msBuildParameterConverter,
                 argumentsProviders,
                 parametersProvider,
-                _virtualContext,
-                _msBuildParameterValidator)
+                _virtualContext)
     }
 }

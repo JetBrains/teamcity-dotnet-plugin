@@ -32,21 +32,11 @@ class ResponseFileArgumentsProvider(
         private val _msBuildParameterConverter: MSBuildParameterConverter,
         private val _argumentsProviders: List<ArgumentsProvider>,
         private val _parametersProviders: List<MSBuildParametersProvider>,
-        private val _virtualContext: VirtualContext,
-        private val _msBuildParameterValidator: MSBuildParameterValidator)
+        private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
-        val params = sequence<MSBuildParameter> {
-            for (param in _parametersProviders.flatMap { it.getParameters(context).toList() }) {
-                if (_msBuildParameterValidator.isValid(param)) {
-                    yield(param)
-                } else {
-                    LOG.debug("Invalid MSBuild parameter $param.")
-                }
-            }
-        }.toList()
-
+        val params = _msBuildParameterConverter.convert(_parametersProviders.flatMap { it.getParameters(context).toList() }.asSequence()).toList()
 
         if (args.isEmpty() && params.isEmpty()) {
             return@sequence
@@ -62,14 +52,14 @@ class ResponseFileArgumentsProvider(
                         }
 
                         for (param in params) {
-                            _loggerService.writeStandardOutput("/p:${param.name}=${param.value}", Color.Details)
+                            _loggerService.writeStandardOutput(param, Color.Details)
                         }
                     }
                 }
             }
         }
 
-        val lines = args.map { _argumentsService.normalize(it.value) } + params.map { _msBuildParameterConverter.convert(it) }
+        val lines = args.map { _argumentsService.normalize(it.value) } + params
         val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {
