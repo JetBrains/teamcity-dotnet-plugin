@@ -16,28 +16,29 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class DotnetCommonArgumentsProviderTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _msBuildParametersProvider: MSBuildParametersProvider
-    private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
+    @MockK private lateinit var _msBuildParametersProvider: MSBuildParametersProvider
+    @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _msBuildParametersProvider = _ctx.mock(MSBuildParametersProvider::class.java)
-        _msBuildParameterConverter = _ctx.mock(MSBuildParameterConverter::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider
@@ -51,17 +52,10 @@ class DotnetCommonArgumentsProviderTest {
     @Test(dataProvider = "testData")
     fun shouldGetArguments(parameters: Map<String, String>, expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), _ctx.mock(DotnetCommand::class.java))
+        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
-        _ctx.checking(object : Expectations() {
-            init {
-                allowing<MSBuildParametersProvider>(_msBuildParametersProvider).getParameters(context)
-                will(returnValue(sequenceOf(msBuildParameter)))
-
-                allowing<MSBuildParameterConverter>(_msBuildParameterConverter).convert(msBuildParameter)
-                will(returnValue("/p:param=value"))
-            }
-        })
+        every { _msBuildParametersProvider.getParameters(context) } returns sequenceOf(msBuildParameter)
+        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(msBuildParameter)) }) } returns sequenceOf("/p:param=value")
 
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
                 ParametersServiceStub(parameters),

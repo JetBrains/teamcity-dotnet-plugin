@@ -174,7 +174,7 @@
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.NugetResultsObserver" id="nugetResultsObserver"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildParameterValidatorImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
 
   <!--Dotnet agent properties providers-->
   <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider" id="dotnetAgentPropertiesProvider">
@@ -275,7 +275,6 @@
   </bean>
 
   <!-- MSBuild command -->
-  <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
   <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
     <constructor-arg>
       <list>
