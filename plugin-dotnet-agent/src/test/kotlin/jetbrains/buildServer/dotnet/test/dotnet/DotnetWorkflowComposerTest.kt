@@ -163,7 +163,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor))),
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))),
                         CommandLine(
                                 null,
                                 TargetType.Tool,
@@ -172,7 +172,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
                 ))
     }
 
@@ -280,7 +280,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
                 ))
     }
 
@@ -373,7 +373,7 @@ class DotnetWorkflowComposerTest {
                                 _dotnetArgs,
                                 _dotnetVars,
                                 "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Minor), StdOutText("3.0.0 ", Color.Minor)))
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
                 ))
     }
 

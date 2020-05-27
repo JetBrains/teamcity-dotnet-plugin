@@ -54,16 +54,21 @@ class CommandExecutionAdapter(
             }
         }
 
-        val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(_commandLine.executableFile)
-        val argsPresentation = _commandLinePresentationService.buildArgsPresentation(_commandLine.arguments)
+        var commandLine: CommandLine? = _commandLine
+        while (commandLine != null) {
+            val executableFilePresentation = _commandLinePresentationService.buildExecutablePresentation(commandLine.executableFile)
+            val argsPresentation = _commandLinePresentationService.buildArgsPresentation(commandLine.arguments)
 
-        var startingInfo =
-                listOf(StdOutText("Starting: ")) +
-                _commandLine.description +
-                executableFilePresentation +
-                argsPresentation
+            var startingInfo =
+                    listOf(StdOutText("Starting: ")) +
+                            commandLine.description +
+                            executableFilePresentation +
+                            argsPresentation
 
-        writeStandardOutput(*(startingInfo).toTypedArray())
+            writeStandardOutput(*(startingInfo).toTypedArray())
+            commandLine = commandLine.baseCommandLine
+        }
+
         val virtualWorkingDirectory = _virtualContext.resolvePath(_commandLine.workingDirectory.path)
         writeStandardOutput(StdOutText("in directory: "), StdOutText(virtualWorkingDirectory))
     }

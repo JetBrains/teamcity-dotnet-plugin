@@ -20,6 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.StdOutText
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -44,8 +45,8 @@ class CommandLinePresentationServiceTest {
     @DataProvider
     fun testExecutableFilePresentation(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(Path("Dotnet.exe"), listOf(StdOutText("Dotnet.exe"))),
-                arrayOf(Path(File("Dir", "Dotnet.exe").path), listOf(StdOutText("Dir/"), StdOutText("Dotnet.exe"))))
+                arrayOf(Path("Dotnet.exe"), listOf(StdOutText("\"Dotnet.exe\""))),
+                arrayOf(Path(File("Dir", "Dotnet.exe").path), listOf(StdOutText("\"Dir/"), StdOutText("Dotnet.exe\""))))
     }
 
     @Test(dataProvider = "testExecutableFilePresentation")

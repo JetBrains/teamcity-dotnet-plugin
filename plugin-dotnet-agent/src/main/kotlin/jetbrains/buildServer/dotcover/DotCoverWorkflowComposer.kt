@@ -137,8 +137,7 @@ class DotCoverWorkflowComposer(
                             baseCommandLine.workingDirectory,
                             createArguments(dotCoverProject).toList(),
                             baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                            baseCommandLine.title,
-                            baseCommandLine.description))
+                            baseCommandLine.title))
                 }
             }
         })

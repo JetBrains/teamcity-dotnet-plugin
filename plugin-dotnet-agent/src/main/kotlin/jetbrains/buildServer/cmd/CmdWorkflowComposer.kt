@@ -46,8 +46,7 @@ class CmdWorkflowComposer(
                                             baseCommandLine.workingDirectory,
                                             getArguments(baseCommandLine).toList(),
                                             baseCommandLine.environmentVariables,
-                                            baseCommandLine.title,
-                                            baseCommandLine.description))
+                                            baseCommandLine.title))
                                 }
                                 else -> yield(baseCommandLine)
                             }

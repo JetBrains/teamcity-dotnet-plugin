@@ -27,13 +27,14 @@ class CommandLinePresentationServiceImpl(
         private val _virtualContext: VirtualContext)
     : CommandLinePresentationService {
     override fun buildExecutablePresentation(executableFile: Path): List<StdOutText> {
+        val executableFilePath = _argumentsService.normalize(executableFile.path)
         val output = mutableListOf<StdOutText>()
-        val lastSeparatorIndex = executableFile.path.indexOfLast { it == File.separatorChar || it == '\\' || it == '/' }
+        val lastSeparatorIndex = executableFilePath.indexOfLast { it == File.separatorChar || it == '\\' || it == '/' }
         if (lastSeparatorIndex >= 0) {
-            output.add(StdOutText(executableFile.path.substring(0 .. lastSeparatorIndex - 1) + separatorChar))
+            output.add(StdOutText(executableFilePath.substring(0 .. lastSeparatorIndex - 1) + separatorChar))
         }
 
-        output.add(StdOutText(executableFile.path.substring(lastSeparatorIndex + 1)))
+        output.add(StdOutText(executableFilePath.substring(lastSeparatorIndex + 1)))
         return output
     }
 
