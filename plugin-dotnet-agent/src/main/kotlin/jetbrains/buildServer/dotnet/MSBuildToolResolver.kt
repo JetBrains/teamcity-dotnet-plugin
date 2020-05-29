@@ -29,7 +29,7 @@ class MSBuildToolResolver(
         private val _dotnetToolResolver: ToolResolver,
         private val _stateWorkflowComposer: ToolStateWorkflowComposer)
     : ToolResolver {
-    override val paltform: ToolPlatform
+    override val platform: ToolPlatform
         get() = _currentTool?.platform ?: ToolPlatform.CrossPlatform
 
     override val toolStateWorkflowComposer: ToolStateWorkflowComposer

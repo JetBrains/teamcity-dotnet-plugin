@@ -113,7 +113,7 @@ class DotnetWorkflowComposer(
 
     private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
         var description = mutableListOf<StdOutText>()
-        when (dotnetBuildContext.command.toolResolver.paltform) {
+        when (dotnetBuildContext.command.toolResolver.platform) {
             ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Header))
         }
 

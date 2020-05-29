@@ -66,7 +66,7 @@ class VisualStudioWorkflowComposer(
 
                 val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
                     _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }.toList()
-                } ?: emptyList()
+                } ?: emptyList<CommandLineArgument>()
 
                 val executableFile = Path(_virtualContext.resolvePath(_toolResolver.executableFile.canonicalPath))
 
@@ -102,7 +102,7 @@ class VisualStudioWorkflowComposer(
 
                                     yieldAll(args)
                                 }.toList(),
-                                emptyList(),
+                                emptyList<CommandLineEnvironmentVariable>(),
                                 DotnetCommandType.VisualStudio.id))
                     }
                 }

@@ -99,7 +99,7 @@ class DotnetWorkflowComposerTest {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns ToolPath(_msbuildExecutable.path)
-                every { paltform } returns ToolPlatform.Windows
+                every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } answers { createToken() }
@@ -181,7 +181,7 @@ class DotnetWorkflowComposerTest {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
                 every { executable } returns _dotnetExecutable
-                every { paltform } returns ToolPlatform.CrossPlatform
+                every { platform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any()) } answers { createToken() }
@@ -208,7 +208,7 @@ class DotnetWorkflowComposerTest {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
-                every { paltform } returns ToolPlatform.Windows
+                every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } answers { createToken() }
@@ -295,7 +295,7 @@ class DotnetWorkflowComposerTest {
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
-                every { paltform } returns ToolPlatform.Windows
+                every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
                         mockk<EnvironmentBuilder>() {
                             every { build(any())  } answers { createToken() }
