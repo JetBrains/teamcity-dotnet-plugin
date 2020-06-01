@@ -159,7 +159,7 @@ class DotnetParametersProvider {
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
 
         private val experimentalCommandTypes: Sequence<CommandType> =
-                    emptySequence()
+                    sequenceOf()
 
         val commandTypes
             get() = sequenceOf(
@@ -174,10 +174,10 @@ class DotnetParametersProvider {
                     RunCommandType(),
                     MSBuildCommandType(),
                     VSTestCommandType(),
-                    VisualStudioCommandType()
-            ).plus(experimentalCommandTypes)
+                    VisualStudioCommandType())
+                    .plus(if(experimentalMode) experimentalCommandTypes else emptySequence())
                     .sortedBy { it.description }
-                    //.plus(CustomCommandType())
+                    .plus(CustomCommandType())
                     .associateBy { it.name }
 
         val coverageTypes

@@ -54,7 +54,7 @@ class EnvironmentVariablesImpl(
                         LOG.debug("Override temp environment variables by '${defaultTemp.path}'")
                         yieldAll(getTempDirVariables(defaultTemp.path))
                     } else {
-                        // create short TemamCity temp
+                        // create short TeamCity temp
                         if (!_fileSystemService.isExists(customTeamCityTemp)) {
                             _fileSystemService.createDirectory(customTeamCityTemp)
                         }

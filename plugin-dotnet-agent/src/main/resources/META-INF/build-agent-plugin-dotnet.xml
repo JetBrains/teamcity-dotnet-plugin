@@ -270,9 +270,6 @@
     <constructor-arg ref="testsResultsAnalyzer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.CustomCommand" id="dotnetCustomCommand">
-    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
-  </bean>
 
   <!-- MSBuild command -->
   <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
@@ -337,4 +334,9 @@
   <!-- Visual Studio -->
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer"/>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
+
+  <!-- Custom cdotnetCustomCommandommand -->
+  <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer">
+    <constructor-arg ref="dotnetStateWorkflowComposer"/>
+  </bean>
 </beans>

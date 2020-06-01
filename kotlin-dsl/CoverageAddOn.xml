@@ -20,6 +20,7 @@
     <dsl type="dotnet" applicable="params['command'] == 'msbuild'" />
     <dsl type="dotnet" applicable="params['command'] == 'test'" />
     <dsl type="dotnet" applicable="params['command'] == 'vstest'" />
+    <dsl type="dotnet" applicable="params['command'] == 'custom'" />
   </extends>
   <params>
     <param name="dotNetCoverage.tool" dslName="coverage" type="compound">

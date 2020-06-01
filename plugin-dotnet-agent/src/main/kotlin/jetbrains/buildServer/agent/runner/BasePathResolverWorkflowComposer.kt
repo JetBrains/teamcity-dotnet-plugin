@@ -45,7 +45,7 @@ class BasePathResolverWorkflowComposer(
                                     state.commandToResolve,
                                     Path(_pathsService.getPath(PathType.WorkingDirectory).path),
                                     listOf(CommandLineArgument(state.pathToResolve.path, CommandLineArgumentType.Target)),
-                                    emptyList(),
+                                    emptyList<CommandLineEnvironmentVariable>(),
                                     "get ${state.pathToResolve.path}"))
                         }
             }

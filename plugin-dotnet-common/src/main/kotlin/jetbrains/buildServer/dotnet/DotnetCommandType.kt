@@ -30,5 +30,5 @@ enum class DotnetCommandType(val id: String) {
     VSTest("vstest"),
     TestAssembly("testassembly"),
     VisualStudio("devenv"),
-    Custom("-"),
+    Custom("custom"),
 }

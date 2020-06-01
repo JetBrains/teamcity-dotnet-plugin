@@ -197,7 +197,7 @@
   </c:forEach>
 </props:selectSectionProperty>
 
-<tr id="${params.pathsKey}-row" class="build clean">
+<tr id="${params.pathsKey}-row" class="build clean custom">
   <th class="noBorder"><label for="${params.pathsKey}">Projects:</label></th>
   <td>
     <div class="position-relative">

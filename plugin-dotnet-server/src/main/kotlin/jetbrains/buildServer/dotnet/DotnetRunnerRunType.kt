@@ -83,14 +83,16 @@ class DotnetRunnerRunType(
     override fun getDefaultRunnerProperties() = emptyMap<String, String>()
 
     override fun describeParameters(parameters: Map<String, String>): String {
-        val paths = parameters[DotnetConstants.PARAM_PATHS] ?: ""
+        val paths = (parameters[DotnetConstants.PARAM_PATHS] ?: "").trim()
         val commandName = parameters[DotnetConstants.PARAM_COMMAND]?.replace('-', ' ')
-        return if (!commandName.isNullOrBlank()) {
-            "$commandName $paths"
-        } else {
-            parameters[DotnetConstants.PARAM_ARGUMENTS]?.let {
-                StringUtil.splitCommandArgumentsAndUnquote(it).take(2).joinToString(" ")
-            } ?: ""
+        val args = parameters[DotnetConstants.PARAM_ARGUMENTS]?.let {
+            StringUtil.splitCommandArgumentsAndUnquote(it).take(2).joinToString(" ")
+        } ?: ""
+
+        return when {
+            commandName == DotnetCommandType.Custom.id -> "$paths\nCommand line parameters: $args"
+            !commandName.isNullOrBlank() -> "$commandName $paths"
+            else -> args
         }
     }
 

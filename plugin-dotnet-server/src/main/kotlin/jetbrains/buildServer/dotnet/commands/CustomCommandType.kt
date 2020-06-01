@@ -16,9 +16,12 @@
 
 package jetbrains.buildServer.dotnet.commands
 
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.requirements.Requirement
+import jetbrains.buildServer.requirements.RequirementQualifier
+import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
+import org.springframework.beans.factory.BeanFactory
 
 /**
  * Provides parameters for dotnet %custom% command.
@@ -35,8 +38,8 @@ class CustomCommandType : DotnetType() {
     override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
 
-        if (properties[DotnetConstants.PARAM_ARGUMENTS].isNullOrBlank()) {
-            yield(InvalidProperty(DotnetConstants.PARAM_ARGUMENTS, DotnetConstants.VALIDATION_EMPTY))
+        if (properties[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
+            yield(InvalidProperty(DotnetConstants.PARAM_PATHS, DotnetConstants.VALIDATION_EMPTY))
         }
     }
 }
