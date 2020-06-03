@@ -55,47 +55,54 @@ class CustomCommandWorkflowComposer(
 
                 var dotnetExecutableFile: String? = null
                 var dotnetDescription: List<StdOutText> = emptyList()
-                for ((target) in _targetService.targets) {
+                val targets = _targetService.targets.map { it.target }.toMutableList()
+                if (targets.isEmpty()) {
+                    // to run dotnet tools
+                    targets.add(Path(""))
+                }
+
+                for (target in targets) {
                     if (context.status != WorkflowStatus.Running) {
                         break
                     }
 
                     var executableFile = target.path
-                    if (!_fileSystemService.isAbsolute(File(executableFile))) {
-                        executableFile = File(workingDirectory.path, executableFile).path
+                    var executableFileExtension = ""
+                    if(executableFile.isNotBlank()) {
+                        if (!_fileSystemService.isAbsolute(File(executableFile))) {
+                            executableFile = File(workingDirectory.path, executableFile).path
+                        }
+
+                        executableFile = _virtualContext.resolvePath(executableFile)
+                        executableFileExtension = File(executableFile).extension.toLowerCase().trim()
                     }
 
-                    executableFile = _virtualContext.resolvePath(executableFile)
-
-                    var cmdArgs: List<CommandLineArgument>
-                    var description: List<StdOutText>
-                    when (File(executableFile).extension.toLowerCase())  {
-                        "exe", "com", "cmd", "bat", "sh" -> {
-                            cmdArgs = args
-                            description = emptyList()
-                        }
-                        else -> {
+                    var cmdArgs = args
+                    var description = emptyList<StdOutText>()
+                    if(executableFileExtension.isBlank()) {
+                        if (executableFile.isNotBlank()) {
                             cmdArgs = listOf(CommandLineArgument(executableFile, CommandLineArgumentType.Target)) + args
-                            val defaultDotnetExecutableFile = _dotnetToolResolver.executable
-                            if (_virtualContext.isVirtual && dotnetExecutableFile == null) {
-                                var toolState = ToolState(
-                                        defaultDotnetExecutableFile,
-                                        observer<Path> { dotnetExecutableFile = it.path },
-                                        observer<Version> { version ->
-                                            dotnetDescription =
-                                                    if (version != Version.Empty)
-                                                        listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${version} ", Color.Header))
-                                                    else
-                                                        emptyList<StdOutText>()
-                                        }
-                                )
-
-                                yieldAll(_dotnetStateWorkflowComposer.compose(context, toolState).commandLines)
-                            }
-
-                            executableFile = dotnetExecutableFile ?: defaultDotnetExecutableFile.path.path
-                            description = dotnetDescription
                         }
+
+                        val defaultDotnetExecutableFile = _dotnetToolResolver.executable
+                        if (_virtualContext.isVirtual && dotnetExecutableFile == null) {
+                            var toolState = ToolState(
+                                    defaultDotnetExecutableFile,
+                                    observer<Path> { dotnetExecutableFile = it.path },
+                                    observer<Version> { version ->
+                                        dotnetDescription =
+                                                if (version != Version.Empty)
+                                                    listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${version} ", Color.Header))
+                                                else
+                                                    emptyList<StdOutText>()
+                                    }
+                            )
+
+                            yieldAll(_dotnetStateWorkflowComposer.compose(context, toolState).commandLines)
+                        }
+
+                        executableFile = dotnetExecutableFile ?: defaultDotnetExecutableFile.path.path
+                        description = dotnetDescription
                     }
 
                     yield(CommandLine(

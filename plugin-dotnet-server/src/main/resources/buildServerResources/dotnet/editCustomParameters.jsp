@@ -19,6 +19,6 @@
   BS.DotnetParametersForm.pathHint["custom"] = "Specify paths to executable files";
   BS.DotnetParametersForm.coverageEnabled["custom"] = true;
   BS.DotnetParametersForm.hideLogging["custom"] = true;
-  BS.DotnetParametersForm.mandatoryPaths["custom"] = true;
+  BS.DotnetParametersForm.mandatoryPaths["custom"] = false;
 </script>
 

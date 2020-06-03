@@ -161,6 +161,26 @@ class CustomCommandWorkflowComposerTest {
                                         )
                                 )
                         )
+                ),
+                // without targets
+                arrayOf(
+                        emptySequence<String>(),
+                        false,
+                        true,
+                        Workflow(
+                                sequenceOf(
+                                        CommandLine(
+                                                null,
+                                                TargetType.Tool,
+                                                Path("vdotnet"),
+                                                Path(_workingDirectory.path),
+                                                _args,
+                                                emptyList<CommandLineEnvironmentVariable>(),
+                                                "",
+                                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
+                                        )
+                                )
+                        )
                 )
         )
     }
