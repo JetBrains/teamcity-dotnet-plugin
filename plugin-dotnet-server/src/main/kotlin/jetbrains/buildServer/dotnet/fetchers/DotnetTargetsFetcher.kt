@@ -36,9 +36,20 @@ class DotnetTargetsFetcher(
                     .toMutableList()
 
     fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> {
-        val projects = _solutionDiscover.discover(streamFactory, paths).flatMap { it.projects.asSequence() }.toList()
-        val projectTypes = projects.flatMap { _projectTypeSelector.select(it) }.toSet()
-        var discoveredTargets = projects.flatMap { it.targets }.map { it.name }
+        val projects = _solutionDiscover
+                .discover(streamFactory, paths)
+                .flatMap { it.projects.asSequence() }
+                .toList()
+
+        val projectTypes = projects
+                .flatMap { _projectTypeSelector.select(it) }
+                .toSet()
+
+        var discoveredTargets = projects
+                .flatMap { it.targets }
+                .map { it.name }
+                .filter { it.isNotBlank() }
+                .map { if(it.contains(' ')) "\"$it\"" else it }
 
         val targets = mutableListOf<String>()
         if (projectTypes.contains(ProjectType.Test)) {
@@ -51,8 +62,11 @@ class DotnetTargetsFetcher(
             discoveredTargets = exclude(discoveredTargets, PublishTargets)
         }
 
-        return InitialDefaultTargets.plus(discoveredTargets).plus(targets).plus(FinishDefaultTargets).asSequence()
-                .filter { !it.isBlank() }
+        return InitialDefaultTargets
+                .asSequence()
+                .plus(discoveredTargets)
+                .plus(targets)
+                .plus(FinishDefaultTargets)
                 .distinctBy { it.toLowerCase() }
     }
 

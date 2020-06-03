@@ -46,6 +46,10 @@ class DotnetTargetsFetcherTest {
                         DotnetTargetsFetcher.InitialDefaultTargets.plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Custom
                 arrayOf(
+                        create("a bc"),
+                        setOf(ProjectType.Publish, ProjectType.Test),
+                        DotnetTargetsFetcher.InitialDefaultTargets.plus("\"a bc\"").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
+                arrayOf(
                         create("abc"),
                         setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
