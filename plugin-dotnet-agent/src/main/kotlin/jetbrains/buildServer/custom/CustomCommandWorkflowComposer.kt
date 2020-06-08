@@ -31,7 +31,8 @@ class CustomCommandWorkflowComposer(
         private val _dotnetToolResolver: DotnetToolResolver,
         private val _fileSystemService: FileSystemService,
         private val _dotnetStateWorkflowComposer: ToolStateWorkflowComposer,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _environmentVariables: EnvironmentVariables)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -74,6 +75,7 @@ class CustomCommandWorkflowComposer(
 
                     var cmdArgs = args
                     var description = emptyList<StdOutText>()
+                    var envVars = emptyList<CommandLineEnvironmentVariable>()
 
                     // use dotnet host
                     if(executableFileExtension.isBlank() || "dll".equals(executableFileExtension)) {
@@ -87,6 +89,7 @@ class CustomCommandWorkflowComposer(
                                     defaultDotnetExecutableFile,
                                     observer<Path> { dotnetExecutableFile = it.path },
                                     observer<Version> { version ->
+                                        envVars = _environmentVariables.getVariables(version).toList()
                                         dotnetDescription =
                                                 if (version != Version.Empty)
                                                     listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${version} ", Color.Header))
@@ -108,7 +111,7 @@ class CustomCommandWorkflowComposer(
                             Path(executableFile),
                             workingDirectory,
                             cmdArgs,
-                            emptyList<CommandLineEnvironmentVariable>(),
+                            envVars,
                             "",
                             description))
                 }

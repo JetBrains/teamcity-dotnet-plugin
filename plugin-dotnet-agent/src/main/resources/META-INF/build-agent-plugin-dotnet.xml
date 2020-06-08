@@ -338,6 +338,7 @@
   <!-- Custom dotnet command -->
   <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer">
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
+    <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
   <!-- exe, com -->

@@ -44,9 +44,11 @@ class CustomCommandWorkflowComposerTest {
     @MockK private lateinit var _dotnetStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _workflowContext: WorkflowContext
+    @MockK private lateinit var _environmentVariables: EnvironmentVariables
 
     private val _workingDirectory = File("wd")
     private val _args = listOf(CommandLineArgument("arg1", CommandLineArgumentType.Custom), CommandLineArgument("arg2", CommandLineArgumentType.Custom))
+    private val _dotnetEnvVars = listOf(CommandLineEnvironmentVariable("env222", "val222"))
 
     @BeforeMethod
     fun setUp() {
@@ -132,7 +134,7 @@ class CustomCommandWorkflowComposerTest {
                                                 Path("vdotnet"),
                                                 Path(_workingDirectory.path),
                                                 listOf(CommandLineArgument("abc", CommandLineArgumentType.Target)) + _args,
-                                                emptyList<CommandLineEnvironmentVariable>(),
+                                                _dotnetEnvVars,
                                                 "",
                                                 listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
                                         )
@@ -150,7 +152,7 @@ class CustomCommandWorkflowComposerTest {
                                                 Path("vdotnet"),
                                                 Path(_workingDirectory.path),
                                                 listOf(CommandLineArgument("abc.Dll", CommandLineArgumentType.Target)) + _args,
-                                                emptyList<CommandLineEnvironmentVariable>(),
+                                                _dotnetEnvVars,
                                                 "",
                                                 listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
                                         )
@@ -169,7 +171,7 @@ class CustomCommandWorkflowComposerTest {
                                                 Path("vdotnet"),
                                                 Path(_workingDirectory.path),
                                                 _args,
-                                                emptyList<CommandLineEnvironmentVariable>(),
+                                                _dotnetEnvVars,
                                                 "",
                                                 listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
                                         )
@@ -202,6 +204,7 @@ class CustomCommandWorkflowComposerTest {
             state.versionObserver.onNext(Version(1, 2, 3))
             Workflow()
         }
+        every { _environmentVariables.getVariables(Version(1, 2, 3)) } returns _dotnetEnvVars.asSequence()
 
         // When
         val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
@@ -221,6 +224,7 @@ class CustomCommandWorkflowComposerTest {
                 _dotnetToolResolver,
                 _fileSystemService,
                 _dotnetStateWorkflowComposer,
-                _virtualContext)
+                _virtualContext,
+                _environmentVariables)
     }
 }
