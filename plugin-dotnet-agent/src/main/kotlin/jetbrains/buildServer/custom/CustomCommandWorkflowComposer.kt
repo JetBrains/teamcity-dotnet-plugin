@@ -69,17 +69,14 @@ class CustomCommandWorkflowComposer(
                     var executableFile = target.path
                     var executableFileExtension = ""
                     if(executableFile.isNotBlank()) {
-                        if (!_fileSystemService.isAbsolute(File(executableFile))) {
-                            executableFile = File(workingDirectory.path, executableFile).path
-                        }
-
-                        executableFile = _virtualContext.resolvePath(executableFile)
                         executableFileExtension = File(executableFile).extension.toLowerCase().trim()
                     }
 
                     var cmdArgs = args
                     var description = emptyList<StdOutText>()
-                    if(executableFileExtension.isBlank()) {
+
+                    // use dotnet host
+                    if(executableFileExtension.isBlank() || "dll".equals(executableFileExtension)) {
                         if (executableFile.isNotBlank()) {
                             cmdArgs = listOf(CommandLineArgument(executableFile, CommandLineArgumentType.Target)) + args
                         }

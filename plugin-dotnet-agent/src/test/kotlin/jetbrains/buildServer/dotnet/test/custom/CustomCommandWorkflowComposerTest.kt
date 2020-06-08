@@ -51,7 +51,6 @@ class CustomCommandWorkflowComposerTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
-        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
     }
 
@@ -61,30 +60,12 @@ class CustomCommandWorkflowComposerTest {
                 arrayOf(
                         sequenceOf("abc.exe"),
                         true,
-                        true,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 null,
                                                 TargetType.Tool,
-                                                Path("v_abc.exe"),
-                                                Path(_workingDirectory.path),
-                                                _args,
-                                                emptyList<CommandLineEnvironmentVariable>()
-                                        )
-                                )
-                        )
-                ),
-                arrayOf(
-                        sequenceOf("abc.exe"),
-                        false,
-                        true,
-                        Workflow(
-                                sequenceOf(
-                                        CommandLine(
-                                                null,
-                                                TargetType.Tool,
-                                                Path("v_" + File(_workingDirectory,"abc.exe").path),
+                                                Path("abc.exe"),
                                                 Path(_workingDirectory.path),
                                                 _args,
                                                 emptyList<CommandLineEnvironmentVariable>()
@@ -94,14 +75,13 @@ class CustomCommandWorkflowComposerTest {
                 ),
                 arrayOf(
                         sequenceOf("abc.com"),
-                        false,
                         true,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 null,
                                                 TargetType.Tool,
-                                                Path("v_" + File(_workingDirectory,"abc.com").path),
+                                                Path("abc.com"),
                                                 Path(_workingDirectory.path),
                                                 _args,
                                                 emptyList<CommandLineEnvironmentVariable>()
@@ -111,14 +91,13 @@ class CustomCommandWorkflowComposerTest {
                 ),
                 arrayOf(
                         sequenceOf("abc.Cmd"),
-                        false,
                         true,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 null,
                                                 TargetType.Tool,
-                                                Path("v_" + File(_workingDirectory,"abc.Cmd").path),
+                                                Path("abc.Cmd"),
                                                 Path(_workingDirectory.path),
                                                 _args,
                                                 emptyList<CommandLineEnvironmentVariable>()
@@ -128,14 +107,13 @@ class CustomCommandWorkflowComposerTest {
                 ),
                 arrayOf(
                         sequenceOf("abc.baT"),
-                        false,
                         true,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
                                                 null,
                                                 TargetType.Tool,
-                                                Path("v_" + File(_workingDirectory,"abc.baT").path),
+                                                Path("abc.baT"),
                                                 Path(_workingDirectory.path),
                                                 _args,
                                                 emptyList<CommandLineEnvironmentVariable>()
@@ -145,7 +123,6 @@ class CustomCommandWorkflowComposerTest {
                 ),
                 arrayOf(
                         sequenceOf("abc"),
-                        false,
                         true,
                         Workflow(
                                 sequenceOf(
@@ -154,7 +131,25 @@ class CustomCommandWorkflowComposerTest {
                                                 TargetType.Tool,
                                                 Path("vdotnet"),
                                                 Path(_workingDirectory.path),
-                                                listOf(CommandLineArgument("v_" + File(_workingDirectory,"abc").path, CommandLineArgumentType.Target)) + _args,
+                                                listOf(CommandLineArgument("abc", CommandLineArgumentType.Target)) + _args,
+                                                emptyList<CommandLineEnvironmentVariable>(),
+                                                "",
+                                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
+                                        )
+                                )
+                        )
+                ),
+                arrayOf(
+                        sequenceOf("abc.Dll"),
+                        true,
+                        Workflow(
+                                sequenceOf(
+                                        CommandLine(
+                                                null,
+                                                TargetType.Tool,
+                                                Path("vdotnet"),
+                                                Path(_workingDirectory.path),
+                                                listOf(CommandLineArgument("abc.Dll", CommandLineArgumentType.Target)) + _args,
                                                 emptyList<CommandLineEnvironmentVariable>(),
                                                 "",
                                                 listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${Version(1, 2, 3)} ", Color.Header))
@@ -165,7 +160,6 @@ class CustomCommandWorkflowComposerTest {
                 // without targets
                 arrayOf(
                         emptySequence<String>(),
-                        false,
                         true,
                         Workflow(
                                 sequenceOf(
@@ -188,7 +182,6 @@ class CustomCommandWorkflowComposerTest {
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
             targets: Sequence<String>,
-            hasAbsoluteExecutablePath: Boolean,
             isVirtual: Boolean,
             expectedWorkflow: Workflow) {
         // Given
@@ -200,7 +193,6 @@ class CustomCommandWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_ARGUMENTS) } returns "args"
         every { _argumentsService.split("args") } returns sequenceOf("arg1", "arg2")
         every { _targetService.targets } returns targets.map { CommandTarget(Path(it)) }
-        every { _fileSystemService.isAbsolute(any()) } returns hasAbsoluteExecutablePath
         val defaultDotnetExecutableFile = ToolPath(Path("dotnet"))
         every { _dotnetToolResolver.executable } returns defaultDotnetExecutableFile
         every { _virtualContext.isVirtual } returns isVirtual

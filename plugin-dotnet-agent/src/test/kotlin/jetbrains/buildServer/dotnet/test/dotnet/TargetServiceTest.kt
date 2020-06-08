@@ -51,8 +51,17 @@ class TargetServiceTest {
         clearAllMocks()
     }
 
-    @Test
-    fun shouldProvideTargets() {
+    @DataProvider
+    fun osTypes(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(OSType.WINDOWS),
+                arrayOf(OSType.MAC),
+                arrayOf(OSType.UNIX)
+        )
+    }
+
+    @Test(dataProvider = "osTypes")
+    fun shouldProvideTargets(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
@@ -62,7 +71,7 @@ class TargetServiceTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns "some includeRules"
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
         every { _argumentsService.split("some includeRules") } returns includeRules
-        every { _virtualContext.targetOSType } returns OSType.UNIX
+        every { _virtualContext.targetOSType } returns os
         every { _fileSystemService.isAbsolute(any()) } returns false
         every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
@@ -72,27 +81,8 @@ class TargetServiceTest {
         Assert.assertEquals(actualTargets, includeRules.map { CommandTarget(Path("v_${File(it).name}")) }.toList())
     }
 
-    @Test
-    fun shouldNotChangeTargetsWhenWindows() {
-        // Given
-        val instance = createInstance()
-        val checkoutDirectory = File("checkout")
-        val includeRules = sequenceOf("rule1", "rule2", "rule3")
-
-        // When
-        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns "some includeRules"
-        every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
-        every { _argumentsService.split("some includeRules") } returns includeRules
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-
-        val actualTargets = instance.targets.toList()
-
-        // Then
-        Assert.assertEquals(actualTargets, includeRules.map { CommandTarget(Path(it)) }.toList())
-    }
-
-    @Test
-    fun shouldExecuteMatcherForWildcards() {
+    @Test(dataProvider = "osTypes")
+    fun shouldExecuteMatcherForWildcards(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
@@ -106,7 +96,7 @@ class TargetServiceTest {
         every { _pathMatcher.match(checkoutDirectory, listOf("rule/**/2")) } returns listOf(File("rule/a/2"), File("rule/b/c/2"))
         every { _pathMatcher.match(checkoutDirectory, listOf("rul?3")) } returns listOf(File("rule3"))
         every { _fileSystemService.isAbsolute(any()) } returns false
-        every { _virtualContext.targetOSType } returns OSType.UNIX
+        every { _virtualContext.targetOSType } returns os
         every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
         val actualTargets = instance.targets.toList()
@@ -115,8 +105,8 @@ class TargetServiceTest {
         Assert.assertEquals(actualTargets, expectedRules.map { CommandTarget(Path("v_${File(it).name}")) }.toList())
     }
 
-    @Test
-    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched() {
+    @Test(dataProvider = "osTypes")
+    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
@@ -128,7 +118,7 @@ class TargetServiceTest {
         every { _argumentsService.split("some includeRules") } returns includeRules.asSequence()
         every { _pathMatcher.match(checkoutDirectory, listOf("rule/**/2")) } returns emptyList<File>()
         every { _fileSystemService.isAbsolute(any()) } returns false
-        every { _virtualContext.targetOSType } returns OSType.MAC
+        every { _virtualContext.targetOSType } returns os
         every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
         var actualExceptionWasThrown = false

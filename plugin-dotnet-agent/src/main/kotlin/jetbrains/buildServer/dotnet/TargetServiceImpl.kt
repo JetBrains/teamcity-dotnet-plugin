@@ -60,10 +60,6 @@ class TargetServiceImpl(
         }
 
     private fun createCommandTarget(workingDirectory: File, target: File): CommandTarget {
-        if (_virtualContext.targetOSType == OSType.WINDOWS) {
-            return CommandTarget(Path(target.path))
-        }
-
         var targetFile: File = target
         if (!_fileSystemService.isAbsolute(target)) {
             targetFile = File(workingDirectory, target.path)
