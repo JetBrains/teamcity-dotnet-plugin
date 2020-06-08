@@ -46,6 +46,7 @@ class CmdWorkflowComposerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+        every { _virtualContext.isVirtual } returns true
     }
 
     @Test
@@ -63,8 +64,8 @@ class CmdWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.MAC, _workflowCmd, _workflowCmd, true),
-                arrayOf(OSType.UNIX, _workflowBat, _workflowBat, true),
+                arrayOf(OSType.MAC, _workflowCmd, Workflow(), true),
+                arrayOf(OSType.UNIX, _workflowBat, Workflow(), true),
                 arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther, false),
                 arrayOf(
@@ -115,22 +116,22 @@ class CmdWorkflowComposerTest {
             osType: OSType,
             baseWorkflow: Workflow,
             expectedWorkflow: Workflow,
-            hasWarning: Boolean) {
+            hasProblem: Boolean) {
         // Given
         val composer = createInstance()
         val pathObserver = mockk<Observer<Path>>()
         every { pathObserver.onNext(any()) } returns Unit
         every { _virtualContext.targetOSType } returns osType
-        if(hasWarning) {
-            every { _loggerService.writeWarning(any()) } returns Unit
+        if(hasProblem) {
+            every { _loggerService.writeBuildProblem(CmdWorkflowComposer.CannotExecuteProblemId, any(), any()) } returns Unit
         }
 
         // When
         val actualCommandLines = composer.compose(_workflowContext, Unit, baseWorkflow).commandLines.toList()
 
         // Then
-        if (hasWarning) {
-            verify { _loggerService.writeWarning(any()) }
+        if (hasProblem) {
+            verify { _loggerService.writeBuildProblem(CmdWorkflowComposer.CannotExecuteProblemId, any(), any()) }
         }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())

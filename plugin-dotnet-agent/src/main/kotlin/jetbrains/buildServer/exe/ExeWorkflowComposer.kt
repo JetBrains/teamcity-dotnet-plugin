@@ -29,21 +29,20 @@ class ExeWorkflowComposer(
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
-                for (baseCommandLine in workflow.commandLines) {
-                    acceptExecutable(baseCommandLine.executableFile)
-                    yield(baseCommandLine)
+                loop@ for (baseCommandLine in workflow.commandLines) {
+                    when (baseCommandLine.executableFile.extension().toLowerCase()) {
+                        "exe", "com" -> {
+                            if (_virtualContext.targetOSType != OSType.WINDOWS) {
+                                _loggerService.writeBuildProblem(CannotExecuteProblemId, "Cannot execute", "Cannot execute \"${baseCommandLine.executableFile}\". Please use an appropriate ${if (!_virtualContext.isVirtual) "agents requirement" else "docker image"}.")
+                                break@loop
+                            } else yield(baseCommandLine)
+                        }
+                        else -> yield(baseCommandLine)
+                    }
                 }
             })
 
-    private fun acceptExecutable(executableFile: Path) =
-            when(executableFile.extension().toLowerCase()) {
-            "exe", "com" -> {
-                if(_virtualContext.targetOSType != OSType.WINDOWS) {
-                    _loggerService.writeWarning("The Windows executable file \"$executableFile\" cannot be executed on this agent, please use an appropriate agents requirement (or a docker image).")
-                    false
-                }
-                else true
-            }
-            else -> false
-        }
+    companion object {
+        internal const val CannotExecuteProblemId = "Cannot execute exe"
+    }
 }

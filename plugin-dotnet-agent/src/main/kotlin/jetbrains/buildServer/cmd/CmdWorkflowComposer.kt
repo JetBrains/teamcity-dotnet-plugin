@@ -30,18 +30,24 @@ class CmdWorkflowComposer(
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
-                for (baseCommandLine in workflow.commandLines) {
-                    if(acceptExecutable(baseCommandLine.executableFile))
-                        yield(CommandLine(
-                                baseCommandLine,
-                                TargetType.Host,
-                                Path( "cmd.exe"),
-                                baseCommandLine.workingDirectory,
-                                getArguments(baseCommandLine).toList(),
-                                baseCommandLine.environmentVariables,
-                                baseCommandLine.title))
-                    else
-                        yield(baseCommandLine)
+                loop@ for (baseCommandLine in workflow.commandLines) {
+                    when(baseCommandLine.executableFile.extension().toLowerCase()) {
+                        "cmd", "bat" -> {
+                            if(_virtualContext.targetOSType != OSType.WINDOWS) {
+                                _loggerService.writeBuildProblem(CannotExecuteProblemId, "Cannot execute","Cannot execute \"${baseCommandLine.executableFile}\". Please use an appropriate ${if(!_virtualContext.isVirtual) "agents requirement" else "docker image"}.")
+                                break@loop
+                            }
+                            else yield(CommandLine(
+                                    baseCommandLine,
+                                    TargetType.Host,
+                                    Path( "cmd.exe"),
+                                    baseCommandLine.workingDirectory,
+                                    getArguments(baseCommandLine).toList(),
+                                    baseCommandLine.environmentVariables,
+                                    baseCommandLine.title))
+                        }
+                        else -> yield(baseCommandLine)
+                    }
                 }
             })
 
@@ -52,15 +58,7 @@ class CmdWorkflowComposer(
         yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Target))
     }
 
-    private fun acceptExecutable(executableFile: Path) =
-            when(executableFile.extension().toLowerCase()) {
-                "cmd", "bat" -> {
-                    if(_virtualContext.targetOSType != OSType.WINDOWS) {
-                        _loggerService.writeWarning("The script \"$executableFile\" cannot be executed on this agent, please use an appropriate agents requirement (or a docker image).")
-                        false
-                    }
-                    else true
-                }
-                else -> false
-            }
+    companion object {
+        internal const val CannotExecuteProblemId = "Cannot execute cmd"
+    }
 }

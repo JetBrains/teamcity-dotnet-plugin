@@ -47,6 +47,7 @@ class ExeWorkflowComposerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+        every { _virtualContext.isVirtual } returns true
     }
 
     @Test
@@ -69,13 +70,13 @@ class ExeWorkflowComposerTest {
                 arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.WINDOWS, _workflowOther2, _workflowOther2, false),
 
-                arrayOf(OSType.UNIX, _workflowExe, _workflowExe, true),
-                arrayOf(OSType.UNIX, _workflowCom, _workflowCom, true),
+                arrayOf(OSType.UNIX, _workflowExe, Workflow(), true),
+                arrayOf(OSType.UNIX, _workflowCom, Workflow(), true),
                 arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.UNIX, _workflowOther2, _workflowOther2, false),
 
-                arrayOf(OSType.MAC, _workflowExe, _workflowExe, true),
-                arrayOf(OSType.MAC, _workflowCom, _workflowCom, true),
+                arrayOf(OSType.MAC, _workflowExe, Workflow(), true),
+                arrayOf(OSType.MAC, _workflowCom, Workflow(), true),
                 arrayOf(OSType.MAC, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.MAC, _workflowOther2, _workflowOther2, false)
         )
@@ -86,22 +87,22 @@ class ExeWorkflowComposerTest {
             osType: OSType,
             baseWorkflow: Workflow,
             expectedWorkflow: Workflow,
-            hasWarning: Boolean) {
+            hasProblem: Boolean) {
         // Given
         val composer = createInstance()
         val pathObserver = mockk<Observer<Path>>()
         every { pathObserver.onNext(any()) } returns Unit
         every { _virtualContext.targetOSType } returns osType
-        if(hasWarning) {
-            every { _loggerService.writeWarning(any()) } returns Unit
+        if(hasProblem) {
+            every { _loggerService.writeBuildProblem(ExeWorkflowComposer.CannotExecuteProblemId, any(), any()) } returns Unit
         }
 
         // When
         val actualCommandLines = composer.compose(_workflowContext, Unit, baseWorkflow).commandLines.toList()
 
         // Then
-        if (hasWarning) {
-            verify { _loggerService.writeWarning(any()) }
+        if (hasProblem) {
+            verify { _loggerService.writeBuildProblem(ExeWorkflowComposer.CannotExecuteProblemId, any(), any()) }
         }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())

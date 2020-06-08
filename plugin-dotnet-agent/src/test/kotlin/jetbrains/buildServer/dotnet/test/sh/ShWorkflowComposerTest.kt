@@ -44,6 +44,7 @@ class ShWorkflowComposerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+        every { _virtualContext.isVirtual } returns true
     }
 
     @Test
@@ -61,7 +62,7 @@ class ShWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.WINDOWS, _workflowSh, _workflowSh, true),
+                arrayOf(OSType.WINDOWS, _workflowSh, Workflow(), true),
                 arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
                 arrayOf(OSType.MAC, _workflowOther, _workflowOther, false),
@@ -99,7 +100,7 @@ class ShWorkflowComposerTest {
         every { pathObserver.onNext(any()) } returns Unit
         every { _virtualContext.targetOSType } returns osType
         if(hasWarning) {
-            every { _loggerService.writeWarning(any()) } returns Unit
+            every { _loggerService.writeBuildProblem(ShWorkflowComposer.CannotExecuteProblemId, any(), any()) } returns Unit
         }
 
         // When
@@ -107,7 +108,7 @@ class ShWorkflowComposerTest {
 
         // Then
         if (hasWarning) {
-            verify { _loggerService.writeWarning(any()) }
+            verify { _loggerService.writeBuildProblem(ShWorkflowComposer.CannotExecuteProblemId, any(), any()) }
         }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
