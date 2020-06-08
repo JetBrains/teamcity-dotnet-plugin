@@ -17,48 +17,50 @@
 package jetbrains.buildServer.sh
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.SimpleWorkflowComposer
-import jetbrains.buildServer.agent.runner.Workflow
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.util.OSType
 
 class ShWorkflowComposer(
         private val _argumentsService: ArgumentsService,
-        private val _environment: Environment,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _loggerService: LoggerService)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Host
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
-            when (_virtualContext.targetOSType) {
-                OSType.UNIX, OSType.MAC -> {
-                    Workflow(sequence {
-                        var shExecutable: Path? = null
-                            for (baseCommandLine in workflow.commandLines) {
-                                when (baseCommandLine.executableFile.extension().toLowerCase()) {
-                                    "sh" -> {
-                                        yield(CommandLine(
-                                                baseCommandLine,
-                                                TargetType.Host,
-                                                shExecutable ?: Path( "sh"),
-                                                baseCommandLine.workingDirectory,
-                                                getArguments(baseCommandLine).toList(),
-                                                baseCommandLine.environmentVariables,
-                                                baseCommandLine.title))
-                                    }
-                                    else -> yield(baseCommandLine)
-                                }
-                            }
-                    })
+            Workflow(sequence {
+                for (baseCommandLine in workflow.commandLines) {
+                    if(acceptExecutable(baseCommandLine.executableFile))
+                        yield(CommandLine(
+                                baseCommandLine,
+                                TargetType.Host,
+                                Path( "sh"),
+                                baseCommandLine.workingDirectory,
+                                getArguments(baseCommandLine).toList(),
+                                baseCommandLine.environmentVariables,
+                                baseCommandLine.title))
+                    else
+                        yield(baseCommandLine)
                 }
-                else -> workflow
-            }
+            })
+
 
     private fun getArguments(commandLine: CommandLine) = sequence {
         yield(CommandLineArgument("-c"))
         val args = sequenceOf(commandLine.executableFile.path).plus(commandLine.arguments.map { it.value }).map { _virtualContext.resolvePath(it) }
         yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Target))
     }
+
+    private fun acceptExecutable(executableFile: Path) =
+            when(executableFile.extension().toLowerCase()) {
+                "sh" -> {
+                    if(_virtualContext.targetOSType == OSType.WINDOWS) {
+                        _loggerService.writeWarning("The script \"$executableFile\" cannot be executed on this agent, please use an appropriate agents requirement (or a docker image).")
+                        false
+                    }
+                    else true
+                }
+                else -> false
+            }
 }

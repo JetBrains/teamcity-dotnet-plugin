@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.cmd
+package jetbrains.buildServer.dotnet.test.sh
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.cmd.CmdWorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.rx.Observer
+import jetbrains.buildServer.sh.ShWorkflowComposer
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -30,15 +30,13 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class CmdWorkflowComposerTest {
+class ShWorkflowComposerTest {
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _workflowContext: WorkflowContext
-    private var _baseCommandLineCmd = createBaseCommandLine(Path(File("abc1", "my.cMd").path))
-    private var _workflowCmd = createWorkflow(_baseCommandLineCmd)
-    private var _baseCommandLineBat = createBaseCommandLine(Path(File("abc2", "my.Bat").path))
-    private var _workflowBat = createWorkflow(_baseCommandLineBat)
-    private var _baseCommandLineOther = createBaseCommandLine(Path(File("abc3", "my.exe").path))
+    private var _baseCommandLineSh = createBaseCommandLine(Path(File("abc1", "my.sH").path))
+    private var _workflowSh = createWorkflow(_baseCommandLineSh)
+    private var _baseCommandLineOther = createBaseCommandLine(Path(File("abc3", "my.dll").path))
     private var _workflowOther = createWorkflow(_baseCommandLineOther)
 
     @BeforeMethod
@@ -63,45 +61,24 @@ class CmdWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.MAC, _workflowCmd, _workflowCmd, true),
-                arrayOf(OSType.UNIX, _workflowBat, _workflowBat, true),
-                arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
+                arrayOf(OSType.WINDOWS, _workflowSh, _workflowSh, true),
                 arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther, false),
+                arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
+                arrayOf(OSType.MAC, _workflowOther, _workflowOther, false),
                 arrayOf(
-                        OSType.WINDOWS,
-                        _workflowCmd,
+                        OSType.UNIX,
+                        _workflowSh,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
-                                                _baseCommandLineCmd,
+                                                _baseCommandLineSh,
                                                 TargetType.Host,
-                                                Path("cmd.exe"),
-                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
+                                                Path("sh"),
+                                                Path(_workflowSh.commandLines.single().workingDirectory.path),
                                                 listOf(
-                                                        CommandLineArgument("/D"),
-                                                        CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.path} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Target)),
-                                                _workflowCmd.commandLines.single().environmentVariables
-                                        )
-                                )
-                        ),
-                        false
-                ),
-                arrayOf(
-                        OSType.WINDOWS,
-                        _workflowBat,
-                        Workflow(
-                                sequenceOf(
-                                        CommandLine(
-                                                _baseCommandLineBat,
-                                                TargetType.Host,
-                                                Path("cmd.exe"),
-                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
-                                                listOf(
-                                                        CommandLineArgument("/D"),
-                                                        CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.path} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Target)),
-                                                _workflowBat.commandLines.single().environmentVariables
+                                                        CommandLineArgument("-c"),
+                                                        CommandLineArgument("\"v_${_workflowSh.commandLines.single().executableFile.path} ${_workflowSh.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Target)),
+                                                _workflowSh.commandLines.single().environmentVariables
                                         )
                                 )
                         ),
@@ -137,7 +114,7 @@ class CmdWorkflowComposerTest {
     }
 
     private fun createInstance()=
-            CmdWorkflowComposer(
+            ShWorkflowComposer(
                 ArgumentsServiceStub(),
                 _virtualContext,
                 _loggerService)

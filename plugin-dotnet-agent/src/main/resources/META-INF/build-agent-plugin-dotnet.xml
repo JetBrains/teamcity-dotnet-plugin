@@ -325,18 +325,22 @@
     <constructor-arg ref="monoVersionParser"/>
   </bean>
 
-  <!-- Cmd -->
+  <!-- cmd, bat -->
   <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
 
-  <!-- Sh -->
+  <!-- sh -->
   <bean class="jetbrains.buildServer.sh.ShWorkflowComposer" id="shWorkflowComposer"/>
 
   <!-- Visual Studio -->
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer"/>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
 
-  <!-- Custom cdotnetCustomCommandommand -->
+  <!-- Custom dotnet command -->
   <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer">
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
+
+  <!-- exe, com -->
+  <bean class="jetbrains.buildServer.exe.ExeWorkflowComposer" id="exeWorkflowComposer"/>
+
 </beans>
