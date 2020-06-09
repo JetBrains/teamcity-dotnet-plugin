@@ -22,7 +22,7 @@ import jetbrains.buildServer.util.OSType
 
 class ExeWorkflowComposer(
         private val _virtualContext: VirtualContext,
-        private val _loggerService: LoggerService)
+        private val _cannotExecute: CannotExecute)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Host
@@ -33,7 +33,7 @@ class ExeWorkflowComposer(
                     when (baseCommandLine.executableFile.extension().toLowerCase()) {
                         "exe", "com" -> {
                             if (_virtualContext.targetOSType != OSType.WINDOWS) {
-                                _loggerService.writeBuildProblem(CannotExecuteProblemId, "Cannot execute", "Cannot execute \"${baseCommandLine.executableFile}\". Please use an appropriate ${if (!_virtualContext.isVirtual) "agents requirement" else "docker image"}.")
+                                _cannotExecute.writeBuildProblemFor(baseCommandLine.executableFile)
                                 break@loop
                             } else yield(baseCommandLine)
                         }
@@ -41,8 +41,4 @@ class ExeWorkflowComposer(
                     }
                 }
             })
-
-    companion object {
-        internal const val CannotExecuteProblemId = "Cannot execute exe"
-    }
 }

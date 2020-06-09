@@ -23,7 +23,7 @@ import jetbrains.buildServer.util.OSType
 class ShWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _virtualContext: VirtualContext,
-        private val _loggerService: LoggerService)
+        private val _cannotExecute: CannotExecute)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Host
@@ -34,7 +34,7 @@ class ShWorkflowComposer(
                     when(baseCommandLine.executableFile.extension().toLowerCase()) {
                         "sh" -> {
                             if(_virtualContext.targetOSType == OSType.WINDOWS) {
-                                _loggerService.writeBuildProblem(CannotExecuteProblemId, "Cannot execute","Cannot execute \"${baseCommandLine.executableFile}\". Please use an appropriate ${if (!_virtualContext.isVirtual) "agents requirement" else "docker image"}.")
+                                _cannotExecute.writeBuildProblemFor(baseCommandLine.executableFile)
                                 break@loop
                             }
                             else yield(CommandLine(
@@ -55,9 +55,5 @@ class ShWorkflowComposer(
         yield(CommandLineArgument("-c"))
         val args = sequenceOf(commandLine.executableFile.path).plus(commandLine.arguments.map { it.value }).map { _virtualContext.resolvePath(it) }
         yield(CommandLineArgument("\"${_argumentsService.combine(args)}\"", CommandLineArgumentType.Target))
-    }
-
-    companion object {
-        internal const val CannotExecuteProblemId = "Cannot execute sh"
     }
 }

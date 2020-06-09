@@ -32,7 +32,7 @@ import java.io.File
 
 class ShWorkflowComposerTest {
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _loggerService: LoggerService
+    @MockK private lateinit var _cannotExecute: CannotExecute
     @MockK private lateinit var _workflowContext: WorkflowContext
     private var _baseCommandLineSh = createBaseCommandLine(Path(File("abc1", "my.sH").path))
     private var _workflowSh = createWorkflow(_baseCommandLineSh)
@@ -100,7 +100,7 @@ class ShWorkflowComposerTest {
         every { pathObserver.onNext(any()) } returns Unit
         every { _virtualContext.targetOSType } returns osType
         if(hasWarning) {
-            every { _loggerService.writeBuildProblem(ShWorkflowComposer.CannotExecuteProblemId, any(), any()) } returns Unit
+            every { _cannotExecute.writeBuildProblemFor(any()) } returns Unit
         }
 
         // When
@@ -108,7 +108,7 @@ class ShWorkflowComposerTest {
 
         // Then
         if (hasWarning) {
-            verify { _loggerService.writeBuildProblem(ShWorkflowComposer.CannotExecuteProblemId, any(), any()) }
+            verify { _cannotExecute.writeBuildProblemFor(any()) }
         }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -118,7 +118,7 @@ class ShWorkflowComposerTest {
             ShWorkflowComposer(
                 ArgumentsServiceStub(),
                 _virtualContext,
-                _loggerService)
+                _cannotExecute)
 
     companion object {
         private fun createWorkflow(baseCommandLine: CommandLine) =

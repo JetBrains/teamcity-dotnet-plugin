@@ -32,7 +32,7 @@ import java.io.File
 
 class CmdWorkflowComposerTest {
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _loggerService: LoggerService
+    @MockK private lateinit var _cannotExecute: CannotExecute
     @MockK private lateinit var _workflowContext: WorkflowContext
     private var _baseCommandLineCmd = createBaseCommandLine(Path(File("abc1", "my.cMd").path))
     private var _workflowCmd = createWorkflow(_baseCommandLineCmd)
@@ -123,7 +123,7 @@ class CmdWorkflowComposerTest {
         every { pathObserver.onNext(any()) } returns Unit
         every { _virtualContext.targetOSType } returns osType
         if(hasProblem) {
-            every { _loggerService.writeBuildProblem(CmdWorkflowComposer.CannotExecuteProblemId, any(), any()) } returns Unit
+            every { _cannotExecute.writeBuildProblemFor(any()) } returns Unit
         }
 
         // When
@@ -131,7 +131,7 @@ class CmdWorkflowComposerTest {
 
         // Then
         if (hasProblem) {
-            verify { _loggerService.writeBuildProblem(CmdWorkflowComposer.CannotExecuteProblemId, any(), any()) }
+            verify { _cannotExecute.writeBuildProblemFor(any()) }
         }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
@@ -139,9 +139,9 @@ class CmdWorkflowComposerTest {
 
     private fun createInstance()=
             CmdWorkflowComposer(
-                ArgumentsServiceStub(),
-                _virtualContext,
-                _loggerService)
+                    ArgumentsServiceStub(),
+                    _virtualContext,
+                    _cannotExecute)
 
     companion object {
         private fun createWorkflow(baseCommandLine: CommandLine) =
