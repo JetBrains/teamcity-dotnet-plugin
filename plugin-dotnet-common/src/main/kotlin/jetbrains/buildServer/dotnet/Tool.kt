@@ -23,6 +23,8 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     VisualStudio2017(15, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2017", 2017),
     VisualStudio2015(14, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2015", 2015),
     VisualStudio2013(12, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2013", 2013),
+    VisualStudio2012(11, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2012", 2012),
+    VisualStudio2010(10, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2010", 2010),
 
     // MSBuild
     MSBuildCrossPlatform(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform MSBuild"),
@@ -43,6 +45,10 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "MSBuild 2013", 2013),
     MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "MSBuild 2013 x64", 2013),
     MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "MSBuild 2013 x86", 2013),
+
+    MSBuild4Windows(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "MSBuild 4", 2010),
+    MSBuild4WindowsX64(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "MSBuild 4 x64", 2010),
+    MSBuild4WindowsX86(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "MSBuild 4 x86", 2010),
 
     // VSTest
     VSTestCrossPlatform(0, ToolType.VSTest, ToolPlatform.CrossPlatform, ToolBitness.Any, "Cross-platform VSTest"),
