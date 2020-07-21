@@ -84,16 +84,19 @@
                 <description>Cross-platform MSBuild</description>
             </option>
             <option name="V16" value="MSBuild_16_Windows">
-                <description>MSBuild 2019 x64</description>
+                <description>MSBuild 2019</description>
             </option>
             <option name="V15" value="MSBuild_15_Windows">
-                <description>MSBuild 2017 x64</description>
+                <description>MSBuild 2017</description>
             </option>
             <option name="V14" value="MSBuild_14_Windows">
-                <description>MSBuild 2015 x64</description>
+                <description>MSBuild 2015</description>
             </option>
             <option name="V12" value="MSBuild_12_Windows">
-                <description>MSBuild 2013 x64</description>
+                <description>MSBuild 2013</description>
+            </option>
+            <option name="V4" value="MSBuild_4_Windows">
+                <description>MSBuild 4</description>
             </option>
         </enum>
     </types>

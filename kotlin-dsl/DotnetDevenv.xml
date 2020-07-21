@@ -79,6 +79,12 @@
             <option name="V12" value="VisualStudio_12_Windows">
                 <description>Visual Studio 2013</description>
             </option>
+            <option name="V11" value="VisualStudio_11_Windows">
+                <description>Visual Studio 2012</description>
+            </option>
+            <option name="V10" value="VisualStudio_10_Windows">
+                <description>Visual Studio 2010</description>
+            </option>
         </enum>
         <enum name="VSAction">
             <description>MSBuild action</description>
