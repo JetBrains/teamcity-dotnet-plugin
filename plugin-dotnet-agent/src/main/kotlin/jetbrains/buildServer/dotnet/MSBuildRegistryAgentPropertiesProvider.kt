@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.AgentPropertyType
 import org.apache.log4j.Logger
 import java.io.File
 
@@ -24,8 +25,9 @@ class MSBuildRegistryAgentPropertiesProvider(
                             && "MSBuildToolsPath".equals(value.key.parts.lastOrNull(), true)) {
                         val versionStr = value.key.parts.dropLast(1).lastOrNull()
                         versionStr?.let { version ->
-                            if (_msuildValidator.isValide(File(value.text))) {
-                                props.add(AgentProperty("MSBuildTools${version}_${value.key.bitness.platform.id}_Path", value.text))
+                            val path = File(value.text)
+                            if (_msuildValidator.isValide(path)) {
+                                props.add(AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools${version}_${value.key.bitness.platform.id}_Path", path.path))
                             } else {
                                 LOG.warn("Cannot find MSBuild in \"${value.text}\".")
                             }

@@ -104,11 +104,11 @@ class ProgramCommandLineAdapterTest {
         Assert.assertEquals(programCommandLine.executablePath, _executable.path)
         Assert.assertEquals(programCommandLine.workingDirectory, _workingDirecory.path)
         Assert.assertEquals(programCommandLine.arguments, expectedArgs)
-        Assert.assertEquals(programCommandLine.environment, mapOf(
+        Assert.assertEquals(programCommandLine.environment.entries, mapOf(
                 "Var1" to "Val1",
                 "Var 3" to "Val 3",
                 "Var 2" to "Val 2"
-        ))
+        ).entries)
     }
 
     @DataProvider(name = "osData")
@@ -129,12 +129,12 @@ class ProgramCommandLineAdapterTest {
         val programCommandLine = createInstance(_systemDiagnosticsCommandLine)
 
         // Then
-        Assert.assertEquals(programCommandLine.environment, mapOf(
+        Assert.assertEquals(programCommandLine.environment.entries, mapOf(
                 "Var1" to "Val1",
                 "Var 3" to "Val 3",
                 "Var 2" to "Val 2",
                 ENV_DOCKER_QUIET_MODE to "true"
-        ))
+        ).entries)
     }
 
     private fun createInstance(commandLine: CommandLine): ProgramCommandLine =

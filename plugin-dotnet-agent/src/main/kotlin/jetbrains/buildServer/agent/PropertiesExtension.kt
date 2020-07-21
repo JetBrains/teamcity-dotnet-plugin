@@ -1,6 +1,10 @@
 package jetbrains.buildServer.agent
 
+import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PROPAGATE_PARAMS
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger
@@ -16,13 +20,19 @@ class PropertiesExtension(
                     try {
                         for (property in agentPropertiesProvider.properties) {
                             val prevValue = configuration.configurationParameters.get(property.name)
-                            if (prevValue != null) {
-                                LOG.warn("Update ${property.name}=\"${property.value}\". Previous value was \"$prevValue\".")
-                            } else {
-                                LOG.info("Add ${property.name}=\"${property.value}\".")
+                            var name = property.name
+
+                            if (property.type != AgentPropertyType.DotNetCLI && property.type != AgentPropertyType.DotNetSDK) {
+                                name = name + "_Test_" + property.type.name + "_from_" + agentPropertiesProvider.desription.replace(' ', '_')
                             }
 
-                            configuration.addConfigurationParameter(property.name, property.value)
+                            if (prevValue != null) {
+                                LOG.warn("Update ${name}=\"${property.value}\". Previous value was \"$prevValue\".")
+                            } else {
+                                LOG.info("Add ${name}=\"${property.value}\".")
+                            }
+
+                            configuration.addConfigurationParameter(name, property.value)
                         }
                     }
                     catch (e: Exception) {

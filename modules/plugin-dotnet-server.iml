@@ -77,5 +77,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="usage-statistics-api" />
     <orderEntry type="module" module-name="usage-statistics-util" />
+    <orderEntry type="library" scope="TEST" name="org.testng:testng:7.1.0" level="project" />
   </component>
 </module>

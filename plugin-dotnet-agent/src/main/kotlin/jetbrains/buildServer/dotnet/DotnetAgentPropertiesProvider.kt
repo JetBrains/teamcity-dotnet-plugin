@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
@@ -41,16 +42,16 @@ class DotnetAgentPropertiesProvider(
         get() = sequence {
             // Detect .NET CLI path
             val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
-            yield(AgentProperty(DotnetConstants.CONFIG_PATH, dotnetPath.canonicalPath))
+            yield(AgentProperty(AgentPropertyType.DotNetCLI, DotnetConstants.CONFIG_PATH, dotnetPath.canonicalPath))
 
             // Detect .NET CLI version
             val sdkVersion = _dotnetVersionProvider.getVersion(Path(dotnetPath.path), Path(_pathsService.getPath(PathType.Work).path))
-            yield(AgentProperty(DotnetConstants.CONFIG_NAME, sdkVersion.toString()))
+            yield(AgentProperty(AgentPropertyType.DotNetCLI, DotnetConstants.CONFIG_NAME, sdkVersion.toString()))
 
             // Detect .NET SDK
             for ((version, path) in enumerateSdk(_dotnetSdksProvider.getSdks(dotnetPath))) {
                 val paramName = "${DotnetConstants.CONFIG_SDK_NAME}$version${DotnetConstants.PATH_SUFFIX}"
-                yield(AgentProperty(paramName, path))
+                yield(AgentProperty(AgentPropertyType.DotNetSDK, paramName, path))
             }
         }
 

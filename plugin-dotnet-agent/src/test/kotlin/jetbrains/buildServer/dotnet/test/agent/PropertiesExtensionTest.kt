@@ -19,6 +19,8 @@ package jetbrains.buildServer.dotnet.test.agent
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -58,10 +60,10 @@ class PropertiesExtensionTest {
         every { _buildAgentConfiguration.configurationParameters } returns config
 
         every { _agentPropertiesProvider1.desription } returns "1"
-        every { _agentPropertiesProvider1.properties } returns sequenceOf(AgentProperty("prop1", "val1"), AgentProperty("prop", "val"))
+        every { _agentPropertiesProvider1.properties } returns sequenceOf(AgentProperty(AgentPropertyType.DotNetCLI, "prop1", "val1"), AgentProperty(AgentPropertyType.DotNetCLI, "prop", "val"))
 
         every { _agentPropertiesProvider2.desription } returns "2"
-        every { _agentPropertiesProvider2.properties } returns sequenceOf(AgentProperty("prop", "val"), AgentProperty("prop2", "val2"))
+        every { _agentPropertiesProvider2.properties } returns sequenceOf(AgentProperty(AgentPropertyType.DotNetCLI, "prop", "val"), AgentProperty(AgentPropertyType.DotNetCLI, "prop2", "val2"))
 
         createInstance()
 

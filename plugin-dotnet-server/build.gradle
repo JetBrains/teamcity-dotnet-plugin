@@ -42,6 +42,7 @@ dependencies {
 
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
   provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'
+  testCompile 'org.testng:testng:7.1.0'
   testCompile 'io.mockk:mockk:1.9.3'
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }

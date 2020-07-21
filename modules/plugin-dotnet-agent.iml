@@ -33,7 +33,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="plugin-dotnet-common" />
     <orderEntry type="module" module-name="common" scope="PROVIDED" />
-    <orderEntry type="library" scope="TEST" name="testng" level="project" />
     <orderEntry type="module" module-name="agent" />
     <orderEntry type="library" name="commons-io" level="project" />
     <orderEntry type="library" scope="TEST" name="jmock-2.5.1" level="project" />
@@ -75,5 +74,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="TEST" name="org.testng:testng:7.1.0" level="project" />
   </component>
 </module>

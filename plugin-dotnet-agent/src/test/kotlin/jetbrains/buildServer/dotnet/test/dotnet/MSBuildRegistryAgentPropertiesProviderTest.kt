@@ -21,6 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -72,7 +73,7 @@ class MSBuildRegistryAgentPropertiesProviderTest {
                 WindowsRegistryValue(rootKey + "15.0" + "MSBuildToolsPath", WindowsRegistryValueType.Text, "msbuild15"),
                 rootKey + "16.0",
                 WindowsRegistryValue(rootKey + "16.0" + "MSBuildToolsPathAaa", WindowsRegistryValueType.Str, "msbuild16"),
-                WindowsRegistryValue(rootKey32 + "17.0" + "MSBuildToolsPath", WindowsRegistryValueType.Str, "msbuild17")
+                WindowsRegistryValue(rootKey32 + "17.0" + "MSBuildToolsPath", WindowsRegistryValueType.Str, "msbuild17" + File.separator)
         )
 
         every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>()) } answers  {
@@ -89,7 +90,7 @@ class MSBuildRegistryAgentPropertiesProviderTest {
 
         every { _msuildValidator.isValide(File("msbuild12")) } returns true
         every { _msuildValidator.isValide(File("msbuild13")) } returns false
-        every { _msuildValidator.isValide(File("msbuild17")) } returns true
+        every { _msuildValidator.isValide(File("msbuild17" + File.separator)) } returns true
 
         val propertiesProvider = createInstance()
 
@@ -98,8 +99,8 @@ class MSBuildRegistryAgentPropertiesProviderTest {
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(
-                        AgentProperty("MSBuildTools12.0_x64_Path", "msbuild12"),
-                        AgentProperty("MSBuildTools17.0_x86_Path", "msbuild17")))
+                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools12.0_x64_Path", "msbuild12"),
+                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools17.0_x86_Path", "msbuild17")))
     }
 
     private fun createInstance() = MSBuildRegistryAgentPropertiesProvider(

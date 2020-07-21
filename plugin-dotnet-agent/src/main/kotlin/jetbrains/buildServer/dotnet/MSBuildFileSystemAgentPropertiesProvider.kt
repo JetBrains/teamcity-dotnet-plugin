@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
+import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.util.PEReader.PEUtil
 import org.apache.log4j.Logger
 import java.io.File
@@ -66,7 +67,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .mapNotNull {
                     LOG.debug("Getting a product version for \"${it.path}\".")
                     _peReader.tryGetProductVersion(it.path)?.let { version ->
-                        AgentProperty("MSBuildTools${version.p1}.0_${it.platform.id}_Path", it.path.parent ?: "")
+                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools${version.p1}.0_${it.platform.id}_Path", it.path.parent ?: "")
                     }
                 }
 

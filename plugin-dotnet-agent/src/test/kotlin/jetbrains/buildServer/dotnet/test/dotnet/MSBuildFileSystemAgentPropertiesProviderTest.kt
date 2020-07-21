@@ -7,6 +7,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
+import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider
 import jetbrains.buildServer.dotnet.VisualStudioInstance
 import jetbrains.buildServer.dotnet.VisualStudioLocator
@@ -40,8 +41,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path),
-                                AgentProperty("MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path),
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
                         )
                 ),
                 arrayOf(
@@ -53,7 +54,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
                         )
                 ),
                 arrayOf(
@@ -65,7 +66,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
                         )
                 ),
                 arrayOf(
@@ -77,7 +78,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
                         )
                 ),
                 arrayOf(
@@ -89,7 +90,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path)
                         )
                 ),
                 arrayOf(
@@ -101,7 +102,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
                         ),
                         listOf(
-                                AgentProperty("MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
                         )
                 ),
                 arrayOf(

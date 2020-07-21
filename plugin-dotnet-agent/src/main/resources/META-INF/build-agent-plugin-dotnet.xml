@@ -195,8 +195,8 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
-  <!--bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/-->
-  <!--bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/-->
+  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>
