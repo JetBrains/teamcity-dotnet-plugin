@@ -4,7 +4,6 @@ import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PROPAGATE_PARAMS
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger

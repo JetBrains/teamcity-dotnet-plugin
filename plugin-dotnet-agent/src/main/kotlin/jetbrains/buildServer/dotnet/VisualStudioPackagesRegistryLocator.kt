@@ -11,18 +11,21 @@ class VisualStudioPackagesRegistryLocator(
     override fun tryGetPackagesPath(): String? {
         var packagesPath: String? = null;
         for (key in RegKeys) {
-            _windowsRegistry.get(key, object : WindowsRegistryVisitor {
-                override fun accept(key: WindowsRegistryKey) = true
-                override fun accept(value: WindowsRegistryValue): Boolean {
-                    if (value.type == WindowsRegistryValueType.Str && "CachePath".equals(value.key.parts.lastOrNull(), true)) {
-                        packagesPath = value.text
-                        LOG.debug("Using Visual Studio packages cache directory \"$packagesPath\"");
-                        return false
-                    }
+            _windowsRegistry.get(
+                    key,
+                    object : WindowsRegistryVisitor {
+                        override fun accept(key: WindowsRegistryKey) = false
+                        override fun accept(value: WindowsRegistryValue): Boolean {
+                            if (value.type == WindowsRegistryValueType.Str && "CachePath".equals(value.key.parts.lastOrNull(), true)) {
+                                packagesPath = value.text
+                                LOG.debug("Using Visual Studio packages cache directory \"$packagesPath\"");
+                                return false
+                            }
 
-                    return true
-                }
-            })
+                            return true
+                        }
+                    },
+                    false)
         }
 
         return packagesPath

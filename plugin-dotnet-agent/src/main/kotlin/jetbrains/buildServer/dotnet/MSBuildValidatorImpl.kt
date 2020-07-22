@@ -6,6 +6,6 @@ import java.io.File
 class MSBuildValidatorImpl(
         private val _fileSystemService: FileSystemService)
     : MSBuildValidator {
-    override fun isValide(msbuildBasePath: File): Boolean =
+    override fun isValid(msbuildBasePath: File): Boolean =
             _fileSystemService.isDirectory(msbuildBasePath) && _fileSystemService.isFile(File(msbuildBasePath, "MSBuild.exe"))
 }

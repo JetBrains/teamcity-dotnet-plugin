@@ -16,13 +16,16 @@
 
 package jetbrains.buildServer.dotnet
 
-class Version private constructor(val major: Int,
-                                  val minor: Int,
-                                  val digits: Int,
-                                  private val patch: Int,
-                                  private val build: Int = 0,
-                                  private val release: String? = null,
-                                  private val metadata: String? = null) : Comparable<Version> {
+class Version private constructor(
+        val major: Int,
+        val minor: Int,
+        val digits: Int,
+        private val patch: Int,
+        private val build: Int = 0,
+        private val release: String? = null,
+        private val metadata: String? = null,
+        private val text: String? = null)
+    : Comparable<Version> {
 
     constructor(major: Int) : this(major, 0, 1, 0, 0)
 
@@ -32,18 +35,20 @@ class Version private constructor(val major: Int,
 
     constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor,4, patch, 0, release)
 
+    constructor(major: Int, minor: Int, patch: Int, build: Int) : this(major, minor,4, patch, build, null)
+
     private val versionString: String = buildString {
         append(major)
-        append('.')
+        append(Separator)
         append(minor)
-        append('.')
+        append(Separator)
         append(patch)
         if (build > 0) append('.').append(build)
         if (release != null) append('-').append(release)
         if (metadata != null) append('+').append(metadata)
     }
 
-    override fun toString(): String = versionString
+    override fun toString(): String = text ?: versionString
 
     override fun compareTo(other: Version): Int {
         major.compareTo(other.major).run { if (this != 0) return this }
@@ -68,38 +73,59 @@ class Version private constructor(val major: Int,
     }
 
     companion object {
+        const val Separator = '.'
         private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
-        val Empty: Version = Version(0, 0, 0, 0)
+        val Empty: Version = Version(0, 0, 0, 0, 0, null, null, null)
 
         fun parse(text: String): Version {
             VERSION_PATTERN.matchEntire(text)?.let {
 
                 val (majorStr, minorStr, patchStr, buildStr, releaseStr, metadataStr) = it.destructured
                 var digits = 0
+                var newText: String = ""
 
                 val major = majorStr.toIntOrNull()?.let {
+                    newText += majorStr
                     digits++
                     it
                 } ?: 0
 
                 val minor = minorStr.toIntOrNull()?.let {
+                    newText += Separator
+                    newText += minorStr
                     digits++
                     it
                 } ?: 0
 
                 val patch = patchStr.toIntOrNull()?.let {
+                    newText += Separator
+                    newText += patchStr
                     digits++
                     it
                 } ?: 0
 
                 val build = buildStr.toIntOrNull()?.let {
+                    newText += Separator
+                    newText += buildStr
                     digits++
                     it
                 } ?: 0
 
-                val release = if (releaseStr.isEmpty()) null else releaseStr
-                val metadata = if (metadataStr.isEmpty()) null else metadataStr
-                return Version(major, minor, digits, patch, build, release, metadata)
+                var release: String? = null
+                if (!releaseStr.isEmpty()) {
+                    newText += "-"
+                    newText += releaseStr
+                    release = releaseStr
+                }
+
+                var metadata: String? = null
+                if (!metadataStr.isEmpty()) {
+                    newText += "+"
+                    newText += metadataStr
+                    metadata = metadataStr
+                }
+
+                return Version(major, minor, digits, patch, build, release, metadata, newText)
             }
 
             return Empty

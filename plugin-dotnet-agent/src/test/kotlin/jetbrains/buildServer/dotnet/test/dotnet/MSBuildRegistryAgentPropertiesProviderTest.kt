@@ -22,13 +22,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.AgentPropertyType
-import jetbrains.buildServer.agent.runner.PathType
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.rx.subjectOf
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -76,7 +72,7 @@ class MSBuildRegistryAgentPropertiesProviderTest {
                 WindowsRegistryValue(rootKey32 + "17.0" + "MSBuildToolsPath", WindowsRegistryValueType.Str, "msbuild17" + File.separator)
         )
 
-        every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>()) } answers  {
+        every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>(), true) } answers  {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (item in regItems) {
                 when (item) {
@@ -88,9 +84,9 @@ class MSBuildRegistryAgentPropertiesProviderTest {
             value
         }
 
-        every { _msuildValidator.isValide(File("msbuild12")) } returns true
-        every { _msuildValidator.isValide(File("msbuild13")) } returns false
-        every { _msuildValidator.isValide(File("msbuild17" + File.separator)) } returns true
+        every { _msuildValidator.isValid(File("msbuild12")) } returns true
+        every { _msuildValidator.isValid(File("msbuild13")) } returns false
+        every { _msuildValidator.isValid(File("msbuild17" + File.separator)) } returns true
 
         val propertiesProvider = createInstance()
 
@@ -103,7 +99,8 @@ class MSBuildRegistryAgentPropertiesProviderTest {
                         AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools17.0_x86_Path", "msbuild17")))
     }
 
-    private fun createInstance() = MSBuildRegistryAgentPropertiesProvider(
-                _windowsRegistry,
-                _msuildValidator)
+    private fun createInstance() =
+            MSBuildRegistryAgentPropertiesProvider(
+                    _windowsRegistry,
+                    _msuildValidator)
 }

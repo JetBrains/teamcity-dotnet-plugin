@@ -89,7 +89,7 @@ class DotnetAgentPropertiesProviderTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldProvideConfigParams(
+    fun shouldProvideAgentProperties(
             originSdks: List<DotnetSdk>,
             expectedProperties: List<AgentProperty>) {
         // Given

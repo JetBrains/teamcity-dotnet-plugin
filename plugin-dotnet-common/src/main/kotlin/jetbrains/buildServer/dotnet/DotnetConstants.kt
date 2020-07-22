@@ -40,8 +40,6 @@ object DotnetConstants {
 
     // Internal configuration parameters:
     // True or False (False by default) - allows experimental features
-    const val PARAM_PROPAGATE_PARAMS = "teamcity.internal.dotnet.propagate.params"
-    // True or False (False by default) - allows experimental features
     const val PARAM_EXPERIMENTAL = "teamcity.internal.dotnet.experimental"
     // True or False (False by default) - allows experimental features
     const val PARAM_SUPPORT_MSBUILD_BITNESS = "teamcity.internal.dotnet.msbuild.bitness"

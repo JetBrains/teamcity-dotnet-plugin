@@ -57,7 +57,7 @@ class MSBuildValidatorTest {
         val validator = createInstance(fileSystemService)
 
         // When
-        val actualResult = validator.isValide(msbuildPath)
+        val actualResult = validator.isValid(msbuildPath)
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)

@@ -1,6 +1,8 @@
 package jetbrains.buildServer.agent
 
+import WindowsRegistryValueType
 import jetbrains.buildServer.util.OSType
+import java.io.File
 
 class WindowsRegistryImpl(
         private val _environment: Environment,
@@ -8,13 +10,13 @@ class WindowsRegistryImpl(
         private val _windowsRegistryParser: WindowsRegistryParser)
     : WindowsRegistry {
 
-    override fun get(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor) {
+    override fun get(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor, recursively: Boolean) {
         if (_environment.os != OSType.WINDOWS) {
             return
         }
 
         var curKey: WindowsRegistryKey = key;
-        for (line in getLines(key)) {
+        for (line in getLines(key, recursively)) {
             if (line.isBlank()) {
                 continue
             }
@@ -38,12 +40,17 @@ class WindowsRegistryImpl(
         }
     }
 
-    private fun getLines(key: WindowsRegistryKey) =
+    private fun getLines(key: WindowsRegistryKey, recursively: Boolean) =
             _commandLineExecutor.tryExecute(
                     createQueryCommand(
-                            CommandLineArgument(key.regKey),
-                            CommandLineArgument("/reg:${key.bitness.id}"),
-                            CommandLineArgument("/s")
+                            sequence {
+                                yield(CommandLineArgument(key.regKey))
+                                yield(CommandLineArgument("/reg:${key.bitness.id}"))
+                                if(recursively) {
+                                    yield(CommandLineArgument("/s"))
+                                }
+                            }
+
                     ))?.let { result ->
                 when (result.exitCode) {
                     0 -> {
@@ -53,7 +60,7 @@ class WindowsRegistryImpl(
                 }
             } ?: emptySequence<String>()
 
-    private fun createQueryCommand(vararg args: CommandLineArgument) = CommandLine(
+    private fun createQueryCommand(args: Sequence<CommandLineArgument>) = CommandLine(
                 null,
                 TargetType.SystemDiagnostics,
                 Path("REG"),

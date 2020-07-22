@@ -4,5 +4,6 @@ enum class AgentPropertyType {
     DotNetCLI,
     DotNetSDK,
     MSBuildTool,
-    VisualStudio
+    VisualStudio,
+    DotNetFramework,
 }

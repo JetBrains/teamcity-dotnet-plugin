@@ -63,7 +63,10 @@ class VersionTest {
                 arrayOf(Version(0, 2), "0.2.0"),
                 arrayOf(Version(2, 0, 0), "2.0.0"),
                 arrayOf(Version(0, 0, 2), "0.0.2"),
-                arrayOf(Version.parse("0.1.2-beta+meta"), "0.1.2-beta+meta"))
+                arrayOf(Version.parse("0.1.2-beta+meta"), "0.1.2-beta+meta"),
+                arrayOf(Version.parse("03.001.02"), "03.001.02"),
+                arrayOf(Version.parse("v0.1.2-beta+meta"), "0.1.2-beta+meta"),
+                arrayOf(Version.parse("vv03.001.02"), "03.001.02"))
     }
 
     @Test(dataProvider = "testDataToString")
@@ -129,7 +132,8 @@ class VersionTest {
                 arrayOf(".xyz", Version.Empty),
                 arrayOf(".1", Version.Empty),
                 arrayOf("abc.1", Version.Empty),
-                arrayOf("1.abc", Version.Empty))
+                arrayOf("1.abc", Version.Empty),
+                arrayOf(" Version:     1.0.0-beta-001598", Version.parse("1.0.0-beta-001598")))
     }
 
     @Test(dataProvider = "testDataParse")
