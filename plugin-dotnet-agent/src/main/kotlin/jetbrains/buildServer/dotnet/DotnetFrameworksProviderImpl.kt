@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import org.apache.log4j.Logger
+import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
 class DotnetFrameworksProviderImpl(
@@ -9,29 +10,26 @@ class DotnetFrameworksProviderImpl(
         private val _registryVisitors: List<DotnetFrameworksWindowsRegistryVisitor>,
         private val _dotnetFrameworkValidator: DotnetFrameworkValidator)
     : DotnetFrameworksProvider {
-    override val frameworks =
-         _registryVisitors
+    @Cacheable("dotnetFrameworks")
+    override fun getFrameworks() =
+            _registryVisitors
                     .asSequence()
-                    .flatMap {
-                        visitor ->
-                        visitor.keys.map { key ->  Pair(key, visitor) } }
-                    .flatMap {
-                        (key, visitor) ->
+                    .flatMap { visitor ->
+                        visitor.keys.map { key -> Pair(key, visitor) }
+                    }
+                    .flatMap { (key, visitor) ->
                         _windowsRegistry.get(key, visitor, true)
                         visitor.getFrameworks()
                     }
-                    .map {
-                        framework ->
+                    .map { framework ->
                         val isValid = _dotnetFrameworkValidator.isValid(framework)
-                        LOG.info("Detected ${if (isValid) "valid" else "invalid"} $framework.")
+                        LOG.debug("Detected ${if (isValid) "valid" else "invalid"} $framework.")
                         Pair(framework, isValid)
                     }
-                    .filter {
-                        (_, isValid) ->
+                    .filter { (_, isValid) ->
                         isValid
                     }
-                    .map {
-                        (framewrok, _) ->
+                    .map { (framewrok, _) ->
                         framewrok
                     }
                     .distinct()

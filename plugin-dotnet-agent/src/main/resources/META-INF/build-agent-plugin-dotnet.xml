@@ -183,6 +183,11 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider" id="dotnetAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkRegistryAgentPropertiesProvider" id="dotnetFrameworkRegistryAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.TargetingPackFileSystemAgentPropertiesProvider" id="targetingPackFileSystemAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.TargetingPackAgentPropertiesProvider" id="targetingPackAgentPropertiesProvider"/>
 
   <bean class="jetbrains.buildServer.dotnet.JsonVisualStudioInstanceParser"/>
   <bean class="jetbrains.buildServer.dotnet.VisualStudioPackagesRegistryLocator" id="visualStudioPackagesRegistryLocator"/>
@@ -195,16 +200,12 @@
       </list>
     </constructor-arg>
   </bean>
-
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworksEnvironmentImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetPolicyRegistryVisitor" scope="prototype" id="dotnetPolicyRegistryVisitor"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetSetupRegistryVisitor" scope="prototype" id="dotnetSetupRegistryVisitor"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworksProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkRegistryAgentPropertiesProvider" id="dotnetFrameworkRegistryAgentPropertiesProvider"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>

@@ -12,7 +12,7 @@ class DotnetFrameworkRegistryAgentPropertiesProvider(
 
     override val properties: Sequence<AgentProperty> get() =
         _dotnetFrameworksProvider
-                .frameworks
+                .getFrameworks()
                 .groupBy { it.platform }
                 .map { curFrameworks ->
                     val latestDotnet4Version = curFrameworks.value.map { it.version }.filter { it.major == 4 }.maxBy { it }

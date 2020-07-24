@@ -76,7 +76,7 @@ class DotnetFrameworksProviderTest {
 
         // Then
         Assert.assertEquals(
-                frameworksProvider.frameworks.sortedBy { it.toString() }.toList(),
+                frameworksProvider.getFrameworks().sortedBy { it.toString() }.toList(),
                 listOf(_framework1, _framework2, _framework5).sortedBy { it.toString() }.toList())
 
         verify(exactly = 1) { _windowsRegistry.get(_key1, _visitor1, true) }

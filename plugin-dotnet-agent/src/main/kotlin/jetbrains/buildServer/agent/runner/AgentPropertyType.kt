@@ -6,4 +6,5 @@ enum class AgentPropertyType {
     MSBuildTool,
     VisualStudio,
     DotNetFramework,
+    TargetingPack
 }

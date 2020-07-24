@@ -8,7 +8,7 @@ class DotnetFrameworkValidatorImpl(
         private val _fileSystemService: FileSystemService)
     : DotnetFrameworkValidator {
     override fun isValid(framework: DotnetFramework): Boolean {
-        LOG.info("Validating $framework.")
+        LOG.debug("Validating $framework.")
         if (!_fileSystemService.isDirectory(framework.path)) {
             LOG.info("\"${framework.path}\" is not a directory.")
             return false
@@ -25,12 +25,12 @@ class DotnetFrameworkValidatorImpl(
                 .toHashSet()
 
         if (!files.contains("csc.exe")) {
-            LOG.info("\"${framework.path}\" does not containt \"csc.exe\".")
+            LOG.info("\"${framework.path}\" does not contain \"csc.exe\".")
             return false
         }
 
         if (!files.contains("vbc.exe")) {
-            LOG.info("\"${framework.path}\" does not containt \"vbc.exe\".")
+            LOG.info("\"${framework.path}\" does not contain \"vbc.exe\".")
             return false
         }
 
@@ -39,7 +39,7 @@ class DotnetFrameworkValidatorImpl(
         }
 
         if (!files.contains("msbuild.exe")) {
-            LOG.info("\"${framework.path}\" does not containt \"msbuild.exe\".")
+            LOG.info("\"${framework.path}\" does not contain \"msbuild.exe\".")
             return false
         }
 

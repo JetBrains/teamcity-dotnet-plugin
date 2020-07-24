@@ -18,13 +18,13 @@ class PropertiesExtension(
                     LOG.info("Fetching the agent properties for ${agentPropertiesProvider.desription}")
                     try {
                         for (property in agentPropertiesProvider.properties) {
-                            val prevValue = configuration.configurationParameters.get(property.name)
                             var name = property.name
 
                             if (property.type != AgentPropertyType.DotNetCLI && property.type != AgentPropertyType.DotNetSDK) {
                                 name = name + "_Test_" + property.type.name + "_from_" + agentPropertiesProvider.desription.replace(' ', '_')
                             }
 
+                            val prevValue = configuration.configurationParameters.get(name)
                             if (prevValue != null) {
                                 LOG.warn("Update ${name}=\"${property.value}\". Previous value was \"$prevValue\".")
                             } else {

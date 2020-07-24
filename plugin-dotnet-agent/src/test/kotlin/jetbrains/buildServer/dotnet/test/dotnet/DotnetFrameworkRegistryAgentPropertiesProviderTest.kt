@@ -108,7 +108,7 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // When
-        every { _dotnetFrameworksProvider.frameworks } returns frameworks
+        every { _dotnetFrameworksProvider.getFrameworks() } returns frameworks
 
         // Then
         Assert.assertEquals(propertiesProvider.desription, "Dotnet Framework in registry")
