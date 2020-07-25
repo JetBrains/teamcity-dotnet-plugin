@@ -17,7 +17,7 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.DotnetVersionParser
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

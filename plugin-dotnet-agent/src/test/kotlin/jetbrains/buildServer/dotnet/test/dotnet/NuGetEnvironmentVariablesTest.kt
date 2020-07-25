@@ -20,10 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
-import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR

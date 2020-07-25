@@ -5,7 +5,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert

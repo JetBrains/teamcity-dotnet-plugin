@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Version
 import org.apache.log4j.Logger
 import java.io.File
 

@@ -1,6 +1,6 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.visualStudio
 
-import com.google.gson.JsonIOException
+import jetbrains.buildServer.visualStudio.VisualStudioInstance
 import java.io.InputStream
 
 interface VisualStudioInstanceParser {

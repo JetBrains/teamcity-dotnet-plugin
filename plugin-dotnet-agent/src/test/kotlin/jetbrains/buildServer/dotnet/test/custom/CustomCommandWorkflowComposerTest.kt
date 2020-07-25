@@ -24,9 +24,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.custom.CustomCommandWorkflowComposer
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
-import jetbrains.buildServer.rx.emptyDisposable
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

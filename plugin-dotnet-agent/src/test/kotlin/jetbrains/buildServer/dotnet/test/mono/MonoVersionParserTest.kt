@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.mono
 
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.mono.MonoVersionParser
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -32,11 +32,11 @@ class MonoVersionParserTest {
                         "        TLS:           normal",
                         "        SIGSEGV:       normal",
                         "        Notification:  Thread + polling"),
-                        Version(5, 2,0)),
+                        Version(5, 2, 0)),
                 arrayOf(listOf(
                         "Mono version 5.0.1234",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com"),
-                        Version(5,0,1234)),
+                        Version(5, 0, 1234)),
                 arrayOf(listOf(
                         "Mono JIT compiler 5.2.0 (Visual Studio built mono)",
                         "Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com",

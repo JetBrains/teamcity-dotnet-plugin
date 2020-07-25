@@ -1,8 +1,7 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.*
 import org.apache.log4j.Logger
-import java.io.File
 
 class VisualStudioPackagesRegistryLocator(
         private val _windowsRegistry: WindowsRegistry)
@@ -34,7 +33,7 @@ class VisualStudioPackagesRegistryLocator(
     companion object {
         private val LOG = Logger.getLogger(VisualStudioPackagesRegistryLocator::class.java)
 
-        private val RegKeys = sequenceOf<WindowsRegistryKey>(
+        internal val RegKeys = sequenceOf<WindowsRegistryKey>(
                 WindowsRegistryKey.create(
                         WindowsRegistryBitness.Bitness64,
                         WindowsRegistryHive.LOCAL_MACHINE,

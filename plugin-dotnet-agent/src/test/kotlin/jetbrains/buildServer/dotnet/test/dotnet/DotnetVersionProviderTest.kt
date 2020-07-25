@@ -20,7 +20,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.dotnet.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetVersionProviderImpl
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -48,7 +48,7 @@ class DotnetVersionProviderTest {
     @DataProvider
     fun testData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), 0, Version(2,2,202)),
+                arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), 0, Version(2, 2, 202)),
                 arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), 1, Version.Empty),
                 arrayOf(listOf("3.0.100-preview9-014004"), emptyList<String>(), -2, Version.Empty),
                 arrayOf(listOf("3.0.100-preview9-014004"), listOf("some error"), 0, Version.Empty),

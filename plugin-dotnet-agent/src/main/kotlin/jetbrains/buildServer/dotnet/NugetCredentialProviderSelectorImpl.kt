@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService

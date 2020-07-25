@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.agent
 
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

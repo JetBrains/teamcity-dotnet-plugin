@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VersionParser
 
 class DotnetVersionParser : VersionParser {

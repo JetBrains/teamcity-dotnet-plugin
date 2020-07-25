@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet
 
 import WindowsRegistryValueType
 import jetbrains.buildServer.agent.*
-import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetPolicyRegistryVisitor(

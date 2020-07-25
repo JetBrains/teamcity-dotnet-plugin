@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.agent
 
 class Version private constructor(
         val major: Int,
         val minor: Int,
         val digits: Int,
-        private val patch: Int,
-        private val build: Int = 0,
+        val patch: Int,
+        val build: Int = 0,
         private val release: String? = null,
         private val metadata: String? = null,
         private val text: String? = null)

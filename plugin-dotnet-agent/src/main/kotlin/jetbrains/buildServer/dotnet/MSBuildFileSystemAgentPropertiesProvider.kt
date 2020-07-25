@@ -5,13 +5,12 @@ import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
 import jetbrains.buildServer.agent.runner.AgentPropertyType
-import jetbrains.buildServer.util.PEReader.PEUtil
+import jetbrains.buildServer.visualStudio.VisualStudioProvider
 import org.apache.log4j.Logger
 import java.io.File
-import java.util.regex.Pattern
 
 class MSBuildFileSystemAgentPropertiesProvider(
-        private val _visualStudioLocator: VisualStudioLocator,
+        private val _visualStudioProviders: List<VisualStudioProvider>,
         private val _fileSystemService: FileSystemService,
         private val _peReader: PEReader)
     : AgentPropertiesProvider {
@@ -19,11 +18,18 @@ class MSBuildFileSystemAgentPropertiesProvider(
     override val desription = "MSBuild in file system"
 
     override val properties get() =
-        _visualStudioLocator.instances
-                // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
+        _visualStudioProviders
+                .asSequence()
+                .flatMap { it.getInstances() }
+                // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\
                 .map {
                     LOG.debug("Goes through \"$it\".")
-                    File(it.installationPath)
+                    it.installationPath
+                }
+                .mapNotNull {
+                    val base = it.parentFile?.parentFile
+                    LOG.debug("Goes through \"$base\".")
+                    base
                 }
                 .filter { _fileSystemService.isExists(it) }
                 .filter { _fileSystemService.isDirectory(it) }
@@ -67,7 +73,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .mapNotNull {
                     LOG.debug("Getting a product version for \"${it.path}\".")
                     _peReader.tryGetProductVersion(it.path)?.let { version ->
-                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools${version.p1}.0_${it.platform.id}_Path", it.path.parent ?: "")
+                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools${version.major}.0_${it.platform.id}_Path", it.path.parent ?: "")
                     }
                 }
 

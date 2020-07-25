@@ -18,10 +18,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert

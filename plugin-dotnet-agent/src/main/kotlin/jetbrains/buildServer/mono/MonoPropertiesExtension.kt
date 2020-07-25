@@ -18,7 +18,7 @@ package jetbrains.buildServer.mono
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.MonoConstants
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.util.EventDispatcher
 import org.apache.log4j.Logger
 

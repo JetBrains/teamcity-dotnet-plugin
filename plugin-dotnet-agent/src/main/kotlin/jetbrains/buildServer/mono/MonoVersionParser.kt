@@ -17,7 +17,7 @@
 package jetbrains.buildServer.mono
 
 import jetbrains.buildServer.agent.VersionParser
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import java.util.regex.Pattern
 
 class MonoVersionParser : VersionParser {

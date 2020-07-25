@@ -9,8 +9,9 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
 import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider
-import jetbrains.buildServer.dotnet.VisualStudioInstance
-import jetbrains.buildServer.dotnet.VisualStudioLocator
+import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.visualStudio.VisualStudioInstance
+import jetbrains.buildServer.visualStudio.VisualStudioProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.util.PEReader.PEVersion
 import org.testng.Assert
@@ -20,7 +21,7 @@ import org.testng.annotations.Test
 import java.io.File
 
 class MSBuildFileSystemAgentPropertiesProviderTest {
-    @MockK private lateinit var _visualStudioLocator: VisualStudioLocator
+    @MockK private lateinit var _visualStudioLocator: VisualStudioProvider
     @MockK private lateinit var _peReader: PEReader
 
     @BeforeMethod
@@ -37,8 +38,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path),
@@ -50,8 +51,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild22.exe"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
@@ -62,8 +63,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addDirectory(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
@@ -74,8 +75,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addDirectory(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
@@ -86,8 +87,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/1abc6.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path)
@@ -98,8 +99,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                                 .addDirectory(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild"))
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         listOf(
                                 AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
@@ -108,8 +109,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                 arrayOf(
                         VirtualFileSystemService(),
                         listOf(
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2017/Professional", "", ""),
-                                VisualStudioInstance("Program Files (x86)/Microsoft Visual Studio/2019/Professional", "", "")
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty),
+                                VisualStudioInstance(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty)
                         ),
                         emptyList<AgentProperty>()
                 ),
@@ -121,7 +122,6 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
         )
     }
 
-
     @Test(dataProvider = "testProperties")
     fun shouldProvideProperties(
             fileSystemService: FileSystemService,
@@ -129,8 +129,8 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
             expectedProperties: List<AgentProperty>) {
         // Given
         val propertiesProvider = createInstance(fileSystemService)
-        every { _visualStudioLocator.instances } returns visualStudioInstances.asSequence()
-        every { _peReader.tryGetProductVersion(any()) } returns PEVersion(16, 0, 0, 0)
+        every { _visualStudioLocator.getInstances() } returns visualStudioInstances.asSequence()
+        every { _peReader.tryGetProductVersion(any()) } returns Version(16, 0, 0, 0)
 
         // When
         val actualProperties = propertiesProvider.properties.toList()
@@ -140,5 +140,5 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            MSBuildFileSystemAgentPropertiesProvider(_visualStudioLocator, fileSystemService, _peReader)
+            MSBuildFileSystemAgentPropertiesProvider(listOf(_visualStudioLocator), fileSystemService, _peReader)
 }

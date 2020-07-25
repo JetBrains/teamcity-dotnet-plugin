@@ -20,6 +20,7 @@ import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.Test

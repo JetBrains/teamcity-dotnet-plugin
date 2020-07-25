@@ -1,14 +1,16 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.visualStudio
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.util.PEReader.PEVersion
+import jetbrains.buildServer.visualStudio.VisualStudioInstance
+import jetbrains.buildServer.visualStudio.VisualStudioInstanceParser
+import jetbrains.buildServer.visualStudio.VisualStudioFileSystemProvider
+import jetbrains.buildServer.visualStudio.VisualStudioPackagesLocator
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -17,14 +19,14 @@ import java.io.File
 import java.io.InputStream
 import java.io.PipedInputStream
 
-class VisualStudioLocatorTest {
+class VisualStudioFileSystemProviderTest {
     @MockK private lateinit var _visualStudioPackagesLocator1: VisualStudioPackagesLocator
     @MockK private lateinit var _visualStudioPackagesLocator2: VisualStudioPackagesLocator
     @MockK private lateinit var _visualStudioInstancesParser: VisualStudioInstanceParser
     private val _inputStream1: InputStream = PipedInputStream()
     private val _inputStream2: InputStream = PipedInputStream()
-    private val _visualStudioInstance1: VisualStudioInstance = VisualStudioInstance("1", "", "")
-    private val _visualStudioInstance2: VisualStudioInstance = VisualStudioInstance("2", "", "")
+    private val _visualStudioInstance1: VisualStudioInstance = VisualStudioInstance(File("a1"), Version.Empty, Version.Empty)
+    private val _visualStudioInstance2: VisualStudioInstance = VisualStudioInstance(File("a2"), Version.Empty, Version.Empty)
 
     @BeforeMethod
     fun setUp() {
@@ -190,12 +192,12 @@ class VisualStudioLocatorTest {
         every { _visualStudioInstancesParser.tryParse(_inputStream2) } returns visualStudioInstance2
 
         // When
-        val actualInstances = locator.instances.toList()
+        val actualInstances = locator.getInstances().toList()
 
         // Then
         Assert.assertEquals(actualInstances, expectedInstances)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            VisualStudioLocatorImpl(listOf(_visualStudioPackagesLocator1, _visualStudioPackagesLocator2), fileSystemService, _visualStudioInstancesParser)
+            VisualStudioFileSystemProvider(listOf(_visualStudioPackagesLocator1, _visualStudioPackagesLocator2), fileSystemService, _visualStudioInstancesParser)
 }

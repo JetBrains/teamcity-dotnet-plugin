@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.Environment
 import org.apache.log4j.Logger

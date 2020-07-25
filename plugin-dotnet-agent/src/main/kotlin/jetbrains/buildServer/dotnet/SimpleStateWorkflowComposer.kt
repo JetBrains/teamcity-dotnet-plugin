@@ -18,10 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.filter
-import jetbrains.buildServer.rx.map
 import jetbrains.buildServer.rx.observer
-import jetbrains.buildServer.rx.use
 
 class SimpleStateWorkflowComposer(
         private val _virtualContext: VirtualContext,

@@ -10,7 +10,7 @@ class DotnetFrameworksProviderImpl(
         private val _registryVisitors: List<DotnetFrameworksWindowsRegistryVisitor>,
         private val _dotnetFrameworkValidator: DotnetFrameworkValidator)
     : DotnetFrameworksProvider {
-    @Cacheable("dotnetFrameworks")
+    @Cacheable("ListOfDotnetFramework")
     override fun getFrameworks() =
             _registryVisitors
                     .asSequence()

@@ -12,7 +12,7 @@ import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner
 import jetbrains.buildServer.dotnet.EnvironmentVariables
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

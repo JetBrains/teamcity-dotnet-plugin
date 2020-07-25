@@ -6,5 +6,7 @@ import java.io.File
 
 class PEReaderImpl : PEReader {
     override fun tryGetProductVersion(file: File) =
-        PEUtil.getProductVersion(file)
+        PEUtil.getProductVersion(file)?.let {
+            Version(it.p1, it.p2, it.p3, it.p4)
+        } ?: Version.Empty
 }

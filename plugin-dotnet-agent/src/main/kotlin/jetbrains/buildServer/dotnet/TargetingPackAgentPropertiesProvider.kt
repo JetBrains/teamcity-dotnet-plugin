@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.AgentPropertyType
 import org.apache.log4j.Logger
 

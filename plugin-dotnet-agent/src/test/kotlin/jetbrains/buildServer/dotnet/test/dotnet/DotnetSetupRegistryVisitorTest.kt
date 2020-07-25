@@ -5,9 +5,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -36,7 +34,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,0,30729,4926), File(_root, "v3.0"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0"))
                         )
                 ),
                 arrayOf(
@@ -80,7 +78,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "V3.0" + "VersioN", WindowsRegistryValueType.Str, "3.0.30729.4926")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,0,30729,4926), File(_root, "v3.0"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0"))
                         )
                 ),
                 arrayOf(
@@ -89,7 +87,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926), File(_root, "v3.5"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File(_root, "v3.5"))
                         )
                 ),
                 arrayOf(
@@ -106,7 +104,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
                         )
                 ),
                 arrayOf(
@@ -116,7 +114,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926),  File(_root, "v3.5"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
                         )
                 ),
                 arrayOf(
@@ -126,7 +124,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "   ")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926),  File(_root, "v3.5"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
                         )
                 ),
                 arrayOf(
@@ -136,7 +134,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Int, 1L)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926),  File(_root, "v3.5"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
                         )
                 ),
                 arrayOf(
@@ -146,7 +144,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "V3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
                         )
                 ),
                 arrayOf(
@@ -157,8 +155,8 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3,0,30729,4926), File(_root, "v3.0")),
-                                DotnetFramework(_key.bitness.platform, Version(3,5,30729,4926), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0")),
+                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
                         )
                 ),
                 // v4
@@ -171,7 +169,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4,8,4084), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(4, 8, 4084), File("abc"))
                         )
                 ),
                 arrayOf(
@@ -181,7 +179,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4,8), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
                         )
                 ),
                 arrayOf(
@@ -208,7 +206,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4,8,4084), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(4, 8, 4084), File("abc"))
                         )
                 ),
                 arrayOf(

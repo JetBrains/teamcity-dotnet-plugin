@@ -20,8 +20,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.AgentPropertyType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.rx.Disposable
-import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger
 import java.io.File
 

@@ -19,7 +19,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.dotnet.DotnetSdk
 import jetbrains.buildServer.dotnet.DotnetSdksProviderImpl
-import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.Test
@@ -45,9 +45,9 @@ class DotnetSdksProviderTest {
         Assert.assertEquals(
                 actualSdks,
                 listOf(
-                        DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2,3)),
+                        DotnetSdk(File(File("dotnet", "sdk"), "1.2.3"), Version(1, 2, 3)),
                         DotnetSdk(File(File("dotnet", "sdk"), "1.2.3-rc"), Version.parse("1.2.3-rc")),
-                        DotnetSdk(File(File("dotnet", "sdk"), "1.2.5"), Version(1, 2,5))
+                        DotnetSdk(File(File("dotnet", "sdk"), "1.2.5"), Version(1, 2, 5))
                 ))
     }
 
