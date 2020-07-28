@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -46,9 +46,9 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version(1, 2, 3), File("dotnetPath"))
                         ),
                         sequenceOf(
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.3"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2.3_x64_Path", "dotnetPath")
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.3"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2.3_x64_Path", "dotnetPath")
                         )
                 ),
                 arrayOf(
@@ -56,9 +56,9 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version.parse("1.2.03"), File("dotnetPath"))
                         ),
                         sequenceOf(
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath")
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath")
                         )
                 ),
                 arrayOf(
@@ -70,12 +70,12 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version.parse("4.9"), File("dotnetPath"))
                         ),
                         sequenceOf(
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9_x64", "4.9.023"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9.023_x64_Path", "dotnetPath")
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9_x64", "4.9.023"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9.023_x64_Path", "dotnetPath")
                         )
                 ),
                 arrayOf(
@@ -88,15 +88,15 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version.parse("4.9"), File("dotnetPath"))
                         ),
                         sequenceOf(
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.0_x86", "4.0.1"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.0_x86_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.0.1_x86_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9_x64", "4.9.023"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9_x64_Path", "dotnetPath"),
-                                AgentProperty(AgentPropertyType.DotNetFramework, "DotNetFramework4.9.023_x64_Path", "dotnetPath")
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.0_x86", "4.0.1"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.0_x86_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.0.1_x86_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64", "1.2.03"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework1.2.03_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9_x64", "4.9.023"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9_x64_Path", "dotnetPath"),
+                                AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework4.9.023_x64_Path", "dotnetPath")
                         )
                 )
         )

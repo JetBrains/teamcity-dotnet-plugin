@@ -2,17 +2,21 @@ package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.agent.runner.ToolInstanceFactory
+import jetbrains.buildServer.agent.runner.ToolInstanceProvider
+import jetbrains.buildServer.dotnet.Platform
 import org.apache.log4j.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
 class VisualStudioRegistryProvider(
         private val _windowsRegistry: WindowsRegistry,
-        private val _visualStudioInstanceFactory: VisualStudioInstanceFactory)
-    : VisualStudioProvider {
+        private val _visualStudioInstanceFactory: ToolInstanceFactory)
+    : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioFromRegistry")
-    override fun getInstances(): Sequence<VisualStudioInstance> {
-        val instances = mutableSetOf<VisualStudioInstance>()
+    override fun getInstances(): Sequence<ToolInstance> {
+        val instances = mutableSetOf<ToolInstance>()
         _windowsRegistry.get(
                 RegKey,
                 object : WindowsRegistryVisitor {
@@ -30,12 +34,12 @@ class VisualStudioRegistryProvider(
                                 value.type == WindowsRegistryValueType.Str
                                 && value.text.isNotBlank()
                                 && "InstallDir".equals(parts[1], true)) {
-                            var version = Version.parse(parts[0])
-                            if (version == Version.Empty) {
+                            var baseVersion = Version.parse(parts[0])
+                            if (baseVersion == Version.Empty) {
                                 LOG.debug("Cannot parse version from ${parts[0]}")
                             }
                             else {
-                                _visualStudioInstanceFactory.tryCreate(File(value.text), version)?.let {
+                                _visualStudioInstanceFactory.tryCreate(File(value.text), baseVersion, Platform.Default)?.let {
                                     LOG.debug("Found $it");
                                     instances.add(it)
                                 }

@@ -5,9 +5,11 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.visualStudio.VisualStudioInstance
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.visualStudio.VisualStudioInstanceParser
 import jetbrains.buildServer.visualStudio.VisualStudioFileSystemProvider
 import jetbrains.buildServer.visualStudio.VisualStudioPackagesLocator
@@ -25,8 +27,8 @@ class VisualStudioFileSystemProviderTest {
     @MockK private lateinit var _visualStudioInstancesParser: VisualStudioInstanceParser
     private val _inputStream1: InputStream = PipedInputStream()
     private val _inputStream2: InputStream = PipedInputStream()
-    private val _visualStudioInstance1: VisualStudioInstance = VisualStudioInstance(File("a1"), Version.Empty, Version.Empty)
-    private val _visualStudioInstance2: VisualStudioInstance = VisualStudioInstance(File("a2"), Version.Empty, Version.Empty)
+    private val _visualStudioInstance1: ToolInstance = ToolInstance(ToolInstanceType.VisualStudio, File("a1"), Version.Empty, Version.Empty, Platform.Default)
+    private val _visualStudioInstance2: ToolInstance = ToolInstance(ToolInstanceType.VisualStudio, File("a2"), Version.Empty, Version.Empty, Platform.Default)
 
     @BeforeMethod
     fun setUp() {
@@ -143,7 +145,7 @@ class VisualStudioFileSystemProviderTest {
                         "ProgramData/Microsoft/VisualStudio/Packages2",
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        emptyList<VisualStudioInstance>()
+                        emptyList<ToolInstance>()
                 ),
                 arrayOf(
                         VirtualFileSystemService()
@@ -153,7 +155,7 @@ class VisualStudioFileSystemProviderTest {
                         null,
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        emptyList<VisualStudioInstance>()
+                        emptyList<ToolInstance>()
                 ),
                 arrayOf(
                         VirtualFileSystemService(),
@@ -161,7 +163,7 @@ class VisualStudioFileSystemProviderTest {
                         null,
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        emptyList<VisualStudioInstance>()
+                        emptyList<ToolInstance>()
                 ),
                 arrayOf(
                         VirtualFileSystemService()
@@ -181,9 +183,9 @@ class VisualStudioFileSystemProviderTest {
             fileSystemService: FileSystemService,
             packagesPath1: String?,
             packagesPath2: String?,
-            visualStudioInstance1: VisualStudioInstance?,
-            visualStudioInstance2: VisualStudioInstance?,
-            expectedInstances: List<VisualStudioInstance>) {
+            visualStudioInstance1: ToolInstance?,
+            visualStudioInstance2: ToolInstance?,
+            expectedInstances: List<ToolInstance>) {
         // Given
         val locator = createInstance(fileSystemService)
         every { _visualStudioPackagesLocator1.tryGetPackagesPath() } returns packagesPath1

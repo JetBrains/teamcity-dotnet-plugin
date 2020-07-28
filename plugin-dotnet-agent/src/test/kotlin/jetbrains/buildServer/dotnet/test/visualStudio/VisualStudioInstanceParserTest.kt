@@ -5,13 +5,15 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.JsonParser
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser.CatalogInfo
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser.Companion.TeamExplorerProductId
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser.ProductInfo
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser.VisualStudioState
-import jetbrains.buildServer.visualStudio.VisualStudioInstance
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.visualStudio.VisualStudioInstanceParser
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -46,7 +48,7 @@ class VisualStudioInstanceParserTest {
                             it.launchParams!!.fileName = File(File(File("Common7"), "IDE2"), "devenv.exe").path
                             it
                         },
-                        VisualStudioInstance(File(File(File("path"), "Common7"), "IDE2"), Version(16, 6, 3), Version(2019))
+                        ToolInstance(ToolInstanceType.VisualStudio, File(File(File("path"), "Common7"), "IDE2"), Version(16, 6, 3), Version(2019), Platform.Default)
                 ),
                 arrayOf(
                         VisualStudioState().let {
@@ -58,7 +60,7 @@ class VisualStudioInstanceParserTest {
                             it.product!!.id = "abc"
                             it
                         },
-                        VisualStudioInstance(_path, Version(16, 6, 3), Version(2019))
+                        ToolInstance(ToolInstanceType.VisualStudio, _path, Version(16, 6, 3), Version(2019), Platform.Default)
                 ),
                 arrayOf(
                         VisualStudioState().let {
@@ -71,7 +73,7 @@ class VisualStudioInstanceParserTest {
                             it.product!!.id = "abc"
                             it
                         },
-                        VisualStudioInstance(_path, Version.Empty, Version(2019))
+                        ToolInstance(ToolInstanceType.VisualStudio, _path, Version.Empty, Version(2019), Platform.Default)
                 ),
                 arrayOf(
                         VisualStudioState().let {
@@ -82,7 +84,7 @@ class VisualStudioInstanceParserTest {
                             it.product = ProductInfo()
                             it
                         },
-                        VisualStudioInstance(_path, Version(16, 6, 3), Version(2019))
+                        ToolInstance(ToolInstanceType.VisualStudio, _path, Version(16, 6, 3), Version(2019), Platform.Default)
                 ),
                 arrayOf(
                         VisualStudioState().let {
@@ -149,7 +151,7 @@ class VisualStudioInstanceParserTest {
     }
 
     @Test(dataProvider = "getParseData")
-    fun shouldParse(visualStudioState: VisualStudioState, expectedInstance: VisualStudioInstance?) {
+    fun shouldParse(visualStudioState: VisualStudioState, expectedInstance: ToolInstance?) {
         // Given
         val parser = createInstance()
         every { _jsonParser.tryParse<VisualStudioState>(any(), VisualStudioState::class.java) } returns visualStudioState

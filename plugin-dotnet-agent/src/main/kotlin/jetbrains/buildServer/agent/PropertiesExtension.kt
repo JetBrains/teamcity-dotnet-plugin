@@ -1,9 +1,5 @@
 package jetbrains.buildServer.agent
 
-import jetbrains.buildServer.agent.runner.AgentPropertyType
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import org.apache.log4j.Logger
@@ -20,8 +16,8 @@ class PropertiesExtension(
                         for (property in agentPropertiesProvider.properties) {
                             var name = property.name
 
-                            if (property.type != AgentPropertyType.DotNetCLI && property.type != AgentPropertyType.DotNetSDK) {
-                                name = name + "_Test_" + property.type.name + "_from_" + agentPropertiesProvider.desription.replace(' ', '_')
+                            if (property.toolType != ToolInstanceType.DotNetCLI && property.toolType != ToolInstanceType.DotNetSDK) {
+                                name = name + "_Test_" + property.toolType.name + "_from_" + agentPropertiesProvider.desription.replace(' ', '_')
                             }
 
                             val prevValue = configuration.configurationParameters.get(name)

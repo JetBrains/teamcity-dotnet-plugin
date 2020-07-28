@@ -1,5 +1,3 @@
 package jetbrains.buildServer.agent
 
-import jetbrains.buildServer.agent.runner.AgentPropertyType
-
-data class AgentProperty(val type: AgentPropertyType, val name: String, val value: String)
+data class AgentProperty(val toolType: ToolInstanceType, val name: String, val value: String)

@@ -6,10 +6,12 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.visualStudio.VisualStudioInstance
-import jetbrains.buildServer.visualStudio.VisualStudioInstanceFactoryImpl
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.dotnet.Platform
+import jetbrains.buildServer.visualStudio.VisualStudioInstanceFactory
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -33,63 +35,63 @@ class VisualStudioInstanceFactoryTest {
                         Version(15, 3, 0),
                         File("path"),
                         Version(15, 0),
-                        VisualStudioInstance(File("path"), Version(15, 3, 0), Version.parse("2017"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(15, 3, 0), Version.parse("2017"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(14, 0, 1, 3),
                         File("path"),
                         Version(14, 0),
-                        VisualStudioInstance(File("path"), Version(14, 0, 1, 3), Version.parse("2015"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(14, 0, 1, 3), Version.parse("2015"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(12, 1, 2),
                         File("path"),
                         Version(12, 0),
-                        VisualStudioInstance(File("path"), Version(12, 1, 2), Version.parse("2013"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(12, 1, 2), Version.parse("2013"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(11),
                         File("path"),
                         Version(11, 0),
-                        VisualStudioInstance(File("path"), Version(11), Version.parse("2012"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(11), Version.parse("2012"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(10, 0),
                         File("path"),
                         Version(10, 0),
-                        VisualStudioInstance(File("path"), Version(10, 0), Version.parse("2010"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(10, 0), Version.parse("2010"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(9, 0, 0),
                         File("path"),
                         Version(9, 0),
-                        VisualStudioInstance(File("path"), Version(9, 0, 0), Version.parse("2008"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(9, 0, 0), Version.parse("2008"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(8, 0, 1),
                         File("path"),
                         Version(8, 0),
-                        VisualStudioInstance(File("path"), Version(8, 0, 1), Version.parse("2005"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(8, 0, 1), Version.parse("2005"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(7, 1, 2),
                         File("path"),
                         Version(7, 1),
-                        VisualStudioInstance(File("path"), Version(7, 1, 2), Version.parse("2003"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(7, 1, 2), Version.parse("2003"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(11, 0, 7),
                         File("path"),
                         Version.Empty,
-                        VisualStudioInstance(File("path"), Version(11, 0, 7), Version.parse("2012"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(11, 0, 7), Version.parse("2012"), Platform.Default)
                 ),
                 // Cannot get a product version
                 arrayOf(
@@ -97,21 +99,21 @@ class VisualStudioInstanceFactoryTest {
                         Version.Empty,
                         File("path"),
                         Version(11, 0),
-                        VisualStudioInstance(File("path"), Version(11, 0), Version.parse("2012"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(11, 0), Version.parse("2012"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(11, 0, 1),
                         File("path"),
                         Version(11, 0),
-                        VisualStudioInstance(File("path"), Version(11, 0, 1), Version.parse("2012"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(11, 0, 1), Version.parse("2012"), Platform.Default)
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File(File("path"), "devenv.exe")),
                         Version(11, 0, 1),
                         File("path"),
                         Version(11, 0),
-                        VisualStudioInstance(File("path"), Version(11, 0, 1), Version.parse("2012"))
+                        ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(11, 0, 1), Version.parse("2012"), Platform.Default)
                 ),
                 // Cannot find a product line version
                 arrayOf(
@@ -169,20 +171,19 @@ class VisualStudioInstanceFactoryTest {
             fileSystemService: FileSystemService,
             peVersion: Version,
             path: File,
-            version: Version,
-            expectedInstance: VisualStudioInstance?) {
+            baseVersion: Version,
+            expectedInstance: ToolInstance?) {
         // Given
         val factory = createInstance(fileSystemService)
-        every { _peReader.tryGetProductVersion(File(File("path"), "devenv.exe")) }.returns(peVersion)
 
         // When
-        every { _peReader.tryGetProductVersion(File(path, "devenv.exe")) } returns peVersion
-        val actualInstance = factory.tryCreate(path, version)
+        every { _peReader.tryGetVersion(File(path, "devenv.exe")) } returns peVersion
+        val actualInstance = factory.tryCreate(path, baseVersion, Platform.Default)
 
         // Then
         Assert.assertEquals(actualInstance, expectedInstance)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            VisualStudioInstanceFactoryImpl(fileSystemService, _peReader)
+            VisualStudioInstanceFactory(fileSystemService, _peReader)
 }

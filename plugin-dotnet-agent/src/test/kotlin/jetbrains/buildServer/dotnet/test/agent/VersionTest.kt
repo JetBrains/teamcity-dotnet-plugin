@@ -124,6 +124,7 @@ class VersionTest {
         return arrayOf(
                 arrayOf("", Version.Empty),
                 arrayOf("1", Version(1)),
+                arrayOf("10.0-A", Version(10, 0, 0, "A")),
                 arrayOf("1.23.99", Version(1, 23, 99)),
                 arrayOf("abc", Version.Empty),
                 arrayOf("abc.xyz", Version.Empty),

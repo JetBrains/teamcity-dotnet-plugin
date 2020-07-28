@@ -184,11 +184,36 @@
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="visualStudioFileSystemProvider"/>
+        <ref bean="visualStudioRegistryProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkRegistryAgentPropertiesProvider" id="dotnetFrameworkRegistryAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.TargetingPackFileSystemAgentPropertiesProvider" id="targetingPackFileSystemAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.TargetingPackAgentPropertiesProvider" id="targetingPackAgentPropertiesProvider"/>
-  <bean class="jetbrains.buildServer.visualStudio.VisualStudioAgentPropertiesProvider" id="visualStudioAgentPropertiesProvider"/>
+  <bean class="jetbrains.buildServer.visualStudio.VisualStudioAgentPropertiesProvider" id="visualStudioAgentPropertiesProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="visualStudioFileSystemProvider"/>
+        <ref bean="visualStudioRegistryProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkSdkAgentPropertiesProvider" id="dotnetFrameworkSdkAgentPropertiesProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="sdkRegistryProvider"/>
+        <ref bean="dotnetFrameworkSdkRegistryProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.WindowsSdkAgentPropertiesProvider" id="windowsSdkAgentPropertiesProvider">
+    <constructor-arg ref="sdkRegistryProvider"/>
+  </bean>
 
   <bean class="jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser"/>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioPackagesRegistryLocator" id="visualStudioPackagesRegistryLocator"/>
@@ -201,14 +226,23 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider" id="visualStudioRegistryProvider"/>
+  <bean class="jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider" id="visualStudioRegistryProvider">
+    <constructor-arg ref="visualStudioInstanceFactory"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworksEnvironmentImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetPolicyRegistryVisitor" scope="prototype" id="dotnetPolicyRegistryVisitor"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetSetupRegistryVisitor" scope="prototype" id="dotnetSetupRegistryVisitor"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworksProviderImpl"/>
-  <bean class="jetbrains.buildServer.visualStudio.VisualStudioInstanceFactoryImpl"/>
+  <bean class="jetbrains.buildServer.visualStudio.VisualStudioInstanceFactory" id="visualStudioInstanceFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkSdkRegistryProvider" id="dotnetFrameworkSdkRegistryProvider">
+    <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.SdkRegistryProvider" id="sdkRegistryProvider">
+    <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkSdkInstanceFactory" id="dotnetFrameworkSdkInstanceFactory"/>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>

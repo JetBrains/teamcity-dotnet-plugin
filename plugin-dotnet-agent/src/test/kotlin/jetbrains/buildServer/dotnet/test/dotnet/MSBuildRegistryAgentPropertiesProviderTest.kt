@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -95,8 +95,8 @@ class MSBuildRegistryAgentPropertiesProviderTest {
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(
-                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools12.0_x64_Path", "msbuild12"),
-                        AgentProperty(AgentPropertyType.MSBuildTool, "MSBuildTools17.0_x86_Path", "msbuild17")))
+                        AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools12.0_x64_Path", "msbuild12"),
+                        AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools17.0_x86_Path", "msbuild17")))
     }
 
     private fun createInstance() =

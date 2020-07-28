@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.TargetingPackFileSystemAgentPropertiesProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
@@ -42,14 +42,14 @@ class TargetingPackFileSystemAgentPropertiesProviderTest {
                         VirtualFileSystemService()
                                 .addFile(_v35_86),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack3.5_Path", File(_base86, "v3.5").path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack3.5_Path", File(_base86, "v3.5").path)
                         )
                 ),
                 arrayOf(
                         VirtualFileSystemService()
                                 .addFile(_v471_64),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base64, ".NETFramework"), "v4.7.1").path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base64, ".NETFramework"), "v4.7.1").path)
                         )
                 ),
                 arrayOf(
@@ -57,14 +57,14 @@ class TargetingPackFileSystemAgentPropertiesProviderTest {
                                 .addFile(_v471_86)
                                 .addFile(_v471_64),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base86, ".NETFramework"), "v4.7.1").path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base86, ".NETFramework"), "v4.7.1").path)
                         )
                 ),
                 arrayOf(
                         VirtualFileSystemService()
                                 .addFile(_v4X_86),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack4.X_Path", File(File(_base86, ".NETFramework"), "v4.X").path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack4.X_Path", File(File(_base86, ".NETFramework"), "v4.X").path)
                         )
                 )
                 ,
@@ -75,9 +75,9 @@ class TargetingPackFileSystemAgentPropertiesProviderTest {
                                 .addFile(_v471_64)
                                 .addFile(_v4X_86),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack3.5_Path", File(_base86, "v3.5").path),
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base86, ".NETFramework"), "v4.7.1").path),
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack4.X_Path", File(File(_base86, ".NETFramework"), "v4.X").path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack3.5_Path", File(_base86, "v3.5").path),
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack4.7.1_Path", File(File(_base86, ".NETFramework"), "v4.7.1").path),
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack4.X_Path", File(File(_base86, ".NETFramework"), "v4.X").path)
                         )
                 ),
                 arrayOf(

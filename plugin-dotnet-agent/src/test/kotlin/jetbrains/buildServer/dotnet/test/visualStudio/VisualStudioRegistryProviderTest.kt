@@ -5,8 +5,9 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.visualStudio.VisualStudioInstance
-import jetbrains.buildServer.visualStudio.VisualStudioInstanceFactory
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.agent.runner.ToolInstanceFactory
+import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -16,7 +17,7 @@ import java.io.File
 
 class VisualStudioRegistryProviderTest {
     @MockK private lateinit var _windowsRegistry: WindowsRegistry
-    @MockK private lateinit var _visualStudioInstanceFactory: VisualStudioInstanceFactory
+    @MockK private lateinit var _visualStudioInstanceFactory: ToolInstanceFactory
 
     @BeforeMethod
     fun setUp() {
@@ -32,7 +33,7 @@ class VisualStudioRegistryProviderTest {
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir", WindowsRegistryValueType.Str, "path")
                         ),
                         sequenceOf(
-                                VisualStudioInstance(File("path"), Version(10, 0), Version(10, 0))
+                                ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(10, 0), Version(10, 0), Platform.Default)
                         )
                 ),
                 arrayOf(
@@ -41,44 +42,44 @@ class VisualStudioRegistryProviderTest {
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "11.1" + "InstallDir", WindowsRegistryValueType.Str, "path2")
                         ),
                         sequenceOf(
-                                VisualStudioInstance(File("path"), Version(10, 0), Version(10, 0))
+                                ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(10, 0), Version(10, 0), Platform.Default)
                         )
                 ),
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir", WindowsRegistryValueType.Str, "path3")
                         ),
-                        emptySequence<VisualStudioInstance>()
+                        emptySequence<ToolInstance>()
                 ),
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir2", WindowsRegistryValueType.Str, "path")
                         ),
-                        emptySequence<VisualStudioInstance>()
+                        emptySequence<ToolInstance>()
                 ),
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir", WindowsRegistryValueType.Int, 101)
                         ),
-                        emptySequence<VisualStudioInstance>()
+                        emptySequence<ToolInstance>()
                 ),
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10a0" + "InstallDir", WindowsRegistryValueType.Str, "path")
                         ),
-                        emptySequence<VisualStudioInstance>()
+                        emptySequence<ToolInstance>()
                 ),
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "abc" + "InstallDir", WindowsRegistryValueType.Str, "path")
                         ),
-                        emptySequence<VisualStudioInstance>()
+                        emptySequence<ToolInstance>()
                 )
         )
     }
 
     @Test(dataProvider = "testDataValues")
-    fun shouldProvideInstances(registryValues: Sequence<WindowsRegistryValue>, expectedInstances: Sequence<VisualStudioInstance>) {
+    fun shouldProvideInstances(registryValues: Sequence<WindowsRegistryValue>, expectedInstances: Sequence<ToolInstance>) {
         // Given
         val instanceProvider = createInstance()
 
@@ -92,8 +93,8 @@ class VisualStudioRegistryProviderTest {
             }
         }
 
-        every { _visualStudioInstanceFactory.tryCreate(any(), any()) } answers { VisualStudioInstance(arg<File>(0), arg<Version>(1), arg<Version>(1)) }
-        every { _visualStudioInstanceFactory.tryCreate(File("path3"), any()) } returns null
+        every { _visualStudioInstanceFactory.tryCreate(any(), any(), Platform.Default) } answers { ToolInstance(ToolInstanceType.VisualStudio, arg<File>(0), arg<Version>(1), arg<Version>(1), Platform.Default) }
+        every { _visualStudioInstanceFactory.tryCreate(File("path3"), any(), Platform.Default) } returns null
 
         val actualInstances = instanceProvider.getInstances()
 

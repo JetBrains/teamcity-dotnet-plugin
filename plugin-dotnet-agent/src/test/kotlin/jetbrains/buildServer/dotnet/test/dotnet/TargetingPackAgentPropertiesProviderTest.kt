@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Version
-import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -32,7 +32,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x86, Version(2, 0), _path)
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -40,7 +40,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version(2, 0), _path)
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -48,7 +48,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x64, Version(2, 0, 1), _path)
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -57,7 +57,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x86, Version(2, 0), File("abc"))
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -65,7 +65,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x86, Version(2, 0, 1), _path)
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -73,7 +73,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x86, Version(2, 0, 1, 3), _path)
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(
@@ -82,7 +82,7 @@ class TargetingPackAgentPropertiesProviderTest {
                                 DotnetFramework(Platform.x86, Version(2, 0, 1), File("abc"))
                         ),
                         listOf(
-                                AgentProperty(AgentPropertyType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
+                                AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack2.0_Path", _path.path)
                         )
                 ),
                 arrayOf(

@@ -2,12 +2,12 @@ package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.Version
-import jetbrains.buildServer.agent.runner.AgentPropertyType
+import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import org.apache.log4j.Logger
 
 class VisualStudioAgentPropertiesProvider(
-        private val _visualStudioProviders: List<VisualStudioProvider>)
+        private val _visualStudioProviders: List<ToolInstanceProvider>)
     : AgentPropertiesProvider {
 
     override val desription = "Visual Studio"
@@ -16,13 +16,13 @@ class VisualStudioAgentPropertiesProvider(
             _visualStudioProviders
                     .asSequence()
                     .flatMap { it.getInstances() }
-                    .distinctBy { it.productLineVersion }
+                    .distinctBy { it.baseVersion }
                     .flatMap {
                         visualStudio ->
                         LOG.info("Found ${visualStudio}.")
                         sequence {
-                            yield(AgentProperty(AgentPropertyType.VisualStudio, "VS${visualStudio.productLineVersion}", "${visualStudio.displayVersion}"))
-                            yield(AgentProperty(AgentPropertyType.VisualStudio, "VS${visualStudio.productLineVersion}_Path", visualStudio.installationPath.path))
+                            yield(AgentProperty(ToolInstanceType.VisualStudio, "VS${visualStudio.baseVersion}", "${visualStudio.detailedVersion}"))
+                            yield(AgentProperty(ToolInstanceType.VisualStudio, "VS${visualStudio.baseVersion}_Path", visualStudio.installationPath.path))
                         }
                     }
 

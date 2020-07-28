@@ -22,7 +22,7 @@ class Version private constructor(
         val digits: Int,
         val patch: Int,
         val build: Int = 0,
-        private val release: String? = null,
+        val release: String? = null,
         private val metadata: String? = null,
         private val text: String? = null)
     : Comparable<Version> {

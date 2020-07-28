@@ -1,7 +1,10 @@
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.JsonParser
+import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.dotnet.Platform
 import org.apache.log4j.Logger
 import java.io.BufferedReader
 import java.io.File
@@ -9,7 +12,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : VisualStudioInstanceParser {
-    override fun tryParse(stream: InputStream): VisualStudioInstance? {
+    override fun tryParse(stream: InputStream): ToolInstance? {
         BufferedReader(InputStreamReader(stream)).use {
             val state = _jsonParser.tryParse<VisualStudioState>(it, VisualStudioState::class.java)
             val installationPath = state?.installationPath;
@@ -27,10 +30,12 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
                 return null
             }
 
-            return VisualStudioInstance(
+            return ToolInstance(
+                    ToolInstanceType.VisualStudio,
                     File(File(installationPath), fileName).parentFile,
                     Version.parse(displayVersion),
-                    Version.parse(productLineVersion))
+                    Version.parse(productLineVersion),
+                    Platform.Default)
         }
     }
 

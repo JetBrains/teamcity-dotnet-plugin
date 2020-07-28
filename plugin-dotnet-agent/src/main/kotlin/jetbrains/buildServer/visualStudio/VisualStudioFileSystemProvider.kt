@@ -1,6 +1,8 @@
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ToolInstance
+import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import org.apache.log4j.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
@@ -9,9 +11,9 @@ class VisualStudioFileSystemProvider(
         private val _packagesLocators: List<VisualStudioPackagesLocator>,
         private val _fileSystemService: FileSystemService,
         private val _visualStudioInstancesParser: VisualStudioInstanceParser)
-    : VisualStudioProvider {
+    : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioFromFileSystem")
-    override fun getInstances(): Sequence<VisualStudioInstance> =
+    override fun getInstances(): Sequence<ToolInstance> =
             _packagesLocators
                     // C:\ProgramData\Microsoft\VisualStudio\Packages
                     .mapNotNull { it.tryGetPackagesPath() }
@@ -39,7 +41,7 @@ class VisualStudioFileSystemProvider(
                     .filter { "state.json".equals(it.name, true) }
                     // parse state.json
                     .mapNotNull {
-                        var instance: VisualStudioInstance? = null
+                        var instance: ToolInstance? = null
                         LOG.debug("Parsing \"$it\".")
                         try {
                             _fileSystemService.read(it) {
