@@ -12,9 +12,11 @@ import java.io.File
 
 class VisualStudioRegistryProvider(
         private val _windowsRegistry: WindowsRegistry,
-        private val _visualStudioInstanceFactory: ToolInstanceFactory)
+        private val _visualStudioInstanceFactory: ToolInstanceFactory,
+        private val _visualStudioTestConsoleInstanceFactory: ToolInstanceFactory,
+        private val _msTestConsoleInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
-    @Cacheable("ListOfVisualStuioFromRegistry")
+    @Cacheable("ListOfVisualStuioAndTestFromRegistry")
     override fun getInstances(): Sequence<ToolInstance> {
         val instances = mutableSetOf<ToolInstance>()
         _windowsRegistry.get(
@@ -24,6 +26,7 @@ class VisualStudioRegistryProvider(
                         val version = Version.parse(key.parts.last())
                         if (version != Version.Empty && version.digits == 2) {
                             _windowsRegistry.get(key, this, false)
+                            _windowsRegistry.get(key + "EnterpriseTools" + "QualityTools", this, false)
                         }
 
                         return true
@@ -34,18 +37,28 @@ class VisualStudioRegistryProvider(
                                 value.type == WindowsRegistryValueType.Str
                                 && value.text.isNotBlank()
                                 && "InstallDir".equals(parts[1], true)) {
-                            var baseVersion = Version.parse(parts[0])
-                            if (baseVersion == Version.Empty) {
-                                LOG.debug("Cannot parse version from ${parts[0]}")
-                            }
-                            else {
-                                _visualStudioInstanceFactory.tryCreate(File(value.text), baseVersion, Platform.Default)?.let {
-                                    LOG.debug("Found $it");
+                            if ("QualityTools".equals(parts[0], true)) {
+                                _visualStudioTestConsoleInstanceFactory.tryCreate(File(value.text), Version.Empty, Platform.Default)?.let {
+                                    LOG.debug("Found $it")
+                                    instances.add(it)
+                                }
+                                _msTestConsoleInstanceFactory.tryCreate(File(value.text), Version.Empty, Platform.Default)?.let {
+                                    LOG.debug("Found $it")
                                     instances.add(it)
                                 }
                             }
-
-                            return false
+                            else {
+                                var baseVersion = Version.parse(parts[0])
+                                if (baseVersion == Version.Empty || baseVersion.digits < 2
+                                ) {
+                                    LOG.debug("Cannot parse version from ${parts[0]}")
+                                } else {
+                                    _visualStudioInstanceFactory.tryCreate(File(value.text), baseVersion, Platform.Default)?.let {
+                                        LOG.debug("Found $it")
+                                        instances.add(it)
+                                    }
+                                }
+                            }
                         }
 
                         return true

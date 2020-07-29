@@ -18,6 +18,8 @@ import java.io.File
 class VisualStudioRegistryProviderTest {
     @MockK private lateinit var _windowsRegistry: WindowsRegistry
     @MockK private lateinit var _visualStudioInstanceFactory: ToolInstanceFactory
+    @MockK private lateinit var _visualStudioTestInstanceFactory: ToolInstanceFactory
+    @MockK private lateinit var _msTestConsoleInstanceFactory: ToolInstanceFactory
 
     @BeforeMethod
     fun setUp() {
@@ -31,15 +33,6 @@ class VisualStudioRegistryProviderTest {
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir", WindowsRegistryValueType.Str, "path")
-                        ),
-                        sequenceOf(
-                                ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(10, 0), Version(10, 0), Platform.Default)
-                        )
-                ),
-                arrayOf(
-                        sequenceOf(
-                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "10.0" + "InstallDir", WindowsRegistryValueType.Str, "path"),
-                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "11.1" + "InstallDir", WindowsRegistryValueType.Str, "path2")
                         ),
                         sequenceOf(
                                 ToolInstance(ToolInstanceType.VisualStudio, File("path"), Version(10, 0), Version(10, 0), Platform.Default)
@@ -74,6 +67,66 @@ class VisualStudioRegistryProviderTest {
                                 WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "abc" + "InstallDir", WindowsRegistryValueType.Str, "path")
                         ),
                         emptySequence<ToolInstance>()
+                ),
+                // VSTest
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir", WindowsRegistryValueType.Str, "path1")
+                        ),
+                        sequenceOf(
+                                ToolInstance(ToolInstanceType.VisualStudioTest, File("path1"), Version(1, 2, 3), Version(1, 2, 3), Platform.Default)
+                        )
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir", WindowsRegistryValueType.Str, "path3")
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools2" + "InstallDir", WindowsRegistryValueType.Str, "path1")
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir2", WindowsRegistryValueType.Str, "path1")
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir", WindowsRegistryValueType.Int, 11)
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                // MSTest
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir", WindowsRegistryValueType.Str, "path2")
+                        ),
+                        sequenceOf(
+                                ToolInstance(ToolInstanceType.MSTest, File("path2"), Version(1, 2, 3), Version(1, 2, 3), Platform.Default)
+                        )
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityToolsAaa" + "InstallDir", WindowsRegistryValueType.Str, "path2")
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "Abc", WindowsRegistryValueType.Str, "path2")
+                        ),
+                        emptySequence<ToolInstance>()
+                ),
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(VisualStudioRegistryProvider.RegKey + "QualityTools" + "InstallDir", WindowsRegistryValueType.Int, 12)
+                        ),
+                        emptySequence<ToolInstance>()
                 )
         )
     }
@@ -96,6 +149,12 @@ class VisualStudioRegistryProviderTest {
         every { _visualStudioInstanceFactory.tryCreate(any(), any(), Platform.Default) } answers { ToolInstance(ToolInstanceType.VisualStudio, arg<File>(0), arg<Version>(1), arg<Version>(1), Platform.Default) }
         every { _visualStudioInstanceFactory.tryCreate(File("path3"), any(), Platform.Default) } returns null
 
+        every { _visualStudioTestInstanceFactory.tryCreate(any(), Version.Empty, Platform.Default) } returns null
+        every { _visualStudioTestInstanceFactory.tryCreate(File("path1"), Version.Empty, Platform.Default) } answers { ToolInstance(ToolInstanceType.VisualStudioTest, arg<File>(0), Version(1, 2, 3), Version(1, 2, 3), Platform.Default) }
+
+        every { _msTestConsoleInstanceFactory.tryCreate(any(), Version.Empty, Platform.Default) } returns null
+        every { _msTestConsoleInstanceFactory.tryCreate(File("path2"), Version.Empty, Platform.Default) } answers { ToolInstance(ToolInstanceType.MSTest, arg<File>(0), Version(1, 2, 3), Version(1, 2, 3), Platform.Default) }
+
         val actualInstances = instanceProvider.getInstances()
 
         // Then
@@ -110,7 +169,8 @@ class VisualStudioRegistryProviderTest {
                                 VisualStudioRegistryProvider.RegKey + "10.0"
                         ),
                         sequenceOf(
-                                VisualStudioRegistryProvider.RegKey + "10.0"
+                                VisualStudioRegistryProvider.RegKey + "10.0",
+                                VisualStudioRegistryProvider.RegKey + "10.0" + "EnterpriseTools" + "QualityTools"
                         )
                 ),
                 arrayOf(
@@ -118,7 +178,8 @@ class VisualStudioRegistryProviderTest {
                                 VisualStudioRegistryProvider.RegKey + "10.1"
                         ),
                         sequenceOf(
-                                VisualStudioRegistryProvider.RegKey + "10.1"
+                                VisualStudioRegistryProvider.RegKey + "10.1",
+                                VisualStudioRegistryProvider.RegKey + "10.1" + "EnterpriseTools" + "QualityTools"
                         )
                 ),
                 arrayOf(
@@ -184,5 +245,7 @@ class VisualStudioRegistryProviderTest {
     private fun createInstance() =
             VisualStudioRegistryProvider(
                     _windowsRegistry,
-                    _visualStudioInstanceFactory)
+                    _visualStudioInstanceFactory,
+                    _visualStudioTestInstanceFactory,
+                    _msTestConsoleInstanceFactory)
 }

@@ -214,6 +214,12 @@
   <bean class="jetbrains.buildServer.dotnet.WindowsSdkAgentPropertiesProvider" id="windowsSdkAgentPropertiesProvider">
     <constructor-arg ref="sdkRegistryProvider"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioTestAgentPropertiesProvider" id="visualStudioTestAgentPropertiesProvider">
+    <constructor-arg ref="visualStudioTestProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.MSTestAgentPropertiesProvider" id="msTestAgentPropertiesProvider">
+    <constructor-arg ref="visualStudioTestProvider"/>
+  </bean>
 
   <bean class="jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser"/>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioPackagesRegistryLocator" id="visualStudioPackagesRegistryLocator"/>
@@ -228,6 +234,8 @@
   </bean>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider" id="visualStudioRegistryProvider">
     <constructor-arg ref="visualStudioInstanceFactory"/>
+    <constructor-arg ref="visualStudioTestConsoleInstanceFactory"/>
+    <constructor-arg ref="msTestConsoleInstanceFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildValidatorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkValidatorImpl"/>
@@ -243,6 +251,18 @@
     <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetFrameworkSdkInstanceFactory" id="dotnetFrameworkSdkInstanceFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioTestConsoleInstanceFactory" id="visualStudioTestConsoleInstanceFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.MSTestConsoleInstanceFactory" id="msTestConsoleInstanceFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.VisualStudioTestProvider" id="visualStudioTestProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="visualStudioFileSystemProvider"/>
+        <ref bean="visualStudioRegistryProvider"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg ref="visualStudioTestConsoleInstanceFactory"/>
+    <constructor-arg ref="msTestConsoleInstanceFactory"/>
+  </bean>
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>

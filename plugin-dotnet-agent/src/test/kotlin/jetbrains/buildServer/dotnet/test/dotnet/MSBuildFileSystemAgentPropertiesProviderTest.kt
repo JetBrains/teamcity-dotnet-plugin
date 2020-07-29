@@ -118,6 +118,16 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                         VirtualFileSystemService(),
                         emptyList<ToolInstance>(),
                         emptyList<AgentProperty>()
+                ),
+                arrayOf(
+                        VirtualFileSystemService()
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
+                        listOf(
+                                ToolInstance(ToolInstanceType.MSTest, File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty, Platform.Default),
+                                ToolInstance(ToolInstanceType.VisualStudioTest, File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty, Platform.Default)
+                        ),
+                        emptyList<AgentProperty>()
                 )
         )
     }

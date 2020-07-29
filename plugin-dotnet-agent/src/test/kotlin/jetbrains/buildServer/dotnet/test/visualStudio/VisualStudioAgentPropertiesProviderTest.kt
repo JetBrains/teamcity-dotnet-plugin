@@ -32,8 +32,14 @@ class VisualStudioAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // When
-        every { _visualStudioProvider1.getInstances() } returns sequenceOf(ToolInstance(ToolInstanceType.VisualStudio, File("path1"), Version.parse("1.2.03"), Version.parse("2019"), Platform.Default))
-        every { _visualStudioProvider2.getInstances() } returns sequenceOf(ToolInstance(ToolInstanceType.VisualStudio, File("path2"), Version.parse("1.2.03.4"), Version.parse("2003"), Platform.Default))
+        every { _visualStudioProvider1.getInstances() } returns sequenceOf(
+                ToolInstance(ToolInstanceType.VisualStudio, File("path1"), Version.parse("1.2.03"), Version.parse("2019"), Platform.Default),
+                ToolInstance(ToolInstanceType.VisualStudioTest, File("path3"), Version.parse("1.4"), Version.parse("2017"), Platform.Default)
+        )
+        every { _visualStudioProvider2.getInstances() } returns sequenceOf(
+                ToolInstance(ToolInstanceType.MSTest, File("path3"), Version.parse("1.4"), Version.parse("2017"), Platform.Default),
+                ToolInstance(ToolInstanceType.VisualStudio, File("path2"), Version.parse("1.2.03.4"), Version.parse("2003"), Platform.Default)
+        )
 
         // Then
         Assert.assertEquals(propertiesProvider.desription, "Visual Studio")

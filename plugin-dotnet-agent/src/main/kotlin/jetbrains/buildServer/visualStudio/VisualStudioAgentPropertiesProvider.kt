@@ -16,6 +16,7 @@ class VisualStudioAgentPropertiesProvider(
             _visualStudioProviders
                     .asSequence()
                     .flatMap { it.getInstances() }
+                    .filter { it.toolType == ToolInstanceType.VisualStudio }
                     .distinctBy { it.baseVersion }
                     .flatMap {
                         visualStudio ->

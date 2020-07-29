@@ -9,4 +9,6 @@ enum class ToolInstanceType {
     DotNetFrameworkSDK,
     TargetingPack,
     WindowsSDK,
+    VisualStudioTest,
+    MSTest
 }

@@ -21,6 +21,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
         _visualStudioProviders
                 .asSequence()
                 .flatMap { it.getInstances() }
+                .filter { it.toolType == ToolInstanceType.VisualStudio }
                 // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\
                 .map {
                     LOG.debug("Goes through \"$it\".")
