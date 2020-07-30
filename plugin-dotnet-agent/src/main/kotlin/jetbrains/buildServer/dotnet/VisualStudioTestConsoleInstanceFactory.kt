@@ -14,9 +14,10 @@ class VisualStudioTestConsoleInstanceFactory(
         private val _peReader: PEReader)
     : ToolInstanceFactory {
 
-    override fun tryCreate(path: File, baseVersion2: Version, platform: Platform): ToolInstance? {
-        // CommonExtensions\Microsoft\TestWindow
-        val basePath = File(File(File(path, "CommonExtensions"), "Microsoft"), "TestWindow")
+    override fun tryCreate(path: File, baseVersion: Version, platform: Platform) =
+        tryCreate(path, platform) ?: tryCreate(File(File(File(path, "CommonExtensions"), "Microsoft"), "TestWindow"), platform)
+
+    private fun tryCreate(basePath: File, platform: Platform): ToolInstance? {
         if (!_fileSystemService.isExists(basePath) || !_fileSystemService.isDirectory(basePath)) {
             LOG.debug("Cannot find \"$basePath\".")
             return null

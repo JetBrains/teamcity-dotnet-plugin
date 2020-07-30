@@ -23,5 +23,7 @@ enum class ParameterType {
 
     Environment,
 
-    System
+    System,
+
+    Internal
 }
