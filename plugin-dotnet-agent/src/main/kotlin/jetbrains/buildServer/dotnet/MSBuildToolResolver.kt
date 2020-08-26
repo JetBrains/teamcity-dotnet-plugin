@@ -20,6 +20,7 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_DEFAULT_BITNESS
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
@@ -55,11 +56,14 @@ class MSBuildToolResolver(
                                 return ToolPath(tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x86Tool)))
                             }
                             else -> {
-                                tryGetWindowsTool(x64Tool)?.let {
-                                    return ToolPath(it)
-                                }
+                                val defaultBitness = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_DEFAULT_BITNESS)?.let {
+                                    ToolBitness.tryParse(it)
+                                } ?: ToolBitness.X86
 
-                                return ToolPath(tryGetWindowsTool(x86Tool) ?: throw RunBuildException(ToolCannotBeFoundException(x64Tool)))
+                                when(defaultBitness) {
+                                    ToolBitness.X64 -> getDefaultToolPath(x64Tool, x86Tool)
+                                    else -> getDefaultToolPath(x86Tool, x64Tool)
+                                }
                             }
                         }
                     }
@@ -73,6 +77,13 @@ class MSBuildToolResolver(
                 }
             } ?: _dotnetToolResolver.executable
 
+    private fun getDefaultToolPath(majorTool: String, minorTool: String): ToolPath {
+        tryGetWindowsTool(majorTool)?.let {
+            return ToolPath(it)
+        }
+
+        return ToolPath(tryGetWindowsTool(minorTool) ?: throw RunBuildException(ToolCannotBeFoundException(majorTool)))
+    }
 
     override val isCommandRequired: Boolean
         get() =

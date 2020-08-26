@@ -49,6 +49,8 @@ object DotnetConstants {
     const val PARAM_RSP = "dotnet.cli.rsp"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
+    // Default bitness X86 or X64, X86 - if it is not specified
+    const val PARAM_DEFAULT_BITNESS = "teamcity.internal.dotnet.default.bitness"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"
