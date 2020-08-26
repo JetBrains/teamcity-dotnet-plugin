@@ -19,5 +19,11 @@ package jetbrains.buildServer.dotnet
 enum class ToolBitness {
     Any,
     X64,
-    X86
+    X86;
+
+    companion object {
+        fun tryParse(id: String): ToolBitness? {
+            return ToolBitness.values().singleOrNull { it.name.equals(id, true) }
+        }
+    }
 }
