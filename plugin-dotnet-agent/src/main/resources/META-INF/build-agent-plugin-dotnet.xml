@@ -183,7 +183,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider" id="dotnetAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
+  <!--<bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider">
     <constructor-arg>
       <list>
@@ -219,7 +219,7 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSTestAgentPropertiesProvider" id="msTestAgentPropertiesProvider">
     <constructor-arg ref="visualStudioTestProvider"/>
-  </bean>
+  </bean>-->
 
   <bean class="jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser"/>
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioPackagesRegistryLocator" id="visualStudioPackagesRegistryLocator"/>
