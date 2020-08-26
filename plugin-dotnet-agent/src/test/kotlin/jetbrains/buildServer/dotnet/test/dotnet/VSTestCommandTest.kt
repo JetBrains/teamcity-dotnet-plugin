@@ -90,7 +90,7 @@ class VSTestCommandTest {
         return arrayOf(
                 arrayOf(listOf("my.dll") as Any, listOf(listOf("my.dll"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf("my.dll", "my2.dll") as Any, listOf(listOf("my.dll"), listOf("my2.dll"))))
+                arrayOf(listOf("my.dll", "my2.dll") as Any, listOf(listOf("my.dll", "my2.dll"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")
