@@ -3,19 +3,19 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.util.StringUtil
 
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
-    override fun convert(parameters: Sequence<MSBuildParameter>) = parameters
+    override fun convert(parameters: Sequence<MSBuildParameter>, isCommandLineParameters: Boolean) = parameters
             .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
-            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value)}" }
+            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value, isCommandLineParameters)}" }
 
-    override fun normalizeName(name: String) =
+    fun normalizeName(name: String) =
             String(
                 name.mapIndexed { index: Int, c: Char ->
                     if ( if(index == 0) isValidInitialElementNameCharacter(c) else isValidSubsequentElementNameCharacter(c) ) c else '_'
                 }.toCharArray()
             )
 
-    override fun normalizeValue(value: String): String {
-        val str = String(escapeSymbols(value.asSequence()).toList().toCharArray())
+    fun normalizeValue(value: String, isCommandLineParameter: Boolean): String {
+        val str = String(escapeSymbols(value.asSequence(), isCommandLineParameter).toList().toCharArray())
         if (str.isBlank() || str.contains(';')) {
             return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
@@ -35,9 +35,9 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         (c == '_') ||
         (c == '-')
 
-    private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
+    private fun escapeSymbols(chars: Sequence<Char>, isCommandLineParameter: Boolean): Sequence<Char> = sequence {
         for (char in chars) {
-            if (char.isLetterOrDigit() || char == ';' || char == '%') {
+            if (char.isLetterOrDigit() || (char == ';' && !isCommandLineParameter) || char == '%') {
                 yield(char)
             } else {
                 yield('%')

@@ -36,7 +36,7 @@ class ResponseFileArgumentsProvider(
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
-        val params = _msBuildParameterConverter.convert(_parametersProviders.flatMap { it.getParameters(context).toList() }.asSequence()).toList()
+        val params = _msBuildParameterConverter.convert(_parametersProviders.flatMap { it.getParameters(context).toList() }.asSequence(), false).toList()
 
         if (args.isEmpty() && params.isEmpty()) {
             return@sequence

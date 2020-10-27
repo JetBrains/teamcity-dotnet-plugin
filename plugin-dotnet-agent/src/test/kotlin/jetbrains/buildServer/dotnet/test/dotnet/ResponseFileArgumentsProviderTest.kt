@@ -65,7 +65,7 @@ class ResponseFileArgumentsProviderTest {
 
         every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1, buildParameterInvalid)
         every { parametersProvider2.getParameters(context) } returns sequenceOf(buildParameter2)
-        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(buildParameter1, buildParameterInvalid, buildParameter2)) }) } returns sequenceOf("par1", "par2")
+        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(buildParameter1, buildParameterInvalid, buildParameter2)) }, false) } returns sequenceOf("par1", "par2")
 
         every { _pathService.getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension) } returns File(rspFileName)
         val blockToken = mockk<Disposable> {

@@ -36,7 +36,7 @@ class DotnetCommonArgumentsProviderImpl(
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
         } else {
             yieldAll(_msBuildLoggerArgumentsProvider.getArguments(context))
-            yieldAll(_msBuildParameterConverter.convert(_msBuildVSTestLoggerParametersProvider.getParameters(context)).map { CommandLineArgument(it) })
+            yieldAll(_msBuildParameterConverter.convert(_msBuildVSTestLoggerParametersProvider.getParameters(context), true).map { CommandLineArgument(it) })
             yieldAll(_sharedCompilationArgumentsProvider.getArguments(context))
         }
 

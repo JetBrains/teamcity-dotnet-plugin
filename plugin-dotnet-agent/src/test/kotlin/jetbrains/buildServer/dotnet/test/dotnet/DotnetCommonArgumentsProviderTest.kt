@@ -55,7 +55,7 @@ class DotnetCommonArgumentsProviderTest {
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
         every { _msBuildParametersProvider.getParameters(context) } returns sequenceOf(msBuildParameter)
-        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(msBuildParameter)) }) } returns sequenceOf("/p:param=value")
+        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(msBuildParameter)) }, true) } returns sequenceOf("/p:param=value")
 
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
                 ParametersServiceStub(parameters),
