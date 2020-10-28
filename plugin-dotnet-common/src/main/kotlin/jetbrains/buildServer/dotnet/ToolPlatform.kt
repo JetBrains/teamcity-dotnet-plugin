@@ -16,8 +16,8 @@
 
 package jetbrains.buildServer.dotnet
 
-enum class ToolPlatform {
-    CrossPlatform,
-    Mono,
-    Windows,
+enum class ToolPlatform(val description: String) {
+    CrossPlatform("Cross-platform"),
+    Mono("Mono"),
+    Windows("Windows"),
 }
