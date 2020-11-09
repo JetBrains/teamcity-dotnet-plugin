@@ -26,6 +26,9 @@ import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.EnvironmentVariables
 import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl.Companion.UseSharedCompilationEnvVarName
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -35,6 +38,7 @@ import java.io.File
 
 class EnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
+    @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystemService: FileSystemService
     @MockK private lateinit var _nugetEnvironmentVariables: EnvironmentVariables
@@ -46,6 +50,7 @@ class EnvironmentVariablesTest {
         clearAllMocks()
         every { _nugetEnvironmentVariables.getVariables(any()) } returns emptySequence()
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
+        every { _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName) } returns null
     }
 
     @Test
@@ -66,11 +71,11 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))).toList())
     }
 
     @Test
-    fun shouldUseSharedCompilation() {
+    fun shouldNotUseSharedCompilationByDefault() {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
@@ -85,7 +90,27 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
+    }
+
+    @Test
+    fun shouldUseSharedCompilationWhenThisParameterWasOverridedInEnvVars() {
+        // Given
+        val environmentVariables = createInstance()
+        val systemPath = File("system")
+
+        // When
+        every { _environment.os } returns OSType.WINDOWS
+        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
+        every { _pathsService.getPath(PathType.System) } returns systemPath
+        every { _virtualContext.isVirtual } returns false
+        every { _virtualContext.targetOSType } returns OSType.WINDOWS
+        every { _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName) } returns "true"
+
+        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
+
+        // Then
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "true"))).toList())
     }
 
     @DataProvider(name = "osTypesData")
@@ -111,7 +136,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + EnvironmentVariablesImpl.getTempDirVariables()).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false")) + EnvironmentVariablesImpl.getTempDirVariables()).toList())
     }
 
     @Test
@@ -130,7 +155,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, EnvironmentVariablesImpl.defaultVariables.toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
     }
 
     @Test(dataProvider = "osTypesData")
@@ -224,11 +249,12 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))).toList())
+        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))).toList())
     }
 
     private fun createInstance() = EnvironmentVariablesImpl(
             _environment,
+            _parametersService,
             _pathsService,
             _fileSystemService,
             _nugetEnvironmentVariables,

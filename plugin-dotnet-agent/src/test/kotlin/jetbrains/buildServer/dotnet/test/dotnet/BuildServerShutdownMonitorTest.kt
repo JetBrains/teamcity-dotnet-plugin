@@ -20,6 +20,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl.Companion.UseSharedCompilationEnvVarName
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -87,7 +88,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue(useSharedCompilationParam))
 
                 oneOf<EventSources>(eventSources).buildFinishedSource
@@ -135,7 +136,7 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
         _ctx.checking(object : Expectations() {
             init {
-                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
 
                 oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
@@ -163,7 +164,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -196,7 +197,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(true))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -229,7 +230,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue("false"))
 
                 allowing<DotnetCommand>(command).commandType
@@ -262,7 +263,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -295,7 +296,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, BuildServerShutdownMonitor.UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType

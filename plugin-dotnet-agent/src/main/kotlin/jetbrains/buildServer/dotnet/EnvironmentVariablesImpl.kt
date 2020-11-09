@@ -17,6 +17,8 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
@@ -25,6 +27,7 @@ import java.io.File
 
 class EnvironmentVariablesImpl(
         private val _environment: Environment,
+        private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
         private val _nugetEnvironmentVariables: EnvironmentVariables,
@@ -32,6 +35,8 @@ class EnvironmentVariablesImpl(
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
+        val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
+        yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
         yieldAll(_nugetEnvironmentVariables.getVariables(sdkVersion))
 
         val home = if (_environment.os == OSType.WINDOWS) USERPROFILE_ENV_VAR else HOME_ENV_VAR
@@ -72,9 +77,9 @@ class EnvironmentVariablesImpl(
 
         private const val USERPROFILE_ENV_VAR = "USERPROFILE"
         private const val HOME_ENV_VAR = "HOME"
+        internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
 
         internal val defaultVariables = sequenceOf(
-                CommandLineEnvironmentVariable("UseSharedCompilation", "false"),
                 CommandLineEnvironmentVariable("COMPlus_EnableDiagnostics", "0"),
                 CommandLineEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true"),
                 CommandLineEnvironmentVariable("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true"),

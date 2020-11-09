@@ -66,7 +66,7 @@ class BuildServerShutdownMonitor(
                 !_virtualContext.isVirtual
                 && buildCommands.contains(context.command.commandType)
                 && context.toolVersion > Version.LastVersionWithoutSharedCompilation
-                && _parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
+                && _parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
             _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory.path }
         }
     }
@@ -74,7 +74,6 @@ class BuildServerShutdownMonitor(
     companion object {
         private val LOG = Logger.getLogger(BuildServerShutdownMonitor::class.java)
         internal val shutdownArgs = listOf(CommandLineArgument("build-server", CommandLineArgumentType.Mandatory), CommandLineArgument("shutdown", CommandLineArgumentType.Mandatory))
-        internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
         private val buildCommands = setOf(
                 DotnetCommandType.Build,
                 DotnetCommandType.Pack,
