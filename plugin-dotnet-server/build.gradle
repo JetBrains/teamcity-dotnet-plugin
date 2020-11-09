@@ -24,10 +24,6 @@ teamcity {
     descriptor = project.file('teamcity-plugin.xml')
     tokens = [Plugin_Version: project.version]
     files {
-      into('server') {
-        from('tools')
-      }
-
       into('kotlin-dsl') {
         from("${rootProject.projectDir}/kotlin-dsl")
       }
