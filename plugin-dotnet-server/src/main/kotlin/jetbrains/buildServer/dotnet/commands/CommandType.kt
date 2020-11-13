@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.RequirementFactory
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
 import org.springframework.beans.factory.BeanFactory
@@ -24,7 +25,8 @@ import org.springframework.beans.factory.BeanFactory
 /**
  * Provides command-specific resources.
  */
-abstract class CommandType {
+abstract class CommandType(
+        private val _requirementFactory: RequirementFactory) {
     abstract val name: String
 
     open val description: String
@@ -34,9 +36,33 @@ abstract class CommandType {
 
     abstract val viewPage: String
 
-    open fun validateProperties(properties: Map<String, String>): Sequence<InvalidProperty> = emptySequence()
+    private fun getRequirements(parameters: Map<String, String>) =
+            parameters[DotnetConstants.PARAM_REQUIRED_SDK]?.let {
+                it
+                        .split("\n", ";")
+                        .asSequence()
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .map { RequirementResult(it, _requirementFactory.tryCreate(it)) }
+            } ?: emptySequence()
 
-    open fun getRequirements(parameters: Map<String, String>, factory: BeanFactory): Sequence<Requirement> = emptySequence()
+    open fun validateProperties(properties: Map<String, String>): Sequence<InvalidProperty> =
+            getRequirements(properties)
+                    .filter { it.requirement == null }
+                    .map { it }
+                    .joinToString(",") { "\"${it.sdkVersion}\"" }
+                    .let {
+                        sequence {
+                            if (it.isNotBlank()) {
+                               yield(InvalidProperty(DotnetConstants.PARAM_REQUIRED_SDK, "Invalid SDK: \"$it\""))
+                            }
+                        }
+                    }
+
+    open fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) =
+        if (!isDocker(parameters)) getRequirements(parameters).mapNotNull { it.requirement } else emptySequence<Requirement>()
 
     protected fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
+
+    private data class RequirementResult(val sdkVersion: String, val requirement: Requirement?)
 }

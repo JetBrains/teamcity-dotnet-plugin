@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
 import org.apache.log4j.Logger
 
 class DotnetFrameworkRegistryAgentPropertiesProvider(
@@ -27,9 +28,9 @@ class DotnetFrameworkRegistryAgentPropertiesProvider(
                                 LOG.info("Found .NET Framework ${it.version} ${it.platform.id} at \"${it.path}\".")
                                 sequence {
                                     val majorVersion = "${it.version.major}${Version.Separator}${it.version.minor}"
-                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework${majorVersion}_${it.platform.id}", it.version.toString()))
-                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework${majorVersion}_${it.platform.id}_Path", it.path.path))
-                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "DotNetFramework${it.version}_${it.platform.id}_Path", it.path.path))
+                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "$CONFIG_PREFIX_DOTNET_FAMEWORK${majorVersion}_${it.platform.id}", it.version.toString()))
+                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "$CONFIG_PREFIX_DOTNET_FAMEWORK${majorVersion}_${it.platform.id}_Path", it.path.path))
+                                    yield(AgentProperty(ToolInstanceType.DotNetFramework, "$CONFIG_PREFIX_DOTNET_FAMEWORK${it.version}_${it.platform.id}_Path", it.path.path))
                                 }
                             }
                             .flatMap { it }

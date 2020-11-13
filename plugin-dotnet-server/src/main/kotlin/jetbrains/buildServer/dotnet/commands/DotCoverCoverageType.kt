@@ -20,6 +20,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_4_6_1
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.RequirementFactory
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -29,7 +30,9 @@ import jetbrains.buildServer.tools.ServerToolManager
 import jetbrains.buildServer.util.VersionComparatorUtil
 import org.springframework.beans.factory.BeanFactory
 
-class DotCoverCoverageType: CommandType() {
+class DotCoverCoverageType(
+        private val _requirementFactory: RequirementFactory)
+    : CommandType(_requirementFactory) {
     override val name: String = CoverageConstants.PARAM_DOTCOVER
 
     override val description: String = "JetBrains dotCover"
@@ -47,33 +50,32 @@ class DotCoverCoverageType: CommandType() {
     }
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
-        yieldAll(super.getRequirements(parameters, factory))
+        if (!isDocker(parameters)) {
+            yieldAll(super.getRequirements(parameters, factory))
 
-        if (isDocker(parameters)) return@sequence
-
-        val requirements = mutableSetOf<Requirement>()
-        requirements += OUR_MINIMAL_REQUIREMENT
-        if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
-        val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
-        val toolManager = factory.getBean(ServerToolManager::class.java)
-        val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
-        val projectManager = factory.getBean(ProjectManager::class.java)
-        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
-        if (toolVersion != null) {
-            val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
-            if (crossPaltform) {
-                requirements.clear()
-            }
-            else {
-                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
-                if(dotnet461Based) {
+            val requirements = mutableSetOf<Requirement>()
+            requirements += OUR_MINIMAL_REQUIREMENT
+            if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
+            val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
+            val toolManager = factory.getBean(ServerToolManager::class.java)
+            val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
+            val projectManager = factory.getBean(ProjectManager::class.java)
+            val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
+            if (toolVersion != null) {
+                val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
+                if (crossPaltform) {
                     requirements.clear()
-                    requirements.add(OUR_NET_461_REQUIREMENT)
+                } else {
+                    val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
+                    if (dotnet461Based) {
+                        requirements.clear()
+                        requirements.add(OUR_NET_461_REQUIREMENT)
+                    }
                 }
             }
-        }
 
-        yieldAll(requirements)
+            yieldAll(requirements)
+        }
     }
 
     companion object {

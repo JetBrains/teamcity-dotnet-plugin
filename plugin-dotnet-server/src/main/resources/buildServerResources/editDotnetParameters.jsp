@@ -347,6 +347,17 @@
   </td>
 </tr>
 
+<tr class="advancedSetting dotnet build pack publish restore test run nuget-push nuget-delete clean msbuild vstest testassembly devenv custom">
+  <th class="noBorder"><label for="${params.requiredSdkKey}">Required SDK:</label></th>
+  <td>
+    <div class="position-relative">
+      <props:textProperty name="${params.requiredSdkKey}" className="longField"/>
+    </div>
+    <span class="error" id="error_${params.requiredSdkKey}"></span>
+    <span class="smallNote">Enter .NET SDK versions separated by semicolon to be required on agents. For instance: 4.5.2; 2; 3.1.404; 5.0</span>
+  </td>
+</tr>
+
 <tr class="advancedSetting dotnet msbuild">
   <th class="noBorder"><label for="${params.targetsKey}">Targets:</label></th>
   <td>

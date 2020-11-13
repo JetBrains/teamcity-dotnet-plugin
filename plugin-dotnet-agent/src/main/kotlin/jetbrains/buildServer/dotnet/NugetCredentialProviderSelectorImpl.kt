@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
 import org.apache.log4j.Logger
 
 class NugetCredentialProviderSelectorImpl(
@@ -28,8 +29,8 @@ class NugetCredentialProviderSelectorImpl(
                     LOG.debug("Cannot find .NET SDK version for credentials plugin $majorVersion")
 
                     val minSdkVersion = _parametersService.getParameterNames(ParameterType.Configuration)
-                            .filter { it.startsWith("DotNetCoreSDK") }
-                            .map { Version.parse(it.replace("DotNetCoreSDK", "").replace("_Path", "")) }
+                            .filter { it.startsWith(CONFIG_PREFIX_CORE_SDK) }
+                            .map { Version.parse(it.replace(CONFIG_PREFIX_CORE_SDK, "").replace("_Path", "")) }
                             .filter { it != Version.Empty }
                             .map { it.major }
                             .ifEmpty { sequenceOf(1) }

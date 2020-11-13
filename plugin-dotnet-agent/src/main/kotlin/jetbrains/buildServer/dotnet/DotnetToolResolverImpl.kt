@@ -38,7 +38,7 @@ class DotnetToolResolverImpl(
         get() {
             try {
                 val homePaths = _toolEnvironment.homePaths.toList()
-                val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths).map { Path(it.path) } + tryFinding(ParameterType.Configuration, DotnetConstants.CONFIG_PATH)
+                val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths).map { Path(it.path) } + tryFinding(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH)
                 var dotnetPath = executables.firstOrNull()
                 if (dotnetPath == null) {
                     if(_virtualContext.isVirtual) {

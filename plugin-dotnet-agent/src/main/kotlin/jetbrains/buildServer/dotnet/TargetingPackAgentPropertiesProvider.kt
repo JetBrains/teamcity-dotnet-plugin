@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
 import org.apache.log4j.Logger
 
 class TargetingPackAgentPropertiesProvider(
@@ -20,7 +21,7 @@ class TargetingPackAgentPropertiesProvider(
                 .map {
                     framework ->
                     LOG.info("Found .NET Framework targeting pack ${framework.version.toString()} at \"${framework.path.path}\".")
-                    AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack${framework.version.major}${Version.Separator}${framework.version.minor}_Path", framework.path.path)
+                    AgentProperty(ToolInstanceType.TargetingPack, "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${framework.version.major}${Version.Separator}${framework.version.minor}_Path", framework.path.path)
                 }
 
     companion object {

@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK
 
 class DotnetFrameworkSdkAgentPropertiesProvider(
         private val _sdkInstanceProviders: List<ToolInstanceProvider>)
@@ -18,8 +19,8 @@ class DotnetFrameworkSdkAgentPropertiesProvider(
                 .flatMap {
                     sdk ->
                     sequence {
-                        yield(AgentProperty(ToolInstanceType.DotNetFrameworkSDK, "DotNetFrameworkSDK${sdk.baseVersion}_${sdk.platform.id}", sdk.detailedVersion.toString()))
-                        yield(AgentProperty(ToolInstanceType.DotNetFrameworkSDK, "DotNetFrameworkSDK${sdk.baseVersion}_${sdk.platform.id}_Path", sdk.installationPath.path))
+                        yield(AgentProperty(ToolInstanceType.DotNetFrameworkSDK, "${CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK}${sdk.baseVersion}_${sdk.platform.id}", sdk.detailedVersion.toString()))
+                        yield(AgentProperty(ToolInstanceType.DotNetFrameworkSDK, "${CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK}${sdk.baseVersion}_${sdk.platform.id}_Path", sdk.installationPath.path))
                     }
                 }
 }

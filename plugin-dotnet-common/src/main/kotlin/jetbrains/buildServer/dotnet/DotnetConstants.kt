@@ -32,10 +32,6 @@ object DotnetConstants {
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"
-    const val PATH_SUFFIX = "_Path"
-    const val CONFIG_NAME = "DotNetCLI"
-    const val CONFIG_PATH = CONFIG_NAME + PATH_SUFFIX
-    const val CONFIG_SDK_NAME = "DotNetCoreSDK"
     const val PARAM_DOCKER_IMAGE = "plugin.docker.imageId"
 
     // Internal configuration parameters:
@@ -56,6 +52,7 @@ object DotnetConstants {
     const val PARAM_COMMAND = "command"
     const val PARAM_CONFIG = "configuration"
     const val PARAM_FRAMEWORK = "framework"
+    const val PARAM_REQUIRED_SDK = "required.sdk"
     const val PARAM_MSBUILD_VERSION = "msbuild.version"
     const val PARAM_NUGET_API_KEY = Constants.SECURE_PROPERTY_PREFIX + "nuget.apiKey"
     const val PARAM_NUGET_PACKAGE_ID = "nuget.packageId"
@@ -93,4 +90,17 @@ object DotnetConstants {
     const val DOTCOVER_PACKAGE_TOOL_TYPE_NAME = "Cross-platform dotCover"
     const val DOTCOVER_PACKAGE_SHORT_TOOL_TYPE_NAME = "Cross-platform dotCover"
     const val DOTCOVER_PACKAGE_TARGET_FILE_DISPLAY_NAME = "DotCover Home Directory"
+
+    // Requirements
+    const val CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK = "DotNetFrameworkSDK"
+    const val CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK = "DotNetFrameworkTargetingPack"
+    const val CONFIG_PREFIX_CORE_SDK = "DotNetCoreSDK"
+    const val CONFIG_PREFIX_DOTNET_FAMEWORK = "DotNetFramework"
+    const val CONFIG_PREFIX_MSBUILD_TOOLS = "MSBuildTools"
+    const val CONFIG_PREFIX_DOTNET_MSTEST = "teamcity.dotnet.mstest"
+    const val CONFIG_PREFIX_DOTNET_VSTEST = "teamcity.dotnet.vstest"
+    const val CONFIG_PREFIX_VISUAL_STUDIO = "VS"
+    const val CONFIG_SUFFIX_PATH = "_Path"
+    const val CONFIG_SUFFIX_DOTNET_CLI = "DotNetCLI"
+    const val CONFIG_SUFFIX_DOTNET_CLI_PATH = CONFIG_SUFFIX_DOTNET_CLI + CONFIG_SUFFIX_PATH
 }
