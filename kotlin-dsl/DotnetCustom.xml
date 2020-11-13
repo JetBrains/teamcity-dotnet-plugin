@@ -45,5 +45,8 @@
         <param name="args">
             <description>Enter additional command line parameters for custom command.</description>
         </param>
+        <param name="required.sdk" dslName="sdk">
+            <description>.NET SDK versions separated by semicolon to be required on agents.</description>
+        </param>
     </params>
 </dsl-extension>
