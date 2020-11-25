@@ -16,6 +16,9 @@
 
 package jetbrains.buildServer.dotnet.test
 
+import io.mockk.mockk
+import jetbrains.buildServer.JsonParser
+import jetbrains.buildServer.JsonParserImpl
 import jetbrains.buildServer.dotnet.discovery.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -35,7 +38,7 @@ class JsonProjectDeserializerTest {
         // Given
         val path = "projectPath"
         val streamFactory = StreamFactoryStub().add(path, this::class.java.getResourceAsStream(target))
-        val deserializer = JsonProjectDeserializer(ReaderFactoryImpl())
+        val deserializer = JsonProjectDeserializer(JsonParserImpl(), ReaderFactoryImpl())
 
         // When
         val actualSolution = deserializer.deserialize(path, streamFactory)
@@ -66,7 +69,7 @@ class JsonProjectDeserializerTest {
     @Test(dataProvider = "testAcceptData")
     fun shouldAccept(path: String, expectedAccepted: Boolean) {
         // Given
-        val deserializer = JsonProjectDeserializer(ReaderFactoryImpl())
+        val deserializer = JsonProjectDeserializer(mockk<JsonParser>(), ReaderFactoryImpl())
 
         // When
         val actualAccepted = deserializer.accept(path)
