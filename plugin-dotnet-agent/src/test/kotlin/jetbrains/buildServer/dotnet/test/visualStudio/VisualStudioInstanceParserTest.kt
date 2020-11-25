@@ -4,7 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.JsonParser
+import jetbrains.buildServer.JsonParser
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser

@@ -39,7 +39,7 @@
   <bean class="jetbrains.buildServer.agent.WindowsRegistryParserImpl"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryImpl"/>
   <bean class="jetbrains.buildServer.agent.PEReaderImpl"/>
-  <bean class="jetbrains.buildServer.agent.JsonParserImpl"/>
+  <bean class="jetbrains.buildServer.JsonParserImpl"/>
 
   <!-- common agent's runner services -->
   <bean class="jetbrains.buildServer.agent.runner.CannotExecuteImpl"/>
