@@ -46,7 +46,7 @@ class RunCommandTest {
                 arrayOf(mapOf(
                             DotnetConstants.PARAM_PATHS to "path/"),
                         sequenceOf(CommandLineArgument("customArg1")),
-                        listOf("--", "customArg1")),
+                        listOf("customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "path/"),
                         sequenceOf(CommandLineArgument("--"), CommandLineArgument("customArg1")),
@@ -58,7 +58,7 @@ class RunCommandTest {
                 arrayOf(mapOf(
                             DotnetConstants.PARAM_FRAMEWORK to "dotcore",
                             DotnetConstants.PARAM_CONFIG to "Release"),
-                        sequenceOf(CommandLineArgument("customArg1"), CommandLineArgument("customArg2")),
+                        sequenceOf(CommandLineArgument("--"), CommandLineArgument("customArg1"), CommandLineArgument("customArg2")),
                         listOf("--framework", "dotcore", "--configuration", "Release", "--", "customArg1", "customArg2")),
                 arrayOf(mapOf(
                             DotnetConstants.PARAM_FRAMEWORK to "dotcore",
@@ -78,7 +78,7 @@ class RunCommandTest {
                 arrayOf(mapOf(
                             Pair(DotnetConstants.PARAM_RUNTIME, "win")),
                         sequenceOf(CommandLineArgument("customArg1")),
-                        listOf("--runtime", "win", "--", "customArg1")))
+                        listOf("--runtime", "win", "customArg1")))
     }
 
     @Test(dataProvider = "testRunArgumentsData")
