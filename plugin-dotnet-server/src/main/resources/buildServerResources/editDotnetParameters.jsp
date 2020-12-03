@@ -482,7 +482,7 @@
   <th class="noBorder">Options:</th>
   <td>
     <props:checkboxProperty name="${params.nugetNoSymbolsKey}"/>
-    <label for="${params.nugetNoSymbolsKey}">Do not publish an existing nuget symbols packages</label>
+    <label for="${params.nugetNoSymbolsKey}">Do not publish nuget symbol packages</label>
   </td>
 </tr>
 

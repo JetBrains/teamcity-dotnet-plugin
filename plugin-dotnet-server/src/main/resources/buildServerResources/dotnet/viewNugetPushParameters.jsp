@@ -31,6 +31,6 @@
 
 <c:if test="${propertiesBean.properties[params.nugetNoSymbolsKey]}">
   <div class="parameter">
-    Do not publish an existing nuget symbols package: <strong>ON</strong>
+    Do not publish nuget symbol packages: <strong>ON</strong>
   </div>
 </c:if>

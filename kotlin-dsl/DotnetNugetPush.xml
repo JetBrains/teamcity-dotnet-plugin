@@ -46,7 +46,7 @@
             </description>
         </param>
         <param name="nuget.noSymbols" dslName="noSymbols" type="boolean" trueValue="true" falseValue="">
-            <description>Do not publish an existing nuget symbols package</description>
+            <description>Do not publish nuget symbol packages</description>
         </param>
         <param name="args">
             <description>Enter additional command line parameters for dotnet nuget push.</description>
