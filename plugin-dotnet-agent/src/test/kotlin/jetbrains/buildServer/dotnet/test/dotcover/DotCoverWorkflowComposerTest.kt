@@ -39,6 +39,7 @@ import java.io.File
 class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _argumentsService: ArgumentsService
     @MockK private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
@@ -52,6 +53,8 @@ class DotCoverWorkflowComposerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _blockToken.dispose() } returns Unit
+        every { _argumentsService.combine(any()) } answers { arg<Sequence<String>>(0).joinToString(arg<String>(1)) }
+        every { _argumentsService.split(any()) } answers { arg<String>(0).split(" ").asSequence() }
     }
 
     @Test
@@ -118,7 +121,8 @@ class DotCoverWorkflowComposerTest {
                                         CommandLineArgument("cover", CommandLineArgumentType.Mandatory),
                                         CommandLineArgument("v_proj", CommandLineArgumentType.Target),
                                         CommandLineArgument("/ReturnTargetExitCode"),
-                                        CommandLineArgument("/AnalyzeTargetArguments=false")
+                                        CommandLineArgument("/AnalyzeTargetArguments=false"),
+                                        CommandLineArgument("--ProcessFilters=-:process1;-:process2", CommandLineArgumentType.Custom)
                                 ),
                                 envVars + _defaultVariables)))
         val composer = createInstance(fileSystemService)
@@ -128,6 +132,7 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns coverageType
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns dotCoverPath
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
+        every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns "--ProcessFilters=-:process1;-:process2"
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverConfigExtension) } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
@@ -572,7 +577,7 @@ class DotCoverWorkflowComposerTest {
                 fileSystemService,
                 _dotCoverProjectSerializer,
                 _loggerService,
-                ArgumentsServiceStub(),
+                _argumentsService,
                 _coverageFilterProvider,
                 _virtualContext,
                 _environmentVariables)

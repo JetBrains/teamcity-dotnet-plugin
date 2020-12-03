@@ -172,7 +172,7 @@ class DotCoverWorkflowComposer(
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
-            StringUtil.split(it).forEach {
+            _argumentsService.split(it).forEach {
                 yield(CommandLineArgument(it, CommandLineArgumentType.Custom))
             }
         }
