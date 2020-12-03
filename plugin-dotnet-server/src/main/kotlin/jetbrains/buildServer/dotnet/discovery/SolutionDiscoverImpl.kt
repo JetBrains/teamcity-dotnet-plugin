@@ -39,7 +39,7 @@ class SolutionDiscoverImpl(
                 yield(solution)
                 break
             } catch (ex: Exception) {
-                LOG.error("Discover error", ex)
+                LOG.debug("Discover error for \"$path\": ${ex.message}")
             }
         }
     }
