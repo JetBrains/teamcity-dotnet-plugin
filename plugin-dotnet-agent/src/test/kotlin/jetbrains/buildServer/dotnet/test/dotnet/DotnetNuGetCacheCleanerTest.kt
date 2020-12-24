@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import com.intellij.execution.ExecutionException
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -74,6 +75,21 @@ class DotnetNuGetCacheCleanerTest {
         // When
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } throws ToolCannotBeFoundException(DotnetConstants.EXECUTABLE)
         every {  _commandLineExecutor.tryExecute(createComandLine()) } returns CommandLineResult(0, listOf("info : type: .nuget/packages/"), emptyList())
+        val actualTargets = instance.targets.toList()
+
+        // Then
+        Assert.assertEquals(actualTargets, emptyList<File>())
+    }
+
+    @Test
+    fun shouldNotProvideTargetsWhenTryExecuteThrowsException() {
+        // Given
+        val instance = createInstance()
+
+        // When
+        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } throws ToolCannotBeFoundException(DotnetConstants.EXECUTABLE)
+        every {  _commandLineExecutor.tryExecute(createComandLine()) } throws ExecutionException("Cannot execute.")
+
         val actualTargets = instance.targets.toList()
 
         // Then

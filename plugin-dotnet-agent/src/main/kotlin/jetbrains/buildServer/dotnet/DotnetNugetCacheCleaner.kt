@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.runner.CacheCleaner
 import jetbrains.buildServer.agent.runner.CleanType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import org.apache.log4j.Logger
 import java.io.File
 
 class DotnetNugetCacheCleaner(
@@ -36,15 +37,21 @@ class DotnetNugetCacheCleaner(
 
     private fun runDotnet(vararg args: CommandLineArgument) =
             dotnet?.let {
-                _commandLineExecutor.tryExecute(
-                        CommandLine(
-                                null,
-                                TargetType.SystemDiagnostics,
-                                it,
-                                Path(_pathsService.getPath(PathType.WorkingDirectory).path),
-                                args.toList(),
-                                _environmentVariables.getVariables(Version.Empty).toList())
-                )
+                try {
+                    _commandLineExecutor.tryExecute(
+                            CommandLine(
+                                    null,
+                                    TargetType.SystemDiagnostics,
+                                    it,
+                                    Path(_pathsService.getPath(PathType.WorkingDirectory).path),
+                                    args.toList(),
+                                    _environmentVariables.getVariables(Version.Empty).toList())
+                    )
+                }
+                catch (ex: Exception) {
+                    LOG.debug(ex.message)
+                    null
+                }
             }
 
     private val dotnet: Path? get() {
@@ -60,5 +67,6 @@ class DotnetNugetCacheCleaner(
         internal val LOCALS_ARG = CommandLineArgument("locals")
         internal val LIST_ARG = CommandLineArgument("--list")
         internal val CLEAR_ARG = CommandLineArgument("--clear")
+        private val LOG = Logger.getLogger(DotnetNugetCacheCleaner::class.java.name)
     }
 }
