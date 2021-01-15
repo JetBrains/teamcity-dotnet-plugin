@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK

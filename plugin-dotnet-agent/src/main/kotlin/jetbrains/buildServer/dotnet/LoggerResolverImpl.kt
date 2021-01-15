@@ -17,7 +17,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType

@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.agent.runner
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.TargetType
 import jetbrains.buildServer.agent.VirtualContext

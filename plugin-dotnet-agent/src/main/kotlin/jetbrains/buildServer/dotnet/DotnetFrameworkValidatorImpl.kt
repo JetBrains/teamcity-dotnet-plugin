@@ -1,8 +1,7 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import org.apache.log4j.Logger
-import java.io.File
 
 class DotnetFrameworkValidatorImpl(
         private val _fileSystemService: FileSystemService)

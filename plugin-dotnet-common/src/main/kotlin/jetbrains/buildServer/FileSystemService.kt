@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent
+package jetbrains.buildServer
 
 import java.io.File
 import java.io.InputStream

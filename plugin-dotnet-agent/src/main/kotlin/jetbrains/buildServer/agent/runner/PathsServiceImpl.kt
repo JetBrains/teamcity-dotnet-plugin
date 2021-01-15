@@ -18,7 +18,7 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.BuildAgentConfiguration
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.impl.config.BuildAgentConfigurablePaths
 import jetbrains.buildServer.agent.plugins.beans.PluginDescriptor
 import java.io.File

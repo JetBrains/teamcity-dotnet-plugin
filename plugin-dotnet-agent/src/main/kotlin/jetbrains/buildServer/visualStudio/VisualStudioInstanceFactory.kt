@@ -1,6 +1,6 @@
 package jetbrains.buildServer.visualStudio
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.PEReader
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version

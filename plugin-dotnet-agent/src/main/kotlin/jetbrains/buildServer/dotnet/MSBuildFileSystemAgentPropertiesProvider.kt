@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.PEReader
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider

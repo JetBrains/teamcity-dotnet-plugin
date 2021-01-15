@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.dotnet.MSBuildValidatorImpl
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert

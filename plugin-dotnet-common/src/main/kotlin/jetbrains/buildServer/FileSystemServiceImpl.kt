@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent
+package jetbrains.buildServer
 
 import jetbrains.buildServer.util.FileUtil
 import org.apache.commons.io.FileUtils

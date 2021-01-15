@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import java.io.File
 
 class MSBuildValidatorImpl(

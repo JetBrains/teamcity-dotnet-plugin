@@ -19,7 +19,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants

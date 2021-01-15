@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import org.apache.log4j.Logger

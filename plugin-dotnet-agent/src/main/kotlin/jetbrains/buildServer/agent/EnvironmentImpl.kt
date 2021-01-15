@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.agent
 
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.impl.OSTypeDetector
 import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.util.StringUtil

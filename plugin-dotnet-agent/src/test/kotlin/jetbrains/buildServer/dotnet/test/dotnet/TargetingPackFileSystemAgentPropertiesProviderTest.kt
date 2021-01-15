@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Environment
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.TargetingPackFileSystemAgentPropertiesProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService

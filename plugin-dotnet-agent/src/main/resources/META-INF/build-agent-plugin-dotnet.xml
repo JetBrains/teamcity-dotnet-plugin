@@ -29,7 +29,7 @@
   <bean class="jetbrains.buildServer.agent.EventObservers"/>
   <bean class="jetbrains.buildServer.agent.EventSourcesImpl"/>
   <bean class="jetbrains.buildServer.agent.EnvironmentImpl"/>
-  <bean class="jetbrains.buildServer.agent.FileSystemServiceImpl"/>
+  <bean class="jetbrains.buildServer.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
   <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
   <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>

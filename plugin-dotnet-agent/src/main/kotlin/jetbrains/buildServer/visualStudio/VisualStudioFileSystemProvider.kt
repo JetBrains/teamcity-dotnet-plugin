@@ -1,6 +1,6 @@
 package jetbrains.buildServer.visualStudio
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import org.apache.log4j.Logger

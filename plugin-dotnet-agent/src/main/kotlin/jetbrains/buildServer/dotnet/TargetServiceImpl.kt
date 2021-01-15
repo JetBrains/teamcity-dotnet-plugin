@@ -16,13 +16,13 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class TargetServiceImpl(

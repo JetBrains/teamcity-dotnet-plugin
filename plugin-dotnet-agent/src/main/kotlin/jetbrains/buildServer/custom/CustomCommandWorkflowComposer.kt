@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.custom
 
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*

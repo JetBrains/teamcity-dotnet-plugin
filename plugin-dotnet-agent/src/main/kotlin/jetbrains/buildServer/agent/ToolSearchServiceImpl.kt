@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.agent
 
+import jetbrains.buildServer.FileSystemService
 import java.io.File
 
 class ToolSearchServiceImpl(

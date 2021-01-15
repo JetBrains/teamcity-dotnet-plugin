@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotnet.test.agent
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.agent.WindowsRegistryParser
 import jetbrains.buildServer.agent.WindowsRegistryParserImpl
 import jetbrains.buildServer.agent.*

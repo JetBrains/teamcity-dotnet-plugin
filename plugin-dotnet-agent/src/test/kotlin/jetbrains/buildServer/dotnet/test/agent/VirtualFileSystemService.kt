@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.agent
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import java.io.*
 
 class VirtualFileSystemService : FileSystemService {

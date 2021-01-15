@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.dotnet.DotnetSdk
 import jetbrains.buildServer.dotnet.DotnetSdksProviderImpl
 import jetbrains.buildServer.agent.Version
