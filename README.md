@@ -33,6 +33,13 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20172&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20172),branch:Indore-2017.2.x/statusIcon.svg" alt=""/></a> | [2017.2](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20172/.lastSuccessful/dotnet.cli.zip?branch=Indore-2017.2.x&guest=1) |
 | <a href="https://teamcity.jetbrains.com/viewType.html?buildTypeId=TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20171&guest=1"><img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20171),branch:Indore-2017.1.x/statusIcon.svg" alt=""/></a> | [2017.1](https://teamcity.jetbrains.com/repository/download/TeamCityPluginsByJetBrains_DotnetCorePlugin_NetFor20171/.lastSuccessful/dotnet-cli.zip?branch=Indore-2017.1.x&guest=1) |
 
+# Additional Resources
+
+* TeamCity integration with .NET
+  * [New approach and demo](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-1-new-approach-and-demo/)
+  * [Testing and building projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-2-testing-and-building-projects/)
+  * [Deploying projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-3-deploying-projects/)
+
 # Compatibility
 
 The plugin is compatible with
