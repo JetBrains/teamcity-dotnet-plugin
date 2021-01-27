@@ -107,14 +107,17 @@ class DotnetCommandSetTest {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
 
-        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
+        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
         every { _testCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
         every { _testCommand.targetArguments } returns sequenceOf(
                 TargetArguments(sequenceOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target))),
-                TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target)))
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my2.dll", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("ddd/my2.csprog", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my3.dll", CommandLineArgumentType.Target)))
         )
 
-        every { _testAssemblyCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
+        every { _testAssemblyCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
         every { _testAssemblyCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2"))
 
         every { _testCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
@@ -124,11 +127,13 @@ class DotnetCommandSetTest {
                 listOf(_testCommand, _cleanCommand, _testAssemblyCommand, _buildCommand))
 
         // When
-        val actualCommands = dotnetCommandSet.commands.toList()
+       val actualCommands = dotnetCommandSet.commands.toList()
 
         // Then
-        Assert.assertEquals(actualCommands.size, 2)
-        Assert.assertEquals(actualCommands[0].getArguments(_context).toList(), listOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
-        Assert.assertEquals(actualCommands[1].getArguments(_context).toList(), listOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
+        Assert.assertEquals(actualCommands.size, 4)
+        Assert.assertEquals(actualCommands[0].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
+        Assert.assertEquals(actualCommands[1].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target), CommandLineArgument("abc/my2.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
+        Assert.assertEquals(actualCommands[2].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("ddd/my2.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
+        Assert.assertEquals(actualCommands[3].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("abc/my3.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
     }
 }
