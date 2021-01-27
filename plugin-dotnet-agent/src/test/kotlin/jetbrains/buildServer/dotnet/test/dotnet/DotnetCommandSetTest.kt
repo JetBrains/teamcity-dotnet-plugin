@@ -57,6 +57,7 @@ class DotnetCommandSetTest {
     fun argumentsData(): Array<Array<Any?>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "test")), listOf("test", "TestArg1", "TestArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("my.csprog", "BuildArg1", "BuildArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "send")), emptyList<String>() as Any?, null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, null),
@@ -80,9 +81,14 @@ class DotnetCommandSetTest {
         every { _cleanCommand.targetArguments } returns emptySequence<TargetArguments>()
         every { _cleanCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
 
+        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
+        every { _testCommand.getArguments(_context) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
+        every { _testCommand.targetArguments } returns emptySequence<TargetArguments>()
+        every { _testCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
+
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
-                listOf(_buildCommand, _cleanCommand, _testAssemblyCommand))
+                listOf(_buildCommand, _cleanCommand, _testAssemblyCommand, _testCommand))
 
         // When
         var actualArguments: List<String> = emptyList()
@@ -107,14 +113,17 @@ class DotnetCommandSetTest {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
 
-        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
+        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
         every { _testCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
         every { _testCommand.targetArguments } returns sequenceOf(
                 TargetArguments(sequenceOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target))),
-                TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target)))
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my2.dll", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("ddd/my2.csprog", CommandLineArgumentType.Target))),
+                TargetArguments(sequenceOf(CommandLineArgument("abc/my3.dll", CommandLineArgumentType.Target)))
         )
 
-        every { _testAssemblyCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
+        every { _testAssemblyCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
         every { _testAssemblyCommand.getArguments(context) } returns sequenceOf(CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2"))
 
         every { _testCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
@@ -124,11 +133,13 @@ class DotnetCommandSetTest {
                 listOf(_testCommand, _cleanCommand, _testAssemblyCommand, _buildCommand))
 
         // When
-        val actualCommands = dotnetCommandSet.commands.toList()
+       val actualCommands = dotnetCommandSet.commands.toList()
 
         // Then
-        Assert.assertEquals(actualCommands.size, 2)
-        Assert.assertEquals(actualCommands[0].getArguments(_context).toList(), listOf(CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
-        Assert.assertEquals(actualCommands[1].getArguments(_context).toList(), listOf(CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
+        Assert.assertEquals(actualCommands.size, 4)
+        Assert.assertEquals(actualCommands[0].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("ddd/my.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
+        Assert.assertEquals(actualCommands[1].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("abc/my.dll", CommandLineArgumentType.Target), CommandLineArgument("abc/my2.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
+        Assert.assertEquals(actualCommands[2].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("ddd/my2.csprog", CommandLineArgumentType.Target), CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2")));
+        Assert.assertEquals(actualCommands[3].getArguments(_context).toList(), listOf(CommandLineArgument("test", CommandLineArgumentType.Mandatory), CommandLineArgument("abc/my3.dll", CommandLineArgumentType.Target), CommandLineArgument("TestAssemblyArg1"), CommandLineArgument("TestAssemblyArg2")));
     }
 }
