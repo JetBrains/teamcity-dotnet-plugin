@@ -16,8 +16,10 @@
 
 package jetbrains.buildServer.dotnet.test
 
+import io.mockk.mockk
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.MonoConstants
+import jetbrains.buildServer.dotnet.RequirementFactory
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.commands.MSBuildCommandType
 import jetbrains.buildServer.requirements.Requirement
@@ -37,8 +39,8 @@ class MSBuildCommandTypeTest {
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id), sequenceOf(Requirement("MSBuildTools14.0_x86_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id), sequenceOf(Requirement("MSBuildTools15.0_x64_Path", null, RequirementType.EXISTS), windowsReq)),
                 arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX86.id), sequenceOf(Requirement("MSBuildTools15.0_x86_Path", null, RequirementType.EXISTS), windowsReq)),
-                arrayOf(emptyMap<String, String>(), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))),
-                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), sequenceOf(Requirement(DotnetConstants.CONFIG_PATH, null, RequirementType.EXISTS))))
+                arrayOf(emptyMap<String, String>(), sequenceOf(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))),
+                arrayOf(mapOf(DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id), sequenceOf(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))))
     }
 
     @Test(dataProvider = "testRequirementsData")
@@ -46,7 +48,7 @@ class MSBuildCommandTypeTest {
             parameters: Map<String, String>,
             expectedRequirements: Sequence<Requirement>) {
         // Given
-        val instance = MSBuildCommandType()
+        val instance = MSBuildCommandType(mockk<RequirementFactory>())
         val ctx = Mockery()
 
         // When

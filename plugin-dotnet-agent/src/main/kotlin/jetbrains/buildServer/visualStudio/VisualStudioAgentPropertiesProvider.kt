@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_VISUAL_STUDIO
 import org.apache.log4j.Logger
 
 class VisualStudioAgentPropertiesProvider(
@@ -22,8 +23,8 @@ class VisualStudioAgentPropertiesProvider(
                         visualStudio ->
                         LOG.info("Found ${visualStudio}.")
                         sequence {
-                            yield(AgentProperty(ToolInstanceType.VisualStudio, "VS${visualStudio.baseVersion}", "${visualStudio.detailedVersion}"))
-                            yield(AgentProperty(ToolInstanceType.VisualStudio, "VS${visualStudio.baseVersion}_Path", visualStudio.installationPath.path))
+                            yield(AgentProperty(ToolInstanceType.VisualStudio, "$CONFIG_PREFIX_VISUAL_STUDIO${visualStudio.baseVersion}", "${visualStudio.detailedVersion}"))
+                            yield(AgentProperty(ToolInstanceType.VisualStudio, "$CONFIG_PREFIX_VISUAL_STUDIO${visualStudio.baseVersion}_Path", visualStudio.installationPath.path))
                         }
                     }
 

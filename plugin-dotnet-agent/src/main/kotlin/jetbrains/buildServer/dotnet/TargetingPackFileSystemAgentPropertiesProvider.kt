@@ -2,6 +2,8 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import org.apache.log4j.Logger
 import java.io.File
 
@@ -49,7 +51,7 @@ class TargetingPackFileSystemAgentPropertiesProvider(
                     LOG.debug("Goes through \"$it\".")
                     val version = it.name.substring(1)
                     LOG.info("Found .NET Framework targeting pack $version at \"${it.path}\".")
-                    AgentProperty(ToolInstanceType.TargetingPack, "DotNetFrameworkTargetingPack${version}_Path", it.path)
+                    AgentProperty(ToolInstanceType.TargetingPack, "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${version}$CONFIG_SUFFIX_PATH", it.path)
                 }
 
     companion object {

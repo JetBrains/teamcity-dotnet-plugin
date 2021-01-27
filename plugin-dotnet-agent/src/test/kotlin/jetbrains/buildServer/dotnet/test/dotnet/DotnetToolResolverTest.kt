@@ -59,7 +59,7 @@ class DotnetToolResolverTest {
         val toolFile = "dotnet.exe"
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH) } returns _toolFile.path
         val actualExecutable = instance.executable
 
         // Then
@@ -73,7 +73,7 @@ class DotnetToolResolverTest {
         val homePaths = sequenceOf(Path("home"))
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH) } returns _toolFile.path
         every { _toolEnvironment.homePaths } returns homePaths
         every { _toolSearchService.find(DotnetConstants.EXECUTABLE, homePaths) } returns sequenceOf(File("home_dotnet.exe"))
 
@@ -98,7 +98,7 @@ class DotnetToolResolverTest {
         val instance = createInstance()
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns _toolFile.path
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH) } returns _toolFile.path
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns os
 
@@ -127,7 +127,7 @@ class DotnetToolResolverTest {
         val homePaths = sequenceOf(Path("home"))
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH) } returns null
         every { _virtualContext.isVirtual } returns true
         every { _environment.os } returns hostOs
         every { _virtualContext.targetOSType } returns containerOs
@@ -147,7 +147,7 @@ class DotnetToolResolverTest {
         val homePaths = sequenceOf(Path("home"))
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_PATH) } returns null
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH) } returns null
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns OSType.UNIX
         every { _toolEnvironment.homePaths } returns homePaths

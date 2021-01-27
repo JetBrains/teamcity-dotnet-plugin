@@ -38,8 +38,8 @@ class DotnetAgentPropertiesProviderTest {
     @MockK private lateinit var _toolProvider: ToolProvider
     private val _toolPath = Path("dotnet")
     private val _workPath = Path("work")
-    private val _configPathProperty = AgentProperty(ToolInstanceType.DotNetCLI, DotnetConstants.CONFIG_PATH, File(_toolPath.path).canonicalPath)
-    private val _configNameProperty = AgentProperty(ToolInstanceType.DotNetCLI, DotnetConstants.CONFIG_NAME, "1.0.1")
+    private val _configPathProperty = AgentProperty(ToolInstanceType.DotNetCLI, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, File(_toolPath.path).canonicalPath)
+    private val _configNameProperty = AgentProperty(ToolInstanceType.DotNetCLI, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, "1.0.1")
 
     @BeforeMethod
     fun setUp() {
@@ -59,8 +59,8 @@ class DotnetAgentPropertiesProviderTest {
                                 DotnetSdk(File("1.0.0"), Version(1, 0, 0))),
                         listOf(
                                 _configPathProperty, _configNameProperty,
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.0${DotnetConstants.PATH_SUFFIX}", File("1.0.0").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.0.0${DotnetConstants.PATH_SUFFIX}", File("1.0.0").absolutePath))),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.0${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.0.0").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.0.0${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.0.0").absolutePath))),
 
                 // Select newest version as default for group by Version(x, y)
                 arrayOf(
@@ -70,10 +70,10 @@ class DotnetAgentPropertiesProviderTest {
                                 DotnetSdk(File("1.1.1"), Version(1, 1, 1))),
                         listOf(
                                 _configPathProperty, _configNameProperty,
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1${DotnetConstants.PATH_SUFFIX}", File("1.1.300").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1.100${DotnetConstants.PATH_SUFFIX}", File("1.1.100").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1.300${DotnetConstants.PATH_SUFFIX}", File("1.1.300").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1.1${DotnetConstants.PATH_SUFFIX}", File("1.1.1").absolutePath))),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.300").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1.100${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.100").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1.300${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.300").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1.1${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.1").absolutePath))),
 
                 // Display preview versions
                 arrayOf(
@@ -82,9 +82,9 @@ class DotnetAgentPropertiesProviderTest {
                                 DotnetSdk(File("1.1.300-preview"), Version.parse("1.1.300-preview"))),
                         listOf(
                                 _configPathProperty, _configNameProperty,
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1${DotnetConstants.PATH_SUFFIX}", File("1.1.300-preview").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1.100${DotnetConstants.PATH_SUFFIX}", File("1.1.100").absolutePath),
-                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_SDK_NAME}1.1.300-preview${DotnetConstants.PATH_SUFFIX}", File("1.1.300-preview").absolutePath)))
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.300-preview").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1.100${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.100").absolutePath),
+                                AgentProperty(ToolInstanceType.DotNetSDK, "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}1.1.300-preview${DotnetConstants.CONFIG_SUFFIX_PATH}", File("1.1.300-preview").absolutePath)))
         )
     }
 
