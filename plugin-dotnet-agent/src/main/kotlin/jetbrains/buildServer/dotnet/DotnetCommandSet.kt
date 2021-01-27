@@ -34,23 +34,39 @@ class DotnetCommandSet(
 
     override val commands: Sequence<DotnetCommand>
         get() = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)?.let {
-            _knownCommands[it]?.let { command ->
-                getTargetArguments(command).asSequence().map {
-                    val targetArguments = TargetArguments(it.arguments.toList().asSequence())
+            _knownCommands[it]?.let { getCommands(it) }
+        } ?: emptySequence()
 
-                    if (    command.commandType == DotnetCommandType.Test
-                            && targetArguments.arguments.filter { it.argumentType == CommandLineArgumentType.Target && "dll".equals(File(it.value).extension, true) }.any()) {
-                        CompositeCommand(command.commandType.id, _knownTestAssemblyCommand, targetArguments)
+    private fun getCommands(command: DotnetCommand): Sequence<CompositeCommand> =
+            sequence {
+                when {
+                    command.commandType == DotnetCommandType.Test && command.targetArguments.any() -> {
+                        var assemblyArguments = mutableListOf<TargetArguments>()
+                        for (tagetArgument in command.targetArguments) {
+                            when {
+                                tagetArgument.arguments.filter { it.argumentType == CommandLineArgumentType.Target && "dll".equals(File(it.value).extension, true) }.any() -> {
+                                    assemblyArguments.add(tagetArgument);
+                                }
+                                else -> {
+                                    if (assemblyArguments.any()) {
+                                        yield(CompositeCommand(command.commandType.id, _knownTestAssemblyCommand, TargetArguments(assemblyArguments.toList().asSequence().flatMap { it.arguments })))
+                                        assemblyArguments.clear()
+                                    }
+
+                                    yield(CompositeCommand(command.commandType.id, command, tagetArgument))
+                                }
+                            }
+                        }
+
+                        if (assemblyArguments.any()) {
+                            yield(CompositeCommand(command.commandType.id, _knownTestAssemblyCommand, TargetArguments(assemblyArguments.toList().asSequence().flatMap { it.arguments })))
+                        }
                     }
-                    else {
-                        CompositeCommand(command.commandType.id, command, targetArguments)
+                    else -> {
+                        yieldAll(command.targetArguments.ifEmpty { sequenceOf(TargetArguments(emptySequence())) }.map { CompositeCommand(command.commandType.id, command, it) })
                     }
                 }
             }
-        } ?: emptySequence()
-
-    private fun getTargetArguments(command: DotnetCommand): Sequence<TargetArguments> =
-            command.targetArguments.ifEmpty { sequenceOf(TargetArguments(emptySequence())) }
 
     class CompositeCommand(
             private val commandId: String,
