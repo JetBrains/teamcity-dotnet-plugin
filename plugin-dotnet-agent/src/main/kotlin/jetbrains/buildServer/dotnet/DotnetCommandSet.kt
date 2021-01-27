@@ -64,7 +64,7 @@ class DotnetCommandSet(
                         }
                     }
                     else -> {
-                        yieldAll(command.targetArguments.ifEmpty { emptySequence() }.map { CompositeCommand(command.commandType.id, command, it) })
+                        yieldAll(command.targetArguments.ifEmpty { sequenceOf(TargetArguments(emptySequence())) }.map { CompositeCommand(command.commandType.id, command, it) })
                     }
                 }
             }
