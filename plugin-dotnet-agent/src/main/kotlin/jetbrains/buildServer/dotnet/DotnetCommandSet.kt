@@ -22,7 +22,6 @@ import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Observer
-import kotlinx.coroutines.yield
 import java.io.File
 
 class DotnetCommandSet(
