@@ -18,13 +18,16 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
+import java.io.File
 
 class TestCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+        private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder)
     : DotnetCommandBase(_parametersService) {
@@ -33,7 +36,24 @@ class TestCommand(
         get() = DotnetCommandType.Test
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
+        get() =
+            _targetService.targets.fold(mutableListOf<Pair<Boolean, MutableList<String>>>()) {
+                acc, commandTarget ->
+                val path = commandTarget.target.path
+                val isAssembly = isAssembly(path)
+                if (isAssembly && acc.any()) {
+                    val group = acc.last()
+                    if (group.first == isAssembly) {
+                        group.second.add(path)
+                        return@fold acc
+                    }
+                }
+
+                acc.add(Pair(isAssembly, mutableListOf(path)))
+                acc
+            }.map {
+                TargetArguments(it.second.asSequence().map { CommandLineArgument(it, CommandLineArgumentType.Target) })
+            }.asSequence()
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
@@ -75,9 +95,13 @@ class TestCommand(
             yield(CommandLineArgument("--no-build"))
         }
 
-        yieldAll(_commonArgumentsProvider.getArguments(context))
+        if (context.command.targetArguments.flatMap { it.arguments }.any { isAssembly(it.value)}) {
+            yieldAll(_assemblyArgumentsProvider.getArguments(context))
+        }
+        else {
+            yieldAll(_commonArgumentsProvider.getArguments(context))
+        }
     }
 
-    override val environmentBuilders: Sequence<EnvironmentBuilder>
-        get() = sequence { yield(_vstestLoggerEnvironment) }
+    private fun isAssembly(path: String) = "dll".equals(File(path).extension, true)
 }

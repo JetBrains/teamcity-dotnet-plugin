@@ -28,7 +28,6 @@ enum class DotnetCommandType(val id: String) {
     Clean("clean"),
     MSBuild("msbuild"),
     VSTest("vstest"),
-    TestAssembly("testassembly"),
     VisualStudio("devenv"),
     Custom("custom"),
 }

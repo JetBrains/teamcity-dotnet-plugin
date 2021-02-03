@@ -22,22 +22,20 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_RSP
 
 class DotnetCommonArgumentsProviderImpl(
+        private val _avoidUsingRspFiles: Boolean,
         private val _parametersService: ParametersService,
         private val _responseFileArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
-        private val _msBuildVSTestLoggerParametersProvider: MSBuildParametersProvider,
-        private val _msBuildLoggerArgumentsProvider: ArgumentsProvider,
-        private val _sharedCompilationArgumentsProvider: ArgumentsProvider,
-        private val _msBuildParameterConverter: MSBuildParameterConverter)
+        private val _argumentsProviders: List<ArgumentsProvider>)
     : DotnetCommonArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val avoidUsingRspFiles = _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
+        val avoidUsingRspFiles = _avoidUsingRspFiles || _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
         if (!avoidUsingRspFiles) {
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
         } else {
-            yieldAll(_msBuildLoggerArgumentsProvider.getArguments(context))
-            yieldAll(_msBuildParameterConverter.convert(_msBuildVSTestLoggerParametersProvider.getParameters(context), true).map { CommandLineArgument(it) })
-            yieldAll(_sharedCompilationArgumentsProvider.getArguments(context))
+            for (argumentsProvider in _argumentsProviders) {
+                yieldAll(argumentsProvider.getArguments(context))
+            }
         }
 
         yieldAll(_customArgumentsProvider.getArguments(context))

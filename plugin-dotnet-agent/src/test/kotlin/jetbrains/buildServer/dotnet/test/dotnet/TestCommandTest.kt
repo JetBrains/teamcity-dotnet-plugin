@@ -71,11 +71,15 @@ class TestCommandTest {
     }
 
     @DataProvider
-    fun projectsArgumentsData(): Array<Array<Any>> {
+    fun projectsArgumentsData(): Array<Array<List<Any>>> {
         return arrayOf(
-                arrayOf(listOf("my.csproj") as Any, listOf(listOf("my.csproj"))),
-                arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
-                arrayOf(listOf("my.csproj", "my2.csproj") as Any, listOf(listOf("my.csproj"), listOf("my2.csproj"))))
+                arrayOf(listOf("my.csproj"), listOf(listOf("my.csproj"))),
+                arrayOf(emptyList<String>(), emptyList<List<String>>()),
+                arrayOf(listOf("my.csproj", "my2.csproj"), listOf(listOf("my.csproj"), listOf("my2.csproj"))),
+                arrayOf(listOf("my.csproj", "my2.dll", "my3.dll"), listOf(listOf("my.csproj"), listOf("my2.dll", "my3.dll"))),
+                arrayOf(listOf("my.csproj", "my2.Dll", "my3.DLL"), listOf(listOf("my.csproj"), listOf("my2.Dll", "my3.DLL"))),
+                arrayOf(listOf("my.csproj", "my2.dll", "my3.dll", "my4.Sln", "my5.dll"), listOf(listOf("my.csproj"), listOf("my2.dll", "my3.dll"), listOf("my4.Sln"), listOf("my5.dll"))),
+                arrayOf(listOf("my.dll", "my.csproj", "my0.csproj", "my2.dll", "my3.dll", "my4.Sln", "my5.dll"), listOf(listOf("my.dll"), listOf("my.csproj"), listOf("my0.csproj"), listOf("my2.dll", "my3.dll"), listOf("my4.Sln"), listOf("my5.dll"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")
@@ -112,6 +116,7 @@ class TestCommandTest {
                 ParametersServiceStub(parameters),
                 testsResultsAnalyzer,
                 TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
+                ArgumentsProviderStub(arguments),
                 ArgumentsProviderStub(arguments),
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
