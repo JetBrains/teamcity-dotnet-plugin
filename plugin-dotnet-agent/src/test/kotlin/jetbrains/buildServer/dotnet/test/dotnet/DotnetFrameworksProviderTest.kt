@@ -62,10 +62,10 @@ class DotnetFrameworksProviderTest {
         every { _visitor1.getFrameworks() } returns sequenceOf(_framework1, _framework2)
         every { _visitor2.getFrameworks() } returns sequenceOf(_framework2, _framework3, _framework4, _framework5)
 
-        every { _windowsRegistry.get(_key1, _visitor1, true) } returns Unit
-        every { _windowsRegistry.get(_key2, _visitor1, true) } returns Unit
-        every { _windowsRegistry.get(_key2, _visitor2, true) } returns Unit
-        every { _windowsRegistry.get(_key3, _visitor2, true) } returns Unit
+        every { _windowsRegistry.accept(_key1, _visitor1, true) } returns Unit
+        every { _windowsRegistry.accept(_key2, _visitor1, true) } returns Unit
+        every { _windowsRegistry.accept(_key2, _visitor2, true) } returns Unit
+        every { _windowsRegistry.accept(_key3, _visitor2, true) } returns Unit
 
         every { _dotnetFrameworkValidator.isValid(_framework1) } returns true
         every { _dotnetFrameworkValidator.isValid(_framework2) } returns true
@@ -78,10 +78,10 @@ class DotnetFrameworksProviderTest {
                 frameworksProvider.getFrameworks().sortedBy { it.toString() }.toList(),
                 listOf(_framework1, _framework2, _framework5).sortedBy { it.toString() }.toList())
 
-        verify(exactly = 1) { _windowsRegistry.get(_key1, _visitor1, true) }
-        verify(exactly = 1) { _windowsRegistry.get(_key2, _visitor1, true) }
-        verify(exactly = 1) { _windowsRegistry.get(_key2, _visitor2, true) }
-        verify(exactly = 1) { _windowsRegistry.get(_key3, _visitor2, true) }
+        verify(exactly = 1) { _windowsRegistry.accept(_key1, _visitor1, true) }
+        verify(exactly = 1) { _windowsRegistry.accept(_key2, _visitor1, true) }
+        verify(exactly = 1) { _windowsRegistry.accept(_key2, _visitor2, true) }
+        verify(exactly = 1) { _windowsRegistry.accept(_key3, _visitor2, true) }
     }
 
     private fun createInstance() =

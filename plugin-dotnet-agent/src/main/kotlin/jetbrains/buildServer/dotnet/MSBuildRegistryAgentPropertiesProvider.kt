@@ -17,11 +17,11 @@ class MSBuildRegistryAgentPropertiesProvider(
         val props = mutableListOf<AgentProperty>()
 
         for (key in RegKeys) {
-            _windowsRegistry.get(
+            _windowsRegistry.accept(
                     key,
                     object: WindowsRegistryVisitor {
-                        override fun accept(key: WindowsRegistryKey) = true
-                        override fun accept(value: WindowsRegistryValue): Boolean {
+                        override fun visit(key: WindowsRegistryKey) = true
+                        override fun visit(value: WindowsRegistryValue): Boolean {
                             if (
                                     value.type == WindowsRegistryValueType.Str
                                     && value.text.isNotBlank()

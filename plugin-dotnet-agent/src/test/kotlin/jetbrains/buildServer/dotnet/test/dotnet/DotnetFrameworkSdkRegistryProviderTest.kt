@@ -111,10 +111,10 @@ class DotnetFrameworkSdkRegistryProviderTest {
         val instanceProvider = createInstance()
 
         // When
-        every { _windowsRegistry.get(DotnetFrameworkSdkRegistryProvider.RegKey, any(), false) } answers {
+        every { _windowsRegistry.accept(DotnetFrameworkSdkRegistryProvider.RegKey, any(), false) } answers {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (registryValue in registryValues) {
-                if (!visitor.accept(registryValue)) {
+                if (!visitor.visit(registryValue)) {
                     break
                 }
             }
