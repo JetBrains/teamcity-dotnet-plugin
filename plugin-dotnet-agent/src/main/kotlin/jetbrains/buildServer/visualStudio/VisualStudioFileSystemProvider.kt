@@ -54,6 +54,13 @@ class VisualStudioFileSystemProvider(
                         LOG.debug("Found $instance");
                         instance
                     }
+                    .filter {
+                        val devenvFile = File(it.installationPath, "devenv.exe")
+                        if (!_fileSystemService.isExists(devenvFile) || !_fileSystemService.isFile(devenvFile)) {
+                            LOG.debug("Cannot find \"$devenvFile\".")
+                            false
+                        } else true
+                    }
 
     companion object {
         private val LOG = Logger.getLogger(VisualStudioFileSystemProvider::class.java)
