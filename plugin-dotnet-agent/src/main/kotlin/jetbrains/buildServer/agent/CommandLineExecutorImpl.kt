@@ -34,7 +34,6 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         currentEnvironment.getOrPut("HOME") { System.getProperty("user.home") }
         cmd.envParams = currentEnvironment
 
-        LOG.info("Execute command line: ${cmd.commandLineString}")
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
         return executor.runProcess(executionTimeoutSeconds)?.let {
             val result = CommandLineResult(
@@ -44,12 +43,12 @@ class CommandLineExecutorImpl : CommandLineExecutor {
 
             if (LOG.isDebugEnabled) {
                 val resultStr = StringBuilder()
-                resultStr.append("Exit code: ${it.exitCode}")
-                resultStr.append("Stdout:\n${it.stdout}")
-                resultStr.append("Stderr:\n${it.stderr}")
-                LOG.debug("Result:\n$resultStr")
+                resultStr.append("---> \"${cmd.commandLineString}\" exits with code: ${it.exitCode}")
+                resultStr.append("---> Stdout:\n${it.stdout}")
+                resultStr.append("---> Stderr:\n${it.stderr}")
+                LOG.debug("---> Result:\n$resultStr")
             } else {
-                LOG.info("Exits with code: ${it.exitCode}")
+                LOG.info("---> \"${cmd.commandLineString}\" exits with code: ${it.exitCode}")
             }
 
             return result

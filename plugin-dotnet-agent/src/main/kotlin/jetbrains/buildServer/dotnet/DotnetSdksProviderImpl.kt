@@ -26,7 +26,7 @@ class DotnetSdksProviderImpl(
     : DotnetSdksProvider {
     override fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
         val sdkPath = File(dotnetExecutable.parent, "sdk")
-        LOG.info("Try getting the list of .NET SDK from directory <$sdkPath>.")
+        LOG.debug("Try getting the list of .NET SDK from directory <$sdkPath>.")
         val sdks = _fileSystemService.list(sdkPath)
                 .filter { _fileSystemService.isDirectory(it) }
                 .map { DotnetSdk(it, Version.parse(it.name)) }

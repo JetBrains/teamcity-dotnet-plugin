@@ -41,6 +41,7 @@ dependencies {
   testCompile 'org.hamcrest:hamcrest-all:1.3'
   testCompile 'org.jetbrains.kotlin:kotlin-reflect' 
   testCompile 'io.mockk:mockk:1.9.3'
+  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
 }
 
 project.tasks.nugetRestore.doFirst {

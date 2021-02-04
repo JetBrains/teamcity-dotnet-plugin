@@ -1,6 +1,8 @@
 package jetbrains.buildServer.agent
 
+import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
+import kotlin.system.measureTimeMillis
 
 class WindowsRegistryImpl(
         private val _environment: Environment,
@@ -13,26 +15,27 @@ class WindowsRegistryImpl(
             return
         }
 
-        var curKey: WindowsRegistryKey = key;
-        for (line in getLines(key, recursively)) {
-            if (line.isBlank()) {
-                continue
-            }
-
-            val value = _windowsRegistryParser.tryParseValue(curKey, line)
-            if (value != null) {
-                if (!visitor.visit(value)) {
-                   return
+        LOG.debugBlock("Accepted ${key}").use {
+            var curKey: WindowsRegistryKey = key;
+            for (line in getLines(key, recursively)) {
+                if (line.isBlank()) {
+                    continue
                 }
-            }
-            else {
-                val newKey = _windowsRegistryParser.tryParseKey(key, line)
-                if (newKey != null) {
-                    if (!visitor.visit(newKey)) {
+
+                val value = _windowsRegistryParser.tryParseValue(curKey, line)
+                if (value != null) {
+                    if (!visitor.visit(value)) {
                         return
                     }
+                } else {
+                    val newKey = _windowsRegistryParser.tryParseKey(key, line)
+                    if (newKey != null) {
+                        if (!visitor.visit(newKey)) {
+                            return
+                        }
 
-                    curKey = newKey;
+                        curKey = newKey;
+                    }
                 }
             }
         }
@@ -64,4 +67,8 @@ class WindowsRegistryImpl(
                 Path("REG"),
                 Path("."),
                 listOf(CommandLineArgument("QUERY")) + args)
+
+    companion object {
+        private val LOG = Logger.getLogger(WindowsRegistryImpl::class.java)
+    }
 }

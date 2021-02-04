@@ -12,7 +12,7 @@ class VisualStudioFileSystemProvider(
         private val _fileSystemService: FileSystemService,
         private val _visualStudioInstancesParser: VisualStudioInstanceParser)
     : ToolInstanceProvider {
-    @Cacheable("ListOfVisualStuioFromFileSystem")
+    @Cacheable("ListOfVisualStuioFromFileSystem", sync = true)
     override fun getInstances(): Sequence<ToolInstance> =
             _packagesLocators
                     // C:\ProgramData\Microsoft\VisualStudio\Packages

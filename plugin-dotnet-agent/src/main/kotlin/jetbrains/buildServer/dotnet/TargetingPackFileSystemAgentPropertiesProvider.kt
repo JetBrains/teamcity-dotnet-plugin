@@ -50,7 +50,7 @@ class TargetingPackFileSystemAgentPropertiesProvider(
                 .map {
                     LOG.debug("Goes through \"$it\".")
                     val version = it.name.substring(1)
-                    LOG.info("Found .NET Framework targeting pack $version at \"${it.path}\".")
+                    LOG.debug("Found .NET Framework targeting pack $version at \"${it.path}\".")
                     AgentProperty(ToolInstanceType.TargetingPack, "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${version}$CONFIG_SUFFIX_PATH", it.path)
                 }
 

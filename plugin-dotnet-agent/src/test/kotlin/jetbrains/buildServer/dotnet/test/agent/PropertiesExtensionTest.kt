@@ -21,11 +21,17 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.rx.subjectOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.testng.Assert
+import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
 class PropertiesExtensionTest {
+    private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _eventSources: EventSources
     @MockK private lateinit var _buildAgent: BuildAgent
     @MockK private lateinit var _buildAgentConfiguration: BuildAgentConfiguration
@@ -36,8 +42,14 @@ class PropertiesExtensionTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-
+        Dispatchers.setMain(mainThreadSurrogate)
         every { _buildAgent.configuration } returns _buildAgentConfiguration
+    }
+
+    @AfterMethod
+    fun tearDown() {
+        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+        mainThreadSurrogate.close()
     }
 
     @Test
@@ -72,7 +84,7 @@ class PropertiesExtensionTest {
     }
 
     private fun createInstance(): PropertiesExtension {
-        val propertiesExtension = PropertiesExtension(listOf(_agentPropertiesProvider1, _agentPropertiesProvider2))
+        val propertiesExtension = PropertiesExtension(Dispatchers.Main, listOf(_agentPropertiesProvider1, _agentPropertiesProvider2))
         propertiesExtension.subscribe(_eventSources)
         return propertiesExtension
     }

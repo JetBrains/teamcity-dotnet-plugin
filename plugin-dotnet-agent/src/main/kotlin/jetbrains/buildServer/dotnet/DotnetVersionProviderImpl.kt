@@ -29,7 +29,7 @@ class DotnetVersionProviderImpl(
     : DotnetVersionProvider {
 
     override fun getVersion(dotnetExecutable: Path, workingDirectory: Path): Version {
-        LOG.info("Try getting the dotnet CLI version for directory \"$workingDirectory\".")
+        LOG.debug("Try getting the dotnet CLI version for directory \"$workingDirectory\".")
         val versionResult = _commandLineExecutor.tryExecute(
                 CommandLine(
                         null,

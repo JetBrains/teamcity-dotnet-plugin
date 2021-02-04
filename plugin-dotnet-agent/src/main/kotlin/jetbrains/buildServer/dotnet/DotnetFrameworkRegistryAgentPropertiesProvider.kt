@@ -25,7 +25,7 @@ class DotnetFrameworkRegistryAgentPropertiesProvider(
                             .asSequence()
                             .filter { it.version.major != 4 || it.version == latestDotnet4Version }
                             .map {
-                                LOG.info("Found .NET Framework ${it.version} ${it.platform.id} at \"${it.path}\".")
+                                LOG.debug("Found .NET Framework ${it.version} ${it.platform.id} at \"${it.path}\".")
                                 sequence {
                                     val majorVersion = "${it.version.major}${Version.Separator}${it.version.minor}"
                                     yield(AgentProperty(ToolInstanceType.DotNetFramework, "$CONFIG_PREFIX_DOTNET_FAMEWORK${majorVersion}_${it.platform.id}", it.version.toString()))

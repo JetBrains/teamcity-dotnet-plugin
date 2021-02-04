@@ -9,7 +9,7 @@ class DotnetFrameworksProviderImpl(
         private val _registryVisitors: List<DotnetFrameworksWindowsRegistryVisitor>,
         private val _dotnetFrameworkValidator: DotnetFrameworkValidator)
     : DotnetFrameworksProvider {
-    @Cacheable("ListOfDotnetFramework")
+    @Cacheable("ListOfDotnetFramework", sync = true)
     override fun getFrameworks() =
             _registryVisitors
                     .asSequence()
@@ -32,6 +32,9 @@ class DotnetFrameworksProviderImpl(
                         framewrok
                     }
                     .distinct()
+                    // Materialize to allow caching
+                    .toList()
+                    .asSequence()
 
     companion object {
         private val LOG = Logger.getLogger(DotnetFrameworksProviderImpl::class.java)

@@ -9,13 +9,19 @@ import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.testng.Assert
+import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class VisualStudioRegistryProviderTest {
+    private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _windowsRegistry: WindowsRegistry
     @MockK private lateinit var _visualStudioInstanceFactory: ToolInstanceFactory
     @MockK private lateinit var _visualStudioTestInstanceFactory: ToolInstanceFactory
@@ -25,6 +31,13 @@ class VisualStudioRegistryProviderTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        Dispatchers.setMain(mainThreadSurrogate)
+    }
+
+    @AfterMethod
+    fun tearDown() {
+        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+        mainThreadSurrogate.close()
     }
 
     @DataProvider
@@ -244,6 +257,7 @@ class VisualStudioRegistryProviderTest {
 
     private fun createInstance() =
             VisualStudioRegistryProvider(
+                    Dispatchers.Main,
                     _windowsRegistry,
                     _visualStudioInstanceFactory,
                     _visualStudioTestInstanceFactory,

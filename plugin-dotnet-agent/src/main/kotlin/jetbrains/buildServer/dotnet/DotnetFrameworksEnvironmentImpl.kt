@@ -8,7 +8,7 @@ import java.io.File
 class DotnetFrameworksEnvironmentImpl(
         private val _windowsRegistry: WindowsRegistry)
     : DotnetFrameworksEnvironment {
-    @Cacheable("tryGetRoot", key = "#bitness.platform.id")
+    @Cacheable("tryGetRoot", key = "#bitness", sync = true)
     override fun tryGetRoot(bitness: WindowsRegistryBitness): File? {
         var root: File? = null
         _windowsRegistry.accept(
@@ -36,7 +36,7 @@ class DotnetFrameworksEnvironmentImpl(
                 false
         )
 
-        LOG.info(".NET Framework ${bitness.platform.id} install root: \"${root ?: "empty"}\"");
+        LOG.debug(".NET Framework ${bitness.platform.id} install root: \"${root ?: "empty"}\"");
         return root
     }
 

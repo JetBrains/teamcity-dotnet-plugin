@@ -7,16 +7,18 @@ import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.agent.Logger
+import kotlinx.coroutines.*
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
 class VisualStudioRegistryProvider(
+        private val _dispatcher: CoroutineDispatcher,
         private val _windowsRegistry: WindowsRegistry,
         private val _visualStudioInstanceFactory: ToolInstanceFactory,
         private val _visualStudioTestConsoleInstanceFactory: ToolInstanceFactory,
         private val _msTestConsoleInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
-    @Cacheable("ListOfVisualStuioAndTestFromRegistry")
+    @Cacheable("ListOfVisualStuioAndTestFromRegistry", sync = true)
     override fun getInstances(): Sequence<ToolInstance> {
         val instances = mutableSetOf<ToolInstance>()
         _windowsRegistry.accept(
@@ -25,8 +27,11 @@ class VisualStudioRegistryProvider(
                     override fun visit(key: WindowsRegistryKey): Boolean {
                         val version = Version.parse(key.parts.last())
                         if (version != Version.Empty && version.digits == 2) {
-                            _windowsRegistry.accept(key, this, false)
-                            _windowsRegistry.accept(key + "EnterpriseTools" + "QualityTools", this, false)
+                            val visitor = this;
+                            runBlocking {
+                                launch(_dispatcher) { _windowsRegistry.accept(key, visitor, false) }
+                                launch(_dispatcher) { _windowsRegistry.accept(key + "EnterpriseTools" + "QualityTools", visitor, false) }
+                            }
                         }
 
                         return true

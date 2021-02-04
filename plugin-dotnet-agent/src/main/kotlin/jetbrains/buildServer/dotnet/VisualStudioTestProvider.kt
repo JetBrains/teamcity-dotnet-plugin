@@ -12,7 +12,7 @@ class VisualStudioTestProvider(
         private val _msTestConsoleInstanceFactory: ToolInstanceFactory,
         private val _parametersService: ParametersService)
     : ToolInstanceProvider {
-    @Cacheable("ListOfVisualStuioTest")
+    @Cacheable("ListOfVisualStuioTest", sync = true)
     override fun getInstances() = (
                     getToolsFromInternalProps() + getTools()
             )

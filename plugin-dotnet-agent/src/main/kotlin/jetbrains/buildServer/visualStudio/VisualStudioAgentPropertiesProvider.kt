@@ -21,7 +21,7 @@ class VisualStudioAgentPropertiesProvider(
                     .distinctBy { it.baseVersion }
                     .flatMap {
                         visualStudio ->
-                        LOG.info("Found ${visualStudio}.")
+                        LOG.debug("Found ${visualStudio}.")
                         sequence {
                             yield(AgentProperty(ToolInstanceType.VisualStudio, "$CONFIG_PREFIX_VISUAL_STUDIO${visualStudio.baseVersion}", "${visualStudio.detailedVersion}"))
                             yield(AgentProperty(ToolInstanceType.VisualStudio, "$CONFIG_PREFIX_VISUAL_STUDIO${visualStudio.baseVersion}_Path", visualStudio.installationPath.path))

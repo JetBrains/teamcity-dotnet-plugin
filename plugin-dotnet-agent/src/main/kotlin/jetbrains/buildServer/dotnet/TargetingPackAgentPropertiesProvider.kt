@@ -20,7 +20,7 @@ class TargetingPackAgentPropertiesProvider(
                 .distinctBy { Version(it.version.major, it.version.minor) }
                 .map {
                     framework ->
-                    LOG.info("Found .NET Framework targeting pack ${framework.version.toString()} at \"${framework.path.path}\".")
+                    LOG.debug("Found .NET Framework targeting pack ${framework.version.toString()} at \"${framework.path.path}\".")
                     AgentProperty(ToolInstanceType.TargetingPack, "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${framework.version.major}${Version.Separator}${framework.version.minor}_Path", framework.path.path)
                 }
 

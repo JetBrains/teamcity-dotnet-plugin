@@ -30,7 +30,7 @@ open class NuGetServiceImpl(
         private val _versionParser: SemanticVersionParser)
     : NuGetService {
 
-    @Cacheable("getPackagesById")
+    @Cacheable("getPackagesById", sync = true)
     override fun getPackagesById(packageId: String, allowPrerelease: Boolean): Sequence<NuGetPackage> {
         return enumeratePackagesById(packageId, allowPrerelease).toList().asSequence()
     }
