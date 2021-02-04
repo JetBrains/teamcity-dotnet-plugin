@@ -21,7 +21,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.OSType
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class DotnetToolResolverImpl(
         private val _parametersService: ParametersService,

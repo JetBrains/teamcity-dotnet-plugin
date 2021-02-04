@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class EnvironmentVariablesImpl(

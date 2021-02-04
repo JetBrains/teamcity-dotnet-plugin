@@ -21,7 +21,7 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.use
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.OutputStreamWriter
 
 class ResponseFileArgumentsProvider(

@@ -1,7 +1,7 @@
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.Environment
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class VisualStudioPackagesEnvironmentLocator(

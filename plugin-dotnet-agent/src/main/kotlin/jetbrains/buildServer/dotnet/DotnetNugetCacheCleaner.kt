@@ -5,7 +5,7 @@ import jetbrains.buildServer.agent.runner.CacheCleaner
 import jetbrains.buildServer.agent.runner.CleanType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class DotnetNugetCacheCleaner(
@@ -49,7 +49,7 @@ class DotnetNugetCacheCleaner(
                     )
                 }
                 catch (ex: Exception) {
-                    LOG.debug(ex.message)
+                    LOG.debug(ex)
                     null
                 }
             }
@@ -67,6 +67,6 @@ class DotnetNugetCacheCleaner(
         internal val LOCALS_ARG = CommandLineArgument("locals")
         internal val LIST_ARG = CommandLineArgument("--list")
         internal val CLEAR_ARG = CommandLineArgument("--clear")
-        private val LOG = Logger.getLogger(DotnetNugetCacheCleaner::class.java.name)
+        private val LOG = Logger.getLogger(DotnetNugetCacheCleaner::class.java)
     }
 }

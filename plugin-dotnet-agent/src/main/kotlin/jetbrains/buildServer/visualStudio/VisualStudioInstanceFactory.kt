@@ -7,7 +7,7 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.dotnet.Platform
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class VisualStudioInstanceFactory(

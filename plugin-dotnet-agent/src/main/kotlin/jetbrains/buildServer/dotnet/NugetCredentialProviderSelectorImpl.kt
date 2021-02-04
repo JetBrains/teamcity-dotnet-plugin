@@ -5,7 +5,7 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class NugetCredentialProviderSelectorImpl(
         private val _parametersService: ParametersService,

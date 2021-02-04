@@ -20,7 +20,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 /**`

@@ -5,7 +5,7 @@ import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class TargetingPackAgentPropertiesProvider(
         private val _frameworksProvider: DotnetFrameworksProvider)

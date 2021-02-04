@@ -2,7 +2,6 @@ package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
-import org.apache.log4j.Logger
 
 class PropertiesExtension(
         private val _agentPropertiesProviders: List<AgentPropertiesProvider>)

@@ -4,7 +4,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class TargetingPackFileSystemAgentPropertiesProvider(

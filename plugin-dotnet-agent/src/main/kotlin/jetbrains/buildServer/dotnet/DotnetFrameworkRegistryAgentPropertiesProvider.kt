@@ -5,7 +5,7 @@ import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class DotnetFrameworkRegistryAgentPropertiesProvider(
         private val _dotnetFrameworksProvider: DotnetFrameworksProvider)

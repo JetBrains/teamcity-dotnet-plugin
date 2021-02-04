@@ -7,7 +7,7 @@ import jetbrains.buildServer.agent.PEReader
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_MSBUILD_TOOLS
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class MSBuildFileSystemAgentPropertiesProvider(

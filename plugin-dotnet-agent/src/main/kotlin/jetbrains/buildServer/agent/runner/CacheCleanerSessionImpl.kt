@@ -3,8 +3,8 @@ package jetbrains.buildServer.agent.runner
 import jetbrains.buildServer.agent.DirectoryCleanersProvider
 import jetbrains.buildServer.agent.DirectoryCleanersProviderContext
 import jetbrains.buildServer.agent.DirectoryCleanersRegistry
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants
-import org.apache.log4j.Logger
 import java.io.File
 import java.time.Duration
 import java.time.Instant

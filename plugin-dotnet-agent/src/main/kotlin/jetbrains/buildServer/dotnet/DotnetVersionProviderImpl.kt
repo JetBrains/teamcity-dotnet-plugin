@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class DotnetVersionProviderImpl(
         private val _buildStepContext: BuildStepContext,
@@ -55,7 +55,7 @@ class DotnetVersionProviderImpl(
 
 
     companion object {
-        private val LOG = Logger.getLogger(DotnetVersionProviderImpl::class.java.name)
+        private val LOG = Logger.getLogger(DotnetVersionProviderImpl::class.java)
         internal val versionArgs = listOf(CommandLineArgument("--version"))
     }
 }
