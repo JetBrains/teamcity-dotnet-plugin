@@ -3,7 +3,7 @@ package jetbrains.buildServer.visualStudio
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 

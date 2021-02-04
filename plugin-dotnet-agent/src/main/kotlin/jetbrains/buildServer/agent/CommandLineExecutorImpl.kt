@@ -17,7 +17,6 @@
 package jetbrains.buildServer.agent
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import org.apache.log4j.Logger
 import java.io.File
 
 class CommandLineExecutorImpl : CommandLineExecutor {

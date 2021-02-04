@@ -1,7 +1,7 @@
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.agent.*
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class VisualStudioPackagesRegistryLocator(
         private val _windowsRegistry: WindowsRegistry)
