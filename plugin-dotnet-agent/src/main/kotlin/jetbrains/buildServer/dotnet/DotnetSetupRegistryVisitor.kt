@@ -30,9 +30,9 @@ class DotnetSetupRegistryVisitor(
         _frameworks.clear()
     }
 
-    override fun accept(key: WindowsRegistryKey) = true
+    override fun visit(key: WindowsRegistryKey) = true
 
-    override fun accept(value: WindowsRegistryValue): Boolean {
+    override fun visit(value: WindowsRegistryValue): Boolean {
         val bitness = value.key.bitness
         if (value.key.parts.size == Deep + 2) {
             val subKey = value.key.parts.takeLast(2)

@@ -15,11 +15,11 @@ class DotnetFrameworkSdkRegistryProvider(
     @Cacheable("ListOfDotnetFrameworkSdkFromRegistry")
     override fun getInstances(): Sequence<ToolInstance> {
             val sdks = mutableListOf<ToolInstance>()
-            _windowsRegistry.get(
+            _windowsRegistry.accept(
                     RegKey,
                     object : WindowsRegistryVisitor {
-                        override fun accept(key: WindowsRegistryKey) = false
-                        override fun accept(value: WindowsRegistryValue): Boolean {
+                        override fun visit(key: WindowsRegistryKey) = false
+                        override fun visit(value: WindowsRegistryValue): Boolean {
                             val name = value.key.parts.last()
                             if (
                                     value.type == WindowsRegistryValueType.Str

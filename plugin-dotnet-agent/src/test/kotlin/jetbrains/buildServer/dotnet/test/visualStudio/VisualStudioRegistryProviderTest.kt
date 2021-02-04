@@ -137,10 +137,10 @@ class VisualStudioRegistryProviderTest {
         val instanceProvider = createInstance()
 
         // When
-        every { _windowsRegistry.get(VisualStudioRegistryProvider.RegKey, any(), false) } answers {
+        every { _windowsRegistry.accept(VisualStudioRegistryProvider.RegKey, any(), false) } answers {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (registryValue in registryValues) {
-                if (!visitor.accept(registryValue)) {
+                if (!visitor.visit(registryValue)) {
                     break
                 }
             }
@@ -222,14 +222,14 @@ class VisualStudioRegistryProviderTest {
         val actualKeys = mutableListOf<WindowsRegistryKey>()
 
         // When
-        every { _windowsRegistry.get(any(), any(), false) } answers {
+        every { _windowsRegistry.accept(any(), any(), false) } answers {
             val key = arg<WindowsRegistryKey>(0)
             if (key != VisualStudioRegistryProvider.RegKey) {
                 actualKeys.add(key)
             } else {
                 val visitor = arg<WindowsRegistryVisitor>(1)
                 for (versionKey in keys) {
-                    if (!visitor.accept(versionKey)) {
+                    if (!visitor.visit(versionKey)) {
                         break
                     }
                 }

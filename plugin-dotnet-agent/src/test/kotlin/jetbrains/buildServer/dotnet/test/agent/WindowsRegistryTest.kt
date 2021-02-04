@@ -136,15 +136,15 @@ class WindowsRegistryTest {
         }
 
         val actualItems = mutableListOf<Any>()
-        registry.get(
+        registry.accept(
                 _rootKey,
                 object :WindowsRegistryVisitor {
-                    override fun accept(key: WindowsRegistryKey): Boolean {
+                    override fun visit(key: WindowsRegistryKey): Boolean {
                         actualItems.add(key)
                         return true
                     }
 
-                    override fun accept(value: WindowsRegistryValue): Boolean {
+                    override fun visit(value: WindowsRegistryValue): Boolean {
                         actualItems.add(value)
                         return true
                     }

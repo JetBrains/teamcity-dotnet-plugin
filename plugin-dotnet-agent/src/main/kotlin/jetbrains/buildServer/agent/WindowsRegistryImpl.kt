@@ -1,8 +1,6 @@
 package jetbrains.buildServer.agent
 
-import WindowsRegistryValueType
 import jetbrains.buildServer.util.OSType
-import java.io.File
 
 class WindowsRegistryImpl(
         private val _environment: Environment,
@@ -10,7 +8,7 @@ class WindowsRegistryImpl(
         private val _windowsRegistryParser: WindowsRegistryParser)
     : WindowsRegistry {
 
-    override fun get(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor, recursively: Boolean) {
+    override fun accept(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor, recursively: Boolean) {
         if (_environment.os != OSType.WINDOWS) {
             return
         }
@@ -23,14 +21,14 @@ class WindowsRegistryImpl(
 
             val value = _windowsRegistryParser.tryParseValue(curKey, line)
             if (value != null) {
-                if (!visitor.accept(value)) {
+                if (!visitor.visit(value)) {
                    return
                 }
             }
             else {
                 val newKey = _windowsRegistryParser.tryParseKey(key, line)
                 if (newKey != null) {
-                    if (!visitor.accept(newKey)) {
+                    if (!visitor.visit(newKey)) {
                         return
                     }
 

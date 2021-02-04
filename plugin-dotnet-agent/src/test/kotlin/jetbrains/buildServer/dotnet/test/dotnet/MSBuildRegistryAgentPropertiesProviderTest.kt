@@ -72,12 +72,12 @@ class MSBuildRegistryAgentPropertiesProviderTest {
                 WindowsRegistryValue(rootKey32 + "17.0" + "MSBuildToolsPath", WindowsRegistryValueType.Str, "msbuild17" + File.separator)
         )
 
-        every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>(), true) } answers  {
+        every { _windowsRegistry.accept(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>(), true) } answers  {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (item in regItems) {
                 when (item) {
-                    is WindowsRegistryValue -> visitor.accept(item)
-                    is WindowsRegistryKey -> visitor.accept(item)
+                    is WindowsRegistryValue -> visitor.visit(item)
+                    is WindowsRegistryKey -> visitor.visit(item)
                 }
             }
             regItems.clear()
