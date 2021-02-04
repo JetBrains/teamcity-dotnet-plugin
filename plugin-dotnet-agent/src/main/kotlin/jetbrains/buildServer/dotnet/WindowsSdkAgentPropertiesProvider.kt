@@ -14,6 +14,7 @@ class WindowsSdkAgentPropertiesProvider(
     override val properties: Sequence<AgentProperty> get() =
         _sdkInstanceProvider
                 .getInstances()
+                .asSequence()
                 .filter { it.toolType == ToolInstanceType.WindowsSDK }
                 .flatMap {
                     sdk ->

@@ -53,10 +53,10 @@ class VisualStudioTestProviderTest {
         every { _msTestConsoleInstanceFactory.tryCreate(any(), any(), any()) } returns null
         every { _msTestConsoleInstanceFactory.tryCreate(File("path6"), any(), any()) } returns msTestTool4
 
-        every { _baseToolInstanceProvider1.getInstances() } returns sequenceOf(msTestTool3, vsTool5)
-        every { _baseToolInstanceProvider2.getInstances() } returns sequenceOf(vsTool6, vsTestTool1)
+        every { _baseToolInstanceProvider1.getInstances() } returns listOf(msTestTool3, vsTool5)
+        every { _baseToolInstanceProvider2.getInstances() } returns listOf(vsTool6, vsTestTool1)
 
-        var actualInstances = provider.getInstances().toList()
+        var actualInstances = provider.getInstances()
 
         // Then
         Assert.assertEquals(
@@ -180,8 +180,8 @@ class VisualStudioTestProviderTest {
         every { _visualStudioTestConsoleInstanceFactory.tryCreate(File("pathB"), any(), any()) } returns _vsTestToolB
 
         // When
-        every { _baseToolInstanceProvider1.getInstances() } returns sequenceOf(_vsTestTool)
-        every { _baseToolInstanceProvider2.getInstances() } returns sequenceOf(_msTestTool)
+        every { _baseToolInstanceProvider1.getInstances() } returns listOf(_vsTestTool)
+        every { _baseToolInstanceProvider2.getInstances() } returns listOf(_msTestTool)
         var actualInstances = provider.getInstances().sortedBy { it.toString() }.toList()
 
         // Then

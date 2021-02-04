@@ -31,7 +31,7 @@ class VisualStudioTestAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // When
-        every { _visualStudioTestInstanceProvider.getInstances() } returns sequenceOf(
+        every { _visualStudioTestInstanceProvider.getInstances() } returns listOf(
                 ToolInstance(ToolInstanceType.VisualStudio, File("path1"), Version(16, 0, 18362), Version(16, 0), Platform.Default),
                 ToolInstance(ToolInstanceType.VisualStudioTest, File("path"), Version(16, 0, 18362), Version(16, 5, 4), Platform.Default),
                 ToolInstance(ToolInstanceType.MSTest, File("path2"), Version(16, 0, 18362), Version(16, 2,1), Platform.Default))

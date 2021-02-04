@@ -13,7 +13,7 @@ class VisualStudioFileSystemProvider(
         private val _visualStudioInstancesParser: VisualStudioInstanceParser)
     : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioFromFileSystem", sync = true)
-    override fun getInstances(): Sequence<ToolInstance> =
+    override fun getInstances(): List<ToolInstance> =
             _packagesLocators
                     // C:\ProgramData\Microsoft\VisualStudio\Packages
                     .mapNotNull { it.tryGetPackagesPath() }
@@ -61,6 +61,7 @@ class VisualStudioFileSystemProvider(
                             false
                         } else true
                     }
+                    .toList()
 
     companion object {
         private val LOG = Logger.getLogger(VisualStudioFileSystemProvider::class.java)

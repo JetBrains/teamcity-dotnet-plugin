@@ -31,7 +31,7 @@ class WindowsSdkAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // When
-        every { _sdkInstanceProvider.getInstances() } returns sequenceOf(
+        every { _sdkInstanceProvider.getInstances() } returns listOf(
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path1"), Version(10, 0, 18362), Version(10, 0), Platform.Default),
                 ToolInstance(ToolInstanceType.DotNetFrameworkSDK, File("path2"), Version(4, 0, 123), Version(4, 0), Platform.x86),
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path3"), Version(8, 1, 345), Version(8, 1, 0, "A"), Platform.Default))

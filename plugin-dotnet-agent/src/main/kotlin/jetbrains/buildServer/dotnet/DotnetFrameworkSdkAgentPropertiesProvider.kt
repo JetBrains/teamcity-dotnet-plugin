@@ -14,7 +14,7 @@ class DotnetFrameworkSdkAgentPropertiesProvider(
     override val properties: Sequence<AgentProperty> get() =
         _sdkInstanceProviders
                 .asSequence()
-                .flatMap { it.getInstances() }
+                .flatMap { it.getInstances().asSequence() }
                 .filter { it.toolType == ToolInstanceType.DotNetFrameworkSDK }
                 .flatMap {
                     sdk ->

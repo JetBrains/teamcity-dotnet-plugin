@@ -15,6 +15,7 @@ class MSTestAgentPropertiesProvider(
     override val properties: Sequence<AgentProperty> get() =
         _visualStudioTestInstanceProvider
                 .getInstances()
+                .asSequence()
                 .filter { it.toolType == ToolInstanceType.MSTest }
                 .map {
                     console ->

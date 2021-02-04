@@ -16,7 +16,7 @@ class VisualStudioAgentPropertiesProvider(
     override val properties =
             _visualStudioProviders
                     .asSequence()
-                    .flatMap { it.getInstances() }
+                    .flatMap { it.getInstances().asSequence() }
                     .filter { it.toolType == ToolInstanceType.VisualStudio }
                     .distinctBy { it.baseVersion }
                     .flatMap {

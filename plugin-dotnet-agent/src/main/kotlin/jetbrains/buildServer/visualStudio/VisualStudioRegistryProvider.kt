@@ -19,7 +19,7 @@ class VisualStudioRegistryProvider(
         private val _msTestConsoleInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioAndTestFromRegistry", sync = true)
-    override fun getInstances(): Sequence<ToolInstance> {
+    override fun getInstances(): List<ToolInstance> {
         val instances = mutableSetOf<ToolInstance>()
         _windowsRegistry.accept(
                 RegKey,
@@ -71,7 +71,7 @@ class VisualStudioRegistryProvider(
                 },
                 false)
 
-        return instances.asSequence()
+        return instances.toList()
     }
 
     companion object {

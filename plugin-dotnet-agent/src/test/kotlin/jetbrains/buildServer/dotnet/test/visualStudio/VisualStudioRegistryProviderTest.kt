@@ -249,7 +249,7 @@ class VisualStudioRegistryProviderTest {
             }
         }
 
-        instanceProvider.getInstances().toList()
+        instanceProvider.getInstances()
 
         // Then
         Assert.assertEquals(actualKeys, expectedKeys.toList())

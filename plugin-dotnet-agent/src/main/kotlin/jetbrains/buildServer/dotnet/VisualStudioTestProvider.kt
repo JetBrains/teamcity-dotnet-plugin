@@ -19,11 +19,12 @@ class VisualStudioTestProvider(
             .distinctBy {
                 Pair(Pair(it.toolType, it.platform), Version(it.baseVersion.major, it.baseVersion.minor))
             }
+            .toList()
 
     private fun getTools() =
             _baseProviders
                 .asSequence()
-                .flatMap { it.getInstances() }
+                .flatMap { it.getInstances().asSequence() }
                 .flatMap {
                     when(it.toolType) {
                         ToolInstanceType.VisualStudioTest -> sequenceOf(it)

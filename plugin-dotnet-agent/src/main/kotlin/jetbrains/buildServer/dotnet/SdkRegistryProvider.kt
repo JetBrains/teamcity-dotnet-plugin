@@ -13,7 +13,7 @@ class SdkRegistryProvider(
         private val _sdkInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
     @Cacheable("ListOfSdkFromRegistry", sync = true)
-    override fun getInstances(): Sequence<ToolInstance> {
+    override fun getInstances(): List<ToolInstance> {
         val sdks = mutableMapOf<String, Sdk>()
         for (regKey in RegKeys) {
             _windowsRegistry.accept(
@@ -93,6 +93,7 @@ class SdkRegistryProvider(
                     }
                 }
                 .distinct()
+                .toList()
     }
 
 

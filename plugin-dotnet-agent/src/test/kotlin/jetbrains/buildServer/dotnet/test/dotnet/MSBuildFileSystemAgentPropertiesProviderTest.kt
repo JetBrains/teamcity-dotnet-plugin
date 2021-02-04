@@ -139,7 +139,7 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
             expectedProperties: List<AgentProperty>) {
         // Given
         val propertiesProvider = createInstance(fileSystemService)
-        every { _visualStudioLocator.getInstances() } returns visualStudioInstances.asSequence()
+        every { _visualStudioLocator.getInstances() } returns visualStudioInstances
         every { _peReader.tryGetVersion(any()) } returns Version(16, 0, 0, 0)
 
         // When

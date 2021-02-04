@@ -21,7 +21,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
     override val properties get() =
         _visualStudioProviders
                 .asSequence()
-                .flatMap { it.getInstances() }
+                .flatMap { it.getInstances().asSequence() }
                 .filter { it.toolType == ToolInstanceType.VisualStudio }
                 // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\
                 .map {

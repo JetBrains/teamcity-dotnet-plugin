@@ -265,7 +265,7 @@ class VisualStudioFileSystemProviderTest {
         every { _visualStudioInstancesParser.tryParse(_inputStream2) } returns visualStudioInstance2
 
         // When
-        val actualInstances = locator.getInstances().toList()
+        val actualInstances = locator.getInstances()
 
         // Then
         Assert.assertEquals(actualInstances, expectedInstances)

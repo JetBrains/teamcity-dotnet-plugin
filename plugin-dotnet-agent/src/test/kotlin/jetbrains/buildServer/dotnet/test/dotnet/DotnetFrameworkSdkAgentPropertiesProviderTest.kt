@@ -32,12 +32,12 @@ class DotnetFrameworkSdkAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // When
-        every { _sdkInstanceProvider1.getInstances() } returns sequenceOf(
+        every { _sdkInstanceProvider1.getInstances() } returns listOf(
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path1"), Version(10, 0, 18362), Version(10, 0), Platform.Default),
                 ToolInstance(ToolInstanceType.DotNetFrameworkSDK, File("path2"), Version(4, 0, 123), Version.parse("4.0"), Platform.x86))
 
         // When
-        every { _sdkInstanceProvider2.getInstances() } returns sequenceOf(
+        every { _sdkInstanceProvider2.getInstances() } returns listOf(
                 ToolInstance(ToolInstanceType.DotNetFrameworkSDK, File("path3"), Version(3, 5, 456, 1), Version.parse("3.5"), Platform.x64),
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path4"), Version(8, 1, 345), Version(8, 1, 0, "A"), Platform.Default))
 
