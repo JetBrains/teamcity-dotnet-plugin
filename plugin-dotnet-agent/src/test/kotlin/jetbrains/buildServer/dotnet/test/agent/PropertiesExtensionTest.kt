@@ -22,14 +22,14 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.rx.subjectOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.testng.Assert
-import org.testng.annotations.AfterMethod
-import org.testng.annotations.BeforeMethod
-import org.testng.annotations.Test
+import org.testng.annotations.*
 
+@ExperimentalCoroutinesApi
 class PropertiesExtensionTest {
     private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _eventSources: EventSources
@@ -42,12 +42,16 @@ class PropertiesExtensionTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        Dispatchers.setMain(mainThreadSurrogate)
         every { _buildAgent.configuration } returns _buildAgentConfiguration
     }
 
-    @AfterMethod
-    fun tearDown() {
+    @BeforeClass
+    fun setUpClass() {
+        Dispatchers.setMain(mainThreadSurrogate)
+    }
+
+    @AfterClass
+    fun tearDownClass() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
         mainThreadSurrogate.close()
     }

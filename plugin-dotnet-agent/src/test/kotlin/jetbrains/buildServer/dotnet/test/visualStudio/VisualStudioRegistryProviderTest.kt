@@ -10,16 +10,16 @@ import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.visualStudio.VisualStudioRegistryProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.testng.Assert
-import org.testng.annotations.AfterMethod
-import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
-import org.testng.annotations.Test
+import org.testng.annotations.*
 import java.io.File
 
+@ExperimentalCoroutinesApi
 class VisualStudioRegistryProviderTest {
     private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _windowsRegistry: WindowsRegistry
@@ -34,8 +34,13 @@ class VisualStudioRegistryProviderTest {
         Dispatchers.setMain(mainThreadSurrogate)
     }
 
-    @AfterMethod
-    fun tearDown() {
+    @BeforeClass
+    fun setUpClass() {
+        Dispatchers.setMain(mainThreadSurrogate)
+    }
+
+    @AfterClass
+    fun tearDownClass() {
         Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
         mainThreadSurrogate.close()
     }
