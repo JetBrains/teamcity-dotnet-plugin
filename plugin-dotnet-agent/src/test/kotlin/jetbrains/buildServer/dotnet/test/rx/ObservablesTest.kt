@@ -433,17 +433,17 @@ class ObservablesTest {
     @DataProvider
     fun testTypeOf(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf(
-                        observableOf(NotificationNext<Any>(1), NotificationNext<Any>("2"), NotificationNext<Any>(3), completed()),
-                        observableOf(NotificationNext(1), NotificationNext(3), completed<Int>())),
-                arrayOf(
-                        observableOf(NotificationNext("1"), NotificationNext("2"), completed()),
+                arrayOf<Any>(
+                        observableOf<Any>(NotificationNext<Any>(1), NotificationNext<Any>("2"), NotificationNext<Any>(3), completed<Any>()),
+                        observableOf<Notification<Int>>(NotificationNext(1), NotificationNext(3), completed<Int>())),
+                arrayOf<Any>(
+                        observableOf<Notification<String>>(NotificationNext("1"), NotificationNext("2"), completed()),
                         observableOf(completed<Int>())),
-                arrayOf(
-                        observableOf(completed()),
+                arrayOf<Any>(
+                        observableOf<Notification<Any>>(completed()),
                         observableOf(completed<Int>())),
-                arrayOf(
-                        observableOf(NotificationError(error)),
+                arrayOf<Any>(
+                        observableOf<Notification<Any>>(NotificationError(error)),
                         observableOf(NotificationError<Int>(error))))
     }
 

@@ -37,16 +37,16 @@ class FailedTestSourceTest {
                         observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), completed()),
                         observableOf(NotificationNext(Unit), completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestFinished("name", 1)), completed()),
+                        observableOf(NotificationNext<ServiceMessage>(TestFinished("name", 1)), completed<ServiceMessage>()),
                         observableOf(completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestIgnored("name", "comment")), completed()),
+                        observableOf(NotificationNext<ServiceMessage>(TestIgnored("name", "comment")), completed<ServiceMessage>()),
                         observableOf(completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationNext<ServiceMessage>(TestFailed("name2", "message2")), completed()),
+                        observableOf(NotificationNext<ServiceMessage>(TestFailed("name", "message")), NotificationNext<ServiceMessage>(TestFailed("name2", "message2")), completed<ServiceMessage>()),
                         observableOf(NotificationNext(Unit), completed<ServiceMessage>())),
                 arrayOf(
-                        observableOf(completed()),
+                        observableOf(completed<ServiceMessage>()),
                         observableOf(completed<ServiceMessage>())))
     }
 

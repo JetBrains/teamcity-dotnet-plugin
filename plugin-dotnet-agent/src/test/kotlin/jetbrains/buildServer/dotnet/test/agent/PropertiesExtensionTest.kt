@@ -23,12 +23,14 @@ import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.rx.subjectOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.testng.Assert
 import org.testng.annotations.*
 
+@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class PropertiesExtensionTest {
     private val mainThreadSurrogate = newSingleThreadContext("Main thread")

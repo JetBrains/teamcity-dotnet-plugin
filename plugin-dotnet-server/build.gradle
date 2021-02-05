@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id 'com.github.rodm.teamcity-server' version "1.0"
+  id 'com.github.rodm.teamcity-server' version "1.3.2"
 }
 
 teamcity {
@@ -46,5 +46,5 @@ dependencies {
 serverPlugin.version = null
 serverPlugin.baseName = projectIds.artifact
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
