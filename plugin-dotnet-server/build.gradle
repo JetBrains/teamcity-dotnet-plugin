@@ -40,6 +40,7 @@ dependencies {
   provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'
   testCompile 'org.testng:testng:7.1.0'
   testCompile 'io.mockk:mockk:1.9.3'
+  testCompile 'org.jetbrains.kotlin:kotlin-reflect' 
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }
 

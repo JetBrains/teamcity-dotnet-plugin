@@ -19,6 +19,7 @@ import org.testng.Assert
 import org.testng.annotations.*
 import java.io.File
 
+@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class VisualStudioRegistryProviderTest {
     private val mainThreadSurrogate = newSingleThreadContext("Main thread")

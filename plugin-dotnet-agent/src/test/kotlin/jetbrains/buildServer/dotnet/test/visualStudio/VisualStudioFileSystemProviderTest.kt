@@ -55,18 +55,6 @@ class VisualStudioFileSystemProviderTest {
                         VirtualFileSystemService()
                                 .addFile(File("ProgramData/Microsoft/VisualStudio/Packages1/_Instances/abcd/state.json"), VirtualFileSystemService.Attributes(), _inputStream1)
                                 .addFile(File("ProgramData/Microsoft/VisualStudio/Packages2/_Instances/abcd/state.json"), VirtualFileSystemService.Attributes(), _inputStream2)
-                                .addFile(File("a1/deVenv.EXe"), VirtualFileSystemService.Attributes())
-                                .addFile(File("a2/Devenv.exe"), VirtualFileSystemService.Attributes()),
-                        "ProgramData/Microsoft/VisualStudio/Packages1",
-                        "ProgramData/Microsoft/VisualStudio/Packages2",
-                        _visualStudioInstance1,
-                        _visualStudioInstance2,
-                        listOf(_visualStudioInstance1, _visualStudioInstance2)
-                ),
-                arrayOf(
-                        VirtualFileSystemService()
-                                .addFile(File("ProgramData/Microsoft/VisualStudio/Packages1/_Instances/abcd/state.json"), VirtualFileSystemService.Attributes(), _inputStream1)
-                                .addFile(File("ProgramData/Microsoft/VisualStudio/Packages2/_Instances/abcd/state.json"), VirtualFileSystemService.Attributes(), _inputStream2)
                                 .addFile(File("a1/devenv.exe"), VirtualFileSystemService.Attributes()),
                         "ProgramData/Microsoft/VisualStudio/Packages1",
                         "ProgramData/Microsoft/VisualStudio/Packages2",
