@@ -19,10 +19,14 @@ class PropertiesExtension(
             sources.beforeAgentConfigurationLoadedSource.subscribe { event ->
                 val configuration = event.agent.configuration
                 LOG.infoBlock("Fetched agent properties").use {
-                    runBlocking {
+                    /*runBlocking {
                         for (agentPropertiesProvider in _agentPropertiesProviders) {
                             launch(_dispatcher) { fetchProperties(agentPropertiesProvider, configuration) }
                         }
+                    }*/
+
+                    for (agentPropertiesProvider in _agentPropertiesProviders) {
+                        fetchProperties(agentPropertiesProvider, configuration)
                     }
                 }
             }
