@@ -30,6 +30,7 @@
   <bean class="jetbrains.buildServer.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.ToolServiceImpl"/>
   <bean class="jetbrains.buildServer.DotnetUsageStatisticsProvider"/>
+  <bean class="jetbrains.buildServer.JsonParserImpl"/>
 
   <!--Dotnet-->
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>

@@ -1,6 +1,6 @@
 package jetbrains.buildServer.visualStudio
 
-import jetbrains.buildServer.agent.JsonParser
+import jetbrains.buildServer.JsonParser
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ToolInstance
