@@ -12,7 +12,6 @@ import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
 class VisualStudioRegistryProvider(
-        private val _dispatcher: CoroutineDispatcher,
         private val _windowsRegistry: WindowsRegistry,
         private val _visualStudioInstanceFactory: ToolInstanceFactory,
         private val _visualStudioTestConsoleInstanceFactory: ToolInstanceFactory,
@@ -28,10 +27,8 @@ class VisualStudioRegistryProvider(
                         val version = Version.parse(key.parts.last())
                         if (version != Version.Empty && version.digits == 2) {
                             val visitor = this;
-                            runBlocking {
-                                launch(_dispatcher) { _windowsRegistry.accept(key, visitor, false) }
-                                launch(_dispatcher) { _windowsRegistry.accept(key + "EnterpriseTools" + "QualityTools", visitor, false) }
-                            }
+                            _windowsRegistry.accept(key, visitor, false)
+                            _windowsRegistry.accept(key + "EnterpriseTools" + "QualityTools", visitor, false)
                         }
 
                         return true

@@ -22,7 +22,6 @@ import java.io.File
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class VisualStudioRegistryProviderTest {
-    private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _windowsRegistry: WindowsRegistry
     @MockK private lateinit var _visualStudioInstanceFactory: ToolInstanceFactory
     @MockK private lateinit var _visualStudioTestInstanceFactory: ToolInstanceFactory
@@ -32,18 +31,6 @@ class VisualStudioRegistryProviderTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        Dispatchers.setMain(mainThreadSurrogate)
-    }
-
-    @BeforeClass
-    fun setUpClass() {
-        Dispatchers.setMain(mainThreadSurrogate)
-    }
-
-    @AfterClass
-    fun tearDownClass() {
-        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-        mainThreadSurrogate.close()
     }
 
     @DataProvider
@@ -263,7 +250,6 @@ class VisualStudioRegistryProviderTest {
 
     private fun createInstance() =
             VisualStudioRegistryProvider(
-                    Dispatchers.Main,
                     _windowsRegistry,
                     _visualStudioInstanceFactory,
                     _visualStudioTestInstanceFactory,

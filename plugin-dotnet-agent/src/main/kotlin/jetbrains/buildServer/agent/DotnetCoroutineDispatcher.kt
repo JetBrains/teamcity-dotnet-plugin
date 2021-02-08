@@ -15,7 +15,7 @@ class DotnetCoroutineDispatcher()
     private var _dispatcher: ExecutorCoroutineDispatcher
 
     init {
-        val executor = ExecutorsFactory.newFixedDaemonExecutor(".NET Runner",  Runtime.getRuntime().availableProcessors() / 2 + 1) as ThreadPoolExecutor
+        val executor = ExecutorsFactory.newFixedDaemonExecutor(".NET Runner",  4) as ThreadPoolExecutor
         _dispatcher = executor.asCoroutineDispatcher()
     }
 

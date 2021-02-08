@@ -16,22 +16,20 @@ class PropertiesExtension(
     private val _lockObject = Object()
 
     override fun subscribe(sources: EventSources): Disposable =
-            sources.beforeAgentConfigurationLoadedSource.subscribe { event ->
-                val configuration = event.agent.configuration
-                LOG.infoBlock("Fetched agent properties").use {
-                    /*runBlocking {
-                        for (agentPropertiesProvider in _agentPropertiesProviders) {
-                            launch(_dispatcher) { fetchProperties(agentPropertiesProvider, configuration) }
-                        }
-                    }*/
-
+        sources.beforeAgentConfigurationLoadedSource.subscribe { event ->
+            val configuration = event.agent.configuration
+            LOG.infoBlock("Fetched agent properties").use {
+                runBlocking {
                     for (agentPropertiesProvider in _agentPropertiesProviders) {
-                        fetchProperties(agentPropertiesProvider, configuration)
+                        launch(_dispatcher) {
+                            fetchProperties(agentPropertiesProvider, configuration)
+                        }
                     }
                 }
             }
+        }
 
-    private fun fetchProperties(agentPropertiesProvider: AgentPropertiesProvider, configuration: BuildAgentConfiguration) {
+    private suspend fun fetchProperties(agentPropertiesProvider: AgentPropertiesProvider, configuration: BuildAgentConfiguration) {
         LOG.debugBlock("Fetching agent properties for ${agentPropertiesProvider.desription}").use {
             try {
                 for (property in agentPropertiesProvider.properties) {
