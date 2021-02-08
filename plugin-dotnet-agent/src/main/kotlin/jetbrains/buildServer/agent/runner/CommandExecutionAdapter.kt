@@ -21,7 +21,7 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.rx.emptyObserver
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class CommandExecutionAdapter(

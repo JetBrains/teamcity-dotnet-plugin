@@ -60,12 +60,12 @@ class VisualStudioPackagesRegistryLocatorTest {
                 WindowsRegistryValue(rootKey + "CachePath", WindowsRegistryValueType.Long, "0x10")
         )
 
-        every { _windowsRegistry.get(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>(), false) } answers  {
+        every { _windowsRegistry.accept(any<WindowsRegistryKey>(), any<WindowsRegistryVisitor>(), false) } answers  {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (item in regItems) {
                 when (item) {
-                    is WindowsRegistryValue -> visitor.accept(item)
-                    is WindowsRegistryKey -> visitor.accept(item)
+                    is WindowsRegistryValue -> visitor.visit(item)
+                    is WindowsRegistryKey -> visitor.visit(item)
                 }
             }
             regItems.clear()

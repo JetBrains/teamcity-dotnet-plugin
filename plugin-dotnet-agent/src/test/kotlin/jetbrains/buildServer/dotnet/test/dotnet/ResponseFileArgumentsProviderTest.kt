@@ -34,7 +34,6 @@ import java.io.InputStreamReader
 class ResponseFileArgumentsProviderTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _loggerService: LoggerService
-    @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _argumentsService: ArgumentsService
 
@@ -55,17 +54,8 @@ class ResponseFileArgumentsProviderTest {
         val argsProvider1 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
         val argsProvider2 = ArgumentsProviderStub(emptySequence())
         val argsProvider3 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
-        val buildParameter1 = MSBuildParameter("param1", "val1")
-        val parametersProvider1 = mockk<MSBuildParametersProvider>()
-        val buildParameter2 = MSBuildParameter("param2", "val2")
-        val parametersProvider2 = mockk<MSBuildParametersProvider>()
-        val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3), listOf(parametersProvider1, parametersProvider2))
+        val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3))
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
-        val buildParameterInvalid = MSBuildParameter("#$%", "*((val1")
-
-        every { parametersProvider1.getParameters(context) } returns sequenceOf(buildParameter1, buildParameterInvalid)
-        every { parametersProvider2.getParameters(context) } returns sequenceOf(buildParameter2)
-        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(buildParameter1, buildParameterInvalid, buildParameter2)) }, false) } returns sequenceOf("par1", "par2")
 
         every { _pathService.getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension) } returns File(rspFileName)
         val blockToken = mockk<Disposable> {
@@ -83,23 +73,20 @@ class ResponseFileArgumentsProviderTest {
         Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}", CommandLineArgumentType.Infrastructural)))
         fileSystemService.read(rspFile) {
             InputStreamReader(it).use {
-                Assert.assertEquals(it.readLines(), listOf("\"arg1\"", "\"arg2\"", "\"arg3\"", "par1", "par2"))
+                Assert.assertEquals(it.readLines(), listOf("\"arg1\"", "\"arg2\"", "\"arg3\""))
             }
         }
     }
 
     private fun createInstance(
             fileSystemService: FileSystemService,
-            argumentsProviders: List<ArgumentsProvider>,
-            parametersProvider: List<MSBuildParametersProvider>): ArgumentsProvider {
+            argumentsProviders: List<ArgumentsProvider>): ArgumentsProvider {
         return ResponseFileArgumentsProvider(
                 _pathService,
                 _argumentsService,
                 fileSystemService,
                 _loggerService,
-                _msBuildParameterConverter,
                 argumentsProviders,
-                parametersProvider,
                 _virtualContext)
     }
 }

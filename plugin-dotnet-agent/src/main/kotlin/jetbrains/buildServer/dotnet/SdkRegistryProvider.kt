@@ -4,7 +4,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
@@ -16,11 +16,11 @@ class SdkRegistryProvider(
     override fun getInstances(): Sequence<ToolInstance> {
         val sdks = mutableMapOf<String, Sdk>()
         for (regKey in RegKeys) {
-            _windowsRegistry.get(
+            _windowsRegistry.accept(
                     regKey,
                     object : WindowsRegistryVisitor {
-                        override fun accept(key: WindowsRegistryKey) = true
-                        override fun accept(value: WindowsRegistryValue): Boolean {
+                        override fun visit(key: WindowsRegistryKey) = true
+                        override fun visit(value: WindowsRegistryValue): Boolean {
                             val parts = value.key.parts.takeLast(3)
                             val majorKey = parts[0]
                             val minorKey = parts[1]

@@ -23,7 +23,7 @@ import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.emptyDisposable
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter

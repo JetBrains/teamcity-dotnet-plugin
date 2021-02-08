@@ -6,7 +6,7 @@ import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.Platform
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
@@ -19,19 +19,19 @@ class VisualStudioRegistryProvider(
     @Cacheable("ListOfVisualStuioAndTestFromRegistry")
     override fun getInstances(): Sequence<ToolInstance> {
         val instances = mutableSetOf<ToolInstance>()
-        _windowsRegistry.get(
+        _windowsRegistry.accept(
                 RegKey,
                 object : WindowsRegistryVisitor {
-                    override fun accept(key: WindowsRegistryKey): Boolean {
+                    override fun visit(key: WindowsRegistryKey): Boolean {
                         val version = Version.parse(key.parts.last())
                         if (version != Version.Empty && version.digits == 2) {
-                            _windowsRegistry.get(key, this, false)
-                            _windowsRegistry.get(key + "EnterpriseTools" + "QualityTools", this, false)
+                            _windowsRegistry.accept(key, this, false)
+                            _windowsRegistry.accept(key + "EnterpriseTools" + "QualityTools", this, false)
                         }
 
                         return true
                     }
-                    override fun accept(value: WindowsRegistryValue): Boolean {
+                    override fun visit(value: WindowsRegistryValue): Boolean {
                         val parts = value.key.parts.takeLast(2)
                         if (
                                 value.type == WindowsRegistryValueType.Str

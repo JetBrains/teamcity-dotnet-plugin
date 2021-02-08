@@ -134,7 +134,7 @@ class DotnetPolicyRegistryVisitorTest {
 
         // When
         val accepted = values.fold(true) {
-            acc, value -> acc && visitor.accept(value)
+            acc, value -> acc && visitor.visit(value)
         }
 
         val actualFrameworks = visitor.getFrameworks().sortedBy { it.toString() }.toList()
@@ -149,7 +149,7 @@ class DotnetPolicyRegistryVisitorTest {
         // Given
         val visitor = createInstance()
         every {_environment.tryGetRoot(_key.bitness)} returns _root
-        visitor.accept(WindowsRegistryValue(_key + "v2.0" + "50727", WindowsRegistryValueType.Str, "50727-50727"))
+        visitor.visit(WindowsRegistryValue(_key + "v2.0" + "50727", WindowsRegistryValueType.Str, "50727-50727"))
 
         // When
         visitor.getFrameworks().toList()

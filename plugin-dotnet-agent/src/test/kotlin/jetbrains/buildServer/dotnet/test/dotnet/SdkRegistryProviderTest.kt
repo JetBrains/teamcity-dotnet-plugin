@@ -405,10 +405,10 @@ class SdkRegistryProviderTest {
         val instanceProvider = createInstance()
 
         // When
-        every { _windowsRegistry.get(any(), any(), true) } answers {
+        every { _windowsRegistry.accept(any(), any(), true) } answers {
             val visitor = arg<WindowsRegistryVisitor>(1)
             for (registryValue in registryValues) {
-                if (!visitor.accept(registryValue)) {
+                if (!visitor.visit(registryValue)) {
                     break
                 }
             }

@@ -19,7 +19,7 @@ package jetbrains.buildServer.dotcover
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.util.OSType
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 
 class EnvironmentVariablesImpl(
         private val _virtualContext: VirtualContext)

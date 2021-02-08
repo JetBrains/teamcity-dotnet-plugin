@@ -1,9 +1,8 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import org.springframework.cache.annotation.Cacheable
-import java.io.File
 
 class DotnetFrameworksProviderImpl(
         private val _windowsRegistry: WindowsRegistry,
@@ -18,7 +17,7 @@ class DotnetFrameworksProviderImpl(
                         visitor.keys.map { key -> Pair(key, visitor) }
                     }
                     .flatMap { (key, visitor) ->
-                        _windowsRegistry.get(key, visitor, true)
+                        _windowsRegistry.accept(key, visitor, true)
                         visitor.getFrameworks()
                     }
                     .map { framework ->

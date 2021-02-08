@@ -21,7 +21,7 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.use
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import java.io.OutputStreamWriter
 
 class ResponseFileArgumentsProvider(
@@ -29,16 +29,13 @@ class ResponseFileArgumentsProvider(
         private val _argumentsService: ArgumentsService,
         private val _fileSystemService: FileSystemService,
         private val _loggerService: LoggerService,
-        private val _msBuildParameterConverter: MSBuildParameterConverter,
         private val _argumentsProviders: List<ArgumentsProvider>,
-        private val _parametersProviders: List<MSBuildParametersProvider>,
         private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
-        val params = _msBuildParameterConverter.convert(_parametersProviders.flatMap { it.getParameters(context).toList() }.asSequence(), false).toList()
 
-        if (args.isEmpty() && params.isEmpty()) {
+        if (args.isEmpty()) {
             return@sequence
         }
 
@@ -50,20 +47,15 @@ class ResponseFileArgumentsProvider(
                         for ((value) in args) {
                             _loggerService.writeStandardOutput(value, Color.Details)
                         }
-
-                        for (param in params) {
-                            _loggerService.writeStandardOutput(param, Color.Details)
-                        }
                     }
                 }
             }
         }
 
-        val lines = args.map { _argumentsService.normalize(it.value) } + params
         val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {
-                for (line in lines) {
+                for (line in args.map { _argumentsService.normalize(it.value) }) {
                     it.write("$line\n")
                 }
             }

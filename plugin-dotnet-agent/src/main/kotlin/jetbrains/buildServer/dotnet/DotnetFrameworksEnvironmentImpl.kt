@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import org.apache.log4j.Logger
+import jetbrains.buildServer.agent.Logger
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
@@ -11,7 +11,7 @@ class DotnetFrameworksEnvironmentImpl(
     @Cacheable("tryGetRoot", key = "#bitness.platform.id")
     override fun tryGetRoot(bitness: WindowsRegistryBitness): File? {
         var root: File? = null
-        _windowsRegistry.get(
+        _windowsRegistry.accept(
                 WindowsRegistryKey.create(
                         bitness,
                         WindowsRegistryHive.LOCAL_MACHINE,
@@ -20,8 +20,8 @@ class DotnetFrameworksEnvironmentImpl(
                         ".NETFramework"),
 
                 object : WindowsRegistryVisitor {
-                    override fun accept(key: WindowsRegistryKey) = true
-                    override fun accept(value: WindowsRegistryValue): Boolean {
+                    override fun visit(key: WindowsRegistryKey) = true
+                    override fun visit(value: WindowsRegistryValue): Boolean {
                         if (
                                 value.type == WindowsRegistryValueType.Str
                                 && value.text.isNotBlank()
