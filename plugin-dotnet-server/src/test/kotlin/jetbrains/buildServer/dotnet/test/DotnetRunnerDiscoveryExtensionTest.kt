@@ -191,10 +191,10 @@ class DotnetRunnerDiscoveryExtensionTest {
                 }
 
                 oneOf<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
-                will(returnValue(solutions))
+                will(returnValue(solutions.toList()))
 
                 allowing<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
-                will(returnValue(solutions))
+                will(returnValue(solutions.toList()))
             }
         })
 

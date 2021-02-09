@@ -39,19 +39,19 @@ class MSBuildSolutionDeserializerTest {
 
         ctx.checking(object : Expectations() {
             init {
-                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).accept("projectPath/proj1.csproj")
+                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).isAccepted("projectPath/proj1.csproj")
                 will(returnValue(true))
 
                 oneOf<SolutionDeserializer>(msBuildProjectDeserializer).deserialize("projectPath/proj1.csproj", streamFactory)
                 will(returnValue(solution1))
 
-                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).accept("projectPath/dir2/proj2.csproj")
+                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).isAccepted("projectPath/dir2/proj2.csproj")
                 will(returnValue(true))
 
                 oneOf<SolutionDeserializer>(msBuildProjectDeserializer).deserialize("projectPath/dir2/proj2.csproj", streamFactory)
                 will(returnValue(solution2))
 
-                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).accept("projectPath/Solution Items")
+                oneOf<SolutionDeserializer>(msBuildProjectDeserializer).isAccepted("projectPath/Solution Items")
                 will(returnValue(false))
             }
         })
@@ -90,7 +90,7 @@ class MSBuildSolutionDeserializerTest {
         val deserializer = MSBuildSolutionDeserializer(ReaderFactoryImpl(), msBuildProjectDeserializer)
 
         // When
-        val actualAccepted = deserializer.accept(path)
+        val actualAccepted = deserializer.isAccepted(path)
 
         // Then
         Assert.assertEquals(actualAccepted, expectedAccepted)

@@ -35,6 +35,7 @@ class DotnetFrameworksFetcher(private val _solutionDiscover: SolutionDiscover) :
 
     private fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
             _solutionDiscover.discover(streamFactory, paths)
+                    .asSequence()
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.frameworks.asSequence() }
                     .map { it.name }

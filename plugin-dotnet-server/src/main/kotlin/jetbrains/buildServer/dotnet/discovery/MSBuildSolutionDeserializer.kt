@@ -21,7 +21,7 @@ import java.util.regex.Pattern
 class MSBuildSolutionDeserializer(
         private val _readerFactory: ReaderFactory,
         private val _msBuildProjectDeserializer: SolutionDeserializer) : SolutionDeserializer {
-    override fun accept(path: String): Boolean = PathPattern.matcher(path).find()
+    override fun isAccepted(path: String): Boolean = PathPattern.matcher(path).find()
 
     override fun deserialize(path: String, streamFactory: StreamFactory): Solution =
             streamFactory.tryCreate(path)?.let {
@@ -35,7 +35,7 @@ class MSBuildSolutionDeserializer(
                                 .map {
                                     it?.let {
                                         val projectPath = normalizePath(path, it.group(1))
-                                        if (_msBuildProjectDeserializer.accept(projectPath)) {
+                                        if (_msBuildProjectDeserializer.isAccepted(projectPath)) {
                                             _msBuildProjectDeserializer.deserialize(projectPath, streamFactory).projects.asSequence()
                                         } else {
                                             emptySequence()

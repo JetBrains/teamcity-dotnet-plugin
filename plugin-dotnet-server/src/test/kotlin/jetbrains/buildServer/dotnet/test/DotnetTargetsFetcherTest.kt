@@ -118,7 +118,7 @@ class DotnetTargetsFetcherTest {
                 will(returnValue(projectTypes))
 
                 oneOf<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
-                will(returnValue(sequenceOf(Solution(listOf(project)))))
+                will(returnValue(listOf(Solution(listOf(project)))))
             }
         })
 

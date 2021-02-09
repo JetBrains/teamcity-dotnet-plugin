@@ -38,6 +38,7 @@ class DotnetTargetsFetcher(
     fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> {
         val projects = _solutionDiscover
                 .discover(streamFactory, paths)
+                .asSequence()
                 .flatMap { it.projects.asSequence() }
                 .toList()
 

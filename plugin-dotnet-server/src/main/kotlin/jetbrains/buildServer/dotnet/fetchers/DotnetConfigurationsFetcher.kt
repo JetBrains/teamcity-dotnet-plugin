@@ -36,6 +36,7 @@ class DotnetConfigurationsFetcher(private val _solutionDiscover: SolutionDiscove
 
     private fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
             _solutionDiscover.discover(streamFactory, paths)
+                    .asSequence()
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.configurations.asSequence() }
                     .map { it.name }

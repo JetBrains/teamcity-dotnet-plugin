@@ -58,7 +58,7 @@ class DotnetRunnerDiscoveryExtension(
                     .asSequence()
 
     fun discover(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<DiscoveredTarget> {
-        val solutions = _solutionDiscover.discover(streamFactory, paths).toList()
+        val solutions = _solutionDiscover.discover(streamFactory, paths)
         val complexSolutions = solutions.asSequence().filter { !it.isSimple }.toList()
         val complexSolutionProjects = complexSolutions.flatMap { it.projects }.toSet()
         val simpleSolutions = solutions.asSequence().filter { it.isSimple && !complexSolutionProjects.containsAll(it.projects) }

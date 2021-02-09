@@ -26,7 +26,7 @@ class JsonProjectDeserializer(
         private val _readerFactory: ReaderFactory)
     : SolutionDeserializer {
 
-    override fun accept(path: String): Boolean = PathPattern.matcher(path).find()
+    override fun isAccepted(path: String): Boolean = PathPattern.matcher(path).find()
 
     override fun deserialize(path: String, streamFactory: StreamFactory): Solution =
             streamFactory.tryCreate(path)?.let {

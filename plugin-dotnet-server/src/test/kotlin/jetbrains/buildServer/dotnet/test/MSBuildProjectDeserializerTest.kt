@@ -99,7 +99,7 @@ class MSBuildProjectDeserializerTest {
         val deserializer = MSBuildProjectDeserializer(XmlDocumentServiceImpl())
 
         // When
-        val actualAccepted = deserializer.accept(path)
+        val actualAccepted = deserializer.isAccepted(path)
 
         // Then
         Assert.assertEquals(actualAccepted, expectedAccepted)

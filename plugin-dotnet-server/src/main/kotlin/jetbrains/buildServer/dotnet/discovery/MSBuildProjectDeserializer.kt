@@ -27,7 +27,7 @@ import javax.xml.xpath.XPathFactory
 
 class MSBuildProjectDeserializer(
         private val _xmlDocumentService: XmlDocumentService) : SolutionDeserializer {
-    override fun accept(path: String): Boolean = PathPattern.matcher(path).find()
+    override fun isAccepted(path: String): Boolean = PathPattern.matcher(path).find()
 
     override fun deserialize(path: String, streamFactory: StreamFactory): Solution =
             streamFactory.tryCreate(path)?.let {

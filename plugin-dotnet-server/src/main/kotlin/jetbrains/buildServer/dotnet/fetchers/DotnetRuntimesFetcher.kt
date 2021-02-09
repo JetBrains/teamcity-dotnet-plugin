@@ -36,6 +36,7 @@ class DotnetRuntimesFetcher(private val _solutionDiscover: SolutionDiscover) : P
 
     private fun getValues(streamFactory: StreamFactory, paths: Sequence<String>): Sequence<String> =
             _solutionDiscover.discover(streamFactory, paths)
+                    .asSequence()
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.runtimes.asSequence() }
                     .map { it.name }

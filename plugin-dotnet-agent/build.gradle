@@ -37,7 +37,6 @@ dependencies {
   provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
   compile 'commons-io:commons-io:2.6'
-  compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
   testCompile 'org.testng:testng:7.1.0'
   testCompile 'org.jmock:jmock:2.5.1'  
   testCompile 'org.hamcrest:hamcrest-all:1.3'

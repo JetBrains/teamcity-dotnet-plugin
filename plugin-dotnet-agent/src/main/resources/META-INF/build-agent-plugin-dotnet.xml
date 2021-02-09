@@ -25,7 +25,7 @@
   <bean class="jetbrains.buildServer.agent.BeanConfig"/>
 
   <!-- common agent services -->
-  <bean class="jetbrains.buildServer.agent.DotnetCoroutineDispatcher"/>
+  <bean class="jetbrains.buildServer.DotnetCoroutineDispatcher"/>
   <bean class="jetbrains.buildServer.agent.PropertiesExtension"/>
   <bean class="jetbrains.buildServer.agent.EventObservers"/>
   <bean class="jetbrains.buildServer.agent.EventSourcesImpl"/>

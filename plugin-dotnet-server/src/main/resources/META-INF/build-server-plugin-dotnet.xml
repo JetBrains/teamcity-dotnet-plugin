@@ -25,6 +25,7 @@
   <bean class="jetbrains.buildServer.BeanConfig"/>
 
   <!--Common-->
+  <bean class="jetbrains.buildServer.DotnetCoroutineDispatcher"/>
   <bean class="jetbrains.buildServer.HttpDownloaderImpl"/>
   <bean class="jetbrains.buildServer.NuGetServiceImpl"/>
   <bean class="jetbrains.buildServer.FileSystemServiceImpl"/>

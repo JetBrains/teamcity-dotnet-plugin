@@ -1,4 +1,4 @@
-package jetbrains.buildServer.agent
+package jetbrains.buildServer
 
 import jetbrains.buildServer.util.executors.ExecutorsFactory
 import jetbrains.buildServer.util.executors.TeamCityThreadPoolExecutor
