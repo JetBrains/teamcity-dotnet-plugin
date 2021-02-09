@@ -13,7 +13,7 @@ class DotnetFrameworkSdkRegistryProvider(
         private val _sdkInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
     @Cacheable("ListOfDotnetFrameworkSdkFromRegistry", sync = true)
-    override fun getInstances(): List<ToolInstance> {
+    override fun getInstances(): Collection<ToolInstance> {
             val sdks = mutableListOf<ToolInstance>()
             _windowsRegistry.accept(
                     RegKey,

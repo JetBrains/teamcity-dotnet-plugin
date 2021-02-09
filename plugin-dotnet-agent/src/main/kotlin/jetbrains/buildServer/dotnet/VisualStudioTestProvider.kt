@@ -13,7 +13,7 @@ class VisualStudioTestProvider(
         private val _parametersService: ParametersService)
     : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioTest", sync = true)
-    override fun getInstances() = (
+    override fun getInstances(): Collection<ToolInstance> = (
                     getToolsFromInternalProps() + getTools()
             )
             .distinctBy {

@@ -7,7 +7,6 @@ import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.Platform
 import jetbrains.buildServer.agent.Logger
-import kotlinx.coroutines.*
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
@@ -18,7 +17,7 @@ class VisualStudioRegistryProvider(
         private val _msTestConsoleInstanceFactory: ToolInstanceFactory)
     : ToolInstanceProvider {
     @Cacheable("ListOfVisualStuioAndTestFromRegistry", sync = true)
-    override fun getInstances(): List<ToolInstance> {
+    override fun getInstances(): Collection<ToolInstance> {
         val instances = mutableSetOf<ToolInstance>()
         _windowsRegistry.accept(
                 RegKey,
