@@ -39,7 +39,7 @@ abstract class CommandType(
     private fun getRequirements(parameters: Map<String, String>) =
             parameters[DotnetConstants.PARAM_REQUIRED_SDK]?.let {
                 it
-                        .split("\n", ";")
+                        .split(" ", "\n", ";")
                         .asSequence()
                         .map { it.trim() }
                         .filter { it.isNotBlank() }

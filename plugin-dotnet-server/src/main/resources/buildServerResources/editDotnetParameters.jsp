@@ -354,10 +354,10 @@
       <props:textProperty name="${params.requiredSdkKey}" className="longField"/>
       <bs:projectData type="DotnetSdk" sourceFieldId="${params.pathsKey}"
                       targetFieldId="${params.requiredSdkKey}" popupTitle="Select SDK"
-                      selectionMode="single"/>
+                      selectionMode="multiple"/>
     </div>
     <span class="error" id="error_${params.requiredSdkKey}"></span>
-    <span class="smallNote">Enter .NET SDK versions separated by semicolon to be required on agents. For instance: 4.5.2; 2; 3.1.404; 5.0</span>
+    <span class="smallNote">Enter space separated .NET SDK versions to be required on agents.<br/>For instance: 5 5.0 5.0.103 3 3.1.406 3.1.406 4.8 4.5.2</span>
   </td>
 </tr>
 
