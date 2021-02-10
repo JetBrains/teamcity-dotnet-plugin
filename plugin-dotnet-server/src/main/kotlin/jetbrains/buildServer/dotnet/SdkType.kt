@@ -5,5 +5,5 @@ public enum class SdkType(val description: String) {
 
     DotnetCore(".NET Core SDK"),
 
-    FullDotnet(".NET Framework SDK")
+    FullDotnet(".NET Targeting Pack")
 }

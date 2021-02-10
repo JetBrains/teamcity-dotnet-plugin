@@ -34,7 +34,7 @@ class SdkResolverImpl() : SdkResolver {
                     }
 
                     name == "net" && version >= Version(3, 5) -> {
-                        yieldAll(getFullDotnetVersion(version))
+                        yield(version)
                     }
 
                     name == "netstandard" -> {
