@@ -36,6 +36,7 @@
   <!--Dotnet-->
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.SdkTypeResolverImpl"/>
 
   <!--Discovery-->
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildProjectDeserializer" id="msBuildProjectDeserializer"/>
@@ -51,12 +52,14 @@
     <constructor-arg ref="defaultDiscoveredTargetNameFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.ProjectTypeSelectorImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.discovery.SdkResolverImpl"/>
 
   <!--Fetchers-->
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetConfigurationsFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetFrameworksFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetRuntimesFetcher"/>
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetTargetsFetcher"/>
+  <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetSdkFetcher"/>
 
   <!--DotCover-->
   <!--bean class="jetbrains.buildServer.dotCover.DotCoverToolTypeAdapter" id="dotCoverToolType"/>

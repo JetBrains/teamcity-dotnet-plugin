@@ -83,9 +83,12 @@ class VersionTest {
 
         // When
         val actualResult = version1.compareTo(version2)
+        val hash1 = version1.hashCode()
+        val hash2 = version2.hashCode()
 
         // Then
         Assert.assertEquals(actualResult, expectedResult)
+        Assert.assertEquals(hash1 == hash2, expectedResult == 0)
     }
 
     @DataProvider
@@ -117,5 +120,16 @@ class VersionTest {
 
         // Then
         Assert.assertEquals(actualVersion, expectedVersion)
+    }
+
+    fun shouldTrim() {
+        // Given
+        val version = Version(1, 0, 2, 0, 0)
+
+        // When
+        val trimmedVersion = version.trim()
+
+        // Then
+        Assert.assertEquals(trimmedVersion.size, 3)
     }
 }

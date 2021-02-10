@@ -161,7 +161,7 @@ class DotnetParametersProvider {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
-        private val _requirementFactory: RequirementFactory = RequirementFactoryImpl()
+        private val _requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl())
         val commandTypes
             get() = sequenceOf(
                     RestoreCommandType(_requirementFactory),

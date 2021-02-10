@@ -352,6 +352,9 @@
   <td>
     <div class="position-relative">
       <props:textProperty name="${params.requiredSdkKey}" className="longField"/>
+      <bs:projectData type="DotnetSdk" sourceFieldId="${params.pathsKey}"
+                      targetFieldId="${params.requiredSdkKey}" popupTitle="Select SDK"
+                      selectionMode="single"/>
     </div>
     <span class="error" id="error_${params.requiredSdkKey}"></span>
     <span class="smallNote">Enter .NET SDK versions separated by semicolon to be required on agents. For instance: 4.5.2; 2; 3.1.404; 5.0</span>

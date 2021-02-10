@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.RequirementFactoryImpl
+import jetbrains.buildServer.dotnet.SdkTypeResolverImpl
 import jetbrains.buildServer.dotnet.SemanticVersionParser
 import jetbrains.buildServer.dotnet.SemanticVersionParserImpl
 import jetbrains.buildServer.requirements.Requirement
@@ -77,7 +78,7 @@ class RequirementFactoryTest {
     @Test(dataProvider = "testData")
     fun shouldCreateRequirement(targetFrameworkMoniker: String, expectedRequierement: Requirement?) {
         // Given
-        val requirementFactory = RequirementFactoryImpl()
+        val requirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl())
 
         // When
         val actualRequirement = requirementFactory.tryCreate(targetFrameworkMoniker)
