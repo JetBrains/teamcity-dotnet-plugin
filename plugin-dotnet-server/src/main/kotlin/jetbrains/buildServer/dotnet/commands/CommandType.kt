@@ -54,7 +54,7 @@ abstract class CommandType(
                     .let {
                         sequence {
                             if (it.isNotBlank()) {
-                               yield(InvalidProperty(DotnetConstants.PARAM_REQUIRED_SDK, "Invalid SDK: \"$it\""))
+                               yield(InvalidProperty(DotnetConstants.PARAM_REQUIRED_SDK, "Invalid version: \"$it\""))
                             }
                         }
                     }

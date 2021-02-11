@@ -48,7 +48,12 @@ class DotnetSdkFetcher(
                     .mapNotNull { _sdkResolver.resolveSdkVersions(it.framework, it.properties) }
                     .flatMap { it }
                     .distinct()
-                    .map { DataItem(it.toString(), _sdkTypeResolver.tryResolve(it)?.description ?: "") }
+                    .map { Pair(it, _sdkTypeResolver.tryResolve(it)) }
+                    .sortedWith(compareBy({-(it.second?.order ?: Int.MAX_VALUE)}, {it.first}))
+                    .toList()
+                    .reversed()
+                    .asSequence()
+                    .map { DataItem(it.first.toString(), it.second?.description ?: "") }
 
     override fun getType(): String {
         return "DotnetSdk"

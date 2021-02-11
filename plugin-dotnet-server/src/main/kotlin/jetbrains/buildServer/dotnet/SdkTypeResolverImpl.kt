@@ -1,15 +1,12 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementQualifier
-import jetbrains.buildServer.requirements.RequirementType
-
 class SdkTypeResolverImpl : SdkTypeResolver {
     override fun tryResolve(sdkVersion: Version): SdkType? =
             when {
+                sdkVersion.versions.size == 1 && sdkVersion == Version(4) -> SdkType.DotnetFramework
                 sdkVersion `in` DotnetVersions -> SdkType.Dotnet
                 sdkVersion `in` DotnetCoreVersions -> SdkType.DotnetCore
-                sdkVersion `in` DotnetFullVersions -> SdkType.FullDotnet
+                sdkVersion `in` DotnetFullVersions -> SdkType.FullDotnetTargetingPack
                 else -> null
             }
 

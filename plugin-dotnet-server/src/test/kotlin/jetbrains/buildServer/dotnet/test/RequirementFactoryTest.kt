@@ -69,7 +69,8 @@ class RequirementFactoryTest {
                 arrayOf("4.8.2", Requirement("Exists=>DotNetFrameworkTargetingPack4.8.2_Path", null, RequirementType.EXISTS)),
                 arrayOf("4.9", Requirement("Exists=>DotNetFrameworkTargetingPack4.9_Path", null, RequirementType.EXISTS)),
                 arrayOf("4.9.1", Requirement("Exists=>DotNetFrameworkTargetingPack4.9.1_Path", null, RequirementType.EXISTS)),
-                arrayOf("4.9.2", Requirement("Exists=>DotNetFrameworkTargetingPack4.9.2_Path", null, RequirementType.EXISTS))
+                arrayOf("4.9.2", Requirement("Exists=>DotNetFrameworkTargetingPack4.9.2_Path", null, RequirementType.EXISTS)),
+                arrayOf("4", Requirement("Exists=>DotNetFramework4[\\.\\d]*_x[\\d]{2}", null, RequirementType.EXISTS))
         )
     }
 

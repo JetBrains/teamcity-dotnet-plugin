@@ -357,7 +357,7 @@
                       selectionMode="multiple"/>
     </div>
     <span class="error" id="error_${params.requiredSdkKey}"></span>
-    <span class="smallNote">Enter space-separated SDK versions to be required on agents.<br/>For instance: 5 5.0 5.0.103 3 3.1.406 3.1.406 4.8 4.5.2</span>
+    <span class="smallNote">Enter space-separated SDK or targeting pack versions to be required on agents.<br/>For instance: 5 5.0 5.0.103 3 3.1.406 4.8 4.5.2</span>
   </td>
 </tr>
 
