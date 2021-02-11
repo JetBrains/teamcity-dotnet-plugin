@@ -8,7 +8,7 @@ import java.util.*
 
 class SdkResolverImpl() : SdkResolver {
     override fun resolveSdkVersions(framework: Framework, propeties: Collection<Property>) =
-        resolveSdkVersions(framework).map { it.trim() }
+        resolveSdkVersions(framework).map { if(it.getPart(0) != 4) it.trim() else it }
 
     private fun resolveSdkVersions(framework: Framework) = sequence {
         FrameworkRegex.matchEntire(framework.name)?.let {

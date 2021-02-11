@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet.fetchers
 
 import jetbrains.buildServer.dotnet.SdkTypeResolver
+import jetbrains.buildServer.dotnet.SdkWizard
 import jetbrains.buildServer.dotnet.discovery.*
 import jetbrains.buildServer.serverSide.DataItem
 import jetbrains.buildServer.serverSide.ProjectDataFetcher
@@ -28,7 +29,7 @@ import jetbrains.buildServer.util.browser.Browser
  */
 class DotnetSdkFetcher(
         private val _solutionDiscover: SolutionDiscover,
-        private val _sdkResolver: SdkResolver,
+        private val _sdkWizard: SdkWizard,
         private val _sdkTypeResolver: SdkTypeResolver)
     : ProjectDataFetcher {
     override fun retrieveData(fsBrowser: Browser, projectFilePath: String): MutableList<DataItem> =
@@ -39,25 +40,10 @@ class DotnetSdkFetcher(
             _solutionDiscover.discover(streamFactory, paths)
                     .asSequence()
                     .flatMap { it.projects.asSequence() }
-                    .flatMap {
-                        it.frameworks.asSequence().map {
-                            framework ->
-                            SdkData(framework, it.properties)
-                        }
-                    }
-                    .mapNotNull { _sdkResolver.resolveSdkVersions(it.framework, it.properties) }
-                    .flatMap { it }
-                    .distinct()
-                    .map { Pair(it, _sdkTypeResolver.tryResolve(it)) }
-                    .sortedWith(compareBy({-(it.second?.order ?: Int.MAX_VALUE)}, {it.first}))
-                    .toList()
-                    .reversed()
-                    .asSequence()
-                    .map { DataItem(it.first.toString(), it.second?.description ?: "") }
+                    .let { _sdkWizard.suggestSdks(it) }
+                    .map { DataItem(it.toString(), _sdkTypeResolver.tryResolve(it)?.description ?: "") }
 
     override fun getType(): String {
         return "DotnetSdk"
     }
-
-    private data class SdkData(val framework: Framework, val properties: Collection<Property>)
 }
