@@ -28,7 +28,8 @@ import java.io.File
 class DotnetRunnerDiscoveryExtension(
         private val _solutionDiscover: SolutionDiscover,
         private val _defaultDiscoveredTargetNameFactory: DiscoveredTargetNameFactory,
-        private val _projectTypeSelector: ProjectTypeSelector)
+        private val _projectTypeSelector: ProjectTypeSelector,
+        private val _sdkWizard: SdkWizard)
     : BreadthFirstRunnerDiscoveryExtension(1) {
     override fun discoverRunnersInDirectory(dir: Element, filesAndDirs: MutableList<Element>): MutableList<DiscoveredObject> =
             discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
@@ -85,11 +86,11 @@ class DotnetRunnerDiscoveryExtension(
             val isNativeOnly = solution.projects.any { isNativeOnly(it) }
             val solutionPath = normalizePath(solution.solution)
             if (!isNativeOnly && solution.projects.any { requiresRestoreCommand(it) }) {
-                yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath))
+                yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath, emptyList()))
             }
 
             if (!isNativeOnly) {
-                yield(createSimpleCommand(DotnetCommandType.Build, solutionPath))
+                yield(createSimpleCommand(DotnetCommandType.Build, solutionPath, emptyList()))
             }
 
             if (isNativeOnly || solution.projects.any { isNative(it) }) {
@@ -98,7 +99,7 @@ class DotnetRunnerDiscoveryExtension(
 
             // If all projects contain tests
             if (!isNativeOnly && solution.projects.map { _projectTypeSelector.select(it) }.all { it.contains(ProjectType.Test) }) {
-                yield(createSimpleCommand(DotnetCommandType.Test, solutionPath))
+                yield(createSimpleCommand(DotnetCommandType.Test, solutionPath, emptyList()))
             }
         } else {
             for (project in solution.projects) {
@@ -106,10 +107,11 @@ class DotnetRunnerDiscoveryExtension(
                     continue
                 }
 
+                var sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
                 val isNativeOnly = isNativeOnly(project)
                 val projectPath = normalizePath(project.project)
                 if (!isNativeOnly && requiresRestoreCommand(project)) {
-                    yield(createSimpleCommand(DotnetCommandType.Restore, projectPath))
+                    yield(createSimpleCommand(DotnetCommandType.Restore, projectPath, sdks))
                 }
 
                 val projectTypes = _projectTypeSelector.select(project)
@@ -118,7 +120,7 @@ class DotnetRunnerDiscoveryExtension(
                 }
 
                 if (!isNativeOnly && projectTypes.contains(ProjectType.Unknown)) {
-                    yield(createSimpleCommand(DotnetCommandType.Build, projectPath))
+                    yield(createSimpleCommand(DotnetCommandType.Build, projectPath, sdks))
                 }
             }
         }
@@ -138,15 +140,16 @@ class DotnetRunnerDiscoveryExtension(
                     testAssemblies.add(normalizePath(File(projectPath).parent + "/bin/**/" + it.value + ".dll"))
                 }
             }
-
             if (!isNativeOnly) {
+                var sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
+
                 if (projectTypes.contains(ProjectType.Test)) {
-                    yield(createSimpleCommand(DotnetCommandType.Test, projectPath))
+                    yield(createSimpleCommand(DotnetCommandType.Test, projectPath, sdks))
                     continue
                 }
 
                 if (projectTypes.contains(ProjectType.Publish)) {
-                    yield(createSimpleCommand(DotnetCommandType.Publish, projectPath))
+                    yield(createSimpleCommand(DotnetCommandType.Publish, projectPath, sdks))
                     continue
                 }
             }
@@ -160,8 +163,17 @@ class DotnetRunnerDiscoveryExtension(
     private fun requiresRestoreCommand(project: Project) =
          project.frameworks.map { it.name.toLowerCase() }.all { it.startsWith("netcoreapp1")}
 
-    private fun createSimpleCommand(commandType: DotnetCommandType, path: String): Command =
-            Command(createDefaultName(commandType, path), listOf(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id), Parameter(DotnetConstants.PARAM_PATHS, path)))
+    private fun createSimpleCommand(commandType: DotnetCommandType, path: String, sdks: List<Version>): Command =
+            Command(
+                    createDefaultName(commandType, path),
+                    sequence<Parameter> {
+                        yield(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id))
+                        yield(Parameter(DotnetConstants.PARAM_PATHS, path))
+                        if (sdks.any()) {
+                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, sdks.first().toString()))
+                        }
+                    }.toList()
+            )
 
     private fun createMSBuildNativeCommand(path: String): Command =
             Command(
@@ -213,6 +225,6 @@ class DotnetRunnerDiscoveryExtension(
 
     private companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnerDiscoveryExtension::class.java.name)
-        private val Params = setOf(DotnetConstants.PARAM_COMMAND, DotnetConstants.PARAM_PATHS, DotnetConstants.PARAM_ARGUMENTS, DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION)
+        private val Params = setOf(DotnetConstants.PARAM_COMMAND, DotnetConstants.PARAM_PATHS, DotnetConstants.PARAM_ARGUMENTS, DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION, DotnetConstants.PARAM_REQUIRED_SDK)
     }
 }

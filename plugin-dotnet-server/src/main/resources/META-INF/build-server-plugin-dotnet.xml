@@ -37,6 +37,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SdkTypeResolverImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.SdkWizardImpl"/>
 
   <!--Discovery-->
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildProjectDeserializer" id="msBuildProjectDeserializer"/>

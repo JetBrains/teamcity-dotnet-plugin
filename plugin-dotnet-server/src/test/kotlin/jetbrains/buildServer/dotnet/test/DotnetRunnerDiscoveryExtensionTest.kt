@@ -16,6 +16,8 @@
 
 package jetbrains.buildServer.dotnet.test
 
+import io.mockk.every
+import io.mockk.mockk
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.discovery.*
 import jetbrains.buildServer.serverSide.BuildTypeSettings
@@ -23,8 +25,6 @@ import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor
 import jetbrains.buildServer.serverSide.discovery.DiscoveredObject
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -61,17 +61,17 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(build1)),
+                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "1.0"))),
                 // Does not genere Restore when >= netcoreapp2* for solution
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp3.0")), emptyList(), emptyList())), "abc.sln")),
                         defaultProjectTypeMap,
                         listOf(createCommand(DotnetCommandType.Build, "abc.sln"))),
-                // Distinct similar default
+                // Requires SDK
                 arrayOf(
-                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir\\mypro.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
+                        sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netstandard2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(restore1, build1)),
+                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "5"))),
                 // Path is case sensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/myproj.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir/MyProj.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
@@ -170,35 +170,39 @@ class DotnetRunnerDiscoveryExtensionTest {
             expectedTargets: List<DiscoveredTarget>) {
         // Given
         val paths = sequenceOf("dir1/proj1.csproj", "dir2/proj2.json")
-        val ctx = Mockery()
-        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
-        val streamFactory = ctx.mock(StreamFactory::class.java)
-        val projectTypeSelector = ctx.mock(ProjectTypeSelector::class.java)
+        val solutionDiscover = mockk<SolutionDiscover>()
+        val streamFactory = mockk<StreamFactory>()
+        val projectTypeSelector = mockk<ProjectTypeSelector>()
+        val sdkWizard = mockk<SdkWizard>()
 
-        ctx.checking(object : Expectations() {
-            init {
-                for (solution in solutions) {
-                    for (project in solution.projects) {
-                        val types = projectTypes.get(project.project)
-                        if (types != null) {
-                            allowing<ProjectTypeSelector>(projectTypeSelector).select(project)
-                            will(returnValue(types))
-                        } else {
-                            allowing<ProjectTypeSelector>(projectTypeSelector).select(project)
-                            will(returnValue(emptySet<ProjectType>()))
-                        }
-                    }
+        for (solution in solutions) {
+            for (project in solution.projects) {
+                val types = projectTypes.get(project.project)
+                if (types != null) {
+                    every { projectTypeSelector.select(project) } returns types
+                } else {
+                    every { projectTypeSelector.select(project) } returns emptySet<ProjectType>()
                 }
-
-                oneOf<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
-                will(returnValue(solutions.toList()))
-
-                allowing<SolutionDiscover>(solutionDiscover).discover(streamFactory, paths)
-                will(returnValue(solutions.toList()))
             }
-        })
+        }
 
-        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector)
+        every { solutionDiscover.discover(streamFactory, paths) } returns solutions.toList()
+        every { solutionDiscover.discover(streamFactory, paths) } returns solutions.toList()
+        every { sdkWizard.suggestSdks(any()) } answers {
+            val frameworks = arg<Sequence<Project>>(0).flatMap { it.frameworks.asSequence() }.map { it.name }.toHashSet()
+            sequence {
+                when {
+                    frameworks.contains("net35") -> yield(Version(3, 5))
+                    frameworks.contains("netcoreapp1.0") -> yield(Version(1, 0))
+                    frameworks.contains("netcoreapp2.1") -> yield(Version(3, 5))
+                    frameworks.contains("netcoreapp3.0") -> yield(Version(3, 5))
+                    frameworks.contains("netstandard2.1") -> yieldAll(sequenceOf(Version(5), Version(4, 8)))
+                    frameworks.contains("net20") -> { }
+                }
+            }
+        }
+
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector, sdkWizard)
 
         // When
         val actualTargets = discoveryExtension.discover(streamFactory, paths).toList()
@@ -256,10 +260,10 @@ class DotnetRunnerDiscoveryExtensionTest {
             createdCommands: Sequence<DotnetRunnerDiscoveryExtension.Command>,
             expectedCommands: Sequence<DotnetRunnerDiscoveryExtension.Command>) {
         // Given
-        val ctx = Mockery()
-        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
-        val projectTypeSelector = ctx.mock(ProjectTypeSelector::class.java)
-        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector)
+        val solutionDiscover = mockk<SolutionDiscover>()
+        val projectTypeSelector = mockk<ProjectTypeSelector>()
+        val sdkWizard = mockk<SdkWizard>()
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector, sdkWizard)
 
         // When
         val actualCommands = discoveryExtension.getNewCommands(existingCommands, createdCommands).toList()
@@ -271,10 +275,10 @@ class DotnetRunnerDiscoveryExtensionTest {
     @Test
     fun shouldGetCreatedCommands() {
         // Given
-        val ctx = Mockery()
-        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
-        val projectTypeSelector = ctx.mock(ProjectTypeSelector::class.java)
-        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector)
+        val solutionDiscover = mockk<SolutionDiscover>()
+        val projectTypeSelector = mockk<ProjectTypeSelector>()
+        val sdkWizard = mockk<SdkWizard>()
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector, sdkWizard)
         val discoveredTarget1 = DiscoveredTarget("abc", mapOf(DotnetConstants.PARAM_COMMAND to "value1"))
         val discoveredTarget2 = DiscoveredTarget("xyz", mapOf(DotnetConstants.PARAM_PATHS to "value2"))
 
@@ -288,48 +292,25 @@ class DotnetRunnerDiscoveryExtensionTest {
     @Test
     fun shouldGetExistingCommands() {
         // Given
-        val ctx = Mockery()
-        val solutionDiscover = ctx.mock(SolutionDiscover::class.java)
-        val buildRunnerDescriptor1 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor1")
-        val buildRunnerDescriptor2 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor2")
-        val buildRunnerDescriptor3 = ctx.mock(SBuildRunnerDescriptor::class.java, "buildRunnerDescriptor3")
-        val buildTypeSettings = ctx.mock(BuildTypeSettings::class.java)
-        val projectTypeSelector = ctx.mock(ProjectTypeSelector::class.java)
-        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector)
-        ctx.checking(object : Expectations() {
-            init {
-                oneOf<BuildTypeSettings>(buildTypeSettings).buildRunners
-                will(returnValue(listOf(buildRunnerDescriptor1, buildRunnerDescriptor2, buildRunnerDescriptor3)))
+        val solutionDiscover = mockk<SolutionDiscover>()
+        val buildRunnerDescriptor1 = mockk<SBuildRunnerDescriptor>()
+        val buildRunnerDescriptor2 = mockk<SBuildRunnerDescriptor>()
+        val buildRunnerDescriptor3 = mockk<SBuildRunnerDescriptor>()
+        val buildTypeSettings = mockk<BuildTypeSettings>()
+        val projectTypeSelector = mockk<ProjectTypeSelector>()
+        val sdkWizard = mockk<SdkWizard>()
+        val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector, sdkWizard)
 
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).runType
-                will(returnValue(MyRunType(DotnetConstants.RUNNER_TYPE)))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).name
-                will(returnValue("abc"))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor1).parameters
-                will(returnValue(mapOf(DotnetConstants.PARAM_COMMAND to "value1")))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).runType
-                will(returnValue(MyRunType("jjj")))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).name
-                will(returnValue("abc"))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor2).parameters
-                will(returnValue(mapOf(DotnetConstants.PARAM_COMMAND to "value1")))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).runType
-                will(returnValue(MyRunType(DotnetConstants.RUNNER_TYPE)))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).name
-                will(returnValue("xyz"))
-
-                oneOf<SBuildRunnerDescriptor>(buildRunnerDescriptor3).parameters
-                will(returnValue(mapOf(DotnetConstants.PARAM_PATHS to "value2")))
-            }
-        })
-
+        every { buildTypeSettings.buildRunners } returns listOf(buildRunnerDescriptor1, buildRunnerDescriptor2, buildRunnerDescriptor3)
+        every { buildRunnerDescriptor1.runType } returns MyRunType(DotnetConstants.RUNNER_TYPE)
+        every { buildRunnerDescriptor1.name } returns "abc"
+        every { buildRunnerDescriptor1.parameters } returns mapOf(DotnetConstants.PARAM_COMMAND to "value1")
+        every { buildRunnerDescriptor2.runType } returns MyRunType("jjj")
+        every { buildRunnerDescriptor2.name } returns "abc"
+        every { buildRunnerDescriptor2.parameters } returns mapOf(DotnetConstants.PARAM_COMMAND to "value1")
+        every { buildRunnerDescriptor3.runType } returns MyRunType(DotnetConstants.RUNNER_TYPE)
+        every { buildRunnerDescriptor3.name } returns "xyz"
+        every { buildRunnerDescriptor3.parameters } returns mapOf(DotnetConstants.PARAM_PATHS to "value2")
 
         // When
         val actualCommands = discoveryExtension.getExistingCommands(buildTypeSettings).toList()
@@ -338,7 +319,14 @@ class DotnetRunnerDiscoveryExtensionTest {
         Assert.assertEquals(actualCommands, listOf(DotnetRunnerDiscoveryExtension.Command("abc", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_COMMAND, "value1"))), DotnetRunnerDiscoveryExtension.Command("xyz", listOf(DotnetRunnerDiscoveryExtension.Parameter(DotnetConstants.PARAM_PATHS, "value2")))))
     }
 
-    private fun createCommand(commandType: DotnetCommandType, path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
+    private fun createCommand(commandType: DotnetCommandType, path: String, requiredSdk: String = ""): DiscoveredTarget {
+        val target =  DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to commandType.id, DotnetConstants.PARAM_PATHS to path))
+        if(requiredSdk.isNotEmpty()) {
+            target.parameters[DotnetConstants.PARAM_REQUIRED_SDK] = requiredSdk
+        }
+
+        return target;
+    }
     private fun createMSBuildCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_ARGUMENTS to "-restore -noLogo", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
     private fun createVSTestCommand(path: String) = DiscoveredTarget("name", mapOf(DotnetConstants.PARAM_COMMAND to DotnetCommandType.VSTest.id, DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_VSTEST_VERSION to Tool.values().filter { it.type == ToolType.VSTest }.sortedBy { it.version }.reversed().first().id))
 
