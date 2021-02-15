@@ -36,11 +36,16 @@ class MSBuildVSTestLoggerParametersProvider(
 
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
-            if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
-                yield(MSBuildParameter("VSTestTestAdapterPath", "${_virtualContext.resolvePath(it.canonicalPath)};."))
+            var paths = _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)
+            if (testReportingMode.contains(TestReportingMode.MultiAdapterPath_5_0_103)) {
+                paths = ".;${_virtualContext.resolvePath(it.canonicalPath)}"
             } else {
-                yield(MSBuildParameter("VSTestTestAdapterPath", _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)))
+                if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
+                    paths = "${_virtualContext.resolvePath(it.canonicalPath)};."
+                }
             }
+
+            yield(MSBuildParameter("VSTestTestAdapterPath", paths))
         }
 
         yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.toLowerCase()))
