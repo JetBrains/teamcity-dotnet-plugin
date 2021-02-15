@@ -14,10 +14,10 @@
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent">
-      <sourceFolder url="file://$MODULE_DIR$/src/test/kotlin" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
+      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/kotlin" isTestSource="true" />
+      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/kotlin" isTestSource="false" />
+      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -77,7 +77,7 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../lib/testng-7.0.0.jar!/" />
+          <root url="jar://$TEAMCITY_DATA_PATH$/lib/testng-7.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
