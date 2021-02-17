@@ -99,6 +99,12 @@
         BS.DotnetParametersForm.clearInputValues(pathsRow);
       }
 
+      $j("div.wizzard").each(function(id, element) {
+        var $wizzard = $j(element);
+        var $wizzardElements = $wizzard.find('span.icon-magic');
+        $wizzardElements[0].hidden = !$wizzard.hasClass(commandName);
+      });
+
       $j("tr.dotnet").each(function(id, element) {
         var $row = $j(element);
         if (!$row.hasClass(commandName)) {
@@ -336,7 +342,7 @@
 <tr class="advancedSetting dotnet build clean publish run test vstest">
   <th class="noBorder"><label for="${params.frameworkKey}">Framework:</label></th>
   <td>
-    <div class="position-relative">
+    <div class="position-relative wizzard build clean publish run test">
       <props:textProperty name="${params.frameworkKey}" className="longField"/>
       <bs:projectData type="DotnetFrameworks" sourceFieldId="${params.pathsKey}"
                       targetFieldId="${params.frameworkKey}" popupTitle="Select frameworks"
@@ -350,7 +356,7 @@
 <tr class="advancedSetting dotnet build pack publish restore test run nuget-push nuget-delete clean msbuild vstest testassembly devenv custom">
   <th class="noBorder"><label for="${params.requiredSdkKey}">Required SDK:</label></th>
   <td>
-    <div class="position-relative">
+    <div class="position-relative wizzard build pack publish restore test run clean msbuild devenv">
       <props:textProperty name="${params.requiredSdkKey}" className="longField"/>
       <bs:projectData type="DotnetSdk" sourceFieldId="${params.pathsKey}"
                       targetFieldId="${params.requiredSdkKey}" popupTitle="Select SDK"
