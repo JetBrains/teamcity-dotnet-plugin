@@ -27,7 +27,6 @@ import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -73,6 +72,7 @@ class TestCommandTest {
                             CommandLineArgument("--filter"),
                             CommandLineArgument("filter")
                     ),
+                    emptySequence(),
                     match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "filter"))) },
                     Verbosity.Detailed
             )

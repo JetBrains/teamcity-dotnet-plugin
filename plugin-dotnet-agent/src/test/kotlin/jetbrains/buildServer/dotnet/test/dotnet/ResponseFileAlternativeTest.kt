@@ -12,7 +12,6 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.util.*
 
 class ResponseFileAlternativeTest {
     @MockK private lateinit var _responseFileFactory: ResponseFileFactory
@@ -40,11 +39,12 @@ class ResponseFileAlternativeTest {
             expectedArguments: Collection<CommandLineArgument>) {
         // Given
         val alternative = createInstance()
-        val params = sequenceOf(MSBuildParameter("ff", "zz"));
-        every { _responseFileFactory.createResponeFile("abc", emptySequence(), params, Verbosity.Detailed) } returns Path("rsp")
+        val alternativeParameters = sequenceOf(MSBuildParameter("ff", "zz"));
+        val alternativeArguments = sequenceOf(CommandLineArgument("aaa"));
+        every { _responseFileFactory.createResponeFile("abc", alternativeArguments, alternativeParameters, Verbosity.Detailed) } returns Path("rsp")
 
         // When
-        var actualArguments = alternative.select("abc", arguments, params, Verbosity.Detailed).toList()
+        var actualArguments = alternative.select("abc", arguments, alternativeArguments, alternativeParameters, Verbosity.Detailed).toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments.toList())

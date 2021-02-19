@@ -60,8 +60,9 @@ class TestCommand(
             if (it.isNotBlank()) {
                 yieldAll(
                         _argumentsAlternative.select(
-                        "Filter",
+                                "Filter",
                                 listOf(CommandLineArgument("--filter"), CommandLineArgument(it)),
+                                emptySequence(),
                                 sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)),
                                 context.verbosityLevel)
                 )
