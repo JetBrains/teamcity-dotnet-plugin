@@ -37,6 +37,8 @@ class VisualStudioCommandType(
     override val viewPage: String = "viewVisualStudioParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = sequence {
+        yieldAll(super.validateProperties(properties))
+
         if (properties[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
             yield(InvalidProperty(DotnetConstants.PARAM_PATHS, DotnetConstants.VALIDATION_EMPTY))
         }

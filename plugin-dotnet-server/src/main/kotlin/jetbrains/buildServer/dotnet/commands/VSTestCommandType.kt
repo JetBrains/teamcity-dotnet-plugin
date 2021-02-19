@@ -67,6 +67,7 @@ class VSTestCommandType(
 
     override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
+
         DotnetConstants.PARAM_PATHS.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))

@@ -36,6 +36,8 @@ class NugetDeleteCommandType(
     override val viewPage: String = "viewNugetDeleteParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = sequence {
+        yieldAll(super.validateProperties(properties))
+
         DotnetConstants.PARAM_NUGET_PACKAGE_ID.let {
             if (properties[it].isNullOrBlank()) {
                 yield(InvalidProperty(it, DotnetConstants.VALIDATION_EMPTY))
