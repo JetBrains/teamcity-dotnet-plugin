@@ -38,6 +38,7 @@ class ResponseFileFactoryTest {
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _argumentsService: ArgumentsService
+    @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
 
     @BeforeMethod
     fun setUp() {
@@ -48,7 +49,7 @@ class ResponseFileFactoryTest {
     }
 
     @Test
-    fun shouldProvideArguments() {
+    fun shouldCreateResponseFile() {
         // Given
         val rspFileName = "rspFile"
         val rspFile = File(rspFileName)
@@ -62,15 +63,27 @@ class ResponseFileFactoryTest {
 
         every { _loggerService.writeBlock(BlockName + " abc") } returns blockToken
         every { _loggerService.writeStandardOutput(any(), Color.Details) } returns Unit
+        every { _msBuildParameterConverter.convert(any(), false) } answers {
+            arg<Sequence<MSBuildParameter>>(0).map { "${it.name}=${it.value}" }
+        }
 
         // When
-        val actualRepsonseFile = responseFileFactory.createResponeFile("abc", listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")), Verbosity.Detailed)
+        val actualRepsonseFile = responseFileFactory.createResponeFile(
+                "abc",
+                sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")),
+                sequenceOf(MSBuildParameter("par1", "val1"), MSBuildParameter("par2", "val2")),
+                Verbosity.Detailed)
 
         // Then
         verify { blockToken.dispose() }
         fileSystemService.read(rspFile) {
             InputStreamReader(it).use {
-                Assert.assertEquals(it.readLines(), listOf("\"arg1\"", "\"arg2\""))
+                Assert.assertEquals(it.readLines(), listOf(
+                        "\"arg1\"",
+                        "\"arg2\"",
+                        "\"par1=val1\"",
+                        "\"par2=val2\""
+                ))
             }
         }
         Assert.assertEquals(actualRepsonseFile, Path(rspFileName))
@@ -82,5 +95,6 @@ class ResponseFileFactoryTest {
                 _argumentsService,
                 fileSystemService,
                 _loggerService,
+                _msBuildParameterConverter,
                 _virtualContext)
 }

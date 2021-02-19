@@ -4,5 +4,9 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 
 interface ResponseFileFactory {
-    fun createResponeFile(description: String, arguments: Collection<CommandLineArgument>, verbosity: Verbosity? = null): Path
+    fun createResponeFile(
+            description: String,
+            arguments: Sequence<CommandLineArgument>,
+            parameters: Sequence<MSBuildParameter>,
+            verbosity: Verbosity? = null): Path
 }

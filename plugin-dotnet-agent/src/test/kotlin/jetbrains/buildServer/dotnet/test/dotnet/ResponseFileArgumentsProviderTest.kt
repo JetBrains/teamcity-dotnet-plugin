@@ -51,20 +51,30 @@ class ResponseFileArgumentsProviderTest {
         val argumentsProvider = createInstance(listOf(argsProvider1, argsProvider2, argsProvider3))
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
 
-        every { _responseFileFactory.createResponeFile("", any(), Verbosity.Detailed) } returns Path(rspFileName)
+        every {
+            _responseFileFactory.createResponeFile(
+                "",
+                any(),
+                any(),
+                Verbosity.Detailed) } returns Path(rspFileName)
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).toList()
 
         // Then
-        verify { _responseFileFactory.createResponeFile("", listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"), CommandLineArgument("arg3")), Verbosity.Detailed) }
+        verify {
+            _responseFileFactory.createResponeFile(
+                "",
+                match { it.toList().equals(listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"), CommandLineArgument("arg3"))) },
+                emptySequence<MSBuildParameter>(),
+                Verbosity.Detailed)
+        }
+
         Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFileName}", CommandLineArgumentType.Infrastructural)))
     }
 
-    private fun createInstance(
-            argumentsProviders: List<ArgumentsProvider>): ArgumentsProvider {
-        return ResponseFileArgumentsProvider(
+    private fun createInstance(argumentsProviders: List<ArgumentsProvider>) =
+        ResponseFileArgumentsProvider(
                 _responseFileFactory,
                 argumentsProviders)
-    }
 }

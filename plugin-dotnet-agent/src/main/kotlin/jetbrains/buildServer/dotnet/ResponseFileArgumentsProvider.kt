@@ -30,6 +30,12 @@ class ResponseFileArgumentsProvider(
             return@sequence
         }
 
-        yield(CommandLineArgument("@${_responseFileFactory.createResponeFile("", args, context.verbosityLevel).path}", CommandLineArgumentType.Infrastructural))
+        val responseFile = _responseFileFactory.createResponeFile(
+                "",
+                args.asSequence(),
+                emptySequence<MSBuildParameter>(),
+                context.verbosityLevel)
+
+        yield(CommandLineArgument("@${responseFile.path}", CommandLineArgumentType.Infrastructural))
     }
 }

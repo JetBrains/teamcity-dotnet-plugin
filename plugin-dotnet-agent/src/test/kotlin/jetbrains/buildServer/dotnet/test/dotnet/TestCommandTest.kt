@@ -18,10 +18,13 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.jmock.Mockery
@@ -32,6 +35,7 @@ import org.testng.annotations.Test
 
 class TestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
 
     @BeforeMethod
     fun setUp() {
@@ -53,7 +57,7 @@ class TestCommandTest {
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
                         listOf("--output", "out", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
-                        listOf("--filter", "filter", "customArg1")))
+                        listOf("@filterRsp", "customArg1")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")
@@ -62,9 +66,20 @@ class TestCommandTest {
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every {
+            _argumentsAlternative.select(
+                    "Filter",
+                    listOf(
+                            CommandLineArgument("--filter"),
+                            CommandLineArgument("filter")
+                    ),
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "filter"))) },
+                    Verbosity.Detailed
+            )
+        } returns sequenceOf(CommandLineArgument("@filterRsp"))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -111,7 +126,6 @@ class TestCommandTest {
             targets: Sequence<String> = emptySequence(),
             arguments: Sequence<CommandLineArgument> = emptySequence(),
             testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
-        val ctx = Mockery()
         return TestCommand(
                 ParametersServiceStub(parameters),
                 testsResultsAnalyzer,
@@ -119,7 +133,7 @@ class TestCommandTest {
                 ArgumentsProviderStub(arguments),
                 ArgumentsProviderStub(arguments),
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
-                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+                mockk<EnvironmentBuilder>(),
+                _argumentsAlternative)
     }
-
 }

@@ -13,14 +13,24 @@ class ResponseFileFactoryImpl(
         private val _argumentsService: ArgumentsService,
         private val _fileSystemService: FileSystemService,
         private val _loggerService: LoggerService,
+        private val _msBuildParameterConverter: MSBuildParameterConverter,
         private val _virtualContext: VirtualContext)
     : ResponseFileFactory {
-    override fun createResponeFile(description: String, arguments: Collection<CommandLineArgument>, verbosity: Verbosity?): Path {
+    override fun createResponeFile(
+            description: String,
+            arguments: Sequence<CommandLineArgument>,
+            parameters: Sequence<MSBuildParameter>,
+            verbosity: Verbosity?): Path {
+        val args = (
+                arguments
+                + _msBuildParameterConverter.convert(parameters, false).map { CommandLineArgument(it) })
+                .toList()
+
         verbosity?.let {
             when (it) {
                 Verbosity.Detailed, Verbosity.Diagnostic -> {
                     _loggerService.writeBlock("$BlockName $description".trim()).use {
-                        for ((value) in arguments) {
+                        for ((value) in args) {
                             _loggerService.writeStandardOutput(value, Color.Details)
                         }
                     }
@@ -31,7 +41,7 @@ class ResponseFileFactoryImpl(
         val msBuildResponseFile = _pathsService.getTempFileName("$description$ResponseFileExtension")
         _fileSystemService.write(msBuildResponseFile) {
             OutputStreamWriter(it).use {
-                for (line in arguments.map { _argumentsService.normalize(it.value) }) {
+                for (line in args.map { _argumentsService.normalize(it.value) }) {
                     it.write("$line\n")
                 }
             }

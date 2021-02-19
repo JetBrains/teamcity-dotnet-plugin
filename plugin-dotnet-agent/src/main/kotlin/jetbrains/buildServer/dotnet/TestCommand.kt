@@ -18,7 +18,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
-import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
@@ -29,7 +28,8 @@ class TestCommand(
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
         override val toolResolver: DotnetToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder)
+        private val _vstestLoggerEnvironment: EnvironmentBuilder,
+        private val _argumentsAlternative: ArgumentsAlternative)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -58,8 +58,13 @@ class TestCommand(
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("--filter"))
-                yield(CommandLineArgument(it))
+                yieldAll(
+                        _argumentsAlternative.select(
+                        "Filter",
+                                listOf(CommandLineArgument("--filter"), CommandLineArgument(it)),
+                                sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)),
+                                context.verbosityLevel)
+                )
             }
         }
 
