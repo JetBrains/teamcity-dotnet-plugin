@@ -16,21 +16,12 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.Color
-import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.rx.use
-import jetbrains.buildServer.agent.Logger
-import java.io.OutputStreamWriter
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
 
 class ResponseFileArgumentsProvider(
-        private val _pathsService: PathsService,
-        private val _argumentsService: ArgumentsService,
-        private val _fileSystemService: FileSystemService,
-        private val _loggerService: LoggerService,
-        private val _argumentsProviders: List<ArgumentsProvider>,
-        private val _virtualContext: VirtualContext)
+        private val _responseFileFactory: ResponseFileFactory,
+        private val _argumentsProviders: List<ArgumentsProvider>)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }
@@ -39,36 +30,6 @@ class ResponseFileArgumentsProvider(
             return@sequence
         }
 
-        context.verbosityLevel?.let {
-            @Suppress("NON_EXHAUSTIVE_WHEN")
-            when (it) {
-                Verbosity.Detailed, Verbosity.Diagnostic -> {
-                    _loggerService.writeBlock(BlockName).use {
-                        for ((value) in args) {
-                            _loggerService.writeStandardOutput(value, Color.Details)
-                        }
-                    }
-                }
-            }
-        }
-
-        val msBuildResponseFile = _pathsService.getTempFileName(ResponseFileExtension)
-        _fileSystemService.write(msBuildResponseFile) {
-            OutputStreamWriter(it).use {
-                for (line in args.map { _argumentsService.normalize(it.value) }) {
-                    it.write("$line\n")
-                }
-            }
-        }
-
-        yield(CommandLineArgument("@${_virtualContext.resolvePath(msBuildResponseFile.path)}", CommandLineArgumentType.Infrastructural))
-    }
-
-    companion object {
-        private val LOG = Logger.getLogger(ResponseFileArgumentsProvider::class.java)
-
-        internal const val ResponseFileExtension = ".rsp"
-        internal const val BlockName = "MSBuild Response File"
-        val nodeReuseArgument = CommandLineArgument("/nodeReuse:false", CommandLineArgumentType.Infrastructural)
+        yield(CommandLineArgument("@${_responseFileFactory.createResponeFile("", args, context.verbosityLevel).path}", CommandLineArgumentType.Infrastructural))
     }
 }

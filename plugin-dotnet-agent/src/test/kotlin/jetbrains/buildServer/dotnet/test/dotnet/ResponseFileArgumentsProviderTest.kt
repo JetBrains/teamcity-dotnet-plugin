@@ -32,61 +32,39 @@ import java.io.File
 import java.io.InputStreamReader
 
 class ResponseFileArgumentsProviderTest {
-    @MockK private lateinit var _pathService: PathsService
-    @MockK private lateinit var _loggerService: LoggerService
-    @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _responseFileFactory: ResponseFileFactory
     @MockK private lateinit var _argumentsService: ArgumentsService
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        every { _virtualContext.resolvePath(any()) } answers { arg<String>(0)}
-        every { _argumentsService.normalize(any()) } answers { "\"${arg<String>(0)}\""}
     }
 
     @Test
     fun shouldProvideArguments() {
         // Given
         val rspFileName = "rspFile"
-        val rspFile = File(rspFileName)
-        val fileSystemService = VirtualFileSystemService()
         val argsProvider1 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg1"), CommandLineArgument("arg2")))
         val argsProvider2 = ArgumentsProviderStub(emptySequence())
         val argsProvider3 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
-        val argumentsProvider = createInstance(fileSystemService, listOf(argsProvider1, argsProvider2, argsProvider3))
+        val argumentsProvider = createInstance(listOf(argsProvider1, argsProvider2, argsProvider3))
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
 
-        every { _pathService.getTempFileName(ResponseFileArgumentsProvider.ResponseFileExtension) } returns File(rspFileName)
-        val blockToken = mockk<Disposable> {
-            every { dispose() } returns Unit
-        }
-
-        every { _loggerService.writeBlock(ResponseFileArgumentsProvider.BlockName) } returns blockToken
-        every { _loggerService.writeStandardOutput(any(), Color.Details) } returns Unit
+        every { _responseFileFactory.createResponeFile("", any(), Verbosity.Detailed) } returns Path(rspFileName)
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).toList()
 
         // Then
-        verify { blockToken.dispose() }
-        Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFile.path}", CommandLineArgumentType.Infrastructural)))
-        fileSystemService.read(rspFile) {
-            InputStreamReader(it).use {
-                Assert.assertEquals(it.readLines(), listOf("\"arg1\"", "\"arg2\"", "\"arg3\""))
-            }
-        }
+        verify { _responseFileFactory.createResponeFile("", listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"), CommandLineArgument("arg3")), Verbosity.Detailed) }
+        Assert.assertEquals(actualArguments, listOf(CommandLineArgument("@${rspFileName}", CommandLineArgumentType.Infrastructural)))
     }
 
     private fun createInstance(
-            fileSystemService: FileSystemService,
             argumentsProviders: List<ArgumentsProvider>): ArgumentsProvider {
         return ResponseFileArgumentsProvider(
-                _pathService,
-                _argumentsService,
-                fileSystemService,
-                _loggerService,
-                argumentsProviders,
-                _virtualContext)
+                _responseFileFactory,
+                argumentsProviders)
     }
 }
