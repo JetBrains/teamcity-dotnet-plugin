@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 
@@ -27,7 +28,8 @@ class VSTestCommand(
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: ToolResolver)
+        override val toolResolver: ToolResolver,
+        private val _argumentsAlternative: ArgumentsAlternative)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -46,21 +48,29 @@ class VSTestCommand(
             }
         }
 
+        var filterArgs: MutableList<CommandLineArgument> = mutableListOf();
         when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
             "filter" -> {
                 parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
                     if (it.isNotBlank()) {
-                        yield(CommandLineArgument("/TestCaseFilter:$it"))
+                        filterArgs.add(CommandLineArgument("/TestCaseFilter:$it"))
                     }
                 }
             }
             "name" -> {
                 parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
                     if (it.isNotBlank()) {
-                        yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                        filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
                     }
                 }
             }
+        }
+
+        if (context.toolVersion >= VersionSupportingArgFiles) {
+            yieldAll(_argumentsAlternative.select("Filter", filterArgs, filterArgs.asSequence(), emptySequence(), context.verbosityLevel))
+        }
+        else {
+            yieldAll(filterArgs)
         }
 
         parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
@@ -85,5 +95,9 @@ class VSTestCommand(
 
         yieldAll(_vstestLoggerArgumentsProvider.getArguments(context))
         yieldAll(_customArgumentsProvider.getArguments(context))
+    }
+
+    companion object {
+        internal val VersionSupportingArgFiles = Version(2, 1)
     }
 }

@@ -18,10 +18,12 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
@@ -31,6 +33,7 @@ import org.testng.annotations.Test
 
 class VSTestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
 
     @BeforeMethod
     fun setUp() {
@@ -41,23 +44,48 @@ class VSTestCommandTest {
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                arrayOf(Version(1, 0),
+                        mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("vstestlog", "customArg1")),
-                arrayOf(mapOf(
+                arrayOf(
+                        Version(1, 0),
+                        mapOf(
                         DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                         DotnetConstants.PARAM_TEST_FILTER to "filter",
                         DotnetConstants.PARAM_PLATFORM to "x86",
                         DotnetConstants.PARAM_FRAMEWORK to "net45",
                         DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
-                arrayOf(mapOf(
+                arrayOf(
+                        Version(2, 1),
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
+                        listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        Version(2, 1),
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "name",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_NAMES to "mynames"),
+                        listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        Version(1, 0),
+                        mapOf(
                         DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                         DotnetConstants.PARAM_TEST_FILTER to "filter",
                         DotnetConstants.PARAM_PLATFORM to Platform.Default.id,
                         DotnetConstants.PARAM_FRAMEWORK to "net45",
                         DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Framework:net45", "vstestlog", "customArg1")),
-                arrayOf(mapOf(
+                arrayOf(
+                        Version(1, 0),
+                        mapOf(
                         DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                         DotnetConstants.PARAM_TEST_FILTER to "filter",
                         DotnetConstants.PARAM_PLATFORM to "x64",
@@ -65,7 +93,9 @@ class VSTestCommandTest {
                         DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "true",
                         DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x64", "/Framework:net45", "/InIsolation", "vstestlog", "customArg1")),
-                arrayOf(mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
+                arrayOf(
+                        Version(1, 0),
+                        mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
                         DotnetConstants.PARAM_TEST_FILTER to "name",
                         DotnetConstants.PARAM_TEST_NAMES to "test1 test2; test3"),
                         listOf("/Tests:test1,test2,test3", "vstestlog", "customArg1")))
@@ -73,13 +103,33 @@ class VSTestCommandTest {
 
     @Test(dataProvider = "argumentsData")
     fun shouldGetArguments(
+            version: Version,
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every {
+            _argumentsAlternative.select(
+                    "Filter",
+                    listOf(CommandLineArgument("/TestCaseFilter:myfilter")),
+                    match { it.toList().equals(listOf(CommandLineArgument("/TestCaseFilter:myfilter"))) },
+                    emptySequence(),
+                    Verbosity.Detailed
+            )
+        } returns sequenceOf(CommandLineArgument("@filterRsp"))
+
+        every {
+            _argumentsAlternative.select(
+                    "Filter",
+                    listOf(CommandLineArgument("/Tests:mynames")),
+                    match { it.toList().equals(listOf(CommandLineArgument("/Tests:mynames"))) },
+                    emptySequence(),
+                    Verbosity.Detailed
+            )
+        } returns sequenceOf(CommandLineArgument("@filterRsp"))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, version, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -140,5 +190,6 @@ class VSTestCommandTest {
                     TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
                     ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     ArgumentsProviderStub(arguments),
-                    ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer))
+                    ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer),
+                    _argumentsAlternative)
 }
