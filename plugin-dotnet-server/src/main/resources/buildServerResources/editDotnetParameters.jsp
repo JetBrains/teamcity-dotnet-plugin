@@ -102,7 +102,9 @@
       $j("div.wizzard").each(function(id, element) {
         var $wizzard = $j(element);
         var $wizzardElements = $wizzard.find('span.icon-magic');
-        $wizzardElements[0].hidden = !$wizzard.hasClass(commandName);
+        if ($wizzardElements.length == 1) {
+          $wizzardElements[0].hidden = !$wizzard.hasClass(commandName);
+        }
       });
 
       $j("tr.dotnet").each(function(id, element) {

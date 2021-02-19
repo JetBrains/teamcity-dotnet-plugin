@@ -43,7 +43,7 @@
   <bean class="jetbrains.buildServer.JsonParserImpl"/>
 
   <!-- common agent's runner services -->
-  <bean class="jetbrains.buildServer.agent.runner.ResponseFileFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.CannotExecuteImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.agent.runner.UnixPathResolverWorkflowComposer" id="unixPathResolverWorkflowComposer">
