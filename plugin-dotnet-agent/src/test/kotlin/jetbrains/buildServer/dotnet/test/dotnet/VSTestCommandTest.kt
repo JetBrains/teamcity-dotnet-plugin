@@ -32,8 +32,10 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class VSTestCommandTest {
-    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
-    @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
+    @MockK
+    private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK
+    private lateinit var _argumentsAlternative: ArgumentsAlternative
 
     @BeforeMethod
     fun setUp() {
@@ -50,11 +52,11 @@ class VSTestCommandTest {
                 arrayOf(
                         Version(1, 0),
                         mapOf(
-                        DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                        DotnetConstants.PARAM_TEST_FILTER to "filter",
-                        DotnetConstants.PARAM_PLATFORM to "x86",
-                        DotnetConstants.PARAM_FRAMEWORK to "net45",
-                        DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(2, 1),
@@ -77,27 +79,27 @@ class VSTestCommandTest {
                 arrayOf(
                         Version(1, 0),
                         mapOf(
-                        DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                        DotnetConstants.PARAM_TEST_FILTER to "filter",
-                        DotnetConstants.PARAM_PLATFORM to Platform.Default.id,
-                        DotnetConstants.PARAM_FRAMEWORK to "net45",
-                        DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to Platform.Default.id,
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
                         mapOf(
-                        DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                        DotnetConstants.PARAM_TEST_FILTER to "filter",
-                        DotnetConstants.PARAM_PLATFORM to "x64",
-                        DotnetConstants.PARAM_FRAMEWORK to "net45",
-                        DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "true",
-                        DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x64",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "true",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilter"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x64", "/Framework:net45", "/InIsolation", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
                         mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
-                        DotnetConstants.PARAM_TEST_FILTER to "name",
-                        DotnetConstants.PARAM_TEST_NAMES to "test1 test2; test3"),
+                                DotnetConstants.PARAM_TEST_FILTER to "name",
+                                DotnetConstants.PARAM_TEST_NAMES to "test1 test2; test3"),
                         listOf("/Tests:test1,test2,test3", "vstestlog", "customArg1")))
     }
 
