@@ -98,18 +98,22 @@ class DotnetRunnerRunType(
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
         val requirements = arrayListOf<Requirement>()
-        runParameters[DotnetConstants.PARAM_COMMAND]?.let {
-            DotnetParametersProvider.commandTypes[it]?.let {
-                requirements.addAll(it.getRequirements(runParameters, _factory))
+        if (!isDocker(runParameters)) {
+            runParameters[DotnetConstants.PARAM_COMMAND]?.let {
+                DotnetParametersProvider.commandTypes[it]?.let {
+                    requirements.addAll(it.getRequirements(runParameters, _factory))
+                }
             }
-        }
 
-        runParameters[CoverageConstants.PARAM_TYPE]?.let {
-            DotnetParametersProvider.coverageTypes[it]?.let {
-                requirements.addAll(it.getRequirements(runParameters, _factory))
+            runParameters[CoverageConstants.PARAM_TYPE]?.let {
+                DotnetParametersProvider.coverageTypes[it]?.let {
+                    requirements.addAll(it.getRequirements(runParameters, _factory))
+                }
             }
         }
 
         return requirements
     }
+
+    private fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
 }

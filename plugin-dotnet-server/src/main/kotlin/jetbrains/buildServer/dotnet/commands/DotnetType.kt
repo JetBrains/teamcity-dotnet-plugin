@@ -27,8 +27,6 @@ abstract class DotnetType(
     : CommandType(_requirementFactory) {
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
         yieldAll(super.getRequirements(parameters, factory))
-        if (!isDocker(parameters)) {
-            yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))
-        }
+        yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))
     }
 }

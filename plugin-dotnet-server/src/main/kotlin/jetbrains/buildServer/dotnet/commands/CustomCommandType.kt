@@ -46,6 +46,12 @@ class CustomCommandType(
         }
     }
 
+    override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory): Sequence<Requirement> = sequence {
+        if (parameters[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
+            yieldAll(super.getRequirements(parameters, factory))
+        }
+    }
+
     companion object {
         const val VALIDATION_EMPTY: String = "Either the \"Executables\" field or \"Command line parameters\" should not be empty"
     }

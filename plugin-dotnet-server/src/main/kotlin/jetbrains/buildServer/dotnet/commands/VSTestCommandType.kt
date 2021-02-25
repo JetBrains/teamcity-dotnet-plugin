@@ -35,33 +35,31 @@ class VSTestCommandType(
     override val viewPage: String = "viewVSTestParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
-        if (!isDocker(parameters)) {
-            yieldAll(super.getRequirements(parameters, factory))
+        yieldAll(super.getRequirements(parameters, factory))
 
-            var shouldBeWindows = false
-            var hasRequirement = false
-            parameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
-                Tool.tryParse(it)?.let {
-                    if (it.type == ToolType.VSTest) {
-                        @Suppress("NON_EXHAUSTIVE_WHEN")
-                        when (it.platform) {
-                            ToolPlatform.Windows -> {
-                                yield(Requirement("teamcity.dotnet.vstest.${it.version}.0", null, RequirementType.EXISTS))
-                                shouldBeWindows = true
-                                hasRequirement = true
-                            }
+        var shouldBeWindows = false
+        var hasRequirement = false
+        parameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
+            Tool.tryParse(it)?.let {
+                if (it.type == ToolType.VSTest) {
+                    @Suppress("NON_EXHAUSTIVE_WHEN")
+                    when (it.platform) {
+                        ToolPlatform.Windows -> {
+                            yield(Requirement("teamcity.dotnet.vstest.${it.version}.0", null, RequirementType.EXISTS))
+                            shouldBeWindows = true
+                            hasRequirement = true
                         }
                     }
                 }
             }
+        }
 
-            if (!hasRequirement) {
-                yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))
-            }
+        if (!hasRequirement) {
+            yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH, null, RequirementType.EXISTS))
+        }
 
-            if (shouldBeWindows) {
-                yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
-            }
+        if (shouldBeWindows) {
+            yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
         }
     }
 

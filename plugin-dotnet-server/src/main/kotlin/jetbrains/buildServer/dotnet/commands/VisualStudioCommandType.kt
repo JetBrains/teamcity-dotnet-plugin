@@ -49,24 +49,22 @@ class VisualStudioCommandType(
     }
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
-        if (!isDocker(parameters)) {
-            yieldAll(super.getRequirements(parameters, factory))
+        yieldAll(super.getRequirements(parameters, factory))
 
-            var hasRequirements = false
-            parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
-                Tool.tryParse(it)?.let {
-                    if (it.type == ToolType.VisualStudio && it != Tool.VisualStudioAny) {
-                        yield(Requirement("VS${it.vsVersion}_Path", null, RequirementType.EXISTS))
-                        hasRequirements = true
-                    }
+        var hasRequirements = false
+        parameters[DotnetConstants.PARAM_VISUAL_STUDIO_VERSION]?.let {
+            Tool.tryParse(it)?.let {
+                if (it.type == ToolType.VisualStudio && it != Tool.VisualStudioAny) {
+                    yield(Requirement("VS${it.vsVersion}_Path", null, RequirementType.EXISTS))
+                    hasRequirements = true
                 }
             }
-
-            if (!hasRequirements) {
-                yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "VS.+_Path", null, RequirementType.EXISTS))
-            }
-
-            yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
         }
+
+        if (!hasRequirements) {
+            yield(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "VS.+_Path", null, RequirementType.EXISTS))
+        }
+
+        yield(Requirement("teamcity.agent.jvm.os.name", "Windows", RequirementType.STARTS_WITH))
     }
 }

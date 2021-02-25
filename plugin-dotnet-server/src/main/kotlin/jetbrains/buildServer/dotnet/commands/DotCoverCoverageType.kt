@@ -50,32 +50,30 @@ class DotCoverCoverageType(
     }
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
-        if (!isDocker(parameters)) {
-            yieldAll(super.getRequirements(parameters, factory))
+        yieldAll(super.getRequirements(parameters, factory))
 
-            val requirements = mutableSetOf<Requirement>()
-            requirements += OUR_MINIMAL_REQUIREMENT
-            if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
-            val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
-            val toolManager = factory.getBean(ServerToolManager::class.java)
-            val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
-            val projectManager = factory.getBean(ProjectManager::class.java)
-            val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
-            if (toolVersion != null) {
-                val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
-                if (crossPaltform) {
+        val requirements = mutableSetOf<Requirement>()
+        requirements += OUR_MINIMAL_REQUIREMENT
+        if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
+        val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
+        val toolManager = factory.getBean(ServerToolManager::class.java)
+        val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
+        val projectManager = factory.getBean(ProjectManager::class.java)
+        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
+        if (toolVersion != null) {
+            val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
+            if (crossPaltform) {
+                requirements.clear()
+            } else {
+                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
+                if (dotnet461Based) {
                     requirements.clear()
-                } else {
-                    val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
-                    if (dotnet461Based) {
-                        requirements.clear()
-                        requirements.add(OUR_NET_461_REQUIREMENT)
-                    }
+                    requirements.add(OUR_NET_461_REQUIREMENT)
                 }
             }
-
-            yieldAll(requirements)
         }
+
+        yieldAll(requirements)
     }
 
     companion object {

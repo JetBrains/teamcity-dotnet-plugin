@@ -60,9 +60,7 @@ abstract class CommandType(
                     }
 
     open fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) =
-        if (!isDocker(parameters)) getRequirements(parameters).mapNotNull { it.requirement } else emptySequence<Requirement>()
-
-    protected fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
+        getRequirements(parameters).mapNotNull { it.requirement }
 
     private data class RequirementResult(val sdkVersion: String, val requirement: Requirement?)
 }

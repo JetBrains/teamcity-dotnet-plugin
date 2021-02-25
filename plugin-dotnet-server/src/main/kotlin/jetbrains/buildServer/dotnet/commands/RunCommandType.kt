@@ -36,12 +36,10 @@ class RunCommandType(
     override val viewPage: String = "viewRunParameters.jsp"
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
-        if (isDocker(parameters)) {
-            yieldAll(super.getRequirements(parameters, factory))
+        yieldAll(super.getRequirements(parameters, factory))
 
-            if (!parameters[DotnetConstants.PARAM_RUNTIME].isNullOrBlank()) {
-                yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, "2.0.0", RequirementType.VER_NO_LESS_THAN))
-            }
+        if (!parameters[DotnetConstants.PARAM_RUNTIME].isNullOrBlank()) {
+            yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, "2.0.0", RequirementType.VER_NO_LESS_THAN))
         }
     }
 }
