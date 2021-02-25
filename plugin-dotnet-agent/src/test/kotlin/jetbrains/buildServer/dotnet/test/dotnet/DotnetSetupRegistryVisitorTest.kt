@@ -169,7 +169,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8, 4084), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(4, 8, 0), File("abc"))
                         )
                 ),
                 arrayOf(
@@ -206,7 +206,7 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8, 4084), File("abc"))
+                                DotnetFramework(_key.bitness.platform, Version(4, 8, 0), File("abc"))
                         )
                 ),
                 arrayOf(
