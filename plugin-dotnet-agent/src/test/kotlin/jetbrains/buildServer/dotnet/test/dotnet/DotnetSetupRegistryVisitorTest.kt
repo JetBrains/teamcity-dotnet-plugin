@@ -188,7 +188,9 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
                         ),
-                        sequenceOf<DotnetFramework>()
+                        sequenceOf(
+                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
+                        )
                 ),
                 arrayOf(
                         _root,
@@ -242,7 +244,9 @@ class DotnetSetupRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
                                 WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
                         ),
-                        sequenceOf<DotnetFramework>()
+                        sequenceOf(
+                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
+                        )
                 ),
                 arrayOf(
                         _root,

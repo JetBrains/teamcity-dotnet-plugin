@@ -95,7 +95,7 @@ class DotnetSetupRegistryVisitor(
                     ReleaseName -> {
                         if (value.type == WindowsRegistryValueType.Int && value.number != 0L) {
                             val framework = _frameworks.getOrPut(key) { Framework(bitness) }
-                            framework.release = FrameworkVersions[value.number] ?: Version.Empty
+                            framework.release = getFrameworkVersion(value.number)
                         }
                     }
                 }
@@ -126,26 +126,39 @@ class DotnetSetupRegistryVisitor(
 
         private val Deep = DotnetPolicyRegistryVisitor.Keys.first().parts.size
 
-        private val FrameworkVersions = mapOf(
-                378389L to Version(4, 5),
-                378675L to Version(4, 5, 1),
-                378758L to Version(4, 5, 1),
-                379893L to Version(4, 5, 2),
-                393295L to Version(4, 6),
-                393297L to Version(4, 6),
-                394254L to Version(4, 6, 1),
-                394271L to Version(4, 6, 1),
-                394802L to Version(4, 6, 2),
-                394806L to Version(4, 6, 2),
-                460798L to Version(4, 7),
-                460805L to Version(4, 7),
-                461308L to Version(4, 7, 1),
-                461310L to Version(4, 7, 1),
-                461808L to Version(4, 7, 2),
-                461814L to Version(4, 7, 2),
-                528040L to Version(4, 8),
-                528049L to Version(4, 8),
-                528372L to Version(4, 8))
+        private fun getFrameworkVersion(releaseKey: Long) : Version {
+            if (releaseKey >= 528040)
+                return Version(4, 8)
+
+            if (releaseKey >= 461808)
+                return Version(4, 7, 2)
+
+            if (releaseKey >= 461308)
+                return Version(4, 7, 1)
+
+            if (releaseKey >= 460798)
+                return Version(4, 7)
+
+            if (releaseKey >= 394802)
+                return Version(4, 6, 2)
+
+            if (releaseKey >= 394254)
+                return Version(4, 6, 1)
+
+            if (releaseKey >= 393295)
+                return Version(4, 6)
+
+            if (releaseKey >= 379893)
+                return Version(4, 5, 2)
+
+            if (releaseKey >= 378675)
+                return Version(4, 5, 1)
+
+            if (releaseKey >= 378389)
+                return Version(4, 5)
+
+            return Version.Empty
+        }
     }
 
     private data class Framework(
