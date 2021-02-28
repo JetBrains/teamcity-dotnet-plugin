@@ -22,20 +22,23 @@ class Version private constructor(
         val digits: Int,
         val patch: Int,
         val build: Int = 0,
+        val minorBuild: Int = 0,
         val release: String? = null,
         private val metadata: String? = null,
         private val text: String? = null)
     : Comparable<Version> {
 
-    constructor(major: Int) : this(major, 0, 1, 0, 0)
+    constructor(major: Int) : this(major, 0, 1, 0, 0, 0)
 
-    constructor(major: Int, minor: Int) : this(major, minor, 2, 0, 0)
+    constructor(major: Int, minor: Int) : this(major, minor, 2, 0, 0, 0)
 
-    constructor(major: Int, minor: Int, patch: Int) : this(major, minor, 3, patch, 0)
+    constructor(major: Int, minor: Int, patch: Int) : this(major, minor, 3, patch, 0, 0)
 
-    constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor,4, patch, 0, release)
+    constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor,4, patch, 0, 0, release)
 
-    constructor(major: Int, minor: Int, patch: Int, build: Int) : this(major, minor,4, patch, build, null)
+    constructor(major: Int, minor: Int, patch: Int, build: Int) : this(major, minor,4, patch, build, 0, null)
+
+    constructor(major: Int, minor: Int, patch: Int, build: Int, minorBuild: Int) : this(major, minor,5, patch, build, minorBuild, null)
 
     private val versionString: String = buildString {
         append(major)
@@ -44,6 +47,7 @@ class Version private constructor(
         append(Separator)
         append(patch)
         if (build > 0) append('.').append(build)
+        if (minorBuild > 0) append('.').append(minorBuild)
         if (release != null) append('-').append(release)
         if (metadata != null) append('+').append(metadata)
     }
@@ -55,6 +59,7 @@ class Version private constructor(
         minor.compareTo(other.minor).run { if (this != 0) return this }
         patch.compareTo(other.patch).run { if (this != 0) return this }
         build.compareTo(other.build).run { if (this != 0) return this }
+        minorBuild.compareTo(other.minorBuild).run { if (this != 0) return this }
         return if (release == null) {
             if (other.release == null) 0 else 1
         } else {
@@ -74,13 +79,13 @@ class Version private constructor(
 
     companion object {
         const val Separator = '.'
-        private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
-        val Empty: Version = Version(0, 0, 0, 0, 0, null, null, null)
+        private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
+        val Empty: Version = Version(0, 0, 0, 0, 0, 0, null, null, null)
 
         fun parse(text: String): Version {
             VERSION_PATTERN.matchEntire(text)?.let {
 
-                val (majorStr, minorStr, patchStr, buildStr, releaseStr, metadataStr) = it.destructured
+                val (majorStr, minorStr, patchStr, buildStr, minorBuildStr, releaseStr, metadataStr) = it.destructured
                 var digits = 0
                 var newText: String = ""
 
@@ -111,6 +116,13 @@ class Version private constructor(
                     it
                 } ?: 0
 
+                val minorBuild = minorBuildStr.toIntOrNull()?.let {
+                    newText += Separator
+                    newText += minorBuildStr
+                    digits++
+                    it
+                } ?: 0
+
                 var release: String? = null
                 if (!releaseStr.isEmpty()) {
                     newText += "-"
@@ -125,7 +137,7 @@ class Version private constructor(
                     metadata = metadataStr
                 }
 
-                return Version(major, minor, digits, patch, build, release, metadata, newText)
+                return Version(major, minor, digits, patch, build, minorBuild, release, metadata, newText)
             }
 
             return Empty
