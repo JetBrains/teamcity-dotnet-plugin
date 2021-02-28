@@ -256,7 +256,7 @@ class SdkRegistryProviderTest {
                 ),
 
                 // Windows SDK
-                //HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v8.0A\WinSDK-NetFx35Tools-x86
+                //HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v8.0A
                 arrayOf(
                         sequenceOf(
                                 WindowsRegistryValue(_key + "Windows" + "v8.0A" + "InstallationFolder", WindowsRegistryValueType.Str, "path"),
@@ -264,6 +264,16 @@ class SdkRegistryProviderTest {
                         ),
                         sequenceOf(
                                 ToolInstance(ToolInstanceType.WindowsSDK, File("path"), Version.parse("8.0.50727"), Version.parse("8.0-A"), Platform.Default)
+                        )
+                ),
+                //HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0
+                arrayOf(
+                        sequenceOf(
+                                WindowsRegistryValue(_key + "Windows" + "v7.0" + "InstallationFolder", WindowsRegistryValueType.Str, "path"),
+                                WindowsRegistryValue(_key + "Windows" + "v7.0" + "ProductVersion", WindowsRegistryValueType.Str, "7.0.7600.16385.40715")
+                        ),
+                        sequenceOf(
+                                ToolInstance(ToolInstanceType.WindowsSDK, File("path"), Version.parse("7.0.7600.16385.40715"), Version.parse("7.0"), Platform.Default)
                         )
                 ),
                 arrayOf(
