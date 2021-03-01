@@ -6,9 +6,15 @@ import java.util.*
 // https://docs.microsoft.com/ru-ru/dotnet/standard/frameworks#net-5-os-specific-tfms
 // https://docs.microsoft.com/ru-ru/dotnet/standard/net-standard
 
-class SdkResolverImpl() : SdkResolver {
+class SdkResolverImpl : SdkResolver {
     override fun resolveSdkVersions(framework: Framework, propeties: Collection<Property>) =
         resolveSdkVersions(framework).map { if(it.getPart(0) != 4) it.trim() else it }
+
+    override fun getCompatibleVersions(sdkType: SdkType, sdkVersion: Version): Sequence<Version> =
+            when(sdkType) {
+                SdkType.Dotnet, SdkType.DotnetCore -> getDotnetVersions(sdkVersion)
+                SdkType.DotnetFramework, SdkType.FullDotnetTargetingPack -> getFullDotnetVersion(sdkVersion)
+            }
 
     private fun resolveSdkVersions(framework: Framework) = sequence {
         FrameworkRegex.matchEntire(framework.name)?.let {
@@ -138,7 +144,6 @@ class SdkResolverImpl() : SdkResolver {
                 Version(1, 1),
                 Version(1, 0)
         )
-
 
         private val WellknownFullDotnetVersions = listOf<Version>(
                 Version(4, 8),

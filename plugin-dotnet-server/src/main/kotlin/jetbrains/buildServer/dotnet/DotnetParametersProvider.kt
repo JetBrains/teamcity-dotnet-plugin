@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.dotnet.commands.*
+import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl
 import jetbrains.buildServer.web.functions.InternalProperties
 
 /**
@@ -161,7 +162,7 @@ class DotnetParametersProvider {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
-        private val _requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl())
+        private val _requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl(), SdkResolverImpl())
         val commandTypes
             get() = sequenceOf(
                     RestoreCommandType(_requirementFactory),

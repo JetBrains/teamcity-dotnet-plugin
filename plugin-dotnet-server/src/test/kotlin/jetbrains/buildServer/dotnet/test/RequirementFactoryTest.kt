@@ -16,10 +16,11 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import jetbrains.buildServer.dotnet.RequirementFactoryImpl
-import jetbrains.buildServer.dotnet.SdkTypeResolverImpl
-import jetbrains.buildServer.dotnet.SemanticVersionParser
-import jetbrains.buildServer.dotnet.SemanticVersionParserImpl
+import io.mockk.every
+import io.mockk.mockk
+import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.discovery.Framework
+import jetbrains.buildServer.dotnet.discovery.SdkResolver
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -77,7 +78,39 @@ class RequirementFactoryTest {
     @Test(dataProvider = "testData")
     fun shouldCreateRequirement(targetFrameworkMoniker: String, expectedRequierement: Requirement?) {
         // Given
-        val requirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl())
+        val sdkResolver = mockk<SdkResolver>()
+        every { sdkResolver.getCompatibleVersions(any(), any()) } answers {
+            sequenceOf(arg<Version>(1))
+        }
+
+        val requirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl(), sdkResolver)
+
+        // When
+        val actualRequirement = requirementFactory.tryCreate(targetFrameworkMoniker)
+
+        // Then
+        Assert.assertEquals(actualRequirement, expectedRequierement)
+    }
+
+    @DataProvider
+    fun testDataCore(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf("3.1", sequenceOf(Version(5, 0), Version(3, 1)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(3.1|5.0)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("3.2", sequenceOf(Version(5, 0), Version(3, 1)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(3.2|5.0|3.1)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("2", sequenceOf(Version(5, 0), Version(3, 1), Version(2, 1), Version(2, 0)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(2|5.0|3.1|2.1)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("3.1", emptySequence<Version>(), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK3.1[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("aaa", emptySequence<Version>(), null)
+        )
+    }
+
+    @Test(dataProvider = "testDataCore")
+    fun shouldCreateRequirementWhenCore(targetFrameworkMoniker: String, compatibleVersions: Sequence<Version>, expectedRequierement: Requirement?) {
+        // Given
+        val sdkResolver = mockk<SdkResolver>()
+        every { sdkResolver.getCompatibleVersions(any(), any()) } answers {
+            compatibleVersions + arg<Version>(1)
+        }
+        val requirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl(), sdkResolver)
 
         // When
         val actualRequirement = requirementFactory.tryCreate(targetFrameworkMoniker)
