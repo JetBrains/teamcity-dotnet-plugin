@@ -31,15 +31,20 @@ class EnvironmentVariablesImpl(
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService,
         private val _nugetEnvironmentVariables: EnvironmentVariables,
-        private val _virtualContext: VirtualContext)
+        private val _virtualContext: VirtualContext,
+        private val _loggerResolver: LoggerResolver)
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
+
+        yield(CommandLineEnvironmentVariable(MSBuildLoggerEnvVar, _loggerResolver.resolve(ToolType.MSBuild).canonicalPath))
+        yield(CommandLineEnvironmentVariable(VSTestLoggerEnvVar, _loggerResolver.resolve(ToolType.VSTest).canonicalPath))
+
         val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
         yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
         yieldAll(_nugetEnvironmentVariables.getVariables(sdkVersion))
 
-        val home = if (_environment.os == OSType.WINDOWS) USERPROFILE_ENV_VAR else HOME_ENV_VAR
+        val home = if (_environment.os == OSType.WINDOWS) UserProfileEnvVar else HomeEnvVar
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
             yield(CommandLineEnvironmentVariable(home, System.getProperty("user.home")))
         }
@@ -75,9 +80,11 @@ class EnvironmentVariablesImpl(
     companion object {
         private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
 
-        private const val USERPROFILE_ENV_VAR = "USERPROFILE"
-        private const val HOME_ENV_VAR = "HOME"
-        internal val UseSharedCompilationEnvVarName = "UseSharedCompilation"
+        private const val UserProfileEnvVar = "USERPROFILE"
+        private const val HomeEnvVar = "HOME"
+        internal const val UseSharedCompilationEnvVarName = "UseSharedCompilation"
+        internal const val MSBuildLoggerEnvVar = "TEAMCITY_MSBUILD_LOGGER"
+        internal const val VSTestLoggerEnvVar = "TEAMCITY_VSTEST_LOGGER"
 
         internal val defaultVariables = sequenceOf(
                 CommandLineEnvironmentVariable("COMPlus_EnableDiagnostics", "0"),
