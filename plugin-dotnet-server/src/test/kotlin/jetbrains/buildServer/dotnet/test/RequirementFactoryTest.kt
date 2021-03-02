@@ -18,9 +18,7 @@ package jetbrains.buildServer.dotnet.test
 
 import io.mockk.every
 import io.mockk.mockk
-import javaslang.collection.Seq
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.discovery.Framework
 import jetbrains.buildServer.dotnet.discovery.SdkResolver
 import jetbrains.buildServer.dotnet.discovery.SdkVersion
 import jetbrains.buildServer.dotnet.discovery.SdkVersionType
