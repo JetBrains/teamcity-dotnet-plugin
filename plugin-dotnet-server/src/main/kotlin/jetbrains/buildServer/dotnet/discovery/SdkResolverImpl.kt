@@ -46,20 +46,6 @@ class SdkResolverImpl : SdkResolver {
                     name == "netstandard" -> {
                         when {
                             version >= Version(2, 1) -> {
-                                yieldAll(getDotnetVersions(Version(3, 0)))
-                            }
-
-                            version >= Version(2, 0) -> {
-                                yieldAll(getDotnetVersions(Version(2)))
-                            }
-
-                            else -> {
-                                yieldAll(getDotnetVersions(Version(1)))
-                            }
-                        }
-
-                        when {
-                            version >= Version(2, 1) -> {
                             }
 
                             version >= Version(1, 4) -> {
@@ -76,6 +62,20 @@ class SdkResolverImpl : SdkResolver {
 
                             else -> {
                                 yieldAll(getFullDotnetVersion(Version(4, 5)))
+                            }
+                        }
+
+                        when {
+                            version >= Version(2, 1) -> {
+                                yieldAll(getDotnetVersions(Version(3, 0)))
+                            }
+
+                            version >= Version(2, 0) -> {
+                                yieldAll(getDotnetVersions(Version(2)))
+                            }
+
+                            else -> {
+                                yieldAll(getDotnetVersions(Version(1)))
                             }
                         }
                     }
@@ -135,6 +135,7 @@ class SdkResolverImpl : SdkResolver {
         }
 
         private val WellknownDotnetVersions = listOf<Version>(
+                Version(6, 0),
                 Version(5, 0),
                 Version(3, 1),
                 Version(3, 0),

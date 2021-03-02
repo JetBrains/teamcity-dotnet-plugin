@@ -71,7 +71,7 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netstandard2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "5"))),
+                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "4.8"))),
                 // Path is case sensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/myproj.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir/MyProj.proj", emptyList(), emptyList(), emptyList(), emptyList())))),

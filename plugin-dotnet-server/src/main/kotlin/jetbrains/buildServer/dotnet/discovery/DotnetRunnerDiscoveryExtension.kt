@@ -170,7 +170,7 @@ class DotnetRunnerDiscoveryExtension(
                         yield(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id))
                         yield(Parameter(DotnetConstants.PARAM_PATHS, path))
                         if (sdks.any()) {
-                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, sdks.first().toString()))
+                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, sdks.last().toString()))
                         }
                     }.toList()
             )
