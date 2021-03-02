@@ -5,12 +5,14 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.visualStudio.VisualStudioAgentPropertiesProvider
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.Platform
+import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -29,7 +31,7 @@ class VisualStudioAgentPropertiesProviderTest {
     @Test
     fun shouldProvideAgentProperties() {
         // Given
-        val propertiesProvider = createInstance()
+        val propertiesProvider = createInstance(VirtualFileSystemService().addFile(File("path1/devenv.exe"), VirtualFileSystemService.Attributes()))
 
         // When
         every { _visualStudioProvider1.getInstances() } returns listOf(
@@ -47,13 +49,11 @@ class VisualStudioAgentPropertiesProviderTest {
                 propertiesProvider.properties.toList(),
                 listOf(
                         AgentProperty(ToolInstanceType.VisualStudio, "VS2019", "1.2.03"),
-                        AgentProperty(ToolInstanceType.VisualStudio, "VS2019_Path", "path1"),
-                        AgentProperty(ToolInstanceType.VisualStudio, "VS2003", "1.2.03.4"),
-                        AgentProperty(ToolInstanceType.VisualStudio, "VS2003_Path", "path2")
+                        AgentProperty(ToolInstanceType.VisualStudio, "VS2019_Path", "path1")
                 )
         )
     }
 
-    private fun createInstance() =
-            VisualStudioAgentPropertiesProvider(listOf(_visualStudioProvider1, _visualStudioProvider2))
+    private fun createInstance(fileSystemService: FileSystemService) =
+            VisualStudioAgentPropertiesProvider(listOf(_visualStudioProvider1, _visualStudioProvider2), fileSystemService)
 }

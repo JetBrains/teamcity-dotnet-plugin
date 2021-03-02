@@ -60,7 +60,7 @@ class VisualStudioFileSystemProviderTest {
                         "ProgramData/Microsoft/VisualStudio/Packages2",
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        listOf(_visualStudioInstance1)
+                        listOf(_visualStudioInstance1, _visualStudioInstance2)
                 ),
                 arrayOf(
                         VirtualFileSystemService()
@@ -72,7 +72,7 @@ class VisualStudioFileSystemProviderTest {
                         "ProgramData/Microsoft/VisualStudio/Packages2",
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        listOf(_visualStudioInstance1)
+                        listOf(_visualStudioInstance1, _visualStudioInstance2)
                 ),
                 arrayOf(
                         VirtualFileSystemService()
@@ -84,7 +84,7 @@ class VisualStudioFileSystemProviderTest {
                         "ProgramData/Microsoft/VisualStudio/Packages2",
                         _visualStudioInstance1,
                         _visualStudioInstance2,
-                        listOf(_visualStudioInstance2)
+                        listOf(_visualStudioInstance1, _visualStudioInstance2)
                 ),
                 arrayOf(
                         VirtualFileSystemService()

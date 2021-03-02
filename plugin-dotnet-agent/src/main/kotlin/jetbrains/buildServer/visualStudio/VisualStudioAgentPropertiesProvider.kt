@@ -1,14 +1,13 @@
 package jetbrains.buildServer.visualStudio
 
-import jetbrains.buildServer.agent.AgentPropertiesProvider
-import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_VISUAL_STUDIO
-import jetbrains.buildServer.agent.Logger
+import java.io.File
 
 class VisualStudioAgentPropertiesProvider(
-        private val _visualStudioProviders: List<ToolInstanceProvider>)
+        _visualStudioProviders: List<ToolInstanceProvider>,
+        private val _fileSystemService: FileSystemService)
     : AgentPropertiesProvider {
 
     override val desription = "Visual Studio"
@@ -19,6 +18,13 @@ class VisualStudioAgentPropertiesProvider(
                     .flatMap { it.getInstances().asSequence() }
                     .filter { it.toolType == ToolInstanceType.VisualStudio }
                     .distinctBy { it.baseVersion }
+                    .filter {
+                        val devenvFile = File(it.installationPath, "devenv.exe")
+                        if (!_fileSystemService.isExists(devenvFile) || !_fileSystemService.isFile(devenvFile)) {
+                            LOG.debug("Cannot find \"$devenvFile\".")
+                            false
+                        } else true
+                    }
                     .flatMap {
                         visualStudio ->
                         LOG.debug("Found ${visualStudio}.")
