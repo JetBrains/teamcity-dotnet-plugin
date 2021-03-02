@@ -16,9 +16,9 @@ class DotnetSetupRegistryVisitor(
         for (framework in _frameworks.values.filter { !it.isEmpty }) {
             val frameworkBasePath = framework.path
             if (frameworkBasePath != null) {
-                var version = framework.release
+                var version = framework.version
                 if (version == Version.Empty) {
-                    version = framework.version
+                    version = framework.release
                 }
 
                 if (version != Version.Empty) {
@@ -128,34 +128,34 @@ class DotnetSetupRegistryVisitor(
 
         private fun getFrameworkVersion(releaseKey: Long) : Version {
             if (releaseKey >= 528040)
-                return Version(4, 8)
+                return Version.parse("4.8")
 
             if (releaseKey >= 461808)
-                return Version(4, 7, 2)
+                return Version.parse("4.7.2")
 
             if (releaseKey >= 461308)
-                return Version(4, 7, 1)
+                return Version.parse("4.7.1")
 
             if (releaseKey >= 460798)
-                return Version(4, 7)
+                return Version.parse("4.7")
 
             if (releaseKey >= 394802)
-                return Version(4, 6, 2)
+                return Version.parse("4.6.2")
 
             if (releaseKey >= 394254)
-                return Version(4, 6, 1)
+                return Version.parse("4.6.1")
 
             if (releaseKey >= 393295)
-                return Version(4, 6)
+                return Version.parse("4.6")
 
             if (releaseKey >= 379893)
-                return Version(4, 5, 2)
+                return Version.parse("4.5.2")
 
             if (releaseKey >= 378675)
-                return Version(4, 5, 1)
+                return Version.parse("4.5.1")
 
             if (releaseKey >= 378389)
-                return Version(4, 5)
+                return Version.parse("4.5")
 
             return Version.Empty
         }
