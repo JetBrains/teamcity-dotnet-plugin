@@ -32,7 +32,6 @@ import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl.Companion.UseShared
 import jetbrains.buildServer.dotnet.LoggerResolver
 import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.util.OSType
-import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
