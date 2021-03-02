@@ -162,28 +162,28 @@ class DotnetParametersProvider {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
-        private val _requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkTypeResolverImpl(), SdkResolverImpl())
+        private val requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
         val commandTypes
             get() = sequenceOf(
-                    RestoreCommandType(_requirementFactory),
-                    BuildCommandType(_requirementFactory),
-                    TestCommandType(_requirementFactory),
-                    PublishCommandType(_requirementFactory),
-                    PackCommandType(_requirementFactory),
-                    NugetPushCommandType(_requirementFactory),
-                    NugetDeleteCommandType(_requirementFactory),
-                    CleanCommandType(_requirementFactory),
-                    RunCommandType(_requirementFactory),
-                    MSBuildCommandType(_requirementFactory),
-                    VSTestCommandType(_requirementFactory),
-                    VisualStudioCommandType(_requirementFactory))
+                    RestoreCommandType(requirementFactory),
+                    BuildCommandType(requirementFactory),
+                    TestCommandType(requirementFactory),
+                    PublishCommandType(requirementFactory),
+                    PackCommandType(requirementFactory),
+                    NugetPushCommandType(requirementFactory),
+                    NugetDeleteCommandType(requirementFactory),
+                    CleanCommandType(requirementFactory),
+                    RunCommandType(requirementFactory),
+                    MSBuildCommandType(requirementFactory),
+                    VSTestCommandType(requirementFactory),
+                    VisualStudioCommandType(requirementFactory))
                     .plus(if(experimentalMode) experimentalCommandTypes else emptySequence())
                     .sortedBy { it.description }
-                    .plus(CustomCommandType(_requirementFactory))
+                    .plus(CustomCommandType(requirementFactory))
                     .associateBy { it.name }
 
         val coverageTypes
-            get() = sequenceOf<CommandType>(DotCoverCoverageType(_requirementFactory))
+            get() = sequenceOf<CommandType>(DotCoverCoverageType(requirementFactory))
                     .sortedBy { it.name }
                     .associateBy { it.name }
     }

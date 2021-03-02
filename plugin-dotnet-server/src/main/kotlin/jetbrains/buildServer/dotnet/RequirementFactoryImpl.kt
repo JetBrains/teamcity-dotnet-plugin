@@ -6,36 +6,41 @@ import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWO
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.dotnet.discovery.Framework
 import jetbrains.buildServer.dotnet.discovery.SdkResolver
+import jetbrains.buildServer.dotnet.discovery.SdkVersionType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier.EXISTS_QUALIFIER
 import jetbrains.buildServer.requirements.RequirementType
 
 class RequirementFactoryImpl(
-        private val _sdkTypeResolver: SdkTypeResolver,
         private val _sdkResolver: SdkResolver)
     : RequirementFactory {
     override fun tryCreate(sdkVersion: String) =
         Version.tryParse(sdkVersion)?.let {
             version ->
-            _sdkTypeResolver.tryResolve(version)?.let {
+            val versions = _sdkResolver.getCompatibleVersions(version).toList()
+            val dotNetVersions = versions.filter { it.sdkType == SdkType.DotnetCore || it.sdkType == SdkType.Dotnet }.toList()
+            if (dotNetVersions.any()) {
                 createRequirement(
-                    when(it) {
-                        SdkType.Dotnet, SdkType.DotnetCore -> {
-                            val versions = (sequenceOf(version) + _sdkResolver.getCompatibleVersions(it, version))
-                                    .distinct()
-                                    .toList()
-
-                            when (versions.size) {
-                                1 -> "$CONFIG_PREFIX_CORE_SDK${versionToRegex(version)}$AnyVersion$CONFIG_SUFFIX_PATH"
-                                else -> {
-                                    val versionsStr = versions.map { versionToRegex(it) }.joinToString("|")
-                                    "$CONFIG_PREFIX_CORE_SDK($versionsStr)$AnyVersion$CONFIG_SUFFIX_PATH"
-                                }
-                            }
+                    when (dotNetVersions.size) {
+                        1 -> "$CONFIG_PREFIX_CORE_SDK${versionToRegex(dotNetVersions[0].version)}$AnyVersion$CONFIG_SUFFIX_PATH"
+                        else -> {
+                            val versionsStr = dotNetVersions.map { versionToRegex(it.version) }.joinToString("|")
+                            "$CONFIG_PREFIX_CORE_SDK($versionsStr)$AnyVersion$CONFIG_SUFFIX_PATH"
                         }
-                        SdkType.FullDotnetTargetingPack -> "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK$version$CONFIG_SUFFIX_PATH"
-                        SdkType.DotnetFramework -> "$CONFIG_PREFIX_DOTNET_FAMEWORK$version[\\.\\d]*_x[\\d]{2}"
-                    })
+                    }
+                )
+            }
+            else {
+                versions
+                        .firstOrNull { it.versionType == SdkVersionType.Default && (it.sdkType == SdkType.FullDotnetTargetingPack || it.sdkType == SdkType.DotnetFramework) }
+                        ?.let {
+                            createRequirement(
+                                when (it.sdkType) {
+                                    SdkType.FullDotnetTargetingPack -> "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${it.version}$CONFIG_SUFFIX_PATH"
+                                    else ->  "$CONFIG_PREFIX_DOTNET_FAMEWORK${it.version}[\\.\\d]*_x[\\d]{2}"
+                                }
+                            )
+                        }
             }
         }
 

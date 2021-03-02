@@ -85,21 +85,22 @@ class DotnetRunnerDiscoveryExtension(
         if (!solution.solution.isBlank()) {
             val isNativeOnly = solution.projects.any { isNativeOnly(it) }
             val solutionPath = normalizePath(solution.solution)
+            val sdks = _sdkWizard.suggestSdks(solution.projects.asSequence()).toList()
             if (!isNativeOnly && solution.projects.any { requiresRestoreCommand(it) }) {
-                yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath, emptyList()))
+                yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath, sdks))
             }
 
             if (!isNativeOnly) {
-                yield(createSimpleCommand(DotnetCommandType.Build, solutionPath, emptyList()))
+                yield(createSimpleCommand(DotnetCommandType.Build, solutionPath, sdks))
             }
 
             if (isNativeOnly || solution.projects.any { isNative(it) }) {
-                yield(createMSBuildNativeCommand(solutionPath))
+                yield(createMSBuildNativeCommand(solutionPath, sdks))
             }
 
             // If all projects contain tests
             if (!isNativeOnly && solution.projects.map { _projectTypeSelector.select(it) }.all { it.contains(ProjectType.Test) }) {
-                yield(createSimpleCommand(DotnetCommandType.Test, solutionPath, emptyList()))
+                yield(createSimpleCommand(DotnetCommandType.Test, solutionPath, sdks))
             }
         } else {
             for (project in solution.projects) {
@@ -107,7 +108,7 @@ class DotnetRunnerDiscoveryExtension(
                     continue
                 }
 
-                var sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
+                val sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
                 val isNativeOnly = isNativeOnly(project)
                 val projectPath = normalizePath(project.project)
                 if (!isNativeOnly && requiresRestoreCommand(project)) {
@@ -116,7 +117,7 @@ class DotnetRunnerDiscoveryExtension(
 
                 val projectTypes = _projectTypeSelector.select(project)
                 if (isNativeOnly || isNative(project)) {
-                    yield(createMSBuildNativeCommand(projectPath))
+                    yield(createMSBuildNativeCommand(projectPath, sdks))
                 }
 
                 if (!isNativeOnly && projectTypes.contains(ProjectType.Unknown)) {
@@ -163,26 +164,34 @@ class DotnetRunnerDiscoveryExtension(
     private fun requiresRestoreCommand(project: Project) =
          project.frameworks.map { it.name.toLowerCase() }.all { it.startsWith("netcoreapp1")}
 
-    private fun createSimpleCommand(commandType: DotnetCommandType, path: String, sdks: List<Version>): Command =
+    private fun getSdkReauirement(sdks: List<SdkVersion>) =
+        sdks.filter { it.versionType == SdkVersionType.Default }.joinToString(" ") { it.version.toString() }
+
+    private fun createSimpleCommand(commandType: DotnetCommandType, path: String, sdks: List<SdkVersion>): Command =
             Command(
                     createDefaultName(commandType, path),
                     sequence<Parameter> {
                         yield(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id))
                         yield(Parameter(DotnetConstants.PARAM_PATHS, path))
                         if (sdks.any()) {
-                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, sdks.last().toString()))
+                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, getSdkReauirement(sdks) ))
                         }
                     }.toList()
             )
 
-    private fun createMSBuildNativeCommand(path: String): Command =
+    private fun createMSBuildNativeCommand(path: String, sdks: List<SdkVersion>): Command =
             Command(
                     createDefaultName(DotnetCommandType.MSBuild, path),
-                    listOf(
-                            Parameter(DotnetConstants.PARAM_COMMAND, DotnetCommandType.MSBuild.id),
-                            Parameter(DotnetConstants.PARAM_PATHS, path),
-                            Parameter(DotnetConstants.PARAM_ARGUMENTS, "-restore -noLogo"),
-                            Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id)))
+                    sequence {
+                        yield(Parameter(DotnetConstants.PARAM_COMMAND, DotnetCommandType.MSBuild.id))
+                        yield(Parameter(DotnetConstants.PARAM_PATHS, path))
+                        yield(Parameter(DotnetConstants.PARAM_ARGUMENTS, "-restore -noLogo"))
+                        if (sdks.any()) {
+                            yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, getSdkReauirement(sdks) ))
+                        }
+                        yield(Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
+                    }.toList()
+            )
 
     private fun createTestNativeCommand(path: String): Command =
             Command(

@@ -29,8 +29,7 @@ import jetbrains.buildServer.util.browser.Browser
  */
 class DotnetSdkFetcher(
         private val _solutionDiscover: SolutionDiscover,
-        private val _sdkWizard: SdkWizard,
-        private val _sdkTypeResolver: SdkTypeResolver)
+        private val _sdkWizard: SdkWizard)
     : ProjectDataFetcher {
     override fun retrieveData(fsBrowser: Browser, projectFilePath: String): MutableList<DataItem> =
             getDataItems(StreamFactoryImpl(fsBrowser), StringUtil.splitCommandArgumentsAndUnquote(projectFilePath).asSequence())
@@ -41,7 +40,13 @@ class DotnetSdkFetcher(
                     .asSequence()
                     .flatMap { it.projects.asSequence() }
                     .let { _sdkWizard.suggestSdks(it) }
-                    .map { DataItem(it.toString(), _sdkTypeResolver.tryResolve(it)?.description ?: "") }
+                    .map { DataItem(it.version.toString(), createDesctiption(it)) }
+
+    private fun createDesctiption(version: SdkVersion): String
+    {
+        val prefix = if(version.versionType == SdkVersionType.Compatible) "Compatible " else ""
+        return "$prefix${version.sdkType.description}"
+    }
 
     override fun getType(): String {
         return "DotnetSdk"

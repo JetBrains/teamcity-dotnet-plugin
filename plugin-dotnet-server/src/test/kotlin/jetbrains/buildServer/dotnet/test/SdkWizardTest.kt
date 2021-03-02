@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.SdkTypeResolver
 import jetbrains.buildServer.dotnet.SdkWizardImpl
 import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.dotnet.discovery.*
+import jetbrains.buildServer.serverSide.DataItem
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -19,25 +20,25 @@ class SdkWizardTest {
                         sequenceOf(
                                 Project("net.csproj", frameworks = listOf(Framework("net5.0")))
                         ),
-                        "5.0"),
+                        "*net5.0 net5.1 net5.1.3"),
                 arrayOf(
                         sequenceOf(
                                 Project("netcore.csproj", frameworks = listOf(Framework("netcoreapp3.1"))),
                                 Project("net.csproj", frameworks = listOf(Framework("net5.0")))
                         ),
-                        "5.0 3.1"),
+                        "*core3.1 *net5.0 net5.1 net5.1.3"),
                 arrayOf(
                         sequenceOf(
                                 Project("netstandard.csproj", frameworks = listOf(Framework("netstandard2.0"))),
-                                Project("netcore.csproj", frameworks = listOf(Framework("netcoreapp3.1"))),
-                                Project("net.csproj", frameworks = listOf(Framework("net5.0")))
+                                Project("netcore.csproj", frameworks = listOf(Framework("netcoreapp3.1"), Framework("netcoreapp2.0"))),
+                                Project("net.csproj", frameworks = listOf(Framework("net6.0")))
                         ),
-                        "5.0 3.1 4.7.2"),
+                        "*core2.0 *core3.1 *net6.0 pack4.7.2 net5.0"),
                 arrayOf(
                         sequenceOf(
                                 Project("net.csproj", frameworks = listOf(Framework("netcoreapp3.1"), Framework("net5.0")))
                         ),
-                        "5.0 3.1")
+                        "*core3.1 *net5.0 net5.1 net5.1.3")
         )
     }
 
@@ -45,16 +46,13 @@ class SdkWizardTest {
     fun shouldResolveSdkVersions(projects: Sequence<Project>, expectedSdkVersions: String) {
         // Given
         val sdkResolver = mockk<SdkResolver>()
-        every { sdkResolver.resolveSdkVersions(Framework("net5.0"), any()) } returns sequenceOf(Version(5, 0))
-        every { sdkResolver.resolveSdkVersions(Framework("netcoreapp3.1"), any()) } returns sequenceOf(Version(5, 0), Version(3, 1))
-        every { sdkResolver.resolveSdkVersions(Framework("netstandard2.0"), any()) } returns sequenceOf(Version(5, 0), Version(3, 1), Version(4, 7, 2))
+        every { sdkResolver.resolveSdkVersions(Framework("net6.0"), any()) } returns sequenceOf(SdkVersion(Version(6, 0), SdkType.Dotnet, SdkVersionType.Default))
+        every { sdkResolver.resolveSdkVersions(Framework("net5.0"), any()) } returns sequenceOf(SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Default), SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible), SdkVersion(Version(5, 1), SdkType.Dotnet, SdkVersionType.Compatible), SdkVersion(Version(5, 1, 3), SdkType.Dotnet, SdkVersionType.Compatible))
+        every { sdkResolver.resolveSdkVersions(Framework("netcoreapp3.1"), any()) } returns sequenceOf(SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible), SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Default))
+        every { sdkResolver.resolveSdkVersions(Framework("netcoreapp2.0"), any()) } returns sequenceOf(SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible), SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Compatible), SdkVersion(Version(2, 0), SdkType.DotnetCore, SdkVersionType.Default))
+        every { sdkResolver.resolveSdkVersions(Framework("netstandard2.0"), any()) } returns sequenceOf(SdkVersion(Version(4, 7, 2), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible), SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible), SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Default))
 
-        val sdkTypeResolver = mockk<SdkTypeResolver>()
-        every { sdkTypeResolver.tryResolve(Version(5, 0)) } returns SdkType.Dotnet
-        every { sdkTypeResolver.tryResolve(Version(3, 1)) } returns SdkType.DotnetCore
-        every { sdkTypeResolver.tryResolve(Version(4, 7, 2)) } returns SdkType.FullDotnetTargetingPack
-
-        val wizard = SdkWizardImpl(sdkResolver, sdkTypeResolver)
+        val wizard = SdkWizardImpl(sdkResolver)
 
         // When
         val actualSdkVersions = wizard.suggestSdks(projects).map { it.toString() }.joinToString(" ")
