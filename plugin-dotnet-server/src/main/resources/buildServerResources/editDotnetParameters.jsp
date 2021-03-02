@@ -361,7 +361,7 @@
     <div class="position-relative wizzard build pack publish restore test run clean msbuild devenv">
       <props:textProperty name="${params.requiredSdkKey}" className="longField"/>
       <bs:projectData type="DotnetSdk" sourceFieldId="${params.pathsKey}"
-                      targetFieldId="${params.requiredSdkKey}" popupTitle="Select SDK"
+                      targetFieldId="${params.requiredSdkKey}" popupTitle="Select SDK or targeting pack versions"
                       selectionMode="multiple"/>
     </div>
     <span class="error" id="error_${params.requiredSdkKey}"></span>
