@@ -26,9 +26,9 @@ class RequirementFactoryImpl(
                                     .toList()
 
                             when (versions.size) {
-                                1 -> "$CONFIG_PREFIX_CORE_SDK$version$AnyVersion$CONFIG_SUFFIX_PATH"
+                                1 -> "$CONFIG_PREFIX_CORE_SDK${versionToRegex(version)}$AnyVersion$CONFIG_SUFFIX_PATH"
                                 else -> {
-                                    val versionsStr = versions.joinToString("|")
+                                    val versionsStr = versions.map { versionToRegex(it) }.joinToString("|")
                                     "$CONFIG_PREFIX_CORE_SDK($versionsStr)$AnyVersion$CONFIG_SUFFIX_PATH"
                                 }
                             }
@@ -41,6 +41,16 @@ class RequirementFactoryImpl(
 
     companion object {
         private const val AnyVersion = "[\\.\\d]*"
+
+        private fun versionToRegex(version: Version): String
+        {
+            if (version.versions.size < 2) {
+               return "$version\\."
+            }
+
+            return version.toString()
+        }
+
         private fun createRequirement(regex: String) =
                 Requirement("$EXISTS_QUALIFIER($regex)", null, RequirementType.EXISTS)
     }

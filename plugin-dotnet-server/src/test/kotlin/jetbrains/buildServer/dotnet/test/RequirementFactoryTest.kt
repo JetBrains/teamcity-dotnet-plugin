@@ -34,7 +34,7 @@ class RequirementFactoryTest {
         return arrayOf(
                 // net5.X
                 arrayOf("5.0", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK5.0[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
-                arrayOf("5", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK5[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("5", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK5\\.[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("5.0.100", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK5.0.100[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("5.1", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK5.1[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("6.0", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK6.0[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
@@ -42,7 +42,7 @@ class RequirementFactoryTest {
 
                 //netcoreappX.X
                 arrayOf("1.0", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK1.0[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
-                arrayOf("1", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK1[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("1", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK1\\.[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("1.2.105", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK1.2.105[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("1.1", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK1.1[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("2.0", Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK2.0[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
@@ -97,7 +97,7 @@ class RequirementFactoryTest {
         return arrayOf(
                 arrayOf("3.1", sequenceOf(Version(5, 0), Version(3, 1)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(3.1|5.0)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("3.2", sequenceOf(Version(5, 0), Version(3, 1)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(3.2|5.0|3.1)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
-                arrayOf("2", sequenceOf(Version(5, 0), Version(3, 1), Version(2, 1), Version(2, 0)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(2|5.0|3.1|2.1)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
+                arrayOf("2", sequenceOf(Version(5, 0), Version(3, 1), Version(2, 1), Version(2, 0)), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK(2\\.|5.0|3.1|2.1)[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("3.1", emptySequence<Version>(), Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(DotNetCoreSDK3.1[\\.\\d]*_Path)", null, RequirementType.EXISTS)),
                 arrayOf("aaa", emptySequence<Version>(), null)
         )
