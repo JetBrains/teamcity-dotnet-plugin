@@ -22,7 +22,7 @@ class DefaultColorTheme : ColorTheme {
         Color.Success -> "32;1"
         Color.Warning -> "33;1"
         Color.Error -> "31;1"
-        Color.Details -> "34"
+        Color.Details -> "34;1"
         Color.Minor -> ""
         else -> ""
     }
