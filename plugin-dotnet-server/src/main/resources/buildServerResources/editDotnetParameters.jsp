@@ -365,7 +365,7 @@
                       selectionMode="multiple"/>
     </div>
     <span class="error" id="error_${params.requiredSdkKey}"></span>
-    <span class="smallNote">Enter space-separated SDK or targeting pack versions to be required on agents.<br/>For instance: 5 5.0 5.0.103 3 3.1.406 4.8 4.5.2</span>
+    <span class="smallNote">Enter space-separated SDK or targeting pack versions to be required on build agents.<br/>For example, <i>4.7.2 4.8 5</i>.<bs:help file="${paramHelpUrl}requiredNetSDK"/></span>
   </td>
 </tr>
 
