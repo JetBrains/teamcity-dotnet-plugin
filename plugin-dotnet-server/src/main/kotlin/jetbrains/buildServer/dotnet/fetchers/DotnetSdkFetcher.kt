@@ -39,7 +39,7 @@ class DotnetSdkFetcher(
             _solutionDiscover.discover(streamFactory, paths)
                     .asSequence()
                     .flatMap { it.projects.asSequence() }
-                    .let { _sdkWizard.suggestSdks(it) }
+                    .let { _sdkWizard.suggestSdks(it, false) }
                     .map { DataItem(it.version.toString(), createDesctiption(it)) }
 
     private fun createDesctiption(version: SdkVersion): String

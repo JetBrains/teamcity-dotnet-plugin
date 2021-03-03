@@ -85,7 +85,7 @@ class DotnetRunnerDiscoveryExtension(
         if (!solution.solution.isBlank()) {
             val isNativeOnly = solution.projects.any { isNativeOnly(it) }
             val solutionPath = normalizePath(solution.solution)
-            val sdks = _sdkWizard.suggestSdks(solution.projects.asSequence()).toList()
+            val sdks = _sdkWizard.suggestSdks(solution.projects.asSequence(), true).toList()
             if (!isNativeOnly && solution.projects.any { requiresRestoreCommand(it) }) {
                 yield(createSimpleCommand(DotnetCommandType.Restore, solutionPath, sdks))
             }
@@ -108,7 +108,7 @@ class DotnetRunnerDiscoveryExtension(
                     continue
                 }
 
-                val sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
+                val sdks = _sdkWizard.suggestSdks(sequenceOf(project), true).toList()
                 val isNativeOnly = isNativeOnly(project)
                 val projectPath = normalizePath(project.project)
                 if (!isNativeOnly && requiresRestoreCommand(project)) {
@@ -142,8 +142,7 @@ class DotnetRunnerDiscoveryExtension(
                 }
             }
             if (!isNativeOnly) {
-                var sdks = _sdkWizard.suggestSdks(sequenceOf(project)).toList()
-
+                val sdks = _sdkWizard.suggestSdks(sequenceOf(project), true).toList()
                 if (projectTypes.contains(ProjectType.Test)) {
                     yield(createSimpleCommand(DotnetCommandType.Test, projectPath, sdks))
                     continue
@@ -165,12 +164,12 @@ class DotnetRunnerDiscoveryExtension(
          project.frameworks.map { it.name.toLowerCase() }.all { it.startsWith("netcoreapp1")}
 
     private fun getSdkReauirement(sdks: List<SdkVersion>) =
-        sdks.filter { it.versionType == SdkVersionType.Default }.joinToString(" ") { it.version.toString() }
+        sdks.joinToString(" ") { it.version.toString() }
 
     private fun createSimpleCommand(commandType: DotnetCommandType, path: String, sdks: List<SdkVersion>): Command =
             Command(
                     createDefaultName(commandType, path),
-                    sequence<Parameter> {
+                    sequence {
                         yield(Parameter(DotnetConstants.PARAM_COMMAND, commandType.id))
                         yield(Parameter(DotnetConstants.PARAM_PATHS, path))
                         if (sdks.any()) {

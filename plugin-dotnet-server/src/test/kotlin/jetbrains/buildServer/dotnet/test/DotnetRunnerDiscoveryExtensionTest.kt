@@ -56,22 +56,22 @@ class DotnetRunnerDiscoveryExtensionTest {
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("net35")), emptyList(), emptyList(), emptyList(), false, emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(createMSBuildCommand("dir/mypro.proj", "3.5"))),
+                        listOf(createMSBuildCommand("dir/mypro.proj", "3.5 4.8"))),
                 // Does not genere Restore when >= netcoreapp2*
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "1.0"))),
+                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "1.0 2.0 2.1"))),
                 // Does not genere Restore when >= netcoreapp2* for solution
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netcoreapp1.0"), Framework("netcoreapp3.0")), emptyList(), emptyList())), "abc.sln")),
                         defaultProjectTypeMap,
-                        listOf(createCommand(DotnetCommandType.Build, "abc.sln", "1.0"))),
+                        listOf(createCommand(DotnetCommandType.Build, "abc.sln", "1.0 2.0 3.0"))),
                 // Requires SDK
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/mypro.proj", emptyList(), listOf(Framework("netstandard2.1")), emptyList(), emptyList())))),
                         defaultProjectTypeMap,
-                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "1.0"))),
+                        listOf(createCommand(DotnetCommandType.Build, "dir/mypro.proj", "1.0 3.5"))),
                 // Path is case sensitive
                 arrayOf(
                         sequenceOf(Solution(listOf(Project("dir/myproj.proj", emptyList(), emptyList(), emptyList(), emptyList()), Project("dir/MyProj.proj", emptyList(), emptyList(), emptyList(), emptyList())))),
@@ -188,23 +188,21 @@ class DotnetRunnerDiscoveryExtensionTest {
 
         every { solutionDiscover.discover(streamFactory, paths) } returns solutions.toList()
         every { solutionDiscover.discover(streamFactory, paths) } returns solutions.toList()
-        every { sdkWizard.suggestSdks(any()) } answers {
+        every { sdkWizard.suggestSdks(any(), true) } answers {
             val frameworks = arg<Sequence<Project>>(0).flatMap { it.frameworks.asSequence() }.map { it.name }.toHashSet()
             sequence {
-                when {
-                    frameworks.contains("net35") -> {
-                        yield(SdkVersion(Version(3, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Default))
-                        yield(SdkVersion(Version(4, 8), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible))
-                    }
-                    frameworks.contains("netcoreapp1.0") -> {
-                        yield(SdkVersion(Version(1, 0), SdkType.DotnetCore, SdkVersionType.Default))
-                        yield(SdkVersion(Version(2, 0), SdkType.DotnetCore, SdkVersionType.Compatible))
-                    }
-                    frameworks.contains("netcoreapp2.1") -> yield(SdkVersion(Version(2, 1), SdkType.DotnetCore, SdkVersionType.Default))
-                    frameworks.contains("netcoreapp3.0") -> yield(SdkVersion(Version(3, 0), SdkType.DotnetCore, SdkVersionType.Default))
-                    frameworks.contains("netstandard2.1") -> yieldAll(sequenceOf(SdkVersion(Version(1, 0), SdkType.Dotnet, SdkVersionType.Default), SdkVersion(Version(3, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
-                    frameworks.contains("net20") -> { }
+                if (frameworks.contains("net35")) {
+                    yield(SdkVersion(Version(3, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Default))
+                    yield(SdkVersion(Version(4, 8), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible))
                 }
+                if (frameworks.contains("netcoreapp1.0")) {
+                    yield(SdkVersion(Version(1, 0), SdkType.DotnetCore, SdkVersionType.Default))
+                    yield(SdkVersion(Version(2, 0), SdkType.DotnetCore, SdkVersionType.Compatible))
+                }
+                if (frameworks.contains("netcoreapp2.1")) yield(SdkVersion(Version(2, 1), SdkType.DotnetCore, SdkVersionType.Default))
+                if (frameworks.contains("netcoreapp3.0")) yield(SdkVersion(Version(3, 0), SdkType.DotnetCore, SdkVersionType.Default))
+                if (frameworks.contains("netstandard2.1")) yieldAll(sequenceOf(SdkVersion(Version(1, 0), SdkType.Dotnet, SdkVersionType.Default), SdkVersion(Version(3, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
+                if (frameworks.contains("net20")) { }
             }
         }
 

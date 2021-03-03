@@ -4,5 +4,5 @@ import jetbrains.buildServer.dotnet.discovery.Project
 import jetbrains.buildServer.dotnet.discovery.SdkVersion
 
 interface SdkWizard {
-    fun suggestSdks(projects: Sequence<Project>): Sequence<SdkVersion>
+    fun suggestSdks(projects: Sequence<Project>, consider—ompatibility: Boolean): Sequence<SdkVersion>
 }
