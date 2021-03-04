@@ -26,7 +26,7 @@ interface ToolService {
 
     fun tryGetPackageVersion(toolType: ToolType, toolPackage: File): GetPackageVersionResult?
 
-    fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File): File
+    fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File
 
     fun unpackToolPackage(toolType: ToolType, toolPackage: File, nugetPackageDirectory: String, targetDirectory: File)
 }

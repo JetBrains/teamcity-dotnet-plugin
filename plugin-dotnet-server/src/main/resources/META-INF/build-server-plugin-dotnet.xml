@@ -68,4 +68,13 @@
     <constructor-arg ref="dotCoverToolType"/>
   </bean-->
 
+  <!--Resharper-->
+  <bean class="jetbrains.buildServer.inspect.ReSharperCmdTypeAdapter" id="resharperToolType"/>
+  <bean class="jetbrains.buildServer.inspect.ReSharperCmdToolProvider">
+    <constructor-arg ref="resharperToolType"/>
+  </bean>
+  <bean class="jetbrains.buildServer.inspect.RequirementsProviderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.InspectCodeRunType"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderRunType"/>
+
 </beans>

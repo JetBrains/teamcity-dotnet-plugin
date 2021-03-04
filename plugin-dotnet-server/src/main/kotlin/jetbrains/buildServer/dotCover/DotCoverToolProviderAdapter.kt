@@ -32,16 +32,16 @@ class DotCoverToolProviderAdapter(
     override fun getType() = _toolType
 
     override fun getAvailableToolVersions(): MutableCollection<out ToolVersion> =
-            _toolService.getTools(getType(), DOTCOVER_PACKAGE_TYPE, DOTCOVER_WIN_PACKAGE_TYPE).toMutableList()
+            _toolService.getTools(type, DOTCOVER_PACKAGE_TYPE, DOTCOVER_WIN_PACKAGE_TYPE).toMutableList()
 
     override fun tryGetPackageVersion(toolPackage: File) =
-            _toolService.tryGetPackageVersion(getType(), toolPackage) ?: super.tryGetPackageVersion(toolPackage)
+            _toolService.tryGetPackageVersion(type, toolPackage) ?: super.tryGetPackageVersion(toolPackage)
 
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File) =
-            _toolService.fetchToolPackage(getType(), toolVersion, targetDirectory)
+            _toolService.fetchToolPackage(type, toolVersion, targetDirectory)
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) =
-            _toolService.unpackToolPackage(getType(), toolPackage, "tools/", targetDirectory)
+            _toolService.unpackToolPackage(type, toolPackage, "tools/", targetDirectory)
 
     override fun getDefaultBundledVersionId(): String? = null
 }

@@ -19,6 +19,7 @@ package jetbrains.buildServer
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.SemanticVersionParser
+import jetbrains.buildServer.inspect.CltConstants.CLT_PACKAGE_ID
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
 import java.io.File
@@ -36,23 +37,11 @@ class ToolServiceImpl(
         try {
             return packageIds
                     .asSequence()
-                    .flatMap { _nuGetService.getPackagesById(it, true) }
-                    .filter { it.isListed }
+                    .flatMap { _nuGetService.getPackagesById(it) }
                     .map { NuGetTool(toolType, it) }
                     .sortedBy { it.version + ":" + it.id }
                     .toList()
                     .reversed()
-        } catch (e: Throwable) {
-            throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
-        }
-    }
-
-    public fun getTools(toolType: ToolType): List<NuGetTool> {
-        try {
-            return _nuGetService.getPackagesById(toolType.type, true)
-                    .filter { it.isListed }
-                    .map { NuGetTool(toolType, it) }
-                    .toList().reversed()
         } catch (e: Throwable) {
             throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
         }
@@ -72,10 +61,10 @@ class ToolServiceImpl(
         return versionResult
     }
 
-    override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File): File {
+    override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File {
         LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val downloadableTool = getTools(toolType).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
+        val downloadableTool = getTools(toolType, *packageIds).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
                 ?: throw ToolException("Failed to find package $toolVersion")
 
         val downloadUrl = downloadableTool.downloadUrl
