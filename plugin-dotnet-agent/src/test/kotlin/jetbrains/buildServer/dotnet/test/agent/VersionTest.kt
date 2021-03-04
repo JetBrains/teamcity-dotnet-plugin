@@ -64,7 +64,6 @@ class VersionTest {
                 arrayOf(Version(2), "2.0.0"),
                 arrayOf(Version(99, 3, 10), "99.3.10"),
                 arrayOf(Version(0, 2), "0.2.0"),
-                arrayOf(Version.parse("4.8"), "4.8"),
                 arrayOf(Version(2, 0, 0), "2.0.0"),
                 arrayOf(Version(0, 0, 2), "0.0.2"),
                 arrayOf(Version(99, 3, 10, 33), "99.3.10.33"),
