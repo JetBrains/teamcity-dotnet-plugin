@@ -119,7 +119,8 @@
       $j(".runnerFormTable span.error").empty();
 
       var hideLogging = BS.DotnetParametersForm.hideLogging[commandName];
-      $j(BS.Util.escapeId('logging')).toggleClass('hidden', !!hideLogging);
+      var loggingRow = $j(BS.Util.escapeId('logging'))
+      loggingRow.toggleClass('hidden', !!hideLogging);
 
       var coverageEnabled = BS.DotnetParametersForm.coverageEnabled[commandName];
       var $coverageRow = $j(BS.Util.escapeId('dotnet-coverage'));
@@ -136,6 +137,22 @@
       $workingDir.closest('tr').toggleClass('hidden', !!hideWorkingDirectory);
       if (hideWorkingDirectory) {
           $workingDir.val('');
+      }
+
+      var commandRow = $j(BS.Util.escapeId('commandLine'));
+      if (commandName == "custom") {
+        commandRow.removeClass("advancedSetting");
+        commandRow.removeClass("advanced_hidden")
+        commandRow.removeClass("advancedSettingHighlight")
+      } else {
+        commandRow.addClass("advancedSetting");
+        if (loggingRow.hasClass("advanced_hidden")) {
+          commandRow.addClass("advanced_hidden");
+        }
+
+        if (loggingRow.hasClass("advancedSettingHighlight")) {
+          commandRow.addClass("advancedSettingHighlight");
+        }
       }
 
       var init = BS.DotnetParametersForm.initFunctions[commandName];
@@ -541,7 +558,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting">
+<tr id="commandLine" class="advancedSetting">
   <th><label for="${params.argumentsKey}">Command line parameters: <a id="dotnet-help" target="_blank" rel="noreferrer" showdiscardchangesmessage="false"><bs:helpIcon iconTitle=""/></a></label></th>
   <td>
     <props:textProperty name="${params.argumentsKey}" className="longField" expandable="true"/>
