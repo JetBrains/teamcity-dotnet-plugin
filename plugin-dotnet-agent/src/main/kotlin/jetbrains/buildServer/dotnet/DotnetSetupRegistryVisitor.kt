@@ -16,9 +16,15 @@ class DotnetSetupRegistryVisitor(
         for (framework in _frameworks.values.filter { !it.isEmpty }) {
             val frameworkBasePath = framework.path
             if (frameworkBasePath != null) {
-                var version = framework.release
-                if (version == Version.Empty) {
+                var version: Version
+                if (framework.release.major == framework.version.major && framework.release.minor == framework.version.minor && (framework.release.patch == framework.version.patch || framework.release.patch == 0)) {
                     version = framework.version
+                }
+                else {
+                    version = framework.release
+                    if (version == Version.Empty) {
+                        version = framework.version
+                    }
                 }
 
                 if (version != Version.Empty) {
