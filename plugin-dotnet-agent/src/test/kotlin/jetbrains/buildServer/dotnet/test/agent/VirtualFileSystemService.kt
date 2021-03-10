@@ -56,7 +56,7 @@ class VirtualFileSystemService : FileSystemService {
         if (!_files.containsKey(file)) {
             val curOutputStream = outputStream ?: PipedOutputStream()
             val curInputStream = inputStream ?: PipedInputStream(curOutputStream as PipedOutputStream)
-            _files[file] = FileInfo(attributes, curInputStream, curOutputStream)
+            _files[file] = FileInfo(attributes, curInputStream, curOutputStream, inputStream == null)
         }
 
         return this
@@ -67,6 +67,16 @@ class VirtualFileSystemService : FileSystemService {
     override fun isDirectory(file: File): Boolean = _directories.contains(file)
 
     override fun isFile(file: File): Boolean = _files.contains(file)
+
+    override fun getLength(file: File): Long =
+        _files[file]!!.let{
+            if (it.isEmpty) {
+                0;
+            }
+            else {
+                it.inputStream.readBytes().size.toLong()
+            }
+        }
 
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
@@ -118,14 +128,11 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun generateTempFile(path: File, prefix: String, extension: String) = File(path, "${prefix}99${extension}")
 
-    private data class FileInfo(val attributes: Attributes, val inputStream: InputStream, val outputStream: OutputStream)
+    private data class FileInfo(val attributes: Attributes, val inputStream: InputStream, val outputStream: OutputStream, val isEmpty: Boolean)
 
     private data class DirectoryInfo(val attributes: Attributes)
 
-    class Attributes {
-        var isAbsolute: Boolean = false
-        var errorOnRemove: Exception? = null
-    }
+    data class Attributes(var isAbsolute: Boolean = false, var errorOnRemove: Exception? = null)
 
     companion object {
         fun absolute(isAbsolute: Boolean = true): Attributes {

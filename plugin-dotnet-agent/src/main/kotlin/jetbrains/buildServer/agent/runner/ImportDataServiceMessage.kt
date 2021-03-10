@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotcover
+package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 
 class ImportDataServiceMessage(
-        coverageToolName: String,
-        artifactPath: Path)
+        dataProcessorType: String,
+        artifactPath: Path,
+        tool: String)
     : ServiceMessage(
         "importData",
         mapOf(
-                "type" to "dotNetCoverage",
-                "tool" to coverageToolName,
-                "path" to artifactPath.path)) {
+                "type" to dataProcessorType,
+                "tool" to tool,
+                "path" to artifactPath.path)
+                .filter { it.value.isNotEmpty() }) {
     override fun hashCode(): Int {
         return toString().hashCode()
     }

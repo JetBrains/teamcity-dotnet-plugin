@@ -18,6 +18,7 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.messages.DefaultMessagesInfo
 import jetbrains.buildServer.messages.serviceMessages.BlockClosed
 import jetbrains.buildServer.messages.serviceMessages.BlockOpened
@@ -56,7 +57,11 @@ class LoggerServiceImpl(
     override fun writeTrace(text: String) =
         _buildLogger.logMessage(DefaultMessagesInfo.internalize(DefaultMessagesInfo.createTextMessage(text)))
 
+    override fun buildFailureDescription(description: String) = _buildLogger.buildFailureDescription(description)
+
     override fun writeTraceBlock(blockName: String, description: String) = writeBlock(blockName, description, true)
+
+    override fun importData(dataProcessorType: String, artifactPath: Path, tool: String) = writeMessage(ImportDataServiceMessage(dataProcessorType, artifactPath, tool))
 
     private fun writeBlock(blockName: String, description: String, trace: Boolean): Disposable {
         val blockOpened = BlockOpened(blockName, if (description.isBlank()) null else description)
@@ -67,6 +72,7 @@ class LoggerServiceImpl(
         _buildLogger.message(blockOpened.toString())
         return disposableOf { _buildLogger.message(BlockClosed(blockName).toString()) }
     }
+
     private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
         if (color == prevColor) {
             text

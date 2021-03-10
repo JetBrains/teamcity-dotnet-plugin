@@ -138,7 +138,7 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath!!))) } returns Unit
-        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
+        every { _loggerService.importData(DotCoverWorkflowComposer.DotCoverDataProcessorType, Path("v_snap"), DotCoverWorkflowComposer.DotCoverToolName) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -154,7 +154,7 @@ class DotCoverWorkflowComposerTest {
         // Then
         verify { _blockToken.dispose() }
         verify { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
-        verify { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) }
+        verify { _loggerService.importData(DotCoverWorkflowComposer.DotCoverDataProcessorType, Path("v_snap"), DotCoverWorkflowComposer.DotCoverToolName) }
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
@@ -293,7 +293,7 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
-        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path(dotCoverSnapshotUniqueName.path))) } returns Unit
+        every { _loggerService.importData(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -313,7 +313,7 @@ class DotCoverWorkflowComposerTest {
         every { _coverageFilterProvider.attributeFilters } returns sequenceOf(attributeFilter)
         every { _loggerService.writeTrace("  $attributeFilter") } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
-        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
+        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverDataProcessorType, Path("v_snap"), DotCoverWorkflowComposer.DotCoverToolName)) } returns Unit
         every { _environmentVariables.getVariables() } returns _defaultVariables
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
@@ -389,7 +389,7 @@ class DotCoverWorkflowComposerTest {
 
         // Then
         verify(exactly = 0) { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) }
-        verify(exactly = 0) { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) }
+        verify(exactly = 0) { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverDataProcessorType, Path("v_snap"), DotCoverWorkflowComposer.DotCoverToolName)) }
 
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
@@ -451,7 +451,7 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
-        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
+        every { _loggerService.importData(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -524,7 +524,7 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getTempFileName(DotCoverWorkflowComposer.DotCoverSnapshotExtension) } returns File(dotCoverSnapshotUniqueName.path)
         every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
-        every { _loggerService.writeMessage(ImportDataServiceMessage(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap"))) } returns Unit
+        every { _loggerService.importData(DotCoverWorkflowComposer.DotCoverToolName, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"

@@ -20,13 +20,9 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.Verbosity
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
-import jetbrains.buildServer.util.StringUtil
 import java.io.File
 
 class DotCoverWorkflowComposer(
@@ -127,7 +123,7 @@ class DotCoverWorkflowComposer(
                         }
 
                         // The snapshot path should be virtual because of the docker wrapper converts it back
-                        _loggerService.writeMessage(ImportDataServiceMessage(DotCoverToolName, virtualSnapshotFilePath))
+                        _loggerService.importData(DotCoverDataProcessorType, virtualSnapshotFilePath, DotCoverToolName)
                     }
                 }.use {
                     yield(CommandLine(
@@ -191,6 +187,7 @@ class DotCoverWorkflowComposer(
         }
 
     companion object {
+        internal const val DotCoverDataProcessorType = "dotNetCoverage"
         internal const val DotCoverToolName = "dotcover"
         internal const val DotCoverConfigExtension = "dotCover.xml"
         internal const val DotCoverSnapshotExtension = ".dcvr"

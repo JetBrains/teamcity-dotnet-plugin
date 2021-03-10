@@ -43,8 +43,7 @@
   <bean class="jetbrains.buildServer.JsonParserImpl"/>
 
   <!-- common agent's runner services -->
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileAlternative"/>
+  <bean class="jetbrains.buildServer.agent.runner.BuildInfoImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.CannotExecuteImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.BasePathResolverWorkflowComposer" id="basePathResolverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.agent.runner.UnixPathResolverWorkflowComposer" id="unixPathResolverWorkflowComposer">
@@ -69,6 +68,9 @@
   <bean class="jetbrains.buildServer.agent.runner.CacheCleanerSessionImpl"/>
 
   <!-- dotnet -->
+  <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.ResponseFileAlternative"/>
+
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdDeepDotnetNugetCacheCleaner">
     <constructor-arg type="String" name="name" value="http-cache in user directory"/>
     <constructor-arg type="String" name="command" value="http-cache"/>
@@ -124,7 +126,7 @@
   <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>
   <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
-  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory">
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="dotnet">
     <constructor-arg value="dotnet"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
@@ -426,12 +428,52 @@
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
 
   <!-- Custom dotnet command -->
-  <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer">
+  <bean class="jetbrains.buildServer.custom.ExecutableWorkflowComposer" id="executableWorkflowComposer">
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
     <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
-  <!-- exe, com -->
-  <bean class="jetbrains.buildServer.exe.ExeWorkflowComposer" id="exeWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer"/>
+
+  <!--Inspections-->
+  <bean class="jetbrains.buildServer.inspect.ArtifactServiceImpl"/>
+  <bean class="jetbrains.buildServer.inspect.XmlReaderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.XmlWriterImpl"/>
+  <bean class="jetbrains.buildServer.inspect.ToolPathResolverImpl" />
+  <bean class="jetbrains.buildServer.inspect.ArgumentsProviderImpl" />
+
+  <!--Resharper Inspections-->
+  <bean class="jetbrains.buildServer.inspect.InspectionConfigurationFile" id="inspectionConfigurationFile"/>
+  <bean class="jetbrains.buildServer.inspect.InspectionEnvironmentProvider" id="inspectionEnvironmentProvider"/>
+  <bean class="jetbrains.buildServer.inspect.InspectionOutputObserver" id="inspectionOutputObserver"/>
+  <bean class="jetbrains.buildServer.inspect.InspectCodeDataProcessor" id="inspectCodeDataProcessor"/>
+  <bean class="jetbrains.buildServer.inspect.InspectionWorkflowComposer" id="inspectionWorkflowComposer">
+    <constructor-arg type="jetbrains.buildServer.inspect.InspectionTool" value="Inspectcode"/>
+    <constructor-arg ref="inspectionEnvironmentProvider"/>
+    <constructor-arg ref="inspectionOutputObserver"/>
+    <constructor-arg ref="inspectionConfigurationFile"/>
+  </bean>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="inspections">
+    <constructor-arg value="dotnet-tools-inspectcode"/>
+  </bean>
+
+  <!--Resharper DupFinder-->
+  <bean class="jetbrains.buildServer.inspect.PackagesProviderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.FolderPluginSource" id="folderPluginSource"/>
+  <bean class="jetbrains.buildServer.inspect.FilePluginSource" id="filePluginSource"/>
+  <bean class="jetbrains.buildServer.inspect.DownloadPluginSource" id="downloadPluginSource"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderConfigurationFile" id="dupFinderConfigurationFile"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderEnvironmentProvider" id="dupFinderEnvironmentProvider"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderOutputObserver" id="dupFinderOutputObserver"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderCodeDataProcessor" id="dupFinderCodeDataProcessor"/>
+  <bean class="jetbrains.buildServer.inspect.InspectionWorkflowComposer" id="dupfinderWorkflowComposer">
+    <constructor-arg type="jetbrains.buildServer.inspect.InspectionTool" value="Dupfinder"/>
+    <constructor-arg ref="dupFinderEnvironmentProvider"/>
+    <constructor-arg ref="dupFinderOutputObserver"/>
+    <constructor-arg ref="dupFinderConfigurationFile"/>
+  </bean>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="dupfinder">
+    <constructor-arg value="dotnet-tools-dupfinder"/>
+  </bean>
 
 </beans>

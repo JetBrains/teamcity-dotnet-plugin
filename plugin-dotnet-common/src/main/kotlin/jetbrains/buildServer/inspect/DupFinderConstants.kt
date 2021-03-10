@@ -22,8 +22,6 @@ object DupFinderConstants {
     const val SETTINGS_INCLUDE_FILES = "$RUNNER_TYPE.include_files"
     const val SETTINGS_EXCLUDE_BY_OPENING_COMMENT = "$RUNNER_TYPE.exclude_by_opening_comment"
     const val SETTINGS_EXCLUDE_REGION_MESSAGE_SUBSTRINGS = "$RUNNER_TYPE.exclude_region_message_substring"
-
     const val SETTINGS_CUSTOM_CMD_ARGS = "$RUNNER_TYPE.customCmdArgs"
-
     const val SETTINGS_DEBUG = "$RUNNER_TYPE.debug"
 }

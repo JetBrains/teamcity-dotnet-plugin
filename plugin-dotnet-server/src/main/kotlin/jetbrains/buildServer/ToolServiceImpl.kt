@@ -47,8 +47,8 @@ class ToolServiceImpl(
         }
     }
 
-    override fun tryGetPackageVersion(toolType: ToolType, toolPackage: File): GetPackageVersionResult? {
-        if (!createPackageFilter(toolType).accept(toolPackage)) {
+    override fun tryGetPackageVersion(toolType: ToolType, toolPackage: File, vararg packageIds: String): GetPackageVersionResult? {
+        if (!createPackageFilter(packageIds.toSet()).accept(toolPackage)) {
             return null
         }
 
@@ -82,11 +82,11 @@ class ToolServiceImpl(
         }
     }
 
-    override fun unpackToolPackage(toolType: ToolType, toolPackage: File, nugetPackageDirectory: String, targetDirectory: File) {
+    override fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String) {
         LOG.info("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
 
-        if (createPackageFilter(toolType).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
-            if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory + "/", targetDirectory)) {
+        if (createPackageFilter(packageIds.toSet()).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
+            if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory, targetDirectory)) {
                 throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
             }
 
@@ -96,9 +96,11 @@ class ToolServiceImpl(
         }
     }
 
-    private fun createPackageFilter(toolType: ToolType) =
+    private fun createPackageFilter(packageIds: Set<String>) =
             FileFilter { packageFile ->
-                packageFile.isFile && packageFile.nameWithoutExtension.startsWith(toolType.type, true) && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
+                packageFile.isFile
+                        && packageIds.any { packageFile.nameWithoutExtension.startsWith(it, true) }
+                        && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
             }
 
     companion object {

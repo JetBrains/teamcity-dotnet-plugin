@@ -1,13 +1,13 @@
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.ToolService
-import jetbrains.buildServer.inspect.CltConstants.CLT_PACKAGE_ID
 import jetbrains.buildServer.tools.ServerToolProviderAdapter
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
 import java.io.File
 
 class ReSharperCmdToolProvider(
+        private val _packageId: String,
         private val _toolService: ToolService,
         private val _toolType: ToolType)
     : ServerToolProviderAdapter() {
@@ -16,18 +16,18 @@ class ReSharperCmdToolProvider(
 
     override fun getAvailableToolVersions(): MutableCollection<out ToolVersion> =
             _toolService
-                    .getTools(type, CLT_PACKAGE_ID)
+                    .getTools(type, _packageId)
                     .filter { it.version.startsWith("2") }
                     .toMutableList()
 
     override fun tryGetPackageVersion(toolPackage: File) =
-            _toolService.tryGetPackageVersion(type, toolPackage) ?: super.tryGetPackageVersion(toolPackage)
+            _toolService.tryGetPackageVersion(type, toolPackage, _packageId) ?: super.tryGetPackageVersion(toolPackage)
 
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File) =
-            _toolService.fetchToolPackage(type, toolVersion, targetDirectory, CLT_PACKAGE_ID)
+            _toolService.fetchToolPackage(type, toolVersion, targetDirectory, _packageId)
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) =
-            _toolService.unpackToolPackage(type, toolPackage, "tools/", targetDirectory)
+            _toolService.unpackToolPackage(toolPackage, "", targetDirectory, _packageId)
 
     override fun getDefaultBundledVersionId(): String? = null
 }
