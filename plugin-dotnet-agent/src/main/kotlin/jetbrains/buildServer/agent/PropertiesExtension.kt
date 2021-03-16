@@ -34,11 +34,6 @@ class PropertiesExtension(
             try {
                 for (property in agentPropertiesProvider.properties) {
                     var name = property.name
-
-                    if (property.toolType != ToolInstanceType.DotNetCLI && property.toolType != ToolInstanceType.DotNetSDK) {
-                        name = name + "_DO_NOT_USE_" + property.toolType.name + "_from_" + agentPropertiesProvider.desription.replace(' ', '_')
-                    }
-
                     synchronized(_lockObject) {
                         val prevValue = configuration.configurationParameters.get(name)
                         if (prevValue != null) {
