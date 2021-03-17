@@ -17,24 +17,24 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 /**`
- * Provides a list of available .NET CLI parameters.
+ * Provides a list of available .NET SDK.
  */
 
-class DotnetAgentPropertiesProvider(
+class DotnetSdkAgentPropertiesProvider(
         private val _toolProvider: ToolProvider,
         private val _dotnetVersionProvider: DotnetVersionProvider,
-        private val _dotnetSdksProvider: DotnetSdksProvider,
-        private val _pathsService: PathsService)
+        private val _sdksProvider: DotnetSdksProvider,
+        private val _pathsService: PathsService,
+        private val _versionEnumerator: VersionEnumerator)
     : AgentPropertiesProvider {
 
-    override val desription = ".NET CLI"
+    override val desription = ".NET SDK"
 
     override val properties: Sequence<AgentProperty>
         get() = sequence {
@@ -46,23 +46,14 @@ class DotnetAgentPropertiesProvider(
             val sdkVersion = _dotnetVersionProvider.getVersion(Path(dotnetPath.path), Path(_pathsService.getPath(PathType.Work).path))
             yield(AgentProperty(ToolInstanceType.DotNetCLI, DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, sdkVersion.toString()))
 
-            // Detect .NET SDK
-            for ((version, path) in enumerateSdk(_dotnetSdksProvider.getSdks(dotnetPath))) {
+            // Detect .NET SDKs
+            for ((version, sdk) in _versionEnumerator.enumerate(_sdksProvider.getSdks(dotnetPath))) {
                 val paramName = "${DotnetConstants.CONFIG_PREFIX_CORE_SDK}$version${DotnetConstants.CONFIG_SUFFIX_PATH}"
-                yield(AgentProperty(ToolInstanceType.DotNetSDK, paramName, path))
+                yield(AgentProperty(ToolInstanceType.DotNetSDK, paramName, sdk.path.absolutePath))
             }
         }
-
 
     companion object {
-        private val LOG = Logger.getLogger(DotnetAgentPropertiesProvider::class.java)
-
-        internal fun enumerateSdk(versions: Sequence<DotnetSdk>): Sequence<Pair<String, String>> = sequence {
-            val groupedVersions = versions.filter { it.version != Version.Empty }.groupBy { Version(it.version.major, it.version.minor) }
-            for ((version, sdks) in groupedVersions) {
-                yield("${version.major}.${version.minor}" to sdks.maxBy { it.version }!!.path.absolutePath)
-                yieldAll(sdks.map { it.version.toString() to it.path.absolutePath })
-            }
-        }
+        private val LOG = Logger.getLogger(DotnetSdkAgentPropertiesProvider::class.java)
     }
 }

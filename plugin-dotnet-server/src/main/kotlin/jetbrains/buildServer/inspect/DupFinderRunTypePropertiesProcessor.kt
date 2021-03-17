@@ -6,13 +6,16 @@ import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.util.PropertiesUtil
 import java.util.*
 
-class DupFinderRunTypePropertiesProcessor : PropertiesProcessor {
+class DupFinderRunTypePropertiesProcessor(
+        private val _toolVersionProvider: ToolVersionProvider)
+    : PropertiesProcessor {
     override fun process(properties: Map<String, String>): Collection<InvalidProperty> {
         val result: MutableList<InvalidProperty> = Vector()
         val files = properties[DupFinderConstants.SETTINGS_INCLUDE_FILES]
         if (PropertiesUtil.isEmptyOrNull(files)) {
             result.add(InvalidProperty(DupFinderConstants.SETTINGS_INCLUDE_FILES, "Input files must be specified"))
         }
+
         val discardCostValue = properties[DupFinderConstants.SETTINGS_DISCARD_COST]
         if (!PropertiesUtil.isEmptyOrNull(discardCostValue)) {
             if (!ReferencesResolverUtil.isReference(discardCostValue!!)) {
@@ -22,6 +25,15 @@ class DupFinderRunTypePropertiesProcessor : PropertiesProcessor {
                 }
             }
         }
+
+        val platform = properties[CltConstants.RUNNER_SETTING_CLT_PLATFORM]?.let {
+            IspectionToolPlatform.tryParse(it)
+        }
+
+        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
+            result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"Please use version ${RequirementsResolverImpl.CrossPlatformVersion} or above."))
+        }
+
         return result
     }
 }

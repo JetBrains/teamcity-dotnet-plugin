@@ -95,6 +95,7 @@ object DotnetConstants {
     const val CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK = "DotNetFrameworkSDK"
     const val CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK = "DotNetFrameworkTargetingPack"
     const val CONFIG_PREFIX_CORE_SDK = "DotNetCoreSDK"
+    const val CONFIG_PREFIX_CORE_RUNTIME = "DotNetCoreRuntime"
     const val CONFIG_PREFIX_DOTNET_FAMEWORK = "DotNetFramework"
     const val CONFIG_PREFIX_MSBUILD_TOOLS = "MSBuildTools"
     const val CONFIG_PREFIX_DOTNET_MSTEST = "teamcity.dotnet.mstest"

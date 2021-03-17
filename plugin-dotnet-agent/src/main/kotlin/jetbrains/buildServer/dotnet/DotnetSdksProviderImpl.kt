@@ -25,13 +25,16 @@ class DotnetSdksProviderImpl(
         private val _fileSystemService: FileSystemService)
     : DotnetSdksProvider {
     override fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
-        val sdkPath = File(dotnetExecutable.parent, "sdk")
-        LOG.debug("Try getting the list of .NET SDK from directory <$sdkPath>.")
-        val sdks = _fileSystemService.list(sdkPath)
+        val sdksPath = File(dotnetExecutable.parent, "sdk")
+        if(!_fileSystemService.isExists(sdksPath) || !_fileSystemService.isDirectory(sdksPath)) {
+            LOG.warn("The directory <$sdksPath> does not exists.")
+        }
+
+        LOG.debug("Try getting the list of .NET SDK from directory <$sdksPath>.")
+        return _fileSystemService.list(sdksPath)
                 .filter { _fileSystemService.isDirectory(it) }
                 .map { DotnetSdk(it, Version.parse(it.name)) }
                 .filter { it.version != Version.Empty }
-        return sdks
     }
 
     companion object {

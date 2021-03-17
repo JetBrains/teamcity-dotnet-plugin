@@ -11,36 +11,31 @@ import java.util.*
 
 class InspectCodeRunType(
         runTypeRegistry: RunTypeRegistry,
-        private val myPluginDescriptor: PluginDescriptor,
-        requirementsProvider: RequirementsProvider) : RunType() {
-    private val myRequirementsProvider: RequirementsProvider
-    override fun getRunnerPropertiesProcessor(): PropertiesProcessor {
-        return InspectCodeRunTypePropertiesProcessor()
+        private val _pluginDescriptor: PluginDescriptor,
+        private val _requirementsProvider: RequirementsProvider,
+        private val _propertiesProcessor: PropertiesProcessor)
+    : RunType() {
+
+    init {
+        runTypeRegistry.registerRunType(this)
     }
 
-    override fun getDescription(): String {
-        return InspectCodeConstants.RUNNER_DESCRIPTION
-    }
+    override fun getRunnerPropertiesProcessor() =
+        _propertiesProcessor
 
-    override fun getEditRunnerParamsJspFilePath(): String {
-        return myPluginDescriptor.getPluginResourcesPath("editInspectCodeRunParams.jsp")
-    }
+    override fun getDescription() = InspectCodeConstants.RUNNER_DESCRIPTION
 
-    override fun getViewRunnerParamsJspFilePath(): String {
-        return myPluginDescriptor.getPluginResourcesPath("viewInspectCodeRunParams.jsp")
-    }
+    override fun getEditRunnerParamsJspFilePath() =
+        _pluginDescriptor.getPluginResourcesPath("editInspectCodeRunParams.jsp")
 
-    override fun getDefaultRunnerProperties(): Map<String, String> {
-        return HashMap()
-    }
+    override fun getViewRunnerParamsJspFilePath() =
+        _pluginDescriptor.getPluginResourcesPath("viewInspectCodeRunParams.jsp")
 
-    override fun getType(): String {
-        return InspectCodeConstants.RUNNER_TYPE
-    }
+    override fun getDefaultRunnerProperties(): Map<String, String> = HashMap()
 
-    override fun getDisplayName(): String {
-        return InspectCodeConstants.RUNNER_DISPLAY_NAME
-    }
+    override fun getType() = InspectCodeConstants.RUNNER_TYPE
+
+    override fun getDisplayName() = InspectCodeConstants.RUNNER_DISPLAY_NAME
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val solutionPath = parameters[InspectCodeConstants.RUNNER_SETTING_SOLUTION_PATH]
@@ -49,26 +44,24 @@ class InspectCodeRunType(
         if (!StringUtil.isEmptyOrSpaces(solutionPath)) {
             sb.append("Solution file path: ").append(solutionPath).append("\n")
         }
+
         sb.append("Sources to analyze: ")
         if (StringUtil.isEmptyOrSpaces(projectFilter)) {
             sb.append("whole solution").append("\n")
         } else {
             sb.append(projectFilter).append("\n")
         }
+
         return sb.toString()
     }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
-        val requirements = myRequirementsProvider.getRequirements(runParameters).toMutableList()
+        val requirements = _requirementsProvider.getRequirements(runParameters).toMutableList()
         for (targetFramework in TargetDotNetFramework.values()) {
             if (!runParameters.containsKey(targetFramework.id)) continue
             requirements.add(targetFramework.createExistsRequirement())
         }
-        return requirements
-    }
 
-    init {
-        myRequirementsProvider = requirementsProvider
-        runTypeRegistry.registerRunType(this)
+        return requirements
     }
 }

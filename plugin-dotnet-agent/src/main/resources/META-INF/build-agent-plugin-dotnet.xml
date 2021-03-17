@@ -119,7 +119,9 @@
     <constructor-arg ref="teamcityEnvironmentVariables"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.dotnet.VersionEnumeratorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimesProviderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionProviderImpl">
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>
@@ -185,7 +187,10 @@
   <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
 
   <!--Dotnet agent properties providers-->
-  <bean class="jetbrains.buildServer.dotnet.DotnetAgentPropertiesProvider" id="dotnetAgentPropertiesProvider">
+  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimeAgentPropertiesProvider" id="dotnetRuntimeAgentPropertiesProvider">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetSdkAgentPropertiesProvider" id="dotnetSdkAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
@@ -439,7 +444,7 @@
   <bean class="jetbrains.buildServer.inspect.ArtifactServiceImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlReaderImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlWriterImpl"/>
-  <bean class="jetbrains.buildServer.inspect.ToolPathResolverImpl" />
+  <bean class="jetbrains.buildServer.inspect.ProcessResolverImpl" />
   <bean class="jetbrains.buildServer.inspect.ArgumentsProviderImpl" />
 
   <!--Resharper Inspections-->

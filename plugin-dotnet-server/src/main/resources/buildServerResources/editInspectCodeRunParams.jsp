@@ -101,6 +101,7 @@
         <props:option value="${item}"><c:out value="${item}"/></props:option>
       </c:forEach>
     </props:selectProperty>
+    <span class="error" id="error_${constants.cltPlatformKey}"></span>
     <span class="smallNote">To find code issues in C++ projects, use the x86 platform.</span>
   </td>
 </tr>

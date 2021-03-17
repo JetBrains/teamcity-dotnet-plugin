@@ -24,7 +24,7 @@ import jetbrains.buildServer.rx.use
 
 class InspectionWorkflowComposer(
         private val _tool: InspectionTool,
-        private val _toolPathResolver: ToolPathResolver,
+        private val _toolPathResolver: ProcessResolver,
         private val _argumentsProvider: ArgumentsProvider,
         private val _environmentProvider: EnvironmentProvider,
         private val _outputObserver: OutputObserver,
@@ -43,9 +43,10 @@ class InspectionWorkflowComposer(
             if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
 
     private fun createCommandLines(context: WorkflowContext) = sequence<CommandLine> {
-        val executable = _toolPathResolver.resolve(_tool)
+        val process = _toolPathResolver.resolve(_tool)
         var args = _argumentsProvider.getArguments(_tool)
         val cmdArgs = sequence<CommandLineArgument> {
+            yieldAll(process.startArguments)
             yield(CommandLineArgument("--config=${_virtualContext.resolvePath(args.configFile.absolutePath)}"))
             if (args.debug) {
                 yield(CommandLineArgument("--logFile=${_virtualContext.resolvePath(args.logFile.absolutePath)}"))
@@ -64,7 +65,7 @@ class InspectionWorkflowComposer(
                     CommandLine(
                             null,
                             target,
-                            executable,
+                            process.executable,
                             Path(_pathsService.getPath(PathType.Checkout).path),
                             cmdArgs.toList(),
                             _environmentProvider.getEnvironmentVariables().toList()))

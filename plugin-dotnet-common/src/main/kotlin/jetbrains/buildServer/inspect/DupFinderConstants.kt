@@ -2,12 +2,7 @@ package jetbrains.buildServer.inspect
 
 object DupFinderConstants {
     const val DATA_PROCESSOR_TYPE = "DotNetDupFinder"
-
     const val RUNNER_TYPE = "dotnet-tools-dupfinder"
-    const val DUPFINDER_BINARY_NUPKG = "tools/dupfinder.exe"
-    const val DUPFINDER_BINARY_ZIP = "dupfinder.exe" //TODO: remove
-
-
     const val RUNNER_DISPLAY_NAME = "Duplicates finder (ReSharper)"
     const val RUNNER_DESCRIPTION = "Finds C# and VB duplicate code."
 
@@ -24,4 +19,7 @@ object DupFinderConstants {
     const val SETTINGS_EXCLUDE_REGION_MESSAGE_SUBSTRINGS = "$RUNNER_TYPE.exclude_region_message_substring"
     const val SETTINGS_CUSTOM_CMD_ARGS = "$RUNNER_TYPE.customCmdArgs"
     const val SETTINGS_DEBUG = "$RUNNER_TYPE.debug"
+
+    const val DEFAULT_INCLUDE_FILES = "**/*.cs"
+    const val DEFAULT_DISCARD_COST = "70"
 }

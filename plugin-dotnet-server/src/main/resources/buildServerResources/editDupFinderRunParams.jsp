@@ -60,6 +60,19 @@
 
 <jsp:include page="/tools/editToolUsage.html?toolType=${constants.cltToolTypeName}&versionParameterName=${constants.cltPathKey}&class=longField"/>
 
+<tr>
+  <th><label for="${constants.cltPlatformKey}">dupFinder Platform: </label></th>
+  <td>
+    <props:selectProperty name="${constants.cltPlatformKey}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${constants.runPlatforms}">
+        <props:option value="${item}"><c:out value="${item}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${constants.cltPlatformKey}"></span>
+  </td>
+</tr>
+
+
 <l:settingsGroup title="Duplicate Searcher Settings" className="advancedSetting">
 
   <tr class="advancedSetting">

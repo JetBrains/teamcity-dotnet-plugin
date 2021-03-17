@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
-import io.mockk.InternalPlatformDsl.toArray
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -10,7 +9,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.inspect.*
 import jetbrains.buildServer.rx.*
-import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -20,7 +18,7 @@ import java.io.File
 import java.io.OutputStream
 
 class InspectionWorkflowComposerTest {
-    @MockK private lateinit var _toolPathResolver: ToolPathResolver
+    @MockK private lateinit var _toolPathResolver: ProcessResolver
     @MockK private lateinit var _argumentsProvider: ArgumentsProvider
     @MockK private lateinit var _environmentProvider: EnvironmentProvider
     @MockK private lateinit var _outputObserver: OutputObserver
@@ -35,7 +33,7 @@ class InspectionWorkflowComposerTest {
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _context: WorkflowContext
 
-    private val _executable = Path("inspection")
+    private val _process = InspectionProcess(Path("inspection"), listOf(CommandLineArgument("exec"),  CommandLineArgument("--")))
     private val _workingDirectory = Path("wd")
     private val _events = mutableListOf<CommandResultEvent>()
     private val _envVar = CommandLineEnvironmentVariable("var1", "val1")
@@ -46,7 +44,7 @@ class InspectionWorkflowComposerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
 
-        every { _toolPathResolver.resolve(InspectionTool.Inspectcode) } returns _executable
+        every { _toolPathResolver.resolve(InspectionTool.Inspectcode) } returns _process
         every { _pathsService.getPath(PathType.Checkout) } returns File(_workingDirectory.path)
         every { _buildInfo.runType } returns InspectionTool.Inspectcode.runnerType
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
@@ -88,9 +86,11 @@ class InspectionWorkflowComposerTest {
                                 CommandLine(
                                         null,
                                         TargetType.Tool,
-                                        _executable,
+                                        _process.executable,
                                         _workingDirectory,
                                         listOf(
+                                                CommandLineArgument("exec"),
+                                                CommandLineArgument("--"),
                                                 CommandLineArgument("--config=v_${File("Config.xml").absolutePath}"),
                                                 CommandLineArgument("--logFile=v_${File("Log.txt").absolutePath}"),
                                                 CommandLineArgument("--arg1")
@@ -110,9 +110,11 @@ class InspectionWorkflowComposerTest {
                                 CommandLine(
                                         null,
                                         TargetType.Tool,
-                                        _executable,
+                                        _process.executable,
                                         _workingDirectory,
                                         listOf(
+                                                CommandLineArgument("exec"),
+                                                CommandLineArgument("--"),
                                                 CommandLineArgument("--config=v_${File("Config.xml").absolutePath}"),
                                                 CommandLineArgument("--arg1")
                                         ),
@@ -131,9 +133,13 @@ class InspectionWorkflowComposerTest {
                                 CommandLine(
                                         null,
                                         TargetType.Tool,
-                                        _executable,
+                                        _process.executable,
                                         _workingDirectory,
-                                        listOf(CommandLineArgument("--config=v_${File("Config.xml").absolutePath}")),
+                                        listOf(
+                                                CommandLineArgument("exec"),
+                                                CommandLineArgument("--"),
+                                                CommandLineArgument("--config=v_${File("Config.xml").absolutePath}")
+                                        ),
                                         listOf(_envVar)))
                 ),
                 arrayOf(
@@ -149,9 +155,11 @@ class InspectionWorkflowComposerTest {
                                 CommandLine(
                                         null,
                                         TargetType.Tool,
-                                        _executable,
+                                        _process.executable,
                                         _workingDirectory,
                                         listOf(
+                                                CommandLineArgument("exec"),
+                                                CommandLineArgument("--"),
                                                 CommandLineArgument("--config=v_${File("Config.xml").absolutePath}"),
                                                 CommandLineArgument("--logFile=v_${File("Log.txt").absolutePath}"),
                                                 CommandLineArgument("--arg1")

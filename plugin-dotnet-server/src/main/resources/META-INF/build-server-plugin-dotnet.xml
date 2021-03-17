@@ -69,14 +69,23 @@
   </bean-->
 
   <!--Resharper-->
+  <bean class="jetbrains.buildServer.inspect.RequirementsResolverImpl" />
   <bean class="jetbrains.buildServer.inspect.ReSharperCmdTypeAdapter" id="resharperToolType"/>
   <bean class="jetbrains.buildServer.inspect.ReSharperCmdToolProvider">
     <constructor-arg value="JetBrains.ReSharper.CommandLineTools"/>
     <constructor-arg ref="resharperToolType"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.inspect.ToolVersionProviderImpl"/>
   <bean class="jetbrains.buildServer.inspect.RequirementsProviderImpl"/>
-  <bean class="jetbrains.buildServer.inspect.InspectCodeRunType"/>
-  <bean class="jetbrains.buildServer.inspect.DupFinderRunType"/>
+  <bean class="jetbrains.buildServer.inspect.InspectCodeRunTypePropertiesProcessor" id="inspectCodeRunTypePropertiesProcessor"/>
+  <bean class="jetbrains.buildServer.inspect.DupFinderRunTypePropertiesProcessor" id="dupFinderRunTypePropertiesProcessor"/>
+  <bean class="jetbrains.buildServer.inspect.InspectCodeRunType">
+    <constructor-arg ref="inspectCodeRunTypePropertiesProcessor"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.inspect.DupFinderRunType">
+    <constructor-arg ref="dupFinderRunTypePropertiesProcessor"/>
+  </bean>
 
 </beans>
