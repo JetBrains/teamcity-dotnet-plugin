@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.E
@@ -23,6 +24,7 @@ class InspectionEnvironmentProviderTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
     @DataProvider(name = "envVarsCases")

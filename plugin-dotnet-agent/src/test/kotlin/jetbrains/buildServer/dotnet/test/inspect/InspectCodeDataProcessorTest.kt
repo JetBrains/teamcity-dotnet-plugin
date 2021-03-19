@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -82,6 +83,8 @@ class InspectCodeDataProcessorTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
+
         every { _reporter.markBuildAsInspectionsBuild() } returns Unit
         every { _reporter.reportInspectionType(any()) } returns Unit
         every { _reporter.reportInspection(any()) } returns Unit

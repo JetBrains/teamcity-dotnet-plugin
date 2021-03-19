@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -24,8 +25,7 @@ import java.io.File
 import java.io.PipedInputStream
 
 class DupFinderCodeDataProcessorTest {
-    @MockK
-    private lateinit var _xmlReader: XmlReader
+    @MockK private lateinit var _xmlReader: XmlReader
     @MockK private lateinit var _reporter: DuplicatesReporter
     @MockK private lateinit var _context: DataProcessorContext
 
@@ -89,6 +89,8 @@ class DupFinderCodeDataProcessorTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
+
         every { _reporter.startDuplicates() } returns Unit
         every { _reporter.finishDuplicates() } returns Unit
     }

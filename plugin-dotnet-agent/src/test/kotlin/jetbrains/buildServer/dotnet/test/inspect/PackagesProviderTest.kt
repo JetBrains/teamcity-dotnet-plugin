@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -19,6 +20,8 @@ class PackagesProviderTest {
 
     @BeforeMethod
     fun setUp() {
+        clearAllMocks()
+
         every { _folderPluginSource.id } returns "Folder"
         every { _folderPluginSource.getPlugin(any()) } returns E("Folder" )
         every { _folderPluginSource.getPlugin("folderSpec") } returns _folderElement

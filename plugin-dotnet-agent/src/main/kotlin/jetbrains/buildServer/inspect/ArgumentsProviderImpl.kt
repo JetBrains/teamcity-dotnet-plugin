@@ -25,7 +25,13 @@ class ArgumentsProviderImpl(
         val logFileArg = processFileArg(customArguments, LogArgRegex, tool.runnerType, ".log")
         val cachesHomeArg = processFileArg(customArguments, CachesHomeArgRegex, tool.runnerType, "").let { if (it.custom) it else null }
         val debug = _parametersService.tryGetParameter(ParameterType.Runner, tool.debugSettings) != null || logFileArg.custom
-        return InspectionArguments(configFileArg.file, outputFileArg.file, logFileArg.file, cachesHomeArg?.file, debug, customArguments)
+        return InspectionArguments(
+                configFileArg.file,
+                outputFileArg.file,
+                logFileArg.file,
+                cachesHomeArg?.file ?: _pathsService.getPath(PathType.CachePerCheckout),
+                debug,
+                customArguments)
     }
 
     private fun processFileArg(customArguments: MutableCollection<CommandLineArgument>, regex: Regex, prefix: String, extension: String): FileArg =

@@ -25,5 +25,7 @@ interface PathsService {
 
     fun getPath(pathType: PathType): File
 
+    fun getPath(pathType: PathType, runnerType: String): File
+
     fun getTempFileName(extension: String): File
 }

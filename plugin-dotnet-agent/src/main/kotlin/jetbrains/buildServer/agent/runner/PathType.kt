@@ -43,5 +43,11 @@ enum class PathType {
 
     Config,
 
-    Log
+    Log,
+
+    GlobalCache,
+
+    Cache,
+
+    CachePerCheckout
 }

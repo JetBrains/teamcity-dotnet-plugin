@@ -29,6 +29,7 @@ class ArgumentsProviderTest {
 
     private val _tmp = File("tmp")
     private val _checkout = File("checkout")
+    private val _cache = File("defaultCache")
 
     @BeforeMethod
     fun setUp() {
@@ -38,6 +39,7 @@ class ArgumentsProviderTest {
         every { _argumentsService.split(any()) } answers { arg<String>(0).split(" ").asSequence() }
         every { _pathsService.getPath(PathType.AgentTemp) } returns _tmp
         every { _pathsService.getPath(PathType.Checkout) } returns _checkout
+        every { _pathsService.getPath(PathType.CachePerCheckout) } returns _cache
     }
 
     @DataProvider
@@ -51,7 +53,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File(_tmp, "inspectcode-report-99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -95,7 +97,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File(_tmp, "inspectcode-report-99.xml"),
                                 File("Abc.log"),
-                                null,
+                                _cache,
                                 true,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -109,7 +111,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File(_tmp, "inspectcode-report-99.xml"),
                                 File(_checkout, "Abc.log"),
-                                null,
+                                _cache,
                                 true,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -124,7 +126,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File("Out.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -138,7 +140,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File(_checkout, "Out.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -152,7 +154,7 @@ class ArgumentsProviderTest {
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
                                 File(_checkout, "Out.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -167,7 +169,7 @@ class ArgumentsProviderTest {
                                 File("Cfg.xml"),
                                 File(_tmp, "inspectcode-report-99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )
@@ -181,7 +183,7 @@ class ArgumentsProviderTest {
                                 File(_checkout, "Cfg.xml"),
                                 File(_tmp, "inspectcode-report-99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
-                                null,
+                                _cache,
                                 false,
                                 listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom))
                         )

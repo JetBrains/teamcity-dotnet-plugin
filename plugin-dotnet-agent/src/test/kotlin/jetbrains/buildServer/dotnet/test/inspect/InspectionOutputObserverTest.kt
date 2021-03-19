@@ -1,6 +1,7 @@
 package jetbrains.buildServer.dotnet.test.inspect
 
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.runner.LoggerService
@@ -16,6 +17,8 @@ class InspectionOutputObserverTest {
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
+        clearAllMocks()
+
         every { _loggerService.writeErrorOutput(any()) } returns Unit
     }
 

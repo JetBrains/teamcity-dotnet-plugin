@@ -481,4 +481,32 @@
     <constructor-arg value="dotnet-tools-dupfinder"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.inspect.InspectCacheCleaner" id="inspectCacheCleanerLight">
+    <constructor-arg name="name" value="Inspection per checkout"/>
+    <constructor-arg name="type" type="jetbrains.buildServer.agent.runner.CleanType" value="Light"/>
+    <constructor-arg name="_runnerType" value="dotnet-tools-inspectcode"/>
+    <constructor-arg name="_pathType" type="jetbrains.buildServer.agent.runner.PathType" value="CachePerCheckout"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.inspect.InspectCacheCleaner" id="inspectCacheCleanerDeep">
+    <constructor-arg name="name" value="Inspection global"/>
+    <constructor-arg name="type" type="jetbrains.buildServer.agent.runner.CleanType" value="Deep"/>
+    <constructor-arg name="_runnerType" value="dotnet-tools-inspectcode"/>
+    <constructor-arg name="_pathType" type="jetbrains.buildServer.agent.runner.PathType" value="Cache"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.inspect.InspectCacheCleaner" id="dupFinderCacheCleanerLight">
+    <constructor-arg name="name" value="dupFinder per checkout"/>
+    <constructor-arg name="type" type="jetbrains.buildServer.agent.runner.CleanType" value="Light"/>
+    <constructor-arg name="_runnerType" value="dotnet-tools-dupfinder"/>
+    <constructor-arg name="_pathType" type="jetbrains.buildServer.agent.runner.PathType" value="CachePerCheckout"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.inspect.InspectCacheCleaner" id="dupFinderCacheCleanerDeep">
+    <constructor-arg name="name" value="dupFinder global"/>
+    <constructor-arg name="type" type="jetbrains.buildServer.agent.runner.CleanType" value="Deep"/>
+    <constructor-arg name="_runnerType" value="dotnet-tools-dupfinder"/>
+    <constructor-arg name="_pathType" type="jetbrains.buildServer.agent.runner.PathType" value="Cache"/>
+  </bean>
+
 </beans>

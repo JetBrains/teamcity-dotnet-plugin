@@ -44,7 +44,7 @@ class PathsServiceImpl(
         throw RunBuildException("Cannot generate unique name in $basePath for $extension.");
     }
 
-    override fun getPath(pathType: PathType) = when (pathType) {
+    override fun getPath(pathType: PathType): File = when (pathType) {
         PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory.canonicalFile
         PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory.canonicalFile
         PathType.AgentTemp -> _buildAgentConfigurablePaths.agentTempDirectory.canonicalFile
@@ -59,7 +59,17 @@ class PathsServiceImpl(
         PathType.Bin -> File(_buildAgentConfiguration.agentHomeDirectory, "bin").canonicalFile
         PathType.Config -> _buildAgentConfigurablePaths.agentConfDirectory.canonicalFile
         PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory.canonicalFile
+        PathType.GlobalCache -> _buildAgentConfigurablePaths.cacheDirectory
+        PathType.Cache -> _buildAgentConfigurablePaths.getCacheDirectory(_buildStepContext.runnerContext.runType)
+        PathType.CachePerCheckout -> File(getPath(PathType.Cache), getPath(PathType.Checkout).name)
     }
+
+    override fun getPath(pathType: PathType, runnerType: String): File =
+            when(pathType) {
+                PathType.Cache -> _buildAgentConfigurablePaths.getCacheDirectory(runnerType)
+                PathType.CachePerCheckout -> File(getPath(PathType.Cache, runnerType), getPath(PathType.Checkout).name)
+                else -> getPath(pathType)
+            }
 
     override fun getTempFileName(extension: String): File =
         uniqueName(getPath(PathType.AgentTemp), extension)

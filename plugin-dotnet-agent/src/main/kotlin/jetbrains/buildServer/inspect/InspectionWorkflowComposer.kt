@@ -77,7 +77,7 @@ class InspectionWorkflowComposer(
             _configurationFile.create(
                     it,
                     virtualOutputPath,
-                    args.cachesHome?.let { Path(_virtualContext.resolvePath(it.absolutePath)) },
+                    Path(_virtualContext.resolvePath(args.cachesHome.absolutePath)),
                     args.debug)
         }
 

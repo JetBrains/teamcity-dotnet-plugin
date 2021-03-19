@@ -102,7 +102,7 @@ class InspectionWorkflowComposerTest {
                                 File("Config.xml"),
                                 File("Output.xml"),
                                 File("Log.txt"),
-                                null,
+                                File("Cache"),
                                 false,
                                 listOf(CommandLineArgument("--arg1"))),
                         0,
@@ -125,7 +125,7 @@ class InspectionWorkflowComposerTest {
                                 File("Config.xml"),
                                 File("Output.xml"),
                                 File("Log.txt"),
-                                null,
+                                File("Cache"),
                                 false,
                                 emptyList()),
                         0,
@@ -183,7 +183,7 @@ class InspectionWorkflowComposerTest {
         // Then
         Assert.assertEquals(actualCommandLines, expectedCommandLines)
         verify { _fileSystemService.write(args.configFile, any()) }
-        verify { _configurationFile.create(_outputStream, Path("v_" + args.outputFile.absolutePath), args.cachesHome?.let{ Path("v_" + it.absolutePath)}, args.debug) }
+        verify { _configurationFile.create(_outputStream, Path("v_" + args.outputFile.absolutePath), Path("v_" + args.cachesHome.absolutePath), args.debug) }
         verify { _outputObserver.onNext("Line 1") }
         if(args.debug) {
             verify { _artifacts.publish(InspectionTool.Inspectcode, args.logFile, null) }
@@ -204,7 +204,7 @@ class InspectionWorkflowComposerTest {
                 File("Config.xml"),
                 File("Output.xml"),
                 File("Log.txt"),
-                null,
+                File("Cache"),
                 false,
                 emptyList()
         )
