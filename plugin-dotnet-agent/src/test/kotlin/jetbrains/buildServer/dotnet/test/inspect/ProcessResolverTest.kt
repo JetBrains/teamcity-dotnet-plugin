@@ -113,6 +113,28 @@ class ProcessResolverTest {
                 ),
                 arrayOf(
                         InspectionTool.Inspectcode,
+                        ParametersServiceStub(mapOf(
+                                CLT_PATH_PARAMETER to "somePath",
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X64.id)),
+                        OSType.UNIX,
+                        InspectionProcess (
+                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
+                        ),
+                        null
+                ),
+                arrayOf(
+                        InspectionTool.Inspectcode,
+                        ParametersServiceStub(mapOf(
+                                CLT_PATH_PARAMETER to "somePath",
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
+                        OSType.UNIX,
+                        InspectionProcess (
+                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
+                        ),
+                        null
+                ),
+                arrayOf(
+                        InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(CLT_PATH_PARAMETER to "somePath")),
                         OSType.UNIX,
                         null,

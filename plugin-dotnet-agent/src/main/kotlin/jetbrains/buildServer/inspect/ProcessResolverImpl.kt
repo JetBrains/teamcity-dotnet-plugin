@@ -26,21 +26,12 @@ class ProcessResolverImpl(
                 ?.let { IspectionToolPlatform.tryParse(it) }
                 ?: IspectionToolPlatform.X64
 
-        return when(platform) {
-            IspectionToolPlatform.X64 ->
-                when(_virtualContext.targetOSType) {
-                    OSType.WINDOWS -> InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.exe"))))
-                    else -> throw RunBuildException("Cannot run ${tool.dysplayName}.")
-                }
-            IspectionToolPlatform.X86 ->
-                when(_virtualContext.targetOSType) {
-                    OSType.WINDOWS -> InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))))
-                    else -> throw RunBuildException("Cannot run ${tool.dysplayName}.")
-                }
-            IspectionToolPlatform.CrossPlatform ->
-                when(_virtualContext.targetOSType) {
-                    OSType.UNIX, OSType.MAC -> InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.sh"))))
-                    OSType.WINDOWS -> InspectionProcess(
+        return when(_virtualContext.targetOSType) {
+            OSType.WINDOWS ->{
+                when(platform) {
+                    IspectionToolPlatform.X64 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.exe"))))
+                    IspectionToolPlatform.X86 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))))
+                    else -> InspectionProcess(
                             Path(""),
                             listOf(
                                     CommandLineArgument("exec"),
@@ -49,6 +40,8 @@ class ProcessResolverImpl(
                                     CommandLineArgument(_virtualContext.resolvePath(("$executableBase.exe")))
                             ))
                 }
+            }
+            else -> InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.sh"))))
         }
     }
 }
