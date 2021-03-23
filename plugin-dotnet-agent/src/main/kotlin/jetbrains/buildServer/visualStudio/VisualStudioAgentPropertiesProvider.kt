@@ -17,7 +17,6 @@ class VisualStudioAgentPropertiesProvider(
                     .asSequence()
                     .flatMap { it.getInstances().asSequence() }
                     .filter { it.toolType == ToolInstanceType.VisualStudio }
-                    .distinctBy { it.baseVersion }
                     .filter {
                         val devenvFile = File(it.installationPath, "devenv.exe")
                         if (!_fileSystemService.isExists(devenvFile) || !_fileSystemService.isFile(devenvFile)) {
@@ -25,6 +24,7 @@ class VisualStudioAgentPropertiesProvider(
                             false
                         } else true
                     }
+                    .distinctBy { it.baseVersion }
                     .flatMap {
                         visualStudio ->
                         LOG.debug("Found ${visualStudio}.")
