@@ -24,7 +24,6 @@ class MSBuildParameterConverterTest {
                 arrayOf("-name", "_name"),
                 arrayOf("@name", "_name"),
                 arrayOf("+name", "_name"),
-                arrayOf("-name", "_name"),
                 arrayOf("#name", "_name"),
                 arrayOf("\$name", "_name"),
                 // other symbols
@@ -74,7 +73,7 @@ class MSBuildParameterConverterTest {
 
                 // should escape `;` for command line parameters https://youtrack.jetbrains.com/issue/TW-64835
                 arrayOf("Value;123", "Value%3B123", true)
-                )
+        )
     }
 
     @Test(dataProvider = "valueCases")
