@@ -47,6 +47,8 @@ class CustomCommandType(
     }
 
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory): Sequence<Requirement> = sequence {
+        yieldAll(super.getRequirements(parameters, factory))
+        
         if (parameters[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
             yieldAll(super.getRequirements(parameters, factory))
         }
