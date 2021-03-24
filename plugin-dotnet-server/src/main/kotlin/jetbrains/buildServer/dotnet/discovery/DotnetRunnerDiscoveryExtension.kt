@@ -188,7 +188,7 @@ class DotnetRunnerDiscoveryExtension(
                         if (sdks.any()) {
                             yield(Parameter(DotnetConstants.PARAM_REQUIRED_SDK, getSdkReauirement(sdks) ))
                         }
-                        yield(Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id))
+                        yield(Parameter(DotnetConstants.PARAM_MSBUILD_VERSION, Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.Any }.sortedBy { it.version }.reversed().first().id))
                     }.toList()
             )
 

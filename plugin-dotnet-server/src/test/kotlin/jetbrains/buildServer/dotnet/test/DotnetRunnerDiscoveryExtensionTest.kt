@@ -343,7 +343,7 @@ class DotnetRunnerDiscoveryExtensionTest {
                 mapOf(
                         DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id,
                         DotnetConstants.PARAM_PATHS to path, DotnetConstants.PARAM_ARGUMENTS to "-restore -noLogo",
-                        DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.X86 }.sortedBy { it.version }.reversed().first().id
+                        DotnetConstants.PARAM_MSBUILD_VERSION to Tool.values().filter { it.type == ToolType.MSBuild && it.bitness == ToolBitness.Any }.sortedBy { it.version }.reversed().first().id
                 ))
 
         if (requiredSdk.isNotEmpty()) {
