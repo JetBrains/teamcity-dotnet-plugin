@@ -50,7 +50,7 @@ class ArtifactServiceTest {
                         InspectionTool.Dupfinder,
                         File("Abc", "file.xml"),
                         Path("rt"),
-                        "${File("Abc", "file.xml").canonicalPath}=>.teamcity/${InspectionTool.Inspectcode.runnerType}/rt"
+                        "${File("Abc", "file.xml").canonicalPath}=>.teamcity/${InspectionTool.Dupfinder.runnerType}/rt"
                 ),
                 arrayOf(
                         VirtualFileSystemService().addFile(File("Abc", "file.xml")),
