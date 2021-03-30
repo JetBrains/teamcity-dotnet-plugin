@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import javaslang.collection.Seq
 import jetbrains.buildServer.agent.Version
 
 class VersionEnumeratorImpl : VersionEnumerator {
