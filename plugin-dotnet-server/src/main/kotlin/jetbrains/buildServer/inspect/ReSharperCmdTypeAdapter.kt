@@ -37,8 +37,6 @@ class ReSharperCmdTypeAdapter : ToolTypeAdapter() {
 
     override fun getToolLicenseUrl() = "https://www.jetbrains.com/legal/docs/resharper/resharper_clt_license.html"
 
-    override fun getTeamCityHelpFile() = "JetBrains+dotCover"
-
     override fun getValidPackageDescription() =
             "Specify the path to a ReSharper Command Line Tools package (.zip or .nupkg).\n" +
             "<br/>Download <em>JetBrains.ReSharper.CommandLineTools.&lt;VERSION&gt;.zip</em> from\n" +

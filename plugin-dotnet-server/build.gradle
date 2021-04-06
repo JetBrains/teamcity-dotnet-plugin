@@ -27,6 +27,9 @@ teamcity {
       into('kotlin-dsl') {
         from("${rootProject.projectDir}/kotlin-dsl")
       }
+      into('server/bundled-tool') {
+        from('bundled-tool')
+      }
     }
   }
 }
@@ -44,6 +47,38 @@ dependencies {
   testImplementation  'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2' 
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }
+
+class PreparePackagesTask extends DefaultTask {
+  @TaskAction
+  def run() {
+    ant.delete(dir: './bundled-tool')
+    ant.mkdir(dir: './bundled-tool')
+
+    def toolsPackageVersion = '2021.1.0'
+    def toolsPackageId = 'JetBrains.ReSharper.CommandLineTools/' + toolsPackageVersion
+
+    println 'Processing ' + toolsPackageId
+    ant.delete(dir: './packages')
+    ant.mkdir(dir: './packages')
+    ant.get(src: 'https://www.nuget.org/api/v2/package/' + toolsPackageId, dest: './packages/package.zip', skipexisting: 'true')
+    ant.unzip(src: './packages/package.zip', dest: './packages')
+    ant.copy(todir: './packages/tools', overwrite: 'true', force: 'true'){
+      fileset(file: './bundled-tool.xml')
+    }
+    ant.move(file: './packages/tools/bundled-tool.xml', tofile: './packages/tools/teamcity-plugin.xml', overwrite: 'true', force: 'true')
+    ant.zip(destfile: './bundled-tool/jetbrains.resharper-clt.bundled.zip') {
+      fileset(dir: './packages') {
+        include(name: 'tools/**/*.*')
+      }
+    }
+    ant.move(file: './packages/JetBrains.ReSharper.CommandLineTools.nuspec', todir: './bundled-tool', overwrite: 'true', force: 'true')
+    ant.delete(dir: './packages')
+  }
+}
+
+task preparePackagesTask(type: PreparePackagesTask)
+
+serverPlugin.dependsOn(preparePackagesTask)
 
 serverPlugin.version = null
 serverPlugin.baseName = projectIds.artifact

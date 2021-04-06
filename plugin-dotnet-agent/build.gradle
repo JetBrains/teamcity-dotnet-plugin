@@ -16,7 +16,7 @@
 
 plugins {
   id 'com.github.rodm.teamcity-agent' version "1.3.2"
-  id 'com.ullink.nuget' version '2.22'
+  id 'de.undercouch.download'
 }
 
 teamcity {
@@ -38,52 +38,37 @@ dependencies {
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
   compile 'commons-io:commons-io:2.6'
   testCompile 'org.testng:testng:7.1.0'
-  testCompile 'org.jmock:jmock:2.5.1'  
+  testCompile 'org.jmock:jmock:2.5.1'
   testCompile 'org.hamcrest:hamcrest-all:1.3'
-  testCompile 'org.jetbrains.kotlin:kotlin-reflect' 
+  testCompile 'org.jetbrains.kotlin:kotlin-reflect'
   testCompile 'io.mockk:mockk:1.9.3'
-  testImplementation  'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
+  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2'
 }
 
-project.tasks.nugetRestore.doFirst {
-  println 'Clean .NET integration directories'
-  ant.delete(dir: './packages')
-  ant.delete(dir: './tools')
+class PreparePackagesTask extends DefaultTask {
+  @TaskAction
+  def run() {
+    ant.delete(dir: './tools')
+    ant.mkdir(dir: './tools')
+
+    def integrationPackageVersion = '1.0.13'
+    def integrationPackageId = 'TeamCity.Dotnet.Integration/' + integrationPackageVersion
+
+    println 'Processing ' + integrationPackageId
+    ant.delete(dir: './packages')
+    ant.mkdir(dir: './packages')
+    ant.get(src: 'https://www.nuget.org/api/v2/package/' +  integrationPackageId, dest: './packages/package.zip', skipexisting: 'true')
+    ant.unzip(src: './packages/package.zip', dest: './packages')
+    ant.move(todir: './tools', overwrite: 'true', force: 'true') {
+      fileset(dir: './packages/build/_common', includes: '**/*')
+    }
+    ant.delete(dir: './packages')
+  }
 }
 
-nugetRestore {
-  version = '4.5.0'
-  packagesConfigFile = file('./../packages.config')
-  packagesDirectory = file('./packages')
-}
+task preparePackagesTask(type: PreparePackagesTask)
 
-project.tasks.nugetRestore.doLast {
-  def path = ant.path {
-    dirset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*')
-  }
-
-  def nuGetPackageId = path.first().name
-  println 'Use .NET integration package: ' + nuGetPackageId
-
-  path = ant.path {
-    dirset(dir: './packages', includes: 'TeamCity.Dotnet.Integration.*/build/_common/**')
-  }
-
-  def contentPath = path.list().first()
-
-  ant.move(todir: './tools', overwrite: 'true', force: 'true') {
-    fileset(dir: contentPath, includes: '**/*')
-  }
-
-  path = ant.path {
-    fileset(dir: './tools', includes: '**/*')
-  }
-
-  path.list().each { println it }
-  ant.delete(dir: './packages')
-}
-
-agentPlugin.dependsOn(nugetRestore)
+agentPlugin.dependsOn(preparePackagesTask)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact
