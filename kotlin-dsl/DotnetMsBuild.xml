@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright 2000 - 2017 JetBrains s.r.o.
+  ~ Copyright 2000-2021 JetBrains s.r.o.
   ~
-  ~  Licensed under the Apache License, Version 2.0 (the "License").
-  ~  See LICENSE in the project root for license information.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
-<dsl-extension kind="buildStep" type="dotnet.cli" generateDslJar="true" applicable="params['command'] == 'msbuild'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'msbuild'">
     <class name="DotnetMsBuildStep">
         <description>
-            A [dotnet msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            A [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
         </description>
     </class>
     <function name="dotnetMsBuild">
         <description>
-            Adds a [dotnet msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
+            Adds a [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
             @see DotnetMsBuildStep
         </description>
     </function>
@@ -27,10 +36,16 @@
         </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
             <description>
-                [Build working directory](https://confluence.jetbrains.com/display/TCDL/Build+Working+Directory) for
+                [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
                 specify it if it is different from the [checkout
-                directory](https://confluence.jetbrains.com/display/TCDL/Build+Checkout+Directory).
+                directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="msbuild.version" dslName="version" type="MSBuildVersion">
+            <description>
+                MSBuild version to use
+                @see MSBuildVersion
             </description>
         </param>
         <param name="targets">
@@ -43,13 +58,16 @@
             <description>Target runtime to build for.</description>
         </param>
         <param name="args">
-            <description>Enter additional command line parameters for dotnet msbuild.</description>
+            <description>Enter additional command line parameters for .NET MSBuild.</description>
         </param>
         <param name="verbosity" dslName="logging" type="Verbosity">
             <description>
                 Specify logging verbosity
                 @see Verbosity
             </description>
+        </param>
+        <param name="required.sdk" dslName="sdk">
+            <description>.NET SDK versions separated by semicolon to be required on agents.</description>
         </param>
     </params>
     <types>
@@ -62,6 +80,27 @@
             <option name="Normal" value="Normal"/>
             <option name="Detailed" value="Detailed"/>
             <option name="Diagnostic" value="Diagnostic"/>
+        </enum>
+        <enum name="MSBuildVersion">
+            <description>MSBuild version</description>
+            <option name="CrossPlatform" value="MSBuild_CrossPlatform">
+                <description>Cross-platform MSBuild</description>
+            </option>
+            <option name="V16" value="MSBuild_16_Windows">
+                <description>MSBuild 2019</description>
+            </option>
+            <option name="V15" value="MSBuild_15_Windows">
+                <description>MSBuild 2017</description>
+            </option>
+            <option name="V14" value="MSBuild_14_Windows">
+                <description>MSBuild 2015</description>
+            </option>
+            <option name="V12" value="MSBuild_12_Windows">
+                <description>MSBuild 2013</description>
+            </option>
+            <option name="V4" value="MSBuild_4_Windows">
+                <description>MSBuild 4</description>
+            </option>
         </enum>
     </types>
 </dsl-extension>

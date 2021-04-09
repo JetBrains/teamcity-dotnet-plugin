@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.BuildProblemData
@@ -31,7 +47,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -50,7 +66,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).writeBuildProblem(BuildProblemData.createBuildProblem("dotnet_exit_code-99", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code -99"))
+                oneOf<LoggerService>(_loggerService).writeBuildProblem("dotnet_exit_code-99", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code -99")
             }
         })
 
@@ -82,8 +98,8 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Some of processes finished with positive exit code (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -104,8 +120,8 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 33 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Process finished with positive exit code 33 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 
@@ -126,7 +142,7 @@ class DotnetWorkflowAnalyzerTest {
         // When
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<LoggerService>(_loggerService).writeErrorOutput("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
+                oneOf<LoggerService>(_loggerService).writeWarning("Process finished with positive exit code 99 (some tests have failed). Reporting step success as all the tests have run.")
             }
         })
 

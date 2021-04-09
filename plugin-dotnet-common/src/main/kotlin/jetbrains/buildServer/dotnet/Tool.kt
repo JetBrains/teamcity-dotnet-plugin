@@ -1,33 +1,63 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet
 
-enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String) {
+enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String, val vsVersion: Int = 0) {
     // Visual Studio
-    VisualStudio2017(2017, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2017"),
-    VisualStudio2015(2015, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2015"),
-    VisualStudio2013(2013, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2013"),
-    VisualStudio2012(2012, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2012"),
-    VisualStudio2010(2010, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "Visual Studio 2010"),
+    VisualStudioAny(0, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, ToolBitness.Any.description, 0),
+    VisualStudio2019(16, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2019", 2019),
+    VisualStudio2017(15, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2017", 2017),
+    VisualStudio2015(14, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2015", 2015),
+    VisualStudio2013(12, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2013", 2013),
+    VisualStudio2012(11, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2012", 2012),
+    VisualStudio2010(10, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2010", 2010),
 
     // MSBuild
-    MSBuild15DotnetCore(15, ToolType.MSBuild, ToolPlatform.DotnetCore, ToolBitness.Any, ".NET Core"),
-    MSBuild15Mono(15, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "Mono"),
-    MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "15.0"),
-    MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "15.0 64-bit"),
-    MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "15.0 32-bit"),
-    MSBuild14Windows(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "14.0"),
-    MSBuild14WindowsX64(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "14.0 64-bit"),
-    MSBuild14WindowsX86(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "14.0 32-bit"),
-    MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "12.0"),
-    MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "12.0 64-bit"),
-    MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "12.0 32-bit"),
+    MSBuildCrossPlatform(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, "${ToolPlatform.CrossPlatform.description} ${ToolType.MSBuild.description}"),
+    MSBuildMono(0, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "${ToolPlatform.Mono.description} ${ToolType.MSBuild.description}"),
+
+    MSBuild16Windows(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2019", 2019),
+    MSBuild16WindowsX64(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2019 ${ToolBitness.X64.description}", 2019),
+    MSBuild16WindowsX86(16, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} Tools 2019 ${ToolBitness.X86.description}", 2019),
+
+    MSBuild15Windows(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2017", 2017),
+    MSBuild15WindowsX64(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2017 ${ToolBitness.X64.description}", 2017),
+    MSBuild15WindowsX86(15, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} Tools 2017 ${ToolBitness.X86.description}", 2017),
+
+    MSBuild14Windows(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2015", 2015),
+    MSBuild14WindowsX64(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2015 ${ToolBitness.X64.description}", 2015),
+    MSBuild14WindowsX86(14, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} Tools 2015 ${ToolBitness.X86.description}", 2015),
+
+    MSBuild12Windows(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2013", 2013),
+    MSBuild12WindowsX64(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2013 ${ToolBitness.X64.description}", 2013),
+    MSBuild12WindowsX86(12, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} Tools 2013 ${ToolBitness.X86.description}", 2013),
+
+    MSBuild4Windows(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} 4.0", 2010),
+    MSBuild4WindowsX64(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} 4.0 ${ToolBitness.X64.description}", 2010),
+    MSBuild4WindowsX86(4, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} 4.0 ${ToolBitness.X86.description}", 2010),
 
     // VSTest
-    VSTest15CrossPlatform(15, ToolType.VSTest, ToolPlatform.DotnetCore, ToolBitness.Any, "Cross-platform"),
-    VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "15"),
-    VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "14"),
-    VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "12");
+    VSTestCrossPlatform(0, ToolType.VSTest, ToolPlatform.CrossPlatform, ToolBitness.Any, "${ToolPlatform.CrossPlatform.description} ${ToolType.VSTest.description}"),
+    VSTest16Windows(16, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2019", 2019),
+    VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2017", 2017),
+    VSTest14Windows(14, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2015", 2015),
+    VSTest12Windows(12, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2013", 2013);
 
-    val id: String get() = "${type}_${version}_${platform}_$bitness"
+    val id: String = "${type}${if (version != 0) "_${version}" else ""}_${platform}${if (bitness != ToolBitness.Any) "_${bitness}" else ""}"
 
     companion object {
         fun tryParse(id: String): Tool? {

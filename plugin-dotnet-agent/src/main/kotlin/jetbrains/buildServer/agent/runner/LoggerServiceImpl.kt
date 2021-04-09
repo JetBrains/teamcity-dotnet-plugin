@@ -1,11 +1,29 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.messages.DefaultMessagesInfo
 import jetbrains.buildServer.messages.serviceMessages.BlockClosed
 import jetbrains.buildServer.messages.serviceMessages.BlockOpened
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import java.io.Closeable
+import jetbrains.buildServer.rx.Disposable
+import jetbrains.buildServer.rx.disposableOf
 
 class LoggerServiceImpl(
         private val _buildStepContext: BuildStepContext,
@@ -13,38 +31,60 @@ class LoggerServiceImpl(
     : LoggerService {
 
     private val listener: LoggingProcessListener
-        get() = LoggingProcessListener(buildLogger)
+        get() = LoggingProcessListener(_buildLogger)
 
-    private val buildLogger: BuildProgressLogger
+    private val _buildLogger: BuildProgressLogger
         get() = _buildStepContext.runnerContext.build.buildLogger
 
-    override fun writeMessage(serviceMessage: ServiceMessage) = buildLogger.message(serviceMessage.toString())
+    override fun writeMessage(serviceMessage: ServiceMessage) = _buildLogger.message(serviceMessage.toString())
 
-    override fun writeBuildProblem(buildProblem: BuildProblemData) = buildLogger.logBuildProblem(buildProblem)
+    override fun writeBuildProblem(identity: String, type: String, description: String) =
+            _buildLogger.logBuildProblem(BuildProblemData.createBuildProblem(identity.substring(0 .. Integer.min(identity.length, 60) - 1), type, description))
 
     override fun writeStandardOutput(text: String, color: Color) =
             listener.onStandardOutput(applyColor(text, color))
 
-    override fun writeStandardOutput(vararg text: Pair<String, Color>) =
+    override fun writeStandardOutput(vararg text: StdOutText) =
             listener.onStandardOutput(applyColor(*text))
 
-    override fun writeErrorOutput(text: String) = listener.onErrorOutput(text)
+    override fun writeErrorOutput(text: String) = _buildLogger.error(text)
 
-    override fun writeBlock(blockName: String, description: String): Closeable {
-        buildLogger.message(BlockOpened(blockName, if (description.isBlank()) null else description).toString())
-        return Closeable { buildLogger.message(BlockClosed(blockName).toString()) }
+    override fun writeWarning(text: String) = _buildLogger.warning(text)
+
+    override fun writeBlock(blockName: String, description: String) = writeBlock(blockName, description, false)
+
+    override fun writeTrace(text: String) =
+        _buildLogger.logMessage(DefaultMessagesInfo.internalize(DefaultMessagesInfo.createTextMessage(text)))
+
+    override fun writeTraceBlock(blockName: String, description: String) = writeBlock(blockName, description, true)
+
+    private fun writeBlock(blockName: String, description: String, trace: Boolean): Disposable {
+        val blockOpened = BlockOpened(blockName, if (description.isBlank()) null else description)
+        if (trace) {
+            blockOpened.addTag(DefaultMessagesInfo.TAG_INTERNAL)
+        }
+
+        _buildLogger.message(blockOpened.toString())
+        return disposableOf { _buildLogger.message(BlockClosed(blockName).toString()) }
     }
-
     private fun applyColor(text: String, color: Color, prevColor: Color = Color.Default): String =
-        if (color == Color.Default)
-            if (color != prevColor)
+        if (color == prevColor) {
+            text
+        }
+        else {
+            if (color == Color.Default) {
                 "\u001B[0m$text"
-            else
-                text
-        else "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
+            } else {
+                "\u001B[${_colorTheme.getAnsiColor(color)}m$text"
+            }
+        }
 
-    private fun applyColor(vararg text: Pair<String, Color>): String =
-            text.fold(Pair<String, Color>("", Color.Default)) {
-                acc, (str, color) -> Pair<String, Color>(acc.first + applyColor(str, color, acc.second), color)
-            }.first
+    private fun applyColor(vararg text: StdOutText): String =
+            text.fold(DefaultStdOutText) {
+                acc, (text, color) -> StdOutText(acc.text + applyColor(text, color, acc.color), color)
+            }.text
+
+    companion object {
+        private val DefaultStdOutText = StdOutText("")
+    }
 }

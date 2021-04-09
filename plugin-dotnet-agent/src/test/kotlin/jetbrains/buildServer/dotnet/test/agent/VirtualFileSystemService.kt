@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.agent
 
 import jetbrains.buildServer.agent.FileSystemService
@@ -31,14 +47,16 @@ class VirtualFileSystemService : FileSystemService {
         return this
     }
 
-    fun addFile(file: File, attributes: Attributes = Attributes()): VirtualFileSystemService {
+    fun addFile(file: File, attributes: Attributes = Attributes(), inputStream: InputStream? = null, outputStream: OutputStream? = null): VirtualFileSystemService {
         val parent = file.parentFile
         if (parent != null) {
             addDirectory(parent)
         }
 
         if (!_files.containsKey(file)) {
-            _files[file] = FileInfo(attributes)
+            val curOutputStream = outputStream ?: PipedOutputStream()
+            val curInputStream = inputStream ?: PipedInputStream(curOutputStream as PipedOutputStream)
+            _files[file] = FileInfo(attributes, curInputStream, curOutputStream)
         }
 
         return this
@@ -48,53 +66,59 @@ class VirtualFileSystemService : FileSystemService {
 
     override fun isDirectory(file: File): Boolean = _directories.contains(file)
 
+    override fun isFile(file: File): Boolean = _files.contains(file)
+
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
-    override fun copy(source: File, destination: File) {
-        if (!isDirectory(source)) {
-            val sourceFile = _files[source]!!
-            addFile(destination, sourceFile.attributes)
-            _files[destination] = sourceFile
+    override fun copy(sourceDirectory: File, destinationDirectory: File) {
+        if (!isDirectory(sourceDirectory)) {
+            val sourceFile = _files[sourceDirectory]!!
+            addFile(destinationDirectory, sourceFile.attributes)
+            _files[destinationDirectory] = sourceFile
         } else {
-            val sourceDir = _directories[source]!!
-            addDirectory(destination, sourceDir.attributes)
-            _directories[destination] = sourceDir
+            val sourceDir = _directories[sourceDirectory]!!
+            addDirectory(destinationDirectory, sourceDir.attributes)
+            _directories[destinationDirectory] = sourceDir
         }
     }
 
-    override fun remove(file: File) {
-        val fileInfo = _files[file]
+    override fun remove(fileOrDirectory: File): Boolean {
+        val fileInfo = _files[fileOrDirectory]
         if (fileInfo != null) {
             val errorOnRemove = fileInfo.attributes.errorOnRemove
             if (errorOnRemove != null) {
                 throw errorOnRemove
             }
 
-            _files.remove(file)
+            _files.remove(fileOrDirectory)
+            return true
         }
 
-        val dirInfo = _directories[file]
+        val dirInfo = _directories[fileOrDirectory]
         if (dirInfo != null) {
             val errorOnRemove = dirInfo.attributes.errorOnRemove
             if (errorOnRemove != null) {
                 throw errorOnRemove
             }
 
-            _directories.remove(file)
+            _directories.remove(fileOrDirectory)
+            return true
         }
+
+        return false
     }
 
-    override fun list(file: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == file }
+    override fun list(directory: File): Sequence<File> = _directories.keys.asSequence().plus(_files.map { it.key }).filter { it.parentFile == directory }
 
-    private data class FileInfo(val attributes: Attributes) {
-        val inputStream: InputStream
-        val outputStream: OutputStream
-
-        init {
-            outputStream = PipedOutputStream()
-            inputStream = PipedInputStream(outputStream)
-        }
+    override fun createDirectory(directory: File): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun sanitizeFileName(name: String) = name
+
+    override fun generateTempFile(path: File, prefix: String, extension: String) = File(path, "${prefix}99${extension}")
+
+    private data class FileInfo(val attributes: Attributes, val inputStream: InputStream, val outputStream: OutputStream)
 
     private data class DirectoryInfo(val attributes: Attributes)
 

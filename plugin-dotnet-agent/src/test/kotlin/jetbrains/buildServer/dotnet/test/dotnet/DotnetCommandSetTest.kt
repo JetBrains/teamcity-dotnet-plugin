@@ -1,35 +1,61 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 
 class DotnetCommandSetTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _buildCommand: DotnetCommand
-    private lateinit var _cleanCommand: DotnetCommand
-    private lateinit var _environmentBuilder: EnvironmentBuilder
+    private lateinit var _context: DotnetBuildContext
+    @MockK private lateinit var _environmentBuilder: EnvironmentBuilder
+    @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _buildCommand: DotnetCommand
+    @MockK private lateinit var _cleanCommand: DotnetCommand
+    @MockK private lateinit var _dotnetCommand: DotnetCommand
+    @MockK private lateinit var _testCommand: TestCommand
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _buildCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Build")
-        _cleanCommand = _ctx.mock<DotnetCommand>(DotnetCommand::class.java, "Clean")
-        _environmentBuilder = _ctx.mock(EnvironmentBuilder::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
+        every { _buildCommand.commandType } returns DotnetCommandType.Build
+        every { _cleanCommand.commandType } returns DotnetCommandType.Clean
+        every { _testCommand.commandType } returns DotnetCommandType.Test
+        _context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
     }
 
     @DataProvider
     fun argumentsData(): Array<Array<Any?>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "clean")), listOf("clean", "CleanArg1", "CleanArg2"), null),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "test")), listOf("test", "TestArg1", "TestArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "build")), listOf("my.csprog", "BuildArg1", "BuildArg2"), null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "send")), emptyList<String>() as Any?, null),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_COMMAND, "   ")), emptyList<String>() as Any?, null),
@@ -43,49 +69,29 @@ class DotnetCommandSetTest {
             expectedArguments: List<String>,
             exceptionPattern: Regex?) {
         // Given
-        val context = DotnetBuildContext(File("wd"), _ctx.mock(DotnetCommand::class.java), DotnetSdk(File("dotnet"), Version.Empty))
-        _ctx.checking(object : Expectations() {
-            init {
-                allowing<DotnetCommand>(_buildCommand).commandType
-                will(returnValue(DotnetCommandType.Build))
+        every { _buildCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),false, _toolStateWorkflowComposer)
+        every { _buildCommand.getArguments(any()) } returns sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))
+        every { _buildCommand.targetArguments } returns sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog", CommandLineArgumentType.Target))))
+        every { _buildCommand.environmentBuilders } returns sequenceOf(_environmentBuilder)
 
-                allowing<DotnetCommand>(_buildCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(File("dotnet"), false)))
+        every { _cleanCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
+        every { _cleanCommand.getArguments(any()) } returns sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))
+        every { _cleanCommand.targetArguments } returns emptySequence<TargetArguments>()
+        every { _cleanCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
 
-                allowing<DotnetCommand>(_buildCommand).getArguments(context)
-                will(returnValue(sequenceOf(CommandLineArgument("BuildArg1"), CommandLineArgument("BuildArg2"))))
-
-                allowing<DotnetCommand>(_buildCommand).targetArguments
-                will(returnValue(sequenceOf(TargetArguments(sequenceOf(CommandLineArgument("my.csprog"))))))
-
-                allowing<DotnetCommand>(_buildCommand).environmentBuilders
-                will(returnValue(sequenceOf(_environmentBuilder)))
-
-                allowing<DotnetCommand>(_cleanCommand).commandType
-                will(returnValue(DotnetCommandType.Clean))
-
-                allowing<DotnetCommand>(_cleanCommand).toolResolver
-                will(returnValue(DotnetToolResolverStub(File("dotnet"), true)))
-
-                allowing<DotnetCommand>(_cleanCommand).getArguments(context)
-                will(returnValue(sequenceOf(CommandLineArgument("CleanArg1"), CommandLineArgument("CleanArg2"))))
-
-                allowing<DotnetCommand>(_cleanCommand).targetArguments
-                will(returnValue(emptySequence<TargetArguments>()))
-
-                allowing<DotnetCommand>(_cleanCommand).environmentBuilders
-                will(returnValue(emptySequence<EnvironmentBuilder>()))
-            }
-        })
+        every { _testCommand.toolResolver } returns ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")),true, _toolStateWorkflowComposer)
+        every { _testCommand.getArguments(any()) } returns sequenceOf(CommandLineArgument("TestArg1"), CommandLineArgument("TestArg2"))
+        every { _testCommand.targetArguments } returns emptySequence<TargetArguments>()
+        every { _testCommand.environmentBuilders } returns emptySequence<EnvironmentBuilder>()
 
         val dotnetCommandSet = DotnetCommandSet(
                 ParametersServiceStub(parameters),
-                listOf(_buildCommand, _cleanCommand))
+                listOf(_buildCommand, _cleanCommand, _testCommand))
 
         // When
         var actualArguments: List<String> = emptyList()
         try {
-            actualArguments = dotnetCommandSet.commands.flatMap { it.getArguments(context) }.map { it.value }.toList()
+            actualArguments = dotnetCommandSet.commands.flatMap { it.getArguments(_context) }.map { it.value }.toList()
             exceptionPattern?.let {
                 Assert.fail("Exception should be thrown")
             }
@@ -95,7 +101,6 @@ class DotnetCommandSetTest {
 
         // Then
         if (exceptionPattern == null) {
-            _ctx.assertIsSatisfied()
             Assert.assertEquals(actualArguments, expectedArguments)
         }
     }

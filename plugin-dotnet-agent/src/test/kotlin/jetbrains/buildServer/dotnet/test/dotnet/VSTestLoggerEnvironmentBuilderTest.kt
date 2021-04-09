@@ -1,7 +1,25 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
@@ -64,7 +82,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             fileSystemService: VirtualFileSystemService,
             expectedDirs: List<File>) {
         // Given
-        val context = DotnetBuildContext(File("wd"), _dotnetCommand, DotnetSdk(File("dotnet"), Version.Empty))
+        val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
         val loggerFile = File("vstest15", "logger.dll")
         fileSystemService.addFile(loggerFile.absoluteFile)
 
@@ -110,7 +128,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             Assert.assertEquals(fileSystemService.isExists(expectedDir), true)
         }
 
-        ticket.close()
+        ticket.dispose()
         for (expectedDir in expectedDirs) {
             val dir = File(expectedDir, uniqueName)
             Assert.assertEquals(fileSystemService.isExists(dir), false)
@@ -130,7 +148,7 @@ class VSTestLoggerEnvironmentBuilderTest {
     @Test(dataProvider = "testDataNotBuildEnv")
     fun shouldNotBuildEnvWhenSpecificTestReportingMode(modes: EnumSet<TestReportingMode>) {
         // Given
-        val context = DotnetBuildContext(File("wd"), _dotnetCommand, DotnetSdk(File("dotnet"), Version.Empty))
+        val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
         val targetFiles = listOf(File("dir", "my.proj"))
         val loggerEnvironment = VSTestLoggerEnvironmentBuilder(
                 _pathService,
@@ -161,7 +179,7 @@ class VSTestLoggerEnvironmentBuilderTest {
             }
         })
 
-        loggerEnvironment.build(context).close()
+        loggerEnvironment.build(context).dispose()
 
         // Then
         _ctx.assertIsSatisfied()

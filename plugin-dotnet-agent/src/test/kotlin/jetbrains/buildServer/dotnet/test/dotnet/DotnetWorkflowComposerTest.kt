@@ -1,239 +1,410 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.*
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.test.*
-import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
-import jetbrains.buildServer.rx.emptyDisposable
-import org.hamcrest.CustomMatcher
-import org.jmock.Expectations
-import org.jmock.Mockery
-import org.jmock.api.Invocation
-import org.jmock.lib.action.CustomAction
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import java.io.Closeable
 import java.io.File
-import java.util.*
 
 class DotnetWorkflowComposerTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _pathService: PathsService
-    private lateinit var _workflowContext: WorkflowContext
-    private lateinit var _environmentBuilder1: EnvironmentBuilder
-    private lateinit var _environmentVariables: EnvironmentVariables
-    private lateinit var _commandSet: CommandSet
-    private lateinit var _dotnetCommand1: DotnetCommand
-    private lateinit var _dotnetCommand2: DotnetCommand
-    private lateinit var _toolResolver1: ToolResolver
-    private lateinit var _toolResolver2: ToolResolver
-    private lateinit var _closeable1: Closeable
-    private lateinit var _loggerService: LoggerService
-    private lateinit var _closeable3: Closeable
-    private lateinit var _closeable4: Closeable
-    private lateinit var _failedTestSource: FailedTestSource
-    private lateinit var _resultsAnalyzer1: ResultsAnalyzer
-    private lateinit var _resultsAnalyzer2: ResultsAnalyzer
-    private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
-    private lateinit var _targetRegistry: TargetRegistry
-    private lateinit var _targetRegistrationToken: Disposable
-    private lateinit var _commandRegistry: CommandRegistry
-    private lateinit var _buildContextFactory: DotnetBuildContextFactory
-    private lateinit var _buildContext1: DotnetBuildContext
-    private lateinit var _buildContext2: DotnetBuildContext
+    @MockK private lateinit var _workflowContext: WorkflowContext
+    @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _commandRegistry: CommandRegistry
+    @MockK private lateinit var _failedTestSource: FailedTestSource
+    @MockK private lateinit var _commandSet: CommandSet
+    @MockK private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
+    @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
+    @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _dotnetToolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _msbuildToolStateWorkflowComposer: ToolStateWorkflowComposer
+    @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
+
+    private val _msbuildVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var2", "val2"))
+    private val _dotnetVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var3", "val3"))
+    private val _dotnetArgs = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
+    private val _msbuildArgs = listOf(CommandLineArgument("arg3"))
+    private val _workingDirectory = File("wd")
+    private val _virtualizedWorkingDirectory = Path("wd")
+    private val _msbuildExecutable = ToolPath(Path("msbuild.exe"))
+    private val _dotnetExecutable = ToolPath(Path("dotnet.exe"))
+    private val _tokens = mutableListOf<Disposable>()
+    private val _versionCmd = CommandLine(
+            null,
+            TargetType.SystemDiagnostics,
+            _dotnetExecutable.path,
+            Path(_workingDirectory.canonicalPath),
+            listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
+            _msbuildVars,
+            "dotnet --version",
+            listOf(StdOutText("Getting the .NET SDK version")))
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _pathService = _ctx.mock(PathsService::class.java)
-        _failedTestSource = _ctx.mock(FailedTestSource::class.java)
-        _dotnetWorkflowAnalyzer = _ctx.mock(DotnetWorkflowAnalyzer::class.java)
-        _loggerService = _ctx.mock(LoggerService::class.java)
-        _workflowContext = _ctx.mock(WorkflowContext::class.java)
-        _environmentVariables = _ctx.mock(EnvironmentVariables::class.java)
-        _commandSet = _ctx.mock(CommandSet::class.java)
-        _dotnetCommand1 = _ctx.mock(DotnetCommand::class.java, "command1")
-        _environmentBuilder1 = _ctx.mock(EnvironmentBuilder::class.java)
-        _resultsAnalyzer1 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer1")
-        _toolResolver1 = _ctx.mock(ToolResolver::class.java, "resolver1")
-        _closeable1 = _ctx.mock(Closeable::class.java, "closeable1")
-        _dotnetCommand2 = _ctx.mock(DotnetCommand::class.java, "command2")
-        _toolResolver2 = _ctx.mock(ToolResolver::class.java, "resolver2")
-        _closeable3 = _ctx.mock(Closeable::class.java, "closeable3")
-        _closeable4 = _ctx.mock(Closeable::class.java, "closeable4")
-        _resultsAnalyzer2 = _ctx.mock(ResultsAnalyzer::class.java, "resultsAnalyzer2")
-        _targetRegistry = _ctx.mock(TargetRegistry::class.java)
-        _targetRegistrationToken = _ctx.mock(Disposable::class.java)
-        _commandRegistry = _ctx.mock(CommandRegistry::class.java)
-        _buildContextFactory = _ctx.mock(DotnetBuildContextFactory::class.java)
-        _buildContext1 = DotnetBuildContext(File("wd"), _dotnetCommand1, DotnetSdk(File("dotnet"), Version(1)))
-        _buildContext2 = DotnetBuildContext(File("wd"), _dotnetCommand2, DotnetSdk(File("dotnet"), Version(2)))
+        _tokens.clear()
+        MockKAnnotations.init(this)
+        clearAllMocks()
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Detailed.toString()
+        every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
+        every { _environmentVariables.getVariables(Version(3, 0, 0)) } returns _dotnetVars.asSequence()
+        every { _dotnetWorkflowAnalyzer.summarize(any()) } returns Unit
+        every { _commandRegistry.register(any()) } returns Unit
+        every { _dotnetWorkflowAnalyzer.registerResult(any(), emptySet(), 0) } returns Unit
+        every { _environmentVariables.getVariables(Version.Empty) } returns _msbuildVars.asSequence()
+        every { _commandLinePresentationService.buildExecutablePresentation(any()) } answers { listOf(StdOutText(arg<Path>(0).path)) }
+        every { _commandLinePresentationService.buildArgsPresentation(any()) } answers { arg<List<CommandLineArgument>>(0).map { StdOutText(" " + it.value) } }
+        every { _virtualContext.isVirtual } returns true
+        every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
+        every { _workflowContext.status } returns WorkflowStatus.Running
+        every { _dotnetToolStateWorkflowComposer.compose(any(), any()) } answers {
+            arg<ToolState>(1).versionObserver.onNext(Version(3))
+            Workflow(_versionCmd)
+        }
+        every { _msbuildToolStateWorkflowComposer.compose(any(), any()) } answers {
+            arg<ToolState>(1).versionObserver.onNext(Version.Empty)
+            Workflow()
+        }
+        every { _resultsObserver.onNext(any()) } returns Unit
     }
 
     @Test
     fun shouldCompose() {
         // Given
         val composer = createInstance()
-        val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"), CommandLineEnvironmentVariable("var1", "val1"))
-        val args1 = listOf(CommandLineArgument("arg1"), CommandLineArgument("arg2"))
-        val args2 = listOf(CommandLineArgument("arg3"))
-        val result = CommandLineResult(sequenceOf(0), emptySequence(), emptySequence())
+
+        val msbuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
+                every { executable } returns ToolPath(_msbuildExecutable.path)
+                every { platform } returns ToolPlatform.Windows
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } answers { createToken() }
+                        })
+                every { getArguments(any()) } returns _msbuildArgs.asSequence()
+                every { commandType } returns DotnetCommandType.MSBuild
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(0,  emptySet()) } returns emptySet()
+                }
+                every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
+            }
+        }
+
+        val dotnetBuildCommand = createDotnetCommand()
+        val dotnetBuildCommand2 = createDotnetCommand()
+
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
+
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
+            createToken()
+        } /* dotnet build */ andThen {
+            createToken()
+        }
+
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        } /* dotnet --version */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
+            createToken()
+        } /* dotnet build */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        }
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand1)
-                will(returnValue(_buildContext1))
-
-                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(1))
-                will(returnValue(envVars.asSequence()))
-
-                oneOf<DotnetCommand>(_dotnetCommand1).commandType
-                will(returnValue(DotnetCommandType.Build))
-
-                oneOf<DotnetCommand>(_dotnetCommand1).getArguments(_buildContext1)
-                will(returnValue(args1.asSequence()))
-
-                oneOf<DotnetCommand>(_dotnetCommand1).environmentBuilders
-                will(returnValue(sequenceOf(_environmentBuilder1)))
-
-                _ctx.invocation {
-                    on(_failedTestSource)
-                    count(2)
-                    func(_failedTestSource::subscribe)
-                    will(object : CustomAction("") {
-                        @Suppress("UNCHECKED_CAST")
-                        override fun invoke(p0: Invocation?): Any {
-                            val observer = p0!!.getParameter(0) as Observer<Unit>
-                            observer.onNext(Unit)
-                            return emptyDisposable()
-                        }
-                    })
-                    with(object : CustomMatcher<Observer<ServiceMessage>>("") {
-                        override fun matches(item: Any?): Boolean = true
-                    })
-                }
-
-                oneOf<DotnetCommand>(_dotnetCommand1).resultsAnalyzer
-                will(returnValue(_resultsAnalyzer1))
-
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer1).analyze(0, EnumSet.of(CommandResult.FailedTests))
-                will(returnValue(EnumSet.of(CommandResult.Success)))
-
-                oneOf<DotnetCommand>(_dotnetCommand1).toolResolver
-                will(returnValue(_toolResolver1))
-
-                oneOf<ToolResolver>(_toolResolver1).executableFile
-                will(returnValue(File("dotnet.exe")))
-
-                oneOf<DotnetBuildContextFactory>(_buildContextFactory).create(_dotnetCommand2)
-                will(returnValue(_buildContext2))
-
-                oneOf<EnvironmentVariables>(_environmentVariables).getVariables(Version(2))
-                will(returnValue(envVars.asSequence()))
-
-                oneOf<DotnetCommand>(_dotnetCommand2).commandType
-                will(returnValue(DotnetCommandType.NuGetPush))
-
-                oneOf<DotnetCommand>(_dotnetCommand2).getArguments(_buildContext2)
-                will(returnValue(args2.asSequence()))
-
-                oneOf<DotnetCommand>(_dotnetCommand2).environmentBuilders
-                will(returnValue(emptySequence<EnvironmentBuilder>()))
-
-                oneOf<DotnetCommand>(_dotnetCommand2).resultsAnalyzer
-                will(returnValue(_resultsAnalyzer2))
-
-                oneOf<ResultsAnalyzer>(_resultsAnalyzer2).analyze(0, EnumSet.of(CommandResult.FailedTests))
-                will(returnValue(EnumSet.of(CommandResult.Success)))
-
-                oneOf<DotnetCommand>(_dotnetCommand2).toolResolver
-                will(returnValue(_toolResolver2))
-
-                oneOf<ToolResolver>(_toolResolver2).executableFile
-                will(returnValue(File("msbuild.exe")))
-
-                oneOf<CommandSet>(_commandSet).commands
-                will(returnValue(sequenceOf(_dotnetCommand1, _dotnetCommand2)))
-
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(result))
-
-                oneOf<LoggerService>(_loggerService).writeStandardOutput(Pair(".NET Core SDK v1.0.0 ", Color.Default), Pair("dotnet.exe arg1 arg2", Color.Header))
-
-                oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.Build.id)
-                will(returnValue(_closeable3))
-
-                oneOf<Closeable>(_closeable3).close()
-
-                oneOf<LoggerService>(_loggerService).writeStandardOutput(Pair(".NET Core SDK v2.0.0 ", Color.Default), Pair("msbuild.exe arg3", Color.Header))
-
-                oneOf<LoggerService>(_loggerService).writeBlock(DotnetCommandType.NuGetPush.id.replace('-', ' '))
-                will(returnValue(_closeable4))
-
-                oneOf<Closeable>(_closeable4).close()
-
-                oneOf<EnvironmentBuilder>(_environmentBuilder1).build(_buildContext1)
-                will(returnValue(_closeable1))
-
-                oneOf<Closeable>(_closeable1).close()
-
-                allowing<WorkflowContext>(_workflowContext).lastResult
-                will(returnValue(result))
-
-                allowing<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).registerResult(with(any(DotnetWorkflowAnalyzerContext::class.java))
-                        ?: DotnetWorkflowAnalyzerContext(), with(EnumSet.of(CommandResult.Success)) ?: EnumSet.noneOf(CommandResult::class.java), with(0))
-                oneOf<DotnetWorkflowAnalyzer>(_dotnetWorkflowAnalyzer).summarize(with(any(DotnetWorkflowAnalyzerContext::class.java)) ?: DotnetWorkflowAnalyzerContext())
-
-                exactly(2).of(_targetRegistry).activate(TargetType.Tool)
-                will(returnValue(_targetRegistrationToken))
-
-                exactly(2).of(_targetRegistrationToken).dispose()
-
-                oneOf(_commandRegistry).register(_buildContext1)
-
-                oneOf(_commandRegistry).register(_buildContext2)
-            }
-        })
-
-        val actualCommandLines = composer.compose(_workflowContext).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
         // Then
-        _ctx.assertIsSatisfied()
+        verifyAllTokensWereDisposed()
+
         Assert.assertEquals(
                 actualCommandLines,
                 listOf(
                         CommandLine(
+                                null,
                                 TargetType.Tool,
-                                File("dotnet.exe"),
-                                File("wd"),
-                                args1,
-                                envVars),
+                                _msbuildExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _msbuildArgs,
+                                _msbuildVars,
+                                "msbuild",
+                                emptyList()),
+                        _versionCmd,
                         CommandLine(
+                                null,
                                 TargetType.Tool,
-                                File("msbuild.exe"),
-                                File("wd"),
-                                args2,
-                                envVars)
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _dotnetArgs,
+                                _dotnetVars,
+                                "dotnet",
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))),
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _dotnetArgs,
+                                _dotnetVars,
+                                "dotnet",
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
+                ))
+    }
+
+    private fun createDotnetCommand(): DotnetCommand {
+        return mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
+                every { executable } returns _dotnetExecutable
+                every { platform } returns ToolPlatform.CrossPlatform
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any()) } answers { createToken() }
+                        })
+                every { getArguments(any()) } returns _dotnetArgs.asSequence()
+                every { commandType } returns DotnetCommandType.Build
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(0, emptySet()) } returns emptySet()
+                }
+                every { isCommandRequired } returns true
+                every { resultsObserver } returns _resultsObserver
+            }
+        }
+    }
+
+    @Test
+    fun shouldComposeForFailedTest() {
+        // Given
+        val composer = createInstance()
+
+        every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
+
+        val msbuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
+                every { executable } returns _msbuildExecutable
+                every { platform } returns ToolPlatform.Windows
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } answers { createToken() }
+                        })
+                every { getArguments(any()) } returns _msbuildArgs.asSequence()
+                every { commandType } returns DotnetCommandType.MSBuild
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(1,  setOf(CommandResult.FailedTests)) } returns setOf(CommandResult.FailedTests)
+                }
+                every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
+            }
+        }
+
+        val dotnetBuildCommand = createDotnetCommand()
+
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<Unit>>(0).onNext(Unit)
+            createToken()
+        } /* dotnet build */ andThen {
+            createToken()
+        }
+
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
+            createToken()
+        } /* dotnet --version */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
+            createToken()
+        } /* dotnet build */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        }
+
+        // When
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
+
+        // Then
+        verifyAllTokensWereDisposed()
+
+        Assert.assertEquals(
+                actualCommandLines,
+                listOf(
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _msbuildExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _msbuildArgs,
+                                _msbuildVars,
+                                "msbuild",
+                                emptyList()),
+                        CommandLine(
+                                null,
+                                TargetType.SystemDiagnostics,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
+                                _msbuildVars,
+                                "dotnet --version",
+                                listOf(StdOutText("Getting the .NET SDK version"))),
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _dotnetArgs,
+                                _dotnetVars,
+                                "dotnet",
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
+                ))
+    }
+
+    @Test
+    fun shouldAbortBuildWhenFailed() {
+        // Given
+        val composer = createInstance()
+
+        every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
+
+        val msbuildCommand = mockk<DotnetCommand>() {
+            every { toolResolver } returns mockk<ToolResolver>() {
+                every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
+                every { executable } returns _msbuildExecutable
+                every { platform } returns ToolPlatform.Windows
+                every { environmentBuilders } returns sequenceOf(
+                        mockk<EnvironmentBuilder>() {
+                            every { build(any())  } answers { createToken() }
+                        })
+                every { getArguments(any()) } returns _msbuildArgs.asSequence()
+                every { commandType } returns DotnetCommandType.MSBuild
+                every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
+                    every { analyze(1,  emptySet()) } returns setOf(CommandResult.Fail)
+                }
+                every { isCommandRequired } returns false
+                every { resultsObserver } returns _resultsObserver
+            }
+        }
+
+        val dotnetBuildCommand = createDotnetCommand()
+
+        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+
+        every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
+            createToken()
+        } /* dotnet build */ andThen {
+            createToken()
+        }
+
+        // Subscribe command results observer
+        every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
+            createToken()
+        } andThen
+        /* // Subscribe for an exit code for msbuild */ {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
+            createToken()
+        } /* Subscribe for an exit code for dotnet --version */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
+            createToken()
+        } /* Subscribe for an exit code for dotnet build */ andThen {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
+            createToken()
+        }
+
+        every { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) } returns Unit
+
+        // When
+        val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
+
+        // Then
+        verifyAllTokensWereDisposed()
+        verify { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) }
+
+        Assert.assertEquals(
+                actualCommandLines,
+                listOf(
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _msbuildExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _msbuildArgs,
+                                _msbuildVars,
+                                "msbuild",
+                                emptyList()),
+                        CommandLine(
+                                null,
+                                TargetType.SystemDiagnostics,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
+                                _msbuildVars,
+                                "dotnet --version",
+                                listOf(StdOutText("Getting the .NET SDK version"))),
+                        CommandLine(
+                                null,
+                                TargetType.Tool,
+                                _dotnetExecutable.path,
+                                Path(_workingDirectory.canonicalPath),
+                                _dotnetArgs,
+                                _dotnetVars,
+                                "dotnet",
+                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
                 ))
     }
 
     private fun createInstance(): DotnetWorkflowComposer {
         return DotnetWorkflowComposer(
-                _pathService,
-                _loggerService,
-                ArgumentsServiceStub(),
+                _pathsService,
                 _environmentVariables,
                 _dotnetWorkflowAnalyzer,
                 _commandSet,
                 _failedTestSource,
-                _targetRegistry,
                 _commandRegistry,
-                _buildContextFactory)
+                _parametersService,
+                _commandLinePresentationService,
+                _virtualContext)
     }
+
+    private fun createToken(): Disposable {
+        val token = mockk<Disposable>() {
+            every { dispose() } returns Unit
+        }
+
+        _tokens.add(token)
+        return token
+    }
+
+    private fun verifyAllTokensWereDisposed() {
+        for (token in _tokens) {
+            verify { token.dispose() }
+        }
+
+        _tokens.clear()
+    }
+
 }

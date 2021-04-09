@@ -1,6 +1,24 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 
@@ -10,14 +28,18 @@ class VSTestCommand(
         private val _targetService: TargetService,
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: ToolResolver)
+        override val toolResolver: ToolResolver,
+        private val _argumentsAlternative: ArgumentsAlternative)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.VSTest
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.targetFile.path))) }
+        get() {
+            val targetArgs = _targetService.targets.map { CommandLineArgument(it.target.path, CommandLineArgumentType.Target) }.toList()
+            return if(targetArgs.any()) sequenceOf(TargetArguments(targetArgs.asSequence())) else emptySequence()
+        }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
@@ -26,26 +48,38 @@ class VSTestCommand(
             }
         }
 
+        var filterArgs: MutableList<CommandLineArgument> = mutableListOf();
         when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
             "filter" -> {
                 parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
                     if (it.isNotBlank()) {
-                        yield(CommandLineArgument("/TestCaseFilter:$it"))
+                        filterArgs.add(CommandLineArgument("/TestCaseFilter:$it"))
                     }
                 }
             }
             "name" -> {
                 parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
                     if (it.isNotBlank()) {
-                        yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                        filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
                     }
                 }
             }
         }
 
+        if (context.toolVersion >= VersionSupportingArgFiles) {
+            yieldAll(_argumentsAlternative.select("Filter", filterArgs, filterArgs.asSequence(), emptySequence(), context.verbosityLevel))
+        }
+        else {
+            yieldAll(filterArgs)
+        }
+
         parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("/Platform:$it"))
+                Platform.tryParse(it)?.let {
+                    if( it != Platform.Default) {
+                        yield(CommandLineArgument("/Platform:${it.id}"))
+                    }
+                }
             }
         }
 
@@ -55,7 +89,15 @@ class VSTestCommand(
             }
         }
 
+        if (parameters(DotnetConstants.PARAM_VSTEST_IN_ISOLATION, "").trim().toBoolean()) {
+            yield(CommandLineArgument("/InIsolation"))
+        }
+
         yieldAll(_vstestLoggerArgumentsProvider.getArguments(context))
         yieldAll(_customArgumentsProvider.getArguments(context))
+    }
+
+    companion object {
+        internal val VersionSupportingArgFiles = Version(2, 1)
     }
 }

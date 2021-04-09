@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.BuildProblemData
@@ -7,6 +23,8 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
+import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 
 class VisualStudioWorkflowComposer(
@@ -16,13 +34,17 @@ class VisualStudioWorkflowComposer(
         private val _loggerService: LoggerService,
         private val _targetService: TargetService,
         private val _toolResolver: ToolResolver,
-        private val _targetRegistry: TargetRegistry)
-    : WorkflowComposer {
+        private val _virtualContext: VirtualContext)
+    : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, workflow: Workflow) =
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
+                if (context.status != WorkflowStatus.Running) {
+                    return@sequence
+                }
+
                 parameters(DotnetConstants.PARAM_COMMAND)?.let {
                     if (!DotnetCommandType.VisualStudio.id.equals(it, true)) {
                         return@sequence
@@ -43,33 +65,45 @@ class VisualStudioWorkflowComposer(
                 }
 
                 val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-                    _argumentsService.split(it).map { CommandLineArgument(it) }.toList()
-                } ?: emptyList()
+                    _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }.toList()
+                } ?: emptyList<CommandLineArgument>()
 
-                val executableFile = _toolResolver.executableFile
+                val executableFile = Path(_virtualContext.resolvePath(_toolResolver.executableFile.canonicalPath))
 
-                for ((targetFile) in _targetService.targets) {
-                    _targetRegistry.activate(target).use {
+                for ((target) in _targetService.targets) {
+                    if (context.status != WorkflowStatus.Running) {
+                        break
+                    }
+
+                    disposableOf(
+                            // Subscribe for an exit code
+                            context.subscribe {
+                                when {
+                                    it is CommandResultExitCode -> {
+                                        if (it.exitCode != 0) {
+                                            _loggerService.writeBuildProblem("visual_studio_exit_code${it.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${it.exitCode}")
+                                            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                                        }
+                                    }
+                                }
+                            }
+                    ).use {
                         yield(CommandLine(
+                                null,
                                 TargetType.Tool,
                                 executableFile,
-                                workingDirectory,
+                                Path(workingDirectory.path),
                                 sequence {
-                                    yield(CommandLineArgument(targetFile.absolutePath))
-                                    yield(CommandLineArgument("/$action"))
+                                    yield(CommandLineArgument(target.path, CommandLineArgumentType.Target))
+                                    yield(CommandLineArgument("/$action", CommandLineArgumentType.Mandatory))
                                     if (!configValue.isBlank()) {
                                         yield(CommandLineArgument(configValue))
                                     }
 
                                     yieldAll(args)
                                 }.toList(),
-                                emptyList()))
-                    }
-
-                    if (context.lastResult.exitCode != 0) {
-                        _loggerService.writeBuildProblem(BuildProblemData.createBuildProblem("visual_studio_exit_code${context.lastResult.exitCode}", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code ${context.lastResult.exitCode}"))
-                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                        return@sequence
+                                emptyList<CommandLineEnvironmentVariable>(),
+                                DotnetCommandType.VisualStudio.id))
                     }
                 }
             })

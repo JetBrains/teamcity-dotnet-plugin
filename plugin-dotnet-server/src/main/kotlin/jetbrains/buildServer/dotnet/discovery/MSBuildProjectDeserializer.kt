@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.discovery
 
 import jetbrains.buildServer.XmlDocumentService
@@ -11,7 +27,7 @@ import javax.xml.xpath.XPathFactory
 
 class MSBuildProjectDeserializer(
         private val _xmlDocumentService: XmlDocumentService) : SolutionDeserializer {
-    override fun accept(path: String): Boolean = PathPattern.matcher(path).find()
+    override fun isAccepted(path: String): Boolean = PathPattern.matcher(path).find()
 
     override fun deserialize(path: String, streamFactory: StreamFactory): Solution =
             streamFactory.tryCreate(path)?.let {
@@ -23,29 +39,30 @@ class MSBuildProjectDeserializer(
                             .map { it?.let { it.groupValues[2] } }
                             .filter { !it.isNullOrBlank() }
                             .map { it as String }
-                            .plus(getContents(doc, "/Project/PropertyGroup/Configuration"))
+                            .plus(getContents(doc, "//PropertyGroup/Configuration"))
                             .distinct()
                             .map { Configuration(it) }
                             .toList()
 
-                    val frameworks = getContents(doc, "/Project/PropertyGroup/TargetFrameworks")
+                    val frameworks = getContents(doc, "//PropertyGroup/TargetFrameworks")
                             .flatMap { it.split(';').asSequence() }
                             .plus(getContents(doc, "/Project/PropertyGroup/TargetFramework"))
+                            .plus(getContents(doc, "/Project/PropertyGroup/TargetFrameworkVersion").map { it.replace("v", "net").replace(".", "") })
                             .distinct()
                             .map { Framework(it) }
                             .toList()
 
-                    val runtimes = getContents(doc, "/Project/PropertyGroup/RuntimeIdentifiers")
+                    val runtimes = getContents(doc, "//PropertyGroup/RuntimeIdentifiers")
                             .flatMap { it.split(';').asSequence() }
                             .plus(getContents(doc, "/Project/PropertyGroup/RuntimeIdentifier"))
                             .distinct()
                             .map { Runtime(it) }
                             .toList()
 
-                    val references = getAttributes(doc, "/Project/ItemGroup/PackageReference[@Include]", "Include")
+                    val references = getAttributes(doc, "//ItemGroup/PackageReference[@Include]", "Include")
                             .filter { !it.isBlank() }
                             .plus(
-                                    getAttributes(doc, "/Project/ItemGroup/Reference[@Include]", "Include")
+                                    getAttributes(doc, "//ItemGroup/Reference[@Include]", "Include")
                                             .map { it.split(',').firstOrNull() }
                                             .filter { !it.isNullOrBlank() })
                             .distinct()
@@ -61,7 +78,14 @@ class MSBuildProjectDeserializer(
                             .filter { "true".equals(it.trim(), true) }
                             .any()
 
-                    Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets, generatePackageOnBuild)))
+                    val properties =
+                            getContents(doc, "/Project/PropertyGroup/AssemblyName").map { Property("AssemblyName", it) }
+                            .plus(getContents(doc, "/Project/PropertyGroup/TestProjectType").map { Property("TestProjectType", it) })
+                            .plus(getContents(doc, "/Project/PropertyGroup/OutputType").map { Property("OutputType", it) })
+                            .plus(getAttributes(doc, "/Project", "Sdk").map { Property("Sdk", it) })
+                            .toList()
+
+                    Solution(listOf(Project(path, configurations, frameworks, runtimes, references, targets, generatePackageOnBuild, properties)))
                 }
             } ?: Solution(emptyList())
 

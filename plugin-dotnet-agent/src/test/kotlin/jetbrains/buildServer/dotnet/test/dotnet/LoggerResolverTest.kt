@@ -1,5 +1,23 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.every
+import io.mockk.mockk
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
@@ -10,8 +28,6 @@ import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -25,9 +41,9 @@ class LoggerResolverTest {
                 arrayOf(
                         ToolType.MSBuild,
                         VirtualFileSystemService()
-                                .addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
+                                .addFile(File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         emptyMap<String, String>(),
-                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
                         null),
 
                 // when bundled was not found
@@ -36,7 +52,7 @@ class LoggerResolverTest {
                         VirtualFileSystemService(),
                         emptyMap<String, String>(),
                         null,
-                        ".NET integration package was not found at .+" as String?),
+                        "Path \"plugin\\${File.separator}tools\\${File.separator}msbuild15\\${File.separator}TeamCity.MSBuild.Logger.dll\" to MSBuild logger was not found"),
 
                 // Success scenario for defaults
                 arrayOf(
@@ -86,29 +102,29 @@ class LoggerResolverTest {
                 arrayOf(
                         ToolType.VSTest,
                         VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
-                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15CrossPlatform.id),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTestCrossPlatform.id),
                         File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
                         ToolType.VSTest,
                         VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
-                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15DotnetCore.id),
+                        mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuildCrossPlatform.id),
                         File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
                         ToolType.VSTest,
-                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild15WindowsX64.id),
-                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
                         ToolType.VSTest,
-                        VirtualFileSystemService().addFile(File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll")),
+                        VirtualFileSystemService().addFile(File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home", DotnetConstants.PARAM_MSBUILD_VERSION to Tool.MSBuild14WindowsX86.id, DotnetConstants.PARAM_VSTEST_VERSION to Tool.VSTest15Windows.id),
-                        File(File("home", "vstest14"), "TeamCity.VSTest.TestAdapter.dll"),
+                        File(File("home", "vstest15"), "TeamCity.VSTest.TestAdapter.dll"),
                         null),
 
                 arrayOf(
@@ -129,9 +145,9 @@ class LoggerResolverTest {
                 // Use bundled when has no directory
                 arrayOf(
                         ToolType.MSBuild,
-                        VirtualFileSystemService().addFile(File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
+                        VirtualFileSystemService().addFile(File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll")),
                         mapOf(DotnetConstants.INTEGRATION_PACKAGE_HOME to "home"),
-                        File(File(File(ToolsPath, "TeamCity.Dotnet.Integration.1.0.34"), "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
+                        File(File(ToolsPath, "msbuild15"), "TeamCity.MSBuild.Logger.dll"),
                         null)
         )
     }
@@ -145,14 +161,9 @@ class LoggerResolverTest {
             expectedErrorPattern: String?) {
         // Given
         val pluginPath = File("plugin")
-        val ctx = Mockery()
-        val pathsService = ctx.mock(PathsService::class.java)
-        ctx.checking(object : Expectations() {
-            init {
-                allowing<PathsService>(pathsService).getPath(PathType.Plugin)
-                will(returnValue(pluginPath))
-            }
-        })
+        val pathsService = mockk<PathsService> {
+            every { getPath(PathType.Plugin) } returns pluginPath
+        }
 
         val loggerProvider = LoggerResolverImpl(ParametersServiceStub(parameters), fileSystemService, pathsService)
 

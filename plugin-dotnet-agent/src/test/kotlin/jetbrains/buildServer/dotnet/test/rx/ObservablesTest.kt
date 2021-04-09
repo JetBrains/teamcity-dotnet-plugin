@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:Suppress("MoveLambdaOutsideParentheses")
 
 package jetbrains.buildServer.dotnet.test.rx
@@ -14,7 +30,7 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = buildObservable<Int> {
+        val source = observable<Int> {
             onNext(1)
             onNext(2)
             onComplete()
@@ -30,7 +46,7 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = buildObservable<Int> {
+        val source = observable<Int> {
             onComplete()
             emptyDisposable()
         }
@@ -44,7 +60,7 @@ class ObservablesTest {
         // Given
 
         // When
-        val source = buildObservable<Int> {
+        val source = observable<Int> {
             onNext(1)
             onNext(2)
             onError(error)
@@ -341,7 +357,7 @@ class ObservablesTest {
         val observers = mutableListOf<Observer<Int>>()
 
         // When
-        val source = buildObservable<Int> {
+        val source = observable<Int> {
             observers.add(this)
             onComplete()
             emptyDisposable()
@@ -363,7 +379,7 @@ class ObservablesTest {
         val unsubscribes = mutableListOf<Boolean>()
 
         // When
-        buildObservable<Int> {
+        observable<Int> {
             onComplete()
             emptyDisposable()
         }
@@ -374,6 +390,73 @@ class ObservablesTest {
         // Then
         Assert.assertEquals(subscribes, listOf(false, true))
         Assert.assertEquals(unsubscribes, listOf(false, true))
+    }
+
+    @DataProvider
+    fun testDistinct(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(1), NotificationNext(2), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(1), NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(1), NotificationNext(2), NotificationNext(2), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(1), NotificationNext(2), NotificationNext(2), NotificationNext(1), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), completed<Int>())),
+                arrayOf(
+                        observableOf(completed()),
+                        observableOf(completed<Int>())),
+                arrayOf(
+                        observableOf(NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))),
+                arrayOf(
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed()),
+                        observableOf(NotificationNext(1), NotificationNext(2), NotificationNext(3), completed<Int>())))
+    }
+
+    @Test(dataProvider = "testDistinct")
+    fun shouldDistinct(data: Observable<Notification<Int>>, expectedNotifications: Observable<Notification<Int>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual= source.distinct()
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
+    }
+
+    @DataProvider
+    fun testTypeOf(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf<Any>(
+                        observableOf<Any>(NotificationNext<Any>(1), NotificationNext<Any>("2"), NotificationNext<Any>(3), completed<Any>()),
+                        observableOf<Notification<Int>>(NotificationNext(1), NotificationNext(3), completed<Int>())),
+                arrayOf<Any>(
+                        observableOf<Notification<String>>(NotificationNext("1"), NotificationNext("2"), completed()),
+                        observableOf(completed<Int>())),
+                arrayOf<Any>(
+                        observableOf<Notification<Any>>(completed()),
+                        observableOf(completed<Int>())),
+                arrayOf<Any>(
+                        observableOf<Notification<Any>>(NotificationError(error)),
+                        observableOf(NotificationError<Int>(error))))
+    }
+
+    @Test(dataProvider = "testTypeOf")
+    fun shouldTypeOf(data: Observable<Notification<Any>>, expectedNotifications: Observable<Notification<Int>>) {
+        // Given
+        val source = data.dematerialize()
+
+        // When
+        val actual = source.ofType<Any, Int>()
+
+        // Then
+        assertEquals(actual, expectedNotifications.dematerialize())
     }
 
     companion object {

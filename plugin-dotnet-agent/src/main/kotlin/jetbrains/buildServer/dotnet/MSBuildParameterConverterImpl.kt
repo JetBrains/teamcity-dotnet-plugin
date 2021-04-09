@@ -1,29 +1,43 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.util.StringUtil
+
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
-    override fun convert(source: MSBuildParameter): String = "/p:${toString(normalizeName(source.name))}=${normalizeValue(source.value)}"
+    override fun convert(parameters: Sequence<MSBuildParameter>, isCommandLineParameters: Boolean) = parameters
+            .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
+            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value, isCommandLineParameters)}" }
 
-    private fun normalizeValue(value: String): String {
-        if (value.isEmpty()) {
-            return "\"\""
+    fun normalizeName(name: String) =
+            String(
+                name.mapIndexed { index: Int, c: Char ->
+                    if ( if(index == 0) isValidInitialElementNameCharacter(c) else isValidSubsequentElementNameCharacter(c) ) c else '_'
+                }.toCharArray()
+            )
+
+    fun normalizeValue(value: String, isCommandLineParameter: Boolean): String {
+        val str = String(escapeSymbols(value.asSequence(), isCommandLineParameter).toList().toCharArray())
+        if (str.isBlank() || str.contains(';')) {
+            return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
 
-        return toString(escape(value))
+        return str
     }
 
-    private fun normalizeName(name: String): Sequence<Char> = sequence {
-        for (char in name.asSequence()) {
-            if (char.isLetterOrDigit() || char == '_') {
-                yield(char)
-            } else {
-                yield('_')
-            }
-        }
-    }
+    private fun isValidInitialElementNameCharacter(c: Char) =
+        (c >= 'A' && c <= 'Z') ||
+        (c >= 'a' && c <= 'z') ||
+        (c == '_')
 
-    private fun escape(name: String): Sequence<Char> = sequence {
-        for (char in name.asSequence()) {
-            if (char.isLetterOrDigit()) {
+    private fun isValidSubsequentElementNameCharacter(c: Char) =
+        (c >= 'A' && c <= 'Z') ||
+        (c >= 'a' && c <= 'z') ||
+        (c >= '0' && c <= '9') ||
+        (c == '_') ||
+        (c == '-')
+
+    private fun escapeSymbols(chars: Sequence<Char>, isCommandLineParameter: Boolean): Sequence<Char> = sequence {
+        for (char in chars) {
+            if (char.isLetterOrDigit() || (char == ';' && !isCommandLineParameter) || char == '%') {
                 yield(char)
             } else {
                 yield('%')
@@ -33,6 +47,4 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
             }
         }
     }
-
-    private fun toString(chars: Sequence<Char>): String = String(chars.toList().toCharArray())
 }

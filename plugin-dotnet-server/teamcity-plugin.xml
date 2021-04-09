@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2000-2021 JetBrains s.r.o.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-plugin-v1-xml">
     <info>
-        <name>dotnet.cli</name>
-        <display-name>.NET CLI Support</display-name>
+        <name>dotnet</name>
+        <display-name>.NET Support</display-name>
         <version>@Plugin_Version@</version>
-        <description>Allows building projects via .NET CLI toolchain</description>
+        <description>Allows building projects via .NET toolchain</description>
         <vendor>
-            <name>JetBrains, s.r.o.</name>
+            <name>JetBrains</name>
             <url>http://www.jetbrains.com/</url>
         </vendor>
     </info>
-    <deployment use-separate-classloader="true"/>
+    <deployment use-separate-classloader="true" node-responsibilities-aware="true"/>
 </teamcity-plugin>

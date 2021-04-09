@@ -1,13 +1,23 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
+ * Copyright 2000-2021 JetBrains s.r.o.
  *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * See LICENSE in the project root for license information.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.dotnet.commands.*
+import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl
 import jetbrains.buildServer.web.functions.InternalProperties
 
 /**
@@ -34,11 +44,18 @@ class DotnetParametersProvider {
     val frameworkKey: String
         get() = DotnetConstants.PARAM_FRAMEWORK
 
+    val requiredSdkKey: String
+        get() = DotnetConstants.PARAM_REQUIRED_SDK
+
     val msbuildVersionKey: String
         get() = DotnetConstants.PARAM_MSBUILD_VERSION
 
     val msbuildVersions: List<Tool>
-        get() = Tool.values().filter { it.type == ToolType.MSBuild }
+        get() = Tool.values().filter {
+            it.type == ToolType.MSBuild
+            && (experimentalMode || it.platform != ToolPlatform.Mono)
+            && (supportMSBuildBitness || it.bitness == ToolBitness.Any)
+        }
 
     val nugetApiKey: String
         get() = DotnetConstants.PARAM_NUGET_API_KEY
@@ -118,14 +135,11 @@ class DotnetParametersProvider {
     val vstestVersions: List<Tool>
         get() = Tool.values().filter { it.type == ToolType.VSTest }
 
+    val vstestPlatforms: List<Platform>
+        get() = Platform.values().toList()
 
-    // Integration package
-
-    val integrationPackagePathKey: String
-        get() = DotnetConstants.INTEGRATION_PACKAGE_HOME
-
-    val integrationPackageToolTypeKey: String
-        get() = DotnetConstants.PACKAGE_TYPE
+    val vstestInIsolation: String
+        get() = DotnetConstants.PARAM_VSTEST_IN_ISOLATION
 
     // Coverage keys
 
@@ -146,33 +160,30 @@ class DotnetParametersProvider {
 
     companion object {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
-
-        private val experimentalCommandTypes: Sequence<CommandType> =
-                if (experimentalMode)
-                    sequenceOf(VisualStudioCommandType())
-                else
-                    emptySequence()
-
+        private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
+        private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
+        private val requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
         val commandTypes
             get() = sequenceOf(
-                    RestoreCommandType(),
-                    BuildCommandType(),
-                    TestCommandType(),
-                    PublishCommandType(),
-                    PackCommandType(),
-                    NugetPushCommandType(),
-                    NugetDeleteCommandType(),
-                    CleanCommandType(),
-                    RunCommandType(),
-                    MSBuildCommandType(),
-                    VSTestCommandType()
-            ).plus(experimentalCommandTypes)
+                    RestoreCommandType(requirementFactory),
+                    BuildCommandType(requirementFactory),
+                    TestCommandType(requirementFactory),
+                    PublishCommandType(requirementFactory),
+                    PackCommandType(requirementFactory),
+                    NugetPushCommandType(requirementFactory),
+                    NugetDeleteCommandType(requirementFactory),
+                    CleanCommandType(requirementFactory),
+                    RunCommandType(requirementFactory),
+                    MSBuildCommandType(requirementFactory),
+                    VSTestCommandType(requirementFactory),
+                    VisualStudioCommandType(requirementFactory))
+                    .plus(if(experimentalMode) experimentalCommandTypes else emptySequence())
                     .sortedBy { it.description }
-                    //.plus(CustomCommandType())
+                    .plus(CustomCommandType(requirementFactory))
                     .associateBy { it.name }
 
         val coverageTypes
-            get() = sequenceOf<CommandType>(DotCoverCoverageType())
+            get() = sequenceOf<CommandType>(DotCoverCoverageType(requirementFactory))
                     .sortedBy { it.name }
                     .associateBy { it.name }
     }

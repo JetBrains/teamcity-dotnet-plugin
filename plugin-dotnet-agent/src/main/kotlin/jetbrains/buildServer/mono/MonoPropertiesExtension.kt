@@ -1,10 +1,26 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.mono
 
-import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.MonoConstants
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.util.EventDispatcher
-import java.io.File
+import jetbrains.buildServer.agent.Logger
 
 class MonoPropertiesExtension(
         events: EventDispatcher<AgentLifeCycleListener>,
@@ -21,15 +37,20 @@ class MonoPropertiesExtension(
         LOG.debug("Locating Mono")
         try {
             val command = CommandLine(
+                    null,
                     TargetType.Tool,
-                    File(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
-                    File("."),
-                    listOf(CommandLineArgument("--version")),
+                    Path(_toolProvider.getPath(MonoConstants.RUNNER_TYPE)),
+                    Path("."),
+                    listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
                     emptyList())
             _commandLineExecutor.tryExecute(command)?.let {
-                _versionParser.tryParse(it.standardOutput)?.let {
-                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.absolutePath)
-                    LOG.info("Found Mono $it at ${command.executableFile.absolutePath}")
+                val version = _versionParser.parse(it.standardOutput)
+                if (version != Version.Empty) {
+                    agent.configuration.addConfigurationParameter(MonoConstants.CONFIG_PATH, command.executableFile.path)
+                    LOG.info("Found Mono $it at ${command.executableFile.path}")
+                }
+                else {
+                    LOG.info("Mono not found")
                 }
             }
         } catch (e: ToolCannotBeFoundException) {
@@ -39,6 +60,6 @@ class MonoPropertiesExtension(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(MonoPropertiesExtension::class.java.name)
+        private val LOG = Logger.getLogger(MonoPropertiesExtension::class.java)
     }
 }

@@ -1,14 +1,29 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.cmd
 
+import io.mockk.*
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.Workflow
-import jetbrains.buildServer.agent.runner.WorkflowComposer
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.cmd.CmdWorkflowComposer
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
+import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.util.OSType
-import org.jmock.Expectations
-import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -16,18 +31,22 @@ import org.testng.annotations.Test
 import java.io.File
 
 class CmdWorkflowComposerTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _environment: Environment
-    private lateinit var _workflowContext: WorkflowContext
-    private var _workflowCmd = createWorkflow(File("abc1", "my.cmd"))
-    private var _workflowBat = createWorkflow(File("abc2", "my.bat"))
-    private var _workflowOther = createWorkflow(File("abc3", "my.exe"))
+    @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _cannotExecute: CannotExecute
+    @MockK private lateinit var _workflowContext: WorkflowContext
+    private var _baseCommandLineCmd = createBaseCommandLine(Path(File("abc1", "my.cMd").path))
+    private var _workflowCmd = createWorkflow(_baseCommandLineCmd)
+    private var _baseCommandLineBat = createBaseCommandLine(Path(File("abc2", "my.Bat").path))
+    private var _workflowBat = createWorkflow(_baseCommandLineBat)
+    private var _baseCommandLineOther = createBaseCommandLine(Path(File("abc3", "my.exe").path))
+    private var _workflowOther = createWorkflow(_baseCommandLineOther)
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _environment = _ctx.mock(Environment::class.java)
-        _workflowContext = _ctx.mock(WorkflowContext::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
+        every { _virtualContext.isVirtual } returns true
     }
 
     @Test
@@ -45,47 +64,49 @@ class CmdWorkflowComposerTest {
     @DataProvider(name = "composeCases")
     fun getComposeCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(OSType.MAC, "cmd", _workflowCmd, _workflowCmd),
-                arrayOf(OSType.UNIX, "cmd", _workflowBat, _workflowBat),
-                arrayOf(OSType.UNIX, "cmd", _workflowOther, _workflowOther),
-                arrayOf(OSType.WINDOWS, File("win", "cmd.exe").path, _workflowOther, _workflowOther),
+                arrayOf(OSType.MAC, _workflowCmd, Workflow(), true),
+                arrayOf(OSType.UNIX, _workflowBat, Workflow(), true),
+                arrayOf(OSType.UNIX, _workflowOther, _workflowOther, false),
+                arrayOf(OSType.WINDOWS, _workflowOther, _workflowOther, false),
                 arrayOf(
                         OSType.WINDOWS,
-                        File("win", "cmd.exe").path,
                         _workflowCmd,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
+                                                _baseCommandLineCmd,
                                                 TargetType.Host,
-                                                File("win", "cmd.exe"),
-                                                _workflowCmd.commandLines.single().workingDirectory,
+                                                Path("cmd.exe"),
+                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"${_workflowCmd.commandLines.single().executableFile.absolutePath} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowCmd.commandLines.single().executableFile.path} ${_workflowCmd.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Target)),
                                                 _workflowCmd.commandLines.single().environmentVariables
                                         )
                                 )
-                        )
+                        ),
+                        false
                 ),
                 arrayOf(
                         OSType.WINDOWS,
-                        File("win", "cmd.exe").path,
                         _workflowBat,
                         Workflow(
                                 sequenceOf(
                                         CommandLine(
+                                                _baseCommandLineBat,
                                                 TargetType.Host,
-                                                File("win", "cmd.exe"),
-                                                _workflowBat.commandLines.single().workingDirectory,
+                                                Path("cmd.exe"),
+                                                Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
                                                         CommandLineArgument("/D"),
                                                         CommandLineArgument("/C"),
-                                                        CommandLineArgument("\"${_workflowBat.commandLines.single().executableFile.absolutePath} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { it.value }}\"")),
+                                                        CommandLineArgument("\"v_${_workflowBat.commandLines.single().executableFile.path} ${_workflowBat.commandLines.single().arguments.joinToString(" ") { "v_" + it.value }}\"", CommandLineArgumentType.Target)),
                                                 _workflowBat.commandLines.single().environmentVariables
                                         )
                                 )
-                        )
+                        ),
+                        false
                 )
         )
     }
@@ -93,49 +114,51 @@ class CmdWorkflowComposerTest {
     @Test(dataProvider = "composeCases")
     fun shouldCompose(
             osType: OSType,
-            cmdFile: String?,
             baseWorkflow: Workflow,
-            expectedWorkflow: Workflow) {
+            expectedWorkflow: Workflow,
+            hasProblem: Boolean) {
         // Given
         val composer = createInstance()
+        val pathObserver = mockk<Observer<Path>>()
+        every { pathObserver.onNext(any()) } returns Unit
+        every { _virtualContext.targetOSType } returns osType
+        if(hasProblem) {
+            every { _cannotExecute.writeBuildProblemFor(any()) } returns Unit
+        }
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<Environment>(_environment).os
-                will(returnValue(osType))
-
-                allowing<Environment>(_environment).tryGetVariable(CmdWorkflowComposer.ComSpecEnvVarName)
-                will(returnValue(cmdFile))
-            }
-        })
-
-        val actualCommandLines = composer.compose(_workflowContext, baseWorkflow).commandLines.toList()
+        val actualCommandLines = composer.compose(_workflowContext, Unit, baseWorkflow).commandLines.toList()
 
         // Then
-        _ctx.assertIsSatisfied()
+        if (hasProblem) {
+            verify { _cannotExecute.writeBuildProblemFor(any()) }
+        }
+
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
-    private fun createInstance(): WorkflowComposer {
-        return CmdWorkflowComposer(
-                ArgumentsServiceStub(),
-                _environment)
-    }
+    private fun createInstance()=
+            CmdWorkflowComposer(
+                    ArgumentsServiceStub(),
+                    _virtualContext,
+                    _cannotExecute)
 
     companion object {
-        private fun createWorkflow(executableFile: File): Workflow {
-            val workingDirectory = File("wd")
+        private fun createWorkflow(baseCommandLine: CommandLine) =
+            Workflow(sequenceOf(baseCommandLine))
+
+        private fun createBaseCommandLine(executableFile: Path): CommandLine {
+            val workingDirectory = Path("wd")
             val args = listOf(CommandLineArgument("arg1"))
             val envVars = listOf(CommandLineEnvironmentVariable("var1", "val1"))
             val commandLine = CommandLine(
+                    null,
                     TargetType.Tool,
                     executableFile,
                     workingDirectory,
                     args,
                     envVars)
-
-            return Workflow(sequenceOf(commandLine))
+            return commandLine
         }
     }
 }

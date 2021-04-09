@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.RunBuildException
@@ -17,34 +33,34 @@ class PathsServiceImpl(
     override val uniqueName: String
         get() = UUID.randomUUID().toString().replace("-", "")
 
-    override fun getPath(pathType: PathType) = when (pathType) {
-        PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory
-        PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory
-        PathType.AgentTemp -> _buildAgentConfigurablePaths.agentTempDirectory
-        PathType.BuildTemp -> _buildAgentConfigurablePaths.buildTempDirectory
-        PathType.GlobalTemp -> _buildAgentConfigurablePaths.cacheDirectory
-        PathType.Plugins -> _buildAgentConfiguration.agentPluginsDirectory
-        PathType.Plugin -> _pluginDescriptor.pluginRoot
-        PathType.Tools -> _buildAgentConfiguration.agentToolsDirectory
-        PathType.Lib -> _buildAgentConfiguration.agentLibDirectory
-        PathType.Work -> _buildAgentConfiguration.workDirectory
-        PathType.System -> _buildAgentConfiguration.systemDirectory
-        PathType.Bin -> File(_buildAgentConfiguration.agentHomeDirectory, "bin")
-        PathType.Config -> _buildAgentConfigurablePaths.agentConfDirectory
-        PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory
-    }
-
-    override fun getToolPath(toolName: String): File = File(_buildStepContext.runnerContext.getToolPath(toolName))
-
-    override fun getTempFileName(extension: String): File {
-        val tempDir = getPath(PathType.AgentTemp)
-        for (num in 1 .. Int.MAX_VALUE) {
-            val file = File(tempDir, "$num$extension")
+    override fun uniqueName(basePath: File, extension: String): File {
+        for (num in 1..Int.MAX_VALUE) {
+            val file = File(basePath, "$num$extension")
             if (!_fileSystemService.isExists(file)) {
-               return file
+                return file
             }
         }
 
-        throw RunBuildException("Cannot generate temp file name for $extension.");
+        throw RunBuildException("Cannot generate unique name in $basePath for $extension.");
     }
+
+    override fun getPath(pathType: PathType) = when (pathType) {
+        PathType.WorkingDirectory -> _buildStepContext.runnerContext.workingDirectory.canonicalFile
+        PathType.Checkout -> _buildStepContext.runnerContext.build.checkoutDirectory.canonicalFile
+        PathType.AgentTemp -> _buildAgentConfigurablePaths.agentTempDirectory.canonicalFile
+        PathType.BuildTemp -> _buildAgentConfigurablePaths.buildTempDirectory.canonicalFile
+        PathType.GlobalTemp -> _buildAgentConfigurablePaths.cacheDirectory.canonicalFile
+        PathType.Plugins -> _buildAgentConfiguration.agentPluginsDirectory.canonicalFile
+        PathType.Plugin -> _pluginDescriptor.pluginRoot.canonicalFile
+        PathType.Tools -> _buildAgentConfiguration.agentToolsDirectory.canonicalFile
+        PathType.Lib -> _buildAgentConfiguration.agentLibDirectory.canonicalFile
+        PathType.Work -> _buildAgentConfiguration.workDirectory.canonicalFile
+        PathType.System -> _buildAgentConfiguration.systemDirectory.canonicalFile
+        PathType.Bin -> File(_buildAgentConfiguration.agentHomeDirectory, "bin").canonicalFile
+        PathType.Config -> _buildAgentConfigurablePaths.agentConfDirectory.canonicalFile
+        PathType.Log -> _buildAgentConfigurablePaths.agentLogsDirectory.canonicalFile
+    }
+
+    override fun getTempFileName(extension: String): File =
+        uniqueName(getPath(PathType.AgentTemp), extension)
 }

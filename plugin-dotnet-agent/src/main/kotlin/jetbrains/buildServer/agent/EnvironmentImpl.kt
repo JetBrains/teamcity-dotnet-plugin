@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.agent.impl.OSTypeDetector
@@ -5,36 +21,27 @@ import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.util.StringUtil
 import java.io.File
 
-class EnvironmentImpl(private val _fileSystemService: FileSystemService) : Environment {
+class EnvironmentImpl(
+        private val _fileSystemService: FileSystemService,
+        private val _osTypeDetector: OSTypeDetector)
+    : Environment {
+
     override fun tryGetVariable(name: String): String? {
         return System.getenv(name)
     }
 
-    override val paths: Sequence<File>
-        get() =
-            (tryGetVariable(PathEnvironmentVariableName)?.let { path ->
+    override val paths: Sequence<Path> get() =
+            tryGetVariable(PathEnvironmentVariableName)?.let { path ->
                 StringUtil.splitHonorQuotes(path, File.pathSeparatorChar)
                         .asSequence()
-                        .map { File(it) }
-                        .filter { _fileSystemService.isExists(it) }
-            } ?: emptySequence()) + getHintPaths()
+                        .map { Path(it) }
+                        .filter { _fileSystemService.isExists(File(it.path)) }
+            } ?: emptySequence()
 
     override val os: OSType
-        get() = OSDetector.detect() ?: OSType.UNIX
-
-    /**
-     * Provides a well known paths for tools on each platform.
-     */
-    private fun getHintPaths(): Sequence<File> = sequence {
-        when (os) {
-            OSType.MAC -> yield(File("/usr/local/share/dotnet"))
-            OSType.UNIX -> yield(File("/usr/share/dotnet"))
-            OSType.WINDOWS -> yield(File("C:\\Program Files\\dotnet"))
-        }
-    }
+        get() = _osTypeDetector.detect() ?: OSType.UNIX
 
     companion object {
         private const val PathEnvironmentVariableName = "PATH"
-        private val OSDetector = OSTypeDetector()
     }
 }

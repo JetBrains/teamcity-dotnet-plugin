@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.XmlDocumentService
@@ -20,11 +36,11 @@ class DotCoverProjectSerializerImpl(
         coverageParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
         doc.appendChild(coverageParamsElement)
 
-        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, project.commandLineToGetCoverage.executableFile.absolutePath))
-        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToGetCoverage.arguments.map { it.value }.asSequence())))
-        val workingDirectory = project.commandLineToGetCoverage.workingDirectory
-        coverageParamsElement.appendChild(createSimpleElement(doc, WORKING_DIR_ELEMENT, workingDirectory.absolutePath))
-        coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, project.snapshotFile.absolutePath))
+        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, project.commandLineToCover.executableFile.path))
+        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToCover.arguments.map { it.value }.asSequence())))
+        val workingDirectory = project.commandLineToCover.workingDirectory
+        coverageParamsElement.appendChild(createSimpleElement(doc, WORKING_DIR_ELEMENT, workingDirectory.path))
+        coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, project.snapshotFile.path))
 
         val filtersElement = doc.createElement(FILTERS_ELEMENT)
         val includeFiltersElement = doc.createElement(INCLUDE_FILTERS_ELEMENT)

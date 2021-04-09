@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.RunBuildException
@@ -23,11 +39,14 @@ class VisualStudioToolResolver(private val _parametersService: ParametersService
             ?: throw RunBuildException("Can't find any version of visual studio")
 
     private val selectedVersion: Int?
-        get() =
-            _parametersService.tryGetParameter(ParameterType.Runner, PARAM_VISUAL_STUDIO_VERSION)?.let {
-                Tool.tryParse(it)?.version
+        get() {
+            val version =  _parametersService.tryGetParameter(ParameterType.Runner, PARAM_VISUAL_STUDIO_VERSION)?.let {
+                Tool.tryParse(it)?.vsVersion
                         ?: throw RunBuildException("Can't parse visual studio version from \"$PARAM_VISUAL_STUDIO_VERSION\" value \"$it\"")
             }
+
+            return if (version != null && version != Tool.VisualStudioAny.version) version else null
+        }
 
     private val availableVersions: Sequence<Int>
         get() =

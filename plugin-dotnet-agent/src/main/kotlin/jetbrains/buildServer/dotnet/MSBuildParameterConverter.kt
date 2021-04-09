@@ -1,5 +1,5 @@
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.runner.Converter
-
-interface MSBuildParameterConverter : Converter<MSBuildParameter, String>
+interface MSBuildParameterConverter {
+    fun convert(parameters: Sequence<MSBuildParameter>, isCommandLineParameters: Boolean): Sequence<String>
+}

@@ -1,8 +1,27 @@
+/*
+ * Copyright 2000-2021 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.agent.ArgumentsService
-import jetbrains.buildServer.agent.PathMatcher
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
@@ -11,8 +30,7 @@ import jetbrains.buildServer.dotnet.CommandTarget
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.TargetService
 import jetbrains.buildServer.dotnet.TargetServiceImpl
-import org.jmock.Expectations
-import org.jmock.Mockery
+import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -20,50 +38,51 @@ import org.testng.annotations.Test
 import java.io.File
 
 class TargetServiceTest {
-    private lateinit var _ctx: Mockery
-    private lateinit var _pathsService: PathsService
-    private lateinit var _parametersService: ParametersService
-    private lateinit var _argumentsService: ArgumentsService
-    private lateinit var _pathMatcher: PathMatcher
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _argumentsService: ArgumentsService
+    @MockK private lateinit var _pathMatcher: PathMatcher
+    @MockK private lateinit var _fileSystemService: FileSystemService
+    @MockK private lateinit var _virtualContext: VirtualContext
 
     @BeforeMethod
     fun setUp() {
-        _ctx = Mockery()
-        _pathsService = _ctx.mock<PathsService>(PathsService::class.java)
-        _parametersService = _ctx.mock<ParametersService>(ParametersService::class.java)
-        _argumentsService = _ctx.mock<ArgumentsService>(ArgumentsService::class.java)
-        _pathMatcher = _ctx.mock<PathMatcher>(PathMatcher::class.java)
+        MockKAnnotations.init(this)
+        clearAllMocks()
     }
 
-    @Test
-    fun shouldProvideTargets() {
+    @DataProvider
+    fun osTypes(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(OSType.WINDOWS),
+                arrayOf(OSType.MAC),
+                arrayOf(OSType.UNIX)
+        )
+    }
+
+    @Test(dataProvider = "osTypes")
+    fun shouldProvideTargets(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
         val includeRules = sequenceOf("rule1", "rule2", "rule3")
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
-                will(returnValue("some includeRules"))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
-                will(returnValue(checkoutDirectory))
-
-                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
-                will(returnValue(includeRules))
-            }
-        })
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns "some includeRules"
+        every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
+        every { _argumentsService.split("some includeRules") } returns includeRules
+        every { _virtualContext.targetOSType } returns os
+        every { _fileSystemService.isAbsolute(any()) } returns false
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
         val actualTargets = instance.targets.toList()
 
         // Then
-        Assert.assertEquals(actualTargets, includeRules.map { CommandTarget(File(it)) }.toList())
+        Assert.assertEquals(actualTargets, includeRules.map { CommandTarget(Path("v_${File(it).name}")) }.toList())
     }
 
-    @Test
-    fun shouldExecuteMatcherForWildcards() {
+    @Test(dataProvider = "osTypes")
+    fun shouldExecuteMatcherForWildcards(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
@@ -71,54 +90,36 @@ class TargetServiceTest {
         val expectedRules = sequenceOf("rule1", "rule/a/2", "rule/b/c/2", "rule3")
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
-                will(returnValue("some includeRules"))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
-                will(returnValue(checkoutDirectory))
-
-                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
-                will(returnValue(includeRules))
-
-                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rule/**/2"))
-                will(returnValue(listOf(File("rule/a/2"), File("rule/b/c/2"))))
-
-                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rul?3"))
-                will(returnValue(listOf(File("rule3"))))
-            }
-        })
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns "some includeRules"
+        every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
+        every { _argumentsService.split("some includeRules") } returns includeRules
+        every { _pathMatcher.match(checkoutDirectory, listOf("rule/**/2")) } returns listOf(File("rule/a/2"), File("rule/b/c/2"))
+        every { _pathMatcher.match(checkoutDirectory, listOf("rul?3")) } returns listOf(File("rule3"))
+        every { _fileSystemService.isAbsolute(any()) } returns false
+        every { _virtualContext.targetOSType } returns os
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
         val actualTargets = instance.targets.toList()
 
         // Then
-        Assert.assertEquals(actualTargets, expectedRules.map { CommandTarget(File(it)) }.toList())
+        Assert.assertEquals(actualTargets, expectedRules.map { CommandTarget(Path("v_${File(it).name}")) }.toList())
     }
 
-    @Test
-    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched() {
+    @Test(dataProvider = "osTypes")
+    fun shouldThrowRunBuildExceptionWhenTargetsWereNotMatched(os: OSType) {
         // Given
         val instance = createInstance()
         val checkoutDirectory = File("checkout")
         val includeRules = listOf("rule1", "rule/**/2", "rule3")
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
-                will(returnValue("some includeRules"))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
-                will(returnValue(checkoutDirectory))
-
-                oneOf<ArgumentsService>(_argumentsService).split("some includeRules")
-                will(returnValue(includeRules.asSequence()))
-
-                oneOf<PathMatcher>(_pathMatcher).match(checkoutDirectory, listOf("rule/**/2"))
-                will(returnValue(emptyList<CommandTarget>()))
-            }
-        })
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns "some includeRules"
+        every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
+        every { _argumentsService.split("some includeRules") } returns includeRules.asSequence()
+        every { _pathMatcher.match(checkoutDirectory, listOf("rule/**/2")) } returns emptyList<File>()
+        every { _fileSystemService.isAbsolute(any()) } returns false
+        every { _virtualContext.targetOSType } returns os
+        every { _virtualContext.resolvePath(any()) } answers { "v_" + File(arg<String>(0)).name }
 
         var actualExceptionWasThrown = false
         try {
@@ -146,15 +147,8 @@ class TargetServiceTest {
         val checkoutDirectory = File("checkout")
 
         // When
-        _ctx.checking(object : Expectations() {
-            init {
-                oneOf<ParametersService>(_parametersService).tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)
-                will(returnValue(pathsParam))
-
-                oneOf<PathsService>(_pathsService).getPath(PathType.WorkingDirectory)
-                will(returnValue(checkoutDirectory))
-            }
-        })
+        every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS) } returns pathsParam
+        every { _pathsService.getPath(PathType.WorkingDirectory) } returns checkoutDirectory
 
         val actualTargets = instance.targets.toList()
 
@@ -167,6 +161,8 @@ class TargetServiceTest {
                 _pathsService,
                 _parametersService,
                 _argumentsService,
-                _pathMatcher)
+                _pathMatcher,
+                _fileSystemService,
+                _virtualContext)
     }
 }
