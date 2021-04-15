@@ -21,7 +21,7 @@ class ProcessResolverImpl(
            throw RunBuildException("Cannot find ${tool.dysplayName}.")
         }
 
-        val executableBase = File(File(toolPath, "tools"), tool.toolName).path;
+        val executableBase = File(toolPath, tool.toolName).path;
         val platform = _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CLT_PLATFORM)
                 ?.let { IspectionToolPlatform.tryParse(it) }
                 ?: IspectionToolPlatform.X64

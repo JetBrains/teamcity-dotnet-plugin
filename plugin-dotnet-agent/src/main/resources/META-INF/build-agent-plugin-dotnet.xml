@@ -426,7 +426,7 @@
   <bean class="jetbrains.buildServer.cmd.CmdWorkflowComposer" id="cmdWorkflowComposer"/>
 
   <!-- sh -->
-  <bean class="jetbrains.buildServer.sh.ShWorkflowComposer" id="shWorkflowComposer"/>
+  <!--<bean class="jetbrains.buildServer.sh.ShWorkflowComposer" id="shWorkflowComposer"/>-->
 
   <!-- Visual Studio -->
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioWorkflowComposer" id="visualStudioWorkflowComposer"/>

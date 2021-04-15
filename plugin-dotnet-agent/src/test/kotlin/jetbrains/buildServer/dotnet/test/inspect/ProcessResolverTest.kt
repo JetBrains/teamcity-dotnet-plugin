@@ -46,7 +46,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
                         OSType.WINDOWS,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.x86.exe")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.x86.exe")
                         ),
                         null
                 ),
@@ -57,7 +57,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
                         OSType.WINDOWS,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Dupfinder.toolName).path}.x86.exe")
+                                Path("v_${File(File("somePath"), InspectionTool.Dupfinder.toolName).path}.x86.exe")
                         ),
                         null
                 ),
@@ -68,7 +68,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to "Abc")),
                         OSType.WINDOWS,
                         InspectionProcess(
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.exe")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.exe")
                         ),
                         null
                 ),
@@ -77,7 +77,7 @@ class ProcessResolverTest {
                         ParametersServiceStub(mapOf(CLT_PATH_PARAMETER to "somePath")),
                         OSType.WINDOWS,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.exe")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.exe")
                         ),
                         null
                 ),
@@ -92,8 +92,8 @@ class ProcessResolverTest {
                                 listOf(
                                         CommandLineArgument("exec"),
                                         CommandLineArgument("--runtimeconfig"),
-                                        CommandLineArgument("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.runtimeconfig.json"),
-                                        CommandLineArgument("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.exe")
+                                        CommandLineArgument("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.runtimeconfig.json"),
+                                        CommandLineArgument("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.exe")
                                 )
                         ),
                         null
@@ -107,7 +107,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.CrossPlatform.id)),
                         OSType.UNIX,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
                 ),
@@ -118,7 +118,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X64.id)),
                         OSType.UNIX,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
                 ),
@@ -129,7 +129,7 @@ class ProcessResolverTest {
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
                         OSType.UNIX,
                         InspectionProcess (
-                                Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
+                                Path("v_${File(File("somePath"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
                 ),

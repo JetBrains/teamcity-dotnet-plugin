@@ -60,18 +60,27 @@ class PreparePackagesTask extends DefaultTask {
     println 'Processing ' + toolsPackageId
     ant.delete(dir: './packages')
     ant.mkdir(dir: './packages')
+    ant.mkdir(dir: './packages/pack')
     ant.get(src: 'https://www.nuget.org/api/v2/package/' + toolsPackageId, dest: './packages/package.zip', skipexisting: 'true')
     ant.unzip(src: './packages/package.zip', dest: './packages')
-    ant.copy(todir: './packages/tools', overwrite: 'true', force: 'true'){
+    ant.move(todir: './packages/pack', overwrite: 'true', force: 'true') {
+      fileset(dir: './packages/tools') {
+        include(name: '**/*.*')
+      }
+    }
+
+    ant.copy(todir: './packages', overwrite: 'true', force: 'true'){
       fileset(file: './bundled-tool.xml')
     }
-    ant.move(file: './packages/tools/bundled-tool.xml', tofile: './packages/tools/teamcity-plugin.xml', overwrite: 'true', force: 'true')
+    ant.move(file: './packages/bundled-tool.xml', tofile: './packages/pack/teamcity-plugin.xml', overwrite: 'true', force: 'true')
+
     ant.zip(destfile: './bundled-tool/jetbrains.resharper-clt.bundled.zip') {
-      fileset(dir: './packages') {
-        include(name: 'tools/**/*.*')
+      fileset(dir: './packages/pack') {
+        include(name: '**/*.*')
       }
     }
     ant.move(file: './packages/JetBrains.ReSharper.CommandLineTools.nuspec', todir: './bundled-tool', overwrite: 'true', force: 'true')
+
     ant.delete(dir: './packages')
   }
 }
