@@ -56,9 +56,11 @@ class InspectionWorkflowComposer(
         }
 
         val virtualOutputPath = Path(_virtualContext.resolvePath((args.outputFile.absolutePath)))
+        var hasErrors = false;
         createConfigFile(args, virtualOutputPath)
         disposableOf(
                 context.toOutput().subscribe(_outputObserver),
+                context.toErrors().subscribe{ hasErrors = true },
                 context.toExitCodes().subscribe { exitCode -> onExit(exitCode, context, args, virtualOutputPath) }
         ).use {
             yield(
@@ -69,6 +71,10 @@ class InspectionWorkflowComposer(
                             Path(_pathsService.getPath(PathType.Checkout).path),
                             cmdArgs.toList(),
                             _environmentProvider.getEnvironmentVariables().toList()))
+
+            if (hasErrors) {
+                context.abort(BuildFinishedStatus.FINISHED_FAILED)
+            }
         }
     }
 

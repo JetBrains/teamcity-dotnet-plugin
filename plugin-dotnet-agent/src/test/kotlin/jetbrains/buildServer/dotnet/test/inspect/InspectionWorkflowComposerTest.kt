@@ -198,7 +198,7 @@ class InspectionWorkflowComposerTest {
     }
 
     @Test
-    fun shouldFailBuildWhenCanntFindOutputFile() {
+    fun shouldFailBuildWhenCannotFindOutputFile() {
         // Given
         val args = InspectionArguments(
                 File("Config.xml"),
@@ -220,6 +220,29 @@ class InspectionWorkflowComposerTest {
 
         // Then
         verify { _loggerService.buildFailureDescription("Output xml from ${InspectionTool.Inspectcode.dysplayName} is not found or empty on path ${args.outputFile.canonicalPath}.") }
+        verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
+    }
+
+    @Test
+    fun shouldFailBuildWhenHasSomeStdErrors() {
+        // Given
+        val composer = createInstance()
+        val args = InspectionArguments(
+                File("Config.xml"),
+                File("Output.xml"),
+                File("Log.txt"),
+                File("Cache"),
+                true,
+                listOf(CommandLineArgument("--arg1")))
+
+        every { _argumentsProvider.getArguments(InspectionTool.Inspectcode) } returns args
+        _events.add(CommandResultError("Some error"))
+        _events.add(CommandResultExitCode(0))
+
+        // When
+        composer.compose(_context, Unit).commandLines.toList()
+
+        // Then
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 
