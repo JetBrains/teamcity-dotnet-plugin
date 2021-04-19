@@ -30,4 +30,6 @@ interface FileSystemService {
     fun isExists(file: File): Boolean
 
     fun isFile(file: File): Boolean
+
+    fun copy(fileFrom: File, fileTo: File)
 }

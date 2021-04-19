@@ -64,8 +64,8 @@ class PreparePackagesTask extends DefaultTask {
     ant.get(src: 'https://www.nuget.org/api/v2/package/' + toolsPackageId, dest: './packages/package.zip', skipexisting: 'true')
     ant.unzip(src: './packages/package.zip', dest: './packages')
     ant.move(todir: './packages/pack', overwrite: 'true', force: 'true') {
-      fileset(dir: './packages/tools') {
-        include(name: '**/*.*')
+      fileset(dir: './packages') {
+        include(name: 'tools/**/*.*')
       }
     }
 
@@ -80,6 +80,9 @@ class PreparePackagesTask extends DefaultTask {
       }
     }
     ant.move(file: './packages/JetBrains.ReSharper.CommandLineTools.nuspec', todir: './bundled-tool', overwrite: 'true', force: 'true')
+    ant.copy(todir: './bundled-tool', overwrite: 'true', force: 'true'){
+      fileset(file: './bundled-tool.xml')
+    }
 
     ant.delete(dir: './packages')
   }

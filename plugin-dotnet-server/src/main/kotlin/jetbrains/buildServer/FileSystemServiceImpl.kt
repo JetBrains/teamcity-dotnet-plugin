@@ -32,4 +32,6 @@ class FileSystemServiceImpl : FileSystemService {
     override fun isExists(file: File): Boolean = file.exists()
 
     override fun isFile(file: File): Boolean = file.isFile
+
+    override fun copy(fileFrom: File, fileTo: File) = FileUtil.copy(fileFrom, fileTo)
 }

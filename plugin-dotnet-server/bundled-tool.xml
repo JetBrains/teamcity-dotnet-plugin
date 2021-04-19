@@ -4,8 +4,8 @@
   <tool-deployment>
     <layout>
       <executable-files>
-        <include name='dupfinder.sh'/>
-        <include name='inspectcode.sh'/>
+        <include name='tools/dupfinder.sh'/>
+        <include name='tools/inspectcode.sh'/>
       </executable-files>
     </layout>
   </tool-deployment>

@@ -38,8 +38,13 @@ class ReSharperCmdToolProvider(
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File) =
             _toolService.fetchToolPackage(type, toolVersion, targetDirectory, _packageId)
 
-    override fun unpackToolPackage(toolPackage: File, targetDirectory: File) =
-            _toolService.unpackToolPackage(toolPackage, "", targetDirectory, _packageId, JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)
+    override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
+        _toolService.unpackToolPackage(toolPackage, "", targetDirectory, _packageId, JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)
+        val pluginRoot = _pluginDescriptor.getPluginRoot();
+        val toolXmlFileFrom = File(pluginRoot, "server/bundled-tool/bundled-tool.xml")
+        val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
+        _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
+    }
 
     override fun getBundledToolVersions(): MutableCollection<InstalledToolVersion> {
         val pluginRoot = _pluginDescriptor.getPluginRoot();
