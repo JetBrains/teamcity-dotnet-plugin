@@ -51,7 +51,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
                                 _cache,
                                 false,
@@ -66,7 +66,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
                                 File("Cache"),
                                 false,
@@ -80,7 +80,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
                                 File(_checkout, "Cache"),
                                 false,
@@ -95,7 +95,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File("Abc.log"),
                                 _cache,
                                 true,
@@ -109,7 +109,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_tmp, "dotnet-tools-inspectcode99.config"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_checkout, "Abc.log"),
                                 _cache,
                                 true,
@@ -167,7 +167,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File("Cfg.xml"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
                                 _cache,
                                 false,
@@ -181,7 +181,7 @@ class ArgumentsProviderTest {
                         InspectionTool.Inspectcode,
                         InspectionArguments(
                                 File(_checkout, "Cfg.xml"),
-                                File(_tmp, "inspectcode-report-99.xml"),
+                                File(_tmp, "inspectcode-report99.xml"),
                                 File(_tmp, "dotnet-tools-inspectcode99.log"),
                                 _cache,
                                 false,

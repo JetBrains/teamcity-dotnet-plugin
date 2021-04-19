@@ -21,7 +21,7 @@ class ArgumentsProviderImpl(
             _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }
         }?.toMutableList() ?: mutableListOf()
         val configFileArg = processFileArg(customArguments, ConfigArgRegex, tool.runnerType, ".config")
-        val outputFileArg = processFileArg(customArguments, OutputArgRegex, "${tool.toolName}-report-", ".xml")
+        val outputFileArg = processFileArg(customArguments, OutputArgRegex, "${tool.toolName}-report", ".xml")
         val logFileArg = processFileArg(customArguments, LogArgRegex, tool.runnerType, ".log")
         val cachesHomeArg = processFileArg(customArguments, CachesHomeArgRegex, tool.runnerType, "").let { if (it.custom) it else null }
         val debug = _parametersService.tryGetParameter(ParameterType.Runner, tool.debugSettings) != null || logFileArg.custom
