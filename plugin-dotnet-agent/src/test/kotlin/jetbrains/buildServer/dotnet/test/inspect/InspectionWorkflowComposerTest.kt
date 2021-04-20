@@ -9,6 +9,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.inspect.*
 import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -250,6 +251,36 @@ class InspectionWorkflowComposerTest {
         composer.compose(_context, Unit).commandLines.toList()
 
         // Then
+        verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
+    }
+
+    // https://youtrack.jetbrains.com/issue/TW-71049
+    // https://youtrack.jetbrains.com/issue/TW-71048
+    @Test
+    fun shouldFailBuildWithWarningAboutNanoServerWhenNegativeExitCodeAndIInWindowsDockerContainer() {
+        // Given
+        val composer = createInstance {
+            _events.add(CommandResultExitCode(-532462766, it.Id))
+            it
+        };
+        val args = InspectionArguments(
+                File("Config.xml"),
+                File("Output.xml"),
+                File("Log.txt"),
+                File("Cache"),
+                true,
+                listOf(CommandLineArgument("--arg1")))
+
+        every { _argumentsProvider.getArguments(InspectionTool.Inspectcode) } returns args
+        every { _loggerService.writeWarning(any()) } returns Unit
+
+        // When
+        every { _virtualContext.isVirtual } returns true
+        every { _virtualContext.targetOSType } returns OSType.WINDOWS
+        composer.compose(_context, Unit).commandLines.toList()
+
+        // Then
+        verify { _loggerService.writeWarning("Windows Nano Server is not supported.") }
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 

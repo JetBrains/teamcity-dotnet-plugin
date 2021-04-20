@@ -22,7 +22,7 @@ import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.filter
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import jetbrains.buildServer.util.OSType
 
 open class InspectionWorkflowComposer(
         private val _tool: InspectionTool,
@@ -99,6 +99,13 @@ open class InspectionWorkflowComposer(
         }
 
         if (exitCode != 0) {
+            if (
+                    exitCode < 0
+                    && _virtualContext.isVirtual
+                    && _virtualContext.targetOSType == OSType.WINDOWS) {
+                _loggerService.writeWarning("Windows Nano Server is not supported.")
+            }
+
             _loggerService.buildFailureDescription("${_tool.dysplayName} execution failure.")
             context.abort(BuildFinishedStatus.FINISHED_FAILED)
         } else {
