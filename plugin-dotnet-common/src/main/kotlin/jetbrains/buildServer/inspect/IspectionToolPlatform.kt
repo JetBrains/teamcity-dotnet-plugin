@@ -3,8 +3,8 @@ package jetbrains.buildServer.inspect
 import jetbrains.buildServer.dotnet.Platform
 
 enum class IspectionToolPlatform(val id: String) {
-    X86("x86"),
     X64("x64"),
+    X86("x86"),
     CrossPlatform("Cross-platform");
 
     companion object {
