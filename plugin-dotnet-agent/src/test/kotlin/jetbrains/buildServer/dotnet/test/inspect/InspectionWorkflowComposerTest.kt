@@ -172,10 +172,12 @@ class InspectionWorkflowComposerTest {
     @Test(dataProvider = "composeCases")
     fun shouldCompose(args: InspectionArguments, exitCode: Int, expectedCommandLines: List<CommandLine>) {
         // Given
-        val composer = createInstance()
+        val composer = createInstance {
+            _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
+            _events.add(CommandResultExitCode(exitCode, it.Id))
+            it
+        };
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode) } returns args
-        _events.add(CommandResultOutput("Line 1"))
-        _events.add(CommandResultExitCode(exitCode))
 
         // When
         var actualCommandLines = composer.compose(_context, Unit).commandLines.toList()
@@ -185,7 +187,7 @@ class InspectionWorkflowComposerTest {
         verify { _fileSystemService.write(args.configFile, any()) }
         verify { _configurationFile.create(_outputStream, Path("v_" + args.outputFile.absolutePath), Path("v_" + args.cachesHome.absolutePath), args.debug) }
         verify { _outputObserver.onNext("Line 1") }
-        if(args.debug) {
+        if (args.debug) {
             verify { _artifacts.publish(InspectionTool.Inspectcode, args.logFile, null) }
         }
 
@@ -209,10 +211,12 @@ class InspectionWorkflowComposerTest {
                 emptyList()
         )
 
-        val composer = createInstance()
+        val composer = createInstance {
+            _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
+            _events.add(CommandResultExitCode(0, it.Id))
+            it
+        };
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode) } returns args
-        _events.add(CommandResultOutput("Line 1"))
-        _events.add(CommandResultExitCode(0))
 
         // When
         every { _artifacts.publish(any(), any(), any()) } returns false
@@ -226,7 +230,12 @@ class InspectionWorkflowComposerTest {
     @Test
     fun shouldFailBuildWhenHasSomeStdErrors() {
         // Given
-        val composer = createInstance()
+        val composer = createInstance {
+            _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
+            _events.add(CommandResultError("Some error", mutableListOf(), it.Id))
+            _events.add(CommandResultExitCode(0, it.Id))
+            it
+        };
         val args = InspectionArguments(
                 File("Config.xml"),
                 File("Output.xml"),
@@ -236,8 +245,6 @@ class InspectionWorkflowComposerTest {
                 listOf(CommandLineArgument("--arg1")))
 
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode) } returns args
-        _events.add(CommandResultError("Some error"))
-        _events.add(CommandResultExitCode(0))
 
         // When
         composer.compose(_context, Unit).commandLines.toList()
@@ -246,8 +253,8 @@ class InspectionWorkflowComposerTest {
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 
-    private fun createInstance() =
-            InspectionWorkflowComposer(
+    private fun createInstance(onNewCommandLine: (CommandLine) -> CommandLine) =
+            object : InspectionWorkflowComposer(
                     InspectionTool.Inspectcode,
                     _toolPathResolver,
                     _argumentsProvider,
@@ -259,5 +266,9 @@ class InspectionWorkflowComposerTest {
                     _pathsService,
                     _loggerService,
                     _artifacts,
-                    _virtualContext)
+                    _virtualContext) {
+                override fun createCommandLine(args: InspectionArguments, virtualOutputPath: Path): CommandLine {
+                    return onNewCommandLine(super.createCommandLine(args, virtualOutputPath))
+                }
+            }
 }

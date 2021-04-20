@@ -81,7 +81,7 @@ class ExecutableWorkflowComposer(
                             }
 
                             yield(CommandLine(
-                                    commandLine.baseCommandLine,
+                                    commandLine,
                                     commandLine.target,
                                     Path(dotnetExecutableFile ?: defaultDotnetExecutableFile.path.path),
                                     commandLine.workingDirectory,

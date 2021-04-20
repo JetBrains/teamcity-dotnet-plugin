@@ -19,10 +19,12 @@ package jetbrains.buildServer.inspect
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.filter
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class InspectionWorkflowComposer(
+open class InspectionWorkflowComposer(
         private val _tool: InspectionTool,
         private val _toolPathResolver: ProcessResolver,
         private val _argumentsProvider: ArgumentsProvider,
@@ -43,8 +45,25 @@ class InspectionWorkflowComposer(
             if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
 
     private fun createCommandLines(context: WorkflowContext) = sequence<CommandLine> {
+        val args = _argumentsProvider.getArguments(_tool)
+        val virtualOutputPath = Path(_virtualContext.resolvePath((args.outputFile.absolutePath)))
+        var hasErrors = false;
+        val commandLine = createCommandLine(args, virtualOutputPath)
+        disposableOf(
+                context.filter { it.SourceId == commandLine.Id }.toOutput().subscribe(_outputObserver),
+                context.filter { it.SourceId == commandLine.Id }.toErrors().subscribe { hasErrors = true },
+                context.filter { it.SourceId == commandLine.Id }.toExitCodes().subscribe { exitCode -> onExit(exitCode, context, args, virtualOutputPath) }
+        ).use {
+            yield(commandLine)
+        }
+
+        if (hasErrors) {
+            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+        }
+    }
+
+    open protected fun createCommandLine(args: InspectionArguments, virtualOutputPath: Path): CommandLine {
         val process = _toolPathResolver.resolve(_tool)
-        var args = _argumentsProvider.getArguments(_tool)
         val cmdArgs = sequence<CommandLineArgument> {
             yieldAll(process.startArguments)
             yield(CommandLineArgument("--config=${_virtualContext.resolvePath(args.configFile.absolutePath)}"))
@@ -55,30 +74,6 @@ class InspectionWorkflowComposer(
             yieldAll(args.customArguments)
         }
 
-        val virtualOutputPath = Path(_virtualContext.resolvePath((args.outputFile.absolutePath)))
-        var hasErrors = false;
-        createConfigFile(args, virtualOutputPath)
-        disposableOf(
-                context.toOutput().subscribe(_outputObserver),
-                context.toErrors().subscribe{ hasErrors = true },
-                context.toExitCodes().subscribe { exitCode -> onExit(exitCode, context, args, virtualOutputPath) }
-        ).use {
-            yield(
-                    CommandLine(
-                            null,
-                            target,
-                            process.executable,
-                            Path(_pathsService.getPath(PathType.Checkout).path),
-                            cmdArgs.toList(),
-                            _environmentProvider.getEnvironmentVariables().toList()))
-
-            if (hasErrors) {
-                context.abort(BuildFinishedStatus.FINISHED_FAILED)
-            }
-        }
-    }
-
-    private fun createConfigFile(args: InspectionArguments, virtualOutputPath: Path)=
         _fileSystemService.write(args.configFile) {
             _configurationFile.create(
                     it,
@@ -86,6 +81,17 @@ class InspectionWorkflowComposer(
                     Path(_virtualContext.resolvePath(args.cachesHome.absolutePath)),
                     args.debug)
         }
+
+        val commandLine = CommandLine(
+                null,
+                target,
+                process.executable,
+                Path(_pathsService.getPath(PathType.Checkout).path),
+                cmdArgs.toList(),
+                _environmentProvider.getEnvironmentVariables().toList())
+
+        return commandLine;
+    }
 
     private fun onExit(exitCode: Int, context: WorkflowContext, args: InspectionArguments, virtualOutputPath: Path) {
         if (args.debug) {
