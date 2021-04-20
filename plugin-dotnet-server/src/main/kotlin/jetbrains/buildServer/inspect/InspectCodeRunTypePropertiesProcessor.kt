@@ -22,7 +22,7 @@ class InspectCodeRunTypePropertiesProcessor(
         }
 
         if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
-            result.add(InvalidProperty(RUNNER_SETTING_CLT_PLATFORM,"Please use version ${RequirementsResolverImpl.CrossPlatformVersion} or above."))
+            result.add(InvalidProperty(RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform inspections, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 
         return result

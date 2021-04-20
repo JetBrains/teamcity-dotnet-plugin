@@ -31,7 +31,7 @@ class DupFinderRunTypePropertiesProcessor(
         }
 
         if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
-            result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"Please use version ${RequirementsResolverImpl.CrossPlatformVersion} or above."))
+            result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform duplicates finder, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 
         return result
