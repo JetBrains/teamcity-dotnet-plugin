@@ -98,7 +98,7 @@ class MSBuildParameterConverterTest {
 
         // When
         val actualParams = converter.convert(
-                sequenceOf(MSBuildParameter("d", "   "), MSBuildParameter("d", ""), MSBuildParameter("a", "b"), MSBuildParameter("", "ñ"), MSBuildParameter("  ", "ñ")), false)
+                sequenceOf(MSBuildParameter("d", "   "), MSBuildParameter("d", ""), MSBuildParameter("a", "b"), MSBuildParameter("", "ñ"), MSBuildParameter("  ", "c")), false)
                 .toList()
 
         // Then
