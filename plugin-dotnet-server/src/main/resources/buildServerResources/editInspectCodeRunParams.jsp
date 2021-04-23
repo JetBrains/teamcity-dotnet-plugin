@@ -94,7 +94,7 @@
 </tr>
 
 <tr>
-  <th><label for="${constants.cltPlatformKey}">InspectCode Platform: </label></th>
+  <th><label for="${constants.cltPlatformKey}">InspectCode Platform: <bs:help file="inspections-resharper#ReSharperInspectionsPlatform" anchor=""/></label></th>
   <td>
     <props:selectProperty name="${constants.cltPlatformKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${constants.runPlatforms}">
