@@ -20,5 +20,5 @@ import java.io.IOException
 
 interface NuGetService {
     @Throws(IOException::class)
-    fun getPackagesById(packageId: String, allowPrerelease: Boolean = false): Sequence<NuGetPackage>
+    fun getPackagesById(packageId: String): Sequence<NuGetPackage>
 }

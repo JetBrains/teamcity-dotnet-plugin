@@ -24,9 +24,9 @@ import java.io.File
 interface ToolService {
     fun getTools(toolType: ToolType, vararg packageIds: String): List<NuGetTool>
 
-    fun tryGetPackageVersion(toolType: ToolType, toolPackage: File): GetPackageVersionResult?
+    fun tryGetPackageVersion(toolType: ToolType, toolPackage: File, vararg packageIds: String): GetPackageVersionResult?
 
-    fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File): File
+    fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File
 
-    fun unpackToolPackage(toolType: ToolType, toolPackage: File, nugetPackageDirectory: String, targetDirectory: File)
+    fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String)
 }

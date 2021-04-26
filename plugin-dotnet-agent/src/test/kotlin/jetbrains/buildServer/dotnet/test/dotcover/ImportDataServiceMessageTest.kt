@@ -17,7 +17,7 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.dotcover.ImportDataServiceMessage
+import jetbrains.buildServer.agent.runner.ImportDataServiceMessage
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -26,15 +26,15 @@ class ImportDataServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf("dotcover", Path("dotCoverHome"), "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='dotCoverHome']"),
-                arrayOf("dotCover", Path("dotCover Home"), "##teamcity[importData type='dotNetCoverage' tool='dotCover' path='dotCover Home']"),
-                arrayOf("", Path(""), "##teamcity[importData type='dotNetCoverage' tool='' path='']"))
+                arrayOf("dotNetCoverage", "dotcover", Path("dotCoverHome"), "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='dotCoverHome']"),
+                arrayOf("dotNetCoverage", "dotCover", Path("dotCover Home"), "##teamcity[importData type='dotNetCoverage' tool='dotCover' path='dotCover Home']"),
+                arrayOf("dotNetCoverage", "", Path(""), "##teamcity[importData type='dotNetCoverage']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")
-    fun shouldProduceServiceMessage(coverageToolName: String, artifactPath: Path, expectedMessage: String) {
+    fun shouldProduceServiceMessage(dataProcessorType: String, coverageToolName: String, artifactPath: Path, expectedMessage: String) {
         // Given
-        val serviceMessage = ImportDataServiceMessage(coverageToolName, artifactPath)
+        val serviceMessage = ImportDataServiceMessage(dataProcessorType, artifactPath, coverageToolName)
 
         // When
         val actualMessage = serviceMessage.toString()

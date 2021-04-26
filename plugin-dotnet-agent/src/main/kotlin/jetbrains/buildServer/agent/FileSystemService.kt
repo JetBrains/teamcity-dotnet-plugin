@@ -27,6 +27,8 @@ interface FileSystemService {
 
     fun isFile(file: File): Boolean
 
+    fun getLength(file: File): Long
+
     fun isAbsolute(file: File): Boolean
 
     fun write(file: File, writer: (OutputStream) -> Unit)

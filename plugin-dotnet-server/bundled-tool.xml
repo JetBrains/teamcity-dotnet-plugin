@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-agent-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-agent-plugin-v1-xml">
+  <tool-deployment>
+    <layout>
+      <executable-files>
+        <include name='tools/dupfinder.sh'/>
+        <include name='tools/inspectcode.sh'/>
+      </executable-files>
+    </layout>
+  </tool-deployment>
+</teamcity-agent-plugin>

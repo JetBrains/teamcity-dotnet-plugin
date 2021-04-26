@@ -16,4 +16,6 @@
 
 package jetbrains.buildServer.agent
 
-interface CommandResultEvent
+interface CommandResultEvent {
+    val SourceId: Long
+}

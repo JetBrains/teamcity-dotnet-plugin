@@ -24,7 +24,7 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
 
     override fun getDisplayName() = DotnetConstants.DOTCOVER_PACKAGE_TOOL_TYPE_NAME
 
-    override fun getDescription(): String? = "Is used in JetBrains dotCover-specific build steps to get code coverage."
+    override fun getDescription(): String = "Is used in JetBrains dotCover-specific build steps to get code coverage."
 
     override fun getShortDisplayName() = DotnetConstants.DOTCOVER_PACKAGE_SHORT_TOOL_TYPE_NAME
 
@@ -32,7 +32,7 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
 
     override fun isSupportDownload() = true
 
-    override fun getToolSiteUrl() = "https://www.jetbrains.com/dotcover/download/#section=commandline"
+    override fun getToolSiteUrl() = "https://www.jetbrains.com/legal/docs/toolbox/user.html"
 
     override fun getToolLicenseUrl() = "https://www.jetbrains.com/dotcover/download/command_line_license.html"
 
@@ -41,8 +41,4 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
     override fun getValidPackageDescription() =  "Specify the path to a " + displayName + " (.nupkg).\n" +
                 "<br/>Download <em>${DotnetConstants.DOTCOVER_PACKAGE_TYPE}.&lt;VERSION&gt;.nupkg</em> from\n" +
                 "<a href=\"https://www.nuget.org/packages/${DotnetConstants.DOTCOVER_PACKAGE_TYPE}/\" target=\"_blank\" rel=\"noreferrer\">www.nuget.org</a>"
-
-    companion object {
-        internal val Shared: ToolTypeAdapter = DotCoverToolTypeAdapter()
-    }
 }

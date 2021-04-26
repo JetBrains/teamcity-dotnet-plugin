@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.rx.Disposable
 
@@ -37,4 +38,8 @@ interface LoggerService {
     fun writeTrace(text: String)
 
     fun writeTraceBlock(blockName: String, description: String = ""): Disposable
+
+    fun buildFailureDescription(description: String)
+
+    fun importData(dataProcessorType: String, artifactPath: Path, tool: String = "")
 }

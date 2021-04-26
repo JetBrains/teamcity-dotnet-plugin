@@ -18,7 +18,6 @@ package jetbrains.buildServer
 
 import com.google.gson.JsonParser
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.dotnet.SemanticVersionParser
 import org.springframework.cache.annotation.Cacheable
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -26,48 +25,64 @@ import java.io.InputStreamReader
 import java.net.URL
 
 open class NuGetServiceImpl(
-        private val _httpDownloader: HttpDownloader,
-        private val _versionParser: SemanticVersionParser)
+        private val _httpDownloader: HttpDownloader)
     : NuGetService {
 
     @Cacheable("getPackagesById", sync = true)
-    override fun getPackagesById(packageId: String, allowPrerelease: Boolean): Sequence<NuGetPackage> {
-        return enumeratePackagesById(packageId, allowPrerelease).toList().asSequence()
-    }
-
-    private fun enumeratePackagesById(packageId: String, allowPrerelease: Boolean) = sequence {
-        LOG.info("Downloading list of packages for $packageId")
-        var counter = 0
-        val listOfPackagesStream = ByteArrayOutputStream()
-        _httpDownloader.download(URL("https://api-v2v3search-0.nuget.org/query?prerelease=$allowPrerelease;q=packageid:$packageId"), listOfPackagesStream)
-        val listOfPackagesJson = InputStreamReader(ByteArrayInputStream(listOfPackagesStream.toByteArray()))
-        val listOfPackagesObj = JsonParser.parse(listOfPackagesJson).asJsonObject
-        val dataArray = listOfPackagesObj.get("data").asJsonArray
-        for (nuGetPackage in dataArray) {
-            val nuGetPackageObj = nuGetPackage.asJsonObject
-            val versionItems = nuGetPackageObj.get("versions").asJsonArray
-            for (versionItem in versionItems) {
-                val versionItemObj = versionItem.asJsonObject
-                val version = versionItemObj.get("version").asString
-                val packageVersion = _versionParser.tryParse(version) ?: continue
-
-                val packageInfoUrl = URL(versionItemObj.get("@id").asString)
-                val packageInfoStream = ByteArrayOutputStream()
-                _httpDownloader.download(packageInfoUrl, packageInfoStream)
-                val packageInfoJson = InputStreamReader(ByteArrayInputStream(packageInfoStream.toByteArray()))
-                val packageInfoObj = JsonParser.parse(packageInfoJson).asJsonObject
-                val downloadUrl = URL(packageInfoObj.get("packageContent").asString)
-                val isListed = packageInfoObj.get("listed").asBoolean
-
-                yield(NuGetPackage(packageId, packageVersion, downloadUrl, isListed))
-                counter++
-            }
+    override fun getPackagesById(packageId: String) = sequence {
+        val searchQueryServiceUrl = enumerateServices("SearchQueryService").firstOrNull()
+        if (searchQueryServiceUrl == null) {
+            LOG.warn("Cannot find Nuget Search Query Service")
         }
 
-        LOG.info("Downloaded list of $counter packages for $packageId")
+        val packageBaseUrl = enumerateServices("PackageBaseAddress/3.0.0").firstOrNull()
+        if (searchQueryServiceUrl == null) {
+            LOG.warn("Cannot find Nuget PackageBaseAddress/3.0.0")
+        }
+
+        ByteArrayOutputStream().use {
+            stream ->
+            var counter = 0
+            _httpDownloader.download(URL(searchQueryServiceUrl, "query?q=packageid:$packageId&prerelease=true"), stream)
+            val json = InputStreamReader(ByteArrayInputStream(stream.toByteArray()))
+            val rootObj = JsonParser.parse(json).asJsonObject
+            val dataArray = rootObj.get("data").asJsonArray
+            for (nuGetPackage in dataArray) {
+                val nuGetPackageObj = nuGetPackage.asJsonObject
+                val versionItems = nuGetPackageObj.get("versions").asJsonArray
+                for (versionItem in versionItems) {
+                    val versionItemObj = versionItem.asJsonObject
+                    val packageVersion = versionItemObj.get("version").asString
+                    val packageUrl = URL(packageBaseUrl, "$packageId/$packageVersion/$packageId.$packageVersion.nupkg".toLowerCase())
+                    yield(NuGetPackage(packageId, packageVersion, packageUrl))
+                    counter++
+                }
+
+                LOG.debug("Downloaded list of $counter packages for $packageId")
+            }
+        }
+    }
+
+    private fun enumerateServices(serviceName: String) = sequence {
+        ByteArrayOutputStream().use {
+            stream ->
+            _httpDownloader.download(NugetFeed, stream)
+            val json = InputStreamReader(ByteArrayInputStream(stream.toByteArray()))
+            val rootObj = JsonParser.parse(json).asJsonObject
+            val resourcesObj = rootObj.get("resources").asJsonArray
+            for (resource in resourcesObj) {
+                val resourceObj = resource.asJsonObject
+                if (resourceObj.get("@type").asString?.startsWith(serviceName, false) == true) {
+                    val serviceUrl = URL(resourceObj.get("@id").asString)
+                    LOG.debug("Found Nuget $serviceName: $serviceUrl")
+                    yield(serviceUrl)
+                }
+            }
+        }
     }
 
     companion object {
+        private val NugetFeed = URL("https://api.nuget.org/v3/index.json")
         private val LOG: Logger = Logger.getInstance(NuGetServiceImpl::class.java.name)
         private val JsonParser = JsonParser()
     }

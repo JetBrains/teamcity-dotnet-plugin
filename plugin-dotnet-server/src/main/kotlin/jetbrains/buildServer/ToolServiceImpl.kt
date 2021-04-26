@@ -36,8 +36,7 @@ class ToolServiceImpl(
         try {
             return packageIds
                     .asSequence()
-                    .flatMap { _nuGetService.getPackagesById(it, true) }
-                    .filter { it.isListed }
+                    .flatMap { _nuGetService.getPackagesById(it) }
                     .map { NuGetTool(toolType, it) }
                     .sortedBy { it.version + ":" + it.id }
                     .toList()
@@ -47,19 +46,8 @@ class ToolServiceImpl(
         }
     }
 
-    public fun getTools(toolType: ToolType): List<NuGetTool> {
-        try {
-            return _nuGetService.getPackagesById(toolType.type, true)
-                    .filter { it.isListed }
-                    .map { NuGetTool(toolType, it) }
-                    .toList().reversed()
-        } catch (e: Throwable) {
-            throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
-        }
-    }
-
-    override fun tryGetPackageVersion(toolType: ToolType, toolPackage: File): GetPackageVersionResult? {
-        if (!createPackageFilter(toolType).accept(toolPackage)) {
+    override fun tryGetPackageVersion(toolType: ToolType, toolPackage: File, vararg packageIds: String): GetPackageVersionResult? {
+        if (!createPackageFilter(packageIds.toSet()).accept(toolPackage)) {
             return null
         }
 
@@ -72,10 +60,10 @@ class ToolServiceImpl(
         return versionResult
     }
 
-    override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File): File {
+    override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File {
         LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val downloadableTool = getTools(toolType).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
+        val downloadableTool = getTools(toolType, *packageIds).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
                 ?: throw ToolException("Failed to find package $toolVersion")
 
         val downloadUrl = downloadableTool.downloadUrl
@@ -93,11 +81,11 @@ class ToolServiceImpl(
         }
     }
 
-    override fun unpackToolPackage(toolType: ToolType, toolPackage: File, nugetPackageDirectory: String, targetDirectory: File) {
+    override fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String) {
         LOG.info("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
 
-        if (createPackageFilter(toolType).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
-            if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory + "/", targetDirectory)) {
+        if (createPackageFilter(packageIds.toSet()).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
+            if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory, targetDirectory)) {
                 throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
             }
 
@@ -107,9 +95,11 @@ class ToolServiceImpl(
         }
     }
 
-    private fun createPackageFilter(toolType: ToolType) =
+    private fun createPackageFilter(packageIds: Set<String>) =
             FileFilter { packageFile ->
-                packageFile.isFile && packageFile.nameWithoutExtension.startsWith(toolType.type, true) && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
+                packageFile.isFile
+                        && packageIds.any { packageFile.nameWithoutExtension.startsWith(it, true) }
+                        && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
             }
 
     companion object {

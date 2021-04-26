@@ -74,14 +74,14 @@ class CommandExecutionAdapter(
     }
 
     override fun processFinished(exitCode: Int) {
-        _eventObserver.onNext(CommandResultExitCode(exitCode))
+        _eventObserver.onNext(CommandResultExitCode(exitCode, _commandLine.Id))
         _blockToken.dispose()
     }
 
     override fun makeProgramCommandLine(): ProgramCommandLine = _programCommandLineFactory.create(_commandLine)
 
     override fun onStandardOutput(text: String) {
-        val event = CommandResultOutput(text)
+        val event = CommandResultOutput(text, mutableSetOf<CommandResultAttribute>(), _commandLine.Id)
         _eventObserver.onNext(event)
         if (!event.attributes.contains(CommandResultAttribute.Suppressed)) {
             writeStandardOutput(text)
@@ -89,7 +89,7 @@ class CommandExecutionAdapter(
     }
 
     override fun onErrorOutput(error: String) {
-        val event = CommandResultOutput(error)
+        val event = CommandResultOutput(error, mutableSetOf<CommandResultAttribute>(), _commandLine.Id)
         _eventObserver.onNext(CommandResultOutput(error))
         if (!event.attributes.contains(CommandResultAttribute.Suppressed)) {
             _loggerService.writeWarning(error)
