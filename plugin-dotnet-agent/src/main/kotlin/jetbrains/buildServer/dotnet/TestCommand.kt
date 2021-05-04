@@ -58,14 +58,21 @@ class TestCommand(
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
             if (it.isNotBlank()) {
-                yieldAll(
-                        _argumentsAlternative.select(
-                                "Filter",
-                                listOf(CommandLineArgument("--filter"), CommandLineArgument(it)),
-                                emptySequence(),
-                                sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)),
-                                context.verbosityLevel)
-                )
+                val hasAssembly = targetArguments.any { it.arguments.any { it.argumentType == CommandLineArgumentType.Target && isAssembly(it.value) }}
+                if (hasAssembly) {
+                    yield(CommandLineArgument("--filter"))
+                    yield(CommandLineArgument(it))
+                }
+                else {
+                    yieldAll(
+                            _argumentsAlternative.select(
+                                    "Filter",
+                                    listOf(CommandLineArgument("--filter"), CommandLineArgument(it)),
+                                    emptySequence(),
+                                    sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)),
+                                    context.verbosityLevel)
+                    )
+                }
             }
         }
 

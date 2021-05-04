@@ -121,6 +121,41 @@ class TestCommandTest {
         Assert.assertEquals(actualCommand, DotnetCommandType.Test)
     }
 
+    @DataProvider
+    fun testFilterData(): Array<Array<Any>> {
+        return arrayOf(
+                arrayOf(listOf("my.csproj"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("@filterRsp", "customArg1")),
+                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "filter", "customArg1")),
+                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "filter", "customArg1")))
+    }
+
+    @Test(dataProvider = "testFilterData")
+    fun shouldProvideFilter(
+            targets: List<String>,
+            parameters: Map<String, String>,
+            expectedArguments: List<String>) {
+        // Given
+        val command = createCommand(parameters = parameters, targets = targets.asSequence(), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every {
+            _argumentsAlternative.select(
+                    "Filter",
+                    listOf(
+                            CommandLineArgument("--filter"),
+                            CommandLineArgument("filter")
+                    ),
+                    emptySequence(),
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "filter"))) },
+                    Verbosity.Detailed
+            )
+        } returns sequenceOf(CommandLineArgument("@filterRsp"))
+
+        // When
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
+
+        // Then
+        Assert.assertEquals(actualArguments, expectedArguments)
+    }
+
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
