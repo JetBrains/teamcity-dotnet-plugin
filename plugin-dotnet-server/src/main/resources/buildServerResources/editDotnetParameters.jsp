@@ -439,6 +439,14 @@
   </td>
 </tr>
 
+<tr class="advancedSetting dotnet pack test">
+  <th class="noBorder">Options:</th>
+  <td>
+    <props:checkboxProperty name="${params.skipBuildKey}"/>
+    <label for="${params.skipBuildKey}">Do not build the projects</label>
+  </td>
+</tr>
+
 <tr class="advancedSetting dotnet build clean pack publish test">
   <th class="noBorder"><label for="${params.outputDirKey}">Output directory:</label></th>
   <td>
@@ -534,14 +542,6 @@
     </div>
     <span class="error" id="error_${params.testSettingsFileKey}"></span>
     <span class="smallNote">The path to the run settings configuration file.</span>
-  </td>
-</tr>
-
-<tr class="advancedSetting dotnet pack test">
-  <th class="noBorder">Options:</th>
-  <td>
-    <props:checkboxProperty name="${params.skipBuildKey}"/>
-    <label for="${params.skipBuildKey}">Do not build the projects</label>
   </td>
 </tr>
 
