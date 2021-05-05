@@ -439,7 +439,7 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet pack test">
+<tr class="advancedSetting dotnet pack test publish run">
   <th class="noBorder">Options:</th>
   <td>
     <props:checkboxProperty name="${params.skipBuildKey}"/>
