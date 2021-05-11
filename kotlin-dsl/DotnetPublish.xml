@@ -54,6 +54,9 @@
         <param name="outputDir">
             <description>The directory where to publish the app.</description>
         </param>
+        <param name="skipBuild" type="boolean" trueValue="true" falseValue="">
+            <description>Do not build the project before testing</description>
+        </param>
         <param name="versionSuffix">
             <description>Defines the value for the $(VersionSuffix) property in the project.</description>
         </param>

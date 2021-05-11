@@ -74,6 +74,10 @@ class PublishCommand(
             }
         }
 
+        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
+            yield(CommandLineArgument("--no-build"))
+        }
+
         yieldAll(_commonArgumentsProvider.getArguments(context))
     }
 

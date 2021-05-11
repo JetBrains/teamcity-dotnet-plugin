@@ -51,6 +51,9 @@
         <param name="runtime">
             <description>Target runtime to pack for.</description>
         </param>
+        <param name="skipBuild" type="boolean" trueValue="true" falseValue="">
+            <description>Do not build the project before testing</description>
+        </param>
         <param name="args">
             <description>Enter additional command line parameters for dotnet run.</description>
         </param>
