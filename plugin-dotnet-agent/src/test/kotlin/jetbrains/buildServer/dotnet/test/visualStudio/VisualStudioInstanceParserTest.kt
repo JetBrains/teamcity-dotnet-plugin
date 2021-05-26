@@ -40,20 +40,6 @@ class VisualStudioInstanceParserTest {
                         VisualStudioState().let {
                             it.installationPath = "path"
                             it.catalogInfo = CatalogInfo()
-                            it.launchParams = JsonVisualStudioInstanceParser.LaunchParams()
-                            it.catalogInfo!!.productDisplayVersion = "16.6.3"
-                            it.catalogInfo!!.productLineVersion = "2019"
-                            it.product = ProductInfo()
-                            it.product!!.id = "abc"
-                            it.launchParams!!.fileName = File(File(File("Common7"), "IDE2"), "devenv.exe").path
-                            it
-                        },
-                        ToolInstance(ToolInstanceType.VisualStudio, File(File(File("path"), "Common7"), "IDE2"), Version(16, 6, 3), Version(2019), Platform.Default)
-                ),
-                arrayOf(
-                        VisualStudioState().let {
-                            it.installationPath = "path"
-                            it.catalogInfo = CatalogInfo()
                             it.catalogInfo!!.productDisplayVersion = "16.6.3"
                             it.catalogInfo!!.productLineVersion = "2019"
                             it.product = ProductInfo()
