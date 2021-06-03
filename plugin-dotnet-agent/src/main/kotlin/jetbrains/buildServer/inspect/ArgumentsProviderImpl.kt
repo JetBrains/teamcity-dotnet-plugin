@@ -12,13 +12,12 @@ import java.io.File
 
 class ArgumentsProviderImpl(
         private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService,
         private val _pathsService: PathsService,
         private val _fileSystemService: FileSystemService)
     : ArgumentsProvider {
     override fun getArguments(tool: InspectionTool): InspectionArguments {
         val customArguments = _parametersService.tryGetParameter(ParameterType.Runner, tool.customArgs)?.let {
-            _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }
+            it.split(System.lineSeparator()).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }
         }?.toMutableList() ?: mutableListOf()
         val configFileArg = processFileArg(customArguments, ConfigArgRegex, tool.runnerType, ".config")
         val outputFileArg = processFileArg(customArguments, OutputArgRegex, "${tool.toolName}-report", ".xml")
