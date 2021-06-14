@@ -16,7 +16,6 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
         BufferedReader(InputStreamReader(stream)).use {
             val state = _jsonParser.tryParse<VisualStudioState>(it, VisualStudioState::class.java)
             val installationPath = state?.installationPath;
-            val fileName = state?.launchParams?.fileName ?: DefaultDevenvPath.path
             val displayVersion = state?.catalogInfo?.productDisplayVersion ?: state?.installationVersion
             val productLineVersion = state?.catalogInfo?.productLineVersion
             if (installationPath.isNullOrBlank() || displayVersion.isNullOrBlank() || productLineVersion.isNullOrBlank()) {
@@ -32,7 +31,7 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
 
             return ToolInstance(
                     ToolInstanceType.VisualStudio,
-                    File(File(installationPath), fileName).parentFile,
+                    File(installationPath, DefaultDevenvPath),
                     Version.parse(displayVersion),
                     Version.parse(productLineVersion),
                     Platform.Default)
@@ -42,7 +41,6 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
     open class VisualStudioState {
         var installationPath: String? = null
         var installationVersion: String? = null
-        var launchParams: LaunchParams? = null
         var catalogInfo: CatalogInfo? = null
         var product: ProductInfo? = null
     }
@@ -56,13 +54,9 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
         var id: String? = null
     }
 
-    class LaunchParams {
-        var fileName: String? = null
-    }
-
     companion object {
         private val LOG = Logger.getLogger(JsonVisualStudioInstanceParser::class.java)
         internal const val TeamExplorerProductId = "Microsoft.VisualStudio.Product.TeamExplorer"
-        private val DefaultDevenvPath = File(File(File("Common7"), "IDE"), "devenv.exe")
+        private val DefaultDevenvPath = File(File("Common7"), "IDE").path
     }
 }

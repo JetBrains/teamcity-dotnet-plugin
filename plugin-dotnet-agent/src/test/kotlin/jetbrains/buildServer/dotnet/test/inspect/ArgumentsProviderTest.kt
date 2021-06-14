@@ -24,7 +24,6 @@ import org.testng.annotations.Test
 import java.io.File
 
 class ArgumentsProviderTest {
-    @MockK private lateinit var _argumentsService: ArgumentsService
     @MockK private lateinit var _pathsService: PathsService
 
     private val _tmp = File("tmp")
@@ -36,7 +35,6 @@ class ArgumentsProviderTest {
         MockKAnnotations.init(this)
         clearAllMocks()
 
-        every { _argumentsService.split(any()) } answers { arg<String>(0).split(" ").asSequence() }
         every { _pathsService.getPath(PathType.AgentTemp) } returns _tmp
         every { _pathsService.getPath(PathType.Checkout) } returns _checkout
         every { _pathsService.getPath(PathType.CachePerCheckout) } returns _cache
@@ -59,9 +57,24 @@ class ArgumentsProviderTest {
                         )
                 ),
 
+                // Cusrom args with spaces (https://youtrack.jetbrains.com/issue/TW-71722)
+                arrayOf(
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg  1" + System.lineSeparator() + "--Arg2")),
+                        VirtualFileSystemService(),
+                        InspectionTool.Inspectcode,
+                        InspectionArguments(
+                                File(_tmp, "dotnet-tools-inspectcode99.config"),
+                                File(_tmp, "inspectcode-report99.xml"),
+                                File(_tmp, "dotnet-tools-inspectcode99.log"),
+                                _cache,
+                                false,
+                                listOf(CommandLineArgument("--Arg  1", CommandLineArgumentType.Custom), CommandLineArgument("--Arg2", CommandLineArgumentType.Custom))
+                        )
+                ),
+
                 // Override cache
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --caches-home=Cache")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--caches-home=Cache")),
                         VirtualFileSystemService().addDirectory(File("Cache"), VirtualFileSystemService.Attributes(true)),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -75,7 +88,7 @@ class ArgumentsProviderTest {
                 ),
 
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --caches-home=Cache")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--caches-home=Cache")),
                         VirtualFileSystemService().addDirectory(File("Cache"), VirtualFileSystemService.Attributes(false)),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -90,7 +103,7 @@ class ArgumentsProviderTest {
 
                 // Override log
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --logFile=Abc.log")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--logFile=Abc.log")),
                         VirtualFileSystemService().addFile(File("Abc.log"), VirtualFileSystemService.Attributes(true)),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -104,7 +117,7 @@ class ArgumentsProviderTest {
                 ),
 
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --logFile=Abc.log")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--logFile=Abc.log")),
                         VirtualFileSystemService(),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -119,7 +132,7 @@ class ArgumentsProviderTest {
 
                 // Override output
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --output=Out.xml")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--output=Out.xml")),
                         VirtualFileSystemService().addFile(File("Out.xml"), VirtualFileSystemService.Attributes(true)),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -133,7 +146,7 @@ class ArgumentsProviderTest {
                 ),
 
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --output=Out.xml")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--output=Out.xml")),
                         VirtualFileSystemService(),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -147,7 +160,7 @@ class ArgumentsProviderTest {
                 ),
 
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 -o=Out.xml")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "-o=Out.xml")),
                         VirtualFileSystemService(),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -162,7 +175,7 @@ class ArgumentsProviderTest {
 
                 // Override config path
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --config=Cfg.xml")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--config=Cfg.xml")),
                         VirtualFileSystemService().addFile(File("Cfg.xml"), VirtualFileSystemService.Attributes(true)),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -176,7 +189,7 @@ class ArgumentsProviderTest {
                 ),
 
                 arrayOf(
-                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1 --config=Cfg.xml")),
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1" + System.lineSeparator() + "--config=Cfg.xml")),
                         VirtualFileSystemService(),
                         InspectionTool.Inspectcode,
                         InspectionArguments(
@@ -210,7 +223,6 @@ class ArgumentsProviderTest {
     private fun createInstance(parametersService: ParametersService, fileSystemService: FileSystemService) =
             ArgumentsProviderImpl(
                     parametersService,
-                    _argumentsService,
                     _pathsService,
                     fileSystemService)
 }
