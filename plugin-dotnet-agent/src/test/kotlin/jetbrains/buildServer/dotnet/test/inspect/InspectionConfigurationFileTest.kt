@@ -11,6 +11,7 @@ import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.inspect.InspectCodeConstants
 import jetbrains.buildServer.inspect.InspectCodeConstants.CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS
 import jetbrains.buildServer.inspect.InspectCodeConstants.CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS
+import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH
 import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_PROJECT_FILTER
 import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_SOLUTION_PATH
 import jetbrains.buildServer.inspect.InspectionConfigurationFile
@@ -41,7 +42,8 @@ class InspectionConfigurationFileTest {
                                 RUNNER_SETTING_PROJECT_FILTER to "Abc\nxyz",
                                 RUNNER_SETTING_SOLUTION_PATH to "My.sln",
                                 CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS to "true",
-                                CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "true"
+                                CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "true",
+                                RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH to "sln.DotSettings"
                         )),
                         E("InspectCodeOptions",
                                 E("Debug", "true"),
@@ -52,6 +54,7 @@ class InspectionConfigurationFileTest {
                                 E("OutputFile", "output.xml"),
                                 E("SolutionFile", "My.sln"),
                                 E("CachesHomeDirectory", "cache"),
+                                E("CustomSettingsProfile", "sln.DotSettings"),
                                 E("SupressBuildInSettings", "true"),
                                 E("NoSolutionWideAnalysis", "true")
                         )

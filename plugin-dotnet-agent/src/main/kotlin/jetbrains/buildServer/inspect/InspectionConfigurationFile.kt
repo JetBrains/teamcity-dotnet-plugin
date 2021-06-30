@@ -8,6 +8,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.build
 import jetbrains.buildServer.inspect.InspectCodeConstants.CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS
 import jetbrains.buildServer.inspect.InspectCodeConstants.CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS
+import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH
 import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_PROJECT_FILTER
 import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_SOLUTION_PATH
 import org.w3c.dom.Document
@@ -32,6 +33,7 @@ class InspectionConfigurationFile(
                         E("OutputFile", if(!outputFile.path.isNullOrEmpty()) outputFile.path else null),
                         E("SolutionFile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_SOLUTION_PATH)),
                         E("CachesHomeDirectory", if(!cachesHomeDirectory?.path.isNullOrEmpty()) cachesHomeDirectory?.path else null),
+                        E("CustomSettingsProfile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH)),
                         E("SupressBuildInSettings", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS)?.let { it.toBoolean().toString() }),
                         E("NoSolutionWideAnalysis", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS)?.let { it.toBoolean().toString() })
                 ),
