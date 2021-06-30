@@ -32,6 +32,8 @@ class SemanticVersionParserTest {
                 arrayOf<Any?>("3.2.4-Beta", SemanticVersion(3, 2, 4, "Beta")),
                 arrayOf<Any?>("333.222.54-beTa", SemanticVersion(333, 222, 54, "beTa")),
                 arrayOf<Any?>("3.2.4-rc", SemanticVersion(3, 2, 4, "rc")),
+                arrayOf<Any?>("2021.2.0-eap01", SemanticVersion(2021, 2, 0, "eap01")),
+                arrayOf<Any?>("2021.2.0-eap0.1", SemanticVersion(2021, 2, 0, "eap0.1")),
                 arrayOf<Any?>("TeamCity.Dotnet.Integration.123.0.18-BEta.nupkg", SemanticVersion(123, 0, 18, "BEta")),
                 arrayOf<Any?>("path\\TeamCity.Dotnet.Integration.123.0.18-BEta.nupkg", null),
                 arrayOf<Any?>("path/TeamCity.Dotnet.Integration.123.0.18-BEta.nupkg", null),
