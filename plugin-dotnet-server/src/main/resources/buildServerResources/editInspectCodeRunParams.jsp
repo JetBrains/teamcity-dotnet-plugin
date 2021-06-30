@@ -135,7 +135,7 @@
   <tr class="advancedSetting">
     <th><label for="${constants.customCommandlineKey}">Additional InspectCode parameters: <bs:help file="inspections-resharper#cmdArgs" anchor=""/></label></th>
     <td>
-      <props:multilineProperty name="${constants.customCommandlineKey}" linkTitle="Command line parameters" cols="60" rows="5" note="Additional command line parameters for InspectCode."/>
+      <props:multilineProperty name="${constants.customCommandlineKey}" linkTitle="Command line parameters" cols="60" rows="5" note="Additional command line parameters for InspectCode separated by new lines."/>
     </td>
   </tr>
 

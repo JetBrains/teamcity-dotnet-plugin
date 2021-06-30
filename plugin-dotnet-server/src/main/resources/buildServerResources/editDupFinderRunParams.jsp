@@ -147,7 +147,7 @@
   <tr class="advancedSetting">
     <th><label for="${constants.customCommandlineKey}">Additional dupFinder parameters: <bs:help file="duplicates-finder-resharper#cmdArgs" anchor=""/></label></th>
     <td>
-      <props:multilineProperty name="${constants.customCommandlineKey}" linkTitle="Command line parameters" cols="60" rows="5" note="Additional command line parameters for dupFinder."/>
+      <props:multilineProperty name="${constants.customCommandlineKey}" linkTitle="Command line parameters" cols="60" rows="5" note="Additional command line parameters for dupFinder separated by new lines."/>
     </td>
   </tr>
 
