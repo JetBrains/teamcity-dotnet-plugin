@@ -20,7 +20,7 @@ class Version(vararg val versions: Int, val release: String = "")
     fun trim() = Version(*_versions, release = release)
 
     override fun toString() =
-            versions.joinToString(".")
+            versions.joinToString(".") + release
 
     override fun compareTo(other: Version): Int {
         var compareVersions = versions

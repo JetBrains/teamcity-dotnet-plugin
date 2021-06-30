@@ -16,14 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import io.mockk.verify
-import jetbrains.buildServer.dotnet.RequirementFactoryImpl
-import jetbrains.buildServer.dotnet.SemanticVersionParser
-import jetbrains.buildServer.dotnet.SemanticVersionParserImpl
 import jetbrains.buildServer.dotnet.Version
-import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementQualifier
-import jetbrains.buildServer.requirements.RequirementType
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -129,6 +122,7 @@ class VersionTest {
         Assert.assertEquals(actualVersion, expectedVersion)
     }
 
+    @Test
     fun shouldTrim() {
         // Given
         val version = Version(1, 0, 2, 0, 0)
@@ -138,5 +132,27 @@ class VersionTest {
 
         // Then
         Assert.assertEquals(trimmedVersion.size, 3)
+    }
+
+    @DataProvider
+    fun toStingData(): Array<Array<out Any?>> {
+        return arrayOf(
+                arrayOf(Version(5, 0), "5.0"),
+                arrayOf(Version(5, 1, 43), "5.1.43"),
+                arrayOf(Version(5), "5"),
+                arrayOf(Version(2021, 2, 0, release = "-eap01"), "2021.2.0-eap01"),
+                arrayOf(Version(2021, 2, 0, release = "-eap0.1"), "2021.2.0-eap0.1")
+        )
+    }
+
+    @Test(dataProvider = "toStingData")
+    fun shouldConvertToString(version: Version, expectedVersionString: String) {
+        // Given
+
+        // When
+        val actualVersionString = version.toString()
+
+        // Then
+        Assert.assertEquals(actualVersionString, expectedVersionString)
     }
 }
