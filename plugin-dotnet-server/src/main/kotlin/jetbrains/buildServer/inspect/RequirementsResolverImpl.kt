@@ -21,8 +21,8 @@ class RequirementsResolverImpl : RequirementsResolver {
     }
 
     companion object {
-        private val MinimalRequirementX64 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]_x64${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
-        private val MinimalRequirementX86 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]_x86${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
+        private val MinimalRequirementX64 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x64${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
+        private val MinimalRequirementX86 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x86${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
         private val FullDotnet461X64 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(${CONFIG_PREFIX_DOTNET_FAMEWORK}4\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_x64${CONFIG_SUFFIX_PATH})", null, RequirementType.EXISTS)
         private val FullDotnet461X86 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(${CONFIG_PREFIX_DOTNET_FAMEWORK}4\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_x86${CONFIG_SUFFIX_PATH})", null, RequirementType.EXISTS)
         private val DotnetCore3 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${CONFIG_PREFIX_CORE_RUNTIME}3\\.[\\d\\.]+${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)

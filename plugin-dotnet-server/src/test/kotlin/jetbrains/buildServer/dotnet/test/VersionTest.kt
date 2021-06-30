@@ -73,7 +73,12 @@ class VersionTest {
                 arrayOf(Version(1, 2, 0, 0), Version(1, 2), 0),
                 arrayOf(Version(1, 2, 0), Version(1, 2), 0),
                 arrayOf(Version(0, 0, 0), Version(0, 0), 0),
-                arrayOf(Version(0), Version(0), 0)
+                arrayOf(Version(0), Version(0), 0),
+                arrayOf(Version(2021, 2, 0, release = "-eap01"), Version(2021, 2, 0, release = "-eap01"), 0),
+                arrayOf(Version(2021, 3, 0, release = "-eap01"), Version(2021, 2, 0, release = "-eap01"), 1),
+                arrayOf(Version(2021, 2, 0, release = "-eap02"), Version(2021, 2, 0, release = "-eap01"), 1),
+                arrayOf(Version(2021, 2, 0, release = "-eap0.2"), Version(2021, 2, 0, release = "-eap0.3"), -1),
+                arrayOf(Version(2021, 2, 0, release = "-eap01"), Version(2018, 2), 1)
         )
     }
 
@@ -97,6 +102,8 @@ class VersionTest {
                 arrayOf("5.0", Version(5, 0)),
                 arrayOf("5.1.43", Version(5, 1, 43)),
                 arrayOf("5", Version(5)),
+                arrayOf("2021.2.0-eap01", Version(2021, 2, 0, release = "-eap01")),
+                arrayOf("2021.2.0-eap0.1", Version(2021, 2, 0, release = "-eap0.1")),
 
                 arrayOf("", null),
                 arrayOf(" ", null),

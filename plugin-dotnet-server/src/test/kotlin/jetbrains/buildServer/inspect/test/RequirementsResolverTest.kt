@@ -20,12 +20,12 @@ class RequirementsResolverTest {
                 arrayOf(
                         Version(2018, 1),
                         IspectionToolPlatform.X64,
-                        listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]_x64${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
+                        listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x64${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 1),
                         IspectionToolPlatform.X86,
-                        listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]_x86${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
+                        listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x86${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 2),
