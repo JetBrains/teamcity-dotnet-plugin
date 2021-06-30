@@ -17,7 +17,7 @@ class ArgumentsProviderImpl(
     : ArgumentsProvider {
     override fun getArguments(tool: InspectionTool): InspectionArguments {
         val customArguments = _parametersService.tryGetParameter(ParameterType.Runner, tool.customArgs)?.let {
-            it.split(System.lineSeparator()).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }
+            it.split("\r\n", "\n").map { CommandLineArgument(it, CommandLineArgumentType.Custom) }
         }?.toMutableList() ?: mutableListOf()
         val configFileArg = processFileArg(customArguments, ConfigArgRegex, tool.runnerType, ".config")
         val outputFileArg = processFileArg(customArguments, OutputArgRegex, "${tool.toolName}-report", ".xml")
