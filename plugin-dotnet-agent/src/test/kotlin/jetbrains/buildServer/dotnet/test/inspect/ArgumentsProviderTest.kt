@@ -86,6 +86,48 @@ class ArgumentsProviderTest {
                         )
                 ),
 
+                arrayOf(
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1\n  \n--Arg  2")),
+                        VirtualFileSystemService(),
+                        InspectionTool.Inspectcode,
+                        InspectionArguments(
+                                File(_tmp, "dotnet-tools-inspectcode99.config"),
+                                File(_tmp, "inspectcode-report99.xml"),
+                                File(_tmp, "dotnet-tools-inspectcode99.log"),
+                                _cache,
+                                false,
+                                listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom), CommandLineArgument("--Arg  2", CommandLineArgumentType.Custom))
+                        )
+                ),
+
+                arrayOf(
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1\r\n  \r\n--Arg  2")),
+                        VirtualFileSystemService(),
+                        InspectionTool.Inspectcode,
+                        InspectionArguments(
+                                File(_tmp, "dotnet-tools-inspectcode99.config"),
+                                File(_tmp, "inspectcode-report99.xml"),
+                                File(_tmp, "dotnet-tools-inspectcode99.log"),
+                                _cache,
+                                false,
+                                listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom), CommandLineArgument("--Arg  2", CommandLineArgumentType.Custom))
+                        )
+                ),
+
+                arrayOf(
+                        ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg1\r--Arg  2")),
+                        VirtualFileSystemService(),
+                        InspectionTool.Inspectcode,
+                        InspectionArguments(
+                                File(_tmp, "dotnet-tools-inspectcode99.config"),
+                                File(_tmp, "inspectcode-report99.xml"),
+                                File(_tmp, "dotnet-tools-inspectcode99.log"),
+                                _cache,
+                                false,
+                                listOf(CommandLineArgument("--Arg1", CommandLineArgumentType.Custom), CommandLineArgument("--Arg  2", CommandLineArgumentType.Custom))
+                        )
+                ),
+
                 // Cusrom args with spaces (https://youtrack.jetbrains.com/issue/TW-71722)
                 arrayOf(
                         ParametersServiceStub(mapOf(InspectCodeConstants.RUNNER_SETTING_CUSTOM_CMD_ARGS to "--Arg  1" + System.lineSeparator() + "--Arg2")),
