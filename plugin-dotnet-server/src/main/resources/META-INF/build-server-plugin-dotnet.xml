@@ -88,4 +88,10 @@
     <constructor-arg ref="dupFinderRunTypePropertiesProcessor"/>
   </bean>
 
+  <!--C# script-->
+  <bean class="jetbrains.buildServer.script.CSharpScriptRunTypePropertiesProcessor" id="cSharpScriptRunTypePropertiesProcessor"/>
+  <bean class="jetbrains.buildServer.script.CSharpScriptRunType">
+    <constructor-arg ref="cSharpScriptRunTypePropertiesProcessor"/>
+  </bean>
+
 </beans>
