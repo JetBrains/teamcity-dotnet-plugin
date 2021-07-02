@@ -10,13 +10,24 @@
 
 <props:workingDirectory />
 
-<%--
-<jsp:include page="/tools/editToolUsage.html?toolType=kotlin.compiler&versionParameterName=${propertyNames.toolPath}&class=longField"/>
---%>
+<jsp:include page="/tools/editToolUsage.html?toolType=${propertyNames.cltToolTypeName}&versionParameterName=${propertyNames.cltPath}&class=longField"/>
+
+<tr class="advancedSetting">
+  <th class="noBorder"><label for="${propertyNames.frameworkVersion}">Framework:</label></th>
+  <td>
+    <props:selectProperty name="${propertyNames.frameworkVersion}" enableFilter="true" className="mediumField">
+      <c:forEach var="item" items="${propertyNames.frameworkVersions}">
+        <props:option value="${item.tfm}"><c:out value="${item.description}"/></props:option>
+      </c:forEach>
+    </props:selectProperty>
+    <span class="error" id="error_${propertyNames.frameworkVersion}"></span>
+    <span class="smallNote" id="defaultNote_${propertyNames.frameworkVersion}">Select a version of .NET Framework.</span>
+  </td>
+</tr>
 
 <props:selectSectionProperty name="${propertyNames.scriptType}" title="Script type:">
 
-  <props:selectSectionPropertyContent value="${propertyNames.typeCustom}" caption="Custom Script">
+  <props:selectSectionPropertyContent value="${propertyNames.typeCustom}" caption="${propertyNames.typeCustomDescription}">
     <tr id="script.content.container">
       <th>
         <label for="${propertyNames.scriptContent}">C# script:<l:star/></label>
@@ -28,7 +39,8 @@
       </td>
     </tr>
   </props:selectSectionPropertyContent>
-  <props:selectSectionPropertyContent value="${propertyNames.typeFile}" caption="Script File">
+
+  <props:selectSectionPropertyContent value="${propertyNames.typeFile}" caption="${propertyNames.typeFileDescription}">
     <tr id="script.content.container">
       <th>
         <label for="${propertyNames.scriptFile}">C# script file:<l:star/></label>
@@ -46,13 +58,11 @@
   </props:selectSectionPropertyContent>
 </props:selectSectionProperty>
 
-<tr class="advancedSetting">
+<%--<tr class="advancedSetting">
   <th>
     <label for="${propertyNames.toolArgs}">Script parameters:</label>
   </th>
   <td>
     <props:textProperty name="${propertyNames.toolArgs}" className="longField" expandable="true"/>
   </td>
-</tr>
-
-<props:javaSettings/>
+</tr>--%>

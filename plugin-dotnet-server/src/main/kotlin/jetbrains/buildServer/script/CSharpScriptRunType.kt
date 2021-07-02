@@ -1,14 +1,12 @@
 package jetbrains.buildServer.script
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.TargetDotNetFramework
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
-import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import java.util.*
 
@@ -33,7 +31,10 @@ class CSharpScriptRunType(
     override fun getViewRunnerParamsJspFilePath() =
         _pluginDescriptor.getPluginResourcesPath("viewCSharpScriptRunParams.jsp")
 
-    override fun getDefaultRunnerProperties(): Map<String, String> = HashMap()
+    override fun getDefaultRunnerProperties() =
+        mapOf(
+                ScriptConstants.FRAMEWORK to Framework.Any.tfm
+        )
 
     override fun getType() = ScriptConstants.RUNNER_TYPE
 
@@ -60,9 +61,9 @@ class CSharpScriptRunType(
         return sb.toString()
     }
 
-    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) = mutableListOf(DotnetCore3)
-
-    companion object {
-        private val DotnetCore3 = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME}3\\.[\\d\\.]+${DotnetConstants.CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
-    }
+    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
+        runParameters[ScriptConstants.FRAMEWORK]
+                ?.let { Framework.tryParse(it) }
+                ?.requirement?.let { mutableListOf(it) }
+                ?: mutableListOf()
 }

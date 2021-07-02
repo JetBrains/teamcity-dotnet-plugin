@@ -1,6 +1,6 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
-infix fun <T: Comparable<T>>Bound<T>.to(that: Bound<T>): Range<T> = SimpleRange<T>(this, that)
+infix fun <T: Comparable<T>>Bound<T>.to(that: Bound<T>): Range<T> = jetbrains.buildServer.SimpleRange<T>(this, that)
 fun <T>combineOf(vararg ranges: Range<T>): Range<T> = MultiRange(*ranges)
 
 private data class SimpleRange<T: Comparable<T>>(

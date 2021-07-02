@@ -3,11 +3,13 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.Version
+import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
 class DotnetRuntimesProviderImpl(
         private val _fileSystemService: FileSystemService)
     : DotnetRuntimesProvider {
+    @Cacheable("ListOfDotnetRuntimes", key = "#dotnetExecutable", sync = true)
     override fun getRuntimes(dotnetExecutable: File): Sequence<DotnetRuntime> {
         val runtimesPath = File(dotnetExecutable.parent, "shared")
         if(!_fileSystemService.isExists(runtimesPath) || !_fileSystemService.isDirectory(runtimesPath)) {

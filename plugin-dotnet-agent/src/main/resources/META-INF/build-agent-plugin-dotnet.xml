@@ -509,4 +509,16 @@
     <constructor-arg name="_pathType" type="jetbrains.buildServer.agent.runner.PathType" value="Cache"/>
   </bean>
 
+  <!--C# script-->
+  <bean class="jetbrains.buildServer.script.CSharpScriptWorkflowComposer" id="cSharpScriptWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="csharpScript">
+    <constructor-arg value="csharpScript"/>
+  </bean>
+  <bean class="jetbrains.buildServer.script.CommandLineFactoryImpl"/>
+  <bean class="jetbrains.buildServer.script.ScriptProviderImpl"/>
+  <bean class="jetbrains.buildServer.script.ToolResolverImpl"/>
+  <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
+
 </beans>

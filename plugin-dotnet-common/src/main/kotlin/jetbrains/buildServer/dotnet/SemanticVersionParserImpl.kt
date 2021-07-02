@@ -28,7 +28,7 @@ class SemanticVersionParserImpl : SemanticVersionParser {
 
     companion object {
         val VERSION_PATTERN = Regex(
-                """^([a-z.]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?(\.nupkg)?${'$'}""",
+                """^([a-z\.-]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?(\.nupkg)?${'$'}""",
                 RegexOption.IGNORE_CASE
         )
     }
