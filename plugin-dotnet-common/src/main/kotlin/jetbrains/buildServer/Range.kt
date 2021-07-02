@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer
 
 interface Range<T> {
     fun contains(value: T): Boolean

@@ -16,11 +16,10 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import io.mockk.verify
+import jetbrains.buildServer.Range
+import jetbrains.buildServer.combineOf
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementQualifier
-import jetbrains.buildServer.requirements.RequirementType
+import jetbrains.buildServer.*
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

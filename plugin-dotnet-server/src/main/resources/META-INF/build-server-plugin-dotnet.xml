@@ -93,5 +93,9 @@
   <bean class="jetbrains.buildServer.script.CSharpScriptRunType">
     <constructor-arg ref="cSharpScriptRunTypePropertiesProcessor"/>
   </bean>
+  <bean class="jetbrains.buildServer.script.CSharpScriptTypeAdapter" id="cSharpScriptToolType"/>
+  <bean class="jetbrains.buildServer.script.CSharpScriptToolProvider">
+    <constructor-arg ref="cSharpScriptToolType"/>
+  </bean>
 
 </beans>
