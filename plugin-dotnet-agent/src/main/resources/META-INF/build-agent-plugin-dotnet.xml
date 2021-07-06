@@ -121,7 +121,9 @@
 
   <bean class="jetbrains.buildServer.dotnet.VersionEnumeratorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetSdksProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimesProviderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimesProviderImpl">
+    <constructor-arg ref="dotnetToolProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionProviderImpl">
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>
@@ -134,7 +136,6 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider">
     <constructor-arg ref="dotnetToolEnvironment"/>
-    <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetVersionParser" id="dotnetVersionParser"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetStateWorkflowComposer" id="dotnetStateWorkflowComposer">
@@ -187,9 +188,7 @@
   <bean class="jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl"/>
 
   <!--Dotnet agent properties providers-->
-  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimeAgentPropertiesProvider" id="dotnetRuntimeAgentPropertiesProvider">
-    <constructor-arg ref="dotnetToolProvider"/>
-  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetRuntimeAgentPropertiesProvider" id="dotnetRuntimeAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetSdkAgentPropertiesProvider" id="dotnetSdkAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
@@ -519,8 +518,6 @@
   </bean>
   <bean class="jetbrains.buildServer.script.ScriptProviderImpl"/>
   <bean class="jetbrains.buildServer.script.ToolResolverImpl"/>
-  <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl">
-    <constructor-arg ref="dotnetToolProvider"/>
-  </bean>
+  <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl"/>
 
 </beans>
