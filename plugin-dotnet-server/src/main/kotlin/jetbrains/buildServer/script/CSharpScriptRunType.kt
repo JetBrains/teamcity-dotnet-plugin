@@ -31,35 +31,12 @@ class CSharpScriptRunType(
     override fun getViewRunnerParamsJspFilePath() =
         _pluginDescriptor.getPluginResourcesPath("viewCSharpScriptRunParams.jsp")
 
-    override fun getDefaultRunnerProperties() =
-        mapOf(
-                ScriptConstants.FRAMEWORK to Framework.Any.tfm
-        )
+    override fun getDefaultRunnerProperties() = emptyMap<String, String>()
+        //mapOf(ScriptConstants.FRAMEWORK to Framework.Any.tfm)
 
     override fun getType() = ScriptConstants.RUNNER_TYPE
 
     override fun getDisplayName() = ScriptConstants.RUNNER_DISPLAY_NAME
-
-    override fun describeParameters(parameters: Map<String, String>): String {
-        val sb = StringBuilder()
-
-/*
-        val solutionPath = parameters[InspectCodeConstants.RUNNER_SETTING_SOLUTION_PATH]
-        val projectFilter = parameters[InspectCodeConstants.RUNNER_SETTING_PROJECT_FILTER]
-        if (!StringUtil.isEmptyOrSpaces(solutionPath)) {
-            sb.append("Solution file path: ").append(solutionPath).append("\n")
-        }
-
-        sb.append("Sources to analyze: ")
-        if (StringUtil.isEmptyOrSpaces(projectFilter)) {
-            sb.append("whole solution").append("\n")
-        } else {
-            sb.append(projectFilter).append("\n")
-        }
-*/
-
-        return sb.toString()
-    }
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
         runParameters[ScriptConstants.FRAMEWORK]

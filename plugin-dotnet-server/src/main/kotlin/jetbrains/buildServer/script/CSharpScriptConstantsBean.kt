@@ -5,8 +5,8 @@ class CSharpScriptConstantsBean {
     val scriptContent = ScriptConstants.SCRIPT_CONTENT
     val scriptFile = ScriptConstants.SCRIPT_FILE
     val cltPath = ScriptConstants.CLT_PATH
-    val frameworkVersion = ScriptConstants.FRAMEWORK
-    val frameworkVersions = Framework.values()
+    // val frameworkVersion = ScriptConstants.FRAMEWORK
+    // val frameworkVersions = Framework.values()
     val toolArgs = ScriptConstants.TOOL_ARGS
     val toolPath = ScriptConstants.TOOL_PATH
 
