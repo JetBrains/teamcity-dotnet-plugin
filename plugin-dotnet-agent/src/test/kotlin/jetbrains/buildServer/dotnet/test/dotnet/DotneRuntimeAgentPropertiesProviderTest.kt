@@ -30,7 +30,6 @@ import java.io.File
 
 class DotneRuntimeAgentPropertiesProviderTest {
     @MockK private lateinit var _dotnetRuntimesProvider: DotnetRuntimesProvider
-    @MockK private lateinit var _toolProvider: ToolProvider
     @MockK private lateinit var _versionEnumerator: VersionEnumerator
     private val _toolPath = Path("dotnet")
 
@@ -61,8 +60,7 @@ class DotneRuntimeAgentPropertiesProviderTest {
             runtimes: List<DotnetRuntime>,
             expectedProperties: List<AgentProperty>) {
         // Given
-        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns _toolPath.path
-        every { _dotnetRuntimesProvider.getRuntimes(File(_toolPath.path)) } returns runtimes.asSequence()
+        every { _dotnetRuntimesProvider.getRuntimes() } returns runtimes.asSequence()
         every { _versionEnumerator.enumerate<DotnetRuntime>(any()) } answers {
             sequence {
                 for (runtime in arg<Sequence<DotnetRuntime>>(0)) {
@@ -82,7 +80,6 @@ class DotneRuntimeAgentPropertiesProviderTest {
     }
 
     private fun createInstance() = DotnetRuntimeAgentPropertiesProvider(
-            _toolProvider,
             _dotnetRuntimesProvider,
             _versionEnumerator)
 }

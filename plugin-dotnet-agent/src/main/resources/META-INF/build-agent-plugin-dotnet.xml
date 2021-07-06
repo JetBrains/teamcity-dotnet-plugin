@@ -514,7 +514,9 @@
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="csharpScript">
     <constructor-arg value="csharpScript"/>
   </bean>
-  <bean class="jetbrains.buildServer.script.CommandLineFactoryImpl"/>
+  <bean class="jetbrains.buildServer.script.CommandLineFactoryImpl">
+    <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
+  </bean>
   <bean class="jetbrains.buildServer.script.ScriptProviderImpl"/>
   <bean class="jetbrains.buildServer.script.ToolResolverImpl"/>
   <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl">

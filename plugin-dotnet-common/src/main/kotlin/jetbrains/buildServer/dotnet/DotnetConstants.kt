@@ -100,6 +100,7 @@ object DotnetConstants {
     const val CONFIG_PREFIX_MSBUILD_TOOLS = "MSBuildTools"
     const val CONFIG_PREFIX_DOTNET_MSTEST = "teamcity.dotnet.mstest"
     const val CONFIG_PREFIX_DOTNET_VSTEST = "teamcity.dotnet.vstest"
+    const val CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER = "DotNetCredentialProvider"
     const val CONFIG_PREFIX_VISUAL_STUDIO = "VS"
     const val CONFIG_SUFFIX_PATH = "_Path"
     const val CONFIG_SUFFIX_DOTNET_CLI = "DotNetCLI"
