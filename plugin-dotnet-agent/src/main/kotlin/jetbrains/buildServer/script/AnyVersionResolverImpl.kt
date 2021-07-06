@@ -14,12 +14,10 @@ import jetbrains.buildServer.to
 
 class AnyVersionResolverImpl(
         private val _fileSystemService: FileSystemService,
-        private val _toolProvider: ToolProvider,
         private val _runtimesProvider: DotnetRuntimesProvider)
     : AnyVersionResolver {
     override fun resolve(toolsPath: File): File {
-        val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
-        var runtimes = _runtimesProvider.getRuntimes(dotnetPath).map { Version(it.version.major, it.version.minor) }.toList()
+        var runtimes = _runtimesProvider.getRuntimes().map { Version(it.version.major, it.version.minor) }.toList()
         return _fileSystemService.list(toolsPath)
                 .filter { _fileSystemService.isDirectory(it) }
                 .map {

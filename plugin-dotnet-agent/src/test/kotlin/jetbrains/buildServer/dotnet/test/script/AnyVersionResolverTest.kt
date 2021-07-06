@@ -19,7 +19,6 @@ import org.testng.annotations.Test
 import java.io.File
 
 class AnyVersionResolverTest {
-    @MockK private lateinit var _toolProvider: ToolProvider
     @MockK private lateinit var _runtimesProvider: DotnetRuntimesProvider
     private val DefaultToolsPath = File("tools")
     private val DotnetPath = "dotnet"
@@ -28,8 +27,6 @@ class AnyVersionResolverTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-
-        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) }.returns(DotnetPath)
     }
 
     @DataProvider(name = "cases")
@@ -108,7 +105,7 @@ class AnyVersionResolverTest {
             toolsPath: File,
             expectedVersionPath: File?) {
         // Given
-        every { _runtimesProvider.getRuntimes(File(DotnetPath)) }.returns(runtimes)
+        every { _runtimesProvider.getRuntimes() }.returns(runtimes)
         val resoler = createInstance(fileSystemService)
 
         // When
@@ -123,5 +120,5 @@ class AnyVersionResolverTest {
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            AnyVersionResolverImpl(fileSystemService, _toolProvider, _runtimesProvider)
+            AnyVersionResolverImpl(fileSystemService, _runtimesProvider)
 }

@@ -16,18 +16,34 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.ToolProvider
 import jetbrains.buildServer.dotnet.DotnetSdk
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetRuntime
 import jetbrains.buildServer.dotnet.DotnetRuntimesProviderImpl
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
+import jetbrains.buildServer.script.ToolResolver
 import org.testng.Assert
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class DotnetRuntimesProviderTest {
+    @MockK
+    private lateinit var _toolProvider: ToolProvider
+
+    @BeforeMethod
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+    }
 
     @DataProvider
     fun testData(): Array<Array<Any>> {
@@ -62,17 +78,18 @@ class DotnetRuntimesProviderTest {
     fun shouldProvideRuntimes(fileSystemService: FileSystemService, expectedRuntimes: List<DotnetRuntime>) {
         // Given
         val toolPath = File("dotnet", "dotnet.exe")
+        every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns toolPath.path
         val provider = createInstance(fileSystemService)
 
         // When
-        val actualRuntimes = provider.getRuntimes(toolPath).toList()
+        val actualRuntimes = provider.getRuntimes().toList()
 
         // Then
         Assert.assertEquals(actualRuntimes, expectedRuntimes)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            DotnetRuntimesProviderImpl(fileSystemService)
+            DotnetRuntimesProviderImpl(fileSystemService, _toolProvider)
 
     companion object {
         private val runtimesPath = File(File(File("Program Files"), "dotnet"), "shared")

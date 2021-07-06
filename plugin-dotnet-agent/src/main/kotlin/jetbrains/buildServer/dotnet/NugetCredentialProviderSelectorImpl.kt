@@ -6,9 +6,12 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 
 class NugetCredentialProviderSelectorImpl(
         private val _parametersService: ParametersService,
+        private val _runtimesProvider: DotnetRuntimesProvider,
         private val _virtualContext: VirtualContext)
     : NugetCredentialProviderSelector {
 
@@ -27,17 +30,18 @@ class NugetCredentialProviderSelectorImpl(
 
                 if (credentialproviderPath == null && sdkVersion != Version.Empty && !_virtualContext.isVirtual) {
                     LOG.debug("Cannot find .NET SDK version for credentials plugin $majorVersion")
-
-                    val minSdkVersion = _parametersService.getParameterNames(ParameterType.Configuration)
-                            .filter { it.startsWith(CONFIG_PREFIX_CORE_SDK) }
-                            .map { Version.parse(it.replace(CONFIG_PREFIX_CORE_SDK, "").replace("_Path", "")) }
-                            .filter { it != Version.Empty }
-                            .map { it.major }
-                            .ifEmpty { sequenceOf(1) }
-                            .min() ?: 1
-
-                    LOG.debug("Minimal .NET SDK version for credentials plugin is $minSdkVersion")
-                    credentialproviderPath = _parametersService.tryGetParameter(ParameterType.Configuration, "DotNetCredentialProvider$minSdkVersion.0.0_Path")
+                    var runtimeVersions = _runtimesProvider.getRuntimes().map { it.version.major }.toSet()
+                    credentialproviderPath =
+                            _parametersService
+                            .getParameterNames(ParameterType.Configuration)
+                            .filter { it.startsWith(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER) }
+                            .filter { it.endsWith(CONFIG_SUFFIX_PATH) }
+                            .map { it to Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) }
+                            .filter { it.second != Version.Empty }
+                            .filter { runtimeVersions.contains(it.second.major) }
+                            .maxBy { it.second }
+                            ?.first
+                            ?.let {  _parametersService.tryGetParameter(ParameterType.Configuration, it) }
                 }
 
                 if (credentialproviderPath != null) {
