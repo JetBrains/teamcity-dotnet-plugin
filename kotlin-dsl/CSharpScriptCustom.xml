@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsl-extension kind="buildStep" type="csharpScript" generateDslJar="true" applicable="params['scriptType'] == 'customScript'">
+  <class name="CSharpScriptCustomBuildStep">
+    <description>
+      A build step running a C# script with the specified content
+    </description>
+  </class>
+  <function name="csharpScript">
+    <description>
+      Adds a build step running a C# script with the specified content
+      @see CSharpCustomScriptBuildStep
+    </description>
+  </function>
+  <init>
+    <param name="scriptType" value="customScript"/>
+    <param name="cltPath" value="%teamcity.tool.dotnet-csi.DEFAULT%"/>
+  </init>
+  <params>
+    <param name="teamcity.build.workingDir" dslName="workingDir">
+      <description>
+        [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for the script,
+        specify it if it is different from the [checkout directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+      </description>
+    </param>
+    <param name="scriptContent" dslName="content" mandatory="true">
+      <description>
+        Content of the script to run
+      </description>
+    </param>
+    <param name="args" dslName="arguments">
+      <description>
+        Space-separated list of additional arguments for C# script
+      </description>
+    </param>
+    <param name="nuget.packageSources" dslName="sources">
+      <description>
+        Space-separated list of NuGet package source (URL, UNC/folder path)
+      </description>
+    </param>
+    <param name="cltPath" dslName="tool">
+      <description>
+        C# tool path
+      </description>
+    </param>
+  </params>
+</dsl-extension>
