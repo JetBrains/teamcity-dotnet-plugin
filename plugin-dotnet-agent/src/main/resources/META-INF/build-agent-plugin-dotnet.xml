@@ -516,8 +516,9 @@
   <bean class="jetbrains.buildServer.script.CommandLineFactoryImpl">
     <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
   </bean>
-  <bean class="jetbrains.buildServer.script.ScriptProviderImpl"/>
+  <bean class="jetbrains.buildServer.script.ScriptResolverImpl"/>
   <bean class="jetbrains.buildServer.script.ToolResolverImpl"/>
   <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl"/>
+  <bean class="jetbrains.buildServer.script.RspContentFactoryImpl"/>
 
 </beans>

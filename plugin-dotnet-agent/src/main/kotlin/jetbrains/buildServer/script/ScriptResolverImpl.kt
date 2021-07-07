@@ -9,7 +9,7 @@ import jetbrains.buildServer.agent.runner.PathsService
 import java.io.File
 import java.io.OutputStreamWriter
 
-class ScriptProviderImpl(
+class ScriptResolverImpl(
         private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService,
         private val _pathsService: PathsService)
