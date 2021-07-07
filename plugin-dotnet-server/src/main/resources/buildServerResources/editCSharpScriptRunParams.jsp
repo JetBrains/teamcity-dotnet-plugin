@@ -58,11 +58,23 @@
   </props:selectSectionPropertyContent>
 </props:selectSectionProperty>
 
-<%--<tr class="advancedSetting">
+<tr class="advancedSetting">
   <th>
-    <label for="${propertyNames.toolArgs}">Script parameters:</label>
+    <label for="${propertyNames.args}">Script parameters:</label>
   </th>
   <td>
-    <props:textProperty name="${propertyNames.toolArgs}" className="longField" expandable="true"/>
+    <props:textProperty name="${propertyNames.args}" className="longField" expandable="true"/>
   </td>
-</tr>--%>
+</tr>
+
+<tr class="advancedSetting">
+  <th class="noBorder"><label for="${propertyNames.nugetPackageSources}">NuGet package sources:</label></th>
+  <td>
+    <c:set var="note">Specifies NuGet package sources to use during the restore.</c:set>
+    <props:multilineProperty name="${propertyNames.nugetPackageSources}" className="longField" expanded="true"
+                             cols="60" rows="3" linkTitle="Sources" note="${note}"/>
+    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
+                    targetFieldId="${propertyNames.nugetPackageSources}" popupTitle="Select TeamCity NuGet feeds"/>
+    <span class="error" id="error_${propertyNames.nugetPackageSources}"></span>
+  </td>
+</tr>

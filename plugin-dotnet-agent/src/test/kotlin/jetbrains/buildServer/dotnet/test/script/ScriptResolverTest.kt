@@ -10,7 +10,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.script.ScriptConstants
-import jetbrains.buildServer.script.ScriptProviderImpl
+import jetbrains.buildServer.script.ScriptResolverImpl
 import jetbrains.buildServer.script.ScriptType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -18,13 +18,12 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.*
 
-class ScriptProviderTest {
+class ScriptResolverTest {
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _fileSystemService: FileSystemService
     @MockK private lateinit var _pathsService: PathsService
     private val _workingDirectory = File("wd")
     private val _tempFile = File("tmpFile")
-
 
     @BeforeMethod
     fun setUp() {
@@ -107,5 +106,5 @@ class ScriptProviderTest {
     }
 
     private fun createInstance() =
-            ScriptProviderImpl(_parametersService, _fileSystemService, _pathsService)
+            ScriptResolverImpl(_parametersService, _fileSystemService, _pathsService)
 }
