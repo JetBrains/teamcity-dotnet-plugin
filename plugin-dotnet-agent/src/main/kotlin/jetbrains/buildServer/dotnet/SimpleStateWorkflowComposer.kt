@@ -49,7 +49,7 @@ class SimpleStateWorkflowComposer(
                     }
                 }
 
-                state.versionObserver.onNext(Version.Empty)
+                state.versionObserver?.onNext(Version.Empty)
             }
     )
 }
