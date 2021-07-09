@@ -13,18 +13,6 @@ class CSharpScriptRunTypePropertiesProcessor(
     : PropertiesProcessor {
     override fun process(properties: Map<String, String>): Collection<InvalidProperty> {
         val result: MutableList<InvalidProperty> = Vector()
-        /*val solutionPath = properties[RUNNER_SETTING_SOLUTION_PATH]
-        if (PropertiesUtil.isEmptyOrNull(solutionPath)) {
-            result.add(InvalidProperty(RUNNER_SETTING_SOLUTION_PATH,"Solution path must be specified"))
-        }
-
-        val platform = properties[RUNNER_SETTING_CLT_PLATFORM]?.let {
-            IspectionToolPlatform.tryParse(it)
-        }
-
-        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
-            result.add(InvalidProperty(RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform inspections, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
-        }*/
         return result
     }
 }

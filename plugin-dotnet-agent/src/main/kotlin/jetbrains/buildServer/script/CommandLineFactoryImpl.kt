@@ -30,7 +30,7 @@ class CommandLineFactoryImpl(
                 null,
                 TargetType.Tool,
                 Path(""),
-                Path(_virtualContext.resolvePath(_pathsService.getPath(PathType.WorkingDirectory).path)),
+                Path(_pathsService.getPath(PathType.WorkingDirectory).path),
                 listOf(
                         CommandLineArgument(_virtualContext.resolvePath(_toolResolver.resolve().path)),
                         CommandLineArgument("@${_virtualContext.resolvePath(rspFile.path)}")
