@@ -62,19 +62,10 @@ class ExecutableWorkflowComposer(
 
                             var description: List<StdOutText> = commandLine.description
                             val defaultDotnetExecutableFile = _dotnetToolResolver.executable
-                            val envVars = mutableListOf<CommandLineEnvironmentVariable>()
                             if (_virtualContext.isVirtual && dotnetExecutableFile == null) {
                                 var toolState = ToolState(
                                         defaultDotnetExecutableFile,
-                                        observer<Path> { dotnetExecutableFile = it.path },
-                                        observer<Version> { version ->
-                                            envVars.addAll(_environmentVariables.getVariables(version))
-                                            description =
-                                                    if (version != Version.Empty && description.size == 0)
-                                                        listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("${version} ", Color.Header))
-                                                    else
-                                                        emptyList<StdOutText>()
-                                        }
+                                        observer<Path> { dotnetExecutableFile = it.path }
                                 )
 
                                 yieldAll(_dotnetStateWorkflowComposer.compose(context, toolState).commandLines)
@@ -86,7 +77,7 @@ class ExecutableWorkflowComposer(
                                     Path(dotnetExecutableFile ?: defaultDotnetExecutableFile.path.path),
                                     commandLine.workingDirectory,
                                     cmdArgs,
-                                    envVars + commandLine.environmentVariables,
+                                    commandLine.environmentVariables,
                                     commandLine.title,
                                     description))
                         }

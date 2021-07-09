@@ -80,11 +80,11 @@ class DotnetWorkflowComposerTest {
         every { _virtualContext.resolvePath(File("wd").canonicalPath) } returns _virtualizedWorkingDirectory.path
         every { _workflowContext.status } returns WorkflowStatus.Running
         every { _dotnetToolStateWorkflowComposer.compose(any(), any()) } answers {
-            arg<ToolState>(1).versionObserver.onNext(Version(3))
+            arg<ToolState>(1).versionObserver?.onNext(Version(3))
             Workflow(_versionCmd)
         }
         every { _msbuildToolStateWorkflowComposer.compose(any(), any()) } answers {
-            arg<ToolState>(1).versionObserver.onNext(Version.Empty)
+            arg<ToolState>(1).versionObserver?.onNext(Version.Empty)
             Workflow()
         }
         every { _resultsObserver.onNext(any()) } returns Unit
