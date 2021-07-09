@@ -23,7 +23,7 @@ class CSharpScriptTypeAdapter : ToolTypeAdapter() {
 
     override fun getDisplayName() = ScriptConstants.CLT_TOOL_TYPE_NAME
 
-    override fun getDescription(): String = "C# script build runner uses it."
+    override fun getDescription(): String = "Is used in C# script build steps."
 
     override fun getShortDisplayName() = "C# tool"
 

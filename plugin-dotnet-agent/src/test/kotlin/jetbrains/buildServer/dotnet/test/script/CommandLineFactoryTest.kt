@@ -63,7 +63,7 @@ class CommandLineFactoryTest {
         Assert.assertEquals(commandLine.baseCommandLine, null)
         Assert.assertEquals(commandLine.target, TargetType.Tool)
         Assert.assertEquals(commandLine.executableFile, Path(""))
-        Assert.assertEquals(commandLine.workingDirectory, Path("v_" + workingDirectory.path))
+        Assert.assertEquals(commandLine.workingDirectory, Path(workingDirectory.path))
         Assert.assertEquals(
                 commandLine.arguments,
                 listOf(
