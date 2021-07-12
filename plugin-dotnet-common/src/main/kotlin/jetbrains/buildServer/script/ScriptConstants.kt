@@ -16,4 +16,6 @@ object ScriptConstants {
 
     const val CLT_TOOL_TYPE_ID = "dotnet-csi"
     const val CLT_TOOL_TYPE_NAME = "C# tool"
+
+    const val RUNNER_ENABLED = "teamcity.internal.csharp.script"
 }

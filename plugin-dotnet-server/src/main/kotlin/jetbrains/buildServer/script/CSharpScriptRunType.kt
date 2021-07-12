@@ -4,20 +4,25 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
+import jetbrains.buildServer.script.ScriptConstants.RUNNER_ENABLED
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
+import jetbrains.buildServer.serverSide.TeamCityProperties
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import java.util.*
 
 class CSharpScriptRunType(
         runTypeRegistry: RunTypeRegistry,
         private val _pluginDescriptor: PluginDescriptor,
-        private val _propertiesProcessor: PropertiesProcessor)
+        private val _propertiesProcessor: PropertiesProcessor,)
     : RunType() {
 
     init {
-        runTypeRegistry.registerRunType(this)
+        if (TeamCityProperties.getBoolean(RUNNER_ENABLED) == true)
+        {
+            runTypeRegistry.registerRunType(this)
+        }
     }
 
     override fun getRunnerPropertiesProcessor() =
