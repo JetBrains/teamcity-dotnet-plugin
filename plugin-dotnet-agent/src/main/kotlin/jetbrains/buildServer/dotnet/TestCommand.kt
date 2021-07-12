@@ -36,24 +36,7 @@ class TestCommand(
         get() = DotnetCommandType.Test
 
     override val targetArguments: Sequence<TargetArguments>
-        get() =
-            _targetService.targets.fold(mutableListOf<Pair<Boolean, MutableList<String>>>()) {
-                acc, commandTarget ->
-                val path = commandTarget.target.path
-                val isAssembly = isAssembly(path)
-                if (isAssembly && acc.any()) {
-                    val group = acc.last()
-                    if (group.first == isAssembly) {
-                        group.second.add(path)
-                        return@fold acc
-                    }
-                }
-
-                acc.add(Pair(isAssembly, mutableListOf(path)))
-                acc
-            }.map {
-                TargetArguments(it.second.asSequence().map { CommandLineArgument(it, CommandLineArgumentType.Target) })
-            }.asSequence()
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
