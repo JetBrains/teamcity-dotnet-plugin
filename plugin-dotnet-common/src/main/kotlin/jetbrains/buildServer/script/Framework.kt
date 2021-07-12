@@ -13,7 +13,8 @@ object FrameworkRequirements {
 }
 
 enum class Framework(val tfm: String, val description: String, val requirement: Requirement) {
-    Any("any", "Any", FrameworkRequirements.create("6\\.", "5\\.", "3\\.1")),
+    Any("any", "Any", FrameworkRequirements.create("3\\.1")),
+    //Any("any", "Any", FrameworkRequirements.create("6\\.", "5\\.", "3\\.1")),
     Net60("net6.0", ".NET 6.0", FrameworkRequirements.create("6\\.")),
     Net50("net5.0", ".NET 5.0", FrameworkRequirements.create("5\\.")),
     NetCore31("netcoreapp3.1", ".NET Core 3.1", FrameworkRequirements.create("3\\.1"));

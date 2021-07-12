@@ -25,9 +25,9 @@ class CSharpScriptTypeAdapter : ToolTypeAdapter() {
 
     override fun getDescription(): String = "Is used in C# script build steps."
 
-    override fun getShortDisplayName() = "C# tool"
+    override fun getShortDisplayName() = "TeamCity C# script runner"
 
-    override fun getTargetFileDisplayName() = "C# tool"
+    override fun getTargetFileDisplayName() = "TeamCity C# script runner"
 
     override fun isSupportDownload() = true
 

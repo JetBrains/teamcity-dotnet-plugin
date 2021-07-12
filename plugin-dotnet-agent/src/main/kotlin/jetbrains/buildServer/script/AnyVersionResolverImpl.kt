@@ -37,9 +37,9 @@ class AnyVersionResolverImpl(
                     LOG.debug("Min version: $minVersion, Runtime range: ${runtimeRange}, Result: $result")
                     result
                 }
-                .maxBy { it.second }
+                .maxByOrNull { it.second }
                 ?.first
-                ?: throw RunBuildException("Cannot find a supported versin of C# tool.")
+                ?: throw RunBuildException("Cannot find a supported versin of C# script runner.")
     }
 
     companion object {

@@ -39,8 +39,10 @@ class CSharpScriptRunType(
     override fun getDisplayName() = ScriptConstants.RUNNER_DISPLAY_NAME
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
-        runParameters[ScriptConstants.FRAMEWORK]
-                ?.let { Framework.tryParse(it) }
-                ?.requirement?.let { mutableListOf(it) }
-                ?: mutableListOf()
+            (
+                    runParameters[ScriptConstants.FRAMEWORK]
+                            ?.let { Framework.tryParse(it) }
+                            ?: Framework.Any
+                    )
+                    .requirement.let { mutableListOf(it) }
 }

@@ -15,7 +15,7 @@ class ToolResolverImpl(
         var toolPath = _parametersService
                 .tryGetParameter(ParameterType.Runner, ScriptConstants.CLT_PATH)
                 ?.let { File(it, "tools") }
-                ?: throw RunBuildException("C# tool path was not defined.")
+                ?: throw RunBuildException("C# script runner path was not defined.")
 
         if(!_fileSystemService.isExists(toolPath)) {
             throw RunBuildException("$toolPath was not found.")
