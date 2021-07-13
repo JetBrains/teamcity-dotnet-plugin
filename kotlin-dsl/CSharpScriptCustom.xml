@@ -13,7 +13,7 @@
   </function>
   <init>
     <param name="scriptType" value="customScript"/>
-    <param name="cltPath" value="%teamcity.tool.dotnet-csi.DEFAULT%"/>
+    <param name="cltPath" value="%teamcity.tool.TeamCity.csi.DEFAULT%"/>
   </init>
   <params>
     <param name="teamcity.build.workingDir" dslName="workingDir">
