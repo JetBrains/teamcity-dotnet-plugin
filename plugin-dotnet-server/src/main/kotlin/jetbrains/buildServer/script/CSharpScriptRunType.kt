@@ -63,7 +63,7 @@ class CSharpScriptRunType(
             return "<empty>"
         }
         else {
-            val scriptLines = scriptContent.lines().dropWhile { it.isNotBlank() }
+            val scriptLines = scriptContent.lines().dropWhile { it.isNullOrBlank() }
             return when(scriptLines.size) {
                 0 -> "<empty>"
                 1 -> scriptLines[0]
