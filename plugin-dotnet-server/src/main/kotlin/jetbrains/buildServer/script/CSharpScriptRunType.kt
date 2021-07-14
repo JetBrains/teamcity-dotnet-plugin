@@ -36,6 +36,12 @@ class CSharpScriptRunType(
     override fun getViewRunnerParamsJspFilePath() =
         _pluginDescriptor.getPluginResourcesPath("viewCSharpScriptRunParams.jsp")
 
+    override fun describeParameters(parameters: Map<String?, String?>) =
+        when(parameters[ScriptConstants.SCRIPT_TYPE]?.let { ScriptType.tryParse(it) } ?: ScriptType.Custom) {
+            ScriptType.Custom -> "Custom script: " + customScriptDescription(parameters[ScriptConstants.SCRIPT_CONTENT])
+            ScriptType.File -> "Script file: ${parameters[ScriptConstants.SCRIPT_FILE] ?: ""} ${parameters[ScriptConstants.ARGS] ?: ""}"
+        }
+
     override fun getDefaultRunnerProperties() = emptyMap<String, String>()
         //mapOf(ScriptConstants.FRAMEWORK to Framework.Any.tfm)
 
@@ -50,4 +56,19 @@ class CSharpScriptRunType(
                             ?: Framework.Any
                     )
                     .requirement.let { mutableListOf(it) }
+
+
+    private fun customScriptDescription(scriptContent: String?):String {
+        if (scriptContent.isNullOrBlank()) {
+            return "<empty>"
+        }
+        else {
+            val scriptLines = scriptContent.lines().dropWhile { it.isNotBlank() }
+            return when(scriptLines.size) {
+                0 -> "<empty>"
+                1 -> scriptLines[0]
+                else -> scriptLines[0] + " (and ${scriptLines.size - 1} more lines)"
+            }
+        }
+    }
 }
