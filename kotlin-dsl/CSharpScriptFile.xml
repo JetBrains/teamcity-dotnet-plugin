@@ -27,7 +27,7 @@
         A path to a file with .main.kts extension
       </description>
     </param>
-    <param name="args" dslName="arguments">
+    <param name="csharpToolArgs" dslName="arguments">
       <description>
         Space-separated list of additional arguments for C# script
       </description>
@@ -37,7 +37,7 @@
         Space-separated list of NuGet package source (URL, UNC/folder path)
       </description>
     </param>
-    <param name="cltPath" dslName="tool">
+    <param name="csharpToolPath" dslName="tool">
       <description>
         C# tool path
       </description>
