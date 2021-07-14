@@ -36,30 +36,27 @@ class DotnetToolProvider(
     override fun supports(toolName: String): Boolean = DotnetConstants.RUNNER_TYPE.equals(toolName, ignoreCase = true)
 
     override fun getPath(toolName: String): String =
-        executablePath
+            if(supports(toolName))
+                executablePath
                 ?.absolutePath
                 ?: throw ToolCannotBeFoundException("""
                         Unable to locate tool $toolName in the system. Please make sure that `PATH` variable contains
                         .NET CLI toolchain directory or defined `${DotnetConstants.TOOL_HOME}` variable.""".trimIndent())
+            else
+                throw ToolCannotBeFoundException("Unsupported tool.")
 
     private val executablePath: File? by lazy {
-        var dotnetRuntime: File? = null
-        val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths + _toolEnvironment.defaultPaths + _toolEnvironment.environmentPaths)
+        val executables = _toolSearchService.find(DotnetConstants.EXECUTABLE, _toolEnvironment.homePaths + _toolEnvironment.defaultPaths + _toolEnvironment.environmentPaths).toList()
         for (dotnetExecutable in executables) {
             if (_dotnetSdksProviderImpl.getSdks(dotnetExecutable).any()) {
                 return@lazy dotnetExecutable
             }
             else {
                 LOG.debug("Cannot find .NET Core SDK for <${dotnetExecutable}>.")
-                dotnetRuntime = dotnetExecutable
             }
         }
 
-        dotnetRuntime?.let {
-            LOG.warn(".NET Core SDK was not found (found .NET Core runtime at path <${it.absolutePath}>). Install .NET Core SDK into the default location or set ${DotnetConstants.TOOL_HOME} environment variable pointing to the installation directory.")
-        }
-
-        return@lazy null
+        return@lazy executables.firstOrNull()
     }
 
     @Throws(ToolCannotBeFoundException::class)
