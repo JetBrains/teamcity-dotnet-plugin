@@ -27,7 +27,7 @@
         Content of the script to run
       </description>
     </param>
-    <param name="csharpToolArgs" dslName="arguments">
+    <param name="scriptArgs" dslName="arguments">
       <description>
         Space-separated list of additional arguments for C# script
       </description>

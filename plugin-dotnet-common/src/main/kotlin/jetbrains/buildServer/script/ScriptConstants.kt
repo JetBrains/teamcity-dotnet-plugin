@@ -8,7 +8,7 @@ object ScriptConstants {
     const val SCRIPT_TYPE = "scriptType"
     const val SCRIPT_CONTENT = "scriptContent"
     const val SCRIPT_FILE = "scriptFile"
-    const val ARGS = "csharpToolArgs"
+    const val ARGS = "scriptArgs"
     const val CLT_PATH = "csharpToolPath"
     const val FRAMEWORK = "framework"
     const val NUGET_PACKAGE_SOURCES = "nuget.packageSources"
