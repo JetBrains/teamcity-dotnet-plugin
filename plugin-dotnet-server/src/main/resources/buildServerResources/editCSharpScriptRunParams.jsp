@@ -70,11 +70,15 @@
 <tr class="advancedSetting">
   <th class="noBorder"><label for="${propertyNames.nugetPackageSources}">NuGet package sources:</label></th>
   <td>
-    <c:set var="note">Specifies NuGet package sources to use during the restore.</c:set>
     <props:multilineProperty name="${propertyNames.nugetPackageSources}" className="longField" expanded="true"
-                             cols="60" rows="3" linkTitle="Sources" note="${note}"/>
+                             cols="60" rows="3" linkTitle="Sources"/>
     <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
                     targetFieldId="${propertyNames.nugetPackageSources}" popupTitle="Select TeamCity NuGet feeds"/>
     <span class="error" id="error_${propertyNames.nugetPackageSources}"></span>
+    <span class="smallNote">
+        Leave blank to use NuGet.org<br />
+        To use a TeamCity NuGet feed<bs:help file="using-teamcity-as-nuget-feed" />, specify the URL from the NuGet feed project settings page.<br />
+        For feeds with authentication configure the <em>NuGet Feed Credentials</em> build feature
+        <bs:help file="NuGet+Feed+Credentials"/>
   </td>
 </tr>
