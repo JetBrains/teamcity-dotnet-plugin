@@ -30,6 +30,7 @@ data class CommandLine(
         val description: List<StdOutText> = emptyList()) {
 
     public val Id: Long
+    public var IsInternal: Boolean = false
 
     init {
         Id = baseCommandLine?.Id ?: CurrentId.incrementAndGet()
