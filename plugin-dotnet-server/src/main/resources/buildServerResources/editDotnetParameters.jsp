@@ -417,14 +417,14 @@
   <th class="noBorder"><label for="${params.nugetPackageSourcesKey}">NuGet package sources:</label></th>
   <td>
     <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
-                             cols="60" rows="3" linkTitle="Sources"/>
+                             cols="60" rows="3" linkTitle=""/>
     <%--<bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
                     targetFieldId="${params.nugetPackageSourcesKey}" popupTitle="Select TeamCity NuGet feeds"/>--%>
     <span class="error" id="error_${params.nugetPackageSourcesKey}"></span>
     <span class="smallNote">
         Leave blank to use NuGet.org<br />
         To use a TeamCity NuGet feed<bs:help file="using-teamcity-as-nuget-feed"/>, specify the URL from the NuGet feed project settings page.<br />
-        For feeds with authentication configure the <em>NuGet Feed Credentials</em> build feature
+        For feeds with authentication, configure the <em>NuGet Feed Credentials</em> build feature
         <bs:help file="NuGet+Feed+Credentials"/>
   </td>
 </tr>
@@ -482,7 +482,7 @@
     <span class="smallNote">
         Specify the NuGet feed URL.<br />
         To use a TeamCity NuGet feed<bs:help file="using-teamcity-as-nuget-feed"/>, specify the URL from the NuGet feed project settings page.<br />
-        For feeds with authentication configure the <em>NuGet Feed Credentials</em> build feature
+        For feeds with authentication, configure the <em>NuGet Feed Credentials</em> build feature
         <bs:help file="NuGet+Feed+Credentials"/>
   </td>
 </tr>
