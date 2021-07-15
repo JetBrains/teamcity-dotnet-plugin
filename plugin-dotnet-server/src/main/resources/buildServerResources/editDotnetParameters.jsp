@@ -418,8 +418,8 @@
   <td>
     <props:multilineProperty name="${params.nugetPackageSourcesKey}" className="longField" expanded="true"
                              cols="60" rows="3" linkTitle="Sources"/>
-    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
-                    targetFieldId="${params.nugetPackageSourcesKey}" popupTitle="Select TeamCity NuGet feeds"/>
+    <%--<bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
+                    targetFieldId="${params.nugetPackageSourcesKey}" popupTitle="Select TeamCity NuGet feeds"/>--%>
     <span class="error" id="error_${params.nugetPackageSourcesKey}"></span>
     <span class="smallNote">
         Leave blank to use NuGet.org<br />
@@ -476,8 +476,8 @@
   <th class="noBorder"><label for="${params.nugetPackageSourceKey}">NuGet Server: <l:star/></label></th>
   <td>
     <props:textProperty name="${params.nugetPackageSourceKey}" className="longField"/>
-    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString" selectionMode="single"
-                    targetFieldId="${params.nugetPackageSourceKey}" popupTitle="Select TeamCity NuGet feed"/>
+    <%--<bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString" selectionMode="single"
+                    targetFieldId="${params.nugetPackageSourceKey}" popupTitle="Select TeamCity NuGet feed"/>--%>
     <span class="error" id="error_${params.nugetPackageSourceKey}"></span>
     <span class="smallNote">
         Specify the NuGet feed URL.<br />

@@ -72,8 +72,8 @@
   <td>
     <props:multilineProperty name="${propertyNames.nugetPackageSources}" className="longField" expanded="true"
                              cols="60" rows="3" linkTitle="Sources"/>
-    <bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
-                    targetFieldId="${propertyNames.nugetPackageSources}" popupTitle="Select TeamCity NuGet feeds"/>
+    <%--<bs:projectData type="NuGetFeedUrls" sourceFieldId="queryString"
+                    targetFieldId="${propertyNames.nugetPackageSources}" popupTitle="Select TeamCity NuGet feeds"/>--%>
     <span class="error" id="error_${propertyNames.nugetPackageSources}"></span>
     <span class="smallNote">
         Leave blank to use NuGet.org<br />
