@@ -19,7 +19,7 @@ class CSharpScriptRunType(
     : RunType() {
 
     init {
-        if (TeamCityProperties.getBoolean(RUNNER_ENABLED) == true)
+        if (TeamCityProperties.getBooleanOrTrue(RUNNER_ENABLED))
         {
             runTypeRegistry.registerRunType(this)
         }
