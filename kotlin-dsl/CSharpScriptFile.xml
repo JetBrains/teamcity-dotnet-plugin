@@ -13,7 +13,7 @@
   </function>
   <init>
     <param name="scriptType" value="file"/>
-    <param name="cltPath" value="%teamcity.tool.dotnet-csi.DEFAULT%"/>
+    <param name="cltPath" value="%teamcity.tool.TeamCity.csi.DEFAULT%"/>
   </init>
   <params>
     <param name="teamcity.build.workingDir" dslName="workingDir">
@@ -27,7 +27,7 @@
         A path to a file with .main.kts extension
       </description>
     </param>
-    <param name="args" dslName="arguments">
+    <param name="scriptArgs" dslName="arguments">
       <description>
         Space-separated list of additional arguments for C# script
       </description>
@@ -37,7 +37,7 @@
         Space-separated list of NuGet package source (URL, UNC/folder path)
       </description>
     </param>
-    <param name="cltPath" dslName="tool">
+    <param name="csharpToolPath" dslName="tool">
       <description>
         C# tool path
       </description>

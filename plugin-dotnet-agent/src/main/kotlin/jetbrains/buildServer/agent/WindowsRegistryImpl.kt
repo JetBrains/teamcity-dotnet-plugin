@@ -2,7 +2,6 @@ package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
-import kotlin.system.measureTimeMillis
 
 class WindowsRegistryImpl(
         private val _environment: Environment,
@@ -61,12 +60,17 @@ class WindowsRegistryImpl(
                 }
             } ?: emptySequence<String>()
 
-    private fun createQueryCommand(args: Sequence<CommandLineArgument>) = CommandLine(
+    private fun createQueryCommand(args: Sequence<CommandLineArgument>): CommandLine {
+        val commandLine =  CommandLine(
                 null,
                 TargetType.SystemDiagnostics,
                 Path("REG"),
                 Path("."),
                 listOf(CommandLineArgument("QUERY")) + args)
+
+        commandLine.IsInternal = true
+        return commandLine
+    }
 
     companion object {
         private val LOG = Logger.getLogger(WindowsRegistryImpl::class.java)

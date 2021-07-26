@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.script
 
+import jetbrains.buildServer.script.ScriptConstants.CLT_TOOL_TYPE_ID
 import jetbrains.buildServer.tools.ToolTypeAdapter
 
 class CSharpScriptTypeAdapter : ToolTypeAdapter() {
@@ -25,13 +26,13 @@ class CSharpScriptTypeAdapter : ToolTypeAdapter() {
 
     override fun getDescription(): String = "Is used in C# script build steps."
 
-    override fun getShortDisplayName() = "C# tool"
+    override fun getShortDisplayName() = "C# script tool"
 
-    override fun getTargetFileDisplayName() = "C# tool"
+    override fun getTargetFileDisplayName() = "TeamCity C# script tool"
 
     override fun isSupportDownload() = true
 
-    override fun getToolSiteUrl() = "https://www.nuget.org/packages/dotnet-csi/"
+    override fun getToolSiteUrl() = "https://www.nuget.org/packages/$CLT_TOOL_TYPE_ID/"
 
     override fun getToolLicenseUrl() = "https://raw.githubusercontent.com/NikolayPianikov/teamcity-csharp-interactive/master/LICENSE"
 

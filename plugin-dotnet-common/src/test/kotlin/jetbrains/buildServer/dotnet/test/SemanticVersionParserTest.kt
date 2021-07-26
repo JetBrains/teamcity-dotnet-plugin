@@ -39,7 +39,7 @@ class SemanticVersionParserTest {
                 arrayOf<Any?>("path/TeamCity.Dotnet.Integration.123.0.18-BEta.nupkg", null),
                 arrayOf<Any?>("TeamCity.Dotnet.Integration.41.30.18.nupkg", SemanticVersion(41, 30, 18)),
                 arrayOf<Any?>("Integration.41.30.18.nupkg", SemanticVersion(41, 30, 18)),
-                arrayOf<Any?>("dotnet-csi.1.23.4-beta1.nupkg", SemanticVersion(1, 23, 4, "beta1")),
+                arrayOf<Any?>("TeamCity.csi.1.23.4-beta1.nupkg", SemanticVersion(1, 23, 4, "beta1")),
                 arrayOf<Any?>("TeamCity.Dotnet.Integration.41.30.18.33.nupkg", null),
                 arrayOf<Any?>("TeamCity.Dotnet.Integration.41.30.18.33-rc.nupkg", null),
                 arrayOf<Any?>("TeamCity.Dotnet.Integration.41.30.nupkg", null),

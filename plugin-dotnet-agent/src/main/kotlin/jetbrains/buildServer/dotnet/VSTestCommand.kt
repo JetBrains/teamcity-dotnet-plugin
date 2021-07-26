@@ -36,10 +36,7 @@ class VSTestCommand(
         get() = DotnetCommandType.VSTest
 
     override val targetArguments: Sequence<TargetArguments>
-        get() {
-            val targetArgs = _targetService.targets.map { CommandLineArgument(it.target.path, CommandLineArgumentType.Target) }.toList()
-            return if(targetArgs.any()) sequenceOf(TargetArguments(targetArgs.asSequence())) else emptySequence()
-        }
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {

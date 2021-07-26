@@ -8,8 +8,7 @@ import java.io.File
 
 class CSharpScriptToolProvider(
         private val _toolService: ToolService,
-        private val _toolType: ToolType,
-        private val _pluginDescriptor: PluginDescriptor)
+        private val _toolType: ToolType)
     : ServerToolProviderAdapter() {
 
     override fun getType() = _toolType
@@ -24,7 +23,7 @@ class CSharpScriptToolProvider(
             _toolService.fetchToolPackage(type, toolVersion, targetDirectory, ScriptConstants.CLT_TOOL_TYPE_ID)
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) =
-        _toolService.unpackToolPackage(toolPackage, "", targetDirectory, ScriptConstants.CLT_TOOL_TYPE_ID)
+            _toolService.unpackToolPackage(toolPackage, "", targetDirectory, ScriptConstants.CLT_TOOL_TYPE_ID)
 
     companion object {
         private val LOG: Logger = Logger.getInstance(CSharpScriptToolProvider::class.java.name)

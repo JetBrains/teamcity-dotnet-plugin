@@ -8,12 +8,14 @@ object ScriptConstants {
     const val SCRIPT_TYPE = "scriptType"
     const val SCRIPT_CONTENT = "scriptContent"
     const val SCRIPT_FILE = "scriptFile"
-    const val ARGS = "args"
-    const val CLT_PATH = "cltPath"
+    const val ARGS = "scriptArgs"
+    const val CLT_PATH = "csharpToolPath"
     const val FRAMEWORK = "framework"
     const val NUGET_PACKAGE_SOURCES = "nuget.packageSources"
     const val TOOL_PATH = "scriptToolPath"
 
-    const val CLT_TOOL_TYPE_ID = "dotnet-csi"
-    const val CLT_TOOL_TYPE_NAME = "C# tool"
+    const val CLT_TOOL_TYPE_ID = "TeamCity.csi"
+    const val CLT_TOOL_TYPE_NAME = "C# script"
+
+    const val RUNNER_ENABLED = "teamcity.internal.csharp.script"
 }
