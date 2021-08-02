@@ -5,6 +5,7 @@
       <configuration version="3" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false">
         <compilerSettings />
         <compilerArguments>
+          <option name="jvmTarget" value="1.8" />
           <option name="languageVersion" value="1.4" />
           <option name="apiVersion" value="1.4" />
         </compilerArguments>
@@ -97,6 +98,41 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-coroutines-debug/1.4.2/kotlinx-coroutines-debug-1.4.2.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="common-tools" />
+    <orderEntry type="module" module-name="server-tools-api" />
+    <orderEntry type="module" module-name="server-openapi" />
+    <orderEntry type="module" module-name="server-model" />
+    <orderEntry type="module" module-name="messages" />
+    <orderEntry type="module" module-name="vcs-plugin-api" />
+    <orderEntry type="module" module-name="common" />
+    <orderEntry type="module" module-name="patches" />
+    <orderEntry type="module" module-name="server-common-api" />
+    <orderEntry type="module" module-name="vcs-api" />
+    <orderEntry type="module" module-name="common-graph" />
+    <orderEntry type="module" module-name="common-vcs" />
+    <orderEntry type="module" module-name="patches-low" />
+    <orderEntry type="module" module-name="runtime-util" />
+    <orderEntry type="library" name="Spring-Framework" level="project" />
+    <orderEntry type="library" name="Spring-Framework-web" level="project" />
+    <orderEntry type="library" name="ServletApi" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../web/lib/jstl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../web/lib/standard.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
