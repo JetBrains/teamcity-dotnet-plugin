@@ -6,10 +6,10 @@
 
 # Plugins
 
-* [.NET plugin](net-plugin)
-* [C# Script runner](c-script-runner)
-* [Inspections](inspections)
-* [Duplicates Finder](duplicates-finder)
+* [.NET plugin](#net-plugin)
+* [C# Script runner](#c-script-runner)
+* [Inspections](#inspections)
+* [Duplicates Finder](#duplicates-finder)
 
 ## .NET plugin
 
