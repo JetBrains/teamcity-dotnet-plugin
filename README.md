@@ -62,7 +62,7 @@ Tests might not be reported correctly for .NET Core xunit test projects when log
 
 The plugin is compatible with
 
-- [.NET 3.1](https://dotnet.microsoft.com/download/dotnet/3.1)
+- [.NET runtime 3.1](https://dotnet.microsoft.com/download/dotnet/3.1)
 
 ## Inspections
 
