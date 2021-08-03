@@ -86,10 +86,10 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 ## Additional Resources
 
-* TeamCity integration with .NET
-  * [New approach and demo](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-1-new-approach-and-demo/)
-  * [Testing and building projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-2-testing-and-building-projects/)
-  * [Deploying projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-3-deploying-projects/)
+* [TeamCity .NET](https://www.jetbrains.com/help/teamcity/net.html)
+* [New approach and demo](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-1-new-approach-and-demo/)
+* [Testing and building projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-2-testing-and-building-projects/)
+* [Deploying projects](https://blog.jetbrains.com/teamcity/2020/12/teamcity-integration-with-net-part-3-deploying-projects/)
 
 ## Build
 
