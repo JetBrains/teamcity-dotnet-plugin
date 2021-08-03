@@ -36,8 +36,6 @@ The plugin is compatible with
 - MSBuild 12+
 - VSTest console 12+
 
-**Note**: This plugin is [bundled in TeamCity 2017.2+](https://www.jetbrains.com/help/teamcity/?Upgrade+Notes)
-
 ### .NET CLI toolkit
 
 To use the `dotnet` build runner, install [.NET CLI](https://dotnet.microsoft.com/download/dotnet-core/) and add the .NET CLI tools path to the `PATH` environment variable.
@@ -80,10 +78,6 @@ The Inspections (ReSharper) build runner allows you to use the benefits of the [
 
 The Duplicates finder (ReSharper) build runner, based on [ReSharper Command Line Tools](https://www.jetbrains.com/resharper/features/command-line.html), is intended to catch similar code fragments and provide a report on the discovered repetitive blocks of C# and Visual Basic .NET code in Visual Studio 2003, 2005, 2008, 2010, 2012, 2013, and 2015 solutions.
 
-## Download
-
-You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamcity) and install it as [an additional TeamCity plugin](https://www.jetbrains.com/help/teamcity/?Installing+Additional+Plugins).
-
 ## Additional Resources
 
 * [TeamCity .NET](https://www.jetbrains.com/help/teamcity/net.html)
@@ -95,6 +89,6 @@ You can [download the plugin](https://plugins.jetbrains.com/plugin/9190?pr=teamc
 
 This project uses gradle as a build system. You can easily open it in [IntelliJ IDEA](https://www.jetbrains.com/idea/help/importing-project-from-gradle-model.html) or [Eclipse](http://gradle.org/eclipse/).
 
-## Contributions
+## Report and Track Issues
 
-We appreciate all kinds of feedback, so please feel free to send a PR or file an issue in the [TeamCity tracker](https://youtrack.jetbrains.com/newIssue?project=TW&clearDraft=true&summary=.NET%20CLI:&c=Subsystem%20Agent%20-%20.NET&c=tag%20.NET%20Core).
+Please use our YouTrack to [report](https://youtrack.jetbrains.com/newIssue?project=TW&description=Expected%20behavior%20and%20actual%20behavior%3A%0A%0ASteps%20to%20reproduce%20the%20problem%3A%0A%0ASpecifications%20like%20the%20tool%20version%2C%20operating%20system%3A%0A%0AResult%20of%20'dotnet%20--info'%3A&c=Subsystem%20Agent%20-%20.NET&c=Assignee%20Nikolay.Pianikov&c=tag%20.NET%20Core) related issues.
