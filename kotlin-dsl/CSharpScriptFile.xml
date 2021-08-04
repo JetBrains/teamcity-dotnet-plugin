@@ -42,5 +42,25 @@
         C# tool path
       </description>
     </param>
+    <param name="plugin.docker.imageId" dslName="dockerImage">
+      <description>
+        TeamCity will start a container from the specified image and will try to run this build step within this container.
+      </description>
+    </param>
+    <param name="plugin.docker.imagePlatform" dslName="dockerPlatform">
+      <description>
+        Allows to choose compatible agents with a specific docker image OS platform.
+      </description>
+    </param>
+    <param name="plugin.docker.pull.enabled" dslName="dockerPull" type="boolean" trueValue="true" falseValue="">
+      <description>
+        If enabled, docker pull will be run before docker run command.
+      </description>
+    </param>
+    <param name="plugin.docker.run.parameters" dslName="dockerParameters">
+      <description>
+        Default argument is --rm, you can specify additional ones.
+      </description>
+    </param>
   </params>
 </dsl-extension>
