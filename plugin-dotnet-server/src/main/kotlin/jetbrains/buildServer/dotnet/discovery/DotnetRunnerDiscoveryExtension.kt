@@ -30,7 +30,7 @@ class DotnetRunnerDiscoveryExtension(
         private val _defaultDiscoveredTargetNameFactory: DiscoveredTargetNameFactory,
         private val _projectTypeSelector: ProjectTypeSelector,
         private val _sdkWizard: SdkWizard)
-    : BreadthFirstRunnerDiscoveryExtension(1) {
+    : BreadthFirstRunnerDiscoveryExtension() {
     override fun discoverRunnersInDirectory(dir: Element, filesAndDirs: MutableList<Element>): MutableList<DiscoveredObject> =
             discover(StreamFactoryImpl(dir.browser), getElements(filesAndDirs.asSequence()).map { it.fullName }).toMutableList()
 
@@ -78,7 +78,7 @@ class DotnetRunnerDiscoveryExtension(
 
     private fun createTarget(command: Command): DiscoveredTarget {
         LOG.debug("Target was created \"$command\"")
-        return DiscoveredTarget(command.name, command.parameters.associate { it.name to it.value })
+        return DiscoveredTarget(DotnetConstants.RUNNER_TYPE, command.name, command.parameters.associate { it.name to it.value })
     }
 
     private fun createCommands(solution: Solution): Sequence<Command> = sequence {

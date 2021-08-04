@@ -98,4 +98,6 @@
     <constructor-arg ref="cSharpScriptToolType"/>
   </bean>
 
+  <bean class="jetbrains.buildServer.script.discovery.CSharpScriptDiscoveryExtension" id="cSharpScriptDiscoveryExtension"/>
+  <bean class="jetbrains.buildServer.script.discovery.ScriptDiscoverImpl" />
 </beans>

@@ -283,8 +283,8 @@ class DotnetRunnerDiscoveryExtensionTest {
         val projectTypeSelector = mockk<ProjectTypeSelector>()
         val sdkWizard = mockk<SdkWizard>()
         val discoveryExtension = DotnetRunnerDiscoveryExtension(solutionDiscover, DiscoveredTargetNameFactoryStub("name"), projectTypeSelector, sdkWizard)
-        val discoveredTarget1 = DiscoveredTarget("abc", mapOf(DotnetConstants.PARAM_COMMAND to "value1"))
-        val discoveredTarget2 = DiscoveredTarget("xyz", mapOf(DotnetConstants.PARAM_PATHS to "value2"))
+        val discoveredTarget1 = DiscoveredTarget(DotnetConstants.RUNNER_TYPE, "abc", mapOf(DotnetConstants.PARAM_COMMAND to "value1"))
+        val discoveredTarget2 = DiscoveredTarget(DotnetConstants.RUNNER_TYPE, "xyz", mapOf(DotnetConstants.PARAM_PATHS to "value2"))
 
         // When
         val actualCommands = discoveryExtension.getCreatedCommands(listOf<DiscoveredObject>(discoveredTarget1, discoveredTarget2).toMutableList()).toList()
@@ -325,6 +325,7 @@ class DotnetRunnerDiscoveryExtensionTest {
 
     private fun createCommand(commandType: DotnetCommandType, path: String, requiredSdk: String = ""): DiscoveredTarget {
         val target = DiscoveredTarget(
+                DotnetConstants.RUNNER_TYPE,
                 "name",
                 mapOf(
                         DotnetConstants.PARAM_COMMAND to commandType.id,
@@ -339,6 +340,7 @@ class DotnetRunnerDiscoveryExtensionTest {
     }
     private fun createMSBuildCommand(path: String, requiredSdk: String = ""): DiscoveredTarget {
         val target =  DiscoveredTarget(
+                DotnetConstants.RUNNER_TYPE,
                 "name",
                 mapOf(
                         DotnetConstants.PARAM_COMMAND to DotnetCommandType.MSBuild.id,
@@ -354,6 +356,7 @@ class DotnetRunnerDiscoveryExtensionTest {
     }
 
     private fun createVSTestCommand(path: String) = DiscoveredTarget(
+            DotnetConstants.RUNNER_TYPE,
             "name",
             mapOf(
                     DotnetConstants.PARAM_COMMAND to DotnetCommandType.VSTest.id,
