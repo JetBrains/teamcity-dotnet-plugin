@@ -12,7 +12,7 @@
 
 <jsp:include page="/tools/editToolUsage.html?toolType=${propertyNames.cltToolTypeName}&versionParameterName=${propertyNames.cltPath}&class=longField"/>
 
-<%--<tr class="advancedSetting">
+<tr class="advancedSetting">
   <th class="noBorder"><label for="${propertyNames.frameworkVersion}">Framework:</label></th>
   <td>
     <props:selectProperty name="${propertyNames.frameworkVersion}" enableFilter="true" className="mediumField">
@@ -23,7 +23,7 @@
     <span class="error" id="error_${propertyNames.frameworkVersion}"></span>
     <span class="smallNote" id="defaultNote_${propertyNames.frameworkVersion}">Select a version of .NET Framework.</span>
   </td>
-</tr>--%>
+</tr>
 
 <props:selectSectionProperty name="${propertyNames.scriptType}" title="Script type:">
   <props:selectSectionPropertyContent value="${propertyNames.typeCustom}" caption="${propertyNames.typeCustomDescription}">
