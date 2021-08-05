@@ -361,17 +361,6 @@
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
   <bean class="jetbrains.buildServer.dotnet.MSBuildArgumentsProvider" id="msBuildArgumentsProvider">
-    <constructor-arg name="_isCommandLineParameters" value="true"/>
-    <constructor-arg>
-      <list>
-        <ref bean="msbuildVSTestLoggerParametersProvider"/>
-        <ref bean="systemParametersProvider"/>
-      </list>
-    </constructor-arg>
-  </bean>
-
-  <bean class="jetbrains.buildServer.dotnet.MSBuildArgumentsProvider" id="msBuildResponseFileArgumentsProvider">
-    <constructor-arg name="_isCommandLineParameters" value="false"/>
     <constructor-arg>
       <list>
         <ref bean="msbuildVSTestLoggerParametersProvider"/>
@@ -386,7 +375,7 @@
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>
         <ref bean="sharedCompilationArgumentsProvider"/>
-        <ref bean="msBuildResponseFileArgumentsProvider"/>
+        <ref bean="msBuildArgumentsProvider"/>
       </list>
     </constructor-arg>
   </bean>
