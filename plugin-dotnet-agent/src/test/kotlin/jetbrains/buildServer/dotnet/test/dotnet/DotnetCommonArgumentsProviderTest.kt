@@ -31,19 +31,16 @@ class DotnetCommonArgumentsProviderTest {
     @DataProvider
     fun testData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(false, emptyMap<String, String>(), listOf("rspArg", "customArg")),
-                arrayOf(false, mapOf(DotnetConstants.PARAM_RSP to "true"), listOf("rspArg", "customArg")),
-                arrayOf(true, mapOf(DotnetConstants.PARAM_RSP to "true"), listOf("l:/logger", "/nodeReuse:false", "customArg")),
-                arrayOf(false, mapOf(DotnetConstants.PARAM_RSP to "false"), listOf("l:/logger", "/nodeReuse:false", "customArg")))
+                arrayOf(false, listOf("rspArg", "customArg")),
+                arrayOf(true, listOf("l:/logger", "/nodeReuse:false", "customArg")))
     }
 
     @Test(dataProvider = "testData")
-    fun shouldGetArguments(avoidUsingRspFiles: Boolean, parameters: Map<String, String>, expectedArguments: List<String>) {
+    fun shouldGetArguments(avoidUsingRspFiles: Boolean, expectedArguments: List<String>) {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
                 avoidUsingRspFiles,
-                ParametersServiceStub(parameters),
                 ArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),
                 ArgumentsProviderStub(sequenceOf(CommandLineArgument("customArg"))),
                 listOf(

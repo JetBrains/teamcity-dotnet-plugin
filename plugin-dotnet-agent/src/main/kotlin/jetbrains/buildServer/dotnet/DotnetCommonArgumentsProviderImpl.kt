@@ -19,17 +19,15 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_RSP
 
 class DotnetCommonArgumentsProviderImpl(
         private val _avoidUsingRspFiles: Boolean,
-        private val _parametersService: ParametersService,
         private val _responseFileArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         private val _argumentsProviders: List<ArgumentsProvider>)
     : DotnetCommonArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val avoidUsingRspFiles = _avoidUsingRspFiles || _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_RSP)?.equals("false", true) ?: false
+        val avoidUsingRspFiles = _avoidUsingRspFiles
         if (!avoidUsingRspFiles) {
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
         } else {
