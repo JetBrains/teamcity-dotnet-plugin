@@ -32,7 +32,7 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
             return ToolInstance(
                     ToolInstanceType.VisualStudio,
                     File(installationPath, DefaultDevenvPath),
-                    Version.parse(displayVersion),
+                    Version.parse(displayVersion.replace(' ', '-')),
                     Version.parse(productLineVersion),
                     Platform.Default)
         }

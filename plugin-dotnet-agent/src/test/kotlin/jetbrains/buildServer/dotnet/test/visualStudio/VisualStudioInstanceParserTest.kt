@@ -40,6 +40,18 @@ class VisualStudioInstanceParserTest {
                         VisualStudioState().let {
                             it.installationPath = "path"
                             it.catalogInfo = CatalogInfo()
+                            it.catalogInfo!!.productDisplayVersion = "17.0.0-Preview-2.1"
+                            it.catalogInfo!!.productLineVersion = "2022"
+                            it.product = ProductInfo()
+                            it.product!!.id = "abc"
+                            it
+                        },
+                        ToolInstance(ToolInstanceType.VisualStudio, _path, Version(17, 0, 0, "Preview-2.1"), Version(2022), Platform.Default)
+                ),
+                arrayOf(
+                        VisualStudioState().let {
+                            it.installationPath = "path"
+                            it.catalogInfo = CatalogInfo()
                             it.catalogInfo!!.productDisplayVersion = "16.6.3"
                             it.catalogInfo!!.productLineVersion = "2019"
                             it.product = ProductInfo()
