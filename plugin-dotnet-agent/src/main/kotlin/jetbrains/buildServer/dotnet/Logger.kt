@@ -48,4 +48,8 @@ enum class Logger(val msbuildTool: Tool, val vstestTool: Tool, val msbuildLogger
     V16Windows(Tool.MSBuild16Windows, Tool.VSTest16Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
     V16WindowsX64(Tool.MSBuild16WindowsX64, Tool.VSTest16Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
     V16WindowsX86(Tool.MSBuild16WindowsX86, Tool.VSTest16Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
+
+    V17Windows(Tool.MSBuild17Windows, Tool.VSTest17Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
+    V17WindowsX64(Tool.MSBuild17WindowsX64, Tool.VSTest17Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
+    V17WindowsX86(Tool.MSBuild17WindowsX86, Tool.VSTest17Windows, File("${MSBuildLoggerSubDir}15", MSBuildLoggerAssemblyName), File("${VSTestSubDir}15", VSTestLoggerAssemblyName)),
 }
