@@ -7,10 +7,10 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.rx.use
 import java.io.OutputStreamWriter
+import java.nio.charset.StandardCharsets
 
 class ResponseFileFactoryImpl(
         private val _pathsService: PathsService,
-        private val _argumentsService: ArgumentsService,
         private val _fileSystemService: FileSystemService,
         private val _loggerService: LoggerService,
         private val _msBuildParameterConverter: MSBuildParameterConverter,
@@ -23,7 +23,7 @@ class ResponseFileFactoryImpl(
             verbosity: Verbosity?): Path {
         val args = (
                 arguments
-                + _msBuildParameterConverter.convert(parameters, false).map { CommandLineArgument(it) })
+                + _msBuildParameterConverter.convert(parameters).map { CommandLineArgument(it) })
                 .toList()
 
         verbosity?.let {
@@ -40,9 +40,12 @@ class ResponseFileFactoryImpl(
 
         val msBuildResponseFile = _pathsService.getTempFileName("$description$ResponseFileExtension")
         _fileSystemService.write(msBuildResponseFile) {
-            OutputStreamWriter(it).use {
-                for (line in args.map { _argumentsService.normalize(it.value) }) {
-                    it.write("$line\n")
+            // BOM
+            it.write(BOM)
+            OutputStreamWriter(it, StandardCharsets.UTF_8).use {
+                for (arg in args) {
+                    it.write(arg.value)
+                    it.write("\n")
                 }
             }
         }
@@ -52,7 +55,7 @@ class ResponseFileFactoryImpl(
 
     companion object {
         private val LOG = Logger.getLogger(ResponseFileFactoryImpl::class.java)
-
+        internal val BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
         internal const val ResponseFileExtension = ".rsp"
         internal const val BlockName = "Response File"
     }

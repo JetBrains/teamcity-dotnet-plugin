@@ -41,8 +41,6 @@ object DotnetConstants {
     const val PARAM_SUPPORT_MSBUILD_BITNESS = "teamcity.internal.dotnet.msbuild.bitness"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
-    // True or False (True by default) - set to False to not use .rsp files
-    const val PARAM_RSP = "dotnet.cli.rsp"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
     // Default bitness X86 or X64, X86 - if it is not specified
