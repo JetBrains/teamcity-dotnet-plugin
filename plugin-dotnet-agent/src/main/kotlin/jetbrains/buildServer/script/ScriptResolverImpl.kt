@@ -31,7 +31,7 @@ class ScriptResolverImpl(
                         if (_fileSystemService.isAbsolute(scriptFile)) {
                             scriptFile
                         } else {
-                            File(_pathsService.getPath(PathType.WorkingDirectory), scriptFile.name)
+                            File(_pathsService.getPath(PathType.WorkingDirectory), scriptFile.path)
                         }
                     }
                 }

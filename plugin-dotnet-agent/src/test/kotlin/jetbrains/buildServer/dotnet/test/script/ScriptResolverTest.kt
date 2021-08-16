@@ -55,6 +55,15 @@ class ScriptResolverTest {
                         null
                 ),
 
+                arrayOf(
+                        mapOf(
+                                ScriptConstants.SCRIPT_TYPE to ScriptType.File.id,
+                                ScriptConstants.SCRIPT_FILE to File(File("SomeDir"), "Abc.csx").path
+                        ),
+                        File(_workingDirectory, File(File("SomeDir"), "Abc.csx").path),
+                        null
+                ),
+
                 // Script content
                 arrayOf(
                         mapOf(
