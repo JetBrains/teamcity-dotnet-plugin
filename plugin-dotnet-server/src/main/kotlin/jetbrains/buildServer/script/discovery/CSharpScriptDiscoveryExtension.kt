@@ -23,7 +23,8 @@ class CSharpScriptDiscoveryExtension(
                             "Run ${it.path}",
                             mapOf(
                                     ScriptConstants.SCRIPT_TYPE to ScriptType.File.id,
-                                    ScriptConstants.SCRIPT_FILE to it.path
+                                    ScriptConstants.SCRIPT_FILE to it.path,
+                                    ScriptConstants.CLT_PATH to "%teamcity.tool.${ScriptConstants.CLT_TOOL_TYPE_ID}.DEFAULT%"
                             )
                     )
                 }
