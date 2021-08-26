@@ -41,6 +41,9 @@ class EnvironmentImpl(
     override val os: OSType
         get() = _osTypeDetector.detect() ?: OSType.UNIX
 
+    override val osName: String?
+        get() = System.getProperty("os.name")
+
     companion object {
         private const val PathEnvironmentVariableName = "PATH"
     }

@@ -15,6 +15,10 @@ class WindowsRegistryImpl(
             return
         }
 
+        if (!supportBittnessFlag && key.bitness != WindowsRegistryBitness.Bitness32) {
+            return
+        }
+
         LOG.debugBlock("Accepted ${key}").use {
             var curKey: WindowsRegistryKey = key;
             for (line in getLines(key, recursively)) {
@@ -41,12 +45,17 @@ class WindowsRegistryImpl(
         }
     }
 
+    private val supportBittnessFlag get() = !"Windows XP".equals(_environment.osName, true);
+
     private fun getLines(key: WindowsRegistryKey, recursively: Boolean) =
             _commandLineExecutor.tryExecute(
                     createQueryCommand(
                             sequence {
                                 yield(CommandLineArgument(key.regKey))
-                                yield(CommandLineArgument("/reg:${key.bitness.id}"))
+                                if (supportBittnessFlag) {
+                                    yield(CommandLineArgument("/reg:${key.bitness.id}"))
+                                }
+
                                 if(recursively) {
                                     yield(CommandLineArgument("/s"))
                                 }
