@@ -24,4 +24,6 @@ interface Environment {
     val paths: Sequence<Path>
 
     val os: OSType
+
+    val osName: String?
 }

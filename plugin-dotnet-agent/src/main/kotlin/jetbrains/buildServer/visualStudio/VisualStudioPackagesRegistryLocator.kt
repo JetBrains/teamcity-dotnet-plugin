@@ -33,21 +33,18 @@ class VisualStudioPackagesRegistryLocator(
     companion object {
         private val LOG = Logger.getLogger(VisualStudioPackagesRegistryLocator::class.java)
 
-        internal val RegKeys = sequenceOf<WindowsRegistryKey>(
-                WindowsRegistryKey.create(
-                        WindowsRegistryBitness.Bitness64,
-                        WindowsRegistryHive.LOCAL_MACHINE,
-                        "SOFTWARE",
-                        "Microsoft",
-                        "VisualStudio",
-                        "Setup"),
-                WindowsRegistryKey.create(
-                        WindowsRegistryBitness.Bitness32,
-                        WindowsRegistryHive.LOCAL_MACHINE,
-                        "SOFTWARE",
-                        "Microsoft",
-                        "VisualStudio",
-                        "Setup")
-        )
+        internal val RegKeys =
+                WindowsRegistryBitness
+                        .values()
+                        .asSequence()
+                        .map {
+                            WindowsRegistryKey.create(
+                                    it,
+                                    WindowsRegistryHive.LOCAL_MACHINE,
+                                    "SOFTWARE",
+                                    "Microsoft",
+                                    "VisualStudio",
+                                    "Setup")
+                        }
     }
 }

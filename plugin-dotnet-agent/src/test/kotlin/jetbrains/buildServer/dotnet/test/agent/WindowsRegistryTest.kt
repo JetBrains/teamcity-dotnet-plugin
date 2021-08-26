@@ -16,7 +16,8 @@ class WindowsRegistryTest {
     @MockK lateinit var _environment: Environment
     @MockK lateinit var _commandLineExecutor: CommandLineExecutor
     @MockK lateinit var _windowsRegistryParser: WindowsRegistryParser
-    private val _rootKey = WindowsRegistryKey.create(WindowsRegistryBitness.Bitness64, WindowsRegistryHive.CURRENT_USER, "myKey")
+    private val _rootKey32 = WindowsRegistryKey.create(WindowsRegistryBitness.Bitness32, WindowsRegistryHive.CURRENT_USER, "myKey32")
+    private val _rootKey64 = WindowsRegistryKey.create(WindowsRegistryBitness.Bitness64, WindowsRegistryHive.CURRENT_USER, "myKey64")
 
     @BeforeMethod
     fun setUp() {
@@ -28,96 +29,134 @@ class WindowsRegistryTest {
     fun testGetData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(
+                        _rootKey64,
                         OSType.WINDOWS,
-                        listOf(Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""))),
-                        listOf(WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""))),
+                        "Windows 10",
+                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""))),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey64.regKey), CommandLineArgument("/reg:64"), CommandLineArgument("/s")),
+                        listOf(WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""))),
                 arrayOf(
+                        _rootKey64,
                         OSType.WINDOWS,
+                        "Windows 10",
                         listOf(
-                                Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey, "2", _rootKey + "subKey1")
+                                Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64, "2", _rootKey64 + "subKey1")
                         ),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey64.regKey), CommandLineArgument("/reg:64"), CommandLineArgument("/s")),
                         listOf(
-                                WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey1"
+                                WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey1"
                         )
                 ),
                 arrayOf(
+                        _rootKey64,
                         OSType.WINDOWS,
+                        "Windows 10",
                         listOf(
-                                Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey, "2", _rootKey + "subKey1"),
-                                Item(_rootKey + "subKey1", "3", WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, ""))
+                                Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64, "2", _rootKey64 + "subKey1"),
+                                Item(_rootKey64 + "subKey1", "3", WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, ""))
                         ),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey64.regKey), CommandLineArgument("/reg:64"), CommandLineArgument("/s")),
                         listOf(
-                                WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey1",
-                                WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, "")
+                                WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey1",
+                                WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, "")
                         )
                 ),
                 arrayOf(
+                        _rootKey64,
                         OSType.WINDOWS,
+                        "Windows 10",
                         listOf(
-                                Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey, "2", _rootKey + "subKey1"),
-                                Item(_rootKey + "subKey1", "3", WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey + "subKey1", "4", null),
-                                Item(_rootKey, "4", _rootKey + "subKey2")
+                                Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64, "2", _rootKey64 + "subKey1"),
+                                Item(_rootKey64 + "subKey1", "3", WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64 + "subKey1", "4", null),
+                                Item(_rootKey64, "4", _rootKey64 + "subKey2")
                         ),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey64.regKey), CommandLineArgument("/reg:64"), CommandLineArgument("/s")),
                         listOf(
-                                WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey1",
-                                WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey2"
+                                WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey1",
+                                WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey2"
                         )
                 ),
                 arrayOf(
+                        _rootKey64,
                         OSType.WINDOWS,
+                        "Windows 10",
                         listOf(
-                                Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey, "2", _rootKey + "subKey1"),
-                                Item(_rootKey + "subKey1", "3", WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, "")),
-                                Item(_rootKey + "subKey1", "4", null),
-                                Item(_rootKey, "4", _rootKey + "subKey2"),
-                                Item(_rootKey + "subKey2", "5", WindowsRegistryValue(_rootKey  + "subKey2", WindowsRegistryValueType.Str, ""))
+                                Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64, "2", _rootKey64 + "subKey1"),
+                                Item(_rootKey64 + "subKey1", "3", WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, "")),
+                                Item(_rootKey64 + "subKey1", "4", null),
+                                Item(_rootKey64, "4", _rootKey64 + "subKey2"),
+                                Item(_rootKey64 + "subKey2", "5", WindowsRegistryValue(_rootKey64  + "subKey2", WindowsRegistryValueType.Str, ""))
                         ),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey64.regKey), CommandLineArgument("/reg:64"), CommandLineArgument("/s")),
                         listOf(
-                                WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey1",
-                                WindowsRegistryValue(_rootKey  + "subKey1", WindowsRegistryValueType.Str, ""),
-                                _rootKey + "subKey2",
-                                WindowsRegistryValue(_rootKey  + "subKey2", WindowsRegistryValueType.Str, "")
+                                WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey1",
+                                WindowsRegistryValue(_rootKey64  + "subKey1", WindowsRegistryValueType.Str, ""),
+                                _rootKey64 + "subKey2",
+                                WindowsRegistryValue(_rootKey64  + "subKey2", WindowsRegistryValueType.Str, "")
                         )
                 ),
                 arrayOf(
+                        _rootKey64,
                         OSType.UNIX,
-                        listOf(Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""))),
+                        "Linux",
+                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""))),
+                        emptyList<CommandLineArgument>(),
                         emptyList<Any>()),
                 arrayOf(
+                        _rootKey64,
                         OSType.MAC,
-                        listOf(Item(_rootKey, "1", WindowsRegistryValue(_rootKey, WindowsRegistryValueType.Str, ""))),
-                        emptyList<Any>()))
+                        "Mac",
+                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""))),
+                        emptyList<CommandLineArgument>(),
+                        emptyList<Any>()),
+
+                // Windows XP
+                arrayOf(
+                        _rootKey32,
+                        OSType.WINDOWS,
+                        "Windows XP",
+                        listOf(Item(_rootKey32, "1", WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey32.regKey), CommandLineArgument("/s")),
+                        listOf(WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
+
+                arrayOf(
+                        _rootKey64,
+                        OSType.WINDOWS,
+                        "Windows XP",
+                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
+                        emptyList<CommandLineArgument>(),
+                        emptyList<Any>()),
+        )
     }
 
     @Test(dataProvider = "testGetData")
-    fun shouldGet(os: OSType, items: List<Item>, expectedItems: List<Any>) {
+    fun shouldGet(key: WindowsRegistryKey, os: OSType, osName: String, items: List<Item>, args: List<CommandLineArgument>, expectedItems: List<Any>) {
         // Given
         val registry = createInstance()
         val lines = items.map { it.line }.distinct().toList()
 
         // When
         every { _environment.os } returns os
+        every { _environment.osName } returns osName
         every { _commandLineExecutor.tryExecute(
                 CommandLine(
                         null,
                         TargetType.SystemDiagnostics,
                         Path("REG"),
                         Path("."),
-                        listOf(
-                                CommandLineArgument("QUERY"),
-                                CommandLineArgument(_rootKey.regKey),
-                                CommandLineArgument("/reg:64"),
-                                CommandLineArgument("/s")))) } returns CommandLineResult(0, lines, emptyList())
+                        args
+                )
+        ) } returns CommandLineResult(0, lines, emptyList())
 
         for (item in items) {
             if (item.item is WindowsRegistryValue) {
@@ -137,7 +176,7 @@ class WindowsRegistryTest {
 
         val actualItems = mutableListOf<Any>()
         registry.accept(
-                _rootKey,
+                key,
                 object :WindowsRegistryVisitor {
                     override fun visit(key: WindowsRegistryKey): Boolean {
                         actualItems.add(key)
