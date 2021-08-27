@@ -51,30 +51,30 @@ class ToolServiceImpl(
             return null
         }
 
-        LOG.info("Get package version for file \"$toolPackage\"")
+        LOG.debug("Get package version for file \"$toolPackage\"")
         val versionResult = _packageVersionParser.tryParse(toolPackage.name)?.let {
             GetPackageVersionResult.version(SimpleToolVersion(toolType, it.toString(), ToolVersionIdHelper.getToolId(toolType.type, it.toString())))
         } ?: GetPackageVersionResult.error("Failed to get version of $toolPackage")
 
-        LOG.info("Package version is \"${versionResult.toolVersion?.version ?: "null"}\"")
+        LOG.debug("Package version is \"${versionResult.toolVersion?.version ?: "null"}\"")
         return versionResult
     }
 
     override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File {
-        LOG.info("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
+        LOG.debug("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
         val downloadableTool = getTools(toolType, *packageIds).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
                 ?: throw ToolException("Failed to find package $toolVersion")
 
         val downloadUrl = downloadableTool.downloadUrl
-        LOG.info("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
+        LOG.debug("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
         val targetFile = File(targetDirectory, downloadableTool.destinationFileName)
         try {
             _fileSystemService.write(targetFile) {
                 _httpDownloader.download(URL(downloadUrl), it)
             }
 
-            LOG.info("Package from: \"$downloadUrl\" was downloaded to \"$targetFile\"")
+            LOG.debug("Package from: \"$downloadUrl\" was downloaded to \"$targetFile\"")
             return targetFile
         } catch (e: Throwable) {
             throw ToolException("Failed to download package \"$toolVersion\" to \"$targetFile\": \"${e.message}\"", e)
@@ -82,16 +82,16 @@ class ToolServiceImpl(
     }
 
     override fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String) {
-        LOG.info("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
+        LOG.debug("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
 
         if (createPackageFilter(packageIds.toSet()).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
             if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory, targetDirectory)) {
                 throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
             }
 
-            LOG.info("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
+            LOG.debug("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
         } else {
-            LOG.info("Package $toolPackage is not acceptable")
+            LOG.debug("Package $toolPackage is not acceptable")
         }
     }
 
