@@ -16,11 +16,9 @@
 
 package jetbrains.buildServer.dotnet.test.agent.runner
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.AgentRunningBuild
 import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.agent.BuildRunnerContext
@@ -32,6 +30,7 @@ import org.testng.annotations.Test
 
 class LoggerServiceTest {
     @MockK private lateinit var _buildStepContext: BuildStepContext
+    @MockK private lateinit var _buildInfo: BuildInfo
     @MockK private lateinit var _colorTheme: ColorTheme
     @MockK private lateinit var _buildProgressLogger: BuildProgressLogger
 
@@ -80,6 +79,22 @@ class LoggerServiceTest {
         Assert.assertEquals(actualBuildLog, expectedBuildLog)
     }
 
+    @Test
+    fun shouldWriteBuildProblem() {
+        // Given
+        val actualBuildLog = mutableListOf<String>()
+        var logger = createInstance()
+        every { _buildInfo.id } returns "runnerId"
+        every { _buildInfo.name } returns "MyStepName"
+        every { _buildProgressLogger.logBuildProblem(any()) } returns Unit
+
+        // When
+        logger.writeBuildProblem("myId", "myType", "myDescription");
+
+        // Then
+        verify { _buildProgressLogger.logBuildProblem(BuildProblemData.createBuildProblem("runnerId:myId", "myType", "myDescription (Step: MyStepName)")) }
+    }
+
     private fun createInstance() =
-            LoggerServiceImpl(_buildStepContext, _colorTheme)
+            LoggerServiceImpl(_buildStepContext, _buildInfo, _colorTheme)
 }

@@ -28,6 +28,7 @@ import jetbrains.buildServer.rx.disposableOf
 
 class LoggerServiceImpl(
         private val _buildStepContext: BuildStepContext,
+        private val _buildInfo: BuildInfo,
         private val _colorTheme: ColorTheme)
     : LoggerService {
 
@@ -39,8 +40,11 @@ class LoggerServiceImpl(
 
     override fun writeMessage(serviceMessage: ServiceMessage) = _buildLogger.message(serviceMessage.toString())
 
-    override fun writeBuildProblem(identity: String, type: String, description: String) =
-            _buildLogger.logBuildProblem(BuildProblemData.createBuildProblem(identity.substring(0 .. Integer.min(identity.length, 60) - 1), type, description))
+    override fun writeBuildProblem(identity: String, type: String, description: String) {
+        var id = "${_buildInfo.id}:$identity"
+        id = id.substring(0 .. Integer.min(id.length, 60) - 1)
+        _buildLogger.logBuildProblem(BuildProblemData.createBuildProblem(id, type, "$description (Step: ${_buildInfo.name})"))
+    }
 
     override fun writeStandardOutput(text: String, color: Color) =
             listener.onStandardOutput(applyColor(text, color))
