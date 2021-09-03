@@ -59,8 +59,9 @@ class MSBuildParameterConverterTest {
                 // escaped
                 arrayOf("!@#\$%^&*()_+~1234-=/;'][{}\":<>,.?/??~`", "\"!@#$%^&*()_+~1234-=/;'][{}\\\":<>,.?/??~`\""),
                 arrayOf("value 123", "\"value 123\""),
+                arrayOf("value123\\", "value123\\\\"),
                 arrayOf("value \" 123", "\"value \\\" 123\""),
-                arrayOf("value \\ 123", "\"value \\ 123\""),
+                arrayOf("value \\ 123", "\"value \\\\ 123\""),
                 arrayOf("value \"\" 123", "\"value \\\"\\\" 123\""),
                 arrayOf("value \" \" 123", "\"value \\\" \\\" 123\""),
                 arrayOf("value1 \n value2", "\"value1 %0A value2\""),
