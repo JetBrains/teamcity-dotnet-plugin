@@ -36,11 +36,13 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         (c == '-')
 
     private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
+        var lastIsSlash = false
         for (char in chars) {
+            lastIsSlash = false
             when {
                 char == '\\' -> {
                     yield('\\')
-                    yield('\\')
+                    lastIsSlash = true
                 }
 
                 char == '"' -> {
@@ -62,6 +64,11 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
 
                 else -> yield(char)
             }
+        }
+
+        // https://youtrack.jetbrains.com/issue/TW-72915
+        if(lastIsSlash) {
+            yield('\\')
         }
     }
 
