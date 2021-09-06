@@ -28,17 +28,18 @@ class MSBuildArgumentsProviderTest {
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(listOf("/p:param=value"))
+                arrayOf(true, listOf("/p:param=value")),
+                arrayOf(false, listOf("/p:param=value"))
         )
     }
 
     @Test(dataProvider = "argumentsData")
-    fun shouldGetArguments(expectedArguments: List<String>) {
+    fun shouldGetArguments(isCommandLineParameters: Boolean, expectedArguments: List<String>) {
         // Given
         val msBuildParameter = MSBuildParameter("Param1", "Value1")
         every { _msBuildParametersProvider.getParameters(_context) } returns sequenceOf(msBuildParameter)
-        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(msBuildParameter)) }) } returns sequenceOf("/p:param=value")
-        val argumentsProvider = MSBuildArgumentsProvider(_msBuildParameterConverter, listOf(_msBuildParametersProvider))
+        every { _msBuildParameterConverter.convert(match { it.toList().equals(listOf(msBuildParameter)) }, isCommandLineParameters) } returns sequenceOf("/p:param=value")
+        val argumentsProvider = MSBuildArgumentsProvider(isCommandLineParameters, _msBuildParameterConverter, listOf(_msBuildParametersProvider))
 
         // When
         val actualArguments = argumentsProvider.getArguments(_context).map { it.value }.toList()

@@ -23,7 +23,6 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BOM
 import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BlockName
 import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.ResponseFileExtension
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
@@ -38,6 +37,7 @@ class ResponseFileFactoryTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _argumentsService: ArgumentsService
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
 
     @BeforeMethod
@@ -45,6 +45,7 @@ class ResponseFileFactoryTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _virtualContext.resolvePath(any()) } answers { arg<String>(0)}
+        every { _argumentsService.normalize(any()) } answers { "\"${arg<String>(0)}\""}
     }
 
     @Test
@@ -62,7 +63,7 @@ class ResponseFileFactoryTest {
 
         every { _loggerService.writeBlock(BlockName + " abc") } returns blockToken
         every { _loggerService.writeStandardOutput(any(), Color.Details) } returns Unit
-        every { _msBuildParameterConverter.convert(any()) } answers {
+        every { _msBuildParameterConverter.convert(any(), false) } answers {
             arg<Sequence<MSBuildParameter>>(0).map { "${it.name}=${it.value}" }
         }
 
@@ -76,15 +77,12 @@ class ResponseFileFactoryTest {
         // Then
         verify { blockToken.dispose() }
         fileSystemService.read(rspFile) {
-            val actualBOM: ByteArray = byteArrayOf(0, 0, 0)
-            it.read(actualBOM, 0,3)
-            Assert.assertEquals(actualBOM, BOM)
             InputStreamReader(it).use {
                 Assert.assertEquals(it.readLines(), listOf(
-                        "arg1",
-                        "arg2",
-                        "par1=val1",
-                        "par2=val2"
+                        "\"arg1\"",
+                        "\"arg2\"",
+                        "\"par1=val1\"",
+                        "\"par2=val2\""
                 ))
             }
         }
@@ -94,6 +92,7 @@ class ResponseFileFactoryTest {
     private fun createInstance(fileSystemService: FileSystemService) =
             ResponseFileFactoryImpl(
                 _pathService,
+                _argumentsService,
                 fileSystemService,
                 _loggerService,
                 _msBuildParameterConverter,

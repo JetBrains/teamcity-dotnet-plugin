@@ -3,9 +3,9 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.util.StringUtil
 
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
-    override fun convert(parameters: Sequence<MSBuildParameter>) = parameters
+    override fun convert(parameters: Sequence<MSBuildParameter>, isCommandLineParameters: Boolean) = parameters
             .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
-            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value)}" }
+            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value, isCommandLineParameters)}" }
 
     fun normalizeName(name: String) =
             String(
@@ -14,9 +14,9 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
                 }.toCharArray()
             )
 
-    fun normalizeValue(value: String): String {
-        val str = String(escapeSymbols(value.asSequence()).toList().toCharArray())
-        if (str.isBlank() || SpecialCharacters.any { value.contains(it)}) {
+    fun normalizeValue(value: String, isCommandLineParameter: Boolean): String {
+        val str = String(escapeSymbols(value.asSequence(), isCommandLineParameter).toList().toCharArray())
+        if (str.isBlank() || str.contains(';')) {
             return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
 
@@ -35,32 +35,16 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         (c == '_') ||
         (c == '-')
 
-    private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
+    private fun escapeSymbols(chars: Sequence<Char>, isCommandLineParameter: Boolean): Sequence<Char> = sequence {
         for (char in chars) {
-            when {
-                char == '"' -> {
-                    yield('\\')
-                    yield('"')
+            if (char.isLetterOrDigit() || (char == ';' && !isCommandLineParameter) || char == '%') {
+                yield(char)
+            } else {
+                yield('%')
+                for (c in String.format("%02X", char.toByte())) {
+                    yield(c)
                 }
-
-                char == ' ' -> {
-                    yield(' ')
-                }
-
-                // invisible
-                char.isISOControl() -> {
-                    yield('%')
-                    for (c in String.format("%02X", char.toByte())) {
-                        yield(c)
-                    }
-                }
-
-                else -> yield(char)
             }
         }
-    }
-
-    companion object {
-        private val SpecialCharacters = hashSetOf(' ', '%', ';')
     }
 }
