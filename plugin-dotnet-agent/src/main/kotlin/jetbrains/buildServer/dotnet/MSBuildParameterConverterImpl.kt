@@ -38,11 +38,6 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
         for (char in chars) {
             when {
-                char == '\\' -> {
-                    yield('\\')
-                    yield('\\')
-                }
-
                 char == '"' -> {
                     yield('\\')
                     yield('"')
