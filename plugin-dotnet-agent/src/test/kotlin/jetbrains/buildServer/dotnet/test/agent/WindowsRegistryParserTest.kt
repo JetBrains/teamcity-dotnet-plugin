@@ -25,6 +25,7 @@ class WindowsRegistryParserTest {
     @DataProvider
     fun testDataKey(): Array<Array<out Any?>> {
         return arrayOf(
+                arrayOf("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MSBuild\\ToolsVersions", WindowsRegistryKey.create(WindowsRegistryBitness.Bitness64, WindowsRegistryHive.LOCAL_MACHINE, "SOFTWARE", "Microsoft", "MSBuild", "ToolsVersions")),
                 arrayOf("    HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MSBuild\\12.0\\abc", _key1 + "12.0" + "abc"),
                 arrayOf("    HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MSBuild\\12.0\\abc", _key1 + arrayOf("12.0", "abc")),
                 arrayOf("    HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MSBuild\\12.0", _key1 + "12.0"),
@@ -60,6 +61,11 @@ class WindowsRegistryParserTest {
     @DataProvider
     fun testDataValue(): Array<Array<out Any?>> {
         return arrayOf(
+                arrayOf(
+                        "    MSBuildToolsPath\tREG_SZ\tc:\\WINDOWS\\Microsoft.NET\\Framework\\v2.0.50727\\",
+                        WindowsRegistryValue(_key2 + "MSBuildToolsPath", WindowsRegistryValueType.Str, "c:\\WINDOWS\\Microsoft.NET\\Framework\\v2.0.50727\\"),
+                        "c:\\WINDOWS\\Microsoft.NET\\Framework\\v2.0.50727\\",
+                        0L),
                 arrayOf(
                         "    aa bb    REG_SZ    abc bb",
                         WindowsRegistryValue(_key2 + "aa bb", WindowsRegistryValueType.Str, "abc bb"),

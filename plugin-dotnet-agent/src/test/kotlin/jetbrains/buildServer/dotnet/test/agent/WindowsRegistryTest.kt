@@ -133,9 +133,18 @@ class WindowsRegistryTest {
                         _rootKey64,
                         OSType.WINDOWS,
                         "Windows XP",
-                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
+                        listOf(Item(_rootKey64, "1", WindowsRegistryValue(_rootKey64, WindowsRegistryValueType.Str, ""))),
                         emptyList<CommandLineArgument>(),
                         emptyList<Any>()),
+
+                // First line is "! REG.EXE VERSION 3.0"
+                arrayOf(
+                        _rootKey32,
+                        OSType.WINDOWS,
+                        "Windows XP",
+                        listOf(Item(_rootKey32, "! REG.EXE VERSION 3.0", null), Item(_rootKey32, "1", WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
+                        listOf(CommandLineArgument("QUERY"), CommandLineArgument(_rootKey32.regKey), CommandLineArgument("/s")),
+                        listOf(WindowsRegistryValue(_rootKey32, WindowsRegistryValueType.Str, ""))),
         )
     }
 
