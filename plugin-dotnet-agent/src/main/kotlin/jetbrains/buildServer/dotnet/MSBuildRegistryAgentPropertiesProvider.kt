@@ -22,15 +22,20 @@ class MSBuildRegistryAgentPropertiesProvider(
                     object: WindowsRegistryVisitor {
                         override fun visit(key: WindowsRegistryKey) = true
                         override fun visit(value: WindowsRegistryValue): Boolean {
+                            LOG.debug("Visit ${value}")
                             if (
                                     value.type == WindowsRegistryValueType.Str
                                     && value.text.isNotBlank()
                                     && "MSBuildToolsPath".equals(value.key.parts.lastOrNull(), true)) {
                                 val versionStr = value.key.parts.dropLast(1).lastOrNull()
+                                LOG.debug("Version: $versionStr")
                                 versionStr?.let { version ->
                                     val path = File(value.text)
+                                    LOG.debug("Path: $path")
                                     if (_msuildValidator.isValid(path)) {
-                                        props.add(AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version}_${value.key.bitness.platform.id}_Path", path.path))
+                                        var property = AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version}_${value.key.bitness.platform.id}_Path", path.path)
+                                        props.add(property)
+                                        LOG.debug("Add property: $path")
                                     } else {
                                         LOG.warn("Cannot find MSBuild in \"${value.text}\".")
                                     }

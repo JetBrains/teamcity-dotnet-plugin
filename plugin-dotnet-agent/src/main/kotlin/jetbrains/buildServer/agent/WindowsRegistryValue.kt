@@ -21,4 +21,8 @@ data class WindowsRegistryValue(
             WindowsRegistryValueType.Long -> _value as Long
             else -> 0L
         }
+
+    override fun toString(): String {
+        return "$type $key = $_value"
+    }
 }

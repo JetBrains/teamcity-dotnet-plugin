@@ -16,15 +16,15 @@ class WindowsRegistryParserImpl : WindowsRegistryParser {
 
     override fun tryParseValue(key: WindowsRegistryKey, text: String): WindowsRegistryValue? =
         RegItemRegex.find(text)?.let { match ->
-            val subKey = match.groupValues[1].let { name ->
+            val subKey = match.groupValues[2].let { name ->
                 key + name
             }
 
-            val type = match.groupValues[2].let { typeStr ->
+            val type = match.groupValues[4].let { typeStr ->
                 WindowsRegistryValueType.tryParse(typeStr)
             } ?: WindowsRegistryValueType.Text
 
-            val value = match.groupValues[3].let { text ->
+            val value = match.groupValues[6].let { text ->
                 when (type) {
                     WindowsRegistryValueType.Str -> text
                     WindowsRegistryValueType.Bin -> arrayOf<Byte>(0)
@@ -39,6 +39,6 @@ class WindowsRegistryParserImpl : WindowsRegistryParser {
         }
 
     companion object {
-        private val RegItemRegex = Regex("^\\s{4}(.+)\\s{4}(REG_SZ|REG_BINARY|REG_DWORD|REG_QWORD|REG_MULTI_SZ|REG_EXPAND_SZ)\\s{4}(.*)\$")
+        private val RegItemRegex = Regex("^(\\s{4}|\\s*\\t)(.+)(\\s{4}|\\t)(REG_SZ|REG_BINARY|REG_DWORD|REG_QWORD|REG_MULTI_SZ|REG_EXPAND_SZ)(\\s{4}|\\t)(.*)\$")
     }
 }

@@ -11,34 +11,46 @@ class WindowsRegistryImpl(
     : WindowsRegistry {
 
     override fun accept(key: WindowsRegistryKey, visitor: WindowsRegistryVisitor, recursively: Boolean) {
+        LOG.debug("Key: $key")
+        LOG.debug("OS: ${_environment.osName}")
         if (_environment.os != OSType.WINDOWS) {
+            LOG.debug("Is not Windows OS, finish.")
             return
         }
 
-        if (!supportBittnessFlag && key.bitness != WindowsRegistryBitness.Bitness32) {
+        if ("Windows XP".equals(_environment.osName, true) && key.bitness != WindowsRegistryBitness.Bitness32) {
+            LOG.debug("Skip, because OS is ${_environment.osName} and bitness is ${key.bitness}.")
             return
         }
 
         LOG.debugBlock("Accepted ${key}").use {
-            var curKey: WindowsRegistryKey = key;
+            var curKey = key;
+            LOG.debug("Current key is $curKey")
             for (line in getLines(key, recursively)) {
+                LOG.debug("Processing line: \"$line\"")
                 if (line.isBlank()) {
+                    LOG.debug("Skip line: \"$line\"")
                     continue
                 }
 
                 val value = _windowsRegistryParser.tryParseValue(curKey, line)
+                LOG.debug("Value: $value")
                 if (value != null) {
                     if (!visitor.visit(value)) {
+                        LOG.debug("Finish")
                         return
                     }
                 } else {
                     val newKey = _windowsRegistryParser.tryParseKey(key, line)
+                    LOG.debug("New key: $newKey")
                     if (newKey != null) {
                         if (!visitor.visit(newKey)) {
+                            LOG.debug("Finish")
                             return
                         }
 
                         curKey = newKey;
+                        LOG.debug("Current key is $curKey")
                     }
                 }
             }
