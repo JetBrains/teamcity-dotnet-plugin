@@ -33,14 +33,14 @@ class NugetCredentialProviderSelectorImpl(
                     var runtimeVersions = _runtimesProvider.getRuntimes().map { it.version.major }.toSet()
                     credentialproviderPath =
                             _parametersService
-                            .getParameterNames(ParameterType.Configuration)
-                            .filter { it.startsWith(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER) }
-                            .filter { it.endsWith(CONFIG_SUFFIX_PATH) }
-                            .map { it to Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) }
-                            .filter { it.second != Version.Empty }
-                            .filter { runtimeVersions.contains(it.second.major) }
-                            .maxBy { it.second }
-                            ?.first
+                                    .getParameterNames(ParameterType.Configuration)
+                                    .filter { it.startsWith(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER) }
+                                    .filter { it.endsWith(CONFIG_SUFFIX_PATH) }
+                                    .map { it to Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) }
+                                    .filter { it.second != Version.Empty }
+                                    .filter { runtimeVersions.contains(it.second.major) }
+                                    .maxByOrNull { it.second }
+                                    ?.first
                             ?.let {  _parametersService.tryGetParameter(ParameterType.Configuration, it) }
                 }
 
