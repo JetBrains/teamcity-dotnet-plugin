@@ -33,14 +33,15 @@ class VSTestCommand(
         private val _argumentsAlternative: ArgumentsAlternative,
         private val _testsFilterProvider: TestsFilterProvider,
         private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
-        private val _loggerService: LoggerService)
+        private val _loggerService: LoggerService,
+        private val _targetArgumentsProvider: TargetArgumentsProvider)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.VSTest
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
+        get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {

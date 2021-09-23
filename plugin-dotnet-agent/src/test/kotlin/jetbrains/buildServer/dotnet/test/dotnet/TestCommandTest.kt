@@ -21,26 +21,28 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class TestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
+    @MockK private lateinit var _targetTypeProvider: TargetTypeProvider
+    @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
+        every { _targetTypeProvider.getTargetType(any()) } answers { if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown }
     }
 
     @DataProvider
@@ -179,6 +181,8 @@ class TestCommandTest {
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 mockk<EnvironmentBuilder>(),
                 _argumentsAlternative,
-                _testsFilterProvider)
+                _testsFilterProvider,
+                _targetTypeProvider,
+                _targetArgumentsProvider)
     }
 }

@@ -57,6 +57,11 @@
         <param name="skipBuild" type="boolean" trueValue="true" falseValue="">
             <description>Do not build the project before testing</description>
         </param>
+        <param name="singleSession" dslName="singleSession" type="boolean" trueValue="true" falseValue="">
+            <description>
+                Whether TeamCity should run tests in a single session
+            </description>
+        </param>
         <param name="test.settingsFile" dslName="settingsFile">
             <description>Run tests that match the given expression.</description>
         </param>

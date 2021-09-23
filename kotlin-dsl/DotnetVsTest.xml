@@ -83,6 +83,11 @@
                 Whether TeamCity should run tests in an isolated process
             </description>
         </param>
+        <param name="singleSession" dslName="singleSession" type="boolean" trueValue="true" falseValue="">
+            <description>
+                Whether TeamCity should run tests in a single session
+            </description>
+        </param>
         <param name="platform" dslName="platform" type="Platform">
             <description>
                 Target platform architecture to be used for test execution

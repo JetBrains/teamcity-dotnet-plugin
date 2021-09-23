@@ -315,6 +315,10 @@
   <td>
     <props:checkboxProperty name="${params.vstestInIsolation}"/>
     <label for="${params.vstestInIsolation}">Run the tests in an isolated process</label>
+    <br/>
+    <props:checkboxProperty name="${params.singleSessionKey}"/>
+    <label for="${params.singleSessionKey}">Run tests in a single session</label>
+    <span class="smallNote">A test session must include assemblies related to a single target framework.</span>
   </td>
 </tr>
 
@@ -443,11 +447,23 @@
   </td>
 </tr>
 
-<tr class="advancedSetting dotnet pack test publish run">
+<tr class="advancedSetting dotnet pack publish run">
   <th class="noBorder">Options:</th>
   <td>
     <props:checkboxProperty name="${params.skipBuildKey}"/>
     <label for="${params.skipBuildKey}">Do not build the projects</label>
+  </td>
+</tr>
+
+<tr class="advancedSetting dotnet test">
+  <th class="noBorder">Options:</th>
+  <td>
+    <props:checkboxProperty name="${params.skipBuildKey}"/>
+    <label for="${params.skipBuildKey}">Do not build the projects</label>
+    <br/>
+    <props:checkboxProperty name="${params.singleSessionKey}"/>
+    <label for="${params.singleSessionKey}">Run tests in a single session</label>
+    <span class="smallNote">Runs tests for assembly files in a single test session. A test session must include assemblies related to a single target framework.</span>
   </td>
 </tr>
 

@@ -30,14 +30,16 @@ class TestCommand(
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
         private val _argumentsAlternative: ArgumentsAlternative,
-        private val _testsFilterProvider: TestsFilterProvider)
+        private val _testsFilterProvider: TestsFilterProvider,
+        private val _targetTypeProvider: TargetTypeProvider,
+        private val _targetArgumentsProvider: TargetArgumentsProvider)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
         get() = DotnetCommandType.Test
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
+        get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         _testsFilterProvider.filterExpression.let {
@@ -100,5 +102,5 @@ class TestCommand(
         }
     }
 
-    private fun isAssembly(path: String) = "dll".equals(File(path).extension, true)
+    private fun isAssembly(path: String) = _targetTypeProvider.getTargetType(File(path)) == CommandTargetType.Assembly
 }

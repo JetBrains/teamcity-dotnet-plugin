@@ -280,6 +280,7 @@
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
   <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.TargetArgumentsProviderByType"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver">
@@ -352,6 +353,8 @@
   <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
+
+  <bean class="jetbrains.buildServer.dotnet.TargetTypeProviderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>

@@ -76,6 +76,7 @@ object DotnetConstants {
     const val PARAM_VSTEST_VERSION = "vstest.version"
     const val PARAM_VSTEST_IN_ISOLATION = "vstest.InIsolation"
     const val PARAM_MSBUILD_LOGGER_PARAMS = "msbuild.logger.params"
+    const val PARAM_SINGLE_SESSION = "singleSession"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
 

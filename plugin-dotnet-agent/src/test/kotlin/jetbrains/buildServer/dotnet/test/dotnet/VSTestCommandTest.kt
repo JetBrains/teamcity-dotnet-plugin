@@ -21,10 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -39,11 +36,13 @@ class VSTestCommandTest {
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
     @MockK private lateinit var _splittedTestsFilterSettings: SplittedTestsFilterSettings
     @MockK private lateinit var _loggerService: LoggerService
+    @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
     }
 
     @DataProvider
@@ -239,5 +238,6 @@ class VSTestCommandTest {
                     _argumentsAlternative,
                     _testsFilterProvider,
                     _splittedTestsFilterSettings,
-                    _loggerService)
+                    _loggerService,
+                    _targetArgumentsProvider)
 }

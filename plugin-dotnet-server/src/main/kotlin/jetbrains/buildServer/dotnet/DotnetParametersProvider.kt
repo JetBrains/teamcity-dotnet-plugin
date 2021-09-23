@@ -141,6 +141,9 @@ class DotnetParametersProvider {
     val vstestInIsolation: String
         get() = DotnetConstants.PARAM_VSTEST_IN_ISOLATION
 
+    val singleSessionKey: String
+        get() = DotnetConstants.PARAM_SINGLE_SESSION
+
     // Coverage keys
 
     val coverageTypeKey: String
