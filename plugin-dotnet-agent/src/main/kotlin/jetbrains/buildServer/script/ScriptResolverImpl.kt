@@ -20,7 +20,6 @@ class ScriptResolverImpl(
                     .tryGetParameter(ParameterType.Runner, ScriptConstants.SCRIPT_TYPE)
                     ?.let { ScriptType.tryParse(it) }
                     ?.let { getScriptFile(it) }
-                    ?.let { it }
                     ?: throw RunBuildException("Cannot specify C# script.")
 
     private fun getScriptFile(scriptType: ScriptType) =

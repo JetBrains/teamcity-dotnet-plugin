@@ -4,7 +4,6 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.system.measureTimeMillis

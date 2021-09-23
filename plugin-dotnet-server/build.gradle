@@ -35,16 +35,16 @@ teamcity {
 }
 
 dependencies {
-  compile project(':plugin-dotnet-common')
-  compile 'com.google.code.gson:gson:2.5'
-  compile "org.jetbrains.kotlin:kotlin-stdlib"
-
+  implementation project(':plugin-dotnet-common')
+  implementation 'com.google.code.gson:gson:2.5'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib"
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
   provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'
-  testCompile 'org.testng:testng:7.1.0'
-  testCompile 'io.mockk:mockk:1.9.3'
-  testCompile 'org.jetbrains.kotlin:kotlin-reflect'
-  testImplementation  'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2' 
+  testImplementation 'org.testng:testng:7.1.0'
+  testImplementation 'io.mockk:mockk:1.9.3'
+  testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
+  testImplementation  'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2' 
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 }
 

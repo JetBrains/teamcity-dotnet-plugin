@@ -68,7 +68,7 @@ class LoggerServiceImpl(
     override fun importData(dataProcessorType: String, artifactPath: Path, tool: String) = writeMessage(ImportDataServiceMessage(dataProcessorType, artifactPath, tool))
 
     private fun writeBlock(blockName: String, description: String, trace: Boolean): Disposable {
-        val blockOpened = BlockOpened(blockName, if (description.isBlank()) null else description)
+        val blockOpened = BlockOpened(blockName, description.ifBlank { null })
         if (trace) {
             blockOpened.addTag(DefaultMessagesInfo.TAG_INTERNAL)
         }

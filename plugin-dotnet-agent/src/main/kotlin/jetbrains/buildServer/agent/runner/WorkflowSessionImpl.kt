@@ -62,7 +62,7 @@ class WorkflowSessionImpl(
 
     override fun sessionStarted() = Unit
 
-    override fun sessionFinished(): BuildFinishedStatus? {
+    override fun sessionFinished(): BuildFinishedStatus {
         _eventSubject.onComplete()
         return _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
     }

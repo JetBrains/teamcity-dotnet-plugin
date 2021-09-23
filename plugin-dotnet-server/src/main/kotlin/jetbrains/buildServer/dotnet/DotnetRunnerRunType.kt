@@ -50,7 +50,7 @@ class DotnetRunnerRunType(
         return DotnetConstants.RUNNER_DESCRIPTION
     }
 
-    override fun getRunnerPropertiesProcessor(): PropertiesProcessor? {
+    override fun getRunnerPropertiesProcessor(): PropertiesProcessor {
         return PropertiesProcessor { properties ->
             val command = properties?.get(DotnetConstants.PARAM_COMMAND)
             if (command.isNullOrEmpty()) {
@@ -72,11 +72,11 @@ class DotnetRunnerRunType(
         }
     }
 
-    override fun getEditRunnerParamsJspFilePath(): String? {
+    override fun getEditRunnerParamsJspFilePath(): String {
         return _pluginDescriptor.getPluginResourcesPath("editDotnetParameters.jsp")
     }
 
-    override fun getViewRunnerParamsJspFilePath(): String? {
+    override fun getViewRunnerParamsJspFilePath(): String {
         return _pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
     }
 

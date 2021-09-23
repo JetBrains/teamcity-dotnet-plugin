@@ -202,7 +202,6 @@ class DotnetRunnerDiscoveryExtensionTest {
                 if (frameworks.contains("netcoreapp2.1")) yield(SdkVersion(Version(2, 1), SdkType.DotnetCore, SdkVersionType.Default))
                 if (frameworks.contains("netcoreapp3.0")) yield(SdkVersion(Version(3, 0), SdkType.DotnetCore, SdkVersionType.Default))
                 if (frameworks.contains("netstandard2.1")) yieldAll(sequenceOf(SdkVersion(Version(1, 0), SdkType.Dotnet, SdkVersionType.Default), SdkVersion(Version(3, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
-                if (frameworks.contains("net20")) { }
             }
         }
 

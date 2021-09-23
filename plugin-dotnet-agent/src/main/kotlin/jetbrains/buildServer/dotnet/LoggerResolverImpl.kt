@@ -63,7 +63,7 @@ class LoggerResolverImpl(
         return Logger.values().firstOrNull { it.msbuildTool == currentTool || it.vstestTool == currentTool }
     }
 
-    private val loggerHome: File?
+    private val loggerHome: File
         get() {
             val loggerHome = _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.INTEGRATION_PACKAGE_HOME)
             if (loggerHome.isNullOrBlank()) {
