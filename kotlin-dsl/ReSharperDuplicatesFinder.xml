@@ -60,36 +60,36 @@
             </description>
         </param>
 
-        <param name="dotnet-tools-dupfinder.hashing.normalize_types" dslName="discardNamespaces" type="boolean"
-               trueValue="true" falseValue="false">
+        <param name="dotnet-tools-dupfinder.hashing.normalize_types" dslName="discardNamespaces"
+               type="boolean" trueValue="true" falseValue="">
             <description>
                 If this option is checked, similar contents with different
                 namespace specifications will be recognized as duplicates.
             </description>
         </param>
         <param name="dotnet-tools-dupfinder.hashing.discard_types" dslName="discardTypesName"
-               type="boolean" trueValue="true" falseValue="false">
+               type="boolean" trueValue="true" falseValue="">
             <description>
                 If this option is checked, similar content with different type names will be recognized as duplicates.
                 These include all possible type references.
             </description>
         </param>
         <param name="dotnet-tools-dupfinder.hashing.discard_fields_name" dslName="discardFieldsName"
-               type="boolean" trueValue="true" falseValue="false">
+               type="boolean" trueValue="true" falseValue="">
             <description>
                 If this option is checked, the similar code fragments with
                 different field names will be recognized as duplicates.
             </description>
         </param>
         <param name="dotnet-tools-dupfinder.hashing.discard_local_variables_name" dslName="discardLocalVariablesName"
-               type="boolean" trueValue="true" falseValue="false">
+               type="boolean" trueValue="true" falseValue="">
             <description>
                 If this option is checked, similar code fragments with
                 different local variable names will be recognized as duplicates.
             </description>
         </param>
         <param name="dotnet-tools-dupfinder.hashing.discard_literals" dslName="discardLiterals"
-               type="boolean" trueValue="true" falseValue="false">
+               type="boolean" trueValue="true" falseValue="">
             <description>
                 If this option is checked, similar lines of code with
                 different literals will be recognized as duplicates.
