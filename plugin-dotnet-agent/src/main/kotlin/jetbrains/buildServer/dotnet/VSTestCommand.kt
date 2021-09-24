@@ -19,6 +19,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.StringUtil
 
@@ -29,7 +30,10 @@ class VSTestCommand(
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: ToolResolver,
-        private val _argumentsAlternative: ArgumentsAlternative)
+        private val _argumentsAlternative: ArgumentsAlternative,
+        private val _testsFilterProvider: TestsFilterProvider,
+        private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
+        private val _loggerService: LoggerService)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -48,13 +52,17 @@ class VSTestCommand(
         var filterArgs: MutableList<CommandLineArgument> = mutableListOf();
         when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
             "filter" -> {
-                parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
+                _testsFilterProvider.filterExpression.let {
                     if (it.isNotBlank()) {
                         filterArgs.add(CommandLineArgument("/TestCaseFilter:$it"))
                     }
                 }
             }
             "name" -> {
+                if(_splittedTestsFilterSettings.IsActive) {
+                    _loggerService.writeWarning("The \"Split tests by parallel groups\" feature is not supported together with a test names filter. Please consider using a test case filter.")
+                }
+
                 parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
                     if (it.isNotBlank()) {
                         filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))

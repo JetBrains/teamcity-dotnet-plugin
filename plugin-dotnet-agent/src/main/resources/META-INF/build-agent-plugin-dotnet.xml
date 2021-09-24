@@ -359,6 +359,17 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
+  <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.SplittedTestsFilterProvider" id="splittedTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
+    <constructor-arg>
+      <list>
+        <ref bean="parameterTestsFilterProvider"/>
+        <ref bean="splittedTestsFilterProvider"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
   <bean class="jetbrains.buildServer.dotnet.MSBuildArgumentsProvider" id="msBuildArgumentsProvider">
     <constructor-arg>
       <list>

@@ -35,6 +35,7 @@ import org.testng.annotations.Test
 class TestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
+    @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
 
     @BeforeMethod
     fun setUp() {
@@ -46,34 +47,41 @@ class TestCommandTest {
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                        "",
                         listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
+                        "",
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
+                        "",
                         listOf("--no-build", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
+                        "",
                         listOf("--output", "out", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
+                        "myFilter",
                         listOf("@filterRsp", "customArg1")))
     }
 
     @Test(dataProvider = "testTestArgumentsData")
     fun shouldGetArguments(
             parameters: Map<String, String>,
+            testsFilter: String,
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsFilterProvider.filterExpression } returns testsFilter
         every {
             _argumentsAlternative.select(
                     "Filter",
                     listOf(
                             CommandLineArgument("--filter"),
-                            CommandLineArgument("filter")
+                            CommandLineArgument(testsFilter)
                     ),
                     emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "filter"))) },
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", testsFilter))) },
                     Verbosity.Detailed
             )
         } returns sequenceOf(CommandLineArgument("@filterRsp"))
@@ -125,8 +133,8 @@ class TestCommandTest {
     fun testFilterData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(listOf("my.csproj"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("@filterRsp", "customArg1")),
-                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "filter", "customArg1")),
-                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "filter", "customArg1")))
+                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "myFilter", "customArg1")),
+                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "myFilter", "customArg1")))
     }
 
     @Test(dataProvider = "testFilterData")
@@ -136,15 +144,16 @@ class TestCommandTest {
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = targets.asSequence(), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsFilterProvider.filterExpression } returns "myFilter"
         every {
             _argumentsAlternative.select(
                     "Filter",
                     listOf(
                             CommandLineArgument("--filter"),
-                            CommandLineArgument("filter")
+                            CommandLineArgument("myFilter")
                     ),
                     emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "filter"))) },
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "myFilter"))) },
                     Verbosity.Detailed
             )
         } returns sequenceOf(CommandLineArgument("@filterRsp"))
@@ -169,6 +178,7 @@ class TestCommandTest {
                 ArgumentsProviderStub(arguments),
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 mockk<EnvironmentBuilder>(),
-                _argumentsAlternative)
+                _argumentsAlternative,
+                _testsFilterProvider)
     }
 }

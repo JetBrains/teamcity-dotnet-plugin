@@ -29,7 +29,8 @@ class TestCommand(
         private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
-        private val _argumentsAlternative: ArgumentsAlternative)
+        private val _argumentsAlternative: ArgumentsAlternative,
+        private val _testsFilterProvider: TestsFilterProvider)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -39,7 +40,7 @@ class TestCommand(
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        parameters(DotnetConstants.PARAM_TEST_CASE_FILTER)?.trim()?.let {
+        _testsFilterProvider.filterExpression.let {
             if (it.isNotBlank()) {
                 val hasAssembly = targetArguments.any { it.arguments.any { it.argumentType == CommandLineArgumentType.Target && isAssembly(it.value) }}
                 if (hasAssembly) {
