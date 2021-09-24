@@ -19,6 +19,7 @@ public enum class TargetDotNetFramework(val version: String) {
     v4_7_1("4.7.1"),
     v4_7_2("4.7.2"),
     v4_8("4.8");
+    // Don't forget to update DSL while adding new version
 
     val id: String get() = "TargetDotNetFramework_$version"
     val description: String get() = ".NET Framework $version"

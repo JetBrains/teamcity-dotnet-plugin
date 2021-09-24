@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2000-2021 JetBrains s.r.o.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet-tools-dupfinder" generateDslJar="true">
+    <class name="ReSharperDuplicates">
+        <description>
+            A [Duplicates finder (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?duplicates-finder-resharper)
+            to find C# and VB duplicate code.
+        </description>
+    </class>
+    <function name="reSharperDuplicates">
+        <description>
+            Adds a [Duplicates finder (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?duplicates-finder-resharper)
+            to find C# and VB duplicate code.
+            @see ReSharperDuplicates
+        </description>
+    </function>
+    <params>
+
+        <param name="dotnet-tools-dupfinder.include_files" dslName="includeFiles">
+            <description>
+                Use newline-delimited Ant-like wildcards relative to the checkout root
+                to specify the files to be included into the duplicates search.
+                Visual Studio solution files are parsed and replaced by all source files
+                from all projects within a solution.
+                Example: src\MySolution.sln
+            </description>
+        </param>
+        <param name="dotnet-tools-dupfinder.exclude_files" dslName="excludeFiles">
+            <description>
+                Enter newline-delimited Ant-like wildcards to exclude files from the duplicates search
+                (for example, generated{*}{}.cs). The entries should be relative to the checkout root.
+            </description>
+        </param>
+
+        <param name="jetbrains.resharper-clt.clt-path" dslName="cltPath">
+            <description>
+                A custom path to R# CLT Home Directory. Paths relative to the checkout directory are supported.
+                The value can reference to JetBrains ReSharper Command Line Tool specified via Administration | Tools.
+            </description>
+        </param>
+        <param name="jetbrains.resharper-clt.platform" dslName="cltPlatform" type="Platform">
+            <description>
+                The platform bitness of the dupFinder tool. By default, x64.
+                The cross-platform duplicates finder is also supported in ReSharper 2020.2.1 or later.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.hashing.normalize_types" dslName="discardNamespaces" type="boolean"
+               trueValue="true" falseValue="false">
+            <description>
+                If this option is checked, similar contents with different
+                namespace specifications will be recognized as duplicates.
+            </description>
+        </param>
+        <param name="dotnet-tools-dupfinder.hashing.discard_types" dslName="discardTypesName"
+               type="boolean" trueValue="true" falseValue="false">
+            <description>
+                If this option is checked, similar content with different type names will be recognized as duplicates.
+                These include all possible type references.
+            </description>
+        </param>
+        <param name="dotnet-tools-dupfinder.hashing.discard_fields_name" dslName="discardFieldsName"
+               type="boolean" trueValue="true" falseValue="false">
+            <description>
+                If this option is checked, the similar code fragments with
+                different field names will be recognized as duplicates.
+            </description>
+        </param>
+        <param name="dotnet-tools-dupfinder.hashing.discard_local_variables_name" dslName="discardLocalVariablesName"
+               type="boolean" trueValue="true" falseValue="false">
+            <description>
+                If this option is checked, similar code fragments with
+                different local variable names will be recognized as duplicates.
+            </description>
+        </param>
+        <param name="dotnet-tools-dupfinder.hashing.discard_literals" dslName="discardLiterals"
+               type="boolean" trueValue="true" falseValue="false">
+            <description>
+                If this option is checked, similar lines of code with
+                different literals will be recognized as duplicates.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.discard_cost" dslName="discardCost">
+            <description>
+                Ignore duplicates with complexity lower than given value.
+                Use this field to specify the lowest level of complexity of code blocks
+                to be taken into consideration when detecting duplicates.
+                Positive numbers and parameter references are supported.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.exclude_by_opening_comment" dslName="excludeOpeningComment">
+            <description>
+                Skip files by opening comment. Enter newline-delimited keywords to exclude files
+                that contain the keyword in the file's opening comments from the duplicates search.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.exclude_region_message_substring" dslName="excludeRegionMessageSubstring">
+            <description>
+                Skip regions by message substring. Enter newline-delimited keywords
+                that exclude regions that contain the keyword in the message substring from the duplicates search.
+                Entering "generated code", for example,
+                will skip regions containing "Windows Form Designer generated code".
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.debug" dslName="debugOutput" type="boolean" trueValue="true" falseValue="">
+            <description>
+                Set true to include debug messages in the build log and publish
+                the file with additional logs (dotnet-tools-dupfinder.log) as an artifact
+            </description>
+        </param>
+
+        <param name="dotnet-tools-dupfinder.customCmdArgs" dslName="customCmdArgs">
+            <description>
+                Specify newline-separated command line parameters to add to calling dupFinder.exe.
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Platform">
+            <option name="X64" value="x64" />
+            <option name="CROSS_PLATFORM" value="Cross-platform"/>
+        </enum>
+    </types>
+
+</dsl-extension>

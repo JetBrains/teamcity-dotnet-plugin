@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2000-2021 JetBrains s.r.o.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<dsl-extension kind="buildStep" type="dotnet-tools-inspectcode" generateDslJar="true">
+    <class name="ReSharperInspections">
+        <description>
+            An [Inspections (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?inspections-resharper)
+            for gathering JetBrains ReSharper inspection results.
+        </description>
+    </class>
+    <function name="reSharperInspections">
+        <description>
+            Adds an [Inspections (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?inspections-resharper)
+            for gathering JetBrains ReSharper inspection results.
+            @see ReSharperInspections
+        </description>
+    </function>
+    <params>
+        <param name="dotnet-tools-inspectcode.solution" dslName="solutionPath" mandatory="true">
+            <description>
+                The path to the .sln file created by Microsoft Visual Studio 2005 or later.
+                The specified path should be relative to the checkout directory.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-inspectcode.project.filter" dslName="projectFilter">
+            <description>
+                Project name wildcards to analyze only a part of the solution.
+                Leave blank to analyze the whole solution. Separate wildcards with new lines.
+            </description>
+        </param>
+
+        <param name="TargetDotNetFramework_2.0" dslName="targetDotNetFramework_2_0"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_3.0" dslName="targetDotNetFramework_3_0"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_3.5" dslName="targetDotNetFramework_3_5"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.0" dslName="targetDotNetFramework_4_0"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.5" dslName="targetDotNetFramework_4_5"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.5.1" dslName="targetDotNetFramework_4_5_1"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.5.2" dslName="targetDotNetFramework_4_5_2"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.6" dslName="targetDotNetFramework_4_6"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.6.1" dslName="targetDotNetFramework_4_6_1"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.6.2" dslName="targetDotNetFramework_4_6_2"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.7" dslName="targetDotNetFramework_4_7"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.7.1" dslName="targetDotNetFramework_4_7_1"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.7.2" dslName="targetDotNetFramework_4_7_2"
+               type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.8" dslName="targetDotNetFramework_4_8"
+               type="boolean" trueValue="true" falseValue=""/>
+
+        <param name="jetbrains.resharper-clt.clt-path" dslName="cltPath">
+            <description>
+                A custom path to R# CLT Home Directory. Paths relative to the checkout directory are supported.
+                The value can reference to JetBrains ReSharper Command Line Tool specified via Administration | Tools.
+            </description>
+        </param>
+        <param name="jetbrains.resharper-clt.platform" dslName="cltPlatform" type="Platform">
+            <description>
+                Select the platform bitness of the InspectCode tool.
+                To find code issues in C++ projects, use the x86 platform.
+                The cross-platform inspections are also supported in ReSharper 2020.2.1 or later.
+            </description>
+        </param>
+        <param name="jetbrains.resharper-clt.plugins" dslName="cltPlugins">
+            <description>
+                Newline-delimited list of ReSharper plugins required for InspectCode in the following format:
+                - Download %pluginId%/%version%
+                - File %filePath%
+                - Folder %folderPath%
+                To download plugins add the https://resharper-plugins.jetbrains.com/api/v2/ NuGet package source.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-inspectcodeCustomSettingsProfile" dslName="customSettingsProfilePath">
+            <description>
+                The path to the file containing ReSharper settings created with JetBrains ReSharper 6.1 or later.
+                The specified path should be relative to the checkout directory.
+                If specified, this settings layer has the top priority, so it overrides ReSharper build-in settings.
+                By default, build-in ReSharper settings layers are applied.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-inspectcode.debug" dslName="debugOutput" type="boolean" trueValue="true" falseValue="">
+            <description>
+                Check this option to include debug messages in the build log and
+                publish the file with additional logs (dotnet-tools-inspectcode.log) as a hidden artifact.
+            </description>
+        </param>
+
+        <param name="dotnet-tools-inspectcode.customCmdArgs" dslName="customCmdArgs">
+            <description>
+                Specify newline-separated command line parameters to add to calling inspectCode.exe.
+            </description>
+        </param>
+    </params>
+    <types>
+        <enum name="Platform">
+            <option name="X86" value="x86" />
+            <option name="X64" value="x64" />
+            <option name="CROSS_PLATFORM" value="Cross-platform"/>
+        </enum>
+    </types>
+</dsl-extension>
