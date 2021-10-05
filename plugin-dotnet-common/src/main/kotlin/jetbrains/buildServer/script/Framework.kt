@@ -12,12 +12,11 @@ object FrameworkRequirements {
     }
 }
 
-enum class Framework(val tfm: String, val description: String, val requirement: Requirement) {
-    Any("any", "Any", FrameworkRequirements.create("3\\.1")),
-    //Any("any", "Any", FrameworkRequirements.create("6\\.", "5\\.", "3\\.1")),
-    Net60("net6.0", ".NET 6.0", FrameworkRequirements.create("6\\.")),
-    Net50("net5.0", ".NET 5.0", FrameworkRequirements.create("5\\.")),
-    NetCore31("netcoreapp3.1", ".NET Core 3.1", FrameworkRequirements.create("3\\.1"));
+enum class Framework(val tfm: String, val description: String, val requirement: Requirement, val runtimeVersion: String) {
+    Any("any", "Any", FrameworkRequirements.create("6\\."), "6.0.0"),
+    //Any("any", "Any", FrameworkRequirements.create("6\\.", "5\\."), "6.0.0"),
+    Net60("net6.0", ".NET 6.0", FrameworkRequirements.create("6\\."), "6.0.0"),
+    Net50("net5.0", ".NET 5.0", FrameworkRequirements.create("5\\."), "5.0.0");
 
     companion object {
         fun tryParse(tfm: String) = Framework.values().singleOrNull { it.tfm.equals(tfm, true) }

@@ -2,7 +2,6 @@ package jetbrains.buildServer.script
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.RUNNER_DESCRIPTION
 import jetbrains.buildServer.dotnet.DotnetRuntimesProvider
 import jetbrains.buildServer.excluding
@@ -15,7 +14,7 @@ class AnyVersionResolverImpl(
         private val _runtimesProvider: DotnetRuntimesProvider,
         private val _virtualContext: VirtualContext)
     : AnyVersionResolver {
-    override fun resolve(toolsPath: File): File {
+    override fun resolve(toolsPath: File): CsiTool {
         var supportedRuntimes = getSupportedRuntimes(toolsPath)
 
         if(!_virtualContext.isVirtual) {
@@ -23,7 +22,7 @@ class AnyVersionResolverImpl(
             supportedRuntimes =
                     supportedRuntimes
                     .filter {
-                        val minVersion = it.second
+                        val minVersion = it.runtimeVersion
                         val runtimeRange = minVersion.including() to Version(minVersion.major + 1).excluding()
                         val result = runtimes.any {runtimeRange.contains(it)}
                         LOG.debug("Min version: $minVersion, Runtime range: ${runtimeRange}, Result: $result")
@@ -32,8 +31,7 @@ class AnyVersionResolverImpl(
         }
 
         return supportedRuntimes
-                .maxByOrNull { it.second }
-                ?.first
+                .maxByOrNull { it.runtimeVersion }
                 ?: throw RunBuildException("Cannot find a supported version of $RUNNER_DESCRIPTION.")
     }
 
@@ -47,9 +45,9 @@ class AnyVersionResolverImpl(
                         } ?: Version.Empty
 
                         LOG.debug("Version: $version")
-                        it to version
+                        CsiTool(it, version)
                     }
-                    .filter { it.second != Version.Empty }
+                    .filter { it.runtimeVersion != Version.Empty }
 
     companion object {
         private val LOG = Logger.getLogger(ToolResolverImpl::class.java)

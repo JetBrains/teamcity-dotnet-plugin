@@ -26,16 +26,17 @@ class CommandLineFactoryImpl(
             }
         }
 
+        val csiTool = _toolResolver.resolve()
         return CommandLine(
                 null,
                 TargetType.Tool,
                 Path(""),
                 Path(_pathsService.getPath(PathType.WorkingDirectory).path),
                 listOf(
-                        CommandLineArgument(_virtualContext.resolvePath(_toolResolver.resolve().path)),
+                        CommandLineArgument(_virtualContext.resolvePath(csiTool.path.path)),
                         CommandLineArgument("@${_virtualContext.resolvePath(rspFile.path)}")
                 ),
-                _nugetEnvironmentVariables.getVariables(Version(Int.MAX_VALUE)).toList()
+                _nugetEnvironmentVariables.getVariables(csiTool.runtimeVersion).toList()
         )
     }
 }

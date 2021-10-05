@@ -6,14 +6,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.script.AnyVersionResolver
-import jetbrains.buildServer.script.Framework
-import jetbrains.buildServer.script.ScriptConstants
-import jetbrains.buildServer.script.ToolResolverImpl
+import jetbrains.buildServer.script.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -44,7 +41,7 @@ class ToolResolverTest {
                                 .addDirectory(File(DefaultBasePath, "tools"))
                                 .addFile(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
-                        File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable)),
+                        CsiTool(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable), Version(6, 0, 0))),
 
                 arrayOf(
                         DefaultBasePath.path,
@@ -93,7 +90,7 @@ class ToolResolverTest {
                         VirtualFileSystemService()
                                 .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
-                        File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
+                        CsiTool(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable), Version(5, 0, 0))),
 
                 arrayOf(
                         DefaultBasePath.path,
@@ -148,12 +145,12 @@ class ToolResolverTest {
             anyVersionPath: File?,
             fileSystemService: FileSystemService,
             basePath: File,
-            expectedPath: File?) {
+            expectedTool: CsiTool?) {
         // Given
         every { _parametersService.tryGetParameter(ParameterType.Runner, ScriptConstants.CLT_PATH) } returns cltPathParam
         every { _parametersService.tryGetParameter(ParameterType.Runner, ScriptConstants.FRAMEWORK) } returns frameworkParam
         if(anyVersionPath != null) {
-            every { _anyVersionResolver.resolve(File(basePath, "tools")) } returns anyVersionPath
+            every { _anyVersionResolver.resolve(File(basePath, "tools")) } returns CsiTool(anyVersionPath, Version(6, 0, 0))
         }
         else {
             every { _anyVersionResolver.resolve(File(basePath, "tools")) } throws RunBuildException("Some error")
@@ -162,14 +159,14 @@ class ToolResolverTest {
         val resoler = createInstance(fileSystemService)
 
         // When
-        var actualPath: File? = null
+        var actualTool: CsiTool? = null
         try {
-            actualPath = resoler.resolve()
+            actualTool = resoler.resolve()
         }
         catch(ex: Exception) { }
 
         // Then
-        Assert.assertEquals(actualPath, expectedPath)
+        Assert.assertEquals(actualTool, expectedTool)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =

@@ -11,10 +11,7 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.EnvironmentVariables
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.script.CommandLineFactoryImpl
-import jetbrains.buildServer.script.RspContentFactory
-import jetbrains.buildServer.script.ScriptResolver
-import jetbrains.buildServer.script.ToolResolver
+import jetbrains.buildServer.script.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -37,7 +34,7 @@ class CommandLineFactoryTest {
         clearAllMocks()
 
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
-        every { _nugetEnvironmentVariables.getVariables(Version(Int.MAX_VALUE)) } returns _envVars.asSequence()
+        every { _nugetEnvironmentVariables.getVariables(Version(6, 0, 0)) } returns _envVars.asSequence()
         every { _rspContentFactory.create() } returns sequenceOf("Line 1", "Line 2")
     }
 
@@ -52,7 +49,7 @@ class CommandLineFactoryTest {
         val tmpDirectory = File("tmp")
         every { _pathsService.getPath(PathType.AgentTemp) } returns tmpDirectory
 
-        val tool = File("tool")
+        val tool = CsiTool(File("tool"), Version(6, 0, 0))
         every { _toolResolver.resolve() } returns tool
 
         // When
