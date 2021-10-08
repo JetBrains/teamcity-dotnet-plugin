@@ -50,7 +50,12 @@ class SystemParametersProviderTest {
     @DataProvider
     fun testData(): Array<Array<out Any>> {
         return arrayOf(
-                arrayOf(ParametersServiceStub(mapOf("arg1" to "val1")), listOf(MSBuildParameter("arg1", "v_val1"))))
+                arrayOf(ParametersServiceStub(
+                        mapOf(
+                                "arg1" to "val1")),
+                        listOf(
+                                MSBuildParameter("ContinuousIntegrationBuild", "true"),
+                                MSBuildParameter("arg1", "v_val1"))))
     }
 
     @Test(dataProvider = "testData")

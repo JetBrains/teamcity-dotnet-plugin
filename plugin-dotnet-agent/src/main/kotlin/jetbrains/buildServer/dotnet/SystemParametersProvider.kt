@@ -25,6 +25,7 @@ class SystemParametersProvider(
         private val _virtualContext: VirtualContext)
     : MSBuildParametersProvider {
     override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {
+        yield(MSBuildParameter("ContinuousIntegrationBuild", "true"))
         for (paramName in _parametersService.getParameterNames(ParameterType.System)) {
             _parametersService.tryGetParameter(ParameterType.System, paramName)?.let {
                 yield(MSBuildParameter(paramName, _virtualContext.resolvePath(it)))
