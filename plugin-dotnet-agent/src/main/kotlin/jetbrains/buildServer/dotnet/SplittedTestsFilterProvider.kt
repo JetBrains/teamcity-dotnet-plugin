@@ -7,6 +7,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.util.zip.GZIPInputStream
 
 class SplittedTestsFilterProvider(
         private val _parametersService: ParametersService,
@@ -31,7 +32,7 @@ class SplittedTestsFilterProvider(
                 var filter: String = ""
                 _fileSystem.read(testsPartsFile) {
                     input ->
-                    BufferedReader(InputStreamReader(input)).use {
+                    BufferedReader(InputStreamReader(GZIPInputStream(input))).use {
                         reader ->
                         val splittedTestsFilterType = SplittedTestsFilterType.tryParse(reader.readLine())
                         LOG.debug("Tests group file type is $splittedTestsFilterType.")

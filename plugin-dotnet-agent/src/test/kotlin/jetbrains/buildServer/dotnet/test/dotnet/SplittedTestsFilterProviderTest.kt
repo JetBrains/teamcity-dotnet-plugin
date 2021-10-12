@@ -1,6 +1,8 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -13,7 +15,8 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
+import java.io.*
+import java.util.zip.GZIPOutputStream
 
 class SplittedTestsFilterProviderTest {
     @MockK private lateinit var _parametersService: ParametersService
@@ -32,7 +35,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.IncludeAll.id +
                                                 "\nAbc"
                                 )),
@@ -43,7 +46,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.ExcludeAll.id +
                                                 "\nAbc"
                                 )),
@@ -54,7 +57,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Include.id +
                                                 "\nAbc"
                                 )),
@@ -65,7 +68,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Exclude.id +
                                                 "\nAbc"
                                 )),
@@ -76,7 +79,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Include.id +
                                                 "\nAbc" +
                                                 "\nXyz"
@@ -88,7 +91,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Exclude.id +
                                                 "\nAbc" +
                                                 "\nXyz"
@@ -100,7 +103,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Include.id
                                 )),
                         ""
@@ -110,7 +113,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         SplittedTestsFilterType.Exclude.id
                                 )),
                         ""
@@ -120,7 +123,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         "aaa"
                                 )),
                         ""
@@ -130,7 +133,7 @@ class SplittedTestsFilterProviderTest {
                         VirtualFileSystemService().addFile(
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
-                                IOUtils.toInputStream(
+                                pack(
                                         " "
                                 )),
                         ""
@@ -163,6 +166,17 @@ class SplittedTestsFilterProviderTest {
     }
 
     private fun createInstance(fileSystemService: FileSystemService) = SplittedTestsFilterProvider(_parametersService, fileSystemService)
+
+    private fun pack(input: String) = ByteArrayInputStream(compress(input))
+
+    fun compress(str: String): ByteArray {
+        val obj = ByteArrayOutputStream()
+        val gzip = GZIPOutputStream(obj)
+        gzip.write(str.toByteArray(charset("UTF-8")))
+        gzip.flush()
+        gzip.close()
+        return obj.toByteArray()
+    }
 
     companion object {
         private val TestsPartsFile = File((File(File("tmp"), "splitTests")), "testsGroup.txt")
