@@ -60,11 +60,25 @@ class SdkRegistryProvider(
                                 if (key != null && baseVersion != Version.Empty) {
                                     when (name) {
                                         InstallationFolderName -> {
-                                            sdks.getOrPut(key!!) { Sdk(toolInstanceType, platform, baseVersion) }.installationFolder = File(value.text)
+                                            val sdk = sdks.getOrPut(key!!) { Sdk(toolInstanceType, platform, baseVersion) };
+                                            sdk.installationFolder = File(value.text)
+                                            if (sdk.toolInstanceType == ToolInstanceType.DotNetFrameworkSDK) {
+                                                val instance = _sdkInstanceFactory.tryCreate(sdk.installationFolder!!, sdk.baseVersion, sdk.platform)
+                                                if(instance != null) {
+                                                    sdk.isValid = true
+                                                    sdk.detailedVersion = instance.detailedVersion
+                                                }
+                                            }
+                                            else {
+                                                sdk.isValid = true
+                                            }
                                         }
 
                                         ProductVersionName -> {
-                                            sdks.getOrPut(key!!) { Sdk(toolInstanceType, platform, baseVersion) }.detailedVersion = Version.parse(value.text.replace("..", "."))
+                                            val sdk = sdks.getOrPut(key!!) { Sdk(toolInstanceType, platform, baseVersion) }
+                                            if(sdk.detailedVersion == Version.Empty) {
+                                                sdk.detailedVersion = Version.parse(value.text.replace("..", "."))
+                                            }
                                         }
                                     }
                                 }
@@ -78,18 +92,14 @@ class SdkRegistryProvider(
 
         return sdks
                 .values
-                .filter { it.installationFolder != null && it.detailedVersion != Version.Empty }
-                .filter { it.toolInstanceType != ToolInstanceType.DotNetFrameworkSDK || _sdkInstanceFactory.tryCreate(it.installationFolder!!, it.baseVersion, it.platform) != null }
+                .filter { it.installationFolder != null && it.detailedVersion != Version.Empty && it.isValid }
                 .groupBy { it }
                 .asSequence()
                 .mapNotNull {
                     grp ->
-                    grp.value.maxByOrNull { tool ->
-                        tool.detailedVersion
-                    }?.let {
-                        max ->
-                        ToolInstance(max.toolInstanceType, max.installationFolder!!, max.detailedVersion, max.baseVersion, max.platform)
-                    }
+                    grp.value
+                            .maxByOrNull { it.detailedVersion }
+                            ?.let { ToolInstance(it.toolInstanceType, it.installationFolder!!, it.detailedVersion, it.baseVersion, it.platform) }
                 }
                 .distinct()
                 .toList()
@@ -117,6 +127,7 @@ class SdkRegistryProvider(
             val toolInstanceType: ToolInstanceType,
             val platform: Platform,
             val baseVersion: Version,
+            var isValid: Boolean = false,
             var installationFolder: File? = null,
             var detailedVersion: Version = Version.Empty) {
         override fun equals(other: Any?): Boolean {
