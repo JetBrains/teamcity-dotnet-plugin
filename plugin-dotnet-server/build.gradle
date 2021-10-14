@@ -54,7 +54,7 @@ class PreparePackagesTask extends DefaultTask {
     ant.delete(dir: './bundled-tool')
     ant.mkdir(dir: './bundled-tool')
 
-    def toolsPackageVersion = '2021.2.2'
+    def toolsPackageVersion = '2021.1.2'
     def toolsPackageId = 'JetBrains.ReSharper.CommandLineTools/' + toolsPackageVersion
 
     println 'Processing ' + toolsPackageId
