@@ -49,7 +49,6 @@ class MSBuildLoggerArgumentsProvider(
             }
         }
 
-
-        yield(CommandLineArgument(parameters.joinToString(";"), CommandLineArgumentType.Infrastructural))
+        yield(CommandLineArgument("\"${parameters.joinToString(";")}\"", CommandLineArgumentType.Infrastructural))
     }
 }

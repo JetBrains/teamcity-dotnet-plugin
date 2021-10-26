@@ -47,25 +47,25 @@ class MSBuildLoggerArgumentsProviderTest {
                         null,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;additionalParam;params")),
+                                "\"/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;additionalParam;params\"")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Normal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=normal;additionalParam;params")),
+                                "\"/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=normal;additionalParam;params\"")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Quiet,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=quiet;additionalParam;params")),
+                                "\"/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=quiet;additionalParam;params\"")),
                 arrayOf(
                         File("logger.dll") as File?,
                         Verbosity.Minimal,
                         listOf(
                                 "/noconsolelogger",
-                                "/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=minimal;additionalParam;params")))
+                                "\"/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,v_${File("logger.dll").absolutePath};TeamCity;verbosity=minimal;additionalParam;params\"")))
     }
 
     @Test(dataProvider = "testLoggerArgumentsData")
