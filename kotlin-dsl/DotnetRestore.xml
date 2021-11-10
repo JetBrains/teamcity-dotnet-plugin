@@ -34,6 +34,14 @@
         <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
+        <param name="teamcity.build.workingDir" dslName="workingDir">
+            <description>
+                [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
+                script,
+                specify it if it is different from the [checkout
+                directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+            </description>
+        </param>
         <param name="nuget.packageSources" dslName="sources">
             <description>Specifies NuGet package sources to use during the restore.</description>
         </param>
