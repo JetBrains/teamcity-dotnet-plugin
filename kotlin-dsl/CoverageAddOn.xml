@@ -21,6 +21,7 @@
     <dsl type="dotnet" applicable="params['command'] == 'test'" />
     <dsl type="dotnet" applicable="params['command'] == 'vstest'" />
     <dsl type="dotnet" applicable="params['command'] == 'custom'" />
+    <dsl type="dotnet" applicable="params['command'] == 'devenv'" />
   </extends>
   <params>
     <param name="dotNetCoverage.tool" dslName="coverage" type="compound">
