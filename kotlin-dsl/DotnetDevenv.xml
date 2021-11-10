@@ -70,6 +70,9 @@
             <option name="Any" value="VisualStudio_Windows">
                 <description>Visual Studio 2019</description>
             </option>
+            <option name="V17" value="VisualStudio_17_Windows">
+                <description>Visual Studio 2022</description>
+            </option>
             <option name="V16" value="VisualStudio_16_Windows">
                 <description>Visual Studio 2019</description>
             </option>
