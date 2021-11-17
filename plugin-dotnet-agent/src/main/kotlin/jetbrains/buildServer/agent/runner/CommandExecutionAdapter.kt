@@ -34,6 +34,7 @@ class CommandExecutionAdapter(
     private var _eventObserver: Observer<CommandResultEvent> = emptyObserver<CommandResultEvent>()
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))
     private var _blockToken: Disposable = emptyDisposable()
+    private val _flowId = FlowGenerator.generateNewFlow()
 
     override fun create(commandLine: CommandLine, eventObserver: Observer<CommandResultEvent>): CommandExecution {
         _commandLine = commandLine
@@ -100,7 +101,7 @@ class CommandExecutionAdapter(
 
     override fun isCommandLineLoggingEnabled(): Boolean = false
 
-    override fun getLogger(): BuildProgressLogger = SuppressingLogger(_loggerService, _buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog)
+    override fun getLogger(): BuildProgressLogger = SuppressingLogger(_loggerService, _buildStepContext.runnerContext.build.buildLogger, _isHiddenInBuidLog, _flowId)
 
     private val _isHiddenInBuidLog get() = _commandLine.chain.any { it.target == TargetType.SystemDiagnostics }
 
@@ -125,7 +126,8 @@ class CommandExecutionAdapter(
     class SuppressingLogger(
             private val _loggerService: LoggerService,
             private val _baseLogger: BuildProgressLogger,
-            private val _isHiddenInBuidLog: Boolean):
+            private val _isHiddenInBuidLog: Boolean,
+            private val _flowId: String):
             BuildProgressLogger by _baseLogger {
 
         override fun message(message: String?) {
@@ -137,5 +139,7 @@ class CommandExecutionAdapter(
                 }
             }
         }
+
+        override fun getFlowId() = _flowId
     }
 }
