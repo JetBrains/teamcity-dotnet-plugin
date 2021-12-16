@@ -16,7 +16,7 @@ class TargetArgumentsProviderByType(
             if (isEnabled) splitByTargetType(targets) else splitByDefault(targets)
 
     private val isEnabled: Boolean
-        get() = _parametersService.tryGetParameter(ParameterType.Runner, PARAM_SINGLE_SESSION)?.trim().toBoolean()
+        get() = _parametersService.tryGetParameter(ParameterType.Runner, PARAM_SINGLE_SESSION)?.trim()?.toBoolean() ?: false
 
     private fun splitByTargetType(targets: Sequence<CommandTarget>): Sequence<TargetArguments> =
             targets

@@ -27,7 +27,7 @@ class VisualStudioInstanceFactory(
                 return null
             }
             else {
-                var curBaseVersion = baseVersion
+                var curBaseVersion: Version
                 var detailedVersion = _peReader.tryGetVersion(devenvFile)
                 if (detailedVersion == Version.Empty) {
                     LOG.warn("Cannot get a product version from \"$devenvFile\".")

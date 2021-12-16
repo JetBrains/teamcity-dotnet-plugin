@@ -17,7 +17,7 @@ class DotnetFrameworkRegistryAgentPropertiesProvider(
                 .getFrameworks()
                 .groupBy { it.platform }
                 .map { curFrameworks ->
-                    val latestDotnet4Version = curFrameworks.value.map { it.version }.filter { it.major == 4 }.maxByOrNull { it }
+                    val latestDotnet4Version = curFrameworks.value.map { it.version }.filter { it.major == 4 }.maxBy { it }
 
                     // Report only the latest version of .NET Framework 4.x
                     return@map curFrameworks

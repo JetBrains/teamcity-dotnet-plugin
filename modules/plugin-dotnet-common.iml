@@ -20,8 +20,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="kotlin" level="project" />
     <orderEntry type="module" module-name="common" scope="PROVIDED" />
     <orderEntry type="library" scope="TEST" name="testng" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlin.stdlib:1.6.10" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2" level="project" />
   </component>
 </module>

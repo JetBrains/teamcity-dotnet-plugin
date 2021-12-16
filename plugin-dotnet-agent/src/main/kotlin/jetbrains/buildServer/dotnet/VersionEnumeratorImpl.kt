@@ -8,7 +8,7 @@ class VersionEnumeratorImpl : VersionEnumerator {
                 .filter { it.version != Version.Empty }
                 .groupBy { Version(it.version.major, it.version.minor) }
                 .forEach { (version, group) ->
-                    val maxVersion = group.maxByOrNull { it.version }!!
+                    val maxVersion = group.maxBy { it.version }!!
                     yield("${version.major}.${version.minor}" to maxVersion)
                     yieldAll(group.map { it.version.toString() to it })
                 }

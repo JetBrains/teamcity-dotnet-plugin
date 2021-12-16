@@ -31,7 +31,7 @@ class LoggerResolverImpl(
     : LoggerResolver {
 
     override fun resolve(toolType: ToolType): File =
-            loggerHome?.let { home ->
+            loggerHome.let { home ->
                 when (toolType) {
                     ToolType.MSBuild -> {
                         getLogger(sequenceOf(DotnetConstants.PARAM_MSBUILD_VERSION, DotnetConstants.PARAM_VSTEST_VERSION))?.let {

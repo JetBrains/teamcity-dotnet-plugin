@@ -74,7 +74,7 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .filter { _fileSystemService.isFile(it.path) }
                 .mapNotNull {
                     LOG.debug("Getting a product version for \"${it.path}\".")
-                    _peReader.tryGetVersion(it.path)?.let { version ->
+                    _peReader.tryGetVersion(it.path).let { version ->
                         AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version.major}.0_${it.platform.id}_Path", it.path.parent ?: "")
                     }
                 }

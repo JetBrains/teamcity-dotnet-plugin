@@ -84,7 +84,7 @@ class SdkRegistryProvider(
                 .asSequence()
                 .mapNotNull {
                     grp ->
-                    grp.value.maxByOrNull { tool ->
+                    grp.value.maxBy { tool ->
                         tool.detailedVersion
                     }?.let {
                         max ->

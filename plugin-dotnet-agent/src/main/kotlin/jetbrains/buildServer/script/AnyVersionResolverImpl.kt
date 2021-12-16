@@ -14,8 +14,8 @@ class AnyVersionResolverImpl(
         private val _runtimesProvider: DotnetRuntimesProvider,
         private val _virtualContext: VirtualContext)
     : AnyVersionResolver {
-    override fun resolve(toolsPath: File): CsiTool {
-        var supportedRuntimes = getSupportedRuntimes(toolsPath)
+    override fun resolve(toolPath: File): CsiTool {
+        var supportedRuntimes = getSupportedRuntimes(toolPath)
 
         if(!_virtualContext.isVirtual) {
             var runtimes = _runtimesProvider.getRuntimes().map { Version(it.version.major, it.version.minor) }.toList()
@@ -31,7 +31,7 @@ class AnyVersionResolverImpl(
         }
 
         return supportedRuntimes
-                .maxByOrNull { it.runtimeVersion }
+                .maxBy { it.runtimeVersion }
                 ?: throw RunBuildException("Cannot find a supported version of $RUNNER_DESCRIPTION.")
     }
 

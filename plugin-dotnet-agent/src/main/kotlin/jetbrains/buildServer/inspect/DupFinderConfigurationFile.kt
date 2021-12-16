@@ -72,7 +72,7 @@ class DupFinderConfigurationFile(
                         ?.filter { it.isNotBlank() }
                         ?: emptyList()
                 )
-                .map { E(elementName, it) as E? }
+                .map { E(elementName, it) }
                 .toList()
 
         if(subElements.any() == true) {

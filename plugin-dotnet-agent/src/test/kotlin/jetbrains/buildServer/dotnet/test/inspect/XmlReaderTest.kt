@@ -13,11 +13,10 @@ class XmlReaderTest {
     @Test
     fun shouldConvertToFlatSequency() {
         // Given
-        val actualResult: List<E>
+        var actualResult: List<E>? = null
         val xmlReader = XmlReaderImpl()
         var xmlFile = File(JsonParserTest::class.java.classLoader.getResource("sample.xml")!!.file)
         FileInputStream(xmlFile).use {
-
             val xmlInFact = XMLInputFactory.newInstance()
             val reader = xmlInFact.createXMLStreamReader(it)
             try {
