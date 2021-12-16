@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.util.FileUtil
@@ -34,6 +33,13 @@ class FileSystemServiceImpl: FileSystemService {
     override fun write(file: File, writer: (OutputStream) -> Unit) = FileOutputStream(file).use(writer)
 
     override fun read(file: File, reader: (InputStream) -> Unit) = FileInputStream(file).use(reader)
+
+    override fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int {
+        RandomAccessFile(file, "r").use {
+            it.seek(fromPosition)
+            return it.read(to)
+        }
+    }
 
     override fun copy(sourceDirectory: File, destinationDirectory: File) = FileUtils.copyDirectory(sourceDirectory, destinationDirectory)
 

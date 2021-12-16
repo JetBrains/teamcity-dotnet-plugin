@@ -45,6 +45,8 @@ object DotnetConstants {
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
     // Default bitness X86 or X64, X86 - if it is not specified
     const val PARAM_DEFAULT_BITNESS = "teamcity.internal.dotnet.default.bitness"
+    // True or False (True by default) - use messages guard
+    const val PARAM_MESSAGES_GUARD = "teamcity.internal.dotnet.messages.guard"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"

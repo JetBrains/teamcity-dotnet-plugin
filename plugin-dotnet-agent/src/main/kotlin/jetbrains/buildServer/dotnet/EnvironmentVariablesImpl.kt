@@ -39,6 +39,12 @@ class EnvironmentVariablesImpl(
 
         yield(CommandLineEnvironmentVariable(MSBuildLoggerEnvVar, _loggerResolver.resolve(ToolType.MSBuild).canonicalPath))
         yield(CommandLineEnvironmentVariable(VSTestLoggerEnvVar, _loggerResolver.resolve(ToolType.VSTest).canonicalPath))
+        val allowMessagesGuard = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD)
+                ?.let { it.equals("true", true) }
+                ?: true
+        if (allowMessagesGuard) {
+            yield(CommandLineEnvironmentVariable(ServiceMessagesPathEnvVar, _pathsService.getPath(PathType.AgentTemp).canonicalPath))
+        }
 
         val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
         yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
@@ -85,6 +91,7 @@ class EnvironmentVariablesImpl(
         internal const val UseSharedCompilationEnvVarName = "UseSharedCompilation"
         internal const val MSBuildLoggerEnvVar = "TEAMCITY_MSBUILD_LOGGER"
         internal const val VSTestLoggerEnvVar = "TEAMCITY_VSTEST_LOGGER"
+        internal const val ServiceMessagesPathEnvVar = "TEAMCITY_SERVICE_MESSAGES_PATH"
 
         internal val defaultVariables = sequenceOf(
                 CommandLineEnvironmentVariable("COMPlus_EnableDiagnostics", "0"),

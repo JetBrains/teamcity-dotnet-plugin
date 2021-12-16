@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package jetbrains.buildServer.agent
 
 import java.io.File
@@ -34,6 +33,8 @@ interface FileSystemService {
     fun write(file: File, writer: (OutputStream) -> Unit)
 
     fun read(file: File, reader: (InputStream) -> Unit)
+
+    fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int
 
     fun copy(sourceDirectory: File, destinationDirectory: File)
 

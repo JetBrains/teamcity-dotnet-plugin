@@ -58,6 +58,16 @@
   <bean class="jetbrains.buildServer.agent.runner.PathsServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.LoggerServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.BuildOptionsImpl"/>
+  <bean class="jetbrains.buildServer.agent.runner.MessagePositionsSource" id="messagePositionsSource"/>
+  <bean class="jetbrains.buildServer.agent.runner.MessageIndicesSource" id="messageIndicesSource">
+    <constructor-arg ref="messagePositionsSource"/>
+  </bean>
+  <bean class="jetbrains.buildServer.agent.runner.ServiceMessagesSource" id="serviceMessagesSource">
+    <constructor-arg ref="messageIndicesSource"/>
+  </bean>
+  <bean class="jetbrains.buildServer.agent.runner.MessagesGuard" scope="prototype" id="messageGuardOutputReplacer">
+    <constructor-arg ref="serviceMessagesSource"/>
+  </bean>
   <bean class="jetbrains.buildServer.agent.runner.CommandExecutionAdapter" scope="prototype"/>
   <bean class="jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter" scope="prototype"/>
   <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>

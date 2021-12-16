@@ -32,6 +32,10 @@ class VirtualFileSystemService : FileSystemService {
         reader(_files[file]!!.inputStream)
     }
 
+    override fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int {
+        TODO("Not yet implemented")
+    }
+
     fun addDirectory(directory: File, attributes: Attributes = Attributes()): VirtualFileSystemService {
         _directories[directory] = DirectoryInfo(attributes)
         var parent: File? = directory
