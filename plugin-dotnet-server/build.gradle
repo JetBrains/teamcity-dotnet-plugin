@@ -37,7 +37,7 @@ teamcity {
 dependencies {
   implementation project(':plugin-dotnet-common')
   implementation 'com.google.code.gson:gson:2.5'
-  implementation "org.jetbrains.kotlin:kotlin-stdlib"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2'
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
   provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'

@@ -39,7 +39,7 @@ class NugetCredentialProviderSelectorImpl(
                                     .map { it to Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) }
                                     .filter { it.second != Version.Empty }
                                     .filter { runtimeVersions.contains(it.second.major) }
-                                    .maxBy { it.second }
+                                    .maxByOrNull { it.second }
                                     ?.first
                             ?.let {  _parametersService.tryGetParameter(ParameterType.Configuration, it) }
                 }
