@@ -31,7 +31,7 @@ class AnyVersionResolverImpl(
         }
 
         return supportedRuntimes
-                .maxBy { it.runtimeVersion }
+                .maxByOrNull { it.runtimeVersion }
                 ?: throw RunBuildException("Cannot find a supported version of $RUNNER_DESCRIPTION.")
     }
 

@@ -33,7 +33,7 @@ teamcity {
 
 dependencies {
   implementation project(':plugin-dotnet-common')
-  implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2'
   provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
