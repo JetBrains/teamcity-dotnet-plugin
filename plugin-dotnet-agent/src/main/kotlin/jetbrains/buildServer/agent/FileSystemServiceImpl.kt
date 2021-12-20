@@ -34,10 +34,12 @@ class FileSystemServiceImpl: FileSystemService {
 
     override fun read(file: File, reader: (InputStream) -> Unit) = FileInputStream(file).use(reader)
 
-    override fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int {
+    override fun readBytes(file: File, operations: Sequence<FileReadOperation>) = sequence<FileReadOperationResult> {
         RandomAccessFile(file, "r").use {
-            it.seek(fromPosition)
-            return it.read(to)
+            for (operation in operations) {
+                it.seek(operation.fromPosition)
+                yield(FileReadOperationResult(operation, it.read(operation.to)))
+            }
         }
     }
 

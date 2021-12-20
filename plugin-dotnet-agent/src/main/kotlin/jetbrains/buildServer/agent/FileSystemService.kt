@@ -34,7 +34,7 @@ interface FileSystemService {
 
     fun read(file: File, reader: (InputStream) -> Unit)
 
-    fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int
+    fun readBytes(file: File, operations: Sequence<FileReadOperation>): Sequence<FileReadOperationResult>
 
     fun copy(sourceDirectory: File, destinationDirectory: File)
 

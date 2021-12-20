@@ -4,6 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.FileReadOperation
+import jetbrains.buildServer.agent.FileReadOperationResult
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.*
 import org.testng.Assert
@@ -36,10 +38,11 @@ class ServiceMessagesSourceTest {
     fun shoLdProvideMessageWhenPositionIsZero() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 0L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
+        every { _fileSystemService.readBytes(_file, match { it.count() == 1 && it.single().fromPosition == 0L }) } answers {
+            val operation = arg<Sequence<FileReadOperation>>(1).single();
+            val bytes = operation.to;
             _text1.copyInto(bytes)
-            bytes.size
+            sequenceOf(FileReadOperationResult(operation, bytes.size))
         }
 
         // When
@@ -54,16 +57,13 @@ class ServiceMessagesSourceTest {
     fun shoLdProvideSeveralMessages() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 33L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
-            _text1.copyInto(bytes)
-            bytes.size
-        }
-
-        every { _fileSystemService.readBytes(_file, 73L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
-            _text2.copyInto(bytes)
-            bytes.size
+        every { _fileSystemService.readBytes(_file, match { it.count() == 2 && it.first().fromPosition == 33L && it.last().fromPosition == 73L }) } answers {
+            val operations = arg<Sequence<FileReadOperation>>(1).toList();
+            _text1.copyInto(operations[0].to)
+            _text2.copyInto(operations[1].to)
+            sequenceOf(
+                    FileReadOperationResult(operations[0], operations[0].to.size),
+                    FileReadOperationResult(operations[1], operations[1].to.size))
         }
 
         // When
@@ -82,19 +82,15 @@ class ServiceMessagesSourceTest {
     fun shoLdNotProvideMessageWhenHasNoData() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 33L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
-            _text1.copyInto(bytes)
-            bytes.size - 1
+        every { _fileSystemService.readBytes(_file, match { it.count() == 2 && it.first().fromPosition == 33L && it.last().fromPosition == 73L }) } answers {
+            val operations = arg<Sequence<FileReadOperation>>(1).toList();
+            _text1.copyInto(operations[0].to)
+            _text2.copyInto(operations[1].to)
+            sequenceOf(
+                    FileReadOperationResult(operations[0], operations[0].to.size - 1),
+                    FileReadOperationResult(operations[1], operations[1].to.size))
         }
 
-        every { _fileSystemService.readBytes(_file, 73L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
-            _text2.copyInto(bytes)
-            bytes.size
-        }
-
-        // When
         every { _indicesSource.read("Src", 1L, 2L) } returns sequenceOf(
                 Index(33L, _text1.size.toLong()),
                 Index(73L, _text2.size.toLong())

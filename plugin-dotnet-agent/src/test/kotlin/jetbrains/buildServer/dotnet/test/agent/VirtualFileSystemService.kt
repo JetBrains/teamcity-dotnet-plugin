@@ -16,6 +16,8 @@
 
 package jetbrains.buildServer.dotnet.test.agent
 
+import jetbrains.buildServer.agent.FileReadOperation
+import jetbrains.buildServer.agent.FileReadOperationResult
 import jetbrains.buildServer.agent.FileSystemService
 import java.io.*
 
@@ -32,7 +34,7 @@ class VirtualFileSystemService : FileSystemService {
         reader(_files[file]!!.inputStream)
     }
 
-    override fun readBytes(file: File, fromPosition: Long, to: ByteArray): Int {
+    override fun readBytes(file: File, operations: Sequence<FileReadOperation>): Sequence<FileReadOperationResult> {
         TODO("Not yet implemented")
     }
 

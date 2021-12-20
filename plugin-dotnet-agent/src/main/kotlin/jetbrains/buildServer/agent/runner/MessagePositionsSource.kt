@@ -1,5 +1,6 @@
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.agent.FileReadOperation
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import java.io.File
@@ -21,7 +22,7 @@ class MessagePositionsSource(
             if (_fileSystemService.isExists(sourceFile) && _fileSystemService.isFile(sourceFile)) {
                 val bytes = ByteArray((count * Long_SIZE).toInt())
                 var offset = fromPosition * Long_SIZE
-                if ( _fileSystemService.readBytes(sourceFile, (offset).toLong(), bytes) == bytes.size) {
+                if (_fileSystemService.readBytes(sourceFile, sequenceOf(FileReadOperation(offset.toLong(), bytes))).singleOrNull()?.bytesRead == bytes.size) {
                     val buffer = ByteBuffer.wrap(bytes);
                     var positionIndex = 0L
                     var prevPosition = 0L
@@ -48,3 +49,4 @@ class MessagePositionsSource(
         private val LOG = Logger.getLogger(MessagePositionsSource::class.java)
     }
 }
+

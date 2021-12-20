@@ -1,5 +1,6 @@
 package jetbrains.buildServer.agent.runner
 
+import jetbrains.buildServer.agent.FileReadOperation
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import java.io.File
@@ -16,15 +17,15 @@ class ServiceMessagesSource(
 
         val sourceFile = File(_pathsService.getPath(PathType.AgentTemp), source + ".msg")
         if (_fileSystemService.isExists(sourceFile) && _fileSystemService.isFile(sourceFile)) {
-            for (index in _indicesSource.read(source, fromPosition, count)) {
-                val bytes = ByteArray(index.size.toInt())
-                if (_fileSystemService.readBytes(sourceFile, index.fromPosition, bytes) == bytes.size) {
-                    yield(String(bytes, Charsets.UTF_8).trimEnd())
+            val readOperations = _indicesSource.read(source, fromPosition, count).map { FileReadOperation(it.fromPosition, ByteArray(it.size.toInt())) }
+            val readResults = _fileSystemService.readBytes(sourceFile, readOperations)
+            for (readResult in readResults) {
+                if (readResult.operation.to.size == readResult.bytesRead) {
+                    yield(String(readResult.operation.to, Charsets.UTF_8).trimEnd())
                 } else {
-                    LOG.warn("Cannot read \"$sourceFile\".")
+                    LOG.warn("Cannot read \"$sourceFile\" at position ${readResult.operation} and size ${readResult.operation.to.size}.")
                 }
             }
-
         } else {
             LOG.debug("Cannot find \"$sourceFile\".")
         }

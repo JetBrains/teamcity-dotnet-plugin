@@ -5,6 +5,8 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import jetbrains.buildServer.agent.FileReadOperation
+import jetbrains.buildServer.agent.FileReadOperationResult
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.MessagePositionsSource
 import jetbrains.buildServer.agent.runner.PathType
@@ -38,11 +40,12 @@ class MessagePositionsSourceTest {
     fun shoLdProvideFirstPosition() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 0L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
+        every { _fileSystemService.readBytes(_file, match { it.count() == 1 && it.single().fromPosition == 0L }) } answers {
+            val operation = arg<Sequence<FileReadOperation>>(1).single();
+            val bytes = operation.to;
             val buffer = ByteBuffer.wrap(bytes);
             buffer.putLong(0, 33L)
-            bytes.size
+            sequenceOf(FileReadOperationResult(operation, bytes.size))
         }
 
         // When
@@ -56,13 +59,14 @@ class MessagePositionsSourceTest {
     fun shoLdProvidePositions() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 1L * Long_SIZE, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
+        every { _fileSystemService.readBytes(_file, match { it.count() == 1 && it.single().fromPosition == 1L * Long_SIZE }) } answers {
+            val operation = arg<Sequence<FileReadOperation>>(1).single();
+            val bytes = operation.to;
             val buffer = ByteBuffer.wrap(bytes);
             buffer.putLong(0, 33L)
             buffer.putLong((1L * Long_SIZE).toInt(), 53L)
             buffer.putLong((2L * Long_SIZE).toInt(), 73L)
-            bytes.size
+            sequenceOf(FileReadOperationResult(operation, bytes.size))
         }
 
         // When
@@ -76,13 +80,14 @@ class MessagePositionsSourceTest {
     fun shoLdDetectCorruptedPositions() {
         // Given
         val source = createInstance()
-        every { _fileSystemService.readBytes(_file, 1L * Long_SIZE, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
+        every { _fileSystemService.readBytes(_file, match { it.count() == 1 && it.single().fromPosition == 1L * Long_SIZE }) } answers {
+            val operation = arg<Sequence<FileReadOperation>>(1).single();
+            val bytes = operation.to;
             val buffer = ByteBuffer.wrap(bytes);
             buffer.putLong(0, 33L)
             buffer.putLong((1L * Long_SIZE).toInt(), 93L)
             buffer.putLong((2L * Long_SIZE).toInt(), 53L)
-            bytes.size
+            sequenceOf(FileReadOperationResult(operation, bytes.size))
         }
 
         // When
@@ -136,9 +141,10 @@ class MessagePositionsSourceTest {
         val source = createInstance()
 
         // When
-        every { _fileSystemService.readBytes(_file, 0L, any<ByteArray>()) } answers {
-            val bytes = arg<ByteArray>(2);
-            bytes.size - 1
+        every { _fileSystemService.readBytes(_file, match { it.count() == 1 && it.single().fromPosition == 0L }) } answers {
+            val operation = arg<Sequence<FileReadOperation>>(1).single();
+            val bytes = operation.to;
+            sequenceOf(FileReadOperationResult(operation, bytes.size - 1))
         }
 
         var actualPositions = source.read("Src", 0L, 1L).toList()
