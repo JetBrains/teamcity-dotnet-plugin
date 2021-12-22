@@ -31,9 +31,6 @@ class MessagesGuardTest {
                 arrayOf(listOf("  "), listOf("  ")),
                 arrayOf(listOf("Abc"), listOf("Abc")),
                 arrayOf(listOf("   Abc  "), listOf("   Abc  ")),
-                arrayOf(listOf("##teamcity[message]"), listOf("##teamcity[message]")),
-                arrayOf(listOf("##teamcity[message dsdsdsd"), listOf("##teamcity[message dsdsdsd")),
-                arrayOf(listOf("   ##teamcity[]  "), listOf("   ##teamcity[]  ")),
                 arrayOf(listOf(createMessage("s1", 0)), listOf(createMessage("s1", 0))),
                 arrayOf(listOf(createMessage("s1", 0) + createMessage("s1", 1)), listOf(createMessage("s1", 0) + createMessage("s1", 1))),
                 arrayOf(listOf("   " + createMessage("s1", 0)), listOf("   " + createMessage("s1", 0))),
@@ -168,6 +165,30 @@ class MessagesGuardTest {
                                 createMessage("s7", 3),
                                 createMessage("s7", 4)
                         )),
+
+                // Suppresing invalid TeamCity messages
+                arrayOf(listOf(createMessage("s1", 0) + "##teamcity[message dsdsdsd"), listOf(createMessage("s1", 0))),
+                arrayOf(listOf("##teamcity[message]"), emptyList()),
+                arrayOf(listOf("##teamcity[message dsdsdsd"), emptyList()),
+                arrayOf(listOf("   ##teamcity[]  "), listOf("   ")),
+                arrayOf(listOf("abc##teamcity[message]"), listOf("abc")),
+                arrayOf(listOf("Abc  ##teamcity[message]"), listOf("Abc  ")),
+
+                // https://youtrack.jetbrains.com/issue/TW-73979
+                arrayOf(
+                        listOf(
+                                "##teamcity[testStarted name='Test1'##teamcity[testStarted name='Test2' source='c706bb34' index='0']",
+                                "0' source='d9f9309b' index='0' flowId='598896723715600'",
+                                "##teamcity[testFinished name='Test1' source='d9f9309b' index='1']",
+                                "##teamcity[testFinished name='Test2' source='c706bb34' index='1']"
+                        ),
+                        listOf(
+                                "0' source='d9f9309b' index='0' flowId='598896723715600'",
+                                "##teamcity[testStarted name='Test1' source='d9f9309b' index='0']",
+                                "##teamcity[testFinished name='Test1' source='d9f9309b' index='1']",
+                                "##teamcity[testStarted name='Test2' source='c706bb34' index='0']",
+                                "##teamcity[testFinished name='Test2' source='c706bb34' index='1']"
+                        )),
         )
     }
 
@@ -205,6 +226,14 @@ class MessagesGuardTest {
                 createMessage("s7", 1),
                 createMessage("s7", 2),
                 createMessage("s7", 3)
+        )
+
+        every { _messagesSource.read("d9f9309b", 0L, 1L) } returns sequenceOf(
+                "##teamcity[testStarted name='Test1' source='d9f9309b' index='0']"
+        )
+
+        every { _messagesSource.read("c706bb34", 0L, 1L) } returns sequenceOf(
+                "##teamcity[testStarted name='Test2' source='c706bb34' index='0']"
         )
 
         // When

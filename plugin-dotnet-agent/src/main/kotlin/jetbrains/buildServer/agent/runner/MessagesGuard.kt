@@ -86,8 +86,10 @@ class MessagesGuard(
             catch (_: Exception) { }
         }
 
-        override fun parseException(parseException: ParseException, text: String) =
-            LOG.debug("Error while parsing \"$text\": ${parseException.message}.")
+        override fun parseException(parseException: ParseException, text: String) {
+            isModified = true
+            LOG.debug("Error while parsing a message. This message will be suppressed: \"$text\": ${parseException.message}.")
+        }
 
         private fun GetCurrentBuilder() = _stringBuilders.lastOrNull() ?: GetNewBuilder()
 
