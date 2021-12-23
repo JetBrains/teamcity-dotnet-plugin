@@ -31,13 +31,13 @@ class MessagesGuard(
         private var isModified = false
 
         public fun Compose() =
-                if (isModified)
+                if (isModified || _stringBuilders.size > 0)
                     _stringBuilders.asSequence().map { it.toString() }
                 else
                     sequenceOf(_text)
 
         override fun regularText(text: String) {
-            GetCurrentBuilder().append(text)
+            GetNewBuilder().append(text)
         }
 
         override fun serviceMessage(message: ServiceMessage) {
@@ -54,7 +54,6 @@ class MessagesGuard(
                                     var counter = 0;
                                     for (newMessage in _messagesSource.read(source, estimatedIndex, count)) {
                                         LOG.warn("Restored: $newMessage")
-                                        isModified = true
                                         GetNewBuilder().append(newMessage)
                                         counter++;
                                     }

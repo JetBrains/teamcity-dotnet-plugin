@@ -32,10 +32,8 @@ class MessagesGuardTest {
                 arrayOf(listOf("Abc"), listOf("Abc")),
                 arrayOf(listOf("   Abc  "), listOf("   Abc  ")),
                 arrayOf(listOf(createMessage("s1", 0)), listOf(createMessage("s1", 0))),
-                arrayOf(listOf(createMessage("s1", 0) + createMessage("s1", 1)), listOf(createMessage("s1", 0) + createMessage("s1", 1))),
-                arrayOf(listOf("   " + createMessage("s1", 0)), listOf("   " + createMessage("s1", 0))),
-                arrayOf(listOf("abc" + createMessage("s1", 1)), listOf("abc" + createMessage("s1", 1))),
-                arrayOf(listOf(createMessage("s1", 1) + "abc"), listOf(createMessage("s1", 1) + "abc")),
+                arrayOf(listOf(createMessage("s1", 0) + createMessage("s1", 1)), listOf(createMessage("s1", 0), createMessage("s1", 1))),
+                arrayOf(listOf(createMessage("s1", 0) + "abc"), listOf(createMessage("s1", 0), "abc")),
                 arrayOf(
                         listOf(
                                 createMessage("S", null)
@@ -85,9 +83,11 @@ class MessagesGuardTest {
                                 createMessage("s1", 0) + "  Abc " + createMessage("s1", 2) + "  Xyz "
                         ),
                         listOf(
-                                createMessage("s1", 0) + "  Abc ",
+                                createMessage("s1", 0),
+                                "  Abc ",
                                 createMessage("s1", 1),
-                                createMessage("s1", 2) + "  Xyz "
+                                createMessage("s1", 2),
+                                "  Xyz "
                         )),
                 arrayOf(
                         listOf(
@@ -175,6 +175,9 @@ class MessagesGuardTest {
                 arrayOf(listOf("Abc  ##teamcity[message]"), listOf("Abc  ")),
 
                 // https://youtrack.jetbrains.com/issue/TW-73979
+                arrayOf(listOf("   " + createMessage("s1", 0)), listOf("   ", createMessage("s1", 0))),
+                arrayOf(listOf("abc" + createMessage("s1", 0)), listOf("abc", createMessage("s1", 0))),
+                arrayOf(listOf("abc  " + createMessage("s1", 0)), listOf("abc  ", createMessage("s1", 0))),
                 arrayOf(
                         listOf(
                                 "##teamcity[testStarted name='Test1'##teamcity[testStarted name='Test2' source='c706bb34' index='0']",
