@@ -35,7 +35,7 @@
       <td class="codeHighlightTD">
         <props:multilineProperty name="${propertyNames.scriptContent}" className="longField" cols="58" rows="10" expanded="true" linkTitle=""
                                  note="Enter a C# script code"
-                                 highlight="shell" />
+                                 highlight="cs" />
       </td>
     </tr>
   </props:selectSectionPropertyContent>
