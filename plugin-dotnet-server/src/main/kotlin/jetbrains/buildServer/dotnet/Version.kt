@@ -66,7 +66,7 @@ class Version(vararg val versions: Int, val release: String = "")
             }
 
             val versionParts = match.groupValues[1].split('.').map{ it.toIntOrNull() }
-            if (versionParts != null && versionParts.any() && versionParts.all { it != null }) {
+            if (versionParts.any() && versionParts.all { it != null }) {
                 return Version(*versionParts.mapNotNull { it }.toIntArray(), release =  match.groupValues[2])
             }
 

@@ -43,7 +43,6 @@ class MSBuildCommandType(
         parameters[DotnetConstants.PARAM_MSBUILD_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.MSBuild) {
-                    @Suppress("NON_EXHAUSTIVE_WHEN")
                     when (it.platform) {
                         ToolPlatform.Windows -> {
                             shouldBeWindows = true
@@ -66,6 +65,7 @@ class MSBuildCommandType(
                             yield(Requirement(MonoConstants.CONFIG_PATH, null, RequirementType.EXISTS))
                             hasRequirement = true
                         }
+                        else -> { }
                     }
                 }
             }

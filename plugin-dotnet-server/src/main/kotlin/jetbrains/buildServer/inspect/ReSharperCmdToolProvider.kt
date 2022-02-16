@@ -67,13 +67,6 @@ class ReSharperCmdToolProvider(
                 getContents(doc, "/package/metadata/version")
                         .firstOrNull()
                         ?.let { bundledCltVersion ->
-                            val tool = NuGetTool(
-                                    _toolType,
-                                    NuGetPackage(
-                                            JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID,
-                                            bundledCltVersion,
-                                            URL("https://www.nuget.org/api/v2/package/JetBrains.ReSharper.CommandLineTools/" + bundledCltVersion)))
-
                             result.add(SimpleInstalledToolVersion(BundledToolVersion(_toolType, bundledCltVersion), null, null, bundledToolPackage))
                         }
             }

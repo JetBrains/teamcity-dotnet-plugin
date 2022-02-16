@@ -48,10 +48,10 @@ class DotCoverProjectSerializerImpl(
 
         for (filter in _coverageFilterProvider.filters) {
             val filterElement = createFilter(doc, filter)
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (filter.type) {
                 CoverageFilter.CoverageFilterType.Include -> includeFiltersElement.appendChild(filterElement)
                 CoverageFilter.CoverageFilterType.Exclude -> excludeFiltersElement.appendChild(filterElement)
+                else -> { }
             }
         }
 
@@ -70,9 +70,9 @@ class DotCoverProjectSerializerImpl(
         val attributeFiltersElement = doc.createElement(ATTRIBUTE_FILTERS_ELEMENT)
         for (filter in _coverageFilterProvider.attributeFilters) {
             val filterElement = createAttributeFilter(doc, filter)
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (filter.type) {
                 CoverageFilter.CoverageFilterType.Exclude -> attributeFiltersElement.appendChild(filterElement)
+                else -> { }
             }
         }
 

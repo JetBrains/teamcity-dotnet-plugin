@@ -22,7 +22,7 @@ class SdkResolverImpl(
         FrameworkRegex.matchEntire(framework.name)?.let {
             val name = it.groupValues[1].toLowerCase()
             var versionStr = it.groupValues[2]
-            val os = it.groupValues[3].toLowerCase()
+            // val os = it.groupValues[3].toLowerCase()
 
             if (!versionStr.contains('.')) {
                 versionStr = versionStr.map { "$it" }.joinToString(".")

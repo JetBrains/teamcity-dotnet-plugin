@@ -42,13 +42,13 @@ class VSTestCommandType(
         parameters[DotnetConstants.PARAM_VSTEST_VERSION]?.let {
             Tool.tryParse(it)?.let {
                 if (it.type == ToolType.VSTest) {
-                    @Suppress("NON_EXHAUSTIVE_WHEN")
                     when (it.platform) {
                         ToolPlatform.Windows -> {
                             yield(Requirement("teamcity.dotnet.vstest.${it.version}.0", null, RequirementType.EXISTS))
                             shouldBeWindows = true
                             hasRequirement = true
                         }
+                        else -> { }
                     }
                 }
             }

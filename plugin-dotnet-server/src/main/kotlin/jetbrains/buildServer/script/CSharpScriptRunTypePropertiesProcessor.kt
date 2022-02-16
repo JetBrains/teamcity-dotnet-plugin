@@ -30,6 +30,8 @@ class CSharpScriptRunTypePropertiesProcessor(
                 if(properties[ScriptConstants.SCRIPT_FILE].isNullOrBlank()) {
                     yield(InvalidProperty(ScriptConstants.SCRIPT_FILE, "Script file path is not specified"))
                 }
+
+            else -> { }
         }
     }
 }

@@ -27,7 +27,6 @@ class ResponseFileFactoryImpl(
                 .toList()
 
         verbosity?.let {
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (it) {
                 Verbosity.Detailed, Verbosity.Diagnostic -> {
                     _loggerService.writeBlock("$BlockName $description".trim()).use {
@@ -36,6 +35,7 @@ class ResponseFileFactoryImpl(
                         }
                     }
                 }
+                else -> { }
             }
         }
 

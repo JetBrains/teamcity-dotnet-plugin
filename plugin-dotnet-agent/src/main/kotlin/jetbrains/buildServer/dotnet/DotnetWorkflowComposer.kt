@@ -113,9 +113,9 @@ class DotnetWorkflowComposer(
 
     private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
         var description = mutableListOf<StdOutText>()
-        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (dotnetBuildContext.command.toolResolver.platform) {
             ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Header))
+            else -> { }
         }
 
         if (dotnetBuildContext.toolVersion != Version.Empty) {
