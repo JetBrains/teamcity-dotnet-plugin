@@ -131,8 +131,8 @@ class DotCoverProjectSerializerTest {
 
         // When
         instance.serialize(dotCoverProject, outputStream)
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
 
         // Then
         _ctx.assertIsSatisfied()
@@ -185,8 +185,8 @@ class DotCoverProjectSerializerTest {
         // When
         instance.serialize(dotCoverProject, outputStream)
 
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
 
         // Then
         _ctx.assertIsSatisfied()

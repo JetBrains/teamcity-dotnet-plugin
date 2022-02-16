@@ -20,7 +20,7 @@ plugins{
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
     testImplementation 'org.testng:testng:6.8'
 }
 
