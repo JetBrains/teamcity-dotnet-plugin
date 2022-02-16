@@ -63,17 +63,8 @@
     </orderEntry>
     <orderEntry type="module" module-name="usage-statistics-api" />
     <orderEntry type="module" module-name="usage-statistics-util" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$TEAMCITY_DATA_PATH$/lib/testng-7.0.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="jetbrains.kotlin.stdlib:1.6.10" level="project" />
-    <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2" level="project" />
-    <orderEntry type="library" scope="TEST" name="org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-RC2" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlin.stdlib" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlinx.coroutines.core" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlinx.coroutines.test" level="project" />
   </component>
 </module>
