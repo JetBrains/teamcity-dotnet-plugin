@@ -151,6 +151,21 @@ class MessagesGuardTest {
                                 createMessage("s0", 2)
                         )),
 
+                arrayOf(
+                        listOf(
+                                createMessage("s0", 0),
+                                createMessage("s0", 1),
+                                createMessage("s0", 2),
+                                createMessage("s0", 0),
+                                createMessage("s0", 1),
+                                createMessage("s0", 2)),
+
+                        listOf(
+                                createMessage("s0", 0),
+                                createMessage("s0", 1),
+                                createMessage("s0", 2)
+                        )),
+
                 // reordering
                 arrayOf(
                         listOf(
