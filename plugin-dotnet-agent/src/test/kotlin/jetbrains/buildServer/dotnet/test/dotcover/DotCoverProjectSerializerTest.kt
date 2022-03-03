@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2021 JetBrains s.r.o.
+ * Copyright 2000-2022 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,8 +131,8 @@ class DotCoverProjectSerializerTest {
 
         // When
         instance.serialize(dotCoverProject, outputStream)
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
 
         // Then
         _ctx.assertIsSatisfied()
@@ -185,8 +185,8 @@ class DotCoverProjectSerializerTest {
         // When
         instance.serialize(dotCoverProject, outputStream)
 
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "")
+        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
 
         // Then
         _ctx.assertIsSatisfied()

@@ -4,20 +4,17 @@
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false">
         <compilerSettings />
-        <compilerArguments>
-          <option name="languageVersion" value="1.4" />
-          <option name="apiVersion" value="1.4" />
-        </compilerArguments>
+        <compilerArguments />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent">
-      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/kotlin" isTestSource="true" />
-      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$TEAMCITY_DATA_PATH$/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/src/test/resources" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/test/kotlin" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/kotlin" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -38,19 +35,6 @@
     <orderEntry type="library" scope="TEST" name="jmock-2.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="hamcrest-1.3" level="project" />
     <orderEntry type="module" module-name="serviceMessages" scope="PROVIDED" />
-    <orderEntry type="library" name="kotlin" level="project" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library name="org.jetbrains.kotlin:kotlin-stdlib:1.3.50" type="repository">
-        <properties maven-id="org.jetbrains.kotlin:kotlin-stdlib:1.3.50" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.3.50/kotlin-stdlib-1.3.50.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.50/kotlin-stdlib-common-1.3.50.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library name="io.mockk:mockk:1.9.3" type="repository">
         <properties maven-id="io.mockk:mockk:1.9.3" />
@@ -74,31 +58,9 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$TEAMCITY_DATA_PATH$/lib/testng-7.0.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2" type="repository">
-        <properties maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.4.2/kotlinx-coroutines-test-1.4.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.4.2/kotlinx-coroutines-core-1.4.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0/kotlin-stdlib-common-1.4.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.0/kotlin-stdlib-1.4.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-coroutines-debug/1.4.2/kotlinx-coroutines-debug-1.4.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="jetbrains.kotlin.stdlib" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlinx.coroutines.core" level="project" />
+    <orderEntry type="library" name="jetbrains.kotlinx.coroutines.test" level="project" />
+    <orderEntry type="library" scope="TEST" name="testng" level="project" />
   </component>
 </module>
