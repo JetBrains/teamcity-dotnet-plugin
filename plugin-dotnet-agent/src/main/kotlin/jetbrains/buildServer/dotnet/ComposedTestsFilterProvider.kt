@@ -11,7 +11,7 @@ class ComposedTestsFilterProvider(
                 {
                     0 -> ""
                     1 -> filters[0]
-                    else -> filters.joinToString("&") { "($it)" }
+                    else -> "\"${filters.joinToString("&") { "($it)" }}\""
                 }
             }
 }

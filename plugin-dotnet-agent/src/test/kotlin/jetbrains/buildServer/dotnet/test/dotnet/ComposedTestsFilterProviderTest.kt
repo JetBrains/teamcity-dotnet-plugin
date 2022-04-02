@@ -27,11 +27,11 @@ class ComposedTestsFilterProviderTest {
                 arrayOf(listOf(empty), ""),
                 arrayOf(listOf(blank), ""),
                 arrayOf(listOf(blank, empty), ""),
-                arrayOf(listOf(abc, xyz), "(Abc)&(Xyz)"),
+                arrayOf(listOf(abc, xyz), "\"(Abc)&(Xyz)\""),
                 arrayOf(listOf(blank, xyz), "Xyz"),
                 arrayOf(listOf(blank, xyz, empty), "Xyz"),
-                arrayOf(listOf(abc, blank, xyz), "(Abc)&(Xyz)"),
-                arrayOf(listOf(abc, blank, xyz, qw, empty), "(Abc)&(Xyz)&(Qw)")
+                arrayOf(listOf(abc, blank, xyz), "\"(Abc)&(Xyz)\""),
+                arrayOf(listOf(abc, blank, xyz, qw, empty), "\"(Abc)&(Xyz)&(Qw)\"")
         )
     }
 
@@ -41,10 +41,10 @@ class ComposedTestsFilterProviderTest {
         val provider = createInstance(testsFilterProviders)
 
         // When
-        val actulFilter = provider.filterExpression;
+        val actualFilter = provider.filterExpression;
 
         // Then
-        Assert.assertEquals(actulFilter, expecedFilter)
+        Assert.assertEquals(actualFilter, expecedFilter)
     }
 
     private fun createInstance(testsFilterProviders: List<TestsFilterProvider>) = ComposedTestsFilterProvider(testsFilterProviders)
