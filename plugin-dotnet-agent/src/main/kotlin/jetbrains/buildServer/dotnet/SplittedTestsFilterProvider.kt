@@ -40,9 +40,9 @@ class SplittedTestsFilterProvider(
                             SplittedTestsFilterType.ExcludeAll ->
                                 filter = ExcludeAllFilter
                             SplittedTestsFilterType.Include ->
-                                filter = createClassFiltersFromLines(true, reader.readLines().asSequence()).joinToString("&")
+                                filter = createClassFiltersFromLines(true, reader.readLines().asSequence()).joinToString(" | ")
                             SplittedTestsFilterType.Exclude ->
-                                filter = createClassFiltersFromLines(false, reader.readLines().asSequence()).joinToString("&")
+                                filter = createClassFiltersFromLines(false, reader.readLines().asSequence()).joinToString(" & ")
                             else ->
                                 filter = ""
                         }

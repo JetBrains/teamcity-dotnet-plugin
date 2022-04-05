@@ -23,15 +23,15 @@ class ComposedTestsFilterProviderTest {
 
         return arrayOf(
                 arrayOf(emptyList<String>(), ""),
-                arrayOf(listOf(abc), "Abc"),
+                arrayOf(listOf(abc), "\"Abc\""),
                 arrayOf(listOf(empty), ""),
                 arrayOf(listOf(blank), ""),
                 arrayOf(listOf(blank, empty), ""),
-                arrayOf(listOf(abc, xyz), "\"(Abc)&(Xyz)\""),
-                arrayOf(listOf(blank, xyz), "Xyz"),
-                arrayOf(listOf(blank, xyz, empty), "Xyz"),
-                arrayOf(listOf(abc, blank, xyz), "\"(Abc)&(Xyz)\""),
-                arrayOf(listOf(abc, blank, xyz, qw, empty), "\"(Abc)&(Xyz)&(Qw)\"")
+                arrayOf(listOf(abc, xyz), "\"(Abc) & (Xyz)\""),
+                arrayOf(listOf(blank, xyz), "\"Xyz\""),
+                arrayOf(listOf(blank, xyz, empty), "\"Xyz\""),
+                arrayOf(listOf(abc, blank, xyz), "\"(Abc) & (Xyz)\""),
+                arrayOf(listOf(abc, blank, xyz, qw, empty), "\"(Abc) & (Xyz) & (Qw)\"")
         )
     }
 

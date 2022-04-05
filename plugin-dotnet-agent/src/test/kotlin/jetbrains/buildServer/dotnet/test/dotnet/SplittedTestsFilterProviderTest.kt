@@ -84,7 +84,7 @@ class SplittedTestsFilterProviderTest {
                                                 "\nAbc" +
                                                 "\nXyz"
                                 )),
-                        "FullyQualifiedName~Abc&FullyQualifiedName~Xyz"
+                        "FullyQualifiedName~Abc | FullyQualifiedName~Xyz"
                 ),
                 arrayOf(
                         TestsPartsFile.path,
@@ -96,7 +96,7 @@ class SplittedTestsFilterProviderTest {
                                                 "\nAbc" +
                                                 "\nXyz"
                                 )),
-                        "FullyQualifiedName!~Abc&FullyQualifiedName!~Xyz"
+                        "FullyQualifiedName!~Abc & FullyQualifiedName!~Xyz"
                 ),
                 arrayOf(
                         TestsPartsFile.path,
