@@ -68,7 +68,7 @@ class SplittedTestsFilterProvider(
                     .filterNotNull()
 
     companion object {
-        internal const val TestsPartsFileParam = "teamcity.build.parallelTests.testsPart.artifactPath"
+        internal const val TestsPartsFileParam = "teamcity.build.parallelTests.testsBatch.artifactPath"
         internal const val ExcludeAllFilter = "FullyQualifiedName=04B12786DAFE"
         private val LOG = Logger.getLogger(SplittedTestsFilterProvider::class.java)
     }
