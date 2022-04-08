@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
@@ -30,6 +31,8 @@ class TestCommand(
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
         private val _argumentsAlternative: ArgumentsAlternative,
+        private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
+        private val _loggerService: LoggerService,
         private val _testsFilterProvider: TestsFilterProvider,
         private val _targetTypeProvider: TargetTypeProvider,
         private val _targetArgumentsProvider: TargetArgumentsProvider)
@@ -42,6 +45,10 @@ class TestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+        if(_splittedTestsFilterSettings.IsActive) {
+            _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
+        }
+
         _testsFilterProvider.filterExpression.let {
             if (it.isNotBlank()) {
                 val hasAssembly = targetArguments.any { it.arguments.any { it.argumentType == CommandLineArgumentType.Target && isAssembly(it.value) }}

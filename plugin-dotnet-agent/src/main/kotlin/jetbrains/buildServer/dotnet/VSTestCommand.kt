@@ -17,10 +17,11 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE
+import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_NAME
 import jetbrains.buildServer.util.StringUtil
 
 class VSTestCommand(
@@ -44,6 +45,10 @@ class VSTestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+        if(_splittedTestsFilterSettings.IsActive) {
+            _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
+        }
+
         parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("/Settings:$it"))
@@ -61,7 +66,7 @@ class VSTestCommand(
             }
             "name" -> {
                 if(_splittedTestsFilterSettings.IsActive) {
-                    _loggerService.writeWarning("The \"Split tests by parallel groups\" feature is not supported together with a test names filter. Please consider using a test case filter.")
+                    _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
                 }
 
                 parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {

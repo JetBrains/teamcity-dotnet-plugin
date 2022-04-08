@@ -16,12 +16,10 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
@@ -33,6 +31,8 @@ import java.io.File
 class TestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
+    @MockK private lateinit var _splittedTestsFilterSettings: SplittedTestsFilterSettings
+    @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
     @MockK private lateinit var _targetTypeProvider: TargetTypeProvider
     @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
@@ -43,6 +43,8 @@ class TestCommandTest {
         clearAllMocks()
         every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
         every { _targetTypeProvider.getTargetType(any()) } answers { if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown }
+        every { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
+        every { _splittedTestsFilterSettings.IsActive } returns false
     }
 
     @DataProvider
@@ -167,6 +169,33 @@ class TestCommandTest {
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 
+    @Test
+    fun shouldShowMessageWhenTestSpitting() {
+        // Given
+        val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsFilterProvider.filterExpression } returns ""
+
+        // When
+        every { _splittedTestsFilterSettings.IsActive } returns true
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+
+        // Then
+        verify { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+    }
+
+    @Test
+    fun shouldNotShowMessageWhenNoTestSpitting() {
+        // Given
+        val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsFilterProvider.filterExpression } returns ""
+
+        // When
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+
+        // Then
+        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+    }
+
     fun createCommand(
             parameters: Map<String, String> = emptyMap(),
             targets: Sequence<String> = emptySequence(),
@@ -181,6 +210,8 @@ class TestCommandTest {
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 mockk<EnvironmentBuilder>(),
                 _argumentsAlternative,
+                _splittedTestsFilterSettings,
+                _loggerService,
                 _testsFilterProvider,
                 _targetTypeProvider,
                 _targetArgumentsProvider)

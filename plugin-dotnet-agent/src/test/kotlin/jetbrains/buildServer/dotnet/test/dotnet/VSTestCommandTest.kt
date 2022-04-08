@@ -24,6 +24,7 @@ import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -43,6 +44,8 @@ class VSTestCommandTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
+        every { _splittedTestsFilterSettings.IsActive } returns false
+        every { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
     }
 
     @DataProvider
@@ -221,6 +224,41 @@ class VSTestCommandTest {
 
         // Then
         verify { _loggerService.writeWarning(any()) }
+    }
+
+    @Test
+    fun shouldShowMessageWhenTestSpitting() {
+        // Given
+        val parameters = mapOf(
+                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                DotnetConstants.PARAM_PLATFORM to "x86",
+                DotnetConstants.PARAM_FRAMEWORK to "net45")
+
+        val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+
+        // When
+        every { _splittedTestsFilterSettings.IsActive } returns true
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+
+        // Then
+        verify { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+    }
+
+    @Test
+    fun shouldNotShowMessageWhenNoTestSpitting() {
+        // Given
+        val parameters = mapOf(
+                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                DotnetConstants.PARAM_PLATFORM to "x86",
+                DotnetConstants.PARAM_FRAMEWORK to "net45")
+
+        val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+
+        // When
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+
+        // Then
+        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
     }
 
     fun createCommand(
