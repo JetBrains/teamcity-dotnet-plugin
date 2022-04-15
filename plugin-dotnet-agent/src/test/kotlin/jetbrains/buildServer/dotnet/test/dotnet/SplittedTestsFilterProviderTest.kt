@@ -10,7 +10,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.SplittedTestsFilterProvider
 import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import org.apache.commons.io.IOUtils
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -28,7 +27,7 @@ class SplittedTestsFilterProviderTest {
     }
 
     @DataProvider(name = "testData")
-    fun testData(): Any? {
+    fun testData(): Any {
         return arrayOf(
                 arrayOf(
                         TestsPartsFile.path,
@@ -36,8 +35,14 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.IncludeAll.id +
-                                                "\nAbc"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=1
+                                            #filtering_mode=include all
+                                            Abc
+                                        """.trimIndent()
                                 )),
                         ""
                 ),
@@ -47,10 +52,16 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.ExcludeAll.id +
-                                                "\nAbc"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=1
+                                            #filtering_mode=exclude all
+                                            Abc
+                                        """.trimIndent()
                                 )),
-                        SplittedTestsFilterProvider.ExcludeAllFilter
+                        ""
                 ),
                 arrayOf(
                         TestsPartsFile.path,
@@ -58,8 +69,16 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Include.id +
-                                                "\nAbc"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=2
+                                            #total=2
+                                            #filtering_mode=includes
+                                            Abc
+                                            #filtering_mode=excludes
+                                            Cba
+                                        """.trimIndent()
                                 )),
                         "FullyQualifiedName~Abc"
                 ),
@@ -69,8 +88,16 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Exclude.id +
-                                                "\nAbc"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=1
+                                            #filtering_mode=includes
+                                            Cba
+                                            #filtering_mode=excludes
+                                            Abc
+                                        """.trimIndent()
                                 )),
                         "FullyQualifiedName!~Abc"
                 ),
@@ -80,9 +107,22 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Include.id +
-                                                "\nAbc" +
-                                                "\nXyz"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=2
+                                            #total=2
+                                            #filtering_mode=includes
+                                            #suite=suite1
+                                            Abc
+                                            #suite=suite2
+                                            Xyz
+                                            #filtering_mode=excludes
+                                            #suite=suite1
+                                            Cba
+                                            #suite=suite2
+                                            Zyx
+                                        """.trimIndent()
                                 )),
                         "FullyQualifiedName~Abc | FullyQualifiedName~Xyz"
                 ),
@@ -92,9 +132,22 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Exclude.id +
-                                                "\nAbc" +
-                                                "\nXyz"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=2
+                                            #filtering_mode=includes
+                                            #suite=suite1
+                                            Cba
+                                            #suite=suite2
+                                            Zyx
+                                            #filtering_mode=excludes
+                                            #suite=suite1
+                                            Abc
+                                            #suite=suite1
+                                            Xyz
+                                        """.trimIndent()
                                 )),
                         "FullyQualifiedName!~Abc & FullyQualifiedName!~Xyz"
                 ),
@@ -104,7 +157,13 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Include.id
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=2
+                                            #total=2
+                                            #filtering_mode=includes
+                                        """.trimIndent()
                                 )),
                         ""
                 ),
@@ -114,7 +173,13 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        SplittedTestsFilterType.Exclude.id
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=1
+                                            #filtering_mode=excludes
+                                        """.trimIndent()
                                 )),
                         ""
                 ),
@@ -124,7 +189,14 @@ class SplittedTestsFilterProviderTest {
                                 TestsPartsFile,
                                 VirtualFileSystemService.Attributes(),
                                 pack(
-                                        "aaa"
+                                        """
+                                            #version=1.0
+                                            #algorithm=test
+                                            #batch_num=1
+                                            #total=1
+                                            #filtering_mode=none
+                                            aaa
+                                        """.trimIndent()
                                 )),
                         ""
                 ),

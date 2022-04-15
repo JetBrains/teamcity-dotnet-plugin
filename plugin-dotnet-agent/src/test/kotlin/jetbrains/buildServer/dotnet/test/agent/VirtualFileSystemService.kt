@@ -75,14 +75,14 @@ class VirtualFileSystemService : FileSystemService {
     override fun isFile(file: File): Boolean = _files.contains(file)
 
     override fun getLength(file: File): Long =
-        _files[file]!!.let{
-            if (it.isEmpty) {
-                0;
+            _files[file]!!.let{
+                if (it.isEmpty) {
+                    0;
+                }
+                else {
+                    it.inputStream.readBytes().size.toLong()
+                }
             }
-            else {
-                it.inputStream.readBytes().size.toLong()
-            }
-        }
 
     override fun isAbsolute(file: File): Boolean = _directories[file]?.attributes?.isAbsolute ?: _files[file]?.attributes?.isAbsolute ?: false
 
