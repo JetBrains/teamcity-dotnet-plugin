@@ -82,10 +82,10 @@ class TestCommandTest {
                     "Filter",
                     listOf(
                             CommandLineArgument("--filter"),
-                            CommandLineArgument(testsFilter)
+                            CommandLineArgument("\"$testsFilter\"")
                     ),
                     emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", testsFilter))) },
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "\"$testsFilter\""))) },
                     Verbosity.Detailed
             )
         } returns sequenceOf(CommandLineArgument("@filterRsp"))
@@ -137,8 +137,8 @@ class TestCommandTest {
     fun testFilterData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(listOf("my.csproj"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("@filterRsp", "customArg1")),
-                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "myFilter", "customArg1")),
-                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "myFilter", "customArg1")))
+                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "\"myFilter\"", "customArg1")),
+                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "\"myFilter\"", "customArg1")))
     }
 
     @Test(dataProvider = "testFilterData")
@@ -154,10 +154,10 @@ class TestCommandTest {
                     "Filter",
                     listOf(
                             CommandLineArgument("--filter"),
-                            CommandLineArgument("myFilter")
+                            CommandLineArgument("\"myFilter\"")
                     ),
                     emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "myFilter"))) },
+                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "\"myFilter\""))) },
                     Verbosity.Detailed
             )
         } returns sequenceOf(CommandLineArgument("@filterRsp"))

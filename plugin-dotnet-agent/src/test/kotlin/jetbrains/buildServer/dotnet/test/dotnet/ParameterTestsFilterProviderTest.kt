@@ -24,6 +24,8 @@ class ParameterTestsFilterProviderTest {
     fun testData(): Any? {
         return arrayOf(
                 arrayOf("Abc", "Abc"),
+                arrayOf("\"Abc\"", "Abc"),
+                arrayOf("\"  \"", ""),
                 arrayOf("  ", ""),
                 arrayOf("", ""),
                 arrayOf(null, "")

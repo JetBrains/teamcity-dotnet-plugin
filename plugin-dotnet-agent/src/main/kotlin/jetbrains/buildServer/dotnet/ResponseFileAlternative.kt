@@ -12,7 +12,7 @@ class ResponseFileAlternative(
                     yieldAll(arguments)
                 }
                 else {
-                    val respponseFile = _responseFileFactory.createResponeFile(description, alternativeArguments, alternativeParameters.asSequence(), verbosity)
+                    val respponseFile = _responseFileFactory.createResponeFile(description, alternativeArguments, alternativeParameters, verbosity)
                     yield(CommandLineArgument("@${respponseFile.path}"))
                 }
             }
