@@ -10,8 +10,8 @@ class ComposedTestsFilterProvider(
                 when(filters.size)
                 {
                     0 -> ""
-                    1 -> "\"${filters[0]}\""
-                    else -> "\"${filters.joinToString(" & ") { "($it)" }}\""
+                    1 -> "${filters[0]}"
+                    else -> "${filters.joinToString(" & ") { "($it)" }}"
                 }
             }
 }

@@ -51,18 +51,19 @@ class TestCommand(
 
         _testsFilterProvider.filterExpression.let {
             if (it.isNotBlank()) {
+                var filter = "\"$it\""
                 val hasAssembly = targetArguments.any { it.arguments.any { it.argumentType == CommandLineArgumentType.Target && isAssembly(it.value) }}
                 if (hasAssembly) {
                     yield(CommandLineArgument("--filter"))
-                    yield(CommandLineArgument(it))
+                    yield(CommandLineArgument(filter))
                 }
                 else {
                     yieldAll(
                             _argumentsAlternative.select(
                                     "Filter",
-                                    listOf(CommandLineArgument("--filter"), CommandLineArgument(it)),
+                                    listOf(CommandLineArgument("--filter"), CommandLineArgument(filter)),
                                     emptySequence(),
-                                    sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)),
+                                    sequenceOf(MSBuildParameter("VSTestTestCaseFilter", filter)),
                                     context.verbosityLevel)
                     )
                 }
