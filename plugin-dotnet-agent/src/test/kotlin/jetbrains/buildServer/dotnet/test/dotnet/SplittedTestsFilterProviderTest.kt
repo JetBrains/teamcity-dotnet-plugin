@@ -15,7 +15,6 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.*
-import java.util.zip.GZIPOutputStream
 
 class SplittedTestsFilterProviderTest {
     @MockK private lateinit var _parametersService: ParametersService
@@ -39,63 +38,7 @@ class SplittedTestsFilterProviderTest {
                                             #version=1.0
                                             #algorithm=test
                                             #batch_num=1
-                                            #total=1
-                                            #filtering_mode=include all
-                                            Abc
-                                        """.trimIndent()
-                                )),
-                        ""
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
-                                            #batch_num=1
-                                            #total=1
-                                            #filtering_mode=exclude all
-                                            Abc
-                                        """.trimIndent()
-                                )),
-                        ""
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
-                                            #batch_num=2
                                             #total=2
-                                            #filtering_mode=includes
-                                            Abc
-                                            #filtering_mode=excludes
-                                            Cba
-                                        """.trimIndent()
-                                )),
-                        "FullyQualifiedName~Abc"
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
-                                            #batch_num=1
-                                            #total=1
-                                            #filtering_mode=includes
-                                            Cba
-                                            #filtering_mode=excludes
                                             Abc
                                         """.trimIndent()
                                 )),
@@ -110,39 +53,8 @@ class SplittedTestsFilterProviderTest {
                                         """
                                             #version=1.0
                                             #algorithm=test
-                                            #batch_num=2
-                                            #total=2
-                                            #filtering_mode=includes
-                                            #suite=suite1
-                                            Abc
-                                            #suite=suite2
-                                            Xyz
-                                            #filtering_mode=excludes
-                                            #suite=suite1
-                                            Cba
-                                            #suite=suite2
-                                            Zyx
-                                        """.trimIndent()
-                                )),
-                        "FullyQualifiedName~Abc | FullyQualifiedName~Xyz"
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
                                             #batch_num=1
                                             #total=2
-                                            #filtering_mode=includes
-                                            #suite=suite1
-                                            Cba
-                                            #suite=suite2
-                                            Zyx
-                                            #filtering_mode=excludes
                                             #suite=suite1
                                             Abc
                                             #suite=suite1
@@ -160,42 +72,8 @@ class SplittedTestsFilterProviderTest {
                                         """
                                             #version=1.0
                                             #algorithm=test
-                                            #batch_num=2
-                                            #total=2
-                                            #filtering_mode=includes
-                                        """.trimIndent()
-                                )),
-                        ""
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
                                             #batch_num=1
                                             #total=1
-                                            #filtering_mode=excludes
-                                        """.trimIndent()
-                                )),
-                        ""
-                ),
-                arrayOf(
-                        TestsPartsFile.path,
-                        VirtualFileSystemService().addFile(
-                                TestsPartsFile,
-                                VirtualFileSystemService.Attributes(),
-                                pack(
-                                        """
-                                            #version=1.0
-                                            #algorithm=test
-                                            #batch_num=1
-                                            #total=1
-                                            #filtering_mode=none
-                                            aaa
                                         """.trimIndent()
                                 )),
                         ""
@@ -243,10 +121,9 @@ class SplittedTestsFilterProviderTest {
 
     fun compress(str: String): ByteArray {
         val obj = ByteArrayOutputStream()
-        val gzip = GZIPOutputStream(obj)
-        gzip.write(str.toByteArray(charset("UTF-8")))
-        gzip.flush()
-        gzip.close()
+        obj.write(str.toByteArray(charset("UTF-8")))
+        obj.flush()
+        obj.close()
         return obj.toByteArray()
     }
 
