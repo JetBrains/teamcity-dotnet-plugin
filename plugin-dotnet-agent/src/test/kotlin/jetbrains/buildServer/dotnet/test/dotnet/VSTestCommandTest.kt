@@ -52,11 +52,13 @@ class VSTestCommandTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(Version(1, 0),
+                        false,
                         "",
                         mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
+                        false,
                         "myfilter",
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -66,7 +68,29 @@ class VSTestCommandTest {
                                 DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
+                        Version(1, 0),
+                        true,
+                        "myfilter",
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
+                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        Version(1, 0),
+                        true,
+                        "myfilter",
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
+                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
                         Version(2, 1),
+                        false,
                         "myfilter",
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -76,6 +100,7 @@ class VSTestCommandTest {
                         listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(2, 1),
+                        false,
                         "myfilter",
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -86,6 +111,7 @@ class VSTestCommandTest {
                         listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
+                        false,
                         "myfilter",
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -95,6 +121,7 @@ class VSTestCommandTest {
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
+                        false,
                         "myfilter",
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -105,6 +132,7 @@ class VSTestCommandTest {
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x64", "/Framework:net45", "/InIsolation", "vstestlog", "customArg1")),
                 arrayOf(
                         Version(1, 0),
+                        false,
                         "",
                         mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
                                 DotnetConstants.PARAM_TEST_FILTER to "name",
@@ -115,11 +143,13 @@ class VSTestCommandTest {
     @Test(dataProvider = "argumentsData")
     fun shouldGetArguments(
             version: Version,
+            splitting: Boolean,
             testsFilter: String,
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _splittedTestsFilterSettings.IsActive } returns splitting
         every { _testsFilterProvider.filterExpression } returns testsFilter
         every {
             _argumentsAlternative.select(
@@ -140,8 +170,6 @@ class VSTestCommandTest {
                     Verbosity.Detailed
             )
         } returns sequenceOf(CommandLineArgument("@filterRsp"))
-
-        every { _splittedTestsFilterSettings.IsActive } returns false
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, version, Verbosity.Detailed)).map { it.value }.toList()
@@ -196,7 +224,7 @@ class VSTestCommandTest {
     }
 
     @Test
-    fun shouldShowWarningWhenTessNamesFilterAndTestSpitting() {
+    fun shouldShowWarningWhenTestNamesFilterAndTestSpitting() {
         // Given
         val parameters = mapOf(
                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
@@ -234,6 +262,7 @@ class VSTestCommandTest {
                 DotnetConstants.PARAM_PLATFORM to "x86",
                 DotnetConstants.PARAM_FRAMEWORK to "net45")
 
+        every { _testsFilterProvider.filterExpression } returns "myfilter"
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When

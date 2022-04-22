@@ -56,22 +56,22 @@ class VSTestCommand(
         }
 
         var filterArgs: MutableList<CommandLineArgument> = mutableListOf();
-        when (parameters(DotnetConstants.PARAM_TEST_FILTER)) {
-            "filter" -> {
+        if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "name") {
+            if(_splittedTestsFilterSettings.IsActive) {
+                _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
+            }
+
+            parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                }
+            }
+        }
+        else {
+            if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "filter" || _splittedTestsFilterSettings.IsActive) {
                 _testsFilterProvider.filterExpression.let {
                     if (it.isNotBlank()) {
                         filterArgs.add(CommandLineArgument("/TestCaseFilter:$it"))
-                    }
-                }
-            }
-            "name" -> {
-                if(_splittedTestsFilterSettings.IsActive) {
-                    _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
-                }
-
-                parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
-                    if (it.isNotBlank()) {
-                        filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
                     }
                 }
             }
