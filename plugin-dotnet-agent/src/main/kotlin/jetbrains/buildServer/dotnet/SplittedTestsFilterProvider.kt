@@ -13,14 +13,28 @@ class SplittedTestsFilterProvider(
         private val _fileSystem: FileSystemService)
     : TestsFilterProvider, SplittedTestsFilterSettings {
     override val IsActive: Boolean
-        get() = TestsPartsFile != null
+        get() = ExcludesFile != null && IncludesFile != null
 
-    private val TestsPartsFile: File?
-        get() = _parametersService.tryGetParameter(ParameterType.System, TestsPartsFileParam)?.let { File(it) }
+    private val ExcludesFile: File?
+        get() = _parametersService.tryGetParameter(ParameterType.System, ExcludesFileParam)?.let { File(it) }
+    private val IncludesFile: File?
+        get() = _parametersService.tryGetParameter(ParameterType.System, IncludesFileParam)?.let { File(it) }
+    private val Mode: SplittedTestsFilterType
+        get() = if (_parametersService.tryGetParameter(ParameterType.Configuration, CurrentBatch) == "1") {
+            SplittedTestsFilterType.Excludes
+        } else {
+            SplittedTestsFilterType.Includes
+        }
+    private val CurrentFile: File?
+        get() = if (Mode == SplittedTestsFilterType.Excludes) {
+            ExcludesFile
+        } else {
+            IncludesFile
+        }
 
     override val filterExpression: String
         get() =
-            TestsPartsFile?.let {
+            CurrentFile?.let {
                 testsPartsFile ->
                 LOG.debug("Tests group file is \"$testsPartsFile\".")
                 if (!_fileSystem.isExists(testsPartsFile) || !_fileSystem.isFile(testsPartsFile)) {
@@ -40,7 +54,11 @@ class SplittedTestsFilterProvider(
                                 tests += line
                             }
                         }
-                        filter = createClassFiltersFromLines(false, tests.asSequence()).joinToString(" & ")
+                        if (Mode == SplittedTestsFilterType.Includes) {
+                            filter = createClassFiltersFromLines(true, tests.asSequence()).joinToString(" | ")
+                        } else {
+                            filter = createClassFiltersFromLines(false, tests.asSequence()).joinToString(" & ")
+                        }
                     }
                 }
 
@@ -64,7 +82,9 @@ class SplittedTestsFilterProvider(
                     .filterNotNull()
 
     companion object {
-        internal const val TestsPartsFileParam = "teamcity.build.parallelTests.excludesFile"
+        internal const val ExcludesFileParam = "teamcity.build.parallelTests.excludesFile"
+        internal const val IncludesFileParam = "teamcity.build.parallelTests.includesFile"
+        internal const val CurrentBatch = "teamcity.build.parallelTests.currentBatch"
         internal const val ExcludeAllFilter = "FullyQualifiedName=04B12786DAFE"
         private val LOG = Logger.getLogger(SplittedTestsFilterProvider::class.java)
     }
