@@ -37,8 +37,8 @@ class SplittedTestsFilterProviderTest {
                                         """
                                             #version=1.0
                                             #algorithm=test
-                                            #batch_num=1
-                                            #total=2
+                                            #current_batch=1
+                                            #total_batches=2
                                             Abc
                                         """.trimIndent()
                                 )),
@@ -53,8 +53,8 @@ class SplittedTestsFilterProviderTest {
                                         """
                                             #version=1.0
                                             #algorithm=test
-                                            #batch_num=1
-                                            #total=2
+                                            #current_batch=1
+                                            #total_batches=2
                                             #suite=suite1
                                             Abc
                                             #suite=suite1
@@ -72,8 +72,8 @@ class SplittedTestsFilterProviderTest {
                                         """
                                             #version=1.0
                                             #algorithm=test
-                                            #batch_num=1
-                                            #total=1
+                                            #current_batch=1
+                                            #total_batches=1
                                         """.trimIndent()
                                 )),
                         ""
