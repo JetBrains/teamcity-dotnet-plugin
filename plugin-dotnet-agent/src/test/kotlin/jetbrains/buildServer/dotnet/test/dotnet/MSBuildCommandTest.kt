@@ -34,6 +34,8 @@ import org.testng.annotations.Test
 class MSBuildCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _targetsParser: TargetsParser
+    @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
+    @MockK private lateinit var _responseFileFactory: ResponseFileFactory
 
     @BeforeMethod
     fun setUp() {
@@ -61,6 +63,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
+        every { _testsFilterProvider.filterExpression } returns ""
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
@@ -129,6 +132,8 @@ class MSBuildCommandTest {
                 ArgumentsProviderStub(customArguments),
                 ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java),
-                _targetsParser)
+                _targetsParser,
+                _testsFilterProvider,
+                _responseFileFactory)
     }
 }
