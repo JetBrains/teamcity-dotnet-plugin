@@ -18,18 +18,19 @@ package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.discovery.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.newSingleThreadContext
-import org.jmock.Expectations
-import org.jmock.Mockery
-import org.testng.Assert
-import org.testng.annotations.AfterClass
-import org.testng.annotations.BeforeClass
-import org.testng.annotations.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.jmock.Expectations
+import org.jmock.integration.junit4.JUnit4Mockery
+import org.jmock.lib.concurrent.Synchroniser
+import org.testng.Assert
+import org.testng.annotations.AfterClass
+import org.testng.annotations.BeforeClass
+import org.testng.annotations.Test
+
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
@@ -54,7 +55,8 @@ class SolutionDiscoverTest {
         val path2 = "projectPath2/proj.sln"
 
         val streamFactory = StreamFactoryStub()
-        val ctx = Mockery()
+        val ctx = JUnit4Mockery()
+        ctx.setThreadingPolicy(Synchroniser())
         val deserializer1 = ctx.mock(SolutionDeserializer::class.java, "deserializer1")
         val deserializer2 = ctx.mock(SolutionDeserializer::class.java, "deserializer2")
         val solution1 = Solution(listOf(Project("projectPath1", listOf(Configuration("Core"), Configuration("Release")), listOf(Framework("Netcoreapp2.0"), Framework("netcoreapp1.0")), listOf(Runtime("win7-x64"), Runtime("win-7x86"), Runtime("ubuntu.16.10-x64")), listOf(Reference("Microsoft.NET.Sdk")))))

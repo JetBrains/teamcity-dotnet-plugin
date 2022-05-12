@@ -51,9 +51,9 @@ class MSBuildCommandTest {
                         Pair(DotnetConstants.PARAM_TARGETS, "restore build"),
                         Pair(DotnetConstants.PARAM_RUNTIME, "osx.10.11-x64"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                        listOf("/t:restore;build", "/p:Configuration=Release", "/p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")),
+                        listOf("-t:restore;build", "-p:Configuration=Release", "-p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore build pack")),
-                        listOf("/t:clean;restore;build;pack", "respArgs", "customArg1")))
+                        listOf("-t:clean;restore;build;pack", "respArgs", "customArg1")))
     }
 
     @Test(dataProvider = "argumentsData")

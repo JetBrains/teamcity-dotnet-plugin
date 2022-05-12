@@ -35,17 +35,18 @@ teamcity {
 }
 
 dependencies {
-  implementation project(':plugin-dotnet-common')
-  implementation 'com.google.code.gson:gson:2.5'
+  implementation project(":plugin-dotnet-common")
+  implementation "com.google.code.gson:gson:2.5"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
   provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
-  provided 'org.jetbrains.teamcity:server-api:${teamcityVersion}'
-  testImplementation 'org.testng:testng:7.1.0'
-  testImplementation 'io.mockk:mockk:1.9.3'
-  testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
-  testImplementation  'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
-  agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
+  provided "org.jetbrains.teamcity:server-api:${teamcityVersion}"
+  testImplementation "org.testng:testng:7.5"
+  testImplementation "org.jmock:jmock-junit4:2.12.0"
+  testImplementation "io.mockk:mockk:1.12.3"
+  testImplementation "org.jetbrains.kotlin:kotlin-reflect"
+  testImplementation  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
+  agent project(path: ":plugin-dotnet-agent", configuration: "plugin")
 }
 
 class PreparePackagesTask extends DefaultTask {

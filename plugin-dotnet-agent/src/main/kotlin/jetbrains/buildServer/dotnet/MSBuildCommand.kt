@@ -42,30 +42,30 @@ class MSBuildCommand(
         parameters(DotnetConstants.PARAM_TARGETS)?.trim()?.let {
             val targets = _targetsParser.parse(it)
             if (targets.isNotBlank()) {
-                yield(CommandLineArgument("/t:$targets"))
+                yield(CommandLineArgument("-t:$targets"))
             }
         }
 
         parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("/p:Configuration=$it"))
+                yield(CommandLineArgument("-p:Configuration=$it"))
             }
         }
 
         parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("/p:Platform=$it"))
+                yield(CommandLineArgument("-p:Platform=$it"))
             }
         }
 
         parameters(DotnetConstants.PARAM_RUNTIME)?.trim()?.let {
             if (it.isNotBlank()) {
-                yield(CommandLineArgument("/p:RuntimeIdentifiers=$it"))
+                yield(CommandLineArgument("-p:RuntimeIdentifiers=$it"))
             }
         }
 
         context.verbosityLevel?.let {
-            yield(CommandLineArgument("/v:${it.id.toLowerCase()}"))
+            yield(CommandLineArgument("-v:${it.id.toLowerCase()}"))
         }
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))
