@@ -5,7 +5,7 @@ import jetbrains.buildServer.util.StringUtil
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     override fun convert(parameters: Sequence<MSBuildParameter>) = parameters
             .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
-            .map { "/p:${normalizeName(it.name)}=${normalizeValue(it.value)}" }
+            .map { "-p:${normalizeName(it.name)}=${normalizeValue(it.value)}" }
 
     fun normalizeName(name: String) =
             String(

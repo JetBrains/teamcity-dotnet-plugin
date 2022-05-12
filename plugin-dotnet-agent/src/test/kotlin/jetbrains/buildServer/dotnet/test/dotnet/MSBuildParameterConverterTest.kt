@@ -103,6 +103,6 @@ class MSBuildParameterConverterTest {
                 .toList()
 
         // Then
-        Assert.assertEquals(actualParams, listOf("/p:a=b"))
+        Assert.assertEquals(actualParams, listOf("-p:a=b"))
     }
 }
