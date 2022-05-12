@@ -19,7 +19,6 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.util.StringUtil
 
 class MSBuildCommand(
         _parametersService: ParametersService,
@@ -29,7 +28,9 @@ class MSBuildCommand(
         private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: ToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
-        private val _targetsParser: TargetsParser)
+        private val _targetsParser: TargetsParser,
+        private val _testsFilterProvider: TestsFilterProvider,
+        private val _responseFileFactory: ResponseFileFactory)
     : DotnetCommandBase(_parametersService) {
 
     override val commandType: DotnetCommandType
@@ -69,6 +70,14 @@ class MSBuildCommand(
         }
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))
+
+        _testsFilterProvider.filterExpression.let {
+            if (it.isNotBlank()) {
+                val filterRespponseFile = _responseFileFactory.createResponeFile("Filter", emptySequence(), sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)), context.verbosityLevel)
+                yield(CommandLineArgument("@${filterRespponseFile.path}"))
+            }
+        }
+
         yieldAll(_customArgumentsProvider.getArguments(context))
     }
 
