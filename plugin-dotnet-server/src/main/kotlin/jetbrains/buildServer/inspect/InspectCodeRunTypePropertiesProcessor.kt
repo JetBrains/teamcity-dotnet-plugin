@@ -1,5 +1,6 @@
 package jetbrains.buildServer.inspect
 
+import jetbrains.buildServer.ToolVersionProvider
 import jetbrains.buildServer.inspect.CltConstants.RUNNER_SETTING_CLT_PLATFORM
 import jetbrains.buildServer.inspect.InspectCodeConstants.RUNNER_SETTING_SOLUTION_PATH
 import jetbrains.buildServer.serverSide.InvalidProperty
@@ -21,7 +22,7 @@ class InspectCodeRunTypePropertiesProcessor(
             IspectionToolPlatform.tryParse(it)
         }
 
-        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
+        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID) < RequirementsResolverImpl.CrossPlatformVersion) {
             result.add(InvalidProperty(RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform inspections, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 

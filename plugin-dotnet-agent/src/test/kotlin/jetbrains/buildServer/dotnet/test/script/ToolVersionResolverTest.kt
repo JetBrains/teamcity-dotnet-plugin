@@ -10,7 +10,7 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.DotnetRuntime
 import jetbrains.buildServer.dotnet.DotnetRuntimesProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
-import jetbrains.buildServer.script.AnyVersionResolverImpl
+import jetbrains.buildServer.script.ToolVersionResolverImpl
 import jetbrains.buildServer.script.CsiTool
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -18,7 +18,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class AnyVersionResolverTest {
+class ToolVersionResolverTest {
     @MockK private lateinit var _runtimesProvider: DotnetRuntimesProvider
     @MockK private lateinit var _virtualContext: VirtualContext
     private val DefaultToolsPath = File("tools")
@@ -106,9 +106,42 @@ class AnyVersionResolverTest {
                         false,
                         null),
 
+                arrayOf(
+                        emptySequence<DotnetRuntime>(),
+                        VirtualFileSystemService(),
+                        DefaultToolsPath,
+                        false,
+                        null),
+
                 // In docker
                 arrayOf(
-                        sequenceOf(DotnetRuntime(File("."), Version(5, 0), "")),
+                        sequenceOf(
+                                DotnetRuntime(File("."), Version(5, 0), ""),
+                                DotnetRuntime(File("."), Version(6, 0), "")),
+                        VirtualFileSystemService()
+                                .addDirectory(File(DefaultToolsPath, "net5.0"))
+                                .addDirectory(File(DefaultToolsPath, "net6.0")),
+                        DefaultToolsPath,
+                        true,
+                        CsiTool(File(DefaultToolsPath, "net6.0"), Version(6, 0))),
+
+                arrayOf(
+                        sequenceOf(
+                                DotnetRuntime(File("."), Version(5, 0), ""),
+                                DotnetRuntime(File("."), Version(6, 0), ""),
+                                DotnetRuntime(File("."), Version(7, 0), "")),
+                        VirtualFileSystemService()
+                                .addDirectory(File(DefaultToolsPath, "net5.0"))
+                                .addDirectory(File(DefaultToolsPath, "net6.0"))
+                                .addDirectory(File(DefaultToolsPath, "net7.0")),
+                        DefaultToolsPath,
+                        true,
+                        CsiTool(File(DefaultToolsPath, "net6.0"), Version(6, 0))),
+
+                arrayOf(
+                        sequenceOf(
+                                DotnetRuntime(File("."), Version(5, 0), ""),
+                                DotnetRuntime(File("."), Version(6, 0), "")),
                         VirtualFileSystemService().addDirectory(File(DefaultToolsPath, "net5.0")),
                         DefaultToolsPath,
                         true,
@@ -116,10 +149,26 @@ class AnyVersionResolverTest {
 
                 arrayOf(
                         emptySequence<DotnetRuntime>(),
-                        VirtualFileSystemService().addDirectory(File(DefaultToolsPath, "net5.0")),
+                        VirtualFileSystemService().addDirectory(File(DefaultToolsPath, "net6.0")),
                         DefaultToolsPath,
                         true,
-                        CsiTool(File(DefaultToolsPath, "net5.0"), Version(5, 0)))
+                        CsiTool(File(DefaultToolsPath, "net6.0"), Version(6, 0))),
+
+                arrayOf(
+                        sequenceOf(
+                                DotnetRuntime(File("."), Version(5, 0), ""),
+                                DotnetRuntime(File("."), Version(6, 0), "")),
+                        VirtualFileSystemService(),
+                        DefaultToolsPath,
+                        true,
+                        null),
+
+                arrayOf(
+                        emptySequence<DotnetRuntime>(),
+                        VirtualFileSystemService(),
+                        DefaultToolsPath,
+                        true,
+                        null)
         )
     }
 
@@ -147,5 +196,5 @@ class AnyVersionResolverTest {
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            AnyVersionResolverImpl(fileSystemService, _runtimesProvider, _virtualContext)
+            ToolVersionResolverImpl(fileSystemService, _runtimesProvider, _virtualContext)
 }

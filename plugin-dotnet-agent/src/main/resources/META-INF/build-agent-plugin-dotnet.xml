@@ -529,7 +529,7 @@
   <bean class="jetbrains.buildServer.script.CommandLineFactoryImpl"/>
   <bean class="jetbrains.buildServer.script.ScriptResolverImpl"/>
   <bean class="jetbrains.buildServer.script.ToolResolverImpl"/>
-  <bean class="jetbrains.buildServer.script.AnyVersionResolverImpl"/>
+  <bean class="jetbrains.buildServer.script.ToolVersionResolverImpl"/>
   <bean class="jetbrains.buildServer.script.RspContentFactoryImpl"/>
 
 </beans>

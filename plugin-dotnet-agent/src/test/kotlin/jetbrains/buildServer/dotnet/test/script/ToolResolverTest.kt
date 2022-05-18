@@ -19,7 +19,7 @@ import java.io.File
 
 class ToolResolverTest {
     @MockK private lateinit var _parametersService: ParametersService
-    @MockK private lateinit var _anyVersionResolver: AnyVersionResolver
+    @MockK private lateinit var _versionResolver: ToolVersionResolver
     private val DefaultBasePath = File("basePath")
     private val DotnetPath = "dotnet"
 
@@ -35,101 +35,50 @@ class ToolResolverTest {
                 // Any version
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Any.tfm,
-                        File("myAny"),
+                        File("net6.0"),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultBasePath, "tools"))
-                                .addFile(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable)),
+                                .addFile(File(File(File("net6.0"), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
-                        CsiTool(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable), Version(6, 0, 0))),
+                        CsiTool(File(File(File("net6.0"), "any"), ToolResolverImpl.ToolExecutable), Version(6, 0, 0))),
 
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Any.tfm,
-                        File("myAny"),
+                        File("net6.0"),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultBasePath, "tools"))
-                                .addFile(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable)),
+                                .addFile(File(File(File("net6.0"), "any"), ToolResolverImpl.ToolExecutable)),
                         File("Abc"),
                         null),
 
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Any.tfm,
-                        File("myAny"),
+                        File("net6.0"),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultBasePath, "tools"))
-                                .addFile(File(File(File("myAny222"), "any"), ToolResolverImpl.ToolExecutable)),
+                                .addFile(File(File(File("net6.0222"), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
                         null),
 
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Any.tfm,
-                        File("myAny"),
+                        File("net6.0"),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultBasePath, "tools"))
-                                .addDirectory(File(File(File("myAny"), "any"), ToolResolverImpl.ToolExecutable)),
+                                .addDirectory(File(File(File("net6.0"), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
                         null),
 
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Any.tfm,
-                        File("myAny"),
+                        File("net6.0"),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultBasePath, "tools")),
                         DefaultBasePath,
                         null),
 
-                // Specified version
                 arrayOf(
                         DefaultBasePath.path,
-                        Framework.Net50.tfm,
-                        null,
-                        VirtualFileSystemService()
-                                .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
-                        DefaultBasePath,
-                        CsiTool(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable), Version(5, 0, 0))),
-
-                arrayOf(
-                        DefaultBasePath.path,
-                        Framework.Net50.tfm,
-                        null,
-                        VirtualFileSystemService()
-                                .addDirectory(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
-                        DefaultBasePath,
-                        null),
-
-                arrayOf(
-                        DefaultBasePath.path,
-                        Framework.Net50.tfm,
-                        null,
-                        VirtualFileSystemService(),
-                        DefaultBasePath,
-                        null),
-
-                arrayOf(
-                        DefaultBasePath.path,
-                        Framework.Net50.tfm,
-                        null,
-                        VirtualFileSystemService()
-                                .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net60.tfm), "any"), ToolResolverImpl.ToolExecutable)),
-                        DefaultBasePath,
-                        null),
-
-                arrayOf(
-                        DefaultBasePath.path,
-                        null,
-                        null,
-                        VirtualFileSystemService()
-                                .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
-                        DefaultBasePath,
-                        null),
-
-                arrayOf(
-                        null,
-                        Framework.Net50.tfm,
                         null,
                         VirtualFileSystemService()
                                 .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
@@ -141,19 +90,17 @@ class ToolResolverTest {
     @Test(dataProvider = "cases")
     fun shouldResolve(
             cltPathParam: String?,
-            frameworkParam: String?,
             anyVersionPath: File?,
             fileSystemService: FileSystemService,
             basePath: File,
             expectedTool: CsiTool?) {
         // Given
         every { _parametersService.tryGetParameter(ParameterType.Runner, ScriptConstants.CLT_PATH) } returns cltPathParam
-        every { _parametersService.tryGetParameter(ParameterType.Runner, ScriptConstants.FRAMEWORK) } returns frameworkParam
         if(anyVersionPath != null) {
-            every { _anyVersionResolver.resolve(File(basePath, "tools")) } returns CsiTool(anyVersionPath, Version(6, 0, 0))
+            every { _versionResolver.resolve(File(basePath, "tools")) } returns CsiTool(anyVersionPath, Version(6, 0, 0))
         }
         else {
-            every { _anyVersionResolver.resolve(File(basePath, "tools")) } throws RunBuildException("Some error")
+            every { _versionResolver.resolve(File(basePath, "tools")) } throws RunBuildException("Some error")
         }
 
         val resoler = createInstance(fileSystemService)
@@ -163,12 +110,12 @@ class ToolResolverTest {
         try {
             actualTool = resoler.resolve()
         }
-        catch(ex: Exception) { }
+        catch(_: Exception) { }
 
         // Then
         Assert.assertEquals(actualTool, expectedTool)
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            ToolResolverImpl(_parametersService, fileSystemService, _anyVersionResolver)
+            ToolResolverImpl(_parametersService, fileSystemService, _versionResolver)
 }

@@ -1,5 +1,6 @@
 package jetbrains.buildServer.inspect
 
+import jetbrains.buildServer.ToolVersionProvider
 import jetbrains.buildServer.parameters.ReferencesResolverUtil
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
@@ -30,7 +31,7 @@ class DupFinderRunTypePropertiesProcessor(
             IspectionToolPlatform.tryParse(it)
         }
 
-        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties) < RequirementsResolverImpl.CrossPlatformVersion) {
+        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID) < RequirementsResolverImpl.CrossPlatformVersion) {
             result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform duplicates finder, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 

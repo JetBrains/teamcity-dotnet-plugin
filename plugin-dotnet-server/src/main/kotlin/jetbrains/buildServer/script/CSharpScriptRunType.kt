@@ -1,9 +1,12 @@
 package jetbrains.buildServer.script
 
-import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.*
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
+import jetbrains.buildServer.script.ScriptConstants.CLT_PATH
+import jetbrains.buildServer.script.ScriptConstants.CLT_TOOL_TYPE_ID
 import jetbrains.buildServer.script.ScriptConstants.RUNNER_ENABLED
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
@@ -15,7 +18,8 @@ import java.util.*
 class CSharpScriptRunType(
         runTypeRegistry: RunTypeRegistry,
         private val _pluginDescriptor: PluginDescriptor,
-        private val _propertiesProcessor: PropertiesProcessor,)
+        private val _propertiesProcessor: PropertiesProcessor,
+        private val _toolVersionProvider: ToolVersionProvider)
     : RunType() {
 
     init {
@@ -49,14 +53,10 @@ class CSharpScriptRunType(
 
     override fun getDisplayName() = ScriptConstants.RUNNER_DISPLAY_NAME
 
-    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
-            (
-                    runParameters[ScriptConstants.FRAMEWORK]
-                            ?.let { Framework.tryParse(it) }
-                            ?: Framework.Any
-                    )
-                    .requirement.let { mutableListOf(it) }
-
+    override fun getRunnerSpecificRequirements(parameters: Map<String, String>): MutableList<Requirement> {
+        val toolVersion = _toolVersionProvider.getVersion(parameters[CLT_PATH], CLT_TOOL_TYPE_ID)
+        return Ranges.filter { it.range.contains(toolVersion) }.firstOrNull()?.requirement?.let { mutableListOf(it) } ?: mutableListOf(createRequitement("6\\."))
+    }
 
     private fun customScriptDescription(scriptContent: String?):String {
         if (scriptContent.isNullOrBlank()) {
@@ -71,4 +71,16 @@ class CSharpScriptRunType(
             }
         }
     }
+
+    companion object {
+        private fun createRequitement(vararg versions: String) =
+                Requirement(RequirementQualifier.EXISTS_QUALIFIER + "${DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME}(${versions.joinToString("|")})[\\d\\.]+${DotnetConstants.CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS)
+
+        private val Ranges = listOf(
+                VersionRange(Version(0).including() to Version(1, 0, 3).including(), createRequitement("6\\.")),
+                VersionRange(Version(1, 0, 3).excluding() to Version(Int.MAX_VALUE).including(), createRequitement("6\\.", "7\\."))
+        )
+    }
+
+    private data class VersionRange(val range: Range<Version>, val requirement: Requirement)
 }

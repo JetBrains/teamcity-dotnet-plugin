@@ -1,6 +1,6 @@
 package jetbrains.buildServer.script
 
-import jetbrains.buildServer.inspect.ToolVersionProvider
+import jetbrains.buildServer.ToolVersionProvider
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 

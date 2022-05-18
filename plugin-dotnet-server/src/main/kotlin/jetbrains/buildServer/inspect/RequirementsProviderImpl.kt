@@ -1,12 +1,8 @@
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.dotnet.Version
-import jetbrains.buildServer.inspect.CltConstants.CLT_PATH_PARAMETER
-import jetbrains.buildServer.inspect.CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID
+import jetbrains.buildServer.ToolVersionProvider
 import jetbrains.buildServer.inspect.CltConstants.RUNNER_SETTING_CLT_PLATFORM
 import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.serverSide.ProjectManager
-import jetbrains.buildServer.tools.ServerToolManager
 
 class RequirementsProviderImpl(
         private val _toolVersionProvider: ToolVersionProvider,
@@ -14,7 +10,7 @@ class RequirementsProviderImpl(
     : RequirementsProvider {
     override fun getRequirements(parameters: Map<String, String>): Collection<Requirement> =
             _requirementsResolver.resolve(
-                    _toolVersionProvider.getVersion(parameters),
+                    _toolVersionProvider.getVersion(parameters[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID),
                     getPlatform(parameters)
             ).toList()
 

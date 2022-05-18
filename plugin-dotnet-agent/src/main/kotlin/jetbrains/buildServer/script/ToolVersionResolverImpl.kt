@@ -9,16 +9,17 @@ import java.io.File
 import jetbrains.buildServer.including
 import jetbrains.buildServer.to
 
-class AnyVersionResolverImpl(
+class ToolVersionResolverImpl(
         private val _fileSystemService: FileSystemService,
         private val _runtimesProvider: DotnetRuntimesProvider,
         private val _virtualContext: VirtualContext)
-    : AnyVersionResolver {
+    : ToolVersionResolver {
     override fun resolve(toolPath: File): CsiTool {
-        var supportedRuntimes = getSupportedRuntimes(toolPath)
+        var supportedRuntimes = getSupportedRuntimes(toolPath).toList()
 
+        var tool: CsiTool?
         if(!_virtualContext.isVirtual) {
-            var runtimes = _runtimesProvider.getRuntimes().map { Version(it.version.major, it.version.minor) }.toList()
+            var runtimes = _runtimesProvider.getRuntimes().map { Version(it.version.major, it.version.minor) }.distinct().toList()
             supportedRuntimes =
                     supportedRuntimes
                     .filter {
@@ -28,11 +29,16 @@ class AnyVersionResolverImpl(
                         LOG.debug("Min version: $minVersion, Runtime range: ${runtimeRange}, Result: $result")
                         result
                     }
+
+            tool  = supportedRuntimes.maxByOrNull { it.runtimeVersion }
+        }
+        else {
+            // Should return .NET Runtime LTS version for docker 6.0.0, 8.0.0 etc. according to https://dotnet.microsoft.com/en-us/platform/support/policy
+            // or any newest available version
+            tool = supportedRuntimes.filter { it.runtimeVersion.major % 2 == 0 }.maxByOrNull { it.runtimeVersion } ?: supportedRuntimes.maxByOrNull { it.runtimeVersion }
         }
 
-        return supportedRuntimes
-                .maxByOrNull { it.runtimeVersion }
-                ?: throw RunBuildException("Cannot find a supported version of $RUNNER_DESCRIPTION.")
+        return tool ?: throw RunBuildException("Cannot find a supported version of $RUNNER_DESCRIPTION.")
     }
 
     private fun getSupportedRuntimes(toolsPath: File) =

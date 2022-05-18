@@ -1,15 +1,16 @@
-package jetbrains.buildServer.inspect
+package jetbrains.buildServer
 
 import jetbrains.buildServer.dotnet.Version
+import jetbrains.buildServer.inspect.CltConstants
 import jetbrains.buildServer.serverSide.ProjectManager
 import jetbrains.buildServer.tools.ServerToolManager
 
 class ToolVersionProviderImpl(
         private val _projectManager: ProjectManager,
         private val _toolManager: ServerToolManager) : ToolVersionProvider {
-    override fun getVersion(parameters: Map<String, String>) =
-            parameters[CltConstants.CLT_PATH_PARAMETER]?.let { path ->
-                _toolManager.findToolType(CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)?.let { toolType ->
+    override fun getVersion(toolPath: String?, toolTypeName: String) =
+            toolPath?.let { path ->
+                _toolManager.findToolType(toolTypeName)?.let { toolType ->
                     _toolManager.resolveToolVersionReference(toolType, path, _projectManager.rootProject)?.let { tool ->
                         Version.tryParse(tool.version)
                     }

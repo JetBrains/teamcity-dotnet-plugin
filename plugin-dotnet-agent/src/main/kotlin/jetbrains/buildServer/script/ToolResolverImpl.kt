@@ -9,7 +9,7 @@ import java.io.File
 class ToolResolverImpl(
         private val _parametersService: ParametersService,
         private val _fileSystemService: FileSystemService,
-        private val _versionResolver: AnyVersionResolver)
+        private val _versionResolver: ToolVersionResolver)
     : ToolResolver {
     override fun resolve(): CsiTool {
         var toolPath = _parametersService
@@ -24,24 +24,10 @@ class ToolResolverImpl(
         }
 
         if(_fileSystemService.isDirectory(toolPath)) {
-            val framework = _parametersService
-                    .tryGetParameter(ParameterType.Runner, ScriptConstants.FRAMEWORK)
-                    ?.let { Framework.tryParse(it) }
-                    ?: Framework.Any
-
-            LOG.debug("Framework: ${framework.tfm}")
-            val basePath: File
-            if(framework == Framework.Any) {
-                val tool = _versionResolver.resolve(toolPath)
-                basePath = tool.path
-                runtimeVersion = tool.runtimeVersion
-            } else {
-                basePath = File(toolPath, framework.tfm)
-                runtimeVersion = Version.parse(framework.runtimeVersion)
-            }
-
-            LOG.debug("Base path: $basePath")
-            toolPath = File(File(basePath, "any"), ToolExecutable)
+            val tool = _versionResolver.resolve(toolPath)
+            runtimeVersion = tool.runtimeVersion
+            LOG.debug("Base path: ${tool.path}")
+            toolPath = File(File(tool.path, "any"), ToolExecutable)
         }
 
         if(!_fileSystemService.isFile(toolPath)) {

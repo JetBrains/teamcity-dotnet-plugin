@@ -76,7 +76,7 @@
     <constructor-arg ref="resharperToolType"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.inspect.ToolVersionProviderImpl"/>
+  <bean class="jetbrains.buildServer.ToolVersionProviderImpl"/>
   <bean class="jetbrains.buildServer.inspect.RequirementsProviderImpl"/>
   <bean class="jetbrains.buildServer.inspect.InspectCodeRunTypePropertiesProcessor" id="inspectCodeRunTypePropertiesProcessor"/>
   <bean class="jetbrains.buildServer.inspect.DupFinderRunTypePropertiesProcessor" id="dupFinderRunTypePropertiesProcessor"/>
