@@ -47,7 +47,6 @@ class CSharpScriptRunType(
         }
 
     override fun getDefaultRunnerProperties() = emptyMap<String, String>()
-        //mapOf(ScriptConstants.FRAMEWORK to Framework.Any.tfm)
 
     override fun getType() = ScriptConstants.RUNNER_TYPE
 
