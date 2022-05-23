@@ -38,7 +38,12 @@ class ProgramCommandLineAdapter(
 
     override fun getEnvironment(): MutableMap<String, String> {
         val environmentVariables = _buildStepContext.runnerContext.buildParameters.environmentVariables.toMutableMap()
-        _commandLine.environmentVariables.forEach { environmentVariables[it.name] = it.value }
+        _commandLine.environmentVariables.forEach {
+            if (!environmentVariables.containsKey(it.name)) {
+                environmentVariables[it.name] = it.value
+            }
+        }
+
         if (_virtualContext.isVirtual && _commandLine.chain.any { it.target == TargetType.SystemDiagnostics }) {
             // Hides docker build log messages
             environmentVariables[ENV_DOCKER_QUIET_MODE] = "true";

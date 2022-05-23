@@ -50,7 +50,8 @@ class ProgramCommandLineAdapterTest {
     )
     private val _envVars = listOf(
             CommandLineEnvironmentVariable("Var1", "Val1"),
-            CommandLineEnvironmentVariable("Var 2", "Val 2")
+            CommandLineEnvironmentVariable("Var 2", "Val 2"),
+            CommandLineEnvironmentVariable("Var 3", "Val 3 new")
     )
     private val _commandLine = CommandLine(
             null,
