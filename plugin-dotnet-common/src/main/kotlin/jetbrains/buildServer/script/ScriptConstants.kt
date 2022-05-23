@@ -10,7 +10,6 @@ object ScriptConstants {
     const val SCRIPT_FILE = "scriptFile"
     const val ARGS = "scriptArgs"
     const val CLT_PATH = "csharpToolPath"
-    const val FRAMEWORK = "framework"
     const val NUGET_PACKAGE_SOURCES = "nuget.packageSources"
     const val TOOL_PATH = "scriptToolPath"
 

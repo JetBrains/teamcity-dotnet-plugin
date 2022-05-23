@@ -12,19 +12,6 @@
 
 <jsp:include page="/tools/editToolUsage.html?toolType=${propertyNames.cltToolTypeName}&versionParameterName=${propertyNames.cltPath}&class=longField"/>
 
-<%--<tr class="advancedSetting">
-  <th class="noBorder"><label for="${propertyNames.frameworkVersion}">Framework:</label></th>
-  <td>
-    <props:selectProperty name="${propertyNames.frameworkVersion}" enableFilter="true" className="mediumField">
-      <c:forEach var="item" items="${propertyNames.frameworkVersions}">
-        <props:option value="${item.tfm}"><c:out value="${item.description}"/></props:option>
-      </c:forEach>
-    </props:selectProperty>
-    <span class="error" id="error_${propertyNames.frameworkVersion}"></span>
-    <span class="smallNote" id="defaultNote_${propertyNames.frameworkVersion}">Select a version of .NET Framework.</span>
-  </td>
-</tr>--%>
-
 <props:selectSectionProperty name="${propertyNames.scriptType}" title="Script type:">
   <props:selectSectionPropertyContent value="${propertyNames.typeCustom}" caption="${propertyNames.typeCustomDescription}">
     <tr id="script.content.container">

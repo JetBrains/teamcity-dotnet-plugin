@@ -81,7 +81,7 @@ class ToolResolverTest {
                         DefaultBasePath.path,
                         null,
                         VirtualFileSystemService()
-                                .addFile(File(File(File(File(DefaultBasePath, "tools"), Framework.Net50.tfm), "any"), ToolResolverImpl.ToolExecutable)),
+                                .addFile(File(File(File(File(DefaultBasePath, "tools"), "net5.0"), "any"), ToolResolverImpl.ToolExecutable)),
                         DefaultBasePath,
                         null)
         )
