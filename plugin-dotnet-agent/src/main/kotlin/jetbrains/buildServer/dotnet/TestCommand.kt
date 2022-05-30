@@ -17,7 +17,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
@@ -30,10 +29,8 @@ class TestCommand(
         private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
         override val toolResolver: DotnetToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
-        private val _argumentsAlternative: ArgumentsAlternative,
-        private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
+        private val _dotnetFilterFactory: DotnetFilterFactory,
         private val _loggerService: LoggerService,
-        private val _testsFilterProvider: TestsFilterProvider,
         private val _targetTypeProvider: TargetTypeProvider,
         private val _targetArgumentsProvider: TargetArgumentsProvider)
     : DotnetCommandBase(_parametersService) {
@@ -45,27 +42,25 @@ class TestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        if(_splittedTestsFilterSettings.IsActive) {
+        val filter = _dotnetFilterFactory.createFilter(commandType);
+        if(filter.isSplitting) {
             _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
         }
 
-        _testsFilterProvider.filterExpression.let {
-            if (it.isNotBlank()) {
-                var filter = "\"$it\""
-                val hasAssembly = targetArguments.any { it.arguments.any { it.argumentType == CommandLineArgumentType.Target && isAssembly(it.value) }}
-                if (hasAssembly) {
-                    yield(CommandLineArgument("--filter"))
-                    yield(CommandLineArgument(filter))
-                }
-                else {
-                    yieldAll(
-                            _argumentsAlternative.select(
-                                    "Filter",
-                                    listOf(CommandLineArgument("--filter"), CommandLineArgument(filter)),
-                                    emptySequence(),
-                                    sequenceOf(MSBuildParameter("VSTestTestCaseFilter", filter)),
-                                    context.verbosityLevel)
-                    )
+        if (filter.filter.isNotBlank()) {
+            yield(CommandLineArgument("--filter"))
+            yield(CommandLineArgument(filter.filter))
+        }
+
+        if (filter.settingsFile != null) {
+            yield(CommandLineArgument("--settings"))
+            yield(CommandLineArgument(filter.settingsFile.path))
+        }
+        else {
+            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("--settings"))
+                    yield(CommandLineArgument(it))
                 }
             }
         }
@@ -80,13 +75,6 @@ class TestCommand(
         parameters(DotnetConstants.PARAM_CONFIG)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--configuration"))
-                yield(CommandLineArgument(it))
-            }
-        }
-
-        parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("--settings"))
                 yield(CommandLineArgument(it))
             }
         }

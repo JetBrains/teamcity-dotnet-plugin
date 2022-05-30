@@ -8,12 +8,8 @@ import jetbrains.buildServer.web.openapi.PluginDescriptor
 import org.jdom.JDOMException
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import org.w3c.dom.NodeList
 import java.io.File
 import java.io.IOException
-import java.net.URL
-import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 
 class ReSharperCmdToolProvider(
         private val _packageId: String,
@@ -84,18 +80,8 @@ class ReSharperCmdToolProvider(
         return result
     }
 
-    private fun getElements(doc: Document, xpath: String): Sequence<Element> = sequence {
-        val nodes = xPath.evaluate(xpath, doc, XPathConstants.NODESET) as NodeList
-        for (i in 0 until nodes.length) {
-            val element = nodes.item(i) as Element
-            yield(element)
-        }
-    }
-
     private fun getContents(doc: Document, xpath: String): Sequence<String> =
-            getElements(doc, xpath).map { it.textContent }.filter { !it.isNullOrBlank() }
-
-    private val xPath = XPathFactory.newInstance().newXPath()
+            doc.find<Element>(xpath).map { it.textContent }.filter { !it.isNullOrBlank() }
 
     companion object {
         private val LOG: Logger = Logger.getInstance(ReSharperCmdToolProvider::class.java.name)

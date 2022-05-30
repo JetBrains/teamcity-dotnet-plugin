@@ -30,9 +30,9 @@ class FileSystemServiceImpl: FileSystemService {
 
     override fun isAbsolute(file: File): Boolean = file.isAbsolute
 
-    override fun write(file: File, writer: (OutputStream) -> Unit) = FileOutputStream(file).use(writer)
+    override fun <T> write(file: File, writer: (OutputStream) -> T) = FileOutputStream(file).use(writer)
 
-    override fun read(file: File, reader: (InputStream) -> Unit) = FileInputStream(file).use(reader)
+    override fun <T> read(file: File, reader: (InputStream) -> T) = FileInputStream(file).use(reader)
 
     override fun readBytes(file: File, operations: Sequence<FileReadOperation>) = sequence<FileReadOperationResult> {
         RandomAccessFile(file, "r").use {

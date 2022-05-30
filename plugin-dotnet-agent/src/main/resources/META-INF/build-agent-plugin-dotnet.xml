@@ -79,7 +79,60 @@
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileAlternative"/>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromSystemSettings" id="testRunSettingsFileProviderFromSystemSettings"/>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromParams" id="testRunSettingsFileProviderFromParams"/>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromTestArgs" id="testRunSettingsFileProviderFromTestArgs"/>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromVSTestArgs">
+    <constructor-arg>
+      <list>
+        <value>\/settings</value>
+        <value>--settings</value>
+      </list>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <value type="jetbrains.buildServer.dotnet.DotnetCommandType">VSTest</value>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromPropertiesArgs">
+    <constructor-arg>
+      <list>
+        <value>\/property:VSTestSetting=</value>
+        <value>\/p:VSTestSetting=</value>
+        <value>-property:VSTestSetting=</value>
+        <value>-p:VSTestSetting=</value>
+      </list>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <value type="jetbrains.buildServer.dotnet.DotnetCommandType">VSTest</value>
+        <value type="jetbrains.buildServer.dotnet.DotnetCommandType">Test</value>
+        <value type="jetbrains.buildServer.dotnet.DotnetCommandType">MSBuild</value>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsExisting" id="testRunSettingsExisting">
+    <constructor-arg>
+      <list>
+        <ref bean="testRunSettingsFileProviderFromVSTestArgs"/>
+        <ref bean="testRunSettingsFileProviderFromTestArgs"/>
+        <ref bean="testRunSettingsFileProviderFromParams"/>
+        <ref bean="testRunSettingsFileProviderFromSystemSettings"/>
+        <ref bean="testRunSettingsFileProviderFromPropertiesArgs"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsForFilter" id="testRunSettingsForFilter">
+    <constructor-arg ref="testRunSettingsExisting"/>
+    <constructor-arg ref="composedTestsFilterProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileNameProviderGenerated" id="testRunSettingsFileNameProviderGenerated">
+    <constructor-arg ref="testRunSettingsForFilter"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetFilterFactoryImpl">
+    <constructor-arg ref="testRunSettingsFileNameProviderGenerated"/>
+  </bean>
 
   <bean class="jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner" id="stdDeepDotnetNugetCacheCleaner">
     <constructor-arg type="String" name="name" value="http-cache in user directory"/>

@@ -31,9 +31,7 @@ class VSTestCommand(
         private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
         private val _customArgumentsProvider: ArgumentsProvider,
         override val toolResolver: ToolResolver,
-        private val _argumentsAlternative: ArgumentsAlternative,
-        private val _testsFilterProvider: TestsFilterProvider,
-        private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
+        private val _dotnetFilterFactory: DotnetFilterFactory,
         private val _loggerService: LoggerService,
         private val _targetArgumentsProvider: TargetArgumentsProvider)
     : DotnetCommandBase(_parametersService) {
@@ -45,43 +43,37 @@ class VSTestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        if(_splittedTestsFilterSettings.IsActive) {
+        val filter = _dotnetFilterFactory.createFilter(commandType);
+        if (filter.isSplitting) {
             _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
         }
 
-        parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
-            if (it.isNotBlank()) {
-                yield(CommandLineArgument("/Settings:$it"))
+        if (filter.settingsFile != null) {
+            yield(CommandLineArgument("/Settings:${filter.settingsFile.path}"))
+        }
+        else {
+            parameters(DotnetConstants.PARAM_TEST_SETTINGS_FILE)?.trim()?.let {
+                if (it.isNotBlank()) {
+                    yield(CommandLineArgument("/Settings:$it"))
+                }
             }
         }
 
-        var filterArgs: MutableList<CommandLineArgument> = mutableListOf();
         if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "name") {
-            if(_splittedTestsFilterSettings.IsActive) {
+            if (filter.isSplitting) {
                 _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
             }
 
             parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {
                 if (it.isNotBlank()) {
-                    filterArgs.add(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
+                    yield(CommandLineArgument("/Tests:${StringUtil.split(it).joinToString(",")}"))
                 }
             }
         }
         else {
-            if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "filter" || _splittedTestsFilterSettings.IsActive) {
-                _testsFilterProvider.filterExpression.let {
-                    if (it.isNotBlank()) {
-                        filterArgs.add(CommandLineArgument("/TestCaseFilter:$it"))
-                    }
-                }
+            if (filter.filter.isNotBlank()) {
+                yield(CommandLineArgument("/TestCaseFilter:${filter.filter}"))
             }
-        }
-
-        if (context.toolVersion >= VersionSupportingArgFiles) {
-            yieldAll(_argumentsAlternative.select("Filter", filterArgs, filterArgs.asSequence(), emptySequence(), context.verbosityLevel))
-        }
-        else {
-            yieldAll(filterArgs)
         }
 
         parameters(DotnetConstants.PARAM_PLATFORM)?.trim()?.let {
@@ -106,9 +98,5 @@ class VSTestCommand(
 
         yieldAll(_vstestLoggerArgumentsProvider.getArguments(context))
         yieldAll(_customArgumentsProvider.getArguments(context))
-    }
-
-    companion object {
-        internal val VersionSupportingArgFiles = Version(2, 1)
     }
 }

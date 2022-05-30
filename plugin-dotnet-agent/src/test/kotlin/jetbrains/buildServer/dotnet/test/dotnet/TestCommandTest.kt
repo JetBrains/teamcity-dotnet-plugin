@@ -30,10 +30,8 @@ import java.io.File
 
 class TestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
-    @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
-    @MockK private lateinit var _splittedTestsFilterSettings: SplittedTestsFilterSettings
+    @MockK private lateinit var _dotnetFilterFactory: DotnetFilterFactory
     @MockK private lateinit var _loggerService: LoggerService
-    @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
     @MockK private lateinit var _targetTypeProvider: TargetTypeProvider
     @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
 
@@ -44,51 +42,45 @@ class TestCommandTest {
         every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
         every { _targetTypeProvider.getTargetType(any()) } answers { if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown }
         every { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
-        every { _splittedTestsFilterSettings.IsActive } returns false
     }
 
     @DataProvider
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        "",
+                        DotnetFilter("", null, false),
                         listOf("customArg1")),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                        "",
+                        DotnetFilter("", null, false),
                         listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
-                        "",
+                        DotnetFilter("", null, false),
                         listOf("--no-build", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
-                        "",
+                        DotnetFilter("", null, false),
                         listOf("--output", "out", "customArg1")),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
-                        "myFilter",
-                        listOf("@filterRsp", "customArg1")))
+                        DotnetFilter("myFilter", null, false),
+                        listOf("--filter", "myFilter", "customArg1")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
+                        DotnetFilter("myFilter", null, false),
+                        listOf("--filter", "myFilter", "--settings", "User.settings", "customArg1")),
+                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter"), Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
+                        DotnetFilter("myFilter", File("Abc.settings"), false),
+                        listOf("--filter", "myFilter", "--settings", "Abc.settings", "customArg1"))
+        )
     }
 
     @Test(dataProvider = "testTestArgumentsData")
     fun shouldGetArguments(
             parameters: Map<String, String>,
-            testsFilter: String,
+            filter: DotnetFilter,
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsFilterProvider.filterExpression } returns testsFilter
-        every {
-            _argumentsAlternative.select(
-                    "Filter",
-                    listOf(
-                            CommandLineArgument("--filter"),
-                            CommandLineArgument("\"$testsFilter\"")
-                    ),
-                    emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "\"$testsFilter\""))) },
-                    Verbosity.Detailed
-            )
-        } returns sequenceOf(CommandLineArgument("@filterRsp"))
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns filter
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
@@ -113,6 +105,7 @@ class TestCommandTest {
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -133,50 +126,13 @@ class TestCommandTest {
         Assert.assertEquals(actualCommand, DotnetCommandType.Test)
     }
 
-    @DataProvider
-    fun testFilterData(): Array<Array<Any>> {
-        return arrayOf(
-                arrayOf(listOf("my.csproj"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("@filterRsp", "customArg1")),
-                arrayOf(listOf("my.dll"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "\"myFilter\"", "customArg1")),
-                arrayOf(listOf("my.csproj", "abc/my.DlL"), mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")), listOf("--filter", "\"myFilter\"", "customArg1")))
-    }
-
-    @Test(dataProvider = "testFilterData")
-    fun shouldProvideFilter(
-            targets: List<String>,
-            parameters: Map<String, String>,
-            expectedArguments: List<String>) {
-        // Given
-        val command = createCommand(parameters = parameters, targets = targets.asSequence(), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsFilterProvider.filterExpression } returns "myFilter"
-        every {
-            _argumentsAlternative.select(
-                    "Filter",
-                    listOf(
-                            CommandLineArgument("--filter"),
-                            CommandLineArgument("\"myFilter\"")
-                    ),
-                    emptySequence(),
-                    match { it.toList().equals(listOf(MSBuildParameter("VSTestTestCaseFilter", "\"myFilter\""))) },
-                    Verbosity.Detailed
-            )
-        } returns sequenceOf(CommandLineArgument("@filterRsp"))
-
-        // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
-
-        // Then
-        Assert.assertEquals(actualArguments, expectedArguments)
-    }
-
     @Test
     fun shouldShowMessageWhenTestSpitting() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsFilterProvider.filterExpression } returns ""
 
         // When
-        every { _splittedTestsFilterSettings.IsActive } returns true
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, true)
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
@@ -187,9 +143,9 @@ class TestCommandTest {
     fun shouldNotShowMessageWhenNoTestSpitting() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsFilterProvider.filterExpression } returns ""
 
         // When
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
@@ -209,10 +165,8 @@ class TestCommandTest {
                 ArgumentsProviderStub(arguments),
                 ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
                 mockk<EnvironmentBuilder>(),
-                _argumentsAlternative,
-                _splittedTestsFilterSettings,
+                _dotnetFilterFactory,
                 _loggerService,
-                _testsFilterProvider,
                 _targetTypeProvider,
                 _targetArgumentsProvider)
     }
