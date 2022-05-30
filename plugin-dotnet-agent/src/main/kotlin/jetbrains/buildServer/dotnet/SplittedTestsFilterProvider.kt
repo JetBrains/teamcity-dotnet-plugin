@@ -42,8 +42,7 @@ class SplittedTestsFilterProvider(
                     return@let null
                 }
 
-                var filter: String = ""
-                _fileSystem.read(testsPartsFile) {
+                var filter = _fileSystem.read(testsPartsFile) {
                     input ->
                     BufferedReader(InputStreamReader(input)).use {
                         reader ->
@@ -54,10 +53,10 @@ class SplittedTestsFilterProvider(
                                 tests += line
                             }
                         }
-                        if (Mode == SplittedTestsFilterType.Includes) {
-                            filter = createClassFiltersFromLines(true, tests.asSequence()).joinToString(" | ")
+                        return@read if (Mode == SplittedTestsFilterType.Includes) {
+                            createClassFiltersFromLines(true, tests.asSequence()).joinToString(" | ")
                         } else {
-                            filter = createClassFiltersFromLines(false, tests.asSequence()).joinToString(" & ")
+                            createClassFiltersFromLines(false, tests.asSequence()).joinToString(" & ")
                         }
                     }
                 }

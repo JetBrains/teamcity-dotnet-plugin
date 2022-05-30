@@ -30,9 +30,9 @@ interface FileSystemService {
 
     fun isAbsolute(file: File): Boolean
 
-    fun write(file: File, writer: (OutputStream) -> Unit)
+    fun <T>write(file: File, writer: (OutputStream) -> T): T
 
-    fun read(file: File, reader: (InputStream) -> Unit)
+    fun <T>read(file: File, reader: (InputStream) -> T): T
 
     fun readBytes(file: File, operations: Sequence<FileReadOperation>): Sequence<FileReadOperationResult>
 

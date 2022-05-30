@@ -3,6 +3,23 @@ package jetbrains.buildServer
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
+
+inline fun <reified T: Node> NodeList.asSequence() = sequence {
+    for (i in 0 until this@asSequence.length) {
+        val node = this@asSequence.item(i)
+        if(node is T) {
+            yield(node)
+        }
+    }
+}
+
+inline fun <reified T: Node> Node.find(xpath: String) =
+        XPathFactory.newInstance().newXPath().evaluate(xpath, this, XPathConstants.NODESET).let {
+            if(it is NodeList) it.asSequence<T>() else emptySequence<T>()
+        }
 
 fun Node.build(elemen: E): Element {
     val owner = if(this is Document) this else this.ownerDocument!!

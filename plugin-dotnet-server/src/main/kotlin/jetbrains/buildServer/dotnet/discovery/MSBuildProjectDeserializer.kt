@@ -17,13 +17,11 @@
 package jetbrains.buildServer.dotnet.discovery
 
 import jetbrains.buildServer.XmlDocumentService
+import jetbrains.buildServer.find
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import org.w3c.dom.NodeList
 import java.util.regex.Pattern
 import java.util.regex.Pattern.CASE_INSENSITIVE
-import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 
 class MSBuildProjectDeserializer(
         private val _xmlDocumentService: XmlDocumentService) : SolutionDeserializer {
@@ -89,21 +87,11 @@ class MSBuildProjectDeserializer(
                 }
             } ?: Solution(emptyList())
 
-    private fun getElements(doc: Document, xpath: String): Sequence<Element> = sequence {
-        val nodes = xPath.evaluate(xpath, doc, XPathConstants.NODESET) as NodeList
-        for (i in 0 until nodes.length) {
-            val element = nodes.item(i) as Element
-            yield(element)
-        }
-    }
-
     private fun getContents(doc: Document, xpath: String): Sequence<String> =
-            getElements(doc, xpath).map { it.textContent }.filter { !it.isNullOrBlank() }
+            doc.find<Element>(xpath).map { it.textContent }.filter { !it.isNullOrBlank() }
 
     private fun getAttributes(doc: Document, xpath: String, attributeName: String): Sequence<String> =
-            getElements(doc, xpath).map { it.getAttribute(attributeName) }.filter { !it.isNullOrBlank() }
-
-    private val xPath = XPathFactory.newInstance().newXPath()
+            doc.find<Element>(xpath).map { it.getAttribute(attributeName) }.filter { !it.isNullOrBlank() }
 
     companion object {
         private val ConditionPattern: Regex = Regex("'\\$\\(Configuration\\)([^']*)' == '([^|]*)([^']*)'", RegexOption.IGNORE_CASE)

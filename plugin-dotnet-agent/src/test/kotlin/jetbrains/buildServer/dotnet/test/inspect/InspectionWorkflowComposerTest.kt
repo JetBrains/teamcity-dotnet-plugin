@@ -49,7 +49,7 @@ class InspectionWorkflowComposerTest {
         every { _pathsService.getPath(PathType.Checkout) } returns File(_workingDirectory.path)
         every { _buildInfo.runType } returns InspectionTool.Inspectcode.runnerType
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0)}
-        every { _fileSystemService.write(any(), any()) } answers { arg<(OutputStream) -> Unit>(1) (_outputStream) }
+        every { _fileSystemService.write<Unit>(any(), any()) } answers { arg<(OutputStream) -> Unit>(1) (_outputStream) }
         every { _configurationFile.create(any(), any(), any(), any()) } returns Unit
         every { _outputObserver.onNext(any()) } returns Unit
         every { _artifacts.publish(any(), any(), any()) } returns true

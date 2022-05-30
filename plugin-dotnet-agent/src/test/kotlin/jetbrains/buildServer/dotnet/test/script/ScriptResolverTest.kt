@@ -92,7 +92,7 @@ class ScriptResolverTest {
         var actualContent: String? = null
         every { _pathsService.getPath(PathType.AgentTemp) } returns tempDirectory
         every { _fileSystemService.generateTempFile(tempDirectory, "CSharpScript", ".csx") } returns _tempFile
-        every { _fileSystemService.write(_tempFile, any()) } answers {
+        every { _fileSystemService.write<Unit>(_tempFile, any()) } answers {
             val outputStream = PipedOutputStream()
             val inputStream = PipedInputStream()
             outputStream.connect(inputStream)

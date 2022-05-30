@@ -25,14 +25,13 @@ class VirtualFileSystemService : FileSystemService {
     private val _directories: MutableMap<File, DirectoryInfo> = mutableMapOf()
     private val _files: MutableMap<File, FileInfo> = mutableMapOf()
 
-    override fun write(file: File, writer: (OutputStream) -> Unit) {
+    override fun <T> write(file: File, writer: (OutputStream) -> T): T {
         addFile(file)
-        writer(_files[file]!!.outputStream)
+        return writer(_files[file]!!.outputStream)
     }
 
-    override fun read(file: File, reader: (InputStream) -> Unit) {
-        reader(_files[file]!!.inputStream)
-    }
+    override fun <T> read(file: File, reader: (InputStream) -> T) =
+            reader(_files[file]!!.inputStream)
 
     override fun readBytes(file: File, operations: Sequence<FileReadOperation>): Sequence<FileReadOperationResult> {
         TODO("Not yet implemented")

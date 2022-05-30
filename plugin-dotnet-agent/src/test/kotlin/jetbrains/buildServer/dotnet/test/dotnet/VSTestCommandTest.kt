@@ -30,12 +30,11 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class VSTestCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
-    @MockK private lateinit var _argumentsAlternative: ArgumentsAlternative
-    @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
-    @MockK private lateinit var _splittedTestsFilterSettings: SplittedTestsFilterSettings
+    @MockK private lateinit var _dotnetFilterFactory: DotnetFilterFactory
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
 
@@ -44,75 +43,58 @@ class VSTestCommandTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
-        every { _splittedTestsFilterSettings.IsActive } returns false
         every { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
     }
 
     @DataProvider
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(Version(1, 0),
-                        false,
-                        "",
+                arrayOf(DotnetFilter("", null, false),
                         mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("vstestlog", "customArg1")),
                 arrayOf(
-                        Version(1, 0),
-                        false,
-                        "myfilter",
-                        mapOf(
-                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                                DotnetConstants.PARAM_TEST_FILTER to "filter",
-                                DotnetConstants.PARAM_PLATFORM to "x86",
-                                DotnetConstants.PARAM_FRAMEWORK to "net45",
-                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
-                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
-                arrayOf(
-                        Version(1, 0),
-                        true,
-                        "myfilter",
-                        mapOf(
-                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                                DotnetConstants.PARAM_TEST_FILTER to "filter",
-                                DotnetConstants.PARAM_PLATFORM to "x86",
-                                DotnetConstants.PARAM_FRAMEWORK to "net45",
-                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
-                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
-                arrayOf(
-                        Version(1, 0),
-                        true,
-                        "myfilter",
-                        mapOf(
-                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
-                                DotnetConstants.PARAM_PLATFORM to "x86",
-                                DotnetConstants.PARAM_FRAMEWORK to "net45",
-                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
-                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
-                arrayOf(
-                        Version(2, 1),
-                        false,
-                        "myfilter",
+                        DotnetFilter("myfilter", null, false),
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                                 DotnetConstants.PARAM_TEST_FILTER to "filter",
                                 DotnetConstants.PARAM_PLATFORM to "x86",
                                 DotnetConstants.PARAM_FRAMEWORK to "net45"),
-                        listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
-                        Version(2, 1),
-                        false,
-                        "myfilter",
+                        DotnetFilter("myfilter", File("genConfig.txt"), false),
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45"),
+                        listOf("/Settings:genConfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        DotnetFilter("myfilter", File("genConfig.txt"), true),
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_TEST_FILTER to "filter",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45",
+                                DotnetConstants.PARAM_TEST_CASE_FILTER to "myfilterAbc"),
+                        listOf("/Settings:genConfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        DotnetFilter("myfilter", null, true),
+                        mapOf(
+                                DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
+                                DotnetConstants.PARAM_PLATFORM to "x86",
+                                DotnetConstants.PARAM_FRAMEWORK to "net45"),
+                        listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                arrayOf(
+                        DotnetFilter("Abc", null, false),
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                                 DotnetConstants.PARAM_TEST_FILTER to "name",
                                 DotnetConstants.PARAM_PLATFORM to "x86",
                                 DotnetConstants.PARAM_FRAMEWORK to "net45",
                                 DotnetConstants.PARAM_TEST_NAMES to "mynames"),
-                        listOf("/Settings:myconfig.txt", "@filterRsp", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
+                        listOf("/Settings:myconfig.txt", "/Tests:mynames", "/Platform:x86", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
-                        Version(1, 0),
-                        false,
-                        "myfilter",
+                        DotnetFilter("myfilter", null, false),
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                                 DotnetConstants.PARAM_TEST_FILTER to "filter",
@@ -120,9 +102,7 @@ class VSTestCommandTest {
                                 DotnetConstants.PARAM_FRAMEWORK to "net45"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Framework:net45", "vstestlog", "customArg1")),
                 arrayOf(
-                        Version(1, 0),
-                        false,
-                        "myfilter",
+                        DotnetFilter("myfilter", null, false),
                         mapOf(
                                 DotnetConstants.PARAM_TEST_SETTINGS_FILE to "myconfig.txt",
                                 DotnetConstants.PARAM_TEST_FILTER to "filter",
@@ -131,48 +111,25 @@ class VSTestCommandTest {
                                 DotnetConstants.PARAM_VSTEST_IN_ISOLATION to "true"),
                         listOf("/Settings:myconfig.txt", "/TestCaseFilter:myfilter", "/Platform:x64", "/Framework:net45", "/InIsolation", "vstestlog", "customArg1")),
                 arrayOf(
-                        Version(1, 0),
-                        false,
-                        "",
+                        DotnetFilter("", null, false),
                         mapOf(DotnetConstants.PARAM_PATHS to "my.dll",
                                 DotnetConstants.PARAM_TEST_FILTER to "name",
                                 DotnetConstants.PARAM_TEST_NAMES to "test1 test2; test3"),
-                        listOf("/Tests:test1,test2,test3", "vstestlog", "customArg1")))
+                        listOf("/Tests:test1,test2,test3", "vstestlog", "customArg1"))
+        )
     }
 
     @Test(dataProvider = "argumentsData")
     fun shouldGetArguments(
-            version: Version,
-            splitting: Boolean,
-            testsFilter: String,
+            filter: DotnetFilter,
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _splittedTestsFilterSettings.IsActive } returns splitting
-        every { _testsFilterProvider.filterExpression } returns testsFilter
-        every {
-            _argumentsAlternative.select(
-                    "Filter",
-                    listOf(CommandLineArgument("/TestCaseFilter:myfilter")),
-                    match { it.toList().equals(listOf(CommandLineArgument("/TestCaseFilter:myfilter"))) },
-                    emptySequence(),
-                    Verbosity.Detailed
-            )
-        } returns sequenceOf(CommandLineArgument("@filterRsp"))
-
-        every {
-            _argumentsAlternative.select(
-                    "Filter",
-                    listOf(CommandLineArgument("/Tests:mynames")),
-                    match { it.toList().equals(listOf(CommandLineArgument("/Tests:mynames"))) },
-                    emptySequence(),
-                    Verbosity.Detailed
-            )
-        } returns sequenceOf(CommandLineArgument("@filterRsp"))
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns filter
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, version, Verbosity.Detailed)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -191,6 +148,7 @@ class VSTestCommandTest {
     fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns DotnetFilter("", null, false)
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -234,21 +192,11 @@ class VSTestCommandTest {
                 DotnetConstants.PARAM_TEST_NAMES to "mynames")
 
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _loggerService.writeWarning(any()) } returns Unit
-        every { _testsFilterProvider.filterExpression } returns "myfilter"
-        every {
-            _argumentsAlternative.select(
-                    "Filter",
-                    listOf(CommandLineArgument("/Tests:mynames")),
-                    match { it.toList().equals(listOf(CommandLineArgument("/Tests:mynames"))) },
-                    emptySequence(),
-                    Verbosity.Detailed
-            )
-        } returns sequenceOf(CommandLineArgument("@filterRsp"))
 
         // When
-        every { _splittedTestsFilterSettings.IsActive } returns true
-        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1), Verbosity.Detailed)).map { it.value }.toList()
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns DotnetFilter("", null, true)
+        every { _loggerService.writeWarning(any()) } returns Unit
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         verify { _loggerService.writeWarning(any()) }
@@ -262,12 +210,11 @@ class VSTestCommandTest {
                 DotnetConstants.PARAM_PLATFORM to "x86",
                 DotnetConstants.PARAM_FRAMEWORK to "net45")
 
-        every { _testsFilterProvider.filterExpression } returns "myfilter"
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        every { _splittedTestsFilterSettings.IsActive } returns true
-        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns DotnetFilter("", null, true)
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         verify { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
@@ -284,7 +231,8 @@ class VSTestCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+        every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns DotnetFilter("", null, false)
+        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
@@ -302,9 +250,7 @@ class VSTestCommandTest {
                     ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
                     ArgumentsProviderStub(arguments),
                     ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer),
-                    _argumentsAlternative,
-                    _testsFilterProvider,
-                    _splittedTestsFilterSettings,
+                    _dotnetFilterFactory,
                     _loggerService,
                     _targetArgumentsProvider)
 }
