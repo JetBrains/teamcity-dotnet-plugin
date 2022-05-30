@@ -74,7 +74,7 @@ class DotnetWorkflowComposer(
                     virtualPath = virtualDotnetExecutable ?: virtualPath
 
                     val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, version ?: Version.Empty, verbosity)
-                    val args = dotnetBuildContext.command.getArguments(dotnetBuildContext).toList()
+                    val args = command.getArguments(dotnetBuildContext).toList()
                     val result = mutableSetOf<CommandResult>()
                     disposableOf(
                             // Subscribe command results observer

@@ -58,5 +58,5 @@ data class E(val name: String, val elements: Sequence<E?>, val value: String? = 
 }
 
 data class A(val name: String, val value: String?) {
-    override fun toString() = if(value == null) "$name='$value'" else ""
+    override fun toString() = if(value != null) "$name='$value'" else ""
 }
