@@ -29,7 +29,7 @@ class MSBuildCommand(
         override val toolResolver: ToolResolver,
         private val _vstestLoggerEnvironment: EnvironmentBuilder,
         private val _targetsParser: TargetsParser,
-        private val _testsFilterProvider: TestsFilterProvider,
+        private val _dotnetFilterFactory: DotnetFilterFactory,
         private val _responseFileFactory: ResponseFileFactory)
     : DotnetCommandBase(_parametersService) {
 
@@ -40,6 +40,8 @@ class MSBuildCommand(
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+        val filter = _dotnetFilterFactory.createFilter(commandType);
+
         parameters(DotnetConstants.PARAM_TARGETS)?.trim()?.let {
             val targets = _targetsParser.parse(it)
             if (targets.isNotBlank()) {
@@ -71,9 +73,19 @@ class MSBuildCommand(
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))
 
-        _testsFilterProvider.filterExpression.let {
-            if (it.isNotBlank()) {
-                val filterRespponseFile = _responseFileFactory.createResponeFile("Filter", emptySequence(), sequenceOf(MSBuildParameter("VSTestTestCaseFilter", it)), context.verbosityLevel)
+        if (filter.isSplitting)
+        {
+            val msBuldParams = mutableListOf<MSBuildParameter>()
+            if (filter.filter.isNotBlank()) {
+                msBuldParams.add(MSBuildParameter("VSTestTestCaseFilter", filter.filter))
+            }
+
+            if (filter.settingsFile != null) {
+                msBuldParams.add(MSBuildParameter("VSTestSetting", filter.settingsFile.path))
+            }
+
+            if (msBuldParams.any()) {
+                val filterRespponseFile = _responseFileFactory.createResponeFile("Filter", emptySequence(), msBuldParams.asSequence(), context.verbosityLevel)
                 yield(CommandLineArgument("@${filterRespponseFile.path}"))
             }
         }

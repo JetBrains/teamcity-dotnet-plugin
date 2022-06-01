@@ -30,11 +30,12 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class MSBuildCommandTest {
     @MockK private lateinit var _toolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _targetsParser: TargetsParser
-    @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
+    @MockK private lateinit var _filterFactory: DotnetFilterFactory
     @MockK private lateinit var _responseFileFactory: ResponseFileFactory
 
     @BeforeMethod
@@ -48,14 +49,18 @@ class MSBuildCommandTest {
     fun argumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        listOf("respArgs", "customArg1")),
+                        listOf("respArgs", "customArg1")
+                ),
                 arrayOf(mapOf(
                         Pair(DotnetConstants.PARAM_TARGETS, "restore build"),
                         Pair(DotnetConstants.PARAM_RUNTIME, "osx.10.11-x64"),
                         Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                        listOf("-t:restore;build", "-p:Configuration=Release", "-p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")),
+                        listOf("-t:restore;build", "-p:Configuration=Release", "-p:RuntimeIdentifiers=osx.10.11-x64", "respArgs", "customArg1")
+                ),
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_TARGETS, "clean restore build pack")),
-                        listOf("-t:clean;restore;build;pack", "respArgs", "customArg1")))
+                        listOf("-t:clean;restore;build;pack", "respArgs", "customArg1")
+                )
+        )
     }
 
     @Test(dataProvider = "argumentsData")
@@ -63,7 +68,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        every { _testsFilterProvider.filterExpression } returns ""
+        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", null, false)
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
@@ -71,6 +76,36 @@ class MSBuildCommandTest {
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
+    }
+
+    @Test
+    fun shouldSupportFilterArgWhenSplitting() {
+        // Given
+        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("myFilter", null, true)
+        val command = createCommand(parameters = mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
+        val filterRspPath = Path("1.rsp")
+        every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestTestCaseFilter", "myFilter").equals(it.singleOrNull()) }) } returns filterRspPath
+
+        // When
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+
+        // Then
+        Assert.assertEquals(actualArguments, listOf("respArgs", "@1.rsp", "customArg1"))
+    }
+
+    @Test
+    fun shouldSupportSettingsFileWhenSplitting() {
+        // Given
+        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", File("My.runsettings"), true)
+        val command = createCommand(parameters = mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
+        val filterRspPath = Path("1.rsp")
+        every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestSetting", "My.runsettings").equals(it.singleOrNull()) }) } returns filterRspPath
+
+        // When
+        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+
+        // Then
+        Assert.assertEquals(actualArguments, listOf("respArgs", "@1.rsp", "customArg1"))
     }
 
     @DataProvider
@@ -133,7 +168,7 @@ class MSBuildCommandTest {
                 ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
                 ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java),
                 _targetsParser,
-                _testsFilterProvider,
+                _filterFactory,
                 _responseFileFactory)
     }
 }
