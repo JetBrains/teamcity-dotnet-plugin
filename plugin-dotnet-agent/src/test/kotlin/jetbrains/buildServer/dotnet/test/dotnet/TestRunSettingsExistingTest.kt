@@ -14,6 +14,7 @@ import jetbrains.buildServer.dotnet.TestRunSettingsFileProvider
 import jetbrains.buildServer.dotnet.TestRunSettingsProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import org.w3c.dom.Document
 import java.io.File
@@ -25,18 +26,19 @@ class TestRunSettingsExistingTest {
     private val _settingsFile11 = File("1.settings")
     private val _settingsFile1 = File("WD", "1.settings")
     private val _settingsFile2 = File("2.settings")
+    private val _documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val _settings1 = _documentBuilder.newDocument()
+    private val _settings2 = _documentBuilder.newDocument()
+    private val _newSettings = _documentBuilder.newDocument()
     @MockK private lateinit var _fileSystem: FileSystemService
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _deserializer: Deserializer<Document>
     @MockK private lateinit var _xmlDocumentService: XmlDocumentService
     @MockK private lateinit var _testRunSettingsFileProvider1: TestRunSettingsFileProvider
     @MockK private lateinit var _testRunSettingsFileProvider2: TestRunSettingsFileProvider
-    private lateinit var _fileProviders: List<TestRunSettingsFileProvider>
     @MockK private lateinit var _inputStream1: InputStream
     @MockK private lateinit var _inputStream2: InputStream
-    @MockK private lateinit var _settings1: Document
-    @MockK private lateinit var _settings2: Document
-    @MockK private lateinit var _newSettings: Document
+    private lateinit var _fileProviders: List<TestRunSettingsFileProvider>
 
     @BeforeMethod
     fun setUp() {
