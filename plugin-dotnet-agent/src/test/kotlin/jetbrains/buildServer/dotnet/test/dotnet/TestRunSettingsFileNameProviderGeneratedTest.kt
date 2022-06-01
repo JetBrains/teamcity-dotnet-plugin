@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathsService
@@ -10,18 +11,22 @@ import jetbrains.buildServer.dotnet.TestRunSettingsFileNameProviderGenerated
 import jetbrains.buildServer.dotnet.TestRunSettingsProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import org.w3c.dom.Document
 import java.io.File
 import java.io.OutputStream
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 
 class TestRunSettingsFileNameProviderGeneratedTest {
+    private val _documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val _settings = _documentBuilder.newDocument()
     @MockK private lateinit var _settingsProvider: TestRunSettingsProvider
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystem: FileSystemService
     @MockK private lateinit var _serializer: Serializer<Document>
-    @MockK private lateinit var _settings: Document
 
     @BeforeMethod
     fun setUp() {
@@ -44,7 +49,6 @@ class TestRunSettingsFileNameProviderGeneratedTest {
             settingsFile
         }
         every { _serializer.serialize(_settings, outputStream) } returns Unit
-
         val actualFile = provider.tryGet(DotnetCommandType.Test)
 
         // Then
