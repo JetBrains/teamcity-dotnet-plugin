@@ -71,7 +71,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         EnumSet.of(TestReportingMode.MultiAdapterPath_5_0_103),
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", ".;v_" + "${File("loggerPath").canonicalPath}"),
+                                MSBuildParameter("VSTestTestAdapterPath", ".%3Bv_" + "${File("loggerPath").canonicalPath}"),
                                 MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
 
                 // Reporting is off
