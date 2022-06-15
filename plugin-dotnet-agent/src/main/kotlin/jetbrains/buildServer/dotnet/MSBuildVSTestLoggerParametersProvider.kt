@@ -38,7 +38,7 @@ class MSBuildVSTestLoggerParametersProvider(
             yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
             var paths = _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)
             if (testReportingMode.contains(TestReportingMode.MultiAdapterPath_5_0_103)) {
-                paths = ".;${_virtualContext.resolvePath(it.canonicalPath)}"
+                paths = ".%3B${_virtualContext.resolvePath(it.canonicalPath)}"
             } else {
                 if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
                     paths = "${_virtualContext.resolvePath(it.canonicalPath)};."
