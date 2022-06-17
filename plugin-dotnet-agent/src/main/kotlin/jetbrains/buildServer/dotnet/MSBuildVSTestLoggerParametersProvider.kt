@@ -19,6 +19,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import java.util.*
 
 class MSBuildVSTestLoggerParametersProvider(
         private val _pathsService: PathsService,
@@ -35,19 +36,19 @@ class MSBuildVSTestLoggerParametersProvider(
         }
 
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
-            yield(MSBuildParameter("VSTestLogger", "logger://teamcity"))
+            yield(MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined))
             var paths = _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)
             if (testReportingMode.contains(TestReportingMode.MultiAdapterPath_5_0_103)) {
-                paths = ".%3B${_virtualContext.resolvePath(it.canonicalPath)}"
+                paths = ".;${_virtualContext.resolvePath(it.canonicalPath)}"
             } else {
                 if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
                     paths = "${_virtualContext.resolvePath(it.canonicalPath)};."
                 }
             }
 
-            yield(MSBuildParameter("VSTestTestAdapterPath", paths))
+            yield(MSBuildParameter("VSTestTestAdapterPath", paths, MSBuildParameterType.Predefined))
         }
 
-        yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.toLowerCase()))
+        yield(MSBuildParameter("VSTestVerbosity", _loggerParameters.vsTestVerbosity.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))
     }
 }

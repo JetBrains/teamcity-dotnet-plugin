@@ -52,27 +52,27 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         File("loggerPath", "vstestlogger.dll") as File?,
                         EnumSet.of(TestReportingMode.On),
                         listOf(
-                                MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", "v_" + File("checkoutDir").canonicalPath),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
+                                MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestTestAdapterPath", "v_" + File("checkoutDir").canonicalPath, MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
 
                 // Supports mult VSTestTestAdapterPath (.NET Core SDK 2.1.102)
                 arrayOf(
                         File("loggerPath", "vstestlogger.dll") as File?,
                         EnumSet.of(TestReportingMode.MultiAdapterPath),
                         listOf(
-                                MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", "v_" + "${File("loggerPath").canonicalPath};."),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
+                                MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestTestAdapterPath", "v_" + "${File("loggerPath").canonicalPath};.", MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
 
                 // Supports mult VSTestTestAdapterPath (.NET SDK 5.0.103)
                 arrayOf(
                         File("loggerPath", "vstestlogger.dll") as File?,
                         EnumSet.of(TestReportingMode.MultiAdapterPath_5_0_103),
                         listOf(
-                                MSBuildParameter("VSTestLogger", "logger://teamcity"),
-                                MSBuildParameter("VSTestTestAdapterPath", ".%3Bv_" + "${File("loggerPath").canonicalPath}"),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.toLowerCase()))),
+                                MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestTestAdapterPath", ".;v_" + "${File("loggerPath").canonicalPath}", MSBuildParameterType.Predefined),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
 
                 // Reporting is off
                 arrayOf(

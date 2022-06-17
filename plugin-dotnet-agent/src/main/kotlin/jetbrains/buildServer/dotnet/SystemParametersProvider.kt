@@ -27,8 +27,18 @@ class SystemParametersProvider(
     override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {
         for (paramName in _parametersService.getParameterNames(ParameterType.System)) {
             _parametersService.tryGetParameter(ParameterType.System, paramName)?.let {
-                yield(MSBuildParameter(paramName, _virtualContext.resolvePath(it)))
+                yield(MSBuildParameter(paramName, _virtualContext.resolvePath(it), getType(paramName)))
             }
         }
     }
+
+    private fun getType(paramName: String) =
+        when {
+            paramName.startsWith("teamcity.", true) -> MSBuildParameterType.Predefined
+            paramName == "agent.home.dir" -> MSBuildParameterType.Predefined
+            paramName == "agent.name" -> MSBuildParameterType.Predefined
+            paramName == "agent.work.dir" -> MSBuildParameterType.Predefined
+            paramName == "build.number" -> MSBuildParameterType.Predefined
+            else -> MSBuildParameterType.Unknown
+        }
 }

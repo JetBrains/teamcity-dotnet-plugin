@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.dotnet.MSBuildParameter
 import jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl
+import jetbrains.buildServer.dotnet.MSBuildParameterType
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -57,36 +58,44 @@ class MSBuildParameterConverterTest {
     fun valueCases(): Array<Array<Any>> {
         return arrayOf(
                 // escaped
-                arrayOf("!@#\$%^&*()_+~1234-=/;'][{}\":<>,.?/??~`", "\"!@#$%^&*()_+~1234-=/;'][{}\\\":<>,.?/??~`\""),
-                arrayOf("value 123", "\"value 123\""),
-                arrayOf("value123\\", "value123\\\\"),
-                arrayOf("value 123\\", "\"value 123\\\\\""),
-                arrayOf("value 123\\ ", "\"value 123\\ \""),
-                arrayOf("value123\\a", "value123\\a"),
-                arrayOf("value 123\\a", "\"value 123\\a\""),
-                arrayOf("value 123  \\a", "\"value 123  \\a\""),
-                arrayOf("value \" 123", "\"value \\\" 123\""),
-                arrayOf("value \"\" 123", "\"value \\\"\\\" 123\""),
-                arrayOf("value \" \" 123", "\"value \\\" \\\" 123\""),
-                arrayOf("value1 \n value2", "\"value1 %0A value2\""),
-                arrayOf("value1\rvalue2", "value1%0Dvalue2"),
-                arrayOf("value1 \t value2", "\"value1 %09 value2\""),
-                arrayOf("value1 \b value2", "\"value1 %08 value2\""),
+                arrayOf("value 123", MSBuildParameterType.Unknown, "\"value 123\""),
+                arrayOf("value123\\", MSBuildParameterType.Unknown, "value123\\\\"),
+                arrayOf("value 123\\", MSBuildParameterType.Unknown, "\"value 123\\\\\""),
+                arrayOf("value 123\\ ", MSBuildParameterType.Unknown, "\"value 123\\ \""),
+                arrayOf("value123\\a", MSBuildParameterType.Unknown, "value123\\a"),
+                arrayOf("value 123\\a", MSBuildParameterType.Unknown, "\"value 123\\a\""),
+                arrayOf("value 123  \\a", MSBuildParameterType.Unknown, "\"value 123  \\a\""),
+                arrayOf("value \" 123", MSBuildParameterType.Unknown, "\"value \\\" 123\""),
+                arrayOf("value \"\" 123", MSBuildParameterType.Unknown, "\"value \\\"\\\" 123\""),
+                arrayOf("value \" \" 123", MSBuildParameterType.Unknown, "\"value \\\" \\\" 123\""),
+                arrayOf("value1 \n value2", MSBuildParameterType.Unknown, "\"value1 %0A value2\""),
+                arrayOf("value1\rvalue2", MSBuildParameterType.Unknown, "\"value1%0Dvalue2\""),
+                arrayOf("value1 \t value2", MSBuildParameterType.Unknown, "\"value1 %09 value2\""),
+                arrayOf("value1 \b value2", MSBuildParameterType.Unknown, "\"value1 %08 value2\""),
+                arrayOf("value1 , value2", MSBuildParameterType.Unknown, "\"value1 , value2\""),
+                arrayOf("value1 , value2", MSBuildParameterType.Predefined, "\"value1 %2C value2\""),
 
                 // should not escape `;` for response files and should wrap a parameter by double quotes in this case https://github.com/JetBrains/teamcity-dotnet-plugin/issues/144
-                arrayOf("Value;123", "\"Value;123\"")
+                arrayOf("Value;123", MSBuildParameterType.Unknown, "\"Value;123\""),
+                arrayOf("!@#\$%^&*()_+~1234-=/;'][{}\":<>,.?/??~`", MSBuildParameterType.Unknown, "\"!@#$%^&*()_+~1234-=/;'][{}\\\":<>,.?/??~`\""),
+
+                // should  escape nod digits and non letters when predefined
+                arrayOf("Value;123", MSBuildParameterType.Predefined, "\"Value%3B123\""),
+                arrayOf("Value,123", MSBuildParameterType.Predefined, "\"Value%2C123\""),
+                arrayOf("!@#\$%^&*()_+~1234-=/;'][{}\":<>,.?/~`", MSBuildParameterType.Predefined, "\"%21%40%23%24%%5E%26%2A()_%2B%7E1234-%3D/%3B%27%5D%5B%7B%7D\\\":%3C%3E%2C.%3F/%7E%60\"")
         )
     }
 
     @Test(dataProvider = "valueCases")
     fun shouldNormalizeValue(
             value: String,
+            parameterType: MSBuildParameterType,
             expectedValue: String) {
         // Given
         val converter = MSBuildParameterConverterImpl()
 
         // When
-        val actualValue = converter.normalizeValue(value)
+        val actualValue = converter.normalizeValue(value) { char -> MSBuildParameterConverterImpl.shouledBeEscaped(parameterType, char) }
 
         // Then
         Assert.assertEquals(actualValue, expectedValue)

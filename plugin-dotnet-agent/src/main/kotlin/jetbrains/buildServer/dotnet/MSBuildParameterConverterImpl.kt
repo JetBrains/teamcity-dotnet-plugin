@@ -3,9 +3,14 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.util.StringUtil
 
 class MSBuildParameterConverterImpl : MSBuildParameterConverter {
-    override fun convert(parameters: Sequence<MSBuildParameter>) = parameters
-            .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
-            .map { "-p:${normalizeName(it.name)}=${normalizeValue(it.value)}" }
+    override fun convert(parameters: Sequence<MSBuildParameter>) =
+            parameters
+                    .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
+                    .map { parameter ->
+                        val normalizedName = normalizeName(parameter.name)
+                        val normalizedValue = normalizeValue(parameter.value) { shouledBeEscaped(parameter.type, it) }
+                        "-p:${normalizedName}=${normalizedValue}"
+                    }
 
     fun normalizeName(name: String) =
             String(
@@ -14,9 +19,9 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
                 }.toCharArray()
             )
 
-    fun normalizeValue(value: String): String {
-        val str = String(escapeSymbols(value.asSequence()).toList().toCharArray())
-        if (str.isBlank() || SpecialCharacters.any { value.contains(it)}) {
+    fun normalizeValue(value: String, shouledBeEscaped: (Char) -> Boolean): String {
+        val str = String(escapeSymbols(value.asSequence(), shouledBeEscaped).toList().toCharArray())
+        if (str.isBlank() || SpecialCharacters.any { str.contains(it)}) {
             return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
 
@@ -35,7 +40,7 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         (c == '_') ||
         (c == '-')
 
-    private fun escapeSymbols(chars: Sequence<Char>): Sequence<Char> = sequence {
+    private fun escapeSymbols(chars: Sequence<Char>, shouledBeEscaped: (Char) -> Boolean): Sequence<Char> = sequence {
         var lastIsSlash = false
         for (char in chars) {
             lastIsSlash = false
@@ -50,18 +55,7 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
                     yield('"')
                 }
 
-                char == ' ' -> {
-                    yield(' ')
-                }
-
-                // invisible
-                char.isISOControl() -> {
-                    yield('%')
-                    for (c in String.format("%02X", char.toByte())) {
-                        yield(c)
-                    }
-                }
-
+                shouledBeEscaped(char) -> yieldAll(escape(char))
                 else -> yield(char)
             }
         }
@@ -72,7 +66,36 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
         }
     }
 
+    fun escape(char: Char) = sequence {
+        yield('%')
+        for (c in String.format("%02X", char.code.toByte())) {
+            yield(c)
+        }
+    }
+
     companion object {
         private val SpecialCharacters = hashSetOf(' ', '%', ';')
+
+        internal fun shouledBeEscaped(parameterType: MSBuildParameterType, char: Char) =
+                when {
+                    // invisible
+                    char.isISOControl() -> true
+                    // predefined parameters
+                    parameterType == MSBuildParameterType.Predefined -> when {
+                        char.isLetterOrDigit() -> false
+                        char == ' ' -> false
+                        char == '\\' -> false
+                        char == '/' -> false
+                        char == '.' -> false
+                        char == '-' -> false
+                        char == '_' -> false
+                        char == '%' -> false
+                        char == ':' -> false
+                        char == ')' -> false
+                        char == '(' -> false
+                        else -> true
+                    }
+                    else -> false
+                }
     }
 }
