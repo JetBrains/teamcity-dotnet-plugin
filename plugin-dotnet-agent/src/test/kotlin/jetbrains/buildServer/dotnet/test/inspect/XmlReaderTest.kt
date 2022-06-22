@@ -7,25 +7,16 @@ import org.testng.Assert
 import org.testng.annotations.Test
 import java.io.File
 import java.io.FileInputStream
-import javax.xml.stream.XMLInputFactory
 
 class XmlReaderTest {
     @Test
     fun shouldConvertToFlatSequency() {
         // Given
-        var actualResult: List<E>? = null
         val xmlReader = XmlReaderImpl()
         var xmlFile = File(JsonParserTest::class.java.classLoader.getResource("sample.xml")!!.file)
-        FileInputStream(xmlFile).use {
-            val xmlInFact = XMLInputFactory.newInstance()
-            val reader = xmlInFact.createXMLStreamReader(it)
-            try {
-                // When
-                actualResult = xmlReader.read(it).toList()
-            } finally {
-                reader.close()
-            }
-        }
+
+        // When
+        var actualResult = FileInputStream(xmlFile).use { xmlReader.read(it).toList() }
 
         // Then
         Assert.assertEquals(
