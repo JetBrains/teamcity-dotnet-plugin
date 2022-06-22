@@ -57,7 +57,7 @@ class SplittedTestsFilterProviderTest {
                                         """.trimIndent()
                                         )
                                 ),
-                        "FullyQualifiedName!~Abc"
+                        "FullyQualifiedName!~Abc."
                 ),
                 arrayOf(
                         "2",
@@ -87,7 +87,7 @@ class SplittedTestsFilterProviderTest {
                                         """.trimIndent()
                                         )
                                 ),
-                        "FullyQualifiedName~Cba"
+                        "FullyQualifiedName~Cba."
                 ),
                 arrayOf(
                         "1",
@@ -122,7 +122,7 @@ class SplittedTestsFilterProviderTest {
                                             Xyz
                                         """.trimIndent()
                                         )),
-                        "FullyQualifiedName!~Cba & FullyQualifiedName!~Zyx"
+                        "FullyQualifiedName!~Cba. & FullyQualifiedName!~Zyx."
                 ),
                 arrayOf(
                         "2",
@@ -157,7 +157,7 @@ class SplittedTestsFilterProviderTest {
                                             Xyz
                                         """.trimIndent()
                                         )),
-                        "FullyQualifiedName~Abc | FullyQualifiedName~Xyz"
+                        "FullyQualifiedName~Abc. | FullyQualifiedName~Xyz."
                 ),
                 arrayOf(
                         "1",
