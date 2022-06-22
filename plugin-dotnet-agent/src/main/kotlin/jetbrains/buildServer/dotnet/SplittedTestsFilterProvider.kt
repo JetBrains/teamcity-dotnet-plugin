@@ -76,7 +76,7 @@ class SplittedTestsFilterProvider(
                             false -> "!~"
                         }
 
-                        "FullyQualifiedName${operation}$it"
+                        "FullyQualifiedName${operation}$it."
                     }
                     .filterNotNull()
 
