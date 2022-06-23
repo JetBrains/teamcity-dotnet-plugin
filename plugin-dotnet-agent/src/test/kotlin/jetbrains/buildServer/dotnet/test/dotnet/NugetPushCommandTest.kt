@@ -19,10 +19,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandResultEvent
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.rx.Observer
@@ -51,23 +48,41 @@ class NugetPushCommandTest {
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_API_KEY to "key",
                         DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
+                        Version.Empty,
                         listOf("--api-key", "key", "--source", "http://jb.com", "--force-english-output", "customArg1")),
                 arrayOf(mapOf(
                         DotnetConstants.PARAM_PATHS to "package.nupkg",
                         DotnetConstants.PARAM_NUGET_NO_SYMBOLS to "true"),
-                        listOf("--no-symbols", "true", "--force-english-output", "customArg1"))
+                        Version(6, 0, 100),
+                        listOf("--no-symbols", "true", "--force-english-output", "customArg1")),
+                arrayOf(mapOf(
+                    DotnetConstants.PARAM_PATHS to "package.nupkg",
+                    DotnetConstants.PARAM_NUGET_NO_SYMBOLS to "true"),
+                    Version.NoArgsForNuGetPushNoSymbolsParameterVersion,
+                    listOf("--no-symbols", "--force-english-output", "customArg1"))
         )
     }
 
     @Test(dataProvider = "testNugetPushArgumentsData")
     fun shouldGetArguments(
-            parameters: Map<String, String>,
-            expectedArguments: List<String>) {
+        parameters: Map<String, String>,
+        toolVersion: Version,
+        expectedArguments: List<String>
+    ) {
         // Given
-        val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        val command = createCommand(
+            parameters = parameters,
+            targets = sequenceOf("my.csproj"),
+            arguments = sequenceOf(CommandLineArgument("customArg1"))
+        )
+        val context = DotnetBuildContext(
+            workingDirectory = ToolPath(Path("wd")),
+            command = command,
+            toolVersion = toolVersion
+        )
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(context).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)

@@ -19,6 +19,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.CommandResultEvent
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Observer
 
@@ -54,13 +55,14 @@ class NugetPushCommand(
 
         if (parameters(DotnetConstants.PARAM_NUGET_NO_SYMBOLS, "").trim().toBoolean()) {
             yield(CommandLineArgument("--no-symbols"))
-            yield(CommandLineArgument("true"))
+
+            if (context.toolVersion < Version.NoArgsForNuGetPushNoSymbolsParameterVersion) {
+                yield(CommandLineArgument("true"))
+            }
         }
 
         yield(CommandLineArgument("--force-english-output", CommandLineArgumentType.Infrastructural))
 
         yieldAll(_customArgumentsProvider.getArguments(context))
     }
-
-
 }
