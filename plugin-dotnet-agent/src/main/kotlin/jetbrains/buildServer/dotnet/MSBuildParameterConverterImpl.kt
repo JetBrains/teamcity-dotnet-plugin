@@ -50,11 +50,6 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
                     lastIsSlash = true
                 }
 
-                char == '"' -> {
-                    yield('\\')
-                    yield('"')
-                }
-
                 shouledBeEscaped(char) -> yieldAll(escape(char))
                 else -> yield(char)
             }
@@ -95,6 +90,7 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
                         char == '(' -> false
                         else -> true
                     }
+                    char == '"' -> true
                     else -> false
                 }
     }
