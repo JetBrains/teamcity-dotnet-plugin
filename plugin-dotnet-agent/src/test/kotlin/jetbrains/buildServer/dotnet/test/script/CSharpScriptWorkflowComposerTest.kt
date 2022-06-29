@@ -2,11 +2,9 @@ package jetbrains.buildServer.dotnet.test.script
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.BuildInfo
-import jetbrains.buildServer.agent.runner.BuildOptions
-import jetbrains.buildServer.agent.runner.Workflow
-import jetbrains.buildServer.agent.runner.WorkflowContext
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.script.CSharpScriptWorkflowComposer
@@ -22,6 +20,7 @@ class CSharpScriptWorkflowComposerTest {
     @MockK private lateinit var _commandLineFactory: CommandLineFactory
     @MockK private lateinit var _context: WorkflowContext
     @MockK private lateinit var _buildOptions: BuildOptions
+    @MockK private lateinit var _loggerService: LoggerService
     private val _events = mutableListOf<CommandResultEvent>()
 
     @BeforeMethod
@@ -30,8 +29,6 @@ class CSharpScriptWorkflowComposerTest {
         clearAllMocks()
 
         every { _buildOptions.failBuildOnExitCode } returns true
-        every { _context.abort(BuildFinishedStatus.FINISHED_FAILED) } returns Unit
-
         every { _context.subscribe(any()) } answers {
             val observer = arg<Observer<CommandResultEvent>>(0)
             for (e in _events) {
@@ -72,24 +69,25 @@ class CSharpScriptWorkflowComposerTest {
     }
 
     @Test
-    fun shouldAbortWhenExitCodeIsNotZero() {
+    fun shouldSendBuildProblemWhenExitCodeIsNotZero() {
         // Given
         val composer = createInstance()
         every { _buildInfo.runType } returns ScriptConstants.RUNNER_TYPE
         val commandLine = CommandLine(null, TargetType.Tool, Path("Abc"), Path("Wd"))
         every { _commandLineFactory.create() } returns commandLine
+        every{ _loggerService.writeBuildProblem(any(), any(), any()) } returns Unit
 
         // When
-        _events.add(CommandResultExitCode(1, commandLine.Id))
+        _events.add(CommandResultExitCode(33, commandLine.Id))
         val actualWorkflow = composer.compose(_context, Unit, Workflow())
 
         // Then
         Assert.assertEquals(actualWorkflow.commandLines.single(), commandLine)
-        verify{ _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
+        verify{ _loggerService.writeBuildProblem("csi_exit_code33", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code 33") }
     }
 
     @Test
-    fun shouldNotAbortWhenExitCodeIsNotZeroButFailBuildOnExitCodeIsFalse() {
+    fun shouldNotSendBuildProblemWhenExitCodeIsNotZeroButFailBuildOnExitCodeIsFalse() {
         // Given
         val composer = createInstance()
         every { _buildInfo.runType } returns ScriptConstants.RUNNER_TYPE
@@ -97,14 +95,14 @@ class CSharpScriptWorkflowComposerTest {
         every { _commandLineFactory.create() } returns commandLine
 
         // When
-        _events.add(CommandResultExitCode(1, commandLine.Id))
+        _events.add(CommandResultExitCode(33, commandLine.Id))
         every { _buildOptions.failBuildOnExitCode } returns false
         val actualWorkflow = composer.compose(_context, Unit, Workflow())
 
         // Then
         Assert.assertEquals(actualWorkflow.commandLines.single(), commandLine)
-        verify(exactly = 0){ _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
+        verify(exactly = 0){ _loggerService.writeBuildProblem(any(), any(), any()) }
     }
 
-    private fun createInstance() = CSharpScriptWorkflowComposer(_buildInfo, _commandLineFactory, _buildOptions)
+    private fun createInstance() = CSharpScriptWorkflowComposer(_buildInfo, _commandLineFactory, _buildOptions, _loggerService)
 }

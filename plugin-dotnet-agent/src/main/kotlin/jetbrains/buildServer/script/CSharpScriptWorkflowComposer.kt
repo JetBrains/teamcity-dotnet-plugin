@@ -1,18 +1,18 @@
 package jetbrains.buildServer.script
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.inspect.InspectionArguments
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.filter
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
-import jetbrains.buildServer.util.OSType
 
 class CSharpScriptWorkflowComposer(
         private val _buildInfo: BuildInfo,
         private val _commandLineFactory: CommandLineFactory,
-        private val _buildOptions: BuildOptions)
+        private val _buildOptions: BuildOptions,
+        private val _loggerService: LoggerService)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -24,16 +24,16 @@ class CSharpScriptWorkflowComposer(
             }
 
     private fun createCommandLines(context: WorkflowContext) = sequence<CommandLine> {
-        var hasErrors = false;
+        var exitCode = 0;
         val commandLine = _commandLineFactory.create()
         disposableOf(
-                context.filter { it.SourceId == commandLine.Id }.toExitCodes().subscribe { hasErrors = it != 0; }
+                context.filter { it.SourceId == commandLine.Id }.toExitCodes().subscribe { exitCode = it; }
         ).use {
             yield(commandLine)
         }
 
-        if (_buildOptions.failBuildOnExitCode && hasErrors) {
-            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+        if (exitCode != 0 && _buildOptions.failBuildOnExitCode) {
+            _loggerService.writeBuildProblem("csi_exit_code$exitCode", BuildProblemData.TC_EXIT_CODE_TYPE, "Process exited with code $exitCode")
         }
     }
 }
