@@ -7,7 +7,6 @@ import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
-import java.util.*
 
 class InspectCodeRunType(
         runTypeRegistry: RunTypeRegistry,
@@ -63,5 +62,9 @@ class InspectCodeRunType(
         }
 
         return requirements
+    }
+
+    override fun getTags(): MutableSet<String> {
+        return mutableSetOf(".NET", "code analysis", "ReSharper")
     }
 }

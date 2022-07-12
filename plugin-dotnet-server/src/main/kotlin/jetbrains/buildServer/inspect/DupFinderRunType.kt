@@ -7,7 +7,6 @@ import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
-import java.util.*
 
 class DupFinderRunType(
         runTypeRegistry: RunTypeRegistry,
@@ -56,4 +55,8 @@ class DupFinderRunType(
 
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
         _requirementsProvider.getRequirements(runParameters).toList()
+
+    override fun getTags(): MutableSet<String> {
+        return mutableSetOf(".NET", "code analysis")
+    }
 }

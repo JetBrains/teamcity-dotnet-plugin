@@ -1,7 +1,8 @@
 package jetbrains.buildServer.script
 
 import jetbrains.buildServer.*
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -13,7 +14,6 @@ import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
 import jetbrains.buildServer.serverSide.TeamCityProperties
 import jetbrains.buildServer.web.openapi.PluginDescriptor
-import java.util.*
 
 class CSharpScriptRunType(
         runTypeRegistry: RunTypeRegistry,
@@ -55,6 +55,10 @@ class CSharpScriptRunType(
     override fun getRunnerSpecificRequirements(parameters: Map<String, String>): MutableList<Requirement> {
         val toolVersion = _toolVersionProvider.getVersion(parameters[CLT_PATH], CLT_TOOL_TYPE_ID)
         return Ranges.filter { it.range.contains(toolVersion) }.firstOrNull()?.requirement?.let { mutableListOf(it) } ?: mutableListOf(createRequitement("6\\."))
+    }
+
+    override fun getTags(): MutableSet<String> {
+        return mutableSetOf(".NET", "C#", "script")
     }
 
     private fun customScriptDescription(scriptContent: String?):String {
