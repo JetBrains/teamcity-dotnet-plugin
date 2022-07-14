@@ -115,7 +115,7 @@ class DotnetRunnerRunType(
         return requirements
     }
 
-    fun getTags(): MutableSet<String> {
+    override fun getTags(): MutableSet<String> {
         return mutableSetOf(".NET", "MSBuild", "VS test", "Visual Studio", "NuGet", "devenv")
     }
 

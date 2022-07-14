@@ -38,7 +38,7 @@ class DupFinderRunType(
 
     override fun getDisplayName() = DupFinderConstants.RUNNER_DISPLAY_NAME
 
-    fun getTags(): MutableSet<String> {
+    override fun getTags(): MutableSet<String> {
         return mutableSetOf(".NET", "ReSharper", "code analysis")
     }
 
