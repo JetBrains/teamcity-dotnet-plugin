@@ -60,7 +60,4 @@ class DupFinderRunType(
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
         _requirementsProvider.getRequirements(runParameters).toList()
 
-    override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET", "code analysis")
-    }
 }
