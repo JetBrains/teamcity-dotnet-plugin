@@ -64,7 +64,7 @@ class InspectCodeRunType(
         return requirements
     }
 
-    override fun getTags(): MutableSet<String> {
+    fun getTags(): MutableSet<String> {
         return mutableSetOf(".NET", "code analysis", "ReSharper")
     }
 }

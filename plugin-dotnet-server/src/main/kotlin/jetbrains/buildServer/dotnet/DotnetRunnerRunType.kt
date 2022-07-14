@@ -115,8 +115,8 @@ class DotnetRunnerRunType(
         return requirements
     }
 
-    override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET")
+    fun getTags(): MutableSet<String> {
+        return mutableSetOf(".NET", "MSBuild", "VS test", "Visual Studio", "NuGet", "devenv")
     }
 
     private fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()

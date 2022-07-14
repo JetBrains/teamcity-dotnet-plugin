@@ -57,7 +57,7 @@ class CSharpScriptRunType(
         return Ranges.filter { it.range.contains(toolVersion) }.firstOrNull()?.requirement?.let { mutableListOf(it) } ?: mutableListOf(createRequitement("6\\."))
     }
 
-    override fun getTags(): MutableSet<String> {
+    fun getTags(): MutableSet<String> {
         return mutableSetOf(".NET", "C#", "script")
     }
 
