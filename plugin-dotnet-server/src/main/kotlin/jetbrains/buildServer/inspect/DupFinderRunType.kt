@@ -38,6 +38,10 @@ class DupFinderRunType(
 
     override fun getDisplayName() = DupFinderConstants.RUNNER_DISPLAY_NAME
 
+    override fun getTags(): MutableSet<String> {
+        return mutableSetOf(".NET", "ReSharper", "code analysis")
+    }
+
     override fun describeParameters(parameters: Map<String, String>): String {
         val includes = parameters[DupFinderConstants.SETTINGS_INCLUDE_FILES]
         val excludes = parameters[DupFinderConstants.SETTINGS_EXCLUDE_FILES]
