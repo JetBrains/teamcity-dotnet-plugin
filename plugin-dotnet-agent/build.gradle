@@ -15,12 +15,13 @@
  */
 
 plugins {
-  id 'com.github.rodm.teamcity-agent' version "1.3.2"
+  id 'com.github.rodm.teamcity-agent' version "1.4.1"
   id 'de.undercouch.download'
 }
 
 teamcity {
   version = teamcityVersion
+  allowSnapshotVersions = true
   agent {
     descriptor = project.file('teamcity-plugin.xml')
     files {

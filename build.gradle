@@ -26,7 +26,7 @@ ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet']
-    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2021.1'
+    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2022.08-SNAPSHOT'
     teamcityDir = project.findProperty('teamcityDir') ?: "$rootDir/servers/TeamCity-${teamcityVersion}"
     if (teamcityDir == null || !file(teamcityDir).isDirectory()) {
         throw new InvalidUserDataException('Please, execute gradle task `:plugin-dotnet-server:installTeamCity` ' +
