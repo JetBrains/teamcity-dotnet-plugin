@@ -120,4 +120,8 @@ class DotnetRunnerRunType(
     }
 
     private fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
+
+    override fun getIconUrl(): String {
+        return _pluginDescriptor.getPluginResourcesPath("dotnet-runner.svg");
+    }
 }
