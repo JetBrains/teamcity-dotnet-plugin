@@ -86,8 +86,4 @@ class CSharpScriptRunType(
     }
 
     private data class VersionRange(val range: Range<Version>, val requirement: Requirement)
-
-    override fun getIconUrl(): String {
-        return this._pluginDescriptor.getPluginResourcesPath("c-sharp-script.svg")
-    }
 }
