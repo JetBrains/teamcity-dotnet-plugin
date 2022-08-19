@@ -17,8 +17,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.runner.ParameterType
-import jetbrains.buildServer.agent.runner.ParametersService
 
 class DotnetCommonArgumentsProviderImpl(
         private val _avoidUsingRspFiles: Boolean,

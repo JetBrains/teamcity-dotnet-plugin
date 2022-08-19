@@ -30,13 +30,14 @@ class RestoreCommand(
         override val toolResolver: DotnetToolResolver)
     : DotnetCommandBase(_parametersService) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.Restore
+    override val commandType  = DotnetCommandType.Restore
+
+    override val commandWords = sequenceOf("restore")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_PACKAGES_DIR)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--packages"))

@@ -31,13 +31,14 @@ class NugetDeleteCommand(
         private val _resultsObserver: Observer<CommandResultEvent>)
     : DotnetCommandBase(_parametersService, _resultsObserver) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.NuGetDelete
+    override val commandType = DotnetCommandType.NuGetDelete
+
+    override val commandWords = sequenceOf("nuget", "delete")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_PACKAGE_ID)?.trim()?.let {
             if (it.isNotBlank()) {
                 yieldAll(StringUtil.split(it).map { CommandLineArgument(it) })

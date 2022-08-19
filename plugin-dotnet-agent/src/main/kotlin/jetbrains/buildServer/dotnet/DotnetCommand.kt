@@ -22,6 +22,8 @@ import jetbrains.buildServer.rx.Observer
 interface DotnetCommand : ArgumentsProvider {
     val commandType: DotnetCommandType
 
+    val commandWords: Sequence<String>
+
     val toolResolver: ToolResolver
 
     val targetArguments: Sequence<TargetArguments>

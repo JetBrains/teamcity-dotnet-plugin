@@ -24,26 +24,26 @@ import java.io.File
 class TestCommand(
         _parametersService: ParametersService,
         override val resultsAnalyzer: ResultsAnalyzer,
+        override val toolResolver: DotnetToolResolver,
         private val _targetService: TargetService,
         private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
         private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
-        override val toolResolver: DotnetToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder,
         private val _dotnetFilterFactory: DotnetFilterFactory,
         private val _loggerService: LoggerService,
         private val _targetTypeProvider: TargetTypeProvider,
         private val _targetArgumentsProvider: TargetArgumentsProvider)
     : DotnetCommandBase(_parametersService) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.Test
+    override val commandType = DotnetCommandType.Test
+
+    override val commandWords = sequenceOf("test")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
-        if(filter.isSplitting) {
+        if (filter.isSplitting) {
             _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
         }
 

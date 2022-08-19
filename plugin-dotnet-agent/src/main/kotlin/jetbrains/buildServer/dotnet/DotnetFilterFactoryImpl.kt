@@ -1,11 +1,10 @@
 package jetbrains.buildServer.dotnet
 
 class DotnetFilterFactoryImpl(
-        private val _testsFilterProvider: TestsFilterProvider,
-        private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
-        private val _testRunSettingsFileProvider: TestRunSettingsFileProvider)
-    : DotnetFilterFactory {
-
+    private val _testsFilterProvider: TestsFilterProvider,
+    private val _splittedTestsFilterSettings: SplittedTestsFilterSettings,
+    private val _testRunSettingsFileProvider: TestRunSettingsFileProvider
+) : DotnetFilterFactory {
     override fun createFilter(command: DotnetCommandType): DotnetFilter {
         var filterExpression = _testsFilterProvider.filterExpression
         val isSplitting = _splittedTestsFilterSettings.IsActive

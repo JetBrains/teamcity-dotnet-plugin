@@ -32,13 +32,14 @@ class NugetPushCommand(
         private val _resultsObserver: Observer<CommandResultEvent>)
     : DotnetCommandBase(_parametersService, _resultsObserver) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.NuGetPush
+    override val commandType = DotnetCommandType.NuGetPush
+
+    override val commandWords = sequenceOf("nuget", "push")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--api-key"))

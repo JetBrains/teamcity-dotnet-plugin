@@ -33,13 +33,14 @@ class MSBuildCommand(
         private val _responseFileFactory: ResponseFileFactory)
     : DotnetCommandBase(_parametersService) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.MSBuild
+    override val commandType = DotnetCommandType.MSBuild
+
+    override val commandWords = sequenceOf("msbuild")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
 
         parameters(DotnetConstants.PARAM_TARGETS)?.trim()?.let {

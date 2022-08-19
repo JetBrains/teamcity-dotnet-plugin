@@ -219,7 +219,7 @@
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-    <constructor-arg ref="dotnetCommandSet"/>
+    <constructor-arg ref="rootDotnetCommandStreamResolver"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentImpl" primary="true" />
   <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
@@ -341,7 +341,20 @@
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetCommandSet" id="dotnetCommandSet"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver" />
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestCommandsStreamResolver" id="testCommandsStreamResolver">
+    <constructor-arg ref="dotnetListTestCommand"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver" />
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandStreamResolver" id="rootDotnetCommandStreamResolver">
+    <constructor-arg>
+      <list>
+        <ref bean="parameterBasedDotnetCommandsStreamResolver"/>
+        <ref bean="testCommandsStreamResolver"/>
+        <ref bean="multiTargetDotnetCommandsResolver"/>
+      </list>
+    </constructor-arg>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl"/>
   <bean class="jetbrains.buildServer.dotnet.TargetArgumentsProviderByType"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
@@ -412,7 +425,7 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
   <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetRestoreCommand"/>
   <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
@@ -422,6 +435,10 @@
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
     <constructor-arg ref="testsResultsAnalyzer"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.ListTestsCommand" id="dotnetListTestCommand">
+    <constructor-arg ref="dotnetCommonArgumentsProvider"/>
+    <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 

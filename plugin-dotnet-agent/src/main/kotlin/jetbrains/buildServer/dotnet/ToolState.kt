@@ -21,7 +21,8 @@ import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.rx.Observer
 
-class ToolState(
-        public val executable: ToolPath,
-        val virtualPathObserver: Observer<Path>,
-        val versionObserver: Observer<Version>? = null)
+data class ToolState(
+    val executable: ToolPath,
+    val virtualPathObserver: Observer<Path>,
+    val versionObserver: Observer<Version>? = null,
+)

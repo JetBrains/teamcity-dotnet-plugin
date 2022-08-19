@@ -28,54 +28,55 @@ class DotnetStateWorkflowComposer(
         private val _virtualContext: VirtualContext,
         private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
         private val _versionParser: VersionParser,
-        private val _defaultEnvironmentVariables: EnvironmentVariables)
-    : ToolStateWorkflowComposer {
+        private val _defaultEnvironmentVariables: EnvironmentVariables
+) : ToolStateWorkflowComposer {
 
     override val target: TargetType
         get() = TargetType.SystemDiagnostics
 
-    override fun compose(context: WorkflowContext, state: ToolState, workflow: Workflow): Workflow = Workflow(
-            sequence {
-                val executable = state.executable
-                var virtualPath: Path? = null
-                if (_virtualContext.isVirtual && executable.homePaths.isEmpty()) {
-                    // Getting dotnet executable
-                    val pathResolverState = PathResolverState(
-                            executable.virtualPath,
-                            observer<Path> {
-                                if (virtualPath == null && it.path.isNotBlank()) {
-                                    virtualPath = it
-                                    state.virtualPathObserver.onNext(it)
-                                }
-                            }
-                    )
-
-                    for (pathResolverWorkflowFactory in _pathResolverWorkflowComposers) {
-                        yieldAll(pathResolverWorkflowFactory.compose(context, pathResolverState).commandLines)
+    override fun compose(context: WorkflowContext, state: ToolState, workflow: Workflow): Workflow = sequence {
+        val executable = state.executable
+        var virtualPath: Path? = null
+        if (_virtualContext.isVirtual && executable.homePaths.isEmpty()) {
+            // Getting dotnet executable
+            val pathResolverState = PathResolverState(
+                executable.virtualPath,
+                observer<Path> {
+                    if (virtualPath == null && it.path.isNotBlank()) {
+                        virtualPath = it
+                        state.virtualPathObserver.onNext(it)
                     }
                 }
+            )
 
-                if(state.versionObserver != null) {
-                    // Getting .NET SDK version
-                    val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
-                    context
-                            .toOutput()
-                            .map { _versionParser.parse(listOf(it)) }
-                            .filter { it != Version.Empty }
-                            .subscribe(state.versionObserver)
-                            .use {
-                                yield(
-                                        CommandLine(
-                                                null,
-                                                TargetType.SystemDiagnostics,
-                                                virtualPath ?: executable.virtualPath,
-                                                workingDirectory,
-                                                DotnetWorkflowComposer.VersionArgs,
-                                                _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
-                                                "dotnet --version",
-                                                listOf(StdOutText("Getting the .NET SDK version"))))
-                            }
-                }
+            for (pathResolverWorkflowFactory in _pathResolverWorkflowComposers) {
+                yieldAll(pathResolverWorkflowFactory.compose(context, pathResolverState).commandLines)
             }
-    )
+        }
+
+        if(state.versionObserver == null) {
+            return@sequence
+        }
+
+        // Getting .NET SDK version
+        context
+            .toOutput()
+            .map { _versionParser.parse(listOf(it)) }
+            .filter { it != Version.Empty }
+            .subscribe(state.versionObserver)
+            .use {
+                yield(
+                    CommandLine(
+                        null,
+                        TargetType.SystemDiagnostics,
+                        virtualPath ?: executable.virtualPath,
+                        Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
+                        DotnetWorkflowComposer.VersionArgs,
+                        _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
+                        "dotnet --version",
+                        listOf(StdOutText("Getting the .NET SDK version"))
+                    )
+                )
+            }
+    }.let(::Workflow)
 }
