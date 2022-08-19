@@ -1,7 +1,5 @@
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
@@ -21,7 +19,7 @@ class TestCommandsStreamResolver(
             ?.let { it.equals("true", true) }
             ?: false
 
-    override val stage = DotnetCommandsStreamResolvingStage.CommandTransformation
+    override val stage = DotnetCommandsStreamResolvingStage.Transformation
 
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
         _splittedTestsFilterSettings.IsActive && useExactMatchFilter && commands.any { it is TestCommand }

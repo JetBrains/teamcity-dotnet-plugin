@@ -17,7 +17,6 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -32,22 +31,9 @@ abstract class DotnetCommandBase(
         _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 
     protected fun parameters(parameterName: String, defaultValue: String): String =
-        _parametersService.tryGetParameter(ParameterType.Runner, parameterName) ?: defaultValue
+        _parametersService
+            .tryGetParameter(ParameterType.Runner, parameterName)
+            ?: defaultValue
 
     override val environmentBuilders: Sequence<EnvironmentBuilder> get() =  emptySequence()
-
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        if (toolResolver.isCommandRequired) {
-            // command
-            yieldAll(commandWords.map { CommandLineArgument(it, CommandLineArgumentType.Mandatory) })
-        }
-
-        // targets e.g. project files or directries
-        yieldAll(targetArguments.flatMap { it.arguments })
-
-        // command specific arguments
-        yieldAll(getCommandSpecificArguments(context))
-    }
-
-    abstract fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument>
 }

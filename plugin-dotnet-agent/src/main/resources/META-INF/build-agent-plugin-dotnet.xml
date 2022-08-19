@@ -346,12 +346,14 @@
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver" />
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver" id="composedDotnetCommandStreamResolver" />
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandStreamResolver" id="rootDotnetCommandStreamResolver">
     <constructor-arg>
       <list>
         <ref bean="parameterBasedDotnetCommandsStreamResolver"/>
         <ref bean="testCommandsStreamResolver"/>
         <ref bean="multiTargetDotnetCommandsResolver"/>
+        <ref bean="composedDotnetCommandStreamResolver"/>
       </list>
     </constructor-arg>
   </bean>

@@ -1,9 +1,6 @@
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandStreamResolverBase
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
@@ -25,30 +22,14 @@ class MultiTargetDotnetCommandStreamResolver : DotnetCommandStreamResolverBase()
                 originalCommand
                     .targetArguments
                     .ifEmpty { sequenceOf(TargetArguments(emptySequence())) }
-                    .map { SpecificTargetDotnetCommand(originalCommand, sequenceOf(it)) }
+                    .map { SpecificTargetDotnetCommand(originalCommand, it) }
             }
 
     final class SpecificTargetDotnetCommand constructor(
         private val _originalCommonCommand: DotnetCommand,
-        override val targetArguments: Sequence<TargetArguments>
+        private val _specificTargetArguments: TargetArguments
     ) : DotnetCommand by _originalCommonCommand {
-//        override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
-//            sequence {
-//                if (_originalCommonCommand.toolResolver.isCommandRequired) {
-//                    // command
-//                    yieldAll(_originalCommonCommand.commandWords.map { CommandLineArgument(it, CommandLineArgumentType.Mandatory) })
-//                }
-//
-//                // projects
-//                yieldAll(_specificTargetArguments.arguments)
-//
-//                var newContext = context.deriveNewFor(this@SpecificTargetDotnetCommand)
-//
-//                // command specific arguments
-//                yieldAll(_originalCommonCommand.getArguments(newContext))
-//            }
-
-//        override val targetArguments: Sequence<TargetArguments>
-//            get() = sequenceOf(_specificTargetArguments)
+        override val targetArguments: Sequence<TargetArguments>
+            get() = sequenceOf(_specificTargetArguments)
     }
 }

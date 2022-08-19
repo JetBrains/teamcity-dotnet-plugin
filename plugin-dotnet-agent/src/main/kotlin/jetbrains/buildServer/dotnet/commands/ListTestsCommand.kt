@@ -20,7 +20,7 @@ public class ListTestsCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
-    override fun getCommandSpecificArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
+    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> =
         sequenceOf(
             "--list-tests",
             "--settings",
