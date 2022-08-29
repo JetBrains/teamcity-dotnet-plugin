@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent
+package jetbrains.buildServer.dotnet.commands.resolution
 
-data class CommandLineArgument(
-    val value: String,
-    val argumentType: CommandLineArgumentType = CommandLineArgumentType.Secondary,
+import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.ToolPath
+import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.rx.Observer
+import java.io.File
+
+class ListTestsState(
+    val listTestsFileObserver: Observer<Path>,
 )

@@ -21,12 +21,12 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class PackCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
-        override val toolResolver: DotnetToolResolver)
-    : DotnetCommandBase(_parametersService) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+    override val toolResolver: DotnetToolResolver,
+) : DotnetCommandBase(_parametersService) {
 
     override val commandType = DotnetCommandType.Pack
 

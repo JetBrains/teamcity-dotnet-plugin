@@ -319,22 +319,22 @@ class SplitTestsFilterProviderTest {
             },
         )
 
-    @Test(dataProvider = "testData")
-    fun shouldProvideFilter(testData: TestData) {
-        // Given
-        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.ExcludesFileParam) } returns testData.excludesFileName
-        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.IncludesFileParam) } returns testData.includesFileName
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, SplitTestsFilterProvider.CurrentBatch) } returns testData.currentBatch
-        val provider = createInstance(testData.fileSystem)
+//    @Test(dataProvider = "testData")
+//    fun shouldProvideFilter(testData: TestData) {
+//        // Given
+//        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.ExcludesFileParam) } returns testData.excludesFileName
+//        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.IncludesFileParam) } returns testData.includesFileName
+//        every { _parametersService.tryGetParameter(ParameterType.Configuration, SplitTestsFilterProvider.CurrentBatch) } returns testData.currentBatch
+//        val provider = createInstance(testData.fileSystem)
+//
+//        // When
+//        val actulFilter = provider.filterExpression;
+//
+//        // Then
+//        Assert.assertEquals(actulFilter, testData.expectedFilter)
+//    }
 
-        // When
-        val actulFilter = provider.filterExpression;
-
-        // Then
-        Assert.assertEquals(actulFilter, testData.expectedFilter)
-    }
-
-    private fun createInstance(fileSystemService: FileSystemService) = SplitTestsFilterProvider(_parametersService, fileSystemService)
+//    private fun createInstance(fileSystemService: FileSystemService) = SplitTestsFilterProvider(_parametersService, fileSystemService)
 
     private fun write(input: String) = ByteArrayInputStream(compress(input))
 

@@ -342,7 +342,7 @@
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver" />
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestCommandsStreamResolver" id="testCommandsStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver" id="testCommandsStreamResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver" />
@@ -438,19 +438,21 @@
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
     <constructor-arg ref="testsResultsAnalyzer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.ListTestsCommand" id="dotnetListTestCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.ListTestsCommand" id="dotnetListTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager" id="splitTestsNamesRegistry"/>
   <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterProvider" id="splittedTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterProvider" id="splitTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterSettingsImpl" id="splitTestsFilterSettings"/>
   <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
     <constructor-arg>
       <list>
         <ref bean="parameterTestsFilterProvider"/>
-        <ref bean="splittedTestsFilterProvider"/>
+        <ref bean="splitTestsFilterProvider"/>
       </list>
     </constructor-arg>
   </bean>

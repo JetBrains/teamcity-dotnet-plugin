@@ -22,18 +22,17 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import java.io.File
 
 class TestCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        override val toolResolver: DotnetToolResolver,
-        private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
-        private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
-        private val _dotnetFilterFactory: DotnetFilterFactory,
-        private val _loggerService: LoggerService,
-        private val _targetTypeProvider: TargetTypeProvider,
-        private val _targetArgumentsProvider: TargetArgumentsProvider)
-    : DotnetCommandBase(_parametersService) {
-
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    override val toolResolver: DotnetToolResolver,
+    private val _targetService: TargetService,
+    private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+    private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
+    private val _dotnetFilterFactory: DotnetFilterFactory,
+    private val _loggerService: LoggerService,
+    private val _targetTypeProvider: TargetTypeProvider,
+    private val _targetArgumentsProvider: TargetArgumentsProvider,
+) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.Test
 
     override val commandWords = sequenceOf("test")

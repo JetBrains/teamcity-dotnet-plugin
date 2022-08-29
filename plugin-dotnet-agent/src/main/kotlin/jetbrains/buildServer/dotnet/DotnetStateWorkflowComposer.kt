@@ -24,13 +24,12 @@ import jetbrains.buildServer.rx.observer
 import jetbrains.buildServer.rx.use
 
 class DotnetStateWorkflowComposer(
-        private val _pathsService: PathsService,
-        private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
-        private val _versionParser: VersionParser,
-        private val _defaultEnvironmentVariables: EnvironmentVariables
+    private val _pathsService: PathsService,
+    private val _virtualContext: VirtualContext,
+    private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
+    private val _versionParser: VersionParser,
+    private val _defaultEnvironmentVariables: EnvironmentVariables
 ) : ToolStateWorkflowComposer {
-
     override val target: TargetType
         get() = TargetType.SystemDiagnostics
 
@@ -49,12 +48,10 @@ class DotnetStateWorkflowComposer(
                 }
             )
 
-            for (pathResolverWorkflowFactory in _pathResolverWorkflowComposers) {
-                yieldAll(pathResolverWorkflowFactory.compose(context, pathResolverState).commandLines)
-            }
+            yieldAll(_pathResolverWorkflowComposers.flatMap { it.compose(context, pathResolverState).commandLines })
         }
 
-        if(state.versionObserver == null) {
+        if (state.versionObserver == null) {
             return@sequence
         }
 
@@ -67,14 +64,14 @@ class DotnetStateWorkflowComposer(
             .use {
                 yield(
                     CommandLine(
-                        null,
-                        TargetType.SystemDiagnostics,
-                        virtualPath ?: executable.virtualPath,
-                        Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
-                        DotnetWorkflowComposer.VersionArgs,
-                        _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
-                        "dotnet --version",
-                        listOf(StdOutText("Getting the .NET SDK version"))
+                        baseCommandLine = null,
+                        target = TargetType.SystemDiagnostics,
+                        executableFile = virtualPath ?: executable.virtualPath,
+                        workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
+                        arguments = listOf(CommandLineArgument("--version")),
+                        environmentVariables = _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
+                        title = "dotnet --version",
+                        description = listOf(StdOutText("Getting the .NET SDK version"))
                     )
                 )
             }

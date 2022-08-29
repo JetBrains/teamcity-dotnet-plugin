@@ -16,7 +16,6 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService

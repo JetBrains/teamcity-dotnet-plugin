@@ -1,0 +1,6 @@
+package jetbrains.buildServer.dotnet.commands.resolution
+
+import jetbrains.buildServer.agent.runner.SimpleWorkflowComposer
+import jetbrains.buildServer.agent.runner.WorkflowComposer
+
+interface DotnetCommandsStreamWorkflowComposer : SimpleWorkflowComposer

@@ -31,7 +31,7 @@ class CustomCommandWorkflowComposer(
 
     override val target: TargetType = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow {
+    override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow {
         parameters(DotnetConstants.PARAM_COMMAND)?.let {
             if (!DotnetCommandType.Custom.id.equals(it, true)) {
                 return Workflow()

@@ -24,17 +24,16 @@ import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_NAME
 import jetbrains.buildServer.util.StringUtil
 
 class VSTestCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: ToolResolver,
-        private val _dotnetFilterFactory: DotnetFilterFactory,
-        private val _loggerService: LoggerService,
-        private val _targetArgumentsProvider: TargetArgumentsProvider)
-    : DotnetCommandBase(_parametersService) {
-
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _vstestLoggerArgumentsProvider: ArgumentsProvider,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: ToolResolver,
+    private val _dotnetFilterFactory: DotnetFilterFactory,
+    private val _loggerService: LoggerService,
+    private val _targetArgumentsProvider: TargetArgumentsProvider,
+) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.VSTest
 
     override val commandWords = sequenceOf("vstest")

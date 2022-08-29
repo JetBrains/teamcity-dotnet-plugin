@@ -21,17 +21,17 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class MSBuildCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: ToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder,
-        private val _targetsParser: TargetsParser,
-        private val _dotnetFilterFactory: DotnetFilterFactory,
-        private val _responseFileFactory: ResponseFileFactory)
-    : DotnetCommandBase(_parametersService) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: ToolResolver,
+    private val _vstestLoggerEnvironment: EnvironmentBuilder,
+    private val _targetsParser: TargetsParser,
+    private val _dotnetFilterFactory: DotnetFilterFactory,
+    private val _responseFileFactory: ResponseFileFactory,
+) : DotnetCommandBase(_parametersService) {
 
     override val commandType = DotnetCommandType.MSBuild
 

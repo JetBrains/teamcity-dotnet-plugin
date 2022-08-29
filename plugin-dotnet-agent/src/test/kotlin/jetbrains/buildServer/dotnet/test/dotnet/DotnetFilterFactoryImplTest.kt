@@ -2,16 +2,11 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.Serializer
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import org.w3c.dom.Document
 import java.io.File
-import java.io.OutputStream
 
 class DotnetFilterFactoryImplTest {
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
@@ -33,7 +28,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.IsActive } returns true
+        every { _splittedTestsFilterSettings.isActive } returns true
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns settingsFile
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -49,7 +44,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.IsActive } returns true
+        every { _splittedTestsFilterSettings.isActive } returns true
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns null
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -65,7 +60,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.IsActive } returns true
+        every { _splittedTestsFilterSettings.isActive } returns true
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
@@ -81,7 +76,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.IsActive } returns false
+        every { _splittedTestsFilterSettings.isActive } returns false
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
