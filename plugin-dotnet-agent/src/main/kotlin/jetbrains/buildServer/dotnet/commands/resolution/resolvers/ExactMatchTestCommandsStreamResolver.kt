@@ -56,8 +56,10 @@ class ExactMatchTestCommandsStreamResolver(
                 yield(ObservingListTestsDotnetCommand(_listTestsDotnetCommand, ExactMatchListTestsCommandResultHandler(saver)))
             }
 
+            val chunksCount = session.chunksCount
+
             // sequence of `dotnet test` commands for every chunk
-            repeat(session.chunksCount) {
+            repeat(chunksCount) {
                 yield(testCommand)
             }
         }

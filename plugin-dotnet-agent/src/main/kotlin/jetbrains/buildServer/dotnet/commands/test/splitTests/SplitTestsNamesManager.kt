@@ -17,7 +17,6 @@ class SplitTestsNamesManager(
     private val _consideringTestsClasses = mutableSetOf<String>()
     private val _whitespacePattern = Pattern.compile("\\s+")
     private var _testsCounter = 0
-    private var _isTestsOutputStarted = false
     private var _testsListFileWriter: BufferedWriter? = null
     private var _currentChunk = 0
 
@@ -52,7 +51,6 @@ class SplitTestsNamesManager(
             // to dispose current file writer
             _manager._testsListFileWriter?.close()
             _manager._testsListFileWriter = null
-            _manager._isTestsOutputStarted = false
         }
     }
 
@@ -113,6 +111,9 @@ class SplitTestsNamesManager(
     override fun dispose() {
         _files.clear()
         _consideringTestsClasses.clear()
+        _testsCounter = 0
+        _currentChunk = 0
+        _testsListFileWriter = null
     }
 
     companion object {
