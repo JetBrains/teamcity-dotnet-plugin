@@ -50,8 +50,8 @@ class ExactMatchTestCommandsStreamResolver(
             }
 
     private fun transform(testCommand: DotnetCommand) = sequence<DotnetCommand> {
-        _testsNamesSessionFactory.getSession().use { session ->
-            (session as SplitTestsNamesSaver).use { saver ->
+        _testsNamesSessionFactory.startSession().use { session ->
+            session.getSaver().use { saver ->
                 // list all target's tests e.g. `dotnet test --list-tests` single command
                 yield(ObservingListTestsDotnetCommand(_listTestsDotnetCommand, ExactMatchListTestsCommandResultHandler(saver)))
             }
@@ -81,7 +81,7 @@ class ExactMatchTestCommandsStreamResolver(
                 return
             }
 
-            // we don't want to see millions of tests names in every build log
+            // we don't want to see millions of tests names in build log
             value.attributes.add(CommandResultAttribute.Suppressed)
 
             val resultLine = value.output.trim()
@@ -95,14 +95,12 @@ class ExactMatchTestCommandsStreamResolver(
 
             resultLine
                 .let { _whitespacePattern.split(it) }
-                .forEach { _testNamesSaver.save(it) }
+                .forEach { _testNamesSaver.tryToSave(it) }
         }
 
         override fun onError(error: Exception) = Unit
 
-        override fun onComplete() {
-            _testNamesSaver.dispose()
-        }
+        override fun onComplete() = Unit
 
         companion object {
             private const val TestsListOutputMarker = "The following Tests are available:"

@@ -51,14 +51,13 @@ class SplitTestsFilterProvider(
             SplittedTestsFilterType.Excludes -> Pair("!~", " & ")
         }
 
-        return buildFilter("FullyQualifiedName", filterOperation, _settings.testClasses, filterCombineOperator)
+        return _settings.testClasses
+            .map { it + "." }       // to avoid collisions with overlapping test class names prefixes
+            .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
     private fun buildExactMatchFilter(): String {
-        val (filterOperation, filterCombineOperator) = when (_settings.filterType) {
-            SplittedTestsFilterType.Includes -> Pair("=", " | ")
-            SplittedTestsFilterType.Excludes -> Pair("!=", " & ")
-        }
+        val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 
         return _testsNamesReader.read()
             .toList()
@@ -69,7 +68,7 @@ class SplitTestsFilterProvider(
     private fun buildFilter(filterProperty: String, filterOperation: String, filterValues: List<String>, filterCombineOperator: String) =
         // https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
         filterValues
-            .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}." }
+            .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}" }
             .let { filterElements ->
                 if (filterElements.size > FilterExressionChunkSize)
                     // chunks in parentheses '(', ')' are necessery to avoid stack overflow in VSTest filter validator

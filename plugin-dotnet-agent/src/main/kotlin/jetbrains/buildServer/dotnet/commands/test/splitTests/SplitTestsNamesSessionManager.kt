@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotnet.commands.test.splitTests
 import jetbrains.buildServer.rx.Disposable
 
 interface SplitTestsNamesSessionManager {
-    fun getSession() : SplitTestsNamesSession
+    fun startSession() : SplitTestsNamesSession
 }
 
 interface SplitTestsNamesSession : Disposable {
@@ -12,7 +12,7 @@ interface SplitTestsNamesSession : Disposable {
 }
 
 interface SplitTestsNamesSaver : Disposable {
-    fun save(testName: String)
+    fun tryToSave(testName: String)
 }
 
 interface SplitTestsNamesReader {

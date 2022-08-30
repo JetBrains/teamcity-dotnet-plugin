@@ -21,7 +21,7 @@ class SplitTestsNamesManager(
     private var _testsListFileWriter: BufferedWriter? = null
     private var _currentChunk = 0
 
-    override fun getSession(): SplitTestsNamesSession {
+    override fun startSession(): SplitTestsNamesSession {
         // load split test file with test classes names to set to make a fast search by test names prefixes
         // to understand is a specific test should be included/excluded from result filter
         _settings.testClasses.forEach { _consideringTestsClasses.add(it) }
@@ -35,9 +35,17 @@ class SplitTestsNamesManager(
     }
 
     override val chunksCount: Int get() =
-        (_testsCounter / _settings.exactMatchFilterSize) + 1
+        Pair(_testsCounter / _settings.exactMatchFilterSize, _testsCounter % _settings.exactMatchFilterSize)
+            .let { (div, rest) ->
+                when {
+                    rest == 0 -> div
+                    div < 1 -> 1
+                    else -> div + 1
+                }
+            }
 
-    override fun getSaver() = this as SplitTestsNamesSaver
+
+    override fun getSaver(): SplitTestsNamesSaver = Saver(this)
 
     private class Saver(private val _manager: SplitTestsNamesManager): SplitTestsNamesSaver by _manager {
         override fun dispose() {
@@ -48,7 +56,7 @@ class SplitTestsNamesManager(
         }
     }
 
-    override fun save(testName: String) {
+    override fun tryToSave(testName: String) {
         if (!testName.contains('.')) {
             LOG.warn(
                 "Test name \"$testName\" doen't contain '.' symbol. " +
@@ -58,30 +66,25 @@ class SplitTestsNamesManager(
         }
 
         // take only test names from includes/excludes test classes file
-        val isContainsInTestClasses =
+        val purposedToSave =
             when (_settings.filterType) {
                 SplittedTestsFilterType.Includes -> containsInTestClassesList(testName)
                 SplittedTestsFilterType.Excludes -> containsInTestClassesList(testName).not()
             }
 
-        if (!isContainsInTestClasses) {
+        if (!purposedToSave) {
             return
         }
 
         // split to chunks and write in dedicated files
-        var testsListFileWriter = getTestsFileWriter()
-        testsListFileWriter.appendLine(testName)
+        fileWriter.appendLine(testName)
 
         _testsCounter++
     }
 
     override fun read() = sequence {
-        if (_files.isEmpty()) {
-            return@sequence
-        }
-
-        _files.remove()
-            .bufferedReader().use { reader ->
+        _files.poll()
+            ?.bufferedReader()?.use { reader ->
                 while (reader.ready())
                     yield(reader.readLine())
             }
@@ -90,7 +93,7 @@ class SplitTestsNamesManager(
     private fun containsInTestClassesList(testName: String) =
         _consideringTestsClasses.contains(testName.substringBeforeLast('.'))
 
-    private fun getTestsFileWriter(): BufferedWriter {
+    private val fileWriter get(): BufferedWriter {
         if (_currentChunk < chunksCount || _testsListFileWriter == null) {
             _testsListFileWriter?.close()
             _testsListFileWriter = newFileWriter()
