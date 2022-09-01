@@ -7,15 +7,14 @@ import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import java.io.BufferedWriter
 import java.io.File
 import java.util.*
-import java.util.regex.Pattern
 
 class SplitTestsNamesManager(
     private val _settings: SplittedTestsFilterSettings,
     private val _pathsService: PathsService,
+    private val _testNameValidator: TestNameValidator,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
     private val _files: Queue<File> = LinkedList<File>()
     private val _consideringTestsClasses = mutableSetOf<String>()
-    private val _whitespacePattern = Pattern.compile("\\s+")
     private var _testsCounter = 0
     private var _testsListFileWriter: BufferedWriter? = null
     private var _currentChunk = 0
@@ -55,11 +54,8 @@ class SplitTestsNamesManager(
     }
 
     override fun tryToSave(testName: String) {
-        if (!testName.contains('.')) {
-            LOG.warn(
-                "Test name \"$testName\" doen't contain '.' symbol. " +
-                        "Tests FQN (fully qualified names) always should contain FQN of test class separated by '.'. This string will be skipped"
-            )
+        if (!_testNameValidator.isValid(testName)) {
+            LOG.warn("String \"$testName\" is not valid test name. This string will be skipped")
             return
         }
 

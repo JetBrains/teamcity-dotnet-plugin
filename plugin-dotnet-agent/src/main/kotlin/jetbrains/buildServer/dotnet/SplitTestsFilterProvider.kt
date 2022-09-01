@@ -45,6 +45,8 @@ class SplitTestsFilterProvider(
         else -> buildDefaultFilter()
     }
 
+    // FullyQualifiedName~Namespace.TestClass0. | FullyQualifiedName~Namespace.TestClass1. | ...
+    // FullyQualifiedName!~Namespace.TestClass0. & FullyQualifiedName!~Namespace.TestClass1. & ...
     private fun buildDefaultFilter(): String {
         val (filterOperation, filterCombineOperator) = when (_settings.filterType) {
             SplittedTestsFilterType.Includes -> Pair("~", " | ")
@@ -56,6 +58,7 @@ class SplitTestsFilterProvider(
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
+    // FullyQualifiedName=Namespace.TestClass0.Test000 | FullyQualifiedName=Namespace.TestClass0.Test001 | ...
     private fun buildExactMatchFilter(): String {
         val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 

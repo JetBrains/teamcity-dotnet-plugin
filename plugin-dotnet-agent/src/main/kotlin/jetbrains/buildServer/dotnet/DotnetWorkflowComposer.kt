@@ -38,6 +38,8 @@ class DotnetWorkflowComposer(
         ?.trim()
         ?.let { Verbosity.tryParse(it) }
 
+    private val dotnetCommands get() = _dotnetCommandsStreamResolver.resolve();
+
     override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow = sequence {
@@ -49,7 +51,7 @@ class DotnetWorkflowComposer(
         val analyzerContext = DotnetWorkflowAnalyzerContext()
         var verbosityLevel = verbosityLevel
 
-        for (dotnetCommand in _dotnetCommandsStreamResolver.resolve()) {
+        for (dotnetCommand in dotnetCommands) {
             if (context.status != WorkflowStatus.Running) {
                 break
             }

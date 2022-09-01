@@ -8,10 +8,10 @@ class DotnetFilterFactoryImpl(
     override fun createFilter(command: DotnetCommandType): DotnetFilter {
         var filterExpression = _testsFilterProvider.filterExpression
         val isSplitting = _splittedTestsFilterSettings.isActive
-        if (_splittedTestsFilterSettings.isActive && filterExpression.length > MaxArgSize) {
+        if (isSplitting && filterExpression.length > MaxArgSize) {
             val settingsFile = _testRunSettingsFileProvider.tryGet(command)
             if (settingsFile != null) {
-                return DotnetFilter("", settingsFile, isSplitting)
+                return DotnetFilter("", settingsFile, true)
             }
         }
 

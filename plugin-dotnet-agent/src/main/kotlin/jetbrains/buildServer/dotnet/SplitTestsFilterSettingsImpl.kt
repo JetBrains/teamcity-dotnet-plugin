@@ -66,7 +66,6 @@ class SplitTestsFilterSettingsImpl(
             }
 
     companion object {
-//        private const val StateFileExtension = "current-tests-chunk"
-        private const val DefaultExactMatchTestsChunkSize = 30 // 5000                               // TODO increase for production purposes
+        private const val DefaultExactMatchTestsChunkSize = 5000
     }
 }

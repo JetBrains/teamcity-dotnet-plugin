@@ -25,10 +25,9 @@ import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSave
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSessionManager
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.use
-import java.util.regex.Pattern
 
 // Transforms a `dotnet test` command to exact match filtered command if needed
-// It looks like a sequence of dotnet commands: `dotnet test --list-test` – to get all tests list – and then `dotnet test ...` N times
+// It looks like a sequence of dotnet commands: `dotnet test --list-test` â€“ to get all tests list â€“ and then `dotnet test ...` N times
 class ExactMatchTestCommandsStreamResolver(
     private val _splitTestsFilterSettings: SplittedTestsFilterSettings,
     private val _listTestsDotnetCommand: DotnetCommand,
@@ -75,7 +74,7 @@ class ExactMatchTestCommandsStreamResolver(
     private final class ExactMatchListTestsCommandResultHandler(
         private val _testNamesSaver: SplitTestsNamesSaver,
     ) : Observer<CommandResultEvent> {
-        private val _whitespacePattern = Pattern.compile("\\s+")
+        private val _whitespacePattern = Regex("\\s+")
         private var _isTestsOutputStarted = false
 
         override fun onNext(value: CommandResultEvent) {
