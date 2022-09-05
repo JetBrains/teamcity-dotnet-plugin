@@ -1,19 +1,12 @@
 package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 
-import io.mockk.InternalPlatformDsl.toArray
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.ToolPath
-import jetbrains.buildServer.dotnet.DotnetBuildContext
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpTestNameValidator
+import jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpIdentifierValidator
 import org.testng.Assert
-import org.testng.annotations.BeforeTest
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class CSharpTestNameValidatorTests {
-    private val validator = CSharpTestNameValidator()
+    private val validator = CSharpIdentifierValidator()
 
     @DataProvider
     fun testData() = arrayOf(

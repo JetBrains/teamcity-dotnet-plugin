@@ -445,7 +445,7 @@
   <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
 
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.TestsListTempFileFactory" id="testsListTempFileFactory"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpTestNameValidator" id="cSharpTestNameValidator"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpIdentifierValidator" id="cSharpTestNameValidator"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager" id="splitTestsNamesManager"/>
   <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterProvider" id="splitTestsFilterProvider"/>

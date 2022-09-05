@@ -8,15 +8,29 @@ import java.util.*
 class SplitTestsNamesManager(
     private val _settings: SplittedTestsFilterSettings,
     private val _testListFactory: TestsListFactory,
-    private val _testNameValidator: TestNameValidator,
+    private val _langIdentifierValidator: LangIdentifierValidator,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
     private val _testsLists: Queue<TestsList> = LinkedList<TestsList>()
     private val _consideringTestsClasses = mutableSetOf<String>()
+    private val _consideringTestsClassesNamespaces = mutableSetOf<String>();
+    private val _t: NavigableSet<String> = TreeSet<String>()
 
     override fun startSession(): SplitTestsNamesSession {
         // load split test file with test classes names to set to make a fast search by test names prefixes
         // to understand is a specific test should be included/excluded from result filter
-        _settings.testClasses.forEach { _consideringTestsClasses.add(it) }
+        _settings.testClasses.forEach { testClassFQN ->
+            _consideringTestsClasses.add(testClassFQN)
+
+            if (!testClassFQN.contains(".")) {
+                return@forEach
+            }
+
+            var value = testClassFQN
+            do {
+                value = value.substringBeforeLast('.')
+                _consideringTestsClassesNamespaces.add(value)
+            } while (value.contains('.'))
+        }
 
         LOG.debug(
             "Loaded ${_consideringTestsClasses.size} test classes names " +
@@ -34,7 +48,7 @@ class SplitTestsNamesManager(
     }
 
     override fun tryToSave(testName: String) {
-        if (!_testNameValidator.isValid(testName)) {
+        if (!isValidTestName(testName)) {
             LOG.debug("String \"$testName\" is not valid test name. This string will be skipped")
             return
         }
@@ -42,8 +56,8 @@ class SplitTestsNamesManager(
         // take only test names from includes/excludes test classes file
         val purposedToSave =
             when (_settings.filterType) {
-                SplittedTestsFilterType.Includes -> containsInTestClassesList(testName)
-                SplittedTestsFilterType.Excludes -> containsInTestClassesList(testName).not()
+                SplittedTestsFilterType.Includes -> includedInConsideringTestClass(testName)
+                SplittedTestsFilterType.Excludes -> includedInConsideringTestClass(testName).not()
             }
 
         if (!purposedToSave) {
@@ -52,6 +66,11 @@ class SplitTestsNamesManager(
 
         save(testName)
     }
+
+    private fun isValidTestName(testName: String) =
+        _langIdentifierValidator.isValid(testName)
+            && !_consideringTestsClassesNamespaces.contains(testName)
+            && !_consideringTestsClasses.contains(testName)
 
     override fun read() =
         _testsLists.peek()
@@ -62,7 +81,7 @@ class SplitTestsNamesManager(
             }
             ?: emptySequence()
 
-    private fun containsInTestClassesList(testName: String) =
+    private fun includedInConsideringTestClass(testName: String) =
         _consideringTestsClasses.contains(testName.substringBeforeLast('.'))
 
     private fun save(testName: String) {
@@ -98,6 +117,7 @@ class SplitTestsNamesManager(
         _testsLists.forEach { it.dispose() }
         _testsLists.clear()
         _consideringTestsClasses.clear()
+        _consideringTestsClassesNamespaces.clear()
     }
 
     companion object {

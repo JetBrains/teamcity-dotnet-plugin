@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.commands.test.splitTests
 
 import java.util.regex.Pattern
 
-class CSharpTestNameValidator : TestNameValidator {
+class CSharpIdentifierValidator : LangIdentifierValidator {
     private val _fullyQualifiedNameRegex =
         // can't use kotlin.text.Regex() because
         // there is no way to set UNICODE_CHARACTER_CLASS flag for some reason
@@ -12,5 +12,5 @@ class CSharpTestNameValidator : TestNameValidator {
             Pattern.MULTILINE or Pattern.UNICODE_CHARACTER_CLASS,
         ).toRegex()
     
-    override fun isValid(testName: String) = _fullyQualifiedNameRegex.matches(testName)
+    override fun isValid(identifier: String) = _fullyQualifiedNameRegex.matches(identifier)
 }

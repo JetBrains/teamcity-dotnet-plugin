@@ -41,7 +41,9 @@ class ExactMatchTestCommandsStreamResolver(
     override val stage = DotnetCommandsStreamResolvingStage.Transformation
 
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
-        _splitTestsFilterSettings.isActive && _splitTestsFilterSettings.useExactMatchFilter && commands.any { it.commandType == DotnetCommandType.Test }
+        _splitTestsFilterSettings.isActive
+            && _splitTestsFilterSettings.useExactMatchFilter
+            && commands.any { it.commandType == DotnetCommandType.Test }
 
     override fun apply(commands: DotnetCommandsStream) =
         commands
