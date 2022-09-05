@@ -50,6 +50,10 @@ class CSharpTestNameValidatorTests {
         arrayOf("Namespace.TestClass.TestMethod.", false),
         arrayOf("Namespace.TestClass.TestMethod_", true),
         arrayOf("Namespace.TestClass..TestMethod", false),
+        arrayOf("Namespace.Test Class.TestMethod", false),
+        arrayOf("Namespace .TestClass.TestMethod", false),
+        arrayOf("Namespace. TestClass.TestMethod", false),
+        arrayOf("Namespace . TestClass . TestMethod", false),
     )
 
     @Test(dataProvider = "testData")

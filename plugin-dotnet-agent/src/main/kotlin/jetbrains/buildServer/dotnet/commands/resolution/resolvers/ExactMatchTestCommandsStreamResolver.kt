@@ -16,11 +16,16 @@
 
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.CommandResultAttribute
+import jetbrains.buildServer.agent.CommandResultEvent
+import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.commands.resolution.*
+import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.SplittedTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandStreamResolverBase
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSaver
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSessionManager
 import jetbrains.buildServer.rx.Observer
@@ -31,7 +36,6 @@ import jetbrains.buildServer.rx.use
 class ExactMatchTestCommandsStreamResolver(
     private val _splitTestsFilterSettings: SplittedTestsFilterSettings,
     private val _listTestsDotnetCommand: DotnetCommand,
-    private val _patheService: PathsService,
     private val _testsNamesSessionFactory: SplitTestsNamesSessionManager,
 ) : DotnetCommandStreamResolverBase() {
     override val stage = DotnetCommandsStreamResolvingStage.Transformation
@@ -50,17 +54,11 @@ class ExactMatchTestCommandsStreamResolver(
 
     private fun transform(testCommand: DotnetCommand) = sequence<DotnetCommand> {
         _testsNamesSessionFactory.startSession().use { session ->
-            session.getSaver().use { saver ->
-                // list all target's tests e.g. `dotnet test --list-tests` single command
-                yield(ObservingListTestsDotnetCommand(_listTestsDotnetCommand, ExactMatchListTestsCommandResultHandler(saver)))
-            }
-
-            val chunksCount = session.chunksCount
+            // list all target's tests e.g. `dotnet test --list-tests` single command
+            yield(ObservingListTestsDotnetCommand(_listTestsDotnetCommand, ExactMatchListTestsCommandResultHandler(session as SplitTestsNamesSaver)))
 
             // sequence of `dotnet test` commands for every chunk
-            repeat(chunksCount) {
-                yield(testCommand)
-            }
+            yieldAll(session.forEveryTestsNamesChunk { testCommand })
         }
     }
 

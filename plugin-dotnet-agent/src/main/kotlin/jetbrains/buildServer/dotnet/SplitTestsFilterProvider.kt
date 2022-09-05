@@ -3,9 +3,6 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
 
 class SplitTestsFilterProvider(
     private val _settings: SplittedTestsFilterSettings,
@@ -27,18 +24,6 @@ class SplitTestsFilterProvider(
                 filter
             }
             ?: ""
-
-    private fun File.readLinesFromFile(): List<String> =
-        _fileSystem
-            .read(this) { input ->
-                BufferedReader(InputStreamReader(input)).use { reader ->
-                    val tests: MutableList<String> = ArrayList()
-                    while (reader.ready()) {
-                        tests += reader.readLine()
-                    }
-                    tests
-                }
-            }
 
     private fun buildFilter() = when {
         _settings.useExactMatchFilter -> buildExactMatchFilter()
