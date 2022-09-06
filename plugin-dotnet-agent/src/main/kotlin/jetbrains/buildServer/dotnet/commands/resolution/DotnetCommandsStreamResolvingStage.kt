@@ -17,9 +17,9 @@
 package jetbrains.buildServer.dotnet.commands.resolution
 
 enum class DotnetCommandsStreamResolvingStage {
-    Initial,
-    CommandRetrieve,
-    Transformation,
-    Targeting,
-    FinalComposition,
+    Initial,                // composing all resolvers together
+    CommandRetrieve,        // getting original requested command
+    Targeting,              // multiply command by every target
+    Transformation,         // transform every single command (maybe to sequence of commands)
+    FinalComposition,       // final composition of command line arguments
 }

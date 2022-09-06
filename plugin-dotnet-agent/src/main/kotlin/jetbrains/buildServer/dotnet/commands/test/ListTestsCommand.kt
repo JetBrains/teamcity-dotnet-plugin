@@ -19,19 +19,14 @@ package jetbrains.buildServer.dotnet.commands.test
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import kotlinx.coroutines.yield
 
 public class ListTestsCommand(
     _parametersService: ParametersService,
     override val resultsAnalyzer: ResultsAnalyzer,
     override val toolResolver: DotnetToolResolver,
     private val _targetService: TargetService,
-    private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
-    private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
-    private val _pathsService: PathsService,
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.ListTests
 

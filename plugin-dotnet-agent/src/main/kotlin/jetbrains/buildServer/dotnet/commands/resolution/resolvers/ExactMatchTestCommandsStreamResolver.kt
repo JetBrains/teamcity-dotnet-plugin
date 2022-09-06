@@ -23,6 +23,7 @@ import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.SplittedTestsFilterSettings
+import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandStreamResolverBase
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
@@ -57,16 +58,21 @@ class ExactMatchTestCommandsStreamResolver(
     private fun transform(testCommand: DotnetCommand) = sequence<DotnetCommand> {
         _testsNamesSessionFactory.startSession().use { session ->
             // list all target's tests e.g. `dotnet test --list-tests` single command
-            yield(ObservingListTestsDotnetCommand(_listTestsDotnetCommand, ExactMatchListTestsCommandResultHandler(session as SplitTestsNamesSaver)))
+            yield(ObservingListTestsDotnetCommand(
+                _listTestsDotnetCommand,
+                ExactMatchListTestsCommandResultHandler(session as SplitTestsNamesSaver),
+                testCommand.targetArguments
+            ))
 
-            // sequence of `dotnet test` commands for every chunk
+            // repeat `dotnet test` commands for every chunk
             yieldAll(session.forEveryTestsNamesChunk { testCommand })
         }
     }
 
     private final class ObservingListTestsDotnetCommand constructor(
         private val _originalCommand: DotnetCommand,
-        private val _resultObserver: Observer<CommandResultEvent>
+        private val _resultObserver: Observer<CommandResultEvent>,
+        override val targetArguments: Sequence<TargetArguments>,
     ) : DotnetCommand by _originalCommand {
         override val resultsObserver = _resultObserver
     }
