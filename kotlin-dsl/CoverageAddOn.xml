@@ -37,7 +37,7 @@
         </param>
         <param name="dotNetCoverage.dotCover.attributeFilters" dslName="attributeFilters">
           <description>
-            Specify a new-line ыseparated list of attribute filters for code coverage.
+            Specify a new-line separated list of attribute filters for code coverage.
             Supported only with dotCover 2.0 or later.
           </description>
         </param>

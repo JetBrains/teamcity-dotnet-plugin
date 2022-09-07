@@ -25,13 +25,11 @@
   <bean class="jetbrains.buildServer.BeanConfig"/>
 
   <!--Common-->
-  <bean class="jetbrains.buildServer.DotnetCoroutineDispatcher"/>
   <bean class="jetbrains.buildServer.HttpDownloaderImpl"/>
   <bean class="jetbrains.buildServer.NuGetServiceImpl"/>
   <bean class="jetbrains.buildServer.FileSystemServiceImpl"/>
   <bean class="jetbrains.buildServer.ToolServiceImpl"/>
   <bean class="jetbrains.buildServer.DotnetUsageStatisticsProvider"/>
-  <bean class="jetbrains.buildServer.JsonParserImpl"/>
 
   <!--Dotnet-->
   <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
@@ -46,7 +44,6 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.JsonProjectDeserializer" id="jsonProjectDeserializer"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.ReaderFactoryImpl"/>
-  <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.DefaultDiscoveredTargetNameFactory" id="defaultDiscoveredTargetNameFactory"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.SolutionDiscoverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.DotnetRunnerDiscoveryExtension">

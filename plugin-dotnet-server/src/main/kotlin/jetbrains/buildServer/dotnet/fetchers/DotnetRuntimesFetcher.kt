@@ -40,7 +40,7 @@ class DotnetRuntimesFetcher(private val _solutionDiscover: SolutionDiscover) : P
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.runtimes.asSequence() }
                     .map { it.name }
-                    .distinctBy { it.toLowerCase() }
+                    .distinctBy { it.lowercase() }
                     .sorted()
 
     override fun getType(): String {

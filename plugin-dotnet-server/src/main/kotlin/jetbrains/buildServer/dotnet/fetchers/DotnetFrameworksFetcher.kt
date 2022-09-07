@@ -39,7 +39,7 @@ class DotnetFrameworksFetcher(private val _solutionDiscover: SolutionDiscover) :
                     .flatMap { it.projects.asSequence() }
                     .flatMap { it.frameworks.asSequence() }
                     .map { it.name }
-                    .distinctBy { it.toLowerCase() }
+                    .distinctBy { it.lowercase() }
                     .sorted()
 
     override fun getType(): String {

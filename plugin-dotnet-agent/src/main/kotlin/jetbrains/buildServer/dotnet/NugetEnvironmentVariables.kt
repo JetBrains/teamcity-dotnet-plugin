@@ -20,7 +20,7 @@ class NugetEnvironmentVariables(
 
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         var varsToOverride = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS)
-                ?.toUpperCase()
+            ?.uppercase()
                 ?.split(';')
                 ?.map { it.trim() }
                 ?.toHashSet()
@@ -52,7 +52,7 @@ class NugetEnvironmentVariables(
     private suspend fun SequenceScope<CommandLineEnvironmentVariable>.yieldEnvVar(
             varsToOverride: Set<String>,
             environmentVariableName: String, valueProvider: () -> String) {
-        if (varsToOverride.size == 0 || varsToOverride.contains(environmentVariableName.toUpperCase())) {
+        if (varsToOverride.size == 0 || varsToOverride.contains(environmentVariableName.uppercase())) {
             if (_environment.tryGetVariable(environmentVariableName).isNullOrBlank() && _parametersService.tryGetParameter(ParameterType.Environment, environmentVariableName).isNullOrBlank()) {
                 yield(CommandLineEnvironmentVariable(environmentVariableName, valueProvider()))
             }

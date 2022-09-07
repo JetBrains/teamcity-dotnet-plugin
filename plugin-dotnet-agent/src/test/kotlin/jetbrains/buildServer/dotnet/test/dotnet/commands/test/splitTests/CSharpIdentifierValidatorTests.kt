@@ -5,7 +5,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class CSharpTestNameValidatorTests {
+class CSharpIdentifierValidatorTests {
     private val validator = CSharpIdentifierValidator()
 
     @DataProvider

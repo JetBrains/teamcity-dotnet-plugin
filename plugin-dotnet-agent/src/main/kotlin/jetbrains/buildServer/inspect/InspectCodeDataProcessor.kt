@@ -17,9 +17,9 @@ class InspectCodeDataProcessor(
         _fileSystem.read(context.file) {
             val inspectionTypeSeverities = mutableMapOf<String, InspectionSeverityValues>()
             for (e in _xmlReader.read(it)) {
-                when (e.name.toLowerCase()) {
+                when (e.name.lowercase()) {
                     "issuetype" -> {
-                        val severity = when (e["Severity"]?.toLowerCase()) {
+                        val severity = when (e["Severity"]?.lowercase()) {
                             "error" -> InspectionSeverityValues.ERROR
                             "warning" -> InspectionSeverityValues.WARNING
                             else -> InspectionSeverityValues.INFO

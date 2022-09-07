@@ -27,7 +27,7 @@ class DupFinderCodeDataProcessor(
                 var duplicates = mutableListOf<DuplicateInfo>()
 
                 for (e in _xmlReader.read(it)) {
-                    when (e.name.toLowerCase()) {
+                    when (e.name.lowercase()) {
                         "duplicate" -> {
                             tryCreateDuplicate(cost, fragments, hashes)?.let {
                                 duplicates.add(it)

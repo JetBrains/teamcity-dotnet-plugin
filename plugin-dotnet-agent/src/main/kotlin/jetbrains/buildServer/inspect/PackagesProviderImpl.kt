@@ -7,7 +7,7 @@ class PackagesProviderImpl(
         sources: List<PluginSource>)
     : PackagesProvider {
 
-    private val _sources: Map<String, PluginSource> = sources.associate { it.id.toLowerCase() to it }
+    private val _sources: Map<String, PluginSource> = sources.associate { it.id.lowercase() to it }
 
     override fun getPackages(specifications: String) =
         E("Packages",
@@ -19,7 +19,7 @@ class PackagesProviderImpl(
                             val match = PluginSourceRegex.matchEntire(specification)
                             if (match != null) {
                                 val sourceId = match.groupValues[1]
-                                val source = _sources[sourceId.toLowerCase()]
+                                val source = _sources[sourceId.lowercase()]
                                 if (source != null) {
                                     source.getPlugin(match.groupValues[2])
                                 } else {

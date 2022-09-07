@@ -43,8 +43,8 @@ class ExecutableWorkflowComposer(
 
                     val executableFile = commandLine.executableFile.path
                     val executableFileExtension =
-                            if (executableFile.isNotBlank()) File(executableFile).extension.trim().toLowerCase()
-                            else ""
+                        if (executableFile.isNotBlank()) File(executableFile).extension.trim().lowercase()
+                        else ""
 
                     when {
                         // native windows

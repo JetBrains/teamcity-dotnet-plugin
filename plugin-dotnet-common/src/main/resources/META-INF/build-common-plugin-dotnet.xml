@@ -20,4 +20,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
   <bean class="jetbrains.buildServer.dotnet.SemanticVersionParserImpl"/>
+  <bean class="jetbrains.buildServer.DotnetCoroutineDispatcher"/>
+  <bean class="jetbrains.buildServer.JsonParserImpl"/>
+  <bean class="jetbrains.buildServer.XmlDocumentServiceImpl"/>
 </beans>

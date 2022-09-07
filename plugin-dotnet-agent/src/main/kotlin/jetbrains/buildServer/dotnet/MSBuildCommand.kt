@@ -69,7 +69,7 @@ class MSBuildCommand(
         }
 
         context.verbosityLevel?.let {
-            yield(CommandLineArgument("-v:${it.id.toLowerCase()}"))
+            yield(CommandLineArgument("-v:${it.id.lowercase()}"))
         }
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))

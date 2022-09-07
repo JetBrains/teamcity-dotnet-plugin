@@ -119,7 +119,9 @@ class NuGetEnvironmentVariablesTest {
         val systemPath = File("System")
 
         // When
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS) } returns " ${FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR.toLowerCase()};$NUGET_HTTP_CACHE_PATH_ENV_VAR"
+        every {
+            _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS)
+        } returns " ${FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR.lowercase()};$NUGET_HTTP_CACHE_PATH_ENV_VAR"
         every { _pathsService.getPath(PathType.System) } returns systemPath
         every { _nugetCredentialProviderSelector.trySelect(any()) } returns "CredentilProvider.dll"
         val actualPaths = createInstance().getVariables(Version.Empty).toList()

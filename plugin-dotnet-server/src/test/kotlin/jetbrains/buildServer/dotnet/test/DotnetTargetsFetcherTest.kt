@@ -90,7 +90,7 @@ class DotnetTargetsFetcherTest {
                         setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 arrayOf(
-                        create(DotnetTargetsFetcher.PublishTargets.first().toUpperCase(), "abc", DotnetTargetsFetcher.TestTargets.first().toUpperCase(), "xyz"),
+                        create(DotnetTargetsFetcher.PublishTargets.first().uppercase(), "abc", DotnetTargetsFetcher.TestTargets.first().uppercase(), "xyz"),
                         setOf(ProjectType.Publish, ProjectType.Test),
                         DotnetTargetsFetcher.InitialDefaultTargets.plus("abc").plus("xyz").plus(DotnetTargetsFetcher.TestTargets).plus(DotnetTargetsFetcher.PublishTargets).plus(DotnetTargetsFetcher.FinishDefaultTargets)),
                 // Default

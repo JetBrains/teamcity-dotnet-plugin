@@ -161,7 +161,7 @@ class DotnetRunnerDiscoveryExtension(
     }
 
     private fun requiresRestoreCommand(project: Project) =
-         project.frameworks.map { it.name.toLowerCase() }.all { it.startsWith("netcoreapp1")}
+         project.frameworks.map { it.name.lowercase() }.all { it.startsWith("netcoreapp1")}
 
     private fun getSdkReauirement(sdks: List<SdkVersion>) =
         sdks.joinToString(" ") { it.version.toString() }

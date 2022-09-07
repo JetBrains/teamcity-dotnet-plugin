@@ -44,7 +44,7 @@ class DotnetUsageStatisticsProvider(
                 }
                 .flatten()
 
-        val formatter = PercentageFormatter(statistics.filter { !it.descriptor.isAdditionalCase }.sumBy { it.count })
+        val formatter = PercentageFormatter(statistics.filter { !it.descriptor.isAdditionalCase }.sumOf { it.count })
 
         for (stat in statistics) {
             publisher.publishStatistic(stat.descriptor.id, stat.count)

@@ -44,9 +44,9 @@ class TargetingPackFileSystemAgentPropertiesProvider(
                     val frameworkList = File(File(it, "RedistList"), "FrameworkList.xml")
                     // check file C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\RedistList\FrameworkList.xml
                     // or name C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.X
-                    it.name.toLowerCase().endsWith("x") || (_fileSystemService.isExists(frameworkList) && _fileSystemService.isFile(frameworkList))
+                    it.name.lowercase().endsWith("x") || (_fileSystemService.isExists(frameworkList) && _fileSystemService.isFile(frameworkList))
                 }
-                .distinctBy { it.name.toLowerCase() }
+                .distinctBy { it.name.lowercase() }
                 .map {
                     LOG.debug("Goes through \"$it\".")
                     val version = it.name.substring(1)

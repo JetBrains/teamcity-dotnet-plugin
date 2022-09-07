@@ -7,7 +7,7 @@ class WindowsRegistryParserImpl : WindowsRegistryParser {
             return null
         }
 
-        if (!trimmed.toLowerCase().startsWith(key.regKey.toLowerCase())) {
+        if (!trimmed.lowercase().startsWith(key.regKey.lowercase())) {
             return null
         }
 
