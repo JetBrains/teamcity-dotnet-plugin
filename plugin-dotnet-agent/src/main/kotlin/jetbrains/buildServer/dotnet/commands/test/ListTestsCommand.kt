@@ -21,7 +21,7 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 
-public class ListTestsCommand(
+class ListTestsCommand(
     _parametersService: ParametersService,
     override val resultsAnalyzer: ResultsAnalyzer,
     override val toolResolver: DotnetToolResolver,
