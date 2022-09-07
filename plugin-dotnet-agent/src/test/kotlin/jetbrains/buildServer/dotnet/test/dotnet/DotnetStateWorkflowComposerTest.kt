@@ -106,7 +106,7 @@ class DotnetStateWorkflowComposerTest {
                                 TargetType.SystemDiagnostics,
                                 executable.virtualPath,
                                 Path(File("wd").canonicalPath),
-                                DotnetWorkflowComposer.VersionArgs,
+                                listOf(CommandLineArgument("--version")),
                                 _envVars,
                                 "dotnet --version",
                                 listOf(StdOutText("Getting the .NET SDK version")))
@@ -169,7 +169,7 @@ class DotnetStateWorkflowComposerTest {
                                 TargetType.SystemDiagnostics,
                                 Path("resolved_dotnet"),
                                 Path(File("wd").canonicalPath),
-                                DotnetWorkflowComposer.VersionArgs,
+                                listOf(CommandLineArgument("--version")),
                                 _envVars,
                                 "dotnet --version",
                                 listOf(StdOutText("Getting the .NET SDK version")))

@@ -137,8 +137,4 @@ class DotnetWorkflowComposer(
 
         return description
     }
-
-    companion object {
-        internal val VersionArgs = listOf(CommandLineArgument("--version"))
-    }
 }
