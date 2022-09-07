@@ -1,5 +1,7 @@
 package jetbrains.buildServer.dotnet.commands.test.splitTests
 
+import jetbrains.buildServer.utils.getBufferedReader
+import jetbrains.buildServer.utils.getBufferedWriter
 import java.io.BufferedWriter
 import java.io.File
 
@@ -10,7 +12,7 @@ class TestsListTempFile(private val _file: File) : TestsList {
     override val testsCount: Int get() = _testsCounter
 
     override val tests: Sequence<String> get() = sequence {
-        _file.bufferedReader()
+        _file.getBufferedReader()
             .use {
                 while (it.ready())
                     yield(it.readLine())
@@ -18,12 +20,13 @@ class TestsListTempFile(private val _file: File) : TestsList {
     }
 
     override fun add(testName: String) {
-        var writer = if (_testsListFileWriter == null) {
-            _testsListFileWriter = _file.bufferedWriter()
+        val writer = if (_testsListFileWriter == null) {
+            _testsListFileWriter = _file.getBufferedWriter()
             _testsListFileWriter as BufferedWriter
         } else _testsListFileWriter as BufferedWriter
 
-        writer.appendLine(testName)
+        writer.write(testName)
+        writer.newLine()
         _testsCounter++
     }
 
