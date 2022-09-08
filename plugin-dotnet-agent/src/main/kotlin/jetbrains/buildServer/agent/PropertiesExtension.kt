@@ -1,47 +1,46 @@
 package jetbrains.buildServer.agent
 
-import jetbrains.buildServer.rx.Disposable
-import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.agent.config.AgentParametersSupplier
 import jetbrains.buildServer.rx.use
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.system.measureTimeMillis
 
 class PropertiesExtension(
-        private val _dispatcher: CoroutineDispatcher,
-        private val _agentPropertiesProviders: List<AgentPropertiesProvider>)
-    : EventObserver {
+    private val _dispatcher: CoroutineDispatcher,
+    private val _agentPropertiesProviders: List<AgentPropertiesProvider>
+) : AgentParametersSupplier {
     private val _lockObject = Object()
 
-    override fun subscribe(sources: EventSources): Disposable =
-        sources.beforeAgentConfigurationLoadedSource.subscribe { event ->
-            val configuration = event.agent.configuration
-            LOG.infoBlock("Fetched agent properties").use {
-                runBlocking {
-                    for (agentPropertiesProvider in _agentPropertiesProviders) {
-                        launch(_dispatcher) {
-                            fetchProperties(agentPropertiesProvider, configuration)
-                        }
+    override fun getParameters(): MutableMap<String, String> {
+        val parameters = mutableMapOf<String, String>()
+        LOG.infoBlock("Fetched agent properties").use {
+            return runBlocking {
+                _agentPropertiesProviders.map { agentPropertiesProvider ->
+                    launch(_dispatcher){
+                        fetchProperties(agentPropertiesProvider, parameters)
                     }
-                }
+                }.joinAll()
+                parameters
             }
         }
+    }
 
-    private suspend fun fetchProperties(agentPropertiesProvider: AgentPropertiesProvider, configuration: BuildAgentConfiguration) {
+    private fun fetchProperties(agentPropertiesProvider: AgentPropertiesProvider, parameters: MutableMap<String, String>) {
         LOG.debugBlock("Fetching agent properties for ${agentPropertiesProvider.desription}").use {
             try {
                 for (property in agentPropertiesProvider.properties) {
                     var name = property.name
                     synchronized(_lockObject) {
-                        val prevValue = configuration.configurationParameters.get(name)
+                        val prevValue = parameters.get(name)
                         if (prevValue != null) {
                             LOG.warn("Update ${name}=\"${property.value}\". Previous value was \"$prevValue\".")
                         } else {
                             LOG.info("${name}=\"${property.value}\".")
                         }
 
-                        configuration.addConfigurationParameter(name, property.value)
+                        parameters.put(name, property.value)
                     }
                 }
             } catch (e: Exception) {
