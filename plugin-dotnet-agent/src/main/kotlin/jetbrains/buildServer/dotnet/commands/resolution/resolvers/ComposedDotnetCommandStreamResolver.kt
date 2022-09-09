@@ -31,7 +31,7 @@ class ComposedDotnetCommandStreamResolver : DotnetCommandStreamResolverBase() {
 
     override fun apply(commands: DotnetCommandsStream) = commands.map { ComposedDotnetCommand(it) }
 
-    final class ComposedDotnetCommand constructor(
+    class ComposedDotnetCommand constructor(
         private val _originalCommonCommand: DotnetCommand
     ) : DotnetCommand by _originalCommonCommand {
         private val commandCommandLineArguments get() =
