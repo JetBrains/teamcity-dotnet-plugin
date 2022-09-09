@@ -41,6 +41,6 @@ class ParameterBasedDotnetCommandsStreamResolver(
             .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
             ?.let { _allKnownCommands[it] }
             ?.let { sequenceOf(it) }
-            ?: emptySequence<DotnetCommand>()
+            ?: emptySequence()
 }
 
