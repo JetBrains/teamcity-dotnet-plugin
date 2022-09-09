@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import java.io.File
 
-interface SplittedTestsFilterSettings {
+interface SplitTestsFilterSettings {
     val isActive: Boolean
     val filterType: SplittedTestsFilterType
     val testsClassesFile: File?

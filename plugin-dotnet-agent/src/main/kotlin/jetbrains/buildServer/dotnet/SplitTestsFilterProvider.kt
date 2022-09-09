@@ -5,9 +5,9 @@ import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
 
 class SplitTestsFilterProvider(
-    private val _settings: SplittedTestsFilterSettings,
-    private val _fileSystem: FileSystemService,
-    private val _testsNamesReader: SplitTestsNamesReader,
+        private val _settings: SplitTestsFilterSettings,
+        private val _fileSystem: FileSystemService,
+        private val _testsNamesReader: SplitTestsNamesReader,
 ) : TestsFilterProvider {
     override val filterExpression: String get() =
         _settings.testsClassesFile

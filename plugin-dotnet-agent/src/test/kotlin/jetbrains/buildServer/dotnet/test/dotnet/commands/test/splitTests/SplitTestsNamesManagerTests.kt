@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.SplittedTestsFilterSettings
+import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import jetbrains.buildServer.dotnet.commands.test.splitTests.LangIdentifierValidator
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager
@@ -15,7 +15,7 @@ import org.testng.annotations.Test
 
 class SplitTestsNamesManagerTests {
     @MockK
-    private lateinit var _settingsMock: SplittedTestsFilterSettings
+    private lateinit var _settingsMock: SplitTestsFilterSettings
 
     @MockK
     private lateinit var _testListFactoryMock: TestsListFactory

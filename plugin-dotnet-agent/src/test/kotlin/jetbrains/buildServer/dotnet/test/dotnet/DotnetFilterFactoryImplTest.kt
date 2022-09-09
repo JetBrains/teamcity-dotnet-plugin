@@ -10,7 +10,7 @@ import java.io.File
 
 class DotnetFilterFactoryImplTest {
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
-    @MockK private lateinit var _splittedTestsFilterSettings: SplittedTestsFilterSettings
+    @MockK private lateinit var _splitTestsFilterSettings: SplitTestsFilterSettings
     @MockK private lateinit var _testRunSettingsFileProvider: TestRunSettingsFileProvider
 
     @BeforeMethod
@@ -28,7 +28,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.isActive } returns true
+        every { _splitTestsFilterSettings.isActive } returns true
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns settingsFile
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -44,7 +44,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.isActive } returns true
+        every { _splitTestsFilterSettings.isActive } returns true
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns null
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -60,7 +60,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.isActive } returns true
+        every { _splitTestsFilterSettings.isActive } returns true
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
@@ -76,7 +76,7 @@ class DotnetFilterFactoryImplTest {
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splittedTestsFilterSettings.isActive } returns false
+        every { _splitTestsFilterSettings.isActive } returns false
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
@@ -84,5 +84,5 @@ class DotnetFilterFactoryImplTest {
         verify(exactly = 0) { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) }
     }
 
-    private fun createInstance() = DotnetFilterFactoryImpl(_testsFilterProvider, _splittedTestsFilterSettings, _testRunSettingsFileProvider)
+    private fun createInstance() = DotnetFilterFactoryImpl(_testsFilterProvider, _splitTestsFilterSettings, _testRunSettingsFileProvider)
 }

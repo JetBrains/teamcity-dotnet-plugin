@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.SplittedTestsFilterSettings
+import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
 import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSession
@@ -33,7 +33,7 @@ import org.testng.annotations.Test
 
 class ExactMatchTestCommandsStreamResolverTests {
     @MockK
-    private lateinit var _splitTestsFilterSettingsMock: SplittedTestsFilterSettings
+    private lateinit var _splitTestsFilterSettingsMock: SplitTestsFilterSettings
 
     @MockK
     private lateinit var _listTestsDotnetCommandMock: DotnetCommand

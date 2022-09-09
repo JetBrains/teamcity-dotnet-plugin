@@ -1,14 +1,14 @@
 package jetbrains.buildServer.dotnet.commands.test.splitTests
 
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.SplittedTestsFilterSettings
+import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import java.util.*
 
 class SplitTestsNamesManager(
-    private val _settings: SplittedTestsFilterSettings,
-    private val _testListFactory: TestsListFactory,
-    private val _langIdentifierValidator: LangIdentifierValidator,
+        private val _settings: SplitTestsFilterSettings,
+        private val _testListFactory: TestsListFactory,
+        private val _langIdentifierValidator: LangIdentifierValidator,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
     private val _testsLists: Queue<TestsList> = LinkedList()
     private val _consideringTestsClasses = mutableSetOf<String>()

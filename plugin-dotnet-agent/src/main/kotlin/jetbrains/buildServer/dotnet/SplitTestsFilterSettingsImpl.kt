@@ -12,7 +12,7 @@ class SplitTestsFilterSettingsImpl(
     private val _parametersService: ParametersService,
     private val _fileSystem: FileSystemService,
     private val _pathsService: PathsService,
-) : SplittedTestsFilterSettings {
+) : SplitTestsFilterSettings {
     override val isActive: Boolean get() = testsClassesFile != null
 
     override val filterType: SplittedTestsFilterType get() =
