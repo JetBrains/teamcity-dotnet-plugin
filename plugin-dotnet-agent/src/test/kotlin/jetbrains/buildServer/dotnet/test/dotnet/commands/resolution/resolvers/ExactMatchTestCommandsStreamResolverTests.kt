@@ -189,5 +189,5 @@ class ExactMatchTestCommandsStreamResolverTests {
     }
 
     private fun create() = ExactMatchTestCommandsStreamResolver(
-            _splitTestsFilterSettingsMock, _listTestsDotnetCommandMock, _testsNamesSessionManagerMock)
+        _splitTestsFilterSettingsMock, _listTestsDotnetCommandMock, _testsNamesSessionManagerMock)
 }
