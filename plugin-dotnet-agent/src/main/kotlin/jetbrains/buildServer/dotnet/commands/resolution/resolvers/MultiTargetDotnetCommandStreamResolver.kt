@@ -42,7 +42,7 @@ class MultiTargetDotnetCommandStreamResolver : DotnetCommandStreamResolverBase()
                     .map { SpecificTargetDotnetCommand(originalCommand, it) }
             }
 
-    final class SpecificTargetDotnetCommand constructor(
+    class SpecificTargetDotnetCommand constructor(
         private val _originalCommonCommand: DotnetCommand,
         private val _specificTargetArguments: TargetArguments
     ) : DotnetCommand by _originalCommonCommand {
