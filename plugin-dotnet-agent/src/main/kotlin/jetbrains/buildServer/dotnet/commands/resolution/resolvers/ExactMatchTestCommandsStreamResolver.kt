@@ -37,7 +37,7 @@ import jetbrains.buildServer.rx.use
 class ExactMatchTestCommandsStreamResolver(
     private val _splitTestsFilterSettings: SplittedTestsFilterSettings,
     private val _listTestsDotnetCommand: DotnetCommand,
-    private val _testsNamesSessionFactory: SplitTestsNamesSessionManager,
+    private val _testsNamesSessionManager: SplitTestsNamesSessionManager,
 ) : DotnetCommandStreamResolverBase() {
     override val stage = DotnetCommandsStreamResolvingStage.Transformation
 
@@ -49,14 +49,14 @@ class ExactMatchTestCommandsStreamResolver(
     override fun apply(commands: DotnetCommandsStream) =
         commands
             .flatMap {
-                when {
-                    it.commandType == DotnetCommandType.Test -> transform(it)
+                when (it.commandType) {
+                    DotnetCommandType.Test -> transform(it)
                     else -> sequenceOf(it)
                 }
             }
 
     private fun transform(testCommand: DotnetCommand) = sequence<DotnetCommand> {
-        _testsNamesSessionFactory.startSession().use { session ->
+        _testsNamesSessionManager.startSession().use { session ->
             // list all target's tests e.g. `dotnet test --list-tests` single command
             yield(ObservingListTestsDotnetCommand(
                 _listTestsDotnetCommand,
@@ -69,15 +69,15 @@ class ExactMatchTestCommandsStreamResolver(
         }
     }
 
-    private final class ObservingListTestsDotnetCommand constructor(
+    private class ObservingListTestsDotnetCommand constructor(
         private val _originalCommand: DotnetCommand,
-        private val _resultObserver: Observer<CommandResultEvent>,
+        _resultObserver: Observer<CommandResultEvent>,
         override val targetArguments: Sequence<TargetArguments>,
     ) : DotnetCommand by _originalCommand {
         override val resultsObserver = _resultObserver
     }
 
-    private final class ExactMatchListTestsCommandResultHandler(
+    private class ExactMatchListTestsCommandResultHandler(
         private val _testNamesSaver: SplitTestsNamesSaver,
     ) : Observer<CommandResultEvent> {
         private val _whitespacePattern = Regex("\\s+")
