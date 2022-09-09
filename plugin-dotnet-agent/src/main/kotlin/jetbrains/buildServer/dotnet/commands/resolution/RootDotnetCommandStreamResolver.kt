@@ -27,5 +27,5 @@ class RootDotnetCommandStreamResolver(
     override fun apply(commands: DotnetCommandsStream) =
         _dotnetCommandsStreamResolvers
             .sortedBy { it.stage.ordinal }
-            .fold(commands) { context, resolver -> resolver.resolve(context) }
+            .fold(commands) { stream, resolver -> resolver.resolve(stream) }
 }
