@@ -10,10 +10,10 @@ class SplitTestsNamesManager(
     private val _testListFactory: TestsListFactory,
     private val _langIdentifierValidator: LangIdentifierValidator,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
-    private val _testsLists: Queue<TestsList> = LinkedList<TestsList>()
+    private val _testsLists: Queue<TestsList> = LinkedList()
     private val _consideringTestsClasses = mutableSetOf<String>()
     private val _consideringTestsClassesNamespaces = mutableSetOf<String>();
-    private val _t: NavigableSet<String> = TreeSet<String>()
+    private val _t: NavigableSet<String> = TreeSet()
 
     override fun startSession(): SplitTestsNamesSession {
         // load split test file with test classes names to set to make a fast search by test names prefixes
@@ -33,8 +33,8 @@ class SplitTestsNamesManager(
         }
 
         LOG.debug(
-            "Loaded ${_consideringTestsClasses.size} test classes names " +
-            "(filter type is ${_settings.filterType}) to make exact match filter for split tests"
+            "Loaded ${_consideringTestsClasses.size} test classes names with ${_consideringTestsClassesNamespaces.size} " +
+            "namespaces (filter type is ${_settings.filterType}) to make exact match filter for split tests"
         )
 
         return this
@@ -49,7 +49,7 @@ class SplitTestsNamesManager(
 
     override fun tryToSave(testName: String) {
         if (!isValidTestName(testName)) {
-            LOG.debug("String \"$testName\" is not valid test name. This string will be skipped")
+            LOG.debug("String \"$testName\" is not a valid test name. This string will be skipped")
             return
         }
 
@@ -67,11 +67,6 @@ class SplitTestsNamesManager(
         save(testName)
     }
 
-    private fun isValidTestName(testName: String) =
-        _langIdentifierValidator.isValid(testName)
-            && !_consideringTestsClassesNamespaces.contains(testName)
-            && !_consideringTestsClasses.contains(testName)
-
     override fun read() =
         _testsLists.peek()
             ?.let { testsList ->
@@ -80,6 +75,19 @@ class SplitTestsNamesManager(
                 tests
             }
             ?: emptySequence()
+
+    // to close session
+    override fun dispose() {
+        _testsLists.forEach { it.dispose() }
+        _testsLists.clear()
+        _consideringTestsClasses.clear()
+        _consideringTestsClassesNamespaces.clear()
+    }
+
+    private fun isValidTestName(testName: String) =
+        _langIdentifierValidator.isValid(testName)
+            && !_consideringTestsClassesNamespaces.contains(testName)
+            && !_consideringTestsClasses.contains(testName)
 
     private fun includedInConsideringTestClass(testName: String) =
         _consideringTestsClasses.contains(testName.substringBeforeLast('.'))
@@ -101,7 +109,7 @@ class SplitTestsNamesManager(
     private val shouldCreateNewList: Boolean get() =
         _testsLists
             .fold(0) { acc, list -> acc + list.testsCount }
-            .let { testsCount -> Pair(testsCount / _settings.exactMatchFilterSize, testsCount % _settings.exactMatchFilterSize) }
+            .let { testsCount -> Pair((testsCount + 1) / _settings.exactMatchFilterSize, (testsCount + 1) % _settings.exactMatchFilterSize) }
             .let { (div, rest) ->
                 when {
                     div == 0 && rest == 0 -> 0       // 0 / 42 == 0      and     0 % 42 == 0    -->     0 lists
@@ -111,14 +119,6 @@ class SplitTestsNamesManager(
                 }
             }
             .let { _testsLists.size == 0 || _testsLists.size < it }
-
-    // to close session
-    override fun dispose() {
-        _testsLists.forEach { it.dispose() }
-        _testsLists.clear()
-        _consideringTestsClasses.clear()
-        _consideringTestsClassesNamespaces.clear()
-    }
 
     companion object {
         private val LOG = Logger.getLogger(SplitTestsNamesManager::class.java)
