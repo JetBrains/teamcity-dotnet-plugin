@@ -1,13 +1,14 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.SplitTestsFilterProvider
+import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.SplittedTestsFilterType
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -19,335 +20,201 @@ import java.io.File
 import java.util.UUID
 
 class SplitTestsFilterProviderTest {
-    @MockK private lateinit var _parametersService: ParametersService
+    @MockK
+    private lateinit var _settingsMock: SplitTestsFilterSettings
+
+    @MockK
+    private lateinit var _fileSystemMock: FileSystemService
+
+    @MockK
+    private lateinit var _testsNamesReaderMock: SplitTestsNamesReader
+
+    @MockK
+    private lateinit var _loggerMock: Logger
 
     @BeforeMethod
     fun setUp() {
-        MockKAnnotations.init(this)
         clearAllMocks()
+        MockKAnnotations.init(this)
+        mockkObject(Logger)
+        every { Logger.getLogger(any()) } returns _loggerMock
+        justRun { _loggerMock.debug(any<String>()) }
+        justRun { _loggerMock.warn(any<String>()) }
     }
 
-    public class TestData(
-        val currentBatch: String,
-        val excludesFileName: String?,
-        val includesFileName: String?,
-        val fileSystem: FileSystemService,
-        val expectedFilter: String,
-    ) {
-        companion object {
-            fun generateTestsNames(count: Int): List<String> =
-                MutableList<String>(count, { UUID.randomUUID().toString() })
+    @Test
+    fun `should provide an empty filter expression if test classes file is null`() {
+        // arrange
+        every { _settingsMock.testsClassesFile } answers { null }
+        val provider = create()
 
-            fun generateTestsListFileContent(currentBatch: Int, totalBatches: Int, tests: List<String>) =  buildString {
-                appendLine("#version=1")
-                appendLine("#algorithm=test")
-                appendLine("#current_batch=${currentBatch}")
-                appendLine("#total_batches=${totalBatches}")
-                tests.forEach(::appendLine)
-            }
+        // act
+        val result = provider.filterExpression
 
-            fun generateTestsFilter(isIncludeFilter: Boolean, testNames: List<String>) = buildString {
-                var testsCount = testNames.size
-                var (operator, combiner) = if (isIncludeFilter) Pair("~", " | ") else Pair("!~", " & ")
+        // assert
+        Assert.assertEquals(result, "")
+        verify (exactly = 0) { _loggerMock.debug(any<String>()) }
+        verify (exactly = 0) { _loggerMock.warn(any<String>()) }
+    }
 
-                append(
-                    testNames
-                        .map { "FullyQualifiedName${operator}${it}." }
-                        .let { filterParts ->
-                            if (testsCount > 1000)
-                                filterParts.chunked(1000) { "(${it.joinToString(combiner)})" }
-                            else
-                                filterParts
-                        }
-                        .joinToString(combiner)
-                )
+    @Test
+    fun `should provide an empty filter expression if file doesn't exist`() {
+        // arrange
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _fileSystemMock.isExists(any()) } answers { false }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertEquals(result, "")
+        verify (exactly = 1) { _loggerMock.warn(any<String>()) }
+        verify (exactly = 1) { _loggerMock.debug(any<String>()) }
+    }
+
+    @Test
+    fun `should provide an empty filter expression if file is not a file`() {
+        // arrange
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { false }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertEquals(result, "")
+        verify (exactly = 1) { _loggerMock.warn(any<String>()) }
+        verify (exactly = 1) { _loggerMock.debug(any<String>()) }
+    }
+
+    @Test
+    fun `should provide default filter expression for includes filter type`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { false }
+        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.testClasses } answers { generateTestClassesList(2) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertEquals(result, "FullyQualifiedName~Namespace.TestClass0. | FullyQualifiedName~Namespace.TestClass1.")
+    }
+
+    @Test
+    fun `should provide default filter expression for excluded filter type`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { false }
+        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Excludes }
+        every { _settingsMock.testClasses } answers { generateTestClassesList(2) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertEquals(result, "FullyQualifiedName!~Namespace.TestClass0. & FullyQualifiedName!~Namespace.TestClass1.")
+    }
+
+    @Test
+    fun `should provide default filter expression for more than 1000 included test classes`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { false }
+        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.testClasses } answers { generateTestClassesList(2500) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertTrue(Regex("^\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\$").matches(result))
+    }
+
+    @Test
+    fun `should provide default filter expression for more than 1000 excluded test classes`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { false }
+        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Excludes }
+        every { _settingsMock.testClasses } answers { generateTestClassesList(2100) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertTrue(Regex("^\\(.+\\)\\s{1}&\\s{1}\\(.+\\)\\s{1}&\\s{1}\\(.+\\)\$").matches(result))
+    }
+
+    @Test
+    fun `should provide exact match filter expression`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { true }
+        every { _testsNamesReaderMock.read() } answers { generateTestsNamesList(2, 2) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertEquals(
+            result,
+            "FullyQualifiedName=Namespace.TestClass0.Test0 | FullyQualifiedName=Namespace.TestClass0.Test1 " +
+                    "| FullyQualifiedName=Namespace.TestClass1.Test0 | FullyQualifiedName=Namespace.TestClass1.Test1"
+        )
+    }
+
+    @Test
+    fun `should provide exact math filter expression for more than 1000 test names`() {
+        // arrange
+        every { _fileSystemMock.isExists(any()) } answers { true }
+        every { _fileSystemMock.isFile(any()) } answers { true }
+        every { _settingsMock.testsClassesFile } answers { mockk() }
+        every { _settingsMock.useExactMatchFilter } answers { true }
+        every { _testsNamesReaderMock.read() } answers { generateTestsNamesList(25, 100) }
+        val provider = create()
+
+        // act
+        val result = provider.filterExpression
+
+        // assert
+        Assert.assertTrue(Regex("^\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\$").matches(result))
+    }
+
+    private fun create() =
+            SplitTestsFilterProvider(_settingsMock, _fileSystemMock, _testsNamesReaderMock)
+
+    private fun generateTestClassesList(n: Int) = sequence {
+        for (index in 0 until n) {
+            yield("Namespace.TestClass$index")
+        }
+    }.toList()
+
+    private fun generateTestsNamesList(n: Int, m: Int) = sequence {
+        for (i in 0 until n) {
+            for (j in 0 until m) {
+                yield("Namespace.TestClass$i.Test$j")
             }
         }
-    }
-
-    @DataProvider(name = "testData")
-    fun testData() =
-        arrayOf(
-            TestData(
-                currentBatch = "1",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                            ExcludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=1
-                                #total_batches=2
-                                Abc
-                            """.trimIndent()
-                            )
-                    )
-                    .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=1
-                                #total_batches=2
-                                Cba
-                            """.trimIndent()
-                            )
-                    ),
-                expectedFilter = "FullyQualifiedName!~Abc."
-            ),
-            TestData(
-                currentBatch = "2",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                            ExcludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=2
-                                #total_batches=2
-                                Abc
-                            """.trimIndent()
-                            )
-                    )
-                    .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=2
-                                #total_batches=2
-                                Cba
-                            """.trimIndent()
-                            )
-                    ),
-                expectedFilter = "FullyQualifiedName~Cba."
-            ),
-            TestData(
-                currentBatch = "1",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                            ExcludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=1
-                                #total_batches=2
-                                #suite=suite1
-                                Cba
-                                #suite=suite2
-                                Zyx
-                            """.trimIndent()
-                            )
-                    )
-                    .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=1
-                                #total_batches=2
-                                #suite=suite1
-                                Abc
-                                #suite=suite1
-                                Xyz
-                            """.trimIndent()
-                            )
-                    ),
-                expectedFilter = "FullyQualifiedName!~Cba. & FullyQualifiedName!~Zyx."
-            ),
-            TestData(
-                currentBatch = "2",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                            ExcludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=2
-                                #total_batches=2
-                                #suite=suite1
-                                Cba
-                                #suite=suite2
-                                Zyx
-                            """.trimIndent()
-                            )
-                    )
-                    .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write("""
-                                #version=1
-                                #algorithm=test
-                                #current_batch=2
-                                #total_batches=2
-                                #suite=suite1
-                                Abc
-                                #suite=suite1
-                                Xyz
-                            """.trimIndent()
-                            )
-                    ),
-                expectedFilter = "FullyQualifiedName~Abc. | FullyQualifiedName~Xyz."
-            ),
-            TestData(
-                currentBatch = "2",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                        ExcludesFile,
-                        VirtualFileSystemService.Attributes(),
-                        write("""
-                                            #version=1
-                                            #algorithm=test
-                                            #current_batch=2
-                                            #total_batches=2
-                                            #suite=suite1
-                                            Cba
-                                            #suite=suite2
-                                            Zyx
-                                        """.trimIndent()
-                        )
-                    )
-                    .addFile(
-                        IncludesFile,
-                        VirtualFileSystemService.Attributes(),
-                        write("""
-                                            #version=1
-                                            #algorithm=test
-                                            #current_batch=2
-                                            #total_batches=2
-                                            #suite=suite1
-                                            Abc
-                                            #suite=suite1
-                                            Xyz
-                                        """.trimIndent()
-                        )
-                    ),
-                expectedFilter = "FullyQualifiedName~Abc. | FullyQualifiedName~Xyz."
-            ),
-            TestData(
-                currentBatch = "1",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService()
-                    .addFile(
-                            ExcludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write(" ")
-                    )
-                    .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write(" ")
-                    ),
-                expectedFilter = ""
-            ),
-            TestData(
-                currentBatch = "2",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService().addDirectory(ExcludesFile),
-                expectedFilter = ""
-            ),
-            TestData(
-                currentBatch = "1",
-                excludesFileName = ExcludesFile.path,
-                includesFileName = IncludesFile.path,
-                fileSystem = VirtualFileSystemService(),
-                expectedFilter = ""
-            ),
-            TestData.generateTestsNames(999).let { testsNames ->
-                TestData(
-                    currentBatch = "1",
-                    excludesFileName = ExcludesFile.path,
-                    includesFileName = IncludesFile.path,
-                    fileSystem =
-                        VirtualFileSystemService()
-                            .addFile(
-                                ExcludesFile,
-                                VirtualFileSystemService.Attributes(),
-                                write(TestData.generateTestsListFileContent(1, 4, testsNames))
-                            ),
-                    expectedFilter = TestData.generateTestsFilter(false, testsNames)
-                )
-            },
-            TestData.generateTestsNames(1001).let { testsNames ->
-                TestData(
-                    currentBatch = "2",
-                    excludesFileName = ExcludesFile.path,
-                    includesFileName = IncludesFile.path,
-                    fileSystem =
-                    VirtualFileSystemService()
-                        .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write(TestData.generateTestsListFileContent(1, 4, testsNames))
-                        ),
-                    expectedFilter = TestData.generateTestsFilter(true, testsNames)
-                )
-            },
-            TestData.generateTestsNames(10_000).let { testsNames ->
-                TestData(
-                    currentBatch = "4",
-                    excludesFileName = ExcludesFile.path,
-                    includesFileName = IncludesFile.path,
-                    fileSystem =
-                    VirtualFileSystemService()
-                        .addFile(
-                            IncludesFile,
-                            VirtualFileSystemService.Attributes(),
-                            write(TestData.generateTestsListFileContent(1, 4, testsNames))
-                        ),
-                    expectedFilter = TestData.generateTestsFilter(true, testsNames)
-                )
-            },
-        )
-
-//    @Test(dataProvider = "testData")
-//    fun shouldProvideFilter(testData: TestData) {
-//        // Given
-//        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.ExcludesFileParam) } returns testData.excludesFileName
-//        every { _parametersService.tryGetParameter(ParameterType.System, SplitTestsFilterProvider.IncludesFileParam) } returns testData.includesFileName
-//        every { _parametersService.tryGetParameter(ParameterType.Configuration, SplitTestsFilterProvider.CurrentBatch) } returns testData.currentBatch
-//        val provider = createInstance(testData.fileSystem)
-//
-//        // When
-//        val actulFilter = provider.filterExpression;
-//
-//        // Then
-//        Assert.assertEquals(actulFilter, testData.expectedFilter)
-//    }
-
-//    private fun createInstance(fileSystemService: FileSystemService) = SplitTestsFilterProvider(_parametersService, fileSystemService)
-
-    private fun write(input: String) = ByteArrayInputStream(compress(input))
-
-    fun compress(str: String): ByteArray {
-        val obj = ByteArrayOutputStream()
-        obj.write(str.toByteArray(charset("UTF-8")))
-        obj.flush()
-        obj.close()
-        return obj.toByteArray()
-    }
-
-    companion object {
-        private val ExcludesFile = File((File(File("tmp"), "parallelTests")), "excludesFile.txt")
-        private val IncludesFile = File((File(File("tmp"), "parallelTests")), "includesFile.txt")
     }
 }

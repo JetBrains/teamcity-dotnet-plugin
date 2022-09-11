@@ -135,7 +135,17 @@ class SplitTestsFilterSettingsImplTests {
         // arrange
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { "tmp" }
-        val fileLines = listOf("  #SFSD ", "  Namespace.TestClass0  ", "   Namespace.TestClass1 ", "Namespace.TestClass2")
+        val fileLines = listOf(
+            "#version=1",
+            "  #SFSD ",
+            "#algorithm=test",
+            "#total_batches=2",
+            "#suite=suite1",
+            "  Namespace.TestClass0  ",
+            "   Namespace.TestClass1 ",
+            "#something",
+            "Namespace.TestClass2",
+        )
         every<List<String>> { _fileSystemMock.read(any(), any()) } answers { fileLines }
         val settings = create()
 

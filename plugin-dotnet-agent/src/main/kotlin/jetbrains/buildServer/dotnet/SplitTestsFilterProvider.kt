@@ -34,7 +34,7 @@ class SplitTestsFilterProvider(
                     return@let null
                 }
 
-                var filter = buildFilter()
+                val filter = buildFilter()
 
                 LOG.debug("Tests group file filter: \"$filter\".")
                 filter
@@ -55,7 +55,7 @@ class SplitTestsFilterProvider(
         }
 
         return _settings.testClasses
-            .map { it + "." }       // to avoid collisions with overlapping test class names prefixes
+            .map { "$it." }       // to avoid collisions with overlapping test class names prefixes
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
@@ -74,10 +74,10 @@ class SplitTestsFilterProvider(
         filterValues
             .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}" }
             .let { filterElements ->
-                if (filterElements.size > FilterExressionChunkSize)
-                    // chunks in parentheses '(', ')' are necessery to avoid stack overflow in VSTest filter validator
+                if (filterElements.size > FilterExpressionChunkSize)
+                    // chunks in parentheses '(', ')' are necessary to avoid stack overflow in VSTest filter validator
                     // https://youtrack.jetbrains.com/issue/TW-76381
-                    filterElements.chunked(FilterExressionChunkSize) { "(${it.joinToString(filterCombineOperator)})" }
+                    filterElements.chunked(FilterExpressionChunkSize) { "(${it.joinToString(filterCombineOperator)})" }
                 else
                     filterElements
             }
@@ -85,6 +85,6 @@ class SplitTestsFilterProvider(
 
     companion object {
         private val LOG = Logger.getLogger(SplitTestsFilterProvider::class.java)
-        private const val FilterExressionChunkSize = 1000;
+        private const val FilterExpressionChunkSize = 1000;
     }
 }
