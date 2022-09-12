@@ -55,7 +55,7 @@ class ExactMatchTestCommandsStreamResolver(
                 }
             }
 
-    private fun transform(testCommand: DotnetCommand) = sequence<DotnetCommand> {
+    private fun transform(testCommand: DotnetCommand) = sequence {
         _testsNamesSessionManager.startSession().use { session ->
             // list all target's tests e.g. `dotnet test --list-tests` single command
             yield(ObservingListTestsDotnetCommand(
@@ -84,7 +84,7 @@ class ExactMatchTestCommandsStreamResolver(
         private var _isTestsOutputStarted = false
 
         override fun onNext(value: CommandResultEvent) {
-            if (!(value is CommandResultOutput)) {
+            if (value !is CommandResultOutput) {
                 return
             }
 
@@ -111,7 +111,6 @@ class ExactMatchTestCommandsStreamResolver(
 
         companion object {
             private const val TestsListOutputMarker = "The following Tests are available:"
-            private val LOG = Logger.getLogger(ExactMatchListTestsCommandResultHandler::class.java)
         }
     }
 }
