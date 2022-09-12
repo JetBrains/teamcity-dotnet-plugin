@@ -115,7 +115,7 @@ class SplitTestsNamesManagerTests {
 
         // assert
         verify (exactly = 0) { testListMock.add(any()) }
-        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(invalidTestName) }) }
+        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(invalidTestName) && it.contains("will be skipped") }) }
     }
 
     @Test
@@ -145,6 +145,7 @@ class SplitTestsNamesManagerTests {
 
         // assert
         verify (exactly = 1) { testListMock.add(validTestName) }
+        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(validTestName) && it.contains("test name will be saved")  }) }
     }
 
     @Test
@@ -174,6 +175,7 @@ class SplitTestsNamesManagerTests {
 
         // assert
         verify (exactly = 1) { testListMock.add(validTestName) }
+        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(validTestName) && it.contains("test name will be saved")  }) }
     }
 
     @Test
@@ -203,6 +205,7 @@ class SplitTestsNamesManagerTests {
 
         // assert
         verify (exactly = 0) { testListMock.add(any()) }
+        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(validTestName) && it.contains("test name will be skipped") }) }
     }
 
     @Test
@@ -232,6 +235,7 @@ class SplitTestsNamesManagerTests {
 
         // assert
         verify (exactly = 0) { testListMock.add(any()) }
+        verify (exactly = 1) { _loggerMock.debug(match<String> { it.contains(validTestName) && it.contains("test name will be skipped") }) }
     }
 
     @Test

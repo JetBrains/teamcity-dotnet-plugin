@@ -61,9 +61,11 @@ class SplitTestsNamesManager(
             }
 
         if (!purposedToSave) {
+            LOG.debug("Test name \"$testName\" isn't purposed to save for filter ${_settings.filterType}. This test name will be skipped")
             return
         }
 
+        LOG.debug("Test name \"$testName\" is purposed to save for filter ${_settings.filterType}. This test name will be saved")
         save(testName)
     }
 
