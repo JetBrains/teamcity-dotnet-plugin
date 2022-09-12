@@ -114,7 +114,7 @@ class CommandExecutionAdapter(
 
     private val _loggingStrategy: LoggingStrategy get() =
         when {
-            _commandLine.chain.any { it.target == TargetType.SystemDiagnostics || it.target == TargetType.ToolTargetDiagnostics } -> LoggingStrategy.HiddenInBuildLog
+            _commandLine.chain.any { it.target == TargetType.SystemDiagnostics } -> LoggingStrategy.HiddenInBuildLog
             else -> LoggingStrategy.Default
         }
 
