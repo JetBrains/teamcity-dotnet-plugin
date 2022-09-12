@@ -1,25 +1,18 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.SplitTestsFilterProvider
 import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
-import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.util.UUID
 
-class SplitTestsFilterProviderTest {
+class SplitTestsFilterProviderTests {
     @MockK
     private lateinit var _settingsMock: SplitTestsFilterSettings
 

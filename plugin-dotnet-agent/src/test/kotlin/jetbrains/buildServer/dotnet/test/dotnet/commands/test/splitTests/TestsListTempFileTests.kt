@@ -28,7 +28,7 @@ class TestsListTempFileTests {
     }
 
     @Test
-    fun testCountShouldBeZeroInitially() {
+    fun `test count should be zero initially`() {
         // arrange
         val testListTempFile = create()
 
@@ -40,7 +40,7 @@ class TestsListTempFileTests {
     }
 
     @Test
-    fun testsShouldBeEmptyInitially() {
+    fun `tests should be empty initially`() {
         // arrange
         val readerMock = mockk<BufferedReader>()
         every { readerMock.ready() } answers { false }
@@ -62,7 +62,7 @@ class TestsListTempFileTests {
     }
 
     @Test
-    fun shouldAddTestNames() {
+    fun `should add test names`() {
         // arrange
         val (first, second) = Pair("123", "456")
         val writerMock = mockk<BufferedWriter>()
@@ -108,7 +108,7 @@ class TestsListTempFileTests {
     }
 
     @Test
-    fun shouldReinitOnDispose() {
+    fun `should reinit on dispose`() {
         // arrange
         val writerMock = mockk<BufferedWriter>()
         every { writerMock.write(any<String>()) } answers { mockk() }

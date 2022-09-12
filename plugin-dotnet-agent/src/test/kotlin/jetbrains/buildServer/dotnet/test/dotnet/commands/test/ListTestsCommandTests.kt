@@ -33,7 +33,7 @@ class ListTestsCommandTests {
     fun beforeAll() = MockKAnnotations.init(this)
 
     @Test
-    fun shouldGetArguments() {
+    fun `should get arguments`() {
         // arrange
         val command = createCommand()
         val context = mockk<DotnetBuildContext>()
@@ -53,7 +53,7 @@ class ListTestsCommandTests {
     }
 
     @Test
-    fun shouldProvideCommandType() {
+    fun `should provide command type`() {
         // arrange
         val command = createCommand()
 
@@ -65,7 +65,7 @@ class ListTestsCommandTests {
     }
 
     @Test
-    fun shouldProvideCommandWords() {
+    fun `should provide command words`() {
         // arrange
         val command = createCommand()
 
@@ -78,7 +78,7 @@ class ListTestsCommandTests {
     }
 
     @Test
-    fun shouldProvideTargetArguments() {
+    fun `should provide target arguments`() {
         // arrange
         val commandTargetsMock = mockk<Sequence<CommandTarget>>()
         every { _targetServiceMock.targets } returns commandTargetsMock

@@ -21,7 +21,7 @@ class TestsListTempFileFactoryTests {
     fun beforeAll() = MockKAnnotations.init(this)
 
     @Test
-    fun shouldCreateNewTempTestList() {
+    fun `should create new temp test list`() {
         // arrange
         val fileMock = mockk<File>()
         every { _pathsServiceMock.getTempFileName(any()) } returns fileMock

@@ -50,7 +50,7 @@ class CSharpIdentifierValidatorTests {
     )
 
     @Test(dataProvider = "testData")
-    fun isValid__different_scenarious(testName: String, expected: Boolean) {
+    fun `should validate test name in different scenarios`(testName: String, expected: Boolean) {
         // act
         val actual = validator.isValid(testName)
 
