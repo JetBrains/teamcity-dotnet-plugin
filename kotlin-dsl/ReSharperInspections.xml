@@ -72,6 +72,8 @@
                type="boolean" trueValue="true" falseValue=""/>
         <param name="TargetDotNetFramework_4.8" dslName="targetDotNetFramework_4_8"
                type="boolean" trueValue="true" falseValue=""/>
+        <param name="TargetDotNetFramework_4.8.1" dslName="targetDotNetFramework_4_8_1"
+               type="boolean" trueValue="true" falseValue=""/>
 
         <param name="jetbrains.resharper-clt.clt-path" dslName="cltPath">
             <description>
