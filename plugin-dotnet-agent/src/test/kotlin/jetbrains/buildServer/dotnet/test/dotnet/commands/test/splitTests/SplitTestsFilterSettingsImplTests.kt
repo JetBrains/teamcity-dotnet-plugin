@@ -16,30 +16,33 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.SplitTestsFilterSettingsImpl
+import jetbrains.buildServer.utils.getBufferedReader
+import jetbrains.buildServer.utils.getBufferedWriter
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
+import java.io.BufferedReader
+import java.io.File
 
 class SplitTestsFilterSettingsImplTests {
     @MockK
     private lateinit var _parametersServiceMock: ParametersService
 
     @MockK
-    private lateinit var _fileSystemMock: FileSystemService
+    private lateinit var _fileSystemServiceMock: FileSystemService
 
     @BeforeMethod
     fun setup(){
         clearAllMocks()
         MockKAnnotations.init(this)
+        mockkStatic(File::getBufferedReader)
     }
 
     @Test
@@ -146,11 +149,29 @@ class SplitTestsFilterSettingsImplTests {
             "#something",
             "Namespace.TestClass2",
         )
-        every<List<String>> { _fileSystemMock.read(any(), any()) } answers { fileLines }
+
+        val readerMock = mockk<BufferedReader>()
+        every { readerMock.ready() } returnsMany(listOf(true, true, true, true, true, true, true, true, true, false))
+        every { readerMock.readLine() } returnsMany(listOf(
+            "#version=1",
+            "  #SFSD ",
+            "#algorithm=test",
+            "#total_batches=2",
+            "#suite=suite1",
+            "  Namespace.TestClass0  ",
+            "   Namespace.TestClass1 ",
+            "#something",
+            "Namespace.TestClass2",
+        ))
+        justRun { readerMock.close() }
+
+        val fileMock = mockk<File>()
+        every { fileMock.getBufferedReader() } answers { readerMock }
+        every { _fileSystemServiceMock.getExistingFile(any()) } answers { Result.success(fileMock) }
         val settings = create()
 
         // act
-        val result = settings.testClasses
+        val result = settings.testClasses.toList()
 
         // assert
         Assert.assertEquals(result.size, 3)
@@ -159,5 +180,5 @@ class SplitTestsFilterSettingsImplTests {
         }
     }
 
-    private fun create() = SplitTestsFilterSettingsImpl(_parametersServiceMock, _fileSystemMock)
+    private fun create() = SplitTestsFilterSettingsImpl(_parametersServiceMock, _fileSystemServiceMock)
 }

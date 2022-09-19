@@ -20,6 +20,15 @@ import org.apache.commons.io.FileUtils
 import java.io.*
 
 class FileSystemServiceImpl: FileSystemService {
+    override fun getExistingFile(path: String): Result<File> =
+        File(path)
+            .let { when {
+                !isExists(it) || !isFile(it) -> {
+                    Result.failure(Error("File \"$it\" doesn't exist or it is not a file"))
+                }
+                else -> Result.success(it)
+            } }
+
     override fun isExists(file: File): Boolean = file.exists()
 
     override fun isDirectory(file: File): Boolean = file.isDirectory

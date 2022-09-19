@@ -21,25 +21,18 @@ import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
 
 class SplitTestsFilterProvider(
-        private val _settings: SplitTestsFilterSettings,
-        private val _fileSystem: FileSystemService,
-        private val _testsNamesReader: SplitTestsNamesReader,
+    private val _settings: SplitTestsFilterSettings,
+    private val _testsNamesReader: SplitTestsNamesReader,
 ) : TestsFilterProvider {
-    override val filterExpression: String get() =
-        _settings.testsClassesFile
-            ?.let { testsPartsFile ->
-                LOG.debug("Tests group file is \"$testsPartsFile\".")
-                if (!_fileSystem.isExists(testsPartsFile) || !_fileSystem.isFile(testsPartsFile)) {
-                    LOG.warn("Cannot find file \"$testsPartsFile\".")
-                    return@let null
-                }
+    override val filterExpression: String get() = when {
+        _settings.isActive -> {
+            val filter = buildFilter()
 
-                val filter = buildFilter()
-
-                LOG.debug("Tests group file filter: \"$filter\".")
-                filter
-            }
-            ?: ""
+            LOG.debug("Tests group file filter: \"$filter\".")
+            filter
+        }
+        else -> ""
+    }
 
     private fun buildFilter() = when {
         _settings.useExactMatchFilter -> buildExactMatchFilter()
@@ -54,7 +47,7 @@ class SplitTestsFilterProvider(
             SplittedTestsFilterType.Excludes -> Pair("!~", " & ")
         }
 
-        return _settings.testClasses
+        return _settings.testClasses.toList()
             .map { "$it." }       // to avoid collisions with overlapping test class names prefixes
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
@@ -63,8 +56,7 @@ class SplitTestsFilterProvider(
     private fun buildExactMatchFilter(): String {
         val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 
-        return _testsNamesReader.read()
-            .toList()
+        return _testsNamesReader.read().toList()
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
@@ -74,12 +66,14 @@ class SplitTestsFilterProvider(
         filterValues
             .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}" }
             .let { filterElements ->
-                if (filterElements.size > FilterExpressionChunkSize)
-                    // chunks in parentheses '(', ')' are necessary to avoid stack overflow in VSTest filter validator
-                    // https://youtrack.jetbrains.com/issue/TW-76381
-                    filterElements.chunked(FilterExpressionChunkSize) { "(${it.joinToString(filterCombineOperator)})" }
-                else
-                    filterElements
+                when {
+                    filterElements.size > FilterExpressionChunkSize -> {
+                        // chunks in parentheses '(', ')' are necessary to avoid stack overflow in VSTest filter validator
+                        // https://youtrack.jetbrains.com/issue/TW-76381
+                        filterElements.chunked(FilterExpressionChunkSize) { chunk -> "(${chunk.joinToString(filterCombineOperator)})" }
+                    }
+                    else -> filterElements
+                }
             }
             .joinToString(filterCombineOperator)
 

@@ -39,7 +39,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.testClasses } answers { emptyList() }
+        every { _settingsMock.testClasses } answers { emptySequence() }
         every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
         justRun { _loggerMock.debug(any<String>()) }
         val manager = create()
@@ -66,7 +66,7 @@ class SplitTestsNamesManagerTests {
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val namespace = "Namespace"
-        val testClasses = listOf("$namespace.TestClass0", "$namespace.TestClass1", namespace)
+        val testClasses = sequenceOf("$namespace.TestClass0", "$namespace.TestClass1", namespace)
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
         justRun { _loggerMock.debug(any<String>()) }
@@ -80,7 +80,7 @@ class SplitTestsNamesManagerTests {
         verify (exactly = 1) {
             _loggerMock.debug(
                 match<String> { msg ->
-                    msg.contains("${testClasses.size} test classes")
+                    msg.contains("${testClasses.count()} test classes")
                         && msg.contains("1 namespaces")
                         && msg.contains("$filterType")
                 }
@@ -93,7 +93,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -108,7 +108,7 @@ class SplitTestsNamesManagerTests {
 
         val manager = create()
         val session = manager.startSession()
-        val invalidTestName = "${testClasses[0]}._%_INVALID"
+        val invalidTestName = "${testClasses.first()}._%_INVALID"
 
         // act
         session.tryToSave(invalidTestName)
@@ -123,7 +123,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -138,7 +138,7 @@ class SplitTestsNamesManagerTests {
 
         val manager = create()
         val session = manager.startSession()
-        val validTestName = "${testClasses[0]}.TestName0"
+        val validTestName = "${testClasses.first()}.TestName0"
 
         // act
         session.tryToSave(validTestName)
@@ -153,7 +153,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Excludes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType}
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -183,7 +183,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType}
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -213,7 +213,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Excludes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType}
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -228,7 +228,7 @@ class SplitTestsNamesManagerTests {
 
         val manager = create()
         val session = manager.startSession()
-        val validTestName = "${testClasses[0]}.TestName0"
+        val validTestName = "${testClasses.first()}.TestName0"
 
         // act
         session.tryToSave(validTestName)
@@ -243,7 +243,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
@@ -267,7 +267,7 @@ class SplitTestsNamesManagerTests {
         val manager = create()
         val session = manager.startSession()
 
-        val testClassFQN = testClasses[0]
+        val testClassFQN = testClasses.first()
 
         // act
         var index = 0
@@ -294,7 +294,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
@@ -320,7 +320,7 @@ class SplitTestsNamesManagerTests {
         val manager = create()
         val session = manager.startSession()
 
-        val testClassFQN = testClasses[0]
+        val testClassFQN = testClasses.first()
         val times = listSize * testListMockList.size
 
         for (index in 0 until times) {
@@ -347,7 +347,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
@@ -373,7 +373,7 @@ class SplitTestsNamesManagerTests {
         val manager = create()
         val session = manager.startSession()
 
-        val testClassFQN = testClasses[0]
+        val testClassFQN = testClasses.first()
         val times = listSize * testListMockList.size
 
         for (index in 0 until times) {
@@ -410,7 +410,7 @@ class SplitTestsNamesManagerTests {
         // arrange
         val filterType = SplittedTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
-        val testClasses = listOf("Namespace.TestClass0", "Namespace.TestClass1")
+        val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.exactMatchFilterSize } answers { 42 }
@@ -426,7 +426,7 @@ class SplitTestsNamesManagerTests {
 
         val manager = create()
         val session = manager.startSession()
-        session.tryToSave("${testClasses[0]}.TestName0")
+        session.tryToSave("${testClasses.first()}.TestName0")
 
         // act
         session.dispose()

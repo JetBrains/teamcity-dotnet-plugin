@@ -17,18 +17,17 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.PathsService
-import java.io.BufferedReader
+import jetbrains.buildServer.utils.getBufferedReader
 import java.io.File
-import java.io.InputStreamReader
 
 class SplitTestsFilterSettingsImpl(
     private val _parametersService: ParametersService,
     private val _fileSystem: FileSystemService,
 ) : SplitTestsFilterSettings {
-    override val isActive: Boolean get() = testsClassesFile != null
+    override val isActive: Boolean get() = testsClassesFilePath != null
 
     override val filterType: SplittedTestsFilterType get() =
         when (_parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH)) {
@@ -36,25 +35,23 @@ class SplitTestsFilterSettingsImpl(
             else -> SplittedTestsFilterType.Includes
         }
 
-    override val testsClassesFile: File? get() =
-        filterType
-            .let {
-                when (it) {
-                    SplittedTestsFilterType.Excludes -> DotnetConstants.PARAM_PARALLEL_TESTS_EXCLUDES_FILE
-                    SplittedTestsFilterType.Includes -> DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
-                }
-            }
-            .let { _parametersService.tryGetParameter(ParameterType.System, it) }
-            ?.let { File(it) }
-
-    override val testClasses: List<String> get() =
+    override val testClasses: Sequence<String> get() = sequence {
         testsClassesFile
-            ?.readLinesFromFile()
-            ?.map { it.trim() }
-            ?.filter { !it.startsWith("#") }
-            ?.map { it.trim() }
-            ?.filter { it.length > 2 }
-            ?: emptyList()
+            .onFailure {
+                LOG.warn("Cannot read tests classes file")
+                LOG.warn(it)
+            }
+            .getOrNull()
+            ?.getBufferedReader()
+            ?.use { reader ->
+                while (reader.ready())
+                    yield(reader.readLine())
+            }
+    }
+        .map { it.trim() }
+        .filter { !it.startsWith("#") }
+        .map { it.trim() }
+        .filter { it.length > 2 }
 
     override val useExactMatchFilter: Boolean get() =
         _parametersService
@@ -69,19 +66,26 @@ class SplitTestsFilterSettingsImpl(
             .let { runCatching { it?.trim()?.toInt() ?: DefaultExactMatchTestsChunkSize } }
             .getOrDefault(DefaultExactMatchTestsChunkSize)
 
-    private fun File.readLinesFromFile(): List<String> =
-        _fileSystem
-            .read(this) { input ->
-                BufferedReader(InputStreamReader(input)).use { reader ->
-                    val tests: MutableList<String> = ArrayList()
-                    while (reader.ready()) {
-                        tests += reader.readLine()
-                    }
-                    tests
+    private val testsClassesFilePath: String? get() =
+        filterType
+            .let {
+                when (it) {
+                    SplittedTestsFilterType.Excludes -> DotnetConstants.PARAM_PARALLEL_TESTS_EXCLUDES_FILE
+                    SplittedTestsFilterType.Includes -> DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
                 }
             }
+            .let { _parametersService.tryGetParameter(ParameterType.System, it) }
+
+    private val testsClassesFile: Result<File> get() =
+        testsClassesFilePath
+            ?.let {
+                LOG.debug("Tests classes file path in parameters is \"$it\"")
+                _fileSystem.getExistingFile(it)
+            }
+            ?: Result.failure(Error("Cannot find split tests filter file path in parameter"))
 
     companion object {
+        private val LOG = Logger.getLogger(SplitTestsFilterSettingsImpl::class.java)
         private const val DefaultExactMatchTestsChunkSize = 10_000
     }
 }

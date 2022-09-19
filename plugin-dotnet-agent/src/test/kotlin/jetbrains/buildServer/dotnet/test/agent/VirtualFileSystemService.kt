@@ -25,6 +25,10 @@ class VirtualFileSystemService : FileSystemService {
     private val _directories: MutableMap<File, DirectoryInfo> = mutableMapOf()
     private val _files: MutableMap<File, FileInfo> = mutableMapOf()
 
+    override fun getExistingFile(path: String): Result<File> {
+        TODO("Not yet implemented")
+    }
+
     override fun <T> write(file: File, writer: (OutputStream) -> T): T {
         addFile(file)
         return writer(_files[file]!!.outputStream)
