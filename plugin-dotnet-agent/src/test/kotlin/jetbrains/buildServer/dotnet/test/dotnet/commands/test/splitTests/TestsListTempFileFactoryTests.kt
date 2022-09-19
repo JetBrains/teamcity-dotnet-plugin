@@ -33,7 +33,7 @@ class TestsListTempFileFactoryTests {
         // assert
         Assert.assertNotNull(result)
         Assert.assertTrue(result is TestsListTempFile)
-        verify (exactly = 1) { _pathsServiceMock.getTempFileName(".tests") }
+        verify (exactly = 1) { _pathsServiceMock.getTempFileName(".dotnet-tests-list") }
     }
 
     private fun createFactory() = TestsListTempFileFactory(_pathsServiceMock)
