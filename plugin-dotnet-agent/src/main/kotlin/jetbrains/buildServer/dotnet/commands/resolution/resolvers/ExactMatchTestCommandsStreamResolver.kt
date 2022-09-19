@@ -19,7 +19,6 @@ package jetbrains.buildServer.dotnet.commands.resolution.resolvers
 import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.CommandResultOutput
-import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.SplitTestsFilterSettings

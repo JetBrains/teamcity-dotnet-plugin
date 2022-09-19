@@ -98,7 +98,7 @@ class TestsListTempFileTests {
         Assert.assertEquals(testsAfterSecond.size, 2)
         Assert.assertEquals(testsAfterSecond[0], first)
         Assert.assertEquals(testsAfterSecond[1], second)
-        verify (exactly = 1) { _fileMock.getBufferedWriter() }
+        verify (exactly = 2) { _fileMock.getBufferedWriter() }
         verify (exactly = 2) { _fileMock.getBufferedReader() }
         verify (exactly = 2) { writerMock.write(any<String>()) }
         verify (exactly = 2) { writerMock.newLine() }

@@ -12,6 +12,7 @@ class TestsListTempFile(private val _file: File) : TestsList {
     override val testsCount: Int get() = _testsCounter
 
     override val tests: Sequence<String> get() = sequence {
+        closeWriter()       // reading while we have opened writer could lead to lost data
         _file.getBufferedReader()
             .use {
                 while (it.ready())
@@ -31,8 +32,12 @@ class TestsListTempFile(private val _file: File) : TestsList {
     }
 
     override fun dispose() {
-        _testsListFileWriter?.close()
+        closeWriter()
         _testsCounter = 0
+    }
+
+    private fun closeWriter() {
+        _testsListFileWriter?.close()
         _testsListFileWriter = null
     }
 }

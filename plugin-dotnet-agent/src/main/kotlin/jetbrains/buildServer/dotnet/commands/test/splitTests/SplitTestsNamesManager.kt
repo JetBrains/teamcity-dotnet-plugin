@@ -22,14 +22,13 @@ import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import java.util.*
 
 class SplitTestsNamesManager(
-        private val _settings: SplitTestsFilterSettings,
-        private val _testListFactory: TestsListFactory,
-        private val _langIdentifierValidator: LangIdentifierValidator,
+    private val _settings: SplitTestsFilterSettings,
+    private val _testListFactory: TestsListFactory,
+    private val _langIdentifierValidator: LangIdentifierValidator,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
     private val _testsLists: Queue<TestsList> = LinkedList()
     private val _consideringTestsClasses = mutableSetOf<String>()
     private val _consideringTestsClassesNamespaces = mutableSetOf<String>();
-    private val _t: NavigableSet<String> = TreeSet()
 
     override fun startSession(): SplitTestsNamesSession {
         // load split test file with test classes names to set to make a fast search by test names prefixes
@@ -57,6 +56,9 @@ class SplitTestsNamesManager(
     }
 
     override fun <T> forEveryTestsNamesChunk(handleChunk: () -> T) = sequence<T> {
+        // we should close all writers before read
+        _testsLists.forEach { it.dispose() }
+
         while (!_testsLists.isEmpty()) {
             yield(handleChunk())
             _testsLists.remove()
@@ -87,11 +89,7 @@ class SplitTestsNamesManager(
 
     override fun read() =
         _testsLists.peek()
-            ?.let { testsList ->
-                val tests = testsList.tests
-                testsList.dispose()
-                tests
-            }
+            ?.tests
             ?: emptySequence()
 
     // to close session
