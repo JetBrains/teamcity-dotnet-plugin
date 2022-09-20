@@ -36,7 +36,7 @@ dependencies {
   implementation project(":plugin-dotnet-common")
   implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.21"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
-  provided "org.jetbrains.teamcity:agent-api:2022.10-SNAPSHOT"
+  provided "org.jetbrains.teamcity:agent-api:${teamcityVersion}"
   provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
   implementation "commons-io:commons-io:2.6"
