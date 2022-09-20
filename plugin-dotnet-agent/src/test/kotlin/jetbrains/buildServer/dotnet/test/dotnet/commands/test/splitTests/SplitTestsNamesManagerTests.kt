@@ -335,7 +335,6 @@ class SplitTestsNamesManagerTests {
             Assert.assertTrue(result.contains("$testClassFQN.TestName$index"))
         }
         verify (exactly = 1) { testListMockList[0].tests }
-        verify (exactly = 1) { testListMockList[0].dispose() }
         verify (exactly = 0) { testListMockList[1].tests }
         verify (exactly = 0) { testListMockList[1].dispose() }
         verify (exactly = 0) { testListMockList[2].tests }
