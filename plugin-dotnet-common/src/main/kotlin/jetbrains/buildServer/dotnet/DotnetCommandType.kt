@@ -22,6 +22,7 @@ enum class DotnetCommandType(val id: String) {
     Publish("publish"),
     Restore("restore"),
     Test("test"),
+    ListTests("list-tests"),
     Run("run"),
     NuGetPush("nuget-push"),
     NuGetDelete("nuget-delete"),
@@ -31,3 +32,4 @@ enum class DotnetCommandType(val id: String) {
     VisualStudio("devenv"),
     Custom("custom"),
 }
+

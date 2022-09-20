@@ -34,7 +34,7 @@ class VSTestLoggerArgumentsProvider(
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             yield(CommandLineArgument("/logger:logger://teamcity", CommandLineArgumentType.Infrastructural))
             yield(CommandLineArgument("/TestAdapterPath:${_virtualContext.resolvePath(it.canonicalPath)}", CommandLineArgumentType.Infrastructural))
-            yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.toLowerCase()}", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("/logger:console;verbosity=${_loggerParameters.vsTestVerbosity.id.lowercase()}", CommandLineArgumentType.Infrastructural))
         }
     }
 }

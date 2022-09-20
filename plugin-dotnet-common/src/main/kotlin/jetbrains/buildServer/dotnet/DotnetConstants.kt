@@ -49,6 +49,13 @@ object DotnetConstants {
     const val PARAM_DEFAULT_BITNESS = "teamcity.internal.dotnet.default.bitness"
     // True or False (True by default) - use messages guard
     const val PARAM_MESSAGES_GUARD = "teamcity.internal.dotnet.messages.guard"
+    const val PARAM_PARALLEL_TESTS_EXCLUDES_FILE = "teamcity.build.parallelTests.excludesFile"
+    const val PARAM_PARALLEL_TESTS_INCLUDES_FILE = "teamcity.build.parallelTests.includesFile"
+    const val PARAM_PARALLEL_TESTS_CURRENT_BATCH = "teamcity.build.parallelTests.currentBatch"
+    // True or False (False by default) - use exact match test filters for `dotnet test --filter <FILTER>` command in case of low performance reasoned by a huge amount of test classes via NUnit
+    const val PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER = "teamcity.internal.dotnet.test.exact.match.filter"
+    // Integer amount of tests that should be included in exact match test filter
+    const val PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE = "teamcity.internal.dotnet.test.exact.match.filter.size"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"

@@ -45,7 +45,7 @@ open class NuGetServiceImpl(
             var counter = 0
             _httpDownloader.download(URL(searchQueryServiceUrl, "query?q=packageid:$packageId&prerelease=true"), stream)
             val json = InputStreamReader(ByteArrayInputStream(stream.toByteArray()))
-            val rootObj = JsonParser.parse(json).asJsonObject
+            val rootObj = JsonParser.parseReader(json).asJsonObject
             val dataArray = rootObj.get("data").asJsonArray
             for (nuGetPackage in dataArray) {
                 val nuGetPackageObj = nuGetPackage.asJsonObject
@@ -53,7 +53,7 @@ open class NuGetServiceImpl(
                 for (versionItem in versionItems) {
                     val versionItemObj = versionItem.asJsonObject
                     val packageVersion = versionItemObj.get("version").asString
-                    val packageUrl = URL(packageBaseUrl, "$packageId/$packageVersion/$packageId.$packageVersion.nupkg".toLowerCase())
+                    val packageUrl = URL(packageBaseUrl, "$packageId/$packageVersion/$packageId.$packageVersion.nupkg".lowercase())
                     yield(NuGetPackage(packageId, packageVersion, packageUrl))
                     counter++
                 }
@@ -68,7 +68,7 @@ open class NuGetServiceImpl(
             stream ->
             _httpDownloader.download(NugetFeed, stream)
             val json = InputStreamReader(ByteArrayInputStream(stream.toByteArray()))
-            val rootObj = JsonParser.parse(json).asJsonObject
+            val rootObj = JsonParser.parseReader(json).asJsonObject
             val resourcesObj = rootObj.get("resources").asJsonArray
             for (resource in resourcesObj) {
                 val resourceObj = resource.asJsonObject
@@ -84,6 +84,5 @@ open class NuGetServiceImpl(
     companion object {
         private val NugetFeed = URL("https://api.nuget.org/v3/index.json")
         private val LOG: Logger = Logger.getInstance(NuGetServiceImpl::class.java.name)
-        private val JsonParser = JsonParser()
     }
 }

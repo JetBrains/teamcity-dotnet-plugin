@@ -21,6 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolver
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import org.testng.Assert
@@ -29,16 +30,17 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetWorkflowComposerTest {
-    @MockK private lateinit var _workflowContext: WorkflowContext
-    @MockK private lateinit var _parametersService: ParametersService
-    @MockK private lateinit var _commandRegistry: CommandRegistry
-    @MockK private lateinit var _failedTestSource: FailedTestSource
-    @MockK private lateinit var _commandSet: CommandSet
-    @MockK private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
-    @MockK private lateinit var _environmentVariables: EnvironmentVariables
     @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    @MockK private lateinit var _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer
+    @MockK private lateinit var _failedTestSource: FailedTestSource
+    @MockK private lateinit var _commandRegistry: CommandRegistry
+    @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _dotnetCommandsStreamResolver: DotnetCommandsStreamResolver
+
+    @MockK private lateinit var _workflowContext: WorkflowContext
     @MockK private lateinit var _dotnetToolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _msbuildToolStateWorkflowComposer: ToolStateWorkflowComposer
     @MockK private lateinit var _resultsObserver: Observer<CommandResultEvent>
@@ -60,7 +62,8 @@ class DotnetWorkflowComposerTest {
             listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
             _msbuildVars,
             "dotnet --version",
-            listOf(StdOutText("Getting the .NET SDK version")))
+            listOf(StdOutText("Getting the .NET SDK version"))
+    )
 
     @BeforeMethod
     fun setUp() {
@@ -92,7 +95,7 @@ class DotnetWorkflowComposerTest {
 
     @Test
     fun shouldCompose() {
-        // Given
+        // arrange
         val composer = createInstance()
 
         val msbuildCommand = mockk<DotnetCommand>() {
@@ -117,29 +120,29 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = createDotnetCommand()
         val dotnetBuildCommand2 = createDotnetCommand()
 
-        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
+        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
-        } /* dotnet build */ andThen {
+        } /* dotnet build */ andThenAnswer {
             createToken()
         }
 
         every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
-        } /* dotnet --version */ andThen {
+        } /* dotnet --version */ andThenAnswer  {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
             createToken()
-        } /* dotnet build */ andThen {
+        } /* dotnet build */ andThenAnswer {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
         }
 
-        // When
+        // act
         val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verifyAllTokensWereDisposed()
 
         Assert.assertEquals(
@@ -199,7 +202,7 @@ class DotnetWorkflowComposerTest {
 
     @Test
     fun shouldComposeForFailedTest() {
-        // Given
+        // arrange
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
@@ -225,30 +228,30 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<Unit>>(0).onNext(Unit)
             createToken()
-        } /* dotnet build */ andThen {
+        } /* dotnet build */ andThenAnswer {
             createToken()
         }
 
         every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
             createToken()
-        } /* dotnet --version */ andThen {
+        } /* dotnet --version */ andThenAnswer {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
             createToken()
-        } /* dotnet build */ andThen {
+        } /* dotnet build */ andThenAnswer {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
         }
 
-        // When
+        // act
         val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verifyAllTokensWereDisposed()
 
         Assert.assertEquals(
@@ -286,7 +289,7 @@ class DotnetWorkflowComposerTest {
 
     @Test
     fun shouldAbortBuildWhenFailed() {
-        // Given
+        // arrange
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
@@ -312,35 +315,35 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { _commandSet.commands } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
-        } /* dotnet build */ andThen {
+        } /* dotnet build */ andThenAnswer {
             createToken()
         }
 
         // Subscribe command results observer
         every { _workflowContext.subscribe(any()) } /* msbuild */ answers {
             createToken()
-        } andThen
+        } andThenAnswer
         /* // Subscribe for an exit code for msbuild */ {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(1))
             createToken()
-        } /* Subscribe for an exit code for dotnet --version */ andThen {
+        } /* Subscribe for an exit code for dotnet --version */ andThenAnswer {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultOutput("3.0.0"))
             createToken()
-        } /* Subscribe for an exit code for dotnet build */ andThen {
+        } /* Subscribe for an exit code for dotnet build */ andThenAnswer {
             arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(0))
             createToken()
         }
 
         every { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) } returns Unit
 
-        // When
+        // act
         val actualCommandLines = composer.compose(_workflowContext, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verifyAllTokensWereDisposed()
         verify { _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED) }
 
@@ -377,18 +380,17 @@ class DotnetWorkflowComposerTest {
                 ))
     }
 
-    private fun createInstance(): DotnetWorkflowComposer {
-        return DotnetWorkflowComposer(
-                _pathsService,
-                _environmentVariables,
-                _dotnetWorkflowAnalyzer,
-                _commandSet,
-                _failedTestSource,
-                _commandRegistry,
-                _parametersService,
-                _commandLinePresentationService,
-                _virtualContext)
-    }
+    private fun createInstance() = DotnetWorkflowComposer(
+            _pathsService,
+            _environmentVariables,
+            _dotnetWorkflowAnalyzer,
+            _failedTestSource,
+            _commandRegistry,
+            _parametersService,
+            _commandLinePresentationService,
+            _virtualContext,
+            _dotnetCommandsStreamResolver,
+        )
 
     private fun createToken(): Disposable {
         val token = mockk<Disposable>() {

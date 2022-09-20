@@ -20,7 +20,7 @@ class SdkResolverImpl(
 
     private fun resolveSdkVersions(framework: Framework) = sequence<SdkVersion> {
         FrameworkRegex.matchEntire(framework.name)?.let {
-            val name = it.groupValues[1].toLowerCase()
+            val name = it.groupValues[1].lowercase()
             var versionStr = it.groupValues[2]
             // val os = it.groupValues[3].toLowerCase()
 
@@ -28,8 +28,7 @@ class SdkResolverImpl(
                 versionStr = versionStr.map { "$it" }.joinToString(".")
             }
 
-            Version.tryParse(versionStr)?.let {
-                version ->
+            Version.tryParse(versionStr)?.let { version ->
                 when {
                     // net5.0, net6.0
                     name == "net" && version >= Version(5, 0) -> {

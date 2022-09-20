@@ -23,12 +23,16 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyObserver
 
 abstract class DotnetCommandBase(
-        private val _parametersService: ParametersService,
-        override val resultsObserver: Observer<CommandResultEvent> = emptyObserver())
-    : DotnetCommand {
-    protected fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
+    private val _parametersService: ParametersService,
+    override val resultsObserver: Observer<CommandResultEvent> = emptyObserver()
+) : DotnetCommand {
+    protected fun parameters(parameterName: String): String? =
+        _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 
-    protected fun parameters(parameterName: String, defaultValue: String): String = _parametersService.tryGetParameter(ParameterType.Runner, parameterName) ?: defaultValue
+    protected fun parameters(parameterName: String, defaultValue: String): String =
+        _parametersService
+            .tryGetParameter(ParameterType.Runner, parameterName)
+            ?: defaultValue
 
-    override val environmentBuilders: Sequence<EnvironmentBuilder> get() = emptySequence()
+    override val environmentBuilders: Sequence<EnvironmentBuilder> get() =  emptySequence()
 }

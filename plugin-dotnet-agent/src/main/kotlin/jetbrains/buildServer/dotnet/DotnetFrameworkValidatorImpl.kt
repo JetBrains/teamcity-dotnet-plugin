@@ -21,7 +21,7 @@ class DotnetFrameworkValidatorImpl(
         var files = _fileSystemService
                 .list(framework.path)
                 .filter { _fileSystemService.isFile(it) }
-                .map { it.name.toLowerCase() }
+                .map { it.name.lowercase() }
                 .toHashSet()
 
         if (!files.contains("csc.exe")) {

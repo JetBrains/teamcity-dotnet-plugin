@@ -20,6 +20,8 @@ import java.io.InputStream
 import java.io.OutputStream
 
 interface FileSystemService {
+    fun getExistingFile(path: String): Result<File>
+
     fun isExists(file: File): Boolean
 
     fun isDirectory(file: File): Boolean

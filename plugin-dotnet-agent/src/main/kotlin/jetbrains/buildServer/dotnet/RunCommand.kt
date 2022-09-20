@@ -21,15 +21,16 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class RunCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: DotnetToolResolver)
-    : DotnetCommandBase(_parametersService) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: DotnetToolResolver,
+) : DotnetCommandBase(_parametersService) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.Run
+    override val commandType = DotnetCommandType.Run
+
+    override val commandWords = sequenceOf("run")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map {

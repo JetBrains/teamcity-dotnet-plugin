@@ -21,20 +21,21 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class MSBuildCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: ToolResolver,
-        private val _vstestLoggerEnvironment: EnvironmentBuilder,
-        private val _targetsParser: TargetsParser,
-        private val _dotnetFilterFactory: DotnetFilterFactory,
-        private val _responseFileFactory: ResponseFileFactory)
-    : DotnetCommandBase(_parametersService) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: ToolResolver,
+    private val _vstestLoggerEnvironment: EnvironmentBuilder,
+    private val _targetsParser: TargetsParser,
+    private val _dotnetFilterFactory: DotnetFilterFactory,
+    private val _responseFileFactory: ResponseFileFactory,
+) : DotnetCommandBase(_parametersService) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.MSBuild
+    override val commandType = DotnetCommandType.MSBuild
+
+    override val commandWords = sequenceOf("msbuild")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
@@ -68,7 +69,7 @@ class MSBuildCommand(
         }
 
         context.verbosityLevel?.let {
-            yield(CommandLineArgument("-v:${it.id.toLowerCase()}"))
+            yield(CommandLineArgument("-v:${it.id.lowercase()}"))
         }
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))

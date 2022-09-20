@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.resolution
 
-interface CommandSet {
-    val commands: Sequence<DotnetCommand>
+abstract class DotnetCommandStreamResolverBase : DotnetCommandsStreamResolver {
+    final override fun resolve(commands: DotnetCommandsStream) = when {
+        shouldBeApplied(commands) -> apply(commands)
+        else -> commands
+    }
+
+    protected abstract fun shouldBeApplied(commands: DotnetCommandsStream): Boolean
+
+    protected abstract fun apply(commands: DotnetCommandsStream): DotnetCommandsStream
 }
+

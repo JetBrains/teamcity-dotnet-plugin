@@ -42,8 +42,8 @@ class DotnetSetupRegistryVisitor(
         val bitness = value.key.bitness
         if (value.key.parts.size == Deep + 2) {
             val subKey = value.key.parts.takeLast(2)
-            val key = subKey[0].toLowerCase()
-            val name = subKey[1].toLowerCase()
+            val key = subKey[0].lowercase()
+            val name = subKey[1].lowercase()
             if (value.type == WindowsRegistryValueType.Str && value.text.isNotBlank() && key.startsWith("v")) {
                 when (key) {
                     "v3.0" -> {
@@ -51,8 +51,8 @@ class DotnetSetupRegistryVisitor(
                             VersionName -> {
                                 val framework = _frameworks.getOrPut(key) { Framework(bitness) }
                                 framework.version = Version.parse(value.text)
-                                _environment.tryGetRoot(value.key.bitness)?.let {
-                                    installRoot -> framework.path = File(installRoot, key)
+                                _environment.tryGetRoot(value.key.bitness)?.let { installRoot ->
+                                    framework.path = File(installRoot, key)
                                 }
                             }
                         }
@@ -64,11 +64,12 @@ class DotnetSetupRegistryVisitor(
                                 val framework = _frameworks.getOrPut(key) { Framework(bitness) }
                                 framework.version = Version.parse(value.text)
                                 if (framework.path == null) {
-                                    _environment.tryGetRoot(value.key.bitness)?.let {
-                                        installRoot -> framework.path = File(installRoot, key)
+                                    _environment.tryGetRoot(value.key.bitness)?.let { installRoot ->
+                                        framework.path = File(installRoot, key)
                                     }
                                 }
                             }
+
                             InstallPathName -> {
                                 val framework = _frameworks.getOrPut(key) { Framework(bitness) }
                                 framework.path = if (value.text.isNotBlank()) File(value.text) else null
@@ -81,23 +82,25 @@ class DotnetSetupRegistryVisitor(
 
         if (value.key.parts.size == Deep + 3) {
             val subKey = value.key.parts.takeLast(3)
-            val key = subKey[0].toLowerCase()
+            val key = subKey[0].lowercase()
             val versionType = subKey[1]
             val name = subKey[2]
             if (key.equals("v4") && versionType.equals("Full", true)) {
-                when (name.toLowerCase()) {
+                when (name.lowercase()) {
                     VersionName -> {
                         if (value.type == WindowsRegistryValueType.Str && value.text.isNotBlank()) {
                             val framework = _frameworks.getOrPut(key) { Framework(bitness) }
                             framework.version = Version.parse(value.text)
                         }
                     }
+
                     InstallPathName -> {
                         if (value.type == WindowsRegistryValueType.Str && value.text.isNotBlank()) {
                             val framework = _frameworks.getOrPut(key) { Framework(bitness) }
                             framework.path = if (value.text.isNotBlank()) File(value.text) else null
                         }
                     }
+
                     ReleaseName -> {
                         if (value.type == WindowsRegistryValueType.Int && value.number != 0L) {
                             val framework = _frameworks.getOrPut(key) { Framework(bitness) }

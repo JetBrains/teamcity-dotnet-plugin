@@ -16,7 +16,7 @@ class NuGetServiceIntegrationTest {
         // When
         val packages = nuget.getPackagesById("IoC.Container").toList()
         val downloadUrl = packages.last().downloadUrl
-        var data: ByteArray? = null
+        var data: ByteArray?
         ByteArrayOutputStream().use { stream ->
             downloader.download(downloadUrl, stream)
             data = stream.toByteArray()

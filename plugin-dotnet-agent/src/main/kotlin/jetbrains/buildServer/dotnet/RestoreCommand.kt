@@ -22,16 +22,16 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 
 class RestoreCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _argumentsService: ArgumentsService,
-        private val _targetService: TargetService,
-        private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
-        override val toolResolver: DotnetToolResolver)
-    : DotnetCommandBase(_parametersService) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _argumentsService: ArgumentsService,
+    private val _targetService: TargetService,
+    private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
+    override val toolResolver: DotnetToolResolver,
+) : DotnetCommandBase(_parametersService) {
+    override val commandType  = DotnetCommandType.Restore
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.Restore
+    override val commandWords = sequenceOf("restore")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

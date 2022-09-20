@@ -31,21 +31,24 @@ class ShWorkflowComposer(
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
                 loop@ for (baseCommandLine in workflow.commandLines) {
-                    when(baseCommandLine.executableFile.extension().toLowerCase()) {
+                    when (baseCommandLine.executableFile.extension().lowercase()) {
                         "sh" -> {
-                            if(_virtualContext.targetOSType == OSType.WINDOWS) {
+                            if (_virtualContext.targetOSType == OSType.WINDOWS) {
                                 _cannotExecute.writeBuildProblemFor(baseCommandLine.executableFile)
                                 break@loop
-                            }
-                            else yield(CommandLine(
+                            } else yield(
+                                CommandLine(
                                     baseCommandLine,
                                     TargetType.Host,
-                                    Path( "sh"),
+                                    Path("sh"),
                                     baseCommandLine.workingDirectory,
                                     getArguments(baseCommandLine).toList(),
                                     baseCommandLine.environmentVariables,
-                                    baseCommandLine.title))
+                                    baseCommandLine.title
+                                )
+                            )
                         }
+
                         else -> yield(baseCommandLine)
                     }
                 }

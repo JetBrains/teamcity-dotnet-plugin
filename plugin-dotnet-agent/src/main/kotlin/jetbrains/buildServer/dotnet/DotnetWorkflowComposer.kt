@@ -18,104 +18,117 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolver
 import jetbrains.buildServer.rx.*
-import jetbrains.buildServer.agent.Logger
 import java.io.File
 
 class DotnetWorkflowComposer(
-        private val _pathsService: PathsService,
-        private val _defaultEnvironmentVariables: EnvironmentVariables,
-        private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
-        private val _commandSet: CommandSet,
-        private val _failedTestSource: FailedTestSource,
-        private val _commandRegistry: CommandRegistry,
-        private val _parametersService: ParametersService,
-        private val _commandLinePresentationService: CommandLinePresentationService,
-        private val _virtualContext: VirtualContext)
-    : SimpleWorkflowComposer {
+    private val _pathsService: PathsService,
+    private val _defaultEnvironmentVariables: EnvironmentVariables,
+    private val _dotnetWorkflowAnalyzer: DotnetWorkflowAnalyzer,
+    private val _failedTestSource: FailedTestSource,
+    private val _commandRegistry: CommandRegistry,
+    private val _parametersService: ParametersService,
+    private val _commandLinePresentationService: CommandLinePresentationService,
+    private val _virtualContext: VirtualContext,
+    private val _dotnetCommandsStreamResolver: DotnetCommandsStreamResolver,
+) : SimpleWorkflowComposer {
+    private val verbosityLevel get() = _parametersService
+        .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+        ?.trim()
+        ?.let { Verbosity.tryParse(it) }
+
+    private val dotnetCommands get() = _dotnetCommandsStreamResolver.resolve();
 
     override val target: TargetType = TargetType.Tool
 
-    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow =
-            Workflow(sequence {
-                val verbosity = _parametersService
-                        .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
-                        ?.trim()
-                        ?.let { Verbosity.tryParse(it) }
+    override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow = sequence {
+        val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
+        val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
 
-                val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
-                val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
+        var versions = mutableMapOf<String, Version>()
+        var virtualDotnetExecutable: Path? = null
+        val analyzerContext = DotnetWorkflowAnalyzerContext()
+        var verbosityLevel = verbosityLevel
 
-                var versions = mutableMapOf<String, Version>()
-                var virtualDotnetExecutable: Path? = null
-                val analyzerContext = DotnetWorkflowAnalyzerContext()
-                for (command in _commandSet.commands) {
-                    if (context.status != WorkflowStatus.Running) {
-                        break
+        for (dotnetCommand in dotnetCommands) {
+            if (context.status != WorkflowStatus.Running) {
+                break
+            }
+
+            val executable = dotnetCommand.toolResolver.executable
+            var virtualPath = executable.virtualPath
+
+            var version: Version? = versions[executable.path.path];
+            if (version == null) {
+                var toolState = ToolState(
+                    executable,
+                    observer<Path> { virtualDotnetExecutable = it },
+                    observer<Version> {
+                        version = it
+                        versions[executable.path.path] = it
                     }
+                )
 
-                    val executable = command.toolResolver.executable
-                    var virtualPath = executable.virtualPath
+                yieldAll(dotnetCommand.toolResolver.toolStateWorkflowComposer.compose(context, toolState).commandLines)
+            }
 
-                    var version: Version? = versions[executable.path.path];
-                    if (version == null) {
-                        var toolState = ToolState(
-                                executable,
-                                observer<Path> { virtualDotnetExecutable = it },
-                                observer<Version> {
-                                    version = it
-                                    versions[executable.path.path] = it;
-                                }
-                        )
+            virtualPath = virtualDotnetExecutable ?: virtualPath
 
-                        yieldAll(command.toolResolver.toolStateWorkflowComposer.compose(context, toolState).commandLines)
-                    }
+            val commandContext = DotnetBuildContext(
+                workingDirectory = ToolPath(workingDirectory, virtualWorkingDirectory),
+                command = dotnetCommand,
+                toolVersion = version ?: Version.Empty,
+                verbosityLevel = verbosityLevel
+            )
+            val args = dotnetCommand.getArguments(commandContext).toList()
+            val result = mutableSetOf<CommandResult>()
 
-                    virtualPath = virtualDotnetExecutable ?: virtualPath
-
-                    val dotnetBuildContext = DotnetBuildContext(ToolPath(workingDirectory, virtualWorkingDirectory), command, version ?: Version.Empty, verbosity)
-                    val args = command.getArguments(dotnetBuildContext).toList()
-                    val result = mutableSetOf<CommandResult>()
-                    disposableOf(
-                            // Subscribe command results observer
-                            context.subscribe(command.resultsObserver),
-                            // Build an environment
-                            dotnetBuildContext.command.environmentBuilders.map { it.build(dotnetBuildContext) }.toDisposable(),
-                            // Subscribe for failed tests
-                            _failedTestSource.subscribe { result += CommandResult.FailedTests },
-                            // Subscribe for an exit code
-                            context.toExitCodes().subscribe {
-                                val commandResult = dotnetBuildContext.command.resultsAnalyzer.analyze(it, result)
-                                _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
-                                if (commandResult.contains(CommandResult.Fail)) {
-                                    context.abort(BuildFinishedStatus.FINISHED_FAILED)
-                                }
-                            }
-                    ).use {
-                        _commandRegistry.register(dotnetBuildContext)
-                        yield(CommandLine(
-                                null,
-                                TargetType.Tool,
-                                virtualPath,
-                                dotnetBuildContext.workingDirectory.path,
-                                args,
-                                _defaultEnvironmentVariables.getVariables(dotnetBuildContext.toolVersion).toList(),
-                                getTitle(virtualPath, args),
-                                getDescription(dotnetBuildContext)))
+            disposableOf(
+                // Subscribe command results observer
+                context.subscribe(dotnetCommand.resultsObserver),
+                // Build an environment
+                dotnetCommand.environmentBuilders.map { it.build(commandContext) }.toDisposable(),
+                // Subscribe for failed tests
+                _failedTestSource.subscribe { result += CommandResult.FailedTests },
+                // Subscribe for an exit code
+                context.toExitCodes().subscribe {
+                    val commandResult = dotnetCommand.resultsAnalyzer.analyze(it, result)
+                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
+                    if (commandResult.contains(CommandResult.Fail)) {
+                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
                     }
                 }
+            ).use {
+                _commandRegistry.register(commandContext)
+                yield(
+                    CommandLine(
+                        baseCommandLine = null,
+                        target = TargetType.Tool,
+                        executableFile = virtualPath,
+                        workingDirectory = commandContext.workingDirectory.path,
+                        arguments = args,
+                        environmentVariables = _defaultEnvironmentVariables.getVariables(commandContext.toolVersion).toList(),
+                        title = getTitle(virtualPath, args),
+                        description = getDescription(commandContext),
+                    )
+                )
+            }
+        }
 
-                _dotnetWorkflowAnalyzer.summarize(analyzerContext)
-            })
+        _dotnetWorkflowAnalyzer.summarize(analyzerContext)
+    }.let(::Workflow)
 
-    private fun getTitle(executableFile: Path, args: List<CommandLineArgument>) =
-        (sequenceOf(File(executableFile.path).nameWithoutExtension) + args.filter { i -> i.argumentType == CommandLineArgumentType.Mandatory }.map { it.value }).joinToString(" ")
+    private fun getTitle(executableFile: Path, args: List<CommandLineArgument>) = sequence {
+        yield(File(executableFile.path).nameWithoutExtension)
+        yieldAll(args.filter { it.argumentType == CommandLineArgumentType.Mandatory }.map { it.value })
+    }.joinToString(" ")
 
     private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
         var description = mutableListOf<StdOutText>()
         when (dotnetBuildContext.command.toolResolver.platform) {
             ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Header))
-            else -> { }
+            else -> {}
         }
 
         if (dotnetBuildContext.toolVersion != Version.Empty) {
@@ -123,10 +136,5 @@ class DotnetWorkflowComposer(
         }
 
         return description
-    }
-
-    companion object {
-        private val LOG = Logger.getLogger(DotnetWorkflowComposer::class.java)
-        internal val VersionArgs = listOf(CommandLineArgument("--version"))
     }
 }

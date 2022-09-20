@@ -158,16 +158,16 @@ class TestCommandTest {
             arguments: Sequence<CommandLineArgument> = emptySequence(),
             testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()): DotnetCommand {
         return TestCommand(
-                ParametersServiceStub(parameters),
-                testsResultsAnalyzer,
-                TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
-                ArgumentsProviderStub(arguments),
-                ArgumentsProviderStub(arguments),
-                ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
-                mockk<EnvironmentBuilder>(),
-                _dotnetFilterFactory,
-                _loggerService,
-                _targetTypeProvider,
-                _targetArgumentsProvider)
+            ParametersServiceStub(parameters),
+            testsResultsAnalyzer,
+            ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
+            TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
+            ArgumentsProviderStub(arguments),
+            ArgumentsProviderStub(arguments),
+            _dotnetFilterFactory,
+            _loggerService,
+            _targetTypeProvider,
+            _targetArgumentsProvider
+        )
     }
 }

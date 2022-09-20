@@ -24,15 +24,15 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.util.StringUtil
 
 class NugetDeleteCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: DotnetToolResolver,
-        private val _resultsObserver: Observer<CommandResultEvent>)
-    : DotnetCommandBase(_parametersService, _resultsObserver) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: DotnetToolResolver,
+    private val _resultsObserver: Observer<CommandResultEvent>,
+): DotnetCommandBase(_parametersService, _resultsObserver) {
+    override val commandType = DotnetCommandType.NuGetDelete
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.NuGetDelete
+    override val commandWords = sequenceOf("nuget", "delete")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()

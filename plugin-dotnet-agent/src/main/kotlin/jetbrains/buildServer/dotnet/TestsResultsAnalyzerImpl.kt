@@ -19,9 +19,8 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.runner.BuildOptions
 
 class TestsResultsAnalyzerImpl(
-        private val _buildOptions: BuildOptions)
-    : ResultsAnalyzer {
-
+    private val _buildOptions: BuildOptions
+) : ResultsAnalyzer {
     override fun analyze(exitCode: Int, result: Set<CommandResult>): Set<CommandResult> {
         if (exitCode == 0) {
             return setOf(CommandResult.Success)
@@ -38,3 +37,4 @@ class TestsResultsAnalyzerImpl(
         }
     }
 }
+

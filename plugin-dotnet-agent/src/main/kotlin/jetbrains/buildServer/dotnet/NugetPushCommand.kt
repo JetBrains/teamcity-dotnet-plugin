@@ -24,16 +24,17 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Observer
 
 class NugetPushCommand(
-        _parametersService: ParametersService,
-        override val resultsAnalyzer: ResultsAnalyzer,
-        private val _targetService: TargetService,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        override val toolResolver: DotnetToolResolver,
-        private val _resultsObserver: Observer<CommandResultEvent>)
-    : DotnetCommandBase(_parametersService, _resultsObserver) {
+    _parametersService: ParametersService,
+    override val resultsAnalyzer: ResultsAnalyzer,
+    private val _targetService: TargetService,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    override val toolResolver: DotnetToolResolver,
+    private val _resultsObserver: Observer<CommandResultEvent>,
+) : DotnetCommandBase(_parametersService, _resultsObserver) {
 
-    override val commandType: DotnetCommandType
-        get() = DotnetCommandType.NuGetPush
+    override val commandType = DotnetCommandType.NuGetPush
+
+    override val commandWords = sequenceOf("nuget", "push")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

@@ -17,17 +17,19 @@
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.agent.runner.StdOutText
+import java.io.File
 import java.util.concurrent.atomic.AtomicLong
 
 data class CommandLine(
-        val baseCommandLine: CommandLine?,
-        val target: TargetType,
-        val executableFile: Path,
-        val workingDirectory: Path,
-        val arguments: List<CommandLineArgument> = emptyList(),
-        val environmentVariables: List<CommandLineEnvironmentVariable> = emptyList(),
-        val title: String = "",
-        val description: List<StdOutText> = emptyList()) {
+    val baseCommandLine: CommandLine?,
+    val target: TargetType,
+    val executableFile: Path,
+    val workingDirectory: Path,
+    val arguments: List<CommandLineArgument> = emptyList(),
+    val environmentVariables: List<CommandLineEnvironmentVariable> = emptyList(),
+    val title: String = "",
+    val description: List<StdOutText> = emptyList(),
+) {
 
     public val Id: Long
     public var IsInternal: Boolean = false

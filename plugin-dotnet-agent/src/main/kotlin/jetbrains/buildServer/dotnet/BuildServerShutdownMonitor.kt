@@ -79,6 +79,7 @@ class BuildServerShutdownMonitor(
                 DotnetCommandType.Pack,
                 DotnetCommandType.Publish,
                 DotnetCommandType.Test,
+                DotnetCommandType.ListTests,
                 DotnetCommandType.Run,
                 DotnetCommandType.MSBuild)
     }
