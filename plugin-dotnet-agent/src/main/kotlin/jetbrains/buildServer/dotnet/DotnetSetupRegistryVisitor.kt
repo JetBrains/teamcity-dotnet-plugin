@@ -135,38 +135,20 @@ class DotnetSetupRegistryVisitor(
 
         private val Deep = DotnetPolicyRegistryVisitor.Keys.first().parts.size
 
-        private fun getFrameworkVersion(releaseKey: Long) : Version {
-            if (releaseKey >= 528040)
-                return Version(4, 8)
-
-            if (releaseKey >= 461808)
-                return Version(4, 7, 2)
-
-            if (releaseKey >= 461308)
-                return Version(4, 7, 1)
-
-            if (releaseKey >= 460798)
-                return Version(4, 7)
-
-            if (releaseKey >= 394802)
-                return Version(4, 6, 2)
-
-            if (releaseKey >= 394254)
-                return Version(4, 6, 1)
-
-            if (releaseKey >= 393295)
-                return Version(4, 6)
-
-            if (releaseKey >= 379893)
-                return Version(4, 5, 2)
-
-            if (releaseKey >= 378675)
-                return Version(4, 5, 1)
-
-            if (releaseKey >= 378389)
-                return Version(4, 5)
-
-            return Version.Empty
+        // https://learn.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed#minimum-version
+        private fun getFrameworkVersion(releaseKey: Long) = when {
+            releaseKey >= 533325 -> Version(4, 8, 1)
+            releaseKey >= 528040 -> Version(4, 8)
+            releaseKey >= 461808 -> Version(4, 7, 2)
+            releaseKey >= 461308 -> Version(4, 7, 1)
+            releaseKey >= 460798 -> Version(4, 7)
+            releaseKey >= 394802 -> Version(4, 6, 2)
+            releaseKey >= 394254 -> Version(4, 6, 1)
+            releaseKey >= 393295 -> Version(4, 6)
+            releaseKey >= 379893 -> Version(4, 5, 2)
+            releaseKey >= 378675 -> Version(4, 5, 1)
+            releaseKey >= 378389 -> Version(4, 5)
+            else -> Version.Empty
         }
     }
 
