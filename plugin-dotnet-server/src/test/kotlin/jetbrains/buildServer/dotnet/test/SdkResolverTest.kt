@@ -39,6 +39,7 @@ class SdkResolverTest {
                 arrayOf(Framework("netstandard1.1"), emptyList<Property>(), "pack4.8 pack4.7 pack4.6 pack4.5 net6 net5 core3 core2 *core1"),
                 arrayOf(Framework("netstandard1.0"), emptyList<Property>(), "pack4.8 pack4.7 pack4.6 pack4.5 net6 net5 core3 core2 *core1"),
 
+                arrayOf(Framework("net481"), emptyList<Property>(), "*pack4.8.1"),
                 arrayOf(Framework("net48"), emptyList<Property>(), "*pack4.8"),
                 arrayOf(Framework("net472"), emptyList<Property>(), "*pack4.7.2"),
                 arrayOf(Framework("net471"), emptyList<Property>(), "*pack4.7.1"),

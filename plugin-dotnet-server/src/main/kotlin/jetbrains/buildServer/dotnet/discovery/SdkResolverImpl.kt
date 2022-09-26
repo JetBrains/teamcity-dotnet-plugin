@@ -1,10 +1,11 @@
 package jetbrains.buildServer.dotnet.discovery
 
 import jetbrains.buildServer.dotnet.*
+import java.util.*
 
-// https://docs.microsoft.com/ru-ru/dotnet/standard/frameworks#net-5-os-specific-tfms
 // https://docs.microsoft.com/ru-ru/dotnet/standard/net-standard
-
+// https://github.com/dotnet/docs/blob/main/docs/standard/frameworks.md
+// https://learn.microsoft.com/en-us/dotnet/standard/frameworks
 class SdkResolverImpl(
         private val _sdkTypeResolver: SdkTypeResolver)
     : SdkResolver {
@@ -14,7 +15,7 @@ class SdkResolverImpl(
     override fun getCompatibleVersions(version: Version): Sequence<SdkVersion> =
             when(val sdkType = _sdkTypeResolver.tryResolve(version)) {
                 SdkType.Dotnet, SdkType.DotnetCore -> getDotnetVersions(SdkVersion(version, sdkType, SdkVersionType.Default))
-                SdkType.DotnetFramework, SdkType.FullDotnetTargetingPack -> getFullDotnetVersion(SdkVersion(version, sdkType, SdkVersionType.Default))
+                SdkType.DotnetFramework, SdkType.FullDotnetTargetingPack -> getDotnetFrameworkVersion(SdkVersion(version, sdkType, SdkVersionType.Default))
                 else -> emptySequence()
             }
 
@@ -50,19 +51,19 @@ class SdkResolverImpl(
                             }
 
                             version >= Version(1, 4) -> {
-                                yieldAll(getFullDotnetVersion(SdkVersion(Version(4, 6, 1), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
+                                yieldAll(getDotnetFrameworkVersion(SdkVersion(Version(4, 6, 1), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
                             }
 
                             version == Version(1, 3) -> {
-                                yieldAll(getFullDotnetVersion(SdkVersion(Version(4, 6), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
+                                yieldAll(getDotnetFrameworkVersion(SdkVersion(Version(4, 6), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
                             }
 
                             version == Version(1, 2) -> {
-                                yieldAll(getFullDotnetVersion(SdkVersion(Version(4, 5, 1), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
+                                yieldAll(getDotnetFrameworkVersion(SdkVersion(Version(4, 5, 1), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
                             }
 
                             else -> {
-                                yieldAll(getFullDotnetVersion(SdkVersion(Version(4, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
+                                yieldAll(getDotnetFrameworkVersion(SdkVersion(Version(4, 5), SdkType.FullDotnetTargetingPack, SdkVersionType.Compatible)))
                             }
                         }
 
@@ -89,7 +90,7 @@ class SdkResolverImpl(
         private val FrameworkRegex = Regex("^([a-z]+)([\\d.]+)(.*)$", RegexOption.IGNORE_CASE)
 
         private fun getDotnetVersions(minimalVersion: SdkVersion) = sequence {
-            val versions = WellknownDotnetVersions
+            val versions = WellKnownDotnetVersions
                     .filter { it.version > minimalVersion.version }
 
             when {
@@ -110,9 +111,8 @@ class SdkResolverImpl(
             }
         }
 
-        private fun getFullDotnetVersion(minimalVersion: SdkVersion) = sequence {
-            val versions = WellknownFullDotnetVersions
-                    .filter { it > minimalVersion.version }
+        private fun getDotnetFrameworkVersion(minimalVersion: SdkVersion) = sequence {
+            val versions = WellKnownDotnetFrameworkVersions.filter { it > minimalVersion.version }
 
             when {
                 minimalVersion.version < Version(4, 5) -> {
@@ -135,29 +135,30 @@ class SdkResolverImpl(
             }
         }
 
-        private val WellknownDotnetVersions = listOf(
-                SdkVersion(Version(6, 0), SdkType.Dotnet, SdkVersionType.Compatible),
-                SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible),
-                SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(3, 0), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(2, 2), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(2, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(2, 0), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(1, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
-                SdkVersion(Version(1, 0), SdkType.DotnetCore, SdkVersionType.Compatible)
+        private val WellKnownDotnetVersions = listOf(
+            SdkVersion(Version(6, 0), SdkType.Dotnet, SdkVersionType.Compatible),
+            SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible),
+            SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(3, 0), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(2, 2), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(2, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(2, 0), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(1, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
+            SdkVersion(Version(1, 0), SdkType.DotnetCore, SdkVersionType.Compatible)
         )
 
-        private val WellknownFullDotnetVersions = listOf(
-                Version(4, 8),
-                Version(4, 7, 2),
-                Version(4, 7, 1),
-                Version(4, 7),
-                Version(4, 6, 2),
-                Version(4, 6, 1),
-                Version(4, 6),
-                Version(4, 5, 2),
-                Version(4, 5, 1),
-                Version(4, 5)
+        private val WellKnownDotnetFrameworkVersions = listOf(
+            Version(4, 8, 1),
+            Version(4, 8),
+            Version(4, 7, 2),
+            Version(4, 7, 1),
+            Version(4, 7),
+            Version(4, 6, 2),
+            Version(4, 6, 1),
+            Version(4, 6),
+            Version(4, 5, 2),
+            Version(4, 5, 1),
+            Version(4, 5)
         )
     }
 }
