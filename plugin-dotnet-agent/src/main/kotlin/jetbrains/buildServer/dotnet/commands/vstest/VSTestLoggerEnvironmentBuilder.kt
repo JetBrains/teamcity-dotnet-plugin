@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.vstest
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
@@ -24,6 +24,7 @@ import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import java.io.Closeable
 import java.io.File
@@ -36,7 +37,8 @@ class VSTestLoggerEnvironmentBuilder(
     private val _loggerService: LoggerService,
     private val _testReportingParameters: TestReportingParameters,
     private val _environmentCleaner: EnvironmentCleaner,
-    private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer)
+    private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer
+)
     : EnvironmentBuilder {
     override fun build(context: DotnetBuildContext): Disposable {
         val testReportingMode = _testReportingParameters.getMode(context)

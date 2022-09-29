@@ -335,9 +335,9 @@
 
   <!--Dotnet arguments' providers-->
   <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentCleaner"/>
-  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentAnalyzerImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerEnvironmentBuilder"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver" />
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver" id="testCommandsStreamResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
@@ -377,7 +377,7 @@
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationArgumentsProvider" id="sharedCompilationArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
     <constructor-arg>
       <list>

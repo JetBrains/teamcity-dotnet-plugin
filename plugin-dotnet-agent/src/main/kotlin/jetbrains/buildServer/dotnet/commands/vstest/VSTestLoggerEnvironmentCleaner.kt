@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.vstest
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.EnvironmentCleaner
 
 class VSTestLoggerEnvironmentCleaner(
         private val _pathsService: PathsService,
@@ -29,7 +30,9 @@ class VSTestLoggerEnvironmentCleaner(
 ) : EnvironmentCleaner {
     override fun clean() {
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
-        val loggersToClean = _fileSystemService.list(checkoutDirectory).filter { _fileSystemService.isDirectory(it) && it.name.startsWith(VSTestLoggerEnvironmentBuilder.directoryPrefix) }.toList()
+        val loggersToClean = _fileSystemService.list(checkoutDirectory).filter { _fileSystemService.isDirectory(it) && it.name.startsWith(
+            VSTestLoggerEnvironmentBuilder.directoryPrefix
+        ) }.toList()
         for (loggerToClean in loggersToClean) {
             LOG.debug("Removing \"$loggerToClean\"")
             try {

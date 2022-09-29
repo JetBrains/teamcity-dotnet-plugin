@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.discovery.vstest
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.FileSystemService
@@ -25,6 +25,8 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
+import jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzer
+import jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery

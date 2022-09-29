@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.vstest
 
 import java.io.File
 
