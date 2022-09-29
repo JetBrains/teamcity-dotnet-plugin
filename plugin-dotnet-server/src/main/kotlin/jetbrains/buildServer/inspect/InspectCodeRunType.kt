@@ -67,4 +67,8 @@ class InspectCodeRunType(
     override fun getTags(): MutableSet<String> {
         return mutableSetOf(".NET", "code analysis", "ReSharper")
     }
+
+    override fun getIconUrl(): String {
+        return _pluginDescriptor.getPluginResourcesPath("resharper.svg")
+    }
 }

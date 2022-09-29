@@ -60,4 +60,7 @@ class DupFinderRunType(
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
         _requirementsProvider.getRequirements(runParameters).toList()
 
+    override fun getIconUrl(): String {
+        return _pluginDescriptor.getPluginResourcesPath("resharper.svg")
+    }
 }
