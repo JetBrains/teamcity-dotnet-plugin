@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -8,7 +8,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.dotnet.Platform
-import jetbrains.buildServer.dotnet.SdkRegistryProvider
+import jetbrains.buildServer.dotnet.discovery.SdkRegistryProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

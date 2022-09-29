@@ -316,7 +316,7 @@
   <bean class="jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFrameworkSdkRegistryProvider" id="dotnetFrameworkSdkRegistryProvider">
     <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.SdkRegistryProvider" id="sdkRegistryProvider">
+  <bean class="jetbrains.buildServer.dotnet.discovery.SdkRegistryProvider" id="sdkRegistryProvider">
     <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFrameworkSdkInstanceFactory" id="dotnetFrameworkSdkInstanceFactory"/>

@@ -1,10 +1,11 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.discovery
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.Platform
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 
@@ -114,11 +115,11 @@ class SdkRegistryProvider(
     }
 
     private class Sdk(
-            val toolInstanceType: ToolInstanceType,
-            val platform: Platform,
-            val baseVersion: Version,
-            var installationFolder: File? = null,
-            var detailedVersion: Version = Version.Empty) {
+        val toolInstanceType: ToolInstanceType,
+        val platform: Platform,
+        val baseVersion: Version,
+        var installationFolder: File? = null,
+        var detailedVersion: Version = Version.Empty) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
