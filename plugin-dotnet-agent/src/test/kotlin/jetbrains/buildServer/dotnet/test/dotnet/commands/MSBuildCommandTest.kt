@@ -25,6 +25,7 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.MSBuildCommand
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import jetbrains.buildServer.dotnet.test.dotnet.TargetServiceStub

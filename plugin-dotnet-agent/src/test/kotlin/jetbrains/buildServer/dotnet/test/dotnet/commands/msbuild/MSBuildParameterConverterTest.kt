@@ -1,8 +1,8 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.msbuild
 
-import jetbrains.buildServer.dotnet.MSBuildParameter
-import jetbrains.buildServer.dotnet.MSBuildParameterConverterImpl
-import jetbrains.buildServer.dotnet.MSBuildParameterType
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterType
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -88,9 +88,9 @@ class MSBuildParameterConverterTest {
 
     @Test(dataProvider = "valueCases")
     fun shouldNormalizeValue(
-            value: String,
-            parameterType: MSBuildParameterType,
-            expectedValue: String) {
+        value: String,
+        parameterType: MSBuildParameterType,
+        expectedValue: String) {
         // Given
         val converter = MSBuildParameterConverterImpl()
 

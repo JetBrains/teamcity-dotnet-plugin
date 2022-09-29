@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.msbuild
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -22,6 +22,8 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildLoggerArgumentsProvider
+import jetbrains.buildServer.dotnet.test.dotnet.LoggerResolverStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

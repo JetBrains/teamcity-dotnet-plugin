@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.msbuild
 
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import java.util.*
 

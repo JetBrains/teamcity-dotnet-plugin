@@ -27,7 +27,7 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.SystemParametersProvider
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert

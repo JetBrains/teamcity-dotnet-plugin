@@ -26,6 +26,8 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BOM
 import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BlockName
 import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.ResponseFileExtension
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverter
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert

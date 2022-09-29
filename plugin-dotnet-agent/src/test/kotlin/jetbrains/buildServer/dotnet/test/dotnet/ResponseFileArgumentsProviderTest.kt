@@ -20,6 +20,7 @@ import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

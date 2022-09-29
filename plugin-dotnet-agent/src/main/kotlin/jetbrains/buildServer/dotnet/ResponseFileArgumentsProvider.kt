@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 
 class ResponseFileArgumentsProvider(
         private val _responseFileFactory: ResponseFileFactory,

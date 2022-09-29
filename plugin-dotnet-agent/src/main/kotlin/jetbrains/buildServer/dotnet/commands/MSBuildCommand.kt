@@ -20,6 +20,7 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 
 class MSBuildCommand(
     _parametersService: ParametersService,

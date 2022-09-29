@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.msbuild
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -8,6 +8,10 @@ import io.mockk.mockk
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParametersProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.msbuild
 
 import jetbrains.buildServer.util.StringUtil
 

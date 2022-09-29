@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.msbuild
+
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 
 interface MSBuildParametersProvider {
     fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter>

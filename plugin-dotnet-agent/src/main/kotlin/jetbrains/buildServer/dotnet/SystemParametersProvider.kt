@@ -19,6 +19,9 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterType
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParametersProvider
 
 class SystemParametersProvider(
         private val _parametersService: ParametersService,

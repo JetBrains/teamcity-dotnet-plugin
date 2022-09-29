@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.msbuild
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -24,7 +24,11 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterType
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
+import jetbrains.buildServer.dotnet.test.dotnet.LoggerResolverStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -55,7 +59,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
                                 MSBuildParameter("VSTestTestAdapterPath", "v_" + File("checkoutDir").canonicalPath, MSBuildParameterType.Predefined),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined)
+                        )),
 
                 // Supports mult VSTestTestAdapterPath (.NET Core SDK 2.1.102)
                 arrayOf(
@@ -64,7 +69,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
                                 MSBuildParameter("VSTestTestAdapterPath", "v_" + "${File("loggerPath").canonicalPath};.", MSBuildParameterType.Predefined),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined)
+                        )),
 
                 // Supports mult VSTestTestAdapterPath (.NET SDK 5.0.103)
                 arrayOf(
@@ -73,7 +79,8 @@ class MSBuildVSTestLoggerParametersProviderTest {
                         listOf(
                                 MSBuildParameter("VSTestLogger", "logger://teamcity", MSBuildParameterType.Predefined),
                                 MSBuildParameter("VSTestTestAdapterPath", ".;v_" + "${File("loggerPath").canonicalPath}", MSBuildParameterType.Predefined),
-                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined))),
+                                MSBuildParameter("VSTestVerbosity", Verbosity.Detailed.id.lowercase(Locale.getDefault()), MSBuildParameterType.Predefined)
+                        )),
 
                 // Reporting is off
                 arrayOf(

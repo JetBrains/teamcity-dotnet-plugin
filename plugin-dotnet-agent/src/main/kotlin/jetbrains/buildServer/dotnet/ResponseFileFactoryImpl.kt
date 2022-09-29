@@ -5,22 +5,24 @@ import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverter
 import jetbrains.buildServer.rx.use
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
 
 class ResponseFileFactoryImpl(
-        private val _pathsService: PathsService,
-        private val _fileSystemService: FileSystemService,
-        private val _loggerService: LoggerService,
-        private val _msBuildParameterConverter: MSBuildParameterConverter,
-        private val _virtualContext: VirtualContext)
+    private val _pathsService: PathsService,
+    private val _fileSystemService: FileSystemService,
+    private val _loggerService: LoggerService,
+    private val _msBuildParameterConverter: MSBuildParameterConverter,
+    private val _virtualContext: VirtualContext)
     : ResponseFileFactory {
     override fun createResponeFile(
-            description: String,
-            arguments: Sequence<CommandLineArgument>,
-            parameters: Sequence<MSBuildParameter>,
-            verbosity: Verbosity?): Path {
+        description: String,
+        arguments: Sequence<CommandLineArgument>,
+        parameters: Sequence<MSBuildParameter>,
+        verbosity: Verbosity?): Path {
         val args = (
                 arguments
                 + _msBuildParameterConverter.convert(parameters).map { CommandLineArgument(it) })
