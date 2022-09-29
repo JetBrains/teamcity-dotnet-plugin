@@ -20,6 +20,10 @@ import org.apache.commons.io.FileUtils
 import java.io.*
 
 class FileSystemServiceImpl: FileSystemService {
+    override fun createFile(path: String) = File(path)
+
+    override fun createFile(parent: File, child: String) = File(parent, child)
+
     override fun getExistingFile(path: String): Result<File> =
         File(path)
             .let { when {

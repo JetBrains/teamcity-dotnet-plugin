@@ -20,6 +20,10 @@ import java.io.InputStream
 import java.io.OutputStream
 
 interface FileSystemService {
+    fun createFile(path: String): File
+
+    fun createFile(parent: File, child: String): File
+
     fun getExistingFile(path: String): Result<File>
 
     fun isExists(file: File): Boolean
