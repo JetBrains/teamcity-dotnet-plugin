@@ -3,9 +3,9 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.SplitTestsFilterProvider
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
-import jetbrains.buildServer.dotnet.SplittedTestsFilterType
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterType
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesReader
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -51,7 +51,7 @@ class SplitTestsFilterProviderTests {
         // arrange
         every { _settingsMock.isActive } answers { true }
         every { _settingsMock.useExactMatchFilter } answers { false }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
         every { _settingsMock.testClasses } answers { generateTestClassesList(2) }
         val provider = create()
 
@@ -67,7 +67,7 @@ class SplitTestsFilterProviderTests {
         // arrange
         every { _settingsMock.isActive } answers { true }
         every { _settingsMock.useExactMatchFilter } answers { false }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Excludes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Excludes }
         every { _settingsMock.testClasses } answers { generateTestClassesList(2) }
         val provider = create()
 
@@ -83,7 +83,7 @@ class SplitTestsFilterProviderTests {
         // arrange
         every { _settingsMock.isActive } answers { true }
         every { _settingsMock.useExactMatchFilter } answers { false }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
         every { _settingsMock.testClasses } answers { generateTestClassesList(2500) }
         val provider = create()
 
@@ -99,7 +99,7 @@ class SplitTestsFilterProviderTests {
         // arrange
         every { _settingsMock.isActive } answers { true }
         every { _settingsMock.useExactMatchFilter } answers { false }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Excludes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Excludes }
         every { _settingsMock.testClasses } answers { generateTestClassesList(2100) }
         val provider = create()
 

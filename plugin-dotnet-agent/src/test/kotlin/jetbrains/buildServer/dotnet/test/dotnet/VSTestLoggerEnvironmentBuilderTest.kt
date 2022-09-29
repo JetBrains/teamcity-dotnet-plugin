@@ -24,6 +24,7 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery

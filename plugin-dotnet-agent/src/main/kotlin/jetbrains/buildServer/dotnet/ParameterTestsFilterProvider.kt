@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
 import jetbrains.buildServer.util.StringUtil
 
 class ParameterTestsFilterProvider(

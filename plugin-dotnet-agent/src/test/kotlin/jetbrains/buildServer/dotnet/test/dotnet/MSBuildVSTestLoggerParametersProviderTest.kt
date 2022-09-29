@@ -24,6 +24,7 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

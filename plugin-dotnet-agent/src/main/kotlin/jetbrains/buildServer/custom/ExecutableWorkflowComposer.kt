@@ -19,16 +19,17 @@ package jetbrains.buildServer.custom
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.observer
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class ExecutableWorkflowComposer(
-        private val _dotnetToolResolver: DotnetToolResolver,
-        private val _dotnetStateWorkflowComposer: ToolStateWorkflowComposer,
-        private val _virtualContext: VirtualContext,
-        private val _environmentVariables: EnvironmentVariables,
-        private val _cannotExecute: CannotExecute)
+    private val _dotnetToolResolver: DotnetToolResolver,
+    private val _dotnetStateWorkflowComposer: ToolStateWorkflowComposer,
+    private val _virtualContext: VirtualContext,
+    private val _environmentVariables: EnvironmentVariables,
+    private val _cannotExecute: CannotExecute)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Host

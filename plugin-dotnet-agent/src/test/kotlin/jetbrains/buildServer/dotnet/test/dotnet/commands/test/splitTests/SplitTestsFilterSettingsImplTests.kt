@@ -22,9 +22,8 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettingsImpl
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettingsImpl
 import jetbrains.buildServer.utils.getBufferedReader
-import jetbrains.buildServer.utils.getBufferedWriter
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

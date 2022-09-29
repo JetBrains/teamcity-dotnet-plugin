@@ -3,8 +3,8 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
-import jetbrains.buildServer.dotnet.SplittedTestsFilterType
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterType
 import jetbrains.buildServer.dotnet.commands.test.splitTests.LangIdentifierValidator
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager
 import jetbrains.buildServer.dotnet.commands.test.splitTests.TestsList
@@ -37,10 +37,10 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should start session for no test classes`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.testClasses } answers { emptySequence() }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
         justRun { _loggerMock.debug(any<String>()) }
         val manager = create()
 
@@ -63,12 +63,12 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should start session and test classes loaded to session`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val namespace = "Namespace"
         val testClasses = sequenceOf("$namespace.TestClass0", "$namespace.TestClass1", namespace)
         every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { SplittedTestsFilterType.Includes }
+        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
         justRun { _loggerMock.debug(any<String>()) }
         val manager = create()
 
@@ -91,7 +91,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should not save invalid test name`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -121,7 +121,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should save valid test name with includes filter session`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -151,7 +151,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should save valid test name with excludes filter session`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Excludes
+        val filterType = SplitTestsFilterType.Excludes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -181,7 +181,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should not save valid but excluded test name with include filter session`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -211,7 +211,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should not save valid but included test name with excludes filter session`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Excludes
+        val filterType = SplitTestsFilterType.Excludes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -241,7 +241,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should save tests names in different test lists`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -292,7 +292,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should read all saved tests names from different test lists`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -344,7 +344,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should iterates over chunks and read all saved tests names from different test lists`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }
@@ -407,7 +407,7 @@ class SplitTestsNamesManagerTests {
     @Test
     fun `should dispose session and clear test lists`() {
         // arrange
-        val filterType = SplittedTestsFilterType.Includes
+        val filterType = SplitTestsFilterType.Includes
         every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
         every { _settingsMock.testClasses } answers { testClasses }

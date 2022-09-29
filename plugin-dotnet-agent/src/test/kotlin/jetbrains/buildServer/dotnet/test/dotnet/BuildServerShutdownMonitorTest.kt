@@ -21,6 +21,7 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl.Companion.UseSharedCompilationEnvVarName
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
 import org.jmock.Mockery

@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import jetbrains.buildServer.dotnet.ComposedTestsFilterProvider
-import jetbrains.buildServer.dotnet.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

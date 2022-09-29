@@ -19,13 +19,15 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class DotnetVersionProviderImpl(
         private val _buildStepContext: BuildStepContext,
         private val _commandLineExecutor: CommandLineExecutor,
         private val _versionParser: VersionParser,
         private val _fileSystemService: FileSystemService,
-        private val _dotnetToolResolver: DotnetToolResolver)
+        private val _dotnetToolResolver: DotnetToolResolver
+)
     : DotnetVersionProvider {
 
     override fun getVersion(dotnetExecutable: Path, workingDirectory: Path): Version {

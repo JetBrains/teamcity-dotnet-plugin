@@ -21,7 +21,7 @@ import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.TargetArguments
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandStreamResolverBase
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
@@ -34,9 +34,9 @@ import jetbrains.buildServer.rx.use
 // Transforms a `dotnet test` command to exact match filtered command if needed
 // It looks like a sequence of dotnet commands: `dotnet test --list-test` – to get all tests list – and then `dotnet test ...` N times
 class ExactMatchTestCommandsStreamResolver(
-        private val _splitTestsFilterSettings: SplitTestsFilterSettings,
-        private val _listTestsDotnetCommand: DotnetCommand,
-        private val _testsNamesSessionManager: SplitTestsNamesSessionManager,
+    private val _splitTestsFilterSettings: SplitTestsFilterSettings,
+    private val _listTestsDotnetCommand: DotnetCommand,
+    private val _testsNamesSessionManager: SplitTestsNamesSessionManager,
 ) : DotnetCommandStreamResolverBase() {
     override val stage = DotnetCommandsStreamResolvingStage.Transformation
 

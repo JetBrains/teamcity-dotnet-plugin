@@ -1,5 +1,7 @@
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+
 class ComposedTestsFilterProvider(
         private val _testsFilterProviders: List<TestsFilterProvider>)
     : TestsFilterProvider {

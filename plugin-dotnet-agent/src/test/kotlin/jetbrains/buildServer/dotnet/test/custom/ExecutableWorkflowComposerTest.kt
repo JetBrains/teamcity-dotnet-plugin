@@ -25,6 +25,7 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.custom.ExecutableWorkflowComposer
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert

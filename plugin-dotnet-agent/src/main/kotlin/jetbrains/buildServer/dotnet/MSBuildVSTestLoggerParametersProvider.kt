@@ -19,14 +19,15 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import java.util.*
 
 class MSBuildVSTestLoggerParametersProvider(
-        private val _pathsService: PathsService,
-        private val _loggerResolver: LoggerResolver,
-        private val _testReportingParameters: TestReportingParameters,
-        private val _loggerParameters: LoggerParameters,
-        private val _virtualContext: VirtualContext)
+    private val _pathsService: PathsService,
+    private val _loggerResolver: LoggerResolver,
+    private val _testReportingParameters: TestReportingParameters,
+    private val _loggerParameters: LoggerParameters,
+    private val _virtualContext: VirtualContext)
     : MSBuildParametersProvider {
 
     override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {

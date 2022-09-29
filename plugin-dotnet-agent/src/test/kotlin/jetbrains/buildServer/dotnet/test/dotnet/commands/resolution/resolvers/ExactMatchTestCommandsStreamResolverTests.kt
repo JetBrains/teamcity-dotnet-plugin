@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
 import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver
 import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesSession

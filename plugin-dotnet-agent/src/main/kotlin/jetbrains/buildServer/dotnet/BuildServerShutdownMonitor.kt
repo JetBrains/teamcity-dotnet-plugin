@@ -22,14 +22,15 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class BuildServerShutdownMonitor(
-        eventSources: EventSources,
-        private val _commandLineExecutor: CommandLineExecutor,
-        private val _dotnetToolResolver: DotnetToolResolver,
-        private val _parametersService: ParametersService,
-        private val _environmentVariables: EnvironmentVariables,
-        private val _virtualContext: VirtualContext)
+    eventSources: EventSources,
+    private val _commandLineExecutor: CommandLineExecutor,
+    private val _dotnetToolResolver: DotnetToolResolver,
+    private val _parametersService: ParametersService,
+    private val _environmentVariables: EnvironmentVariables,
+    private val _virtualContext: VirtualContext)
     : CommandRegistry {
 
     private var _subscriptionToken: Disposable

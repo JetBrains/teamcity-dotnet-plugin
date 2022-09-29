@@ -76,10 +76,10 @@
 
   <!-- dotnet -->
   <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromSystemSettings" id="testRunSettingsFileProviderFromSystemSettings"/>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromParams" id="testRunSettingsFileProviderFromParams"/>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromTestArgs" id="testRunSettingsFileProviderFromTestArgs"/>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromVSTestArgs">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromSystemSettings" id="testRunSettingsFileProviderFromSystemSettings"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromParams" id="testRunSettingsFileProviderFromParams"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromTestArgs" id="testRunSettingsFileProviderFromTestArgs"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromVSTestArgs">
     <constructor-arg>
       <list>
         <value>\/settings</value>
@@ -92,7 +92,7 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromPropertiesArgs">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromKeyValueArgs" id="testRunSettingsFileProviderFromPropertiesArgs">
     <constructor-arg>
       <list>
         <value>\/property:VSTestSetting=</value>
@@ -109,7 +109,7 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsExisting" id="testRunSettingsExisting">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsExisting" id="testRunSettingsExisting">
     <constructor-arg>
       <list>
         <ref bean="testRunSettingsFileProviderFromVSTestArgs"/>
@@ -120,11 +120,11 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsForFilter" id="testRunSettingsForFilter">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsForFilter" id="testRunSettingsForFilter">
     <constructor-arg ref="testRunSettingsExisting"/>
     <constructor-arg ref="composedTestsFilterProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.TestRunSettingsFileNameProviderGenerated" id="testRunSettingsFileNameProviderGenerated">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileNameProviderGenerated" id="testRunSettingsFileNameProviderGenerated">
     <constructor-arg ref="testRunSettingsForFilter"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetFilterFactoryImpl">
@@ -188,7 +188,7 @@
     <constructor-arg ref="dotnetVersionParser"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.BuildServerShutdownMonitor"/>
-  <bean class="jetbrains.buildServer.dotnet.TestReportingParametersImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.TestReportingParametersImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FailedTestSourceImpl"/>
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="dotnet">
     <constructor-arg value="dotnet"/>
@@ -358,15 +358,15 @@
   <bean class="jetbrains.buildServer.dotnet.TargetArgumentsProviderByType"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.DotnetToolResolverImpl" id="dotnetToolResolver">
+  <bean class="jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolverImpl" id="dotnetToolResolver">
     <constructor-arg ref="dotnetToolEnvironment"/>
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildToolResolver" id="msbuildToolResolver">
+  <bean class="jetbrains.buildServer.dotnet.toolResolvers.MSBuildToolResolver" id="msbuildToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
     <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.VSTestToolResolver" id="vstestToolResolver">
+  <bean class="jetbrains.buildServer.dotnet.toolResolvers.VSTestToolResolver" id="vstestToolResolver">
     <constructor-arg ref="dotnetToolResolver"/>
     <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
@@ -410,43 +410,43 @@
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.ResultsAnalyzerImpl" primary="true"/>
-  <bean class="jetbrains.buildServer.dotnet.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
-  <bean class="jetbrains.buildServer.dotnet.BuildCommand" id="dotnetBuildCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.BuildCommand" id="dotnetBuildCommand">
     <constructor-arg ref="testsResultsAnalyzer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="nugetResultsObserver"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetPushCommand" id="dotnetNugetPushCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.NugetPushCommand" id="dotnetNugetPushCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="nugetResultsObserver"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.PackCommand" id="dotnetPackCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.PublishCommand" id="dotnetPublishCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.RestoreCommand" id="dotnetRestoreCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.RunCommand" id="dotnetRunCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.PackCommand" id="dotnetPackCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.PublishCommand" id="dotnetPublishCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.RestoreCommand" id="dotnetRestoreCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.RunCommand" id="dotnetRunCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.TargetTypeProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.TestCommand" id="dotnetTestCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.TestCommand" id="dotnetTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
     <constructor-arg ref="testsResultsAnalyzer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.ListTestsCommand" id="dotnetListTestCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.ListTestsCommand" id="dotnetListTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.CleanCommand" id="dotnetCleanCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.CleanCommand" id="dotnetCleanCommand"/>
 
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.TestsListTempFileFactory" id="testsListTempFileFactory"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpIdentifierValidator" id="cSharpTestNameValidator"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager" id="splitTestsNamesManager"/>
   <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterProvider" id="splitTestsFilterProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.SplitTestsFilterSettingsImpl" id="splitTestsFilterSettings"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterProvider" id="splitTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettingsImpl" id="splitTestsFilterSettings"/>
   <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
     <constructor-arg>
       <list>
@@ -475,14 +475,14 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.MSBuildCommand" id="dotnetMSBuildCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.MSBuildCommand" id="dotnetMSBuildCommand">
     <constructor-arg ref="testsResultsAnalyzer"/>
     <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="msbuildToolResolver"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.VSTestCommand" id="dotnetVSTestCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.VSTestCommand" id="dotnetVSTestCommand">
     <constructor-arg ref="testsResultsAnalyzer"/>
     <constructor-arg ref="vstestLoggerArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>

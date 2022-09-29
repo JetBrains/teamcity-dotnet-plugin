@@ -3,6 +3,9 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

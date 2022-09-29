@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.dotnet.DotnetToolResolver
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.dotnet.DotnetVersionProviderImpl
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService

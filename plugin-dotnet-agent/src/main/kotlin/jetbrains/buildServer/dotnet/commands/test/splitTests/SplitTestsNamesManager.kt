@@ -17,8 +17,6 @@
 package jetbrains.buildServer.dotnet.commands.test.splitTests
 
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.SplitTestsFilterSettings
-import jetbrains.buildServer.dotnet.SplittedTestsFilterType
 import java.util.*
 
 class SplitTestsNamesManager(
@@ -74,8 +72,8 @@ class SplitTestsNamesManager(
         // take only test names from includes/excludes test classes file
         val purposedToSave =
             when (_settings.filterType) {
-                SplittedTestsFilterType.Includes -> includedInConsideringTestClass(testName)
-                SplittedTestsFilterType.Excludes -> includedInConsideringTestClass(testName).not()
+                SplitTestsFilterType.Includes -> includedInConsideringTestClass(testName)
+                SplitTestsFilterType.Excludes -> includedInConsideringTestClass(testName).not()
             }
 
         if (!purposedToSave) {
