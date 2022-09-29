@@ -430,7 +430,7 @@
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.TargetTypeProviderImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.TestCommand" id="dotnetTestCommand">
+  <bean class="jetbrains.buildServer.dotnet.commands.test.TestCommand" id="dotnetTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
     <constructor-arg ref="testsResultsAnalyzer"/>

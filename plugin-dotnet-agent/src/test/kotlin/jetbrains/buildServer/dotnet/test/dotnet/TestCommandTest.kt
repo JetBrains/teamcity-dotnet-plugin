@@ -21,6 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.test.TestCommand
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

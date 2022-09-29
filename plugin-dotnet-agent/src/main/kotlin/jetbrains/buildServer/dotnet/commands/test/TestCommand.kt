@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.test
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.*
 import java.io.File
 
 class TestCommand(
