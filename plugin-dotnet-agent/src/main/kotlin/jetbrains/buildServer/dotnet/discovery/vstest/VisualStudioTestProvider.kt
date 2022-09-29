@@ -1,8 +1,9 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.discovery.vstest
 
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotnet.Platform
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
 

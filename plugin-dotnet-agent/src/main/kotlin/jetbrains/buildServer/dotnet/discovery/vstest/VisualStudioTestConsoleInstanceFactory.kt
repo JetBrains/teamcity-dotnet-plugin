@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.discovery.vstest
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
@@ -7,6 +7,7 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.Platform
 import java.io.File
 
 class VisualStudioTestConsoleInstanceFactory(

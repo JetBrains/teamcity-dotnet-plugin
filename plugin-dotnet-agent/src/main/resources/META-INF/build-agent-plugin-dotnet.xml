@@ -320,9 +320,9 @@
     <constructor-arg ref="dotnetFrameworkSdkInstanceFactory"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFrameworkSdkInstanceFactory" id="dotnetFrameworkSdkInstanceFactory"/>
-  <bean class="jetbrains.buildServer.dotnet.VisualStudioTestConsoleInstanceFactory" id="visualStudioTestConsoleInstanceFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.discovery.vstest.VisualStudioTestConsoleInstanceFactory" id="visualStudioTestConsoleInstanceFactory"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.mstest.MSTestConsoleInstanceFactory" id="msTestConsoleInstanceFactory"/>
-  <bean class="jetbrains.buildServer.dotnet.VisualStudioTestProvider" id="visualStudioTestProvider">
+  <bean class="jetbrains.buildServer.dotnet.discovery.vstest.VisualStudioTestProvider" id="visualStudioTestProvider">
     <constructor-arg>
       <list>
         <ref bean="visualStudioFileSystemProvider"/>

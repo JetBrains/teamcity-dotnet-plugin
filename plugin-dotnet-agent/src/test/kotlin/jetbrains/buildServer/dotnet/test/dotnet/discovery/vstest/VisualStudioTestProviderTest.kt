@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.discovery.vstest
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -8,7 +8,7 @@ import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.Platform
-import jetbrains.buildServer.dotnet.VisualStudioTestProvider
+import jetbrains.buildServer.dotnet.discovery.vstest.VisualStudioTestProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
