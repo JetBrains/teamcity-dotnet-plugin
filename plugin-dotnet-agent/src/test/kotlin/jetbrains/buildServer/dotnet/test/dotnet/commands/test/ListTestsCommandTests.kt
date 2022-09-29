@@ -9,6 +9,9 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.ListTestsCommand
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import org.testng.Assert
 import org.testng.annotations.BeforeClass

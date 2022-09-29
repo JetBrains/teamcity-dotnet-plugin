@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.responseFile
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactory
+import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

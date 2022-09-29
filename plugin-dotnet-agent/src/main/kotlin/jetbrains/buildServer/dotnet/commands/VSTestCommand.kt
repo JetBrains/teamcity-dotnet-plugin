@@ -22,6 +22,9 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_NAME
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.util.StringUtil
 
 class VSTestCommand(

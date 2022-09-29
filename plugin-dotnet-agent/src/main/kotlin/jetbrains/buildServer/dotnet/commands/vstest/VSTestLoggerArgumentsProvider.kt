@@ -20,6 +20,8 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.logging.LoggerParameters
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 
 /**
  * Provides arguments to dotnet related to TeamCity logger.

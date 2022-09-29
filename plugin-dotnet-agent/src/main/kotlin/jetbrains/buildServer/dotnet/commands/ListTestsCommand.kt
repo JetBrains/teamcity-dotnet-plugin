@@ -20,6 +20,9 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class ListTestsCommand(

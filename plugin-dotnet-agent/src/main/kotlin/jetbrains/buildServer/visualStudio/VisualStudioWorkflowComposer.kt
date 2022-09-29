@@ -22,19 +22,19 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.TargetService
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.rx.disposableOf
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 
 class VisualStudioWorkflowComposer(
-        private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService,
-        private val _pathsService: PathsService,
-        private val _loggerService: LoggerService,
-        private val _targetService: TargetService,
-        private val _toolResolver: ToolResolver,
-        private val _virtualContext: VirtualContext)
+    private val _parametersService: ParametersService,
+    private val _argumentsService: ArgumentsService,
+    private val _pathsService: PathsService,
+    private val _loggerService: LoggerService,
+    private val _targetService: TargetService,
+    private val _toolResolver: ToolResolver,
+    private val _virtualContext: VirtualContext)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool

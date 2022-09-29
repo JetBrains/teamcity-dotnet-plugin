@@ -24,9 +24,11 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzer
 import jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -79,11 +81,11 @@ class VSTestLoggerEnvironmentBuilderTest {
 
     @Test(dataProvider = "testData")
     fun shouldCopyLoggerAndCreateReadme(
-            checkoutDirectory: File,
-            targetArguments: Sequence<TargetArguments>,
-            targetFiles: List<File>,
-            fileSystemService: VirtualFileSystemService,
-            expectedDirs: List<File>) {
+        checkoutDirectory: File,
+        targetArguments: Sequence<TargetArguments>,
+        targetFiles: List<File>,
+        fileSystemService: VirtualFileSystemService,
+        expectedDirs: List<File>) {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
         val loggerFile = File("vstest15", "logger.dll")

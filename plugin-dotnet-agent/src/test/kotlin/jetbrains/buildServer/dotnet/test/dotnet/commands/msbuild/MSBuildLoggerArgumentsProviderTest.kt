@@ -23,7 +23,8 @@ import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildLoggerArgumentsProvider
-import jetbrains.buildServer.dotnet.test.dotnet.LoggerResolverStub
+import jetbrains.buildServer.dotnet.logging.LoggerParameters
+import jetbrains.buildServer.dotnet.test.dotnet.logging.LoggerResolverStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

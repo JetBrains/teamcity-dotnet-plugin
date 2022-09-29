@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
-import java.io.File
+import jetbrains.buildServer.agent.CommandLineArgument
 
-interface LoggerResolver {
-    fun resolve(toolType: ToolType): File
-}
+data class TargetArguments(val arguments: Sequence<CommandLineArgument>)

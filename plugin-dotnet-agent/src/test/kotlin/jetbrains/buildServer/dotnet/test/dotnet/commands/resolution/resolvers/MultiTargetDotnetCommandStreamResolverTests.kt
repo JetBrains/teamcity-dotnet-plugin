@@ -22,11 +22,10 @@ import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
 import jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver
 import org.testng.Assert
-import org.testng.CommandLineArgs
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 

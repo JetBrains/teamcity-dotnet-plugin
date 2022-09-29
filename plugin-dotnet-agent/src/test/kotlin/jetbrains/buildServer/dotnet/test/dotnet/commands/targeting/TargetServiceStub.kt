@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.targeting
 
-import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 
-data class TargetArguments(val arguments: Sequence<CommandLineArgument>)
+class TargetServiceStub(override val targets: Sequence<CommandTarget>) : TargetService

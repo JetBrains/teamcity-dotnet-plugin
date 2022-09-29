@@ -20,12 +20,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.custom.CustomCommandWorkflowComposer
-import jetbrains.buildServer.custom.ExecutableWorkflowComposer
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.rx.Observer
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

@@ -1,10 +1,11 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.responseFile
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverter
 import jetbrains.buildServer.rx.use

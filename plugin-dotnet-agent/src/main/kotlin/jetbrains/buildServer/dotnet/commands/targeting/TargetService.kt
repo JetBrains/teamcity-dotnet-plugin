@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
-interface LoggerParameters {
-    val paramVerbosity: Verbosity?
+import jetbrains.buildServer.dotnet.CommandTarget
 
-    val msBuildLoggerVerbosity: Verbosity?
-
-    val vsTestVerbosity: Verbosity
-
-    val msBuildParameters: String
-
-    fun getAdditionalLoggerParameters(context: DotnetBuildContext): Sequence<String>
+/***
+ * Provides a list of target files for command.
+ */
+interface TargetService {
+    val targets: Sequence<CommandTarget>
 }

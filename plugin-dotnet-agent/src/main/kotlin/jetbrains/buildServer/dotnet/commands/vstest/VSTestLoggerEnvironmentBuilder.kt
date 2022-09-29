@@ -26,6 +26,7 @@ import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import java.io.Closeable
 import java.io.File
 import java.io.OutputStreamWriter

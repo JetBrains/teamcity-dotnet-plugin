@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.responseFile
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.dotnet.ArgumentsProvider
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 
 class ResponseFileArgumentsProvider(
-        private val _responseFileFactory: ResponseFileFactory,
-        private val _argumentsProviders: List<ArgumentsProvider>)
+    private val _responseFileFactory: ResponseFileFactory,
+    private val _argumentsProviders: List<ArgumentsProvider>)
     : ArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val args = _argumentsProviders.flatMap { it.getArguments(context).toList() }

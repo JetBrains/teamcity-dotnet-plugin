@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.logging
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -23,6 +23,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.logging.LoggerParametersImpl
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

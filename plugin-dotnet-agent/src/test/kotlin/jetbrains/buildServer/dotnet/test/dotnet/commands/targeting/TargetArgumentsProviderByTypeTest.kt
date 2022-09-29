@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.targeting
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -10,6 +10,9 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProviderByType
+import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

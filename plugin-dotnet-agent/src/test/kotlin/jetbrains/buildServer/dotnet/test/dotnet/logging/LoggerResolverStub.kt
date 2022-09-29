@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.logging
 
 import jetbrains.buildServer.RunBuildException
-import jetbrains.buildServer.dotnet.LoggerResolver
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import jetbrains.buildServer.dotnet.ToolType
 import java.io.File
 

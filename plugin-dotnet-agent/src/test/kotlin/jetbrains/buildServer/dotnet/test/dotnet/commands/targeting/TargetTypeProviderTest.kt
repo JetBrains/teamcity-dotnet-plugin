@@ -1,9 +1,7 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.targeting
 
-import io.mockk.every
-import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.CommandTargetType
-import jetbrains.buildServer.dotnet.TargetTypeProviderImpl
+import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProviderImpl
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

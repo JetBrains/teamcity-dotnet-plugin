@@ -19,14 +19,14 @@ package jetbrains.buildServer.custom
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.rx.observer
-import java.io.File
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 
 class CustomCommandWorkflowComposer(
         private val _parametersService: ParametersService,
         private val _argumentsService: ArgumentsService,
         private val _pathsService: PathsService,
-        private val _targetService: TargetService)
+        private val _targetService: TargetService
+)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool

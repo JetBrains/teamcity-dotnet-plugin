@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.CommandResultEvent
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.rx.Observer
 
 interface DotnetCommand : ArgumentsProvider {

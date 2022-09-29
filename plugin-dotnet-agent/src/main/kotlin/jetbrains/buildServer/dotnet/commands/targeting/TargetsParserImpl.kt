@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
 class TargetsParserImpl : TargetsParser {
     override fun parse(targets: String) =

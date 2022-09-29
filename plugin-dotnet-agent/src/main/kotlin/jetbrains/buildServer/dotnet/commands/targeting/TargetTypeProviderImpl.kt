@@ -1,5 +1,6 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
+import jetbrains.buildServer.dotnet.CommandTargetType
 import java.io.File
 
 class TargetTypeProviderImpl : TargetTypeProvider {

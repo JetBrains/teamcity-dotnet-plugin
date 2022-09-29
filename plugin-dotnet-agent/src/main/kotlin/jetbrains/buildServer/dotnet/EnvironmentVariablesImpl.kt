@@ -23,6 +23,7 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import java.io.File
 
 class EnvironmentVariablesImpl(
@@ -32,7 +33,8 @@ class EnvironmentVariablesImpl(
         private val _fileSystemService: FileSystemService,
         private val _nugetEnvironmentVariables: EnvironmentVariables,
         private val _virtualContext: VirtualContext,
-        private val _loggerResolver: LoggerResolver)
+        private val _loggerResolver: LoggerResolver
+)
     : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)

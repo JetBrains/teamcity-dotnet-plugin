@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.targeting
 
-import jetbrains.buildServer.dotnet.TargetsParserImpl
+import jetbrains.buildServer.dotnet.commands.targeting.TargetsParserImpl
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

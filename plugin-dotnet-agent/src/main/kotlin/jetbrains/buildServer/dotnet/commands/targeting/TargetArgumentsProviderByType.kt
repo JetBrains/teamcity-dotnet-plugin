@@ -1,16 +1,19 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.CommandTargetType
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_SINGLE_SESSION
 import java.io.File
 
 class TargetArgumentsProviderByType(
         private val _parametersService: ParametersService,
-        private val _targetTypeProvider: TargetTypeProvider):
-        TargetArgumentsProvider {
+        private val _targetTypeProvider: TargetTypeProvider
+):
+    TargetArgumentsProvider {
 
     override fun getTargetArguments(targets: Sequence<CommandTarget>) =
             if (isEnabled) splitByTargetType(targets) else splitByDefault(targets)

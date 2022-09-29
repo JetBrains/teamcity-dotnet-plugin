@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.targeting
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
@@ -22,7 +22,8 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.util.OSType
+import jetbrains.buildServer.dotnet.CommandTarget
+import jetbrains.buildServer.dotnet.DotnetConstants
 import java.io.File
 
 class TargetServiceImpl(

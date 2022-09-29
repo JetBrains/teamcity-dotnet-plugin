@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.targeting
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -28,8 +28,8 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.CommandTarget
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.TargetService
-import jetbrains.buildServer.dotnet.TargetServiceImpl
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
+import jetbrains.buildServer.dotnet.commands.targeting.TargetServiceImpl
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

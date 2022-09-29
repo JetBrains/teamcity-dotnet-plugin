@@ -22,6 +22,8 @@ import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.Observer
 

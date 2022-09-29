@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CommandTarget
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.TargetService
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub

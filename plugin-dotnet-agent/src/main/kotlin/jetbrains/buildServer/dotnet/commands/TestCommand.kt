@@ -20,6 +20,10 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.targeting.TargetService
+import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import java.io.File
 

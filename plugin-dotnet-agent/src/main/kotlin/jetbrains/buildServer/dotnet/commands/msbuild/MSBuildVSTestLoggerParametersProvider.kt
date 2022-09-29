@@ -21,6 +21,8 @@ import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
+import jetbrains.buildServer.dotnet.logging.LoggerParameters
+import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import java.util.*
 
 class MSBuildVSTestLoggerParametersProvider(

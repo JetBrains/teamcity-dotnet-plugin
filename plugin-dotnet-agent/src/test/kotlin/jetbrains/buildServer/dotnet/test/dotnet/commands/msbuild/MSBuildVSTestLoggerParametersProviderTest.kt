@@ -28,7 +28,8 @@ import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterType
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
-import jetbrains.buildServer.dotnet.test.dotnet.LoggerResolverStub
+import jetbrains.buildServer.dotnet.logging.LoggerParameters
+import jetbrains.buildServer.dotnet.test.dotnet.logging.LoggerResolverStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

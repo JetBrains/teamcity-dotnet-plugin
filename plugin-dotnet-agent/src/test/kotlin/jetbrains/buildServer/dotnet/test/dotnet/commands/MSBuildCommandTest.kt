@@ -26,9 +26,11 @@ import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.MSBuildCommand
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactory
+import jetbrains.buildServer.dotnet.commands.targeting.TargetsParser
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
-import jetbrains.buildServer.dotnet.test.dotnet.TargetServiceStub
+import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.test.TestsResultsAnalyzerStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
 import org.jmock.Mockery

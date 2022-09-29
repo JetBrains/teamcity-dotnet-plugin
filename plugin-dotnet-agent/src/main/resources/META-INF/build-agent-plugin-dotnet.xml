@@ -75,7 +75,7 @@
   <bean class="jetbrains.buildServer.agent.runner.CacheCleanerSessionImpl"/>
 
   <!-- dotnet -->
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactoryImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromSystemSettings" id="testRunSettingsFileProviderFromSystemSettings"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromParams" id="testRunSettingsFileProviderFromParams"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromTestArgs" id="testRunSettingsFileProviderFromTestArgs"/>
@@ -242,7 +242,7 @@
     <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetCredentialProviderSelectorImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.logging.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver" id="nugetResultsObserver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl"/>
@@ -334,7 +334,7 @@
   </bean>
 
   <!--Dotnet arguments' providers-->
-  <bean class="jetbrains.buildServer.dotnet.TargetsParserImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetsParserImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
@@ -354,8 +354,8 @@
       </list>
     </constructor-arg>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.TargetServiceImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.TargetArgumentsProviderByType"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetServiceImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProviderByType"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolverImpl" id="dotnetToolResolver">
@@ -371,14 +371,14 @@
     <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.LoggerParametersImpl">
+  <bean class="jetbrains.buildServer.dotnet.logging.LoggerParametersImpl">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationArgumentsProvider" id="sharedCompilationArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
+  <bean class="jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileArgumentsProvider" id="dotnetCommonResponseFileArgumentsProvider">
     <constructor-arg>
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>
@@ -429,7 +429,7 @@
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.TargetTypeProviderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProviderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.TestCommand" id="dotnetTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
@@ -466,7 +466,7 @@
   </bean>
 
   <!-- MSBuild command -->
-  <bean class="jetbrains.buildServer.dotnet.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
+  <bean class="jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileArgumentsProvider" id="msbuildResponseFileArgumentsProvider">
     <constructor-arg>
       <list>
         <ref bean="msBuildLoggerArgumentsProvider"/>

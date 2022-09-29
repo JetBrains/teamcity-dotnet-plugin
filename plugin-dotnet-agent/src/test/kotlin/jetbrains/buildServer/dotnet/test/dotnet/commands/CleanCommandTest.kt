@@ -26,7 +26,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.CleanCommand
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
-import jetbrains.buildServer.dotnet.test.dotnet.TargetServiceStub
+import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

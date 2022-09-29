@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.logging
 
 import io.mockk.every
 import io.mockk.mockk
@@ -23,7 +23,7 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.LoggerResolverImpl
+import jetbrains.buildServer.dotnet.logging.LoggerResolverImpl
 import jetbrains.buildServer.dotnet.Tool
 import jetbrains.buildServer.dotnet.ToolType
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService

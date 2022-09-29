@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.responseFile
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -23,11 +23,12 @@ import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BOM
-import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.BlockName
-import jetbrains.buildServer.dotnet.ResponseFileFactoryImpl.Companion.ResponseFileExtension
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactoryImpl.Companion.BOM
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactoryImpl.Companion.BlockName
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactoryImpl.Companion.ResponseFileExtension
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverter
+import jetbrains.buildServer.dotnet.commands.responseFile.ResponseFileFactoryImpl
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert

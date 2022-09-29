@@ -23,7 +23,7 @@ import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.ToolResolver
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
 import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver

@@ -22,9 +22,12 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.TestCommand
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
+import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
+import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
-import jetbrains.buildServer.dotnet.test.dotnet.TargetServiceStub
+import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.test.TestsResultsAnalyzerStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
 import org.testng.Assert
