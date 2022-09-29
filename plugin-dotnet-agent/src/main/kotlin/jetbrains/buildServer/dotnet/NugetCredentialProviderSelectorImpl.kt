@@ -4,15 +4,15 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 
 class NugetCredentialProviderSelectorImpl(
-        private val _parametersService: ParametersService,
-        private val _runtimesProvider: DotnetRuntimesProvider,
-        private val _virtualContext: VirtualContext)
+    private val _parametersService: ParametersService,
+    private val _runtimesProvider: DotnetRuntimesProvider,
+    private val _virtualContext: VirtualContext)
     : NugetCredentialProviderSelector {
 
     override fun trySelect(sdkVersion: Version): String? {

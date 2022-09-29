@@ -23,8 +23,8 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetSdk
-import jetbrains.buildServer.dotnet.DotnetSdksProvider
+import jetbrains.buildServer.dotnet.discovery.dotnetSdk.DotnetSdk
+import jetbrains.buildServer.dotnet.discovery.dotnetSdk.DotnetSdksProvider
 import jetbrains.buildServer.dotnet.DotnetToolProvider
 import jetbrains.buildServer.dotnet.test.agent.ToolSearchServiceStub
 import org.testng.Assert

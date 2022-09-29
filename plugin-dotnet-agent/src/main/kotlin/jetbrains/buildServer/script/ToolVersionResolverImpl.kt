@@ -3,16 +3,16 @@ package jetbrains.buildServer.script
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.DotnetConstants.RUNNER_DESCRIPTION
-import jetbrains.buildServer.dotnet.DotnetRuntimesProvider
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 import jetbrains.buildServer.excluding
 import java.io.File
 import jetbrains.buildServer.including
 import jetbrains.buildServer.to
 
 class ToolVersionResolverImpl(
-        private val _fileSystemService: FileSystemService,
-        private val _runtimesProvider: DotnetRuntimesProvider,
-        private val _virtualContext: VirtualContext)
+    private val _fileSystemService: FileSystemService,
+    private val _runtimesProvider: DotnetRuntimesProvider,
+    private val _virtualContext: VirtualContext)
     : ToolVersionResolver {
     override fun resolve(toolPath: File): CsiTool {
         var supportedRuntimes = getSupportedRuntimes(toolPath).toList()

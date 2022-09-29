@@ -7,8 +7,8 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VirtualContext
-import jetbrains.buildServer.dotnet.DotnetRuntime
-import jetbrains.buildServer.dotnet.DotnetRuntimesProvider
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntime
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.script.ToolVersionResolverImpl
 import jetbrains.buildServer.script.CsiTool
@@ -65,7 +65,8 @@ class ToolVersionResolverTest {
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
                                 DotnetRuntime(File("."), Version(6, 0, 0,"beta"), ""),
-                                DotnetRuntime(File("."), Version(3, 1), "")),
+                                DotnetRuntime(File("."), Version(3, 1), "")
+                        ),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultToolsPath, "net5.0"))
                                 .addDirectory(File(DefaultToolsPath, "net6.0"))
@@ -77,7 +78,8 @@ class ToolVersionResolverTest {
                 arrayOf(
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
-                                DotnetRuntime(File("."), Version(3, 1), "")),
+                                DotnetRuntime(File("."), Version(3, 1), "")
+                        ),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultToolsPath, "net5.0"))
                                 .addDirectory(File(DefaultToolsPath, "netcoreapp3.1")),
@@ -117,7 +119,8 @@ class ToolVersionResolverTest {
                 arrayOf(
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
-                                DotnetRuntime(File("."), Version(6, 0), "")),
+                                DotnetRuntime(File("."), Version(6, 0), "")
+                        ),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultToolsPath, "net5.0"))
                                 .addDirectory(File(DefaultToolsPath, "net6.0")),
@@ -129,7 +132,8 @@ class ToolVersionResolverTest {
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
                                 DotnetRuntime(File("."), Version(6, 0), ""),
-                                DotnetRuntime(File("."), Version(7, 0), "")),
+                                DotnetRuntime(File("."), Version(7, 0), "")
+                        ),
                         VirtualFileSystemService()
                                 .addDirectory(File(DefaultToolsPath, "net5.0"))
                                 .addDirectory(File(DefaultToolsPath, "net6.0"))
@@ -141,7 +145,8 @@ class ToolVersionResolverTest {
                 arrayOf(
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
-                                DotnetRuntime(File("."), Version(6, 0), "")),
+                                DotnetRuntime(File("."), Version(6, 0), "")
+                        ),
                         VirtualFileSystemService().addDirectory(File(DefaultToolsPath, "net5.0")),
                         DefaultToolsPath,
                         true,
@@ -157,7 +162,8 @@ class ToolVersionResolverTest {
                 arrayOf(
                         sequenceOf(
                                 DotnetRuntime(File("."), Version(5, 0), ""),
-                                DotnetRuntime(File("."), Version(6, 0), "")),
+                                DotnetRuntime(File("."), Version(6, 0), "")
+                        ),
                         VirtualFileSystemService(),
                         DefaultToolsPath,
                         true,
@@ -174,11 +180,11 @@ class ToolVersionResolverTest {
 
     @Test(dataProvider = "cases")
     fun shouldResolve(
-            runtimes: Sequence<DotnetRuntime>,
-            fileSystemService: FileSystemService,
-            toolsPath: File,
-            isVurtual: Boolean,
-            expectedTool: CsiTool?) {
+        runtimes: Sequence<DotnetRuntime>,
+        fileSystemService: FileSystemService,
+        toolsPath: File,
+        isVurtual: Boolean,
+        expectedTool: CsiTool?) {
         // Given
         every { _runtimesProvider.getRuntimes() }.returns(runtimes)
         every { _virtualContext.isVirtual } returns isVurtual

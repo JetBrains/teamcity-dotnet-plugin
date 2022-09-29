@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.discovery.dotnetSdk.DotnetSdksProvider
 import java.io.File
 
 /**
@@ -27,7 +28,8 @@ class DotnetToolProvider(
         toolProvidersRegistry: ToolProvidersRegistry,
         private val _toolSearchService: ToolSearchService,
         private val _toolEnvironment: ToolEnvironment,
-        private val _dotnetSdksProviderImpl: DotnetSdksProvider)
+        private val _dotnetSdksProviderImpl: DotnetSdksProvider
+)
     : ToolProvider {
     init {
         toolProvidersRegistry.registerToolProvider(this)

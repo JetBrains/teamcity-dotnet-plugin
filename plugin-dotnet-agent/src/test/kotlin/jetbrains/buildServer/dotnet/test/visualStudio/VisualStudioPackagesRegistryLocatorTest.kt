@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.discovery.msbuild.MSBuildValidator
 import jetbrains.buildServer.visualStudio.VisualStudioPackagesRegistryLocator
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

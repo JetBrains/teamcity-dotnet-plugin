@@ -9,8 +9,8 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl
 import jetbrains.buildServer.agent.Version
-import jetbrains.buildServer.dotnet.DotnetRuntime
-import jetbrains.buildServer.dotnet.DotnetRuntimesProvider
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntime
+import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider

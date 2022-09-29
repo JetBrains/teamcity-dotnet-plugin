@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import jetbrains.buildServer.agent.Version
-import jetbrains.buildServer.dotnet.DotnetSdk
 import jetbrains.buildServer.dotnet.VersionEnumeratorImpl
 import jetbrains.buildServer.dotnet.Versioned
 import org.testng.Assert
