@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.nuget
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -23,11 +23,14 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR
-import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_HTTP_CACHE_PATH_ENV_VAR
-import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_PACKAGES_ENV_VAR
-import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_PLUGIN_PATH_ENV_VAR
-import jetbrains.buildServer.dotnet.NugetEnvironmentVariables.Companion.NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables.Companion.FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables.Companion.NUGET_HTTP_CACHE_PATH_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables.Companion.NUGET_PACKAGES_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables.Companion.NUGET_PLUGIN_PATH_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables.Companion.NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR
+import jetbrains.buildServer.dotnet.commands.nuget.NugetCredentialProviderSelector
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironment
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

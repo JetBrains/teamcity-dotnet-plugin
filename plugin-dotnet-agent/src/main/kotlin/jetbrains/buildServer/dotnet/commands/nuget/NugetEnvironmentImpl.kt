@@ -1,10 +1,11 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.nuget
 
 import jetbrains.buildServer.agent.BuildRunnerSettings
 import jetbrains.buildServer.agent.EventObserver
 import jetbrains.buildServer.agent.EventSources
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.LoggerService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_DOCKER_IMAGE
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe

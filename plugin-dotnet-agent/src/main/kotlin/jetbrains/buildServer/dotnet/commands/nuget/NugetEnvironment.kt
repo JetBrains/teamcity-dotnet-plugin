@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.nuget
 
 import jetbrains.buildServer.agent.BuildRunnerSettings
 

@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.nuget
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl
+import jetbrains.buildServer.dotnet.commands.nuget.NugetCredentialProviderSelectorImpl
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntime
 import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider

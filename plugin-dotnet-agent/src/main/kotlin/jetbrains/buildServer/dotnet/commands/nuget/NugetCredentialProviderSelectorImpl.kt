@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.nuget
 
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.VirtualContext
@@ -7,6 +7,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
+import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
 import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 
 class NugetCredentialProviderSelectorImpl(

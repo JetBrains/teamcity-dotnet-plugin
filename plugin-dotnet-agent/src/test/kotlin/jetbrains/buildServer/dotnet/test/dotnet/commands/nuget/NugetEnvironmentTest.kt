@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.nuget
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -8,6 +8,7 @@ import jetbrains.buildServer.agent.BuildRunnerSettings
 import jetbrains.buildServer.agent.EventSources
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
+import jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl
 import jetbrains.buildServer.rx.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

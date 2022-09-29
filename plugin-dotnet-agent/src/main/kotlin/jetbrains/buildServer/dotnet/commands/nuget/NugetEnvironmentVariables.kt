@@ -1,25 +1,31 @@
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.nuget
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.EnvironmentVariables
+import jetbrains.buildServer.dotnet.Verbosity
 import java.io.File
 
 class NugetEnvironmentVariables(
-        private val _environment: Environment,
-        private val _parametersService: ParametersService,
-        private val _pathsService: PathsService,
-        private val _virtualContext: VirtualContext,
-        private val _credentialProviderSelector: NugetCredentialProviderSelector,
-        private val _nugetEnvironment: NugetEnvironment)
+    private val _environment: Environment,
+    private val _parametersService: ParametersService,
+    private val _pathsService: PathsService,
+    private val _virtualContext: VirtualContext,
+    private val _credentialProviderSelector: NugetCredentialProviderSelector,
+    private val _nugetEnvironment: NugetEnvironment
+)
     : EnvironmentVariables {
 
     private val _basePath get() = File(_pathsService.getPath(PathType.System), "dotnet")
 
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
-        var varsToOverride = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS)
+        var varsToOverride = _parametersService.tryGetParameter(ParameterType.Configuration,
+            DotnetConstants.PARAM_OVERRIDE_NUGET_VARS
+        )
             ?.uppercase()
                 ?.split(';')
                 ?.map { it.trim() }

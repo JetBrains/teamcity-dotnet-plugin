@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet
+package jetbrains.buildServer.dotnet.test.dotnet.commands.nuget
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -25,9 +25,9 @@ import jetbrains.buildServer.BuildProblemTypes
 import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultOutput
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.dotnet.NugetResultsObserver
-import jetbrains.buildServer.dotnet.NugetResultsObserver.Companion.ErrorPrefix
-import jetbrains.buildServer.dotnet.NugetResultsObserver.Companion.WarningPrefix
+import jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver
+import jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver.Companion.ErrorPrefix
+import jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver.Companion.WarningPrefix
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test

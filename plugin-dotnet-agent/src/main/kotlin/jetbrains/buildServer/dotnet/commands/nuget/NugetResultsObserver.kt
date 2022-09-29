@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.commands.nuget
 
 import jetbrains.buildServer.BuildProblemTypes.TC_ERROR_MESSAGE_TYPE
 import jetbrains.buildServer.agent.CommandResultAttribute

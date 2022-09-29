@@ -218,18 +218,18 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="rootDotnetCommandStreamResolver"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentImpl" primary="true" />
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true" />
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentPredefined" id="teamCityNugetEnvironment">
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="teamCityNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="true"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="nugetEnvironmentVariables"/>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="stdNugetEnvironmentVariables">
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables" id="nugetEnvironmentVariables"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables" id="stdNugetEnvironmentVariables">
     <constructor-arg ref="stdPathsNugetEnvironment"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetEnvironmentVariables" id="teamcityNugetEnvironmentVariables">
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables" id="teamcityNugetEnvironmentVariables">
     <constructor-arg ref="teamCityNugetEnvironment"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" primary="true">
@@ -241,10 +241,10 @@
   <bean class="jetbrains.buildServer.dotnet.EnvironmentVariablesImpl" id="teamcityEnvironmentVariables">
     <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.NugetCredentialProviderSelectorImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetCredentialProviderSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.LoggerResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.NugetResultsObserver" id="nugetResultsObserver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver" id="nugetResultsObserver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl"/>
 
   <!--Dotnet agent properties providers-->
