@@ -22,7 +22,7 @@ import java.util.*
 class SplitTestsNamesManager(
     private val _settings: SplitTestsFilterSettings,
     private val _testListFactory: TestsListFactory,
-    private val _langIdentifierValidator: LangIdentifierValidator,
+    private val _listTestsOutputValueProcessor: ListTestsOutputValueProcessor,
 ) : SplitTestsNamesSessionManager, SplitTestsNamesSession, SplitTestsNamesSaver, SplitTestsNamesReader {
     private val _testsLists: Queue<TestsList> = LinkedList()
     private val _consideringTestsClasses = mutableSetOf<String>()
@@ -63,9 +63,13 @@ class SplitTestsNamesManager(
         }
     }
 
-    override fun tryToSave(testName: String) {
-        if (!isValidTestName(testName)) {
-            LOG.debug("String \"$testName\" is not a valid test name. This string will be skipped")
+    override fun tryToSave(presumablyTestNameLine: String) {
+        val (isValidIdentifier, testName) = _listTestsOutputValueProcessor.process(presumablyTestNameLine)
+
+        // validation
+        // please, note: tests that are renamed via DisplayName attribute cannot be properly processed
+        if (!isValidIdentifier || isNamespace(testName) || isTestClass(testName)) {
+            LOG.debug("String \"$presumablyTestNameLine\" is not a valid test name. This string will be skipped")
             return
         }
 
@@ -98,10 +102,9 @@ class SplitTestsNamesManager(
         _consideringTestsClassesNamespaces.clear()
     }
 
-    private fun isValidTestName(testName: String) =
-        _langIdentifierValidator.isValid(testName)
-            && !_consideringTestsClassesNamespaces.contains(testName)
-            && !_consideringTestsClasses.contains(testName)
+    private fun isNamespace(testName: String) = _consideringTestsClassesNamespaces.contains(testName)
+
+    private fun isTestClass(testName: String) = _consideringTestsClasses.contains(testName)
 
     private fun includedInConsideringTestClass(testName: String) =
         _consideringTestsClasses.contains(testName.substringBeforeLast('.'))

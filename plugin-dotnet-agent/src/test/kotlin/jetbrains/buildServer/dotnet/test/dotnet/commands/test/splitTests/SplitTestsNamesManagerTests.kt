@@ -3,12 +3,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.test.splitTests
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
-import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterType
-import jetbrains.buildServer.dotnet.commands.test.splitTests.LangIdentifierValidator
-import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager
-import jetbrains.buildServer.dotnet.commands.test.splitTests.TestsList
-import jetbrains.buildServer.dotnet.commands.test.splitTests.TestsListFactory
+import jetbrains.buildServer.dotnet.commands.test.splitTests.*
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -21,7 +16,7 @@ class SplitTestsNamesManagerTests {
     private lateinit var _testListFactoryMock: TestsListFactory
 
     @MockK
-    private lateinit var _langIdentifierValidatorMock: LangIdentifierValidator
+    private lateinit var _listTestsOutputValueProcessor: ListTestsOutputValueProcessor
 
     @MockK
     private lateinit var _loggerMock: Logger
@@ -38,9 +33,11 @@ class SplitTestsNamesManagerTests {
     fun `should start session for no test classes`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.testClasses } answers { emptySequence() }
-        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { emptySequence()  }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
         justRun { _loggerMock.debug(any<String>()) }
         val manager = create()
 
@@ -64,11 +61,13 @@ class SplitTestsNamesManagerTests {
     fun `should start session and test classes loaded to session`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val namespace = "Namespace"
         val testClasses = sequenceOf("$namespace.TestClass0", "$namespace.TestClass1", namespace)
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { SplitTestsFilterType.Includes }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
         justRun { _loggerMock.debug(any<String>()) }
         val manager = create()
 
@@ -92,11 +91,12 @@ class SplitTestsNamesManagerTests {
     fun `should not save invalid test name`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -104,7 +104,7 @@ class SplitTestsNamesManagerTests {
         every { _testListFactoryMock.new() } answers { testListMock }
         justRun { testListMock.add(any()) }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { false }
+        every { _listTestsOutputValueProcessor.process(any()) } answers { ProcessedListTestsOutput(false, "")}
 
         val manager = create()
         val session = manager.startSession()
@@ -122,19 +122,21 @@ class SplitTestsNamesManagerTests {
     fun `should save valid test name with includes filter session`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
-
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
         justRun { _loggerMock.debug(any<String>()) }
 
         val testListMock = mockk<TestsList>()
         every { _testListFactoryMock.new() } answers { testListMock }
         justRun { testListMock.add(any()) }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -152,11 +154,12 @@ class SplitTestsNamesManagerTests {
     fun `should save valid test name with excludes filter session`() {
         // arrange
         val filterType = SplitTestsFilterType.Excludes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType}
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -164,7 +167,9 @@ class SplitTestsNamesManagerTests {
         every { _testListFactoryMock.new() } answers { testListMock }
         justRun { testListMock.add(any()) }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -182,11 +187,12 @@ class SplitTestsNamesManagerTests {
     fun `should not save valid but excluded test name with include filter session`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType}
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -194,7 +200,9 @@ class SplitTestsNamesManagerTests {
         every { _testListFactoryMock.new() } answers { testListMock }
         justRun { testListMock.add(any()) }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -212,11 +220,12 @@ class SplitTestsNamesManagerTests {
     fun `should not save valid but included test name with excludes filter session`() {
         // arrange
         val filterType = SplitTestsFilterType.Excludes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType}
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -224,7 +233,9 @@ class SplitTestsNamesManagerTests {
         every { _testListFactoryMock.new() } answers { testListMock }
         justRun { testListMock.add(any()) }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -242,12 +253,13 @@ class SplitTestsNamesManagerTests {
     fun `should save tests names in different test lists`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
-        every { _settingsMock.exactMatchFilterSize } answers { listSize }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { listSize }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -262,7 +274,9 @@ class SplitTestsNamesManagerTests {
             every { list.add(any()) } answers { count++; Unit }
         }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -293,12 +307,13 @@ class SplitTestsNamesManagerTests {
     fun `should read all saved tests names from different test lists`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
-        every { _settingsMock.exactMatchFilterSize } answers { listSize }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { listSize }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -315,7 +330,9 @@ class SplitTestsNamesManagerTests {
             every { list.tests } answers { sequence { yieldAll(testsNames) } }
         }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -345,12 +362,13 @@ class SplitTestsNamesManagerTests {
     fun `should iterates over chunks and read all saved tests names from different test lists`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
         val listSize = 3
-        every { _settingsMock.exactMatchFilterSize } answers { listSize }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { listSize }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -367,7 +385,9 @@ class SplitTestsNamesManagerTests {
             every { list.tests } answers { sequence { yieldAll(testsNames) } }
         }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -408,11 +428,12 @@ class SplitTestsNamesManagerTests {
     fun `should dispose session and clear test lists`() {
         // arrange
         val filterType = SplitTestsFilterType.Includes
-        every { _settingsMock.filterType } answers { filterType }
         val testClasses = sequenceOf("Namespace.TestClass0", "Namespace.TestClass1")
-        every { _settingsMock.testClasses } answers { testClasses }
-        every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.exactMatchFilterSize } answers { 42 }
+        _settingsMock.also { it ->
+            every { it.filterType } answers { filterType }
+            every { it.testClasses } answers { testClasses }
+            every { it.exactMatchFilterSize } answers { 42 }
+        }
 
         justRun { _loggerMock.debug(any<String>()) }
 
@@ -421,7 +442,9 @@ class SplitTestsNamesManagerTests {
         justRun { testListMock.add(any()) }
         justRun { testListMock.dispose() }
 
-        every { _langIdentifierValidatorMock.isValid(any()) } answers { true }
+        slot<String>().also { testNameSlot ->
+            every { _listTestsOutputValueProcessor.process(capture(testNameSlot)) } answers { ProcessedListTestsOutput(true, testNameSlot.captured)}
+        }
 
         val manager = create()
         val session = manager.startSession()
@@ -434,5 +457,5 @@ class SplitTestsNamesManagerTests {
         verify (exactly = 1) { testListMock.dispose() }
     }
 
-    private fun create() = SplitTestsNamesManager(_settingsMock, _testListFactoryMock, _langIdentifierValidatorMock)
+    private fun create() = SplitTestsNamesManager(_settingsMock, _testListFactoryMock, _listTestsOutputValueProcessor)
 }
