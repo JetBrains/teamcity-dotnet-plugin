@@ -47,6 +47,13 @@ class CSharpIdentifierValidatorTests {
         arrayOf("Namespace .TestClass.TestMethod", false),
         arrayOf("Namespace. TestClass.TestMethod", false),
         arrayOf("Namespace . TestClass . TestMethod", false),
+        arrayOf("(parameter:", false),
+        arrayOf("\"value\",", false),
+        arrayOf("\"value2\")", false),
+        arrayOf("42,", false),
+        arrayOf("42)", false),
+        arrayOf("Namespace.TestClass.TestMethod(", false),
+        arrayOf("Namespace.TestClass.TestMethod(parameter", false),
     )
 
     @Test(dataProvider = "testData")
