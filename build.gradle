@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-}
-
-repositories {
-    mavenCentral()
-}
-
 ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
     versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
@@ -41,20 +33,3 @@ ext {
 
 group = projectIds.group
 version = projectIds.version
-
-allprojects {
-    group = projectIds.group
-    version = projectIds.version
-}
-
-subprojects {
-    apply plugin: "kotlin"
-
-    repositories {
-        mavenCentral()
-        mavenLocal()
-    }
-
-    test.useTestNG()
-    jar.version = null
-}
