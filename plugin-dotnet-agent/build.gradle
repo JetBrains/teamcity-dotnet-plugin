@@ -34,18 +34,18 @@ teamcity {
 }
 
 dependencies {
-  implementation project(":plugin-dotnet-common")
+  implementation project(':plugin-dotnet-common')
   implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
   provided "org.jetbrains.teamcity:agent-api:${teamcityVersion}"
   provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
   provided "org.jetbrains.teamcity:common-api:${teamcityVersion}"
-  implementation "commons-io:commons-io:2.6"
-  testImplementation "org.testng:testng:7.5"
-  testImplementation "org.jmock:jmock:2.12.0"
-  testImplementation "org.hamcrest:hamcrest-all:1.3"
-  testImplementation "org.jetbrains.kotlin:kotlin-reflect"
-  testImplementation "io.mockk:mockk:1.12.3"
+  implementation 'commons-io:commons-io:2.11.0'
+  testImplementation 'org.testng:testng:7.5'
+  testImplementation 'org.jmock:jmock:2.12.0'
+  testImplementation 'org.hamcrest:hamcrest-all:1.3'
+  testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
+  testImplementation 'io.mockk:mockk:1.13.2'
   testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
 }
 
