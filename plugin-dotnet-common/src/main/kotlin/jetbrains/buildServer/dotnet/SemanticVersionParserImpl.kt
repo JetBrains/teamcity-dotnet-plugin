@@ -16,20 +16,18 @@
 
 package jetbrains.buildServer.dotnet
 
+// parses semver from strings and file names
 class SemanticVersionParserImpl : SemanticVersionParser {
-
-    override fun tryParse(version: String): SemanticVersion? {
-        VERSION_PATTERN.find(version)?.let {
-            val (_, major, minor, build, _, patch, _) = it.destructured
-            return SemanticVersion(major.toInt(), minor.toInt(), build.toInt(), patch)
+    override fun tryParse(version: String) = VersionRegex.find(version)
+        ?.destructured
+        ?.let { (_, major, minor, build, _, patch, _) ->
+            SemanticVersion(major.toInt(), minor.toInt(), build.toInt(), patch)
         }
-        return null
-    }
 
     companion object {
-        val VERSION_PATTERN = Regex(
-                """^([a-z\.-]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?(\.nupkg)?${'$'}""",
-                RegexOption.IGNORE_CASE
+        private val VersionRegex = Regex(
+            """^([a-z\.-]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?(\.[A-Za-z][\w\d]*)?${'$'}""",
+            RegexOption.IGNORE_CASE
         )
     }
 }

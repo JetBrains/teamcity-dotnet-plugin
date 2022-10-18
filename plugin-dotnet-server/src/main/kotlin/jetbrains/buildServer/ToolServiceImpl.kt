@@ -26,35 +26,34 @@ import java.io.FileFilter
 import java.net.URL
 
 class ToolServiceImpl(
-        private val _packageVersionParser: SemanticVersionParser,
-        private val _httpDownloader: HttpDownloader,
-        private val _nuGetService: NuGetService,
-        private val _fileSystemService: FileSystemService)
-    : ToolService {
-
+    private val _packageVersionParser: SemanticVersionParser,
+    private val _httpDownloader: HttpDownloader,
+    private val _nuGetService: NuGetService,
+    private val _fileSystemService: FileSystemService
+) : ToolService {
     override fun getTools(toolType: ToolType, vararg packageIds: String): List<NuGetTool> {
         try {
             return packageIds
-                    .asSequence()
-                    .flatMap { _nuGetService.getPackagesById(it) }
-                    .map { NuGetTool(toolType, it) }
-                    .sortedBy { it.version + ":" + it.id }
-                    .toList()
-                    .reversed()
+                .asSequence()
+                .flatMap { _nuGetService.getPackagesById(it) }
+                .map { NuGetTool(toolType, it) }
+                .sortedBy { it.version + ":" + it.id }
+                .toList()
+                .reversed()
         } catch (e: Throwable) {
             throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
         }
     }
 
     override fun tryGetPackageVersion(toolType: ToolType, toolPackage: File, vararg packageIds: String): GetPackageVersionResult? {
-        if (!createPackageFilter(packageIds.toSet()).accept(toolPackage)) {
+        if (!toolPackage.isPackageFileValid(packageIds)) {
             return null
         }
 
         LOG.debug("Get package version for file \"$toolPackage\"")
-        val versionResult = _packageVersionParser.tryParse(toolPackage.name)?.let {
-            GetPackageVersionResult.version(SimpleToolVersion(toolType, it.toString(), ToolVersionIdHelper.getToolId(toolType.type, it.toString())))
-        } ?: GetPackageVersionResult.error("Failed to get version of $toolPackage")
+        val versionResult = _packageVersionParser.tryParse(toolPackage.name)
+            ?.let { GetPackageVersionResult.version(SimpleToolVersion(toolType, it.toString(), ToolVersionIdHelper.getToolId(toolType.type, it.toString()))) }
+            ?: GetPackageVersionResult.error("Failed to get version of $toolPackage")
 
         LOG.debug("Package version is \"${versionResult.toolVersion?.version ?: "null"}\"")
         return versionResult
@@ -63,8 +62,9 @@ class ToolServiceImpl(
     override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File {
         LOG.debug("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val downloadableTool = getTools(toolType, *packageIds).firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
-                ?: throw ToolException("Failed to find package $toolVersion")
+        val downloadableTool = getTools(toolType, *packageIds)
+            .firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
+            ?: throw ToolException("Failed to find package $toolVersion")
 
         val downloadUrl = downloadableTool.downloadUrl
         LOG.debug("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
@@ -81,28 +81,30 @@ class ToolServiceImpl(
         }
     }
 
-    override fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String) {
+    override fun unpackToolPackage(toolPackage: File, packageDirectory: String, targetDirectory: File, vararg packageIds: String) {
         LOG.debug("Unpack package \"$toolPackage\" to directory \"$targetDirectory\"")
-
-        if (createPackageFilter(packageIds.toSet()).accept(toolPackage) && _packageVersionParser.tryParse(toolPackage.name) != null) {
-            if (!ArchiveUtil.unpackZip(toolPackage, nugetPackageDirectory, targetDirectory)) {
-                throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
+        when {
+            toolPackage.isPackageFileValid(packageIds) && isPackageVersionValid(toolPackage) -> {
+                when (ArchiveUtil.unpackZip(toolPackage, packageDirectory, targetDirectory)) {
+                    true -> LOG.debug("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
+                    false -> throw ToolException("Failed to unpack package $toolPackage to $targetDirectory")
+                }
             }
-
-            LOG.debug("Package \"$toolPackage\" was unpacked to directory \"$targetDirectory\"")
-        } else {
-            LOG.debug("Package $toolPackage is not acceptable")
+            else -> LOG.debug("Package $toolPackage is not acceptable")
         }
     }
 
-    private fun createPackageFilter(packageIds: Set<String>) =
-            FileFilter { packageFile ->
-                packageFile.isFile
-                        && packageIds.any { packageFile.nameWithoutExtension.startsWith(it, true) }
-                        && DotnetConstants.PACKAGE_NUGET_EXTENSION.equals(packageFile.extension, true)
-            }
+    private fun File.isPackageFileValid(packageIds: Array<out String>) =
+        FileFilter { packageFile ->
+            packageFile.isFile
+                && packageIds.toSet().any { packageFile.nameWithoutExtension.startsWith(it, true) }
+                && AllowedPackageExtensions.any { it.equals(packageFile.extension, true) }
+        }.accept(this)
+
+    private fun isPackageVersionValid(toolPackage: File) = _packageVersionParser.tryParse(toolPackage.name) != null
 
     companion object {
         private val LOG: Logger = Logger.getInstance(ToolServiceImpl::class.java.name)
+        private val AllowedPackageExtensions = arrayOf(DotnetConstants.PACKAGE_NUGET_EXTENSION, "zip")
     }
 }
