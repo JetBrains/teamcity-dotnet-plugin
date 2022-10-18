@@ -28,5 +28,5 @@ interface ToolService {
 
     fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File
 
-    fun unpackToolPackage(toolPackage: File, nugetPackageDirectory: String, targetDirectory: File, vararg packageIds: String)
+    fun unpackToolPackage(toolPackage: File, packageDirectory: String, targetDirectory: File, vararg packageIds: String)
 }
