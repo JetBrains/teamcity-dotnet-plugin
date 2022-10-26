@@ -85,4 +85,18 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet publish`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) command for the specified solution.
+                Does not try to build the project, assumes this is already done by some previous step.
+            </description>
+            <code>
+                dotnetPublish {
+                projects = "MyProject.sln"
+                skipBuild = true
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

@@ -90,4 +90,45 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command for all the solution files in the checkout directory.
+                Does not try to build the project, assumes this is already done by some previous step.
+            </description>
+            <code>
+                dotnetTest {
+                    projects = "*.sln"
+                    skipBuild = true
+                }
+            </code>
+        </example>
+        <example>
+            <description>
+                Runs [`dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) for the MyProject.sln solution file.
+                Collects code coverage with help of [JetBrains DotCover](https://www.jetbrains.com/dotcover/) for the specified assemblies.
+            </description>
+            <code>
+                dotnetTest {
+                    projects = "MyProject.sln"
+                    skipBuild = true
+                    coverage = dotcover {
+                        toolPath = "%teamcity.tool.JetBrains.dotCover.CommandLineTools.DEFAULT%"
+                        assemblyFilters = "build/*.dll"
+                    }
+                }
+            </code>
+        </example>
+        <example>
+            <description>
+                Runs [`dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) for the specified test assemblies.
+            </description>
+            <code>
+                dotnetTest {
+                    projects = "tests/*.dll"
+                    skipBuild = true
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

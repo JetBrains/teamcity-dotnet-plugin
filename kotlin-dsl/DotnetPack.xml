@@ -82,4 +82,19 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet pack`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-pack) command for the specified solution.
+                Does not try to build the project, assumes this is already done by some previous step.
+            </description>
+            <code>
+                dotnetPack {
+                    projects = "MyProject.sln"
+                    configuration = "Debug"
+                    skipBuild = true
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>
