@@ -140,5 +140,17 @@
             <option name="CROSS_PLATFORM" value="Cross-platform"/>
         </enum>
     </types>
-
+    <examples>
+        <example>
+            <description>
+                Searches for code duplicates in all the C# source code files of the project.
+            </description>
+            <code>
+                reSharperDuplicates {
+                    includeFiles = "ProjectSrc/**/*.cs"
+                    cltPath = "%teamcity.tool.jetbrains.resharper-clt.DEFAULT%"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>
