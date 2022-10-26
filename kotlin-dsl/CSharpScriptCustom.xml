@@ -43,4 +43,17 @@
       </description>
     </param>
   </params>
+  <examples>
+    <example>
+      <description>
+        Runs a C# script with help of [C# script tool](https://www.nuget.org/packages/TeamCity.csi).
+      </description>
+      <code>
+        csharpScript {
+          content = """WriteLine("Hello World!");"""
+          tool = "%teamcity.tool.TeamCity.csi.DEFAULT%"
+        }
+      </code>
+    </example>
+  </examples>
 </dsl-extension>
