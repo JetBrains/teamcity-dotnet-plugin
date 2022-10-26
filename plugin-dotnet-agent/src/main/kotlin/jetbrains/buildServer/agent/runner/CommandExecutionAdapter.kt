@@ -22,7 +22,6 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.emptyDisposable
 import jetbrains.buildServer.rx.emptyObserver
 import jetbrains.buildServer.dotnet.DotnetConstants
-import java.io.BufferedWriter
 import java.io.File
 
 class CommandExecutionAdapter(
@@ -33,7 +32,6 @@ class CommandExecutionAdapter(
     private val _programCommandLineFactory: ProgramCommandLineFactory,
     private val _messagesGuard: OutputReplacer,
     private val _parametersService: ParametersService,
-    private val _pathsService: PathsService,
 ) : CommandExecutionFactory, CommandExecution, BuildProgressLoggerAware {
     private var _eventObserver: Observer<CommandResultEvent> = emptyObserver<CommandResultEvent>()
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))

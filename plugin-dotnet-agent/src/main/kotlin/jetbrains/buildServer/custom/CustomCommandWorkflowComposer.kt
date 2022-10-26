@@ -20,14 +20,16 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
+import jetbrains.buildServer.rx.subscribe
+import jetbrains.buildServer.rx.use
 
 class CustomCommandWorkflowComposer(
-        private val _parametersService: ParametersService,
-        private val _argumentsService: ArgumentsService,
-        private val _pathsService: PathsService,
-        private val _targetService: TargetService
-)
-    : SimpleWorkflowComposer {
+    private val _parametersService: ParametersService,
+    private val _argumentsService: ArgumentsService,
+    private val _pathsService: PathsService,
+    private val _targetService: TargetService,
+    private val _buildOptions: BuildOptions,
+) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
@@ -42,10 +44,16 @@ class CustomCommandWorkflowComposer(
             return Workflow()
         }
 
+        return Workflow(createCommandLines(context))
+    }
+
+    private fun createCommandLines(context: WorkflowContext) = sequence {
         val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).path)
-        val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
-            _argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) }.toList()
-        } ?: emptyList<CommandLineArgument>()
+        val args = parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let { argString ->
+            _argumentsService.split(argString).map {
+                CommandLineArgument(it, CommandLineArgumentType.Custom)
+            }.toList()
+        } ?: emptyList()
 
         val targets = _targetService.targets.map { it.target }.toMutableList()
         if (targets.isEmpty()) {
@@ -53,8 +61,19 @@ class CustomCommandWorkflowComposer(
             targets.add(Path(""))
         }
 
-        return Workflow(targets.asSequence().map { CommandLine(null, target, it, workingDirectory, args) })
+        context.toExitCodes()
+            .subscribe {
+                if (it != 0 && _buildOptions.failBuildOnExitCode) {
+                    context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                }
+            }
+            .use {
+                yieldAll(targets.asSequence().map {
+                    CommandLine(null, target, it, workingDirectory, args)
+                })
+            }
     }
 
-    private fun parameters(parameterName: String): String? = _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
+    private fun parameters(parameterName: String): String? =
+        _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
 }
