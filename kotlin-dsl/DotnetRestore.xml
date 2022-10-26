@@ -79,4 +79,16 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet restore`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-restore) command for the MyProject.sln solution file.
+            </description>
+            <code>
+                dotnetRestore {
+                    projects = "MyProject.sln"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

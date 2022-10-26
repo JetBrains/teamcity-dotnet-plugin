@@ -82,4 +82,17 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet build`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build) command for all solution files in the build checkout directory.
+            </description>
+            <code>
+                dotnetBuild {
+                    projects = "*.sln"
+                    configuration = "Debug"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

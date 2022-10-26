@@ -79,4 +79,18 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet clean`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-clean) command for all the solution files in the checkout directory with the detailed logging.
+            </description>
+            <code>
+                dotnetClean {
+                    projects = "*.sln"
+                    configuration = "Debug"
+                    logging = DotnetCleanStep.Verbosity.Detailed
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>
