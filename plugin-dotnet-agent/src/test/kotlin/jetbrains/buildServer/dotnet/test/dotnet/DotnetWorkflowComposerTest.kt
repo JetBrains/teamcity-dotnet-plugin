@@ -381,15 +381,14 @@ class DotnetWorkflowComposerTest {
     }
 
     private fun createInstance() = DotnetWorkflowComposer(
-            _pathsService,
-            _environmentVariables,
-            _dotnetWorkflowAnalyzer,
-            _failedTestSource,
-            _commandRegistry,
-            _parametersService,
-            _commandLinePresentationService,
-            _virtualContext,
-            _dotnetCommandsStreamResolver,
+        _pathsService,
+        _environmentVariables,
+        _dotnetWorkflowAnalyzer,
+        _failedTestSource,
+        _commandRegistry,
+        _parametersService,
+        _virtualContext,
+        _dotnetCommandsStreamResolver,
         )
 
     private fun createToken(): Disposable {
