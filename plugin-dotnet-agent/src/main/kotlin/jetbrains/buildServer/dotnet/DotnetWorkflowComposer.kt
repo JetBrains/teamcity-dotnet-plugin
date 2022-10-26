@@ -29,7 +29,6 @@ class DotnetWorkflowComposer(
     private val _failedTestSource: FailedTestSource,
     private val _commandRegistry: CommandRegistry,
     private val _parametersService: ParametersService,
-    private val _commandLinePresentationService: CommandLinePresentationService,
     private val _virtualContext: VirtualContext,
     private val _dotnetCommandsStreamResolver: DotnetCommandsStreamResolver,
 ) : SimpleWorkflowComposer {
@@ -38,7 +37,7 @@ class DotnetWorkflowComposer(
         ?.trim()
         ?.let { Verbosity.tryParse(it) }
 
-    private val dotnetCommands get() = _dotnetCommandsStreamResolver.resolve();
+    private val dotnetCommands get() = _dotnetCommandsStreamResolver.resolve()
 
     override val target: TargetType = TargetType.Tool
 
@@ -46,10 +45,10 @@ class DotnetWorkflowComposer(
         val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
         val virtualWorkingDirectory = Path(_virtualContext.resolvePath(workingDirectory.path))
 
-        var versions = mutableMapOf<String, Version>()
+        val versions = mutableMapOf<String, Version>()
         var virtualDotnetExecutable: Path? = null
         val analyzerContext = DotnetWorkflowAnalyzerContext()
-        var verbosityLevel = verbosityLevel
+        val verbosityLevel = verbosityLevel
 
         for (dotnetCommand in dotnetCommands) {
             if (context.status != WorkflowStatus.Running) {
@@ -59,9 +58,9 @@ class DotnetWorkflowComposer(
             val executable = dotnetCommand.toolResolver.executable
             var virtualPath = executable.virtualPath
 
-            var version: Version? = versions[executable.path.path];
+            var version: Version? = versions[executable.path.path]
             if (version == null) {
-                var toolState = ToolState(
+                val toolState = ToolState(
                     executable,
                     observer<Path> { virtualDotnetExecutable = it },
                     observer<Version> {
@@ -125,7 +124,7 @@ class DotnetWorkflowComposer(
     }.joinToString(" ")
 
     private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
-        var description = mutableListOf<StdOutText>()
+        val description = mutableListOf<StdOutText>()
         when (dotnetBuildContext.command.toolResolver.platform) {
             ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Header))
             else -> {}
