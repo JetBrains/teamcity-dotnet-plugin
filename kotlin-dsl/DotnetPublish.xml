@@ -93,8 +93,8 @@
             </description>
             <code>
                 dotnetPublish {
-                projects = "MyProject.sln"
-                skipBuild = true
+                    projects = "MyProject.sln"
+                    skipBuild = true
                 }
             </code>
         </example>
