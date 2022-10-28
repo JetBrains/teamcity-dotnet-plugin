@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet.test.custom
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.BuildProblemTypes
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.custom.CustomCommandWorkflowComposer
@@ -36,6 +37,7 @@ class CustomCommandWorkflowComposerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _targetService: TargetService
     @MockK private lateinit var _buildOptions: BuildOptions
+    @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _workflowContext: WorkflowContext
 
     private val _workingDirectory = File("wd")
@@ -73,6 +75,7 @@ class CustomCommandWorkflowComposerTest {
         every { pathObserver.onNext(any()) } returns Unit
         every { _argumentsService.split("args") } returns sequenceOf("arg1", "arg2")
         every { _targetService.targets } returns emptySequence()
+        every { _loggerService.writeBuildProblem(any(), any(), any()) } just Runs
     }
 
     @DataProvider(name = "composeCases")
@@ -213,6 +216,10 @@ class CustomCommandWorkflowComposerTest {
 
         // assert
         verify(exactly = (if (failBuild) 1 else 0)) {
+            _loggerService.writeBuildProblem(
+                "dotnet_custom_exit_code$exitCode",
+                BuildProblemTypes.TC_EXIT_CODE_TYPE,
+                "Process exited with code $exitCode")
             _workflowContext.abort(BuildFinishedStatus.FINISHED_FAILED)
         }
     }
@@ -223,7 +230,8 @@ class CustomCommandWorkflowComposerTest {
             _argumentsService,
             _pathsService,
             _targetService,
-            _buildOptions
+            _buildOptions,
+            _loggerService,
         )
     }
 }
