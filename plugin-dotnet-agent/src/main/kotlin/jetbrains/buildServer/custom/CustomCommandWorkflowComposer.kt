@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.custom
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
@@ -29,6 +30,7 @@ class CustomCommandWorkflowComposer(
     private val _pathsService: PathsService,
     private val _targetService: TargetService,
     private val _buildOptions: BuildOptions,
+    private val _loggerService: LoggerService,
 ) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -64,6 +66,11 @@ class CustomCommandWorkflowComposer(
         context.toExitCodes()
             .subscribe {
                 if (it != 0 && _buildOptions.failBuildOnExitCode) {
+                    _loggerService.writeBuildProblem(
+                        "dotnet_custom_exit_code$it",
+                        BuildProblemData.TC_EXIT_CODE_TYPE,
+                        "Process exited with code $it"
+                    )
                     context.abort(BuildFinishedStatus.FINISHED_FAILED)
                 }
             }
