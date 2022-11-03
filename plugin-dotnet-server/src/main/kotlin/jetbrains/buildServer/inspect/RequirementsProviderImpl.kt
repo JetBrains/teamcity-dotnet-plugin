@@ -17,5 +17,5 @@ class RequirementsProviderImpl(
     private fun getPlatform(parameters: Map<String, String>): IspectionToolPlatform =
             parameters[RUNNER_SETTING_CLT_PLATFORM]
                     ?.let { IspectionToolPlatform.tryParse(it) }
-                    ?: IspectionToolPlatform.X64
+                    ?: IspectionToolPlatform.WindowsX64
 }

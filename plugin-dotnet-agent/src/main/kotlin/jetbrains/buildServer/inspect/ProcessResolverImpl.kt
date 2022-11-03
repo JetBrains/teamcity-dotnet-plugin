@@ -2,7 +2,6 @@ package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -24,13 +23,13 @@ class ProcessResolverImpl(
         val executableBase = File(File(toolPath, "tools"), tool.toolName).path;
         val platform = _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CLT_PLATFORM)
                 ?.let { IspectionToolPlatform.tryParse(it) }
-                ?: IspectionToolPlatform.X64
+                ?: IspectionToolPlatform.WindowsX64
 
         return when(_virtualContext.targetOSType) {
             OSType.WINDOWS ->{
                 when(platform) {
-                    IspectionToolPlatform.X64 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.exe"))))
-                    IspectionToolPlatform.X86 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))))
+                    IspectionToolPlatform.WindowsX64 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.exe"))))
+                    IspectionToolPlatform.WindowsX86 ->  InspectionProcess(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))))
                     else -> InspectionProcess(
                             Path(""),
                             listOf(

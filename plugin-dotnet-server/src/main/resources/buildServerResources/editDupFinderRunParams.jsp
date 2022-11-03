@@ -65,7 +65,7 @@
   <td>
     <props:selectProperty name="${constants.cltPlatformKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${constants.runPlatforms}">
-        <props:option value="${item}"><c:out value="${item}"/></props:option>
+        <props:option value="${item.id}"><c:out value="${item.displayName}"/></props:option>
       </c:forEach>
     </props:selectProperty>
     <span class="error" id="error_${constants.cltPlatformKey}"></span>

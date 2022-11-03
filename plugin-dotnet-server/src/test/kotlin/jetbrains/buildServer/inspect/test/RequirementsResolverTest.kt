@@ -19,27 +19,27 @@ class RequirementsResolverTest {
         return arrayOf(
                 arrayOf(
                         Version(2018, 1),
-                        IspectionToolPlatform.X64,
+                        IspectionToolPlatform.WindowsX64,
                         listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x64${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 1),
-                        IspectionToolPlatform.X86,
+                        IspectionToolPlatform.WindowsX86,
                         listOf(Requirement(EXISTS_QUALIFIER + "${CONFIG_PREFIX_DOTNET_FAMEWORK}[\\d\\.]+_x86${CONFIG_SUFFIX_PATH}", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 2),
-                        IspectionToolPlatform.X64,
+                        IspectionToolPlatform.WindowsX64,
                         listOf(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(${CONFIG_PREFIX_DOTNET_FAMEWORK}4\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_x64${CONFIG_SUFFIX_PATH})", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 2),
-                        IspectionToolPlatform.X86,
+                        IspectionToolPlatform.WindowsX86,
                         listOf(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(${CONFIG_PREFIX_DOTNET_FAMEWORK}4\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_x86${CONFIG_SUFFIX_PATH})", null, RequirementType.EXISTS))
                 ),
                 arrayOf(
                         Version(2018, 2),
-                        IspectionToolPlatform.X86,
+                        IspectionToolPlatform.WindowsX86,
                         listOf(Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(${CONFIG_PREFIX_DOTNET_FAMEWORK}4\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_x86${CONFIG_SUFFIX_PATH})", null, RequirementType.EXISTS))
                 )
         )

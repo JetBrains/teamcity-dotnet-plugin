@@ -23,5 +23,7 @@ class InspectCodeConstantsBean {
 
     fun getCltPluginsKey() = InspectCodeConstants.RUNNER_SETTING_CLT_PLUGINS
 
-    fun getRunPlatforms(): Collection<String> = IspectionToolPlatform.values().map { it.id }
+    fun getRunPlatforms() = IspectionToolPlatform.values()
+
+    fun getRunPlatformName(platformId: String): String = IspectionToolPlatform.values().firstOrNull { it.id == platformId }?.displayName ?: platformId
 }

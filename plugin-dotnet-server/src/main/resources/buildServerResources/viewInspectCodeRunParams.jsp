@@ -38,7 +38,7 @@
 
 <c:if test="${not empty propertiesBean.properties[constants.cltPlatformKey]}">
   <div class="parameter">
-    InspectCode platform: <props:displayValue name="${constants.cltPlatformKey}"/>
+    InspectCode platform: <strong><c:out value="${constants.getRunPlatformName(propertiesBean.properties[constants.cltPlatformKey])}"/></strong>
   </div>
 </c:if>
 

@@ -43,7 +43,7 @@ class ProcessResolverTest {
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(
                                 CLT_PATH_PARAMETER to "somePath",
-                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
                         InspectionProcess (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.x86.exe")
@@ -54,7 +54,7 @@ class ProcessResolverTest {
                         InspectionTool.Dupfinder,
                         ParametersServiceStub(mapOf(
                                 CLT_PATH_PARAMETER to "somePath",
-                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
                         InspectionProcess (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Dupfinder.toolName).path}.x86.exe")
@@ -115,7 +115,7 @@ class ProcessResolverTest {
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(
                                 CLT_PATH_PARAMETER to "somePath",
-                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X64.id)),
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX64.id)),
                         OSType.UNIX,
                         InspectionProcess (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
@@ -126,7 +126,7 @@ class ProcessResolverTest {
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(
                                 CLT_PATH_PARAMETER to "somePath",
-                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
+                                RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.UNIX,
                         InspectionProcess (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
@@ -149,7 +149,7 @@ class ProcessResolverTest {
                 ),
                 arrayOf(
                         InspectionTool.Inspectcode,
-                        ParametersServiceStub(mapOf(RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.X86.id)),
+                        ParametersServiceStub(mapOf(RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
                         null,
                         RunBuildException("Cannot find ${InspectionTool.Inspectcode.dysplayName}.")

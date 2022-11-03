@@ -12,10 +12,10 @@ class RequirementsResolverImpl : RequirementsResolver {
     override fun resolve(version: Version, platform: IspectionToolPlatform) = sequence {
         when {
             version >= CrossPlatformVersion && platform == IspectionToolPlatform.CrossPlatform -> yield(DotnetCore3)
-            version >= RequiresNet461Version && platform == IspectionToolPlatform.X86 -> yield(FullDotnet461X86)
-            version >= RequiresNet461Version && platform == IspectionToolPlatform.X64 -> yield(FullDotnet461X64)
-            platform == IspectionToolPlatform.X86 -> yield(MinimalRequirementX86)
-            platform == IspectionToolPlatform.X64 -> yield(MinimalRequirementX64)
+            version >= RequiresNet461Version && platform == IspectionToolPlatform.WindowsX86 -> yield(FullDotnet461X86)
+            version >= RequiresNet461Version && platform == IspectionToolPlatform.WindowsX64 -> yield(FullDotnet461X64)
+            platform == IspectionToolPlatform.WindowsX86 -> yield(MinimalRequirementX86)
+            platform == IspectionToolPlatform.WindowsX64 -> yield(MinimalRequirementX64)
             else -> emptySequence<Requirement>()
         }
     }

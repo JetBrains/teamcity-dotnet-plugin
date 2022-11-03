@@ -1,11 +1,9 @@
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.dotnet.Platform
-
-enum class IspectionToolPlatform(val id: String) {
-    X64("x64"),
-    X86("x86"),
-    CrossPlatform("Cross-platform");
+enum class IspectionToolPlatform(val id: String, val displayName: String) {
+    WindowsX64("x64", "Windows (x64)"),
+    WindowsX86("x86", "Windows (x86)"),
+    CrossPlatform("Cross-platform", "Cross-platform");
 
     companion object {
         fun tryParse(id: String): IspectionToolPlatform? {

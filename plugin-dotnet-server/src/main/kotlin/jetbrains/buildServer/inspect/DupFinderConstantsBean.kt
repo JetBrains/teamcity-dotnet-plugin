@@ -31,5 +31,7 @@ class DupFinderConstantsBean {
 
     fun getCltToolTypeName() = CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID
 
-    fun getRunPlatforms(): Collection<String> = IspectionToolPlatform.values().filter { it != IspectionToolPlatform.X86 }.map { it.id }
+    fun getRunPlatforms() = IspectionToolPlatform.values().filter { it != IspectionToolPlatform.WindowsX86 }
+
+    fun getRunPlatformName(platformId: String) = IspectionToolPlatform.values().firstOrNull { it.id == platformId }?.displayName ?: platformId
 }
