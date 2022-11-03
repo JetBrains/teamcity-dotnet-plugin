@@ -1,23 +1,35 @@
 package jetbrains.buildServer.dotnet.commands.msbuild
 
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.StringUtil
 
-class MSBuildParameterConverterImpl : MSBuildParameterConverter {
-    override fun convert(parameters: Sequence<MSBuildParameter>) =
-            parameters
-                    .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
-                    .map { parameter ->
-                        val normalizedName = normalizeName(parameter.name)
-                        val normalizedValue = normalizeValue(parameter.value) { shouledBeEscaped(parameter.type, it) }
-                        "-p:${normalizedName}=${normalizedValue}"
-                    }
+class MSBuildParameterConverterImpl(
+    private val _parameterService: ParametersService,
+) : MSBuildParameterConverter {
+    private val hasParametersEscapingBeenEnabled get() =
+        _parameterService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_PARAMETERS_ESCAPE)
+            ?.let { it.trim().equals("true", ignoreCase = true) }
+            ?: false
+
+    override fun convert(parameters: Sequence<MSBuildParameter>): Sequence<String> {
+        val allParamsEscapingEnabled = hasParametersEscapingBeenEnabled
+        return parameters
+            .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
+            .map { parameter ->
+                val normalizedName = normalizeName(parameter.name)
+                val normalizedValue = normalizeValue(parameter.value) { shouledBeEscaped(parameter.type, it, allParamsEscapingEnabled) }
+                "-p:${normalizedName}=${normalizedValue}"
+            }
+    }
 
     fun normalizeName(name: String) =
-            String(
-                name.mapIndexed { index: Int, c: Char ->
-                    if ( if(index == 0) isValidInitialElementNameCharacter(c) else isValidSubsequentElementNameCharacter(c) ) c else '_'
-                }.toCharArray()
-            )
+        String(
+            name.mapIndexed { index: Int, c: Char ->
+                if ( if(index == 0) isValidInitialElementNameCharacter(c) else isValidSubsequentElementNameCharacter(c) ) c else '_'
+            }.toCharArray()
+        )
 
     fun normalizeValue(value: String, shouledBeEscaped: (Char) -> Boolean): String {
         val str = String(escapeSymbols(value.asSequence(), shouledBeEscaped).toList().toCharArray())
@@ -71,27 +83,26 @@ class MSBuildParameterConverterImpl : MSBuildParameterConverter {
     companion object {
         private val SpecialCharacters = hashSetOf(' ', '%', ';')
 
-        internal fun shouledBeEscaped(parameterType: MSBuildParameterType, char: Char) =
-                when {
-                    // invisible
-                    char.isISOControl() -> true
-                    // predefined parameters
-                    parameterType == MSBuildParameterType.Predefined -> when {
-                        char.isLetterOrDigit() -> false
-                        char == ' ' -> false
-                        char == '\\' -> false
-                        char == '/' -> false
-                        char == '.' -> false
-                        char == '-' -> false
-                        char == '_' -> false
-                        char == '%' -> false
-                        char == ':' -> false
-                        char == ')' -> false
-                        char == '(' -> false
-                        else -> true
-                    }
-                    char == '"' -> true
-                    else -> false
-                }
+        internal fun shouledBeEscaped(parameterType: MSBuildParameterType, char: Char, allParamsEscapingEnabled: Boolean) = when {
+            // invisible
+            char.isISOControl() -> true
+            // predefined parameters
+            allParamsEscapingEnabled || parameterType == MSBuildParameterType.Predefined -> when {
+                char.isLetterOrDigit() -> false
+                char == ' ' -> false
+                char == '\\' -> false
+                char == '/' -> false
+                char == '.' -> false
+                char == '-' -> false
+                char == '_' -> false
+                char == '%' -> false
+                char == ':' -> false
+                char == ')' -> false
+                char == '(' -> false
+                else -> true
+            }
+            char == '"' -> true
+            else -> false
+        }
     }
 }
