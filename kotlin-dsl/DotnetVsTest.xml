@@ -138,4 +138,28 @@
             <option name="ARM" value="ARM"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet vstest`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-vstest) command to run selected tests by names from the specified assemblies
+            </description>
+            <code>
+                dotnetVsTest {
+                    assemblies = "path\to\assemblies\*.dll"
+                    version = DotnetVsTestStep.VSTestVersion.V17
+                    filter = testName {
+                        names = """
+                            Test0
+                            Test1
+                            Test2
+                        """.trimIndent()
+                    }
+                    settingsFile = "MyProjectTestsSettings.runsettings"
+                    logging = DotnetVsTestStep.Verbosity.Normal
+                    runInIsolation = true
+                    platform = DotnetVsTestStep.Platform.x64
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

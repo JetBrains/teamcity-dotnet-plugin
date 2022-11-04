@@ -108,4 +108,18 @@
             </option>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`devenv.exe`](https://learn.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches) command for all solution files in the build checkout directory.
+            </description>
+            <code>
+                dotnetDevenv {
+                    projects = "*.sln"
+                    version = DevenvBuildStep.VSVersion.Any
+                    action = DevenvBuildStep.VSAction.Clean
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

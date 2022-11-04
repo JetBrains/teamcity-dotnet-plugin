@@ -49,4 +49,17 @@
             <description>.NET SDK versions separated by semicolon to be required on agents.</description>
         </param>
     </params>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet EXECUTABLE`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet#options-for-running-an-application) to run specified .NET application
+            </description>
+            <code>
+                dotnetCustom {
+                    executables = "MyProgram.exe"
+                    args = "abc=123"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

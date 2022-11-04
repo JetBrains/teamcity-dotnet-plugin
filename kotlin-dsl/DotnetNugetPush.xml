@@ -73,4 +73,18 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet nuget push`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-push) command to push and publish specified packages to a specified server
+            </description>
+            <code>
+                dotnetNugetPush {
+                    packages = "*.nupkg"
+                    serverUrl = "https://nuget.example.com/feed"
+                    apiKey = "******"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

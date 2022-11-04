@@ -79,4 +79,19 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) command to run source code without explicit compile or launch commands
+            </description>
+            <code>
+                dotnetRun {
+                    projects = "MySolution.sln"
+                    framework = "net481"
+                    configuration = "Release"
+                    args = "abc=123"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>
