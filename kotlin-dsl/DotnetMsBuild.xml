@@ -106,4 +106,21 @@
             </option>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet msbuild`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-msbuild) command for Rebuild target for a specified solution in the build checkout directory with detailed logging
+            </description>
+            <code>
+                dotnetMsBuild {
+                    projects = "MySolution.sln"
+                    version = DotnetMsBuildStep.MSBuildVersion.CrossPlatform
+                    targets = "Rebuild"
+                    configuration = "Release"
+                    logging = DotnetMsBuildStep.Verbosity.Detailed
+                    sdk = "4.8.1"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

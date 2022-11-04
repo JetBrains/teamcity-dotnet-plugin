@@ -65,4 +65,18 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
     </types>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotnet nuget delete`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-delete) command to delete a specified package from a specified server
+            </description>
+            <code>
+                dotnetNugetDelete {
+                    serverUrl = "https://nuget.example.com/feed"
+                    packageId = "MyPackage 1.2.3"
+                    apiKey = "******"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>

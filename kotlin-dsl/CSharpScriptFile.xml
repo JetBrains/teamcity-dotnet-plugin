@@ -1,46 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dsl-extension kind="buildStep" type="csharpScript" generateDslJar="true" applicable="params['scriptType'] == 'file'">
-  <class name="CSharpScriptFileBuildStep">
-    <description>
-      A build step running a C# script with from a specified file
-    </description>
-  </class>
-  <function name="csharpFile">
-    <description>
-      Adds a build step running a C# script from a specified file
-      @see CSharpScriptFileBuildStep
-    </description>
-  </function>
-  <init>
-    <param name="scriptType" value="file"/>
-    <param name="csharpToolPath" value="%teamcity.tool.TeamCity.csi.DEFAULT%"/>
-  </init>
-  <params>
-    <param name="teamcity.build.workingDir" dslName="workingDir">
-      <description>
-        [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for the script,
-        specify it if it is different from the [checkout directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
-      </description>
-    </param>
-    <param name="scriptFile" dslName="path" mandatory="true">
-      <description>
-        A path to a file with .main.kts extension
-      </description>
-    </param>
-    <param name="scriptArgs" dslName="arguments">
-      <description>
-        Space-separated list of additional arguments for C# script
-      </description>
-    </param>
-    <param name="nuget.packageSources" dslName="sources">
-      <description>
-        Space-separated list of NuGet package source (URL, UNC/folder path)
-      </description>
-    </param>
-    <param name="csharpToolPath" dslName="tool">
-      <description>
-        C# tool path
-      </description>
-    </param>
-  </params>
+    <class name="CSharpScriptFileBuildStep">
+        <description>
+            A build step running a C# script with from a specified file
+        </description>
+    </class>
+    <function name="csharpFile">
+        <description>
+            Adds a build step running a C# script from a specified file
+            @see CSharpScriptFileBuildStep
+        </description>
+    </function>
+    <init>
+        <param name="scriptType" value="file"/>
+        <param name="csharpToolPath" value="%teamcity.tool.TeamCity.csi.DEFAULT%"/>
+    </init>
+    <params>
+        <param name="teamcity.build.workingDir" dslName="workingDir">
+            <description>
+                [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for the script,
+                specify it if it is different from the [checkout directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+            </description>
+        </param>
+        <param name="scriptFile" dslName="path" mandatory="true">
+            <description>
+                A path to a file with .main.kts extension
+            </description>
+        </param>
+        <param name="scriptArgs" dslName="arguments">
+            <description>
+                Space-separated list of additional arguments for C# script
+            </description>
+        </param>
+        <param name="nuget.packageSources" dslName="sources">
+            <description>
+                Space-separated list of NuGet package source (URL, UNC/folder path)
+            </description>
+        </param>
+        <param name="csharpToolPath" dslName="tool">
+            <description>
+                C# tool path
+            </description>
+        </param>
+    </params>
+    <examples>
+        <example>
+            <description>
+                Runs a C# script with help of [C# script tool](https://www.nuget.org/packages/TeamCity.csi)
+            </description>
+            <code>
+                csharpFile {
+                    path = "MyScript.csi"
+                    tool = "%teamcity.tool.TeamCity.csi.DEFAULT%"
+                }
+            </code>
+        </example>
+    </examples>
 </dsl-extension>
