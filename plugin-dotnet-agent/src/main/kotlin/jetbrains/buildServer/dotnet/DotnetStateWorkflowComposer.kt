@@ -48,7 +48,9 @@ class DotnetStateWorkflowComposer(
                 }
             )
 
-            yieldAll(_pathResolverWorkflowComposers.flatMap { it.compose(context, pathResolverState).commandLines })
+            for (pathResolverWorkflowFactory in _pathResolverWorkflowComposers) {
+                yieldAll(pathResolverWorkflowFactory.compose(context, pathResolverState).commandLines)
+            }
         }
 
         if (state.versionObserver == null) {
