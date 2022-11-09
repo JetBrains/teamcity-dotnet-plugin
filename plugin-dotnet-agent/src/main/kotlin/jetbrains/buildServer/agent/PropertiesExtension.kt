@@ -58,6 +58,7 @@ class PropertiesExtension(
 
     companion object {
         private val LOG = Logger.getLogger(PropertiesExtension::class.java)
+        // This constant is used in the FxCop plugin
         const val PROPERTIES_EXTENSION_NAME = "DotNetPropertiesExtensionSupplier"
     }
 }
