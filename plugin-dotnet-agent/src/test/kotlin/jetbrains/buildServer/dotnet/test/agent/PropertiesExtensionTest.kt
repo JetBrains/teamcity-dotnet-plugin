@@ -18,8 +18,10 @@ package jetbrains.buildServer.dotnet.test.agent
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.ExtensionHolder
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.agent.config.AgentParametersSupplier
 import jetbrains.buildServer.rx.subjectOf
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
@@ -33,6 +35,7 @@ class PropertiesExtensionTest {
     private val mainThreadSurrogate = newSingleThreadContext("Main thread")
     @MockK private lateinit var _agentPropertiesProvider1: AgentPropertiesProvider
     @MockK private lateinit var _agentPropertiesProvider2: AgentPropertiesProvider
+    @MockK private lateinit var _extensionHolder: ExtensionHolder
 
     @BeforeMethod
     fun setUp() {
@@ -73,7 +76,12 @@ class PropertiesExtensionTest {
     }
 
     private fun createInstance(): PropertiesExtension {
-        val propertiesExtension = PropertiesExtension(Dispatchers.Main, listOf(_agentPropertiesProvider1, _agentPropertiesProvider2))
+        every { _extensionHolder.registerExtension(AgentParametersSupplier::class.java, PropertiesExtension.PROPERTIES_EXTENSION_NAME, any()) } returns Unit
+
+        val propertiesExtension = PropertiesExtension(Dispatchers.Main, listOf(_agentPropertiesProvider1, _agentPropertiesProvider2), _extensionHolder)
+
+        verify { _extensionHolder.registerExtension(AgentParametersSupplier::class.java, PropertiesExtension.PROPERTIES_EXTENSION_NAME, propertiesExtension) }
+
         return propertiesExtension
     }
 }
