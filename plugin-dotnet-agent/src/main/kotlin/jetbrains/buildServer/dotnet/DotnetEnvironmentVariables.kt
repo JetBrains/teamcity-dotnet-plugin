@@ -16,26 +16,24 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
+import jetbrains.buildServer.agent.Environment
+import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.util.OSType
-import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.logging.LoggerResolver
-import java.io.File
+import jetbrains.buildServer.util.OSType
 
-class EnvironmentVariablesImpl(
+class DotnetEnvironmentVariables(
         private val _environment: Environment,
         private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
-        private val _fileSystemService: FileSystemService,
         private val _nugetEnvironmentVariables: EnvironmentVariables,
-        private val _virtualContext: VirtualContext,
         private val _loggerResolver: LoggerResolver
-)
-    : EnvironmentVariables {
+) : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(defaultVariables)
 
@@ -48,7 +46,7 @@ class EnvironmentVariablesImpl(
             yield(CommandLineEnvironmentVariable(ServiceMessagesPathEnvVar, _pathsService.getPath(PathType.AgentTemp).canonicalPath))
         }
 
-        val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
+        val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
         yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
         yieldAll(_nugetEnvironmentVariables.getVariables(sdkVersion))
 
@@ -56,37 +54,10 @@ class EnvironmentVariablesImpl(
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
             yield(CommandLineEnvironmentVariable(home, System.getProperty("user.home")))
         }
-
-        if (_virtualContext.targetOSType != OSType.WINDOWS) {
-            if (_virtualContext.isVirtual && _environment.os == OSType.WINDOWS) {
-                LOG.debug("Override temp environment variables by empty values")
-                yieldAll(getTempDirVariables())
-            } else {
-                val tempPath = _pathsService.getPath(PathType.BuildTemp).path
-                if (tempPath.length <= 60) {
-                    LOG.debug("Do not override temp environment variables")
-                }
-                else {
-                    // try to find default /tmp
-                    if (_fileSystemService.isExists(defaultTemp) && _fileSystemService.isDirectory(defaultTemp)) {
-                        LOG.debug("Override temp environment variables by '${defaultTemp.path}'")
-                        yieldAll(getTempDirVariables(defaultTemp.path))
-                    } else {
-                        // create short TeamCity temp
-                        if (!_fileSystemService.isExists(customTeamCityTemp)) {
-                            _fileSystemService.createDirectory(customTeamCityTemp)
-                        }
-
-                        LOG.debug("Override temp environment variables by '${customTeamCityTemp}'")
-                        yieldAll(getTempDirVariables(customTeamCityTemp.path))
-                    }
-                }
-            }
-        }
     }
 
     companion object {
-        private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
+        private val LOG = Logger.getLogger(DotnetEnvironmentVariables::class.java)
 
         private const val UserProfileEnvVar = "USERPROFILE"
         private const val HomeEnvVar = "HOME"
@@ -100,13 +71,5 @@ class EnvironmentVariablesImpl(
                 CommandLineEnvironmentVariable("DOTNET_CLI_TELEMETRY_OPTOUT", "true"),
                 CommandLineEnvironmentVariable("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true"),
                 CommandLineEnvironmentVariable("NUGET_XMLDOC_MODE", "skip"))
-
-        internal fun getTempDirVariables(tempPath: String = "") = sequenceOf(
-                CommandLineEnvironmentVariable("TEMP", tempPath),
-                CommandLineEnvironmentVariable("TMP", tempPath),
-                CommandLineEnvironmentVariable("TMPDIR", tempPath))
-
-        internal val defaultTemp = File("/tmp")
-        internal val customTeamCityTemp = File("~/teamcity_temp")
     }
 }

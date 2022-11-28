@@ -27,7 +27,7 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl.Companion.UseSharedCompilationEnvVarName
+import jetbrains.buildServer.dotnet.DotnetEnvironmentVariables.Companion.UseSharedCompilationEnvVarName
 import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -40,7 +40,6 @@ class EnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _pathsService: PathsService
-    @MockK private lateinit var _fileSystemService: FileSystemService
     @MockK private lateinit var _nugetEnvironmentVariables: EnvironmentVariables
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _loggerResolver: LoggerResolver
@@ -78,7 +77,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))).toList())
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))).toList())
     }
 
     @Test
@@ -101,16 +100,16 @@ class EnvironmentVariablesTest {
 
         // Then
         Assert.assertEquals(
-                actualVariables,
-                (
-                        EnvironmentVariablesImpl.defaultVariables
-                                + sequenceOf(
-                                    CommandLineEnvironmentVariable(EnvironmentVariablesImpl.MSBuildLoggerEnvVar, File("msbuild_logger").canonicalPath),
-                                    CommandLineEnvironmentVariable(EnvironmentVariablesImpl.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath))
-                                + sequenceOf(
-                                    CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"),
-                                    CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))
-                ).toList()
+            actualVariables,
+            (
+                    DotnetEnvironmentVariables.defaultVariables
+                            + sequenceOf(
+                        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.MSBuildLoggerEnvVar, File("msbuild_logger").canonicalPath),
+                        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath))
+                            + sequenceOf(
+                        CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"),
+                        CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))
+                    ).toList()
         )
     }
 
@@ -130,7 +129,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
     }
 
     @Test
@@ -150,14 +149,14 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "true"))).toList())
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "true"))).toList())
     }
 
     @DataProvider(name = "osTypesData")
     fun osTypesData(): Array<Array<OSType>> {
         return arrayOf(
-                arrayOf(OSType.UNIX),
-                arrayOf(OSType.MAC))
+            arrayOf(OSType.UNIX),
+            arrayOf(OSType.MAC))
     }
 
     @Test(dataProvider = "osTypesData")
@@ -176,7 +175,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false")) + EnvironmentVariablesImpl.getTempDirVariables()).toList())
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
     }
 
     @Test
@@ -184,7 +183,7 @@ class EnvironmentVariablesTest {
         // Given
         val environmentVariables = createInstance()
         val systemPath = File("system")
-        
+
         // When
         every { _environment.os } returns OSType.WINDOWS
         every { _environment.tryGetVariable("USERPROFILE") } returns "path"
@@ -195,81 +194,7 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
-    }
-
-    @Test(dataProvider = "osTypesData")
-    fun shouldNotOverrideTeamCityTempWhenNotVirtualAndNotWindowsAndLenghtLessOrEq60(os: OSType) {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-        val tempPath = "a".repeat(60)
-
-        // When
-        every { _environment.os } returns os
-        every { _environment.tryGetVariable("HOME") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns os
-        every { _pathsService.getPath(PathType.BuildTemp) } returns File(tempPath)
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        for (envVar in EnvironmentVariablesImpl.getTempDirVariables(tempPath)) {
-            Assert.assertTrue(!actualVariables.contains(envVar))
-        }
-    }
-
-    @Test(dataProvider = "osTypesData")
-    fun shouldOverrideTeamCityTempByTmpWhenNotVirtualAndNotWindowsAndLenghtLessMore60AndTmpExists(os: OSType) {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-        val tempPath = "a".repeat(61)
-
-        // When
-        every { _environment.os } returns os
-        every { _environment.tryGetVariable("HOME") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns os
-        every { _pathsService.getPath(PathType.BuildTemp) } returns File(tempPath)
-        every { _fileSystemService.isExists(EnvironmentVariablesImpl.defaultTemp) } returns true
-        every { _fileSystemService.isDirectory(EnvironmentVariablesImpl.defaultTemp) } returns true
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        for (envVar in EnvironmentVariablesImpl.getTempDirVariables(EnvironmentVariablesImpl.defaultTemp.path)) {
-            Assert.assertTrue(actualVariables.contains(envVar))
-        }
-    }
-
-    @Test(dataProvider = "osTypesData")
-    fun shouldOverrideTeamCityTempByCustomTeamCityTempWhenNotVirtualAndNotWindowsAndLenghtLessMore60AndTmpExists(os: OSType) {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-        val tempPath = "a".repeat(61)
-
-        // When
-        every { _environment.os } returns os
-        every { _environment.tryGetVariable("HOME") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns os
-        every { _pathsService.getPath(PathType.BuildTemp) } returns File(tempPath)
-        every { _fileSystemService.isExists(EnvironmentVariablesImpl.defaultTemp) } returns false
-        every { _fileSystemService.isExists(EnvironmentVariablesImpl.customTeamCityTemp) } returns false
-        every { _fileSystemService.createDirectory(EnvironmentVariablesImpl.customTeamCityTemp) } returns true
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        for (envVar in EnvironmentVariablesImpl.getTempDirVariables(EnvironmentVariablesImpl.customTeamCityTemp.path)) {
-            Assert.assertTrue(actualVariables.contains(envVar))
-        }
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"))).toList())
     }
 
     @Test
@@ -289,21 +214,20 @@ class EnvironmentVariablesTest {
         val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
 
         // Then
-        Assert.assertEquals(actualVariables, (EnvironmentVariablesImpl.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))).toList())
+        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, "false"), CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))).toList())
     }
 
-    private fun createInstance() = EnvironmentVariablesImpl(
-            _environment,
-            _parametersService,
-            _pathsService,
-            _fileSystemService,
-            _nugetEnvironmentVariables,
-            _virtualContext,
-            _loggerResolver)
+    private fun createInstance() = DotnetEnvironmentVariables(
+        _environment,
+        _parametersService,
+        _pathsService,
+        _nugetEnvironmentVariables,
+        _loggerResolver,
+    )
 
     private val commonVars = sequenceOf(
-        CommandLineEnvironmentVariable(EnvironmentVariablesImpl.MSBuildLoggerEnvVar, File("msbuild_logger").canonicalPath),
-        CommandLineEnvironmentVariable(EnvironmentVariablesImpl.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath),
-        CommandLineEnvironmentVariable(EnvironmentVariablesImpl.ServiceMessagesPathEnvVar, _tmpPath.canonicalPath)
+        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.MSBuildLoggerEnvVar, File("msbuild_logger").canonicalPath),
+        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath),
+        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.ServiceMessagesPathEnvVar, _tmpPath.canonicalPath)
     )
 }

@@ -58,6 +58,7 @@ class DotnetStateWorkflowComposer(
         }
 
         // Getting .NET SDK version
+        val workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
         context
             .toOutput()
             .map { _versionParser.parse(listOf(it)) }
@@ -69,7 +70,7 @@ class DotnetStateWorkflowComposer(
                         baseCommandLine = null,
                         target = TargetType.SystemDiagnostics,
                         executableFile = virtualPath ?: executable.virtualPath,
-                        workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
+                        workingDirectory = workingDirectory,
                         arguments = listOf(CommandLineArgument("--version")),
                         environmentVariables = _defaultEnvironmentVariables.getVariables(Version.Empty).toList(),
                         title = "dotnet --version",
