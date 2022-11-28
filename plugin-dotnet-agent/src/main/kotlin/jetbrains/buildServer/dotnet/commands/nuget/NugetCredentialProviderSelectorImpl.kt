@@ -7,7 +7,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
-import jetbrains.buildServer.dotnet.EnvironmentVariablesImpl
+import jetbrains.buildServer.dotnet.DotnetEnvironmentVariables
 import jetbrains.buildServer.dotnet.discovery.dotnetRuntime.DotnetRuntimesProvider
 
 class NugetCredentialProviderSelectorImpl(
@@ -59,6 +59,6 @@ class NugetCredentialProviderSelectorImpl(
     }
 
     companion object {
-        private val LOG = Logger.getLogger(EnvironmentVariablesImpl::class.java)
+        private val LOG = Logger.getLogger(NugetCredentialProviderSelectorImpl::class.java)
     }
 }

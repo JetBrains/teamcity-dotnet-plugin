@@ -22,10 +22,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.BuildStepContext
-import jetbrains.buildServer.agent.runner.ProgramCommandLine
-import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter
+import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter.Companion.ENV_DOCKER_QUIET_MODE
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -37,9 +36,10 @@ class ProgramCommandLineAdapterTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _buildStepContext: BuildStepContext
     @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _parametersService: ParametersService
 
     private val _executable = Path("executable")
-    private val _workingDirecory = Path("wd")
+    private val _workingDirectory = Path("wd")
     private val _args = listOf(
         CommandLineArgument("Arg1"),
         CommandLineArgument("Arg 2")
@@ -57,7 +57,7 @@ class ProgramCommandLineAdapterTest {
             null,
             TargetType.Tool,
             _executable,
-            _workingDirecory,
+            _workingDirectory,
             _args,
             _envVars)
 
@@ -65,7 +65,7 @@ class ProgramCommandLineAdapterTest {
             null,
             TargetType.SystemDiagnostics,
             _executable,
-            _workingDirecory,
+            _workingDirectory,
             _args,
             _envVars)
 
@@ -103,7 +103,7 @@ class ProgramCommandLineAdapterTest {
 
         // Then
         Assert.assertEquals(programCommandLine.executablePath, _executable.path)
-        Assert.assertEquals(programCommandLine.workingDirectory, _workingDirecory.path)
+        Assert.assertEquals(programCommandLine.workingDirectory, _workingDirectory.path)
         Assert.assertEquals(programCommandLine.arguments, expectedArgs)
         Assert.assertEquals(programCommandLine.environment.entries, mapOf(
                 "Var1" to "Val1",
@@ -138,7 +138,91 @@ class ProgramCommandLineAdapterTest {
         ).entries)
     }
 
+    @Test(dataProvider = "osData")
+    fun `should override default values of TMP, TEMP and TMPDIR env vars from command line when override option enabled`(os: OSType) {
+        // assert
+        every { _environment.os } returns os
+        every { _virtualContext.isVirtual } returns true
+        val buildParams = mockk<BuildParametersMap>().also { every { it.environmentVariables } answers {
+            mutableMapOf(
+                "TEMP" to "DEFAULT",
+                "TMP" to "DEFAULT",
+                "TMPDIR" to "DEFAULT",
+                "ABC" to "123"
+            )
+        } }
+        val runnerContext = mockk<BuildRunnerContext>().also { every { it.buildParameters } answers { buildParams } }
+        every {_buildStepContext.runnerContext } answers { runnerContext }
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_TEMP_DIR_OVERRIDE) } answers { "" }
+        val commandLine = CommandLine(
+            null,
+            TargetType.Tool,
+            _executable,
+            _workingDirectory,
+            _args,
+            environmentVariables = listOf(
+                CommandLineEnvironmentVariable("TEMP", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("TMP", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("TMPDIR", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("ABC", "OVERRIDDEN"),
+            ),
+        )
+
+        // act
+        val programCommandLine = createInstance(commandLine)
+
+        // arrange
+        Assert.assertEquals(programCommandLine.environment.entries, mapOf(
+            "TEMP" to "OVERRIDDEN",
+            "TMP" to "OVERRIDDEN",
+            "TMPDIR" to "OVERRIDDEN",
+            "ABC" to "123"
+        ).entries)
+    }
+
+    @Test(dataProvider = "osData")
+    fun `should not override default values of TMP, TEMP and TMPDIR env vars from command line when override option disabled`(os: OSType) {
+        // assert
+        every { _environment.os } returns os
+        every { _virtualContext.isVirtual } returns true
+        val buildParams = mockk<BuildParametersMap>().also { every { it.environmentVariables } answers {
+            mutableMapOf(
+                "TEMP" to "DEFAULT",
+                "TMP" to "DEFAULT",
+                "TMPDIR" to "DEFAULT",
+                "ABC" to "123"
+            )
+        } }
+        val runnerContext = mockk<BuildRunnerContext>().also { every { it.buildParameters } answers { buildParams } }
+        every {_buildStepContext.runnerContext } answers { runnerContext }
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_TEMP_DIR_OVERRIDE) } answers { "false" }
+        val commandLine = CommandLine(
+            null,
+            TargetType.Tool,
+            _executable,
+            _workingDirectory,
+            _args,
+            environmentVariables = listOf(
+                CommandLineEnvironmentVariable("TEMP", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("TMP", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("TMPDIR", "OVERRIDDEN"),
+                CommandLineEnvironmentVariable("ABC", "OVERRIDDEN"),
+            ),
+        )
+
+        // act
+        val programCommandLine = createInstance(commandLine)
+
+        // arrange
+        Assert.assertEquals(programCommandLine.environment.entries, mapOf(
+            "TEMP" to "DEFAULT",
+            "TMP" to "DEFAULT",
+            "TMPDIR" to "DEFAULT",
+            "ABC" to "123"
+        ).entries)
+    }
+
     private fun createInstance(commandLine: CommandLine): ProgramCommandLine =
-            ProgramCommandLineAdapter(_argumentsService, _environment, _buildStepContext, _virtualContext)
+            ProgramCommandLineAdapter(_argumentsService, _environment, _buildStepContext, _virtualContext, _parametersService)
                     .create(commandLine)
 }

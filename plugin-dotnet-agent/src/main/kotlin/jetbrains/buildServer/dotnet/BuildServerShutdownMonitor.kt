@@ -67,7 +67,7 @@ class BuildServerShutdownMonitor(
                 !_virtualContext.isVirtual
                 && buildCommands.contains(context.command.commandType)
                 && context.toolVersion > Version.LastVersionWithoutSharedCompilation
-                && _parametersService.tryGetParameter(ParameterType.Environment, EnvironmentVariablesImpl.UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
+                && _parametersService.tryGetParameter(ParameterType.Environment, DotnetEnvironmentVariables.UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
             _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory.path }
         }
     }

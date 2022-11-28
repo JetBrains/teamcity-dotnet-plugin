@@ -17,14 +17,16 @@
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.OSType
 
 class ProgramCommandLineAdapter(
-        private val _argumentsService: ArgumentsService,
-        private val _environment: Environment,
-        private val _buildStepContext: BuildStepContext,
-        private val _virtualContext: VirtualContext)
-    : ProgramCommandLine, ProgramCommandLineFactory {
+    private val _argumentsService: ArgumentsService,
+    private val _environment: Environment,
+    private val _buildStepContext: BuildStepContext,
+    private val _virtualContext: VirtualContext,
+    private val _parametersService: ParametersService,
+) : ProgramCommandLine, ProgramCommandLineFactory {
 
     private var _commandLine: CommandLine = CommandLine(null, TargetType.NotApplicable, Path(""), Path(""))
 
@@ -39,7 +41,9 @@ class ProgramCommandLineAdapter(
     override fun getEnvironment(): MutableMap<String, String> {
         val environmentVariables = _buildStepContext.runnerContext.buildParameters.environmentVariables.toMutableMap()
         _commandLine.environmentVariables.forEach {
-            if (!environmentVariables.containsKey(it.name)) {
+            // add plugin specific env vars in addition to build and user defined env vars;
+            // or override if it's allowed for some variables
+            if (!environmentVariables.containsKey(it.name) || isEnvVarOverrideAllowed(it.name)) {
                 environmentVariables[it.name] = it.value
             }
         }
@@ -52,6 +56,13 @@ class ProgramCommandLineAdapter(
         return environmentVariables
     }
 
+    private fun isEnvVarOverrideAllowed(variableName: String) =
+        OverridableTempDirectoryEnvVars.contains(variableName) && _isTempDirOverrideAllowed
+
+    private val _isTempDirOverrideAllowed: Boolean get() = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_TEMP_DIR_OVERRIDE)
+        ?.let { !it.trim().equals("false", true) }
+        ?: true
+
     override fun create(commandLine: CommandLine): ProgramCommandLine {
         this._commandLine = commandLine;
         return this;
@@ -59,5 +70,6 @@ class ProgramCommandLineAdapter(
 
     companion object {
         internal const val ENV_DOCKER_QUIET_MODE = "TEAMCITY_DOCKER_QUIET_MODE"
+        internal val OverridableTempDirectoryEnvVars = setOf("TEMP", "TMP", "TMPDIR")
     }
 }
