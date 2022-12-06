@@ -14,12 +14,47 @@
  * limitations under the License.
  */
 
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+}
+
+repositories {
+    mavenCentral()
+}
+
 ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
-    def versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
+    versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet']
     teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2022.10-SNAPSHOT'
+    teamcityDir = project.findProperty('teamcityDir') ?: "$rootDir/servers/TeamCity-${teamcityVersion}"
+    if (teamcityDir == null || !file(teamcityDir).isDirectory()) {
+        throw new InvalidUserDataException('Please, execute gradle task `:plugin-dotnet-server:installTeamCity` ' +
+                'or specify correct `teamcityDir` path in gradle.properties file')
+    }
+    teamcityDir = teamcityDir.replace("\\", "/")
+    if (teamcityDir.endsWith("/")) {
+        teamcityDir = teamcityDir.substring(0, teamcityDir.length() - 5)
+    }
+    println "TeamCity directory: " + teamcityDir
 }
 
 group = projectIds.group
 version = projectIds.version
+
+allprojects {
+    group = projectIds.group
+    version = projectIds.version
+}
+
+subprojects {
+    apply plugin: "kotlin"
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    test.useTestNG()
+    jar.version = null
+}

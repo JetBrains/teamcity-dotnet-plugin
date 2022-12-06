@@ -15,8 +15,7 @@
  */
 
 plugins {
-  id 'io.github.rodm.teamcity-server' version '1.5'
-  id 'plugin.conventions'
+  id 'com.github.rodm.teamcity-server' version "1.4.1"
 }
 
 teamcity {
@@ -37,18 +36,18 @@ teamcity {
 }
 
 dependencies {
-  implementation project(':plugin-dotnet-common')
-  implementation 'com.google.code.gson:gson:2.9.1'
-  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-  provided "org.jetbrains.teamcity.internal:server-tools:${teamcityVersion}"
+  implementation project(":plugin-dotnet-common")
+  implementation "com.google.code.gson:gson:2.9.1"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
+  provided files("${teamcityDir}/webapps/ROOT/WEB-INF/lib/server-tools.jar")
   provided "org.jetbrains.teamcity:server-api:${teamcityVersion}"
-  testImplementation 'org.testng:testng:7.5'
-  testImplementation 'org.jmock:jmock-junit4:2.12.0'
-  testImplementation 'io.mockk:mockk:1.13.2'
-  testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
-  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-  agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
+  testImplementation "org.testng:testng:7.5"
+  testImplementation "org.jmock:jmock-junit4:2.12.0"
+  testImplementation "io.mockk:mockk:1.12.3"
+  testImplementation "org.jetbrains.kotlin:kotlin-reflect"
+  testImplementation  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
+  agent project(path: ":plugin-dotnet-agent", configuration: "plugin")
 }
 
 class PreparePackagesTask extends DefaultTask {
@@ -97,3 +96,6 @@ serverPlugin.dependsOn(preparePackagesTask)
 
 serverPlugin.version = null
 serverPlugin.baseName = projectIds.artifact
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
