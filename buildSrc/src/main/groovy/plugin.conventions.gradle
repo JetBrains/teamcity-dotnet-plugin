@@ -1,0 +1,17 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+group = project.projectIds.group
+version = project.projectIds.version
+
+test.useTestNG()
+jar.version = null
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
