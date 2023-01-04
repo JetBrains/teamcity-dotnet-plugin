@@ -36,3 +36,15 @@
     Additional arguments: <props:displayValue name="${params.dotCoverArgumentsKey}"/>
   </div>
 </c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.dotCoverPublishSnapshotKey]}">
+  <div class="parameter">
+    Publish dotCover snapshot: <props:displayValue name="${params.dotCoverPublishSnapshotKey}"/>
+  </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.dotCoverPublishNativeRerportKey]}">
+  <div class="parameter">
+    Publish dotCover native report: <props:displayValue name="${params.dotCoverPublishNativeRerportKey}"/>
+  </div>
+</c:if>

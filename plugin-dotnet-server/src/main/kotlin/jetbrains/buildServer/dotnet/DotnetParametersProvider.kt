@@ -158,6 +158,12 @@ class DotnetParametersProvider {
     val dotCoverAttributeFiltersKey: String
         get() = CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS
 
+    val dotCoverPublishNativeRerportKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_PUBLISH_NATIVE_REPORT
+
+    val dotCoverPublishSnapshotKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_PUBLISH_SNAPSHOT
+
     val dotCoverArgumentsKey: String
         get() = CoverageConstants.PARAM_DOTCOVER_ARGUMENTS
 

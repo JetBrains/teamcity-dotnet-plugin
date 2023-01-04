@@ -29,7 +29,13 @@ object CoverageConstants {
     const val PARAM_DOTCOVER_FILTERS = "dotNetCoverage.dotCover.filters"
     const val PARAM_DOTCOVER_ATTRIBUTE_FILTERS = "dotNetCoverage.dotCover.attributeFilters"
     const val PARAM_DOTCOVER_ARGUMENTS = "dotNetCoverage.dotCover.customCmd"
+    const val PARAM_DOTCOVER_PUBLISH_SNAPSHOT = "dotNetCoverage.dotCover.publish.snapshot"
+    const val PARAM_DOTCOVER_PUBLISH_NATIVE_REPORT = "dotNetCoverage.dotCover.publish.report"
     const val PARAM_DOTCOVER_LOG_PATH = "teamcity.agent.dotCover.log"
+
+    const val DOTCOVER_SNAPSHOT_FILE = "dotCover.dcrv"
+    const val DOTCOVER_NATIVE_REPORT_FILE = "dotCover.html"
+    const val DOTCOVER_NATIVE_REPORT_FILE_PATH = ".teamcity/NETCoverage/$DOTCOVER_NATIVE_REPORT_FILE"
 
     val DOTNET_FRAMEWORK_PATTERN_3_5 = DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
     val DOTNET_FRAMEWORK_PATTERN_4_6_1 = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"

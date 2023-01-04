@@ -62,3 +62,15 @@
     <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
   </td>
 </tr>
+
+<tr class="advancedSetting">
+  <th><label>Options:</label></th>
+
+  <td>
+    <props:checkboxProperty name="${params.dotCoverPublishSnapshotKey}"/>
+    <label for="${params.dotCoverPublishSnapshotKey}">Publish dotCover snapshot</label>
+    <br/>
+    <props:checkboxProperty name="${params.dotCoverPublishNativeRerportKey}"/>
+    <label for="${params.dotCoverPublishNativeRerportKey}">Publish dotCover native report</label>
+  </td>
+</tr>

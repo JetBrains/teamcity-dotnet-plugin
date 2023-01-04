@@ -60,6 +60,7 @@
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetSdkFetcher"/>
 
   <!--DotCover-->
+  <bean class="jetbrains.buildServer.dotCover.DotCoverNativeReportTab" id="dotCoverNativeReportTab"/>
   <!--bean class="jetbrains.buildServer.dotCover.DotCoverToolTypeAdapter" id="dotCoverToolType"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverToolProviderAdapter">
     <constructor-arg ref="dotCoverToolType"/>
