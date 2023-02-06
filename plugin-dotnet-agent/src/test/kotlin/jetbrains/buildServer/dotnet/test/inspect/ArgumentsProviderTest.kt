@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jetbrains.buildServer.dotnet.test.inspect
 
 import io.mockk.*
@@ -74,21 +90,21 @@ class ArgumentsProviderTest {
         Assert.assertNotNull(result)
         verify (exactly = 0) { _fileSystemServiceMock.generateTempFile(any(), any(), any()) }
 
-        // --config – relative
+        // --config ï¿½ relative
         Assert.assertEquals(result.configFile, absoluteConfigFileMock)
         verify (exactly = 1) { _fileSystemServiceMock.createFile(configFilePath) }
         verify (exactly = 1) { _fileSystemServiceMock.createFile(checkoutPathMock, configFilePath) }
 
-        // --output – absolute
+        // --output ï¿½ absolute
         Assert.assertEquals(result.outputFile, outputFileMock)
         verify (exactly = 1) { _fileSystemServiceMock.createFile(outputPath) }
 
-        // --logFile – relative
+        // --logFile ï¿½ relative
         Assert.assertEquals(result.logFile, absoluteLogFileMock)
         verify (exactly = 1) { _fileSystemServiceMock.createFile(logFilePath) }
         verify (exactly = 1) { _fileSystemServiceMock.createFile(checkoutPathMock, logFilePath) }
 
-        // --caches-home – absolute
+        // --caches-home ï¿½ absolute
         Assert.assertEquals(result.cachesHome, cacheHomeFileMock)
         verify (exactly = 1) { _fileSystemServiceMock.createFile(cachesHomePath) }
     }
