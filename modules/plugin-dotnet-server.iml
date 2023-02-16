@@ -25,6 +25,7 @@
     <orderEntry type="module" module-name="server-tools" />
     <orderEntry type="module" module-name="web-openapi" />
     <orderEntry type="library" scope="TEST" name="hamcrest-1.3" level="project" />
+    <orderEntry type="module" module-name="migration" />
     <orderEntry type="module" module-name="usage-statistics-api" />
     <orderEntry type="module" module-name="usage-statistics-util" />
     <orderEntry type="library" name="DotNetCompileLibs" level="project" />
