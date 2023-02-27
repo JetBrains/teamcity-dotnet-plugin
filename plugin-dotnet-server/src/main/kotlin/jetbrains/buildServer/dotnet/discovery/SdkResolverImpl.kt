@@ -47,7 +47,7 @@ class SdkResolverImpl(
 
             Version.tryParse(versionStr)?.let { version ->
                 when {
-                    // net5.0, net6.0
+                    // net5.0, net6.0, net7.0, net8.0, ...
                     name == "net" && version >= Version(5, 0) -> {
                         yieldAll(getDotnetVersions(SdkVersion(version, SdkType.Dotnet, SdkVersionType.Default)))
                     }
@@ -152,6 +152,8 @@ class SdkResolverImpl(
         }
 
         private val WellKnownDotnetVersions = listOf(
+            SdkVersion(Version(8, 0), SdkType.Dotnet, SdkVersionType.Compatible),
+            SdkVersion(Version(7, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(6, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(5, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(3, 1), SdkType.DotnetCore, SdkVersionType.Compatible),
