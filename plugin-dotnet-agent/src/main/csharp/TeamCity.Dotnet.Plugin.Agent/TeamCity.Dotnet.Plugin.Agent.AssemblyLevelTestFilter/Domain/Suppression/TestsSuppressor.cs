@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using Microsoft.Extensions.Logging;
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
@@ -20,19 +36,14 @@ internal class TestsSuppressor : ITestsSuppressor
         _logger.LogDebug("TestsSuppressor initialized with {StrategyCount} suppressing strategies", _suppressingStrategies.Count);
     }
     
-    public int SuppressTests(TypeDefinition testClass, ITestEngine testEngine, TestSuppressionCriteria suppressionCriteria)
+    public int SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters)
     {
-        if (!suppressionCriteria.ShouldBeSuppressed)
-        {
-            _logger.LogDebug("SuppressTests called, but suppression criterion indicates no suppression is needed");
-            return 0;
-        }
-        
         try
         {
-            var suppressionStrategy = ResolveSuppressingStrategy(testEngine, suppressionCriteria.TestsSelector);
-            suppressionStrategy.SuppressTests(testClass, suppressionCriteria.TestsSelector);
+            var suppressionStrategy = ResolveSuppressingStrategy(parameters.TestEngine, parameters.TestSelector);
+            suppressionStrategy.SuppressTests(testClass, parameters.TestSelector);
             _logger.LogInformation("Tests suppressed successfully for {TestClass}", testClass.FullName);
+            return 0;
         }
         catch (Exception ex)
         {
@@ -43,10 +54,9 @@ internal class TestsSuppressor : ITestsSuppressor
     
     private ITestSuppressingStrategy<TEngine, TTestsQuery> ResolveSuppressingStrategy<TEngine, TTestsQuery>(TEngine testEngine, TTestsQuery testsQuery)
         where TEngine : ITestEngine
-        where TTestsQuery : ITestsSelector
+        where TTestsQuery : ITestSelector
     {
         var key = (testEngine.GetType(), testsQuery.GetType());
-        
         if (_suppressingStrategies.TryGetValue(key, out var suppressingStrategy))
         {
             _logger.LogDebug("Suppressing strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);

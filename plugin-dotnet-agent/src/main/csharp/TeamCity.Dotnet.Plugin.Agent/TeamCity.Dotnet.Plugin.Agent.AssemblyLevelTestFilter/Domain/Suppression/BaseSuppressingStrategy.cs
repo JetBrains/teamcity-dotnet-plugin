@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 
@@ -10,10 +26,10 @@ internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingS
     {
         TestEngine = testEngine;
     }
-    
-    protected TTestEngine TestEngine { get; }
-    
-    protected IEnumerable<MethodDefinition> GetTestMethods(TypeDefinition type) =>
+
+    private TTestEngine TestEngine { get; }
+
+    private IEnumerable<MethodDefinition> GetTestMethods(TypeDefinition type) =>
         type.Methods
             .Where(method => method.CustomAttributes
                 .Select(a => a.AttributeType.FullName)
@@ -26,7 +42,7 @@ internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingS
         RemoveTestAttributesFromClass(type);
     }
 
-    protected void RemoveTestAttributesFromMethods(TypeDefinition testClass)
+    private void RemoveTestAttributesFromMethods(TypeDefinition testClass)
     {
         foreach (var method in GetTestMethods(testClass))
         {
@@ -37,7 +53,7 @@ internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingS
         }
     }
 
-    protected void RemoveTestAttributesFromClass(TypeDefinition testClass)
+    private void RemoveTestAttributesFromClass(TypeDefinition testClass)
     {
         foreach (var testAttribute in GetTypeTestAttributes(testClass))
         {

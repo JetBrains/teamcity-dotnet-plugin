@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+using Mono.Cecil;
 
-public class ValidationResult
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+
+internal interface ITestClassDetector
 {
-    public bool IsValid { get; }
-    public string ErrorMessage { get; }
-
-    private ValidationResult(bool isValid, string errorMessage)
-    {
-        IsValid = isValid;
-        ErrorMessage = errorMessage;
-    }
-
-    public static ValidationResult Valid => new(true, string.Empty);
-
-    public static ValidationResult Invalid(string errorMessage) => new(false, errorMessage);
+    IEnumerable<TestClass> Detect(AssemblyDefinition assemblyDefinition);
 }

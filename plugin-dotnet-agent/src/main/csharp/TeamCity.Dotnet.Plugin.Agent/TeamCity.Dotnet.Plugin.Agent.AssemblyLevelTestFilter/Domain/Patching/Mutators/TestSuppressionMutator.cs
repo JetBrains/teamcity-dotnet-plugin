@@ -1,3 +1,19 @@
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
@@ -6,17 +22,17 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching.M
 
 internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatchingCriteria>
 {
-    private readonly ITestsSuppressionResolver _testsSuppressionResolver;
-    private readonly ITestEngineRecognizer _testEngineRecognizer;
+    private readonly ITestSuppressionDecider _testSuppressionDecider;
+    private readonly ITestClassDetector _testClassDetector;
     private readonly ITestsSuppressor _testsSuppressor;
     
     public TestSuppressionMutator(
-        ITestsSuppressionResolver testsSuppressionResolver,
-        ITestEngineRecognizer testEngineRecognizer,
+        ITestSuppressionDecider testSuppressionDecider,
+        ITestClassDetector testClassDetector,
         ITestsSuppressor testsSuppressor)
     {
-        _testsSuppressionResolver = testsSuppressionResolver;
-        _testEngineRecognizer = testEngineRecognizer;
+        _testSuppressionDecider = testSuppressionDecider;
+        _testClassDetector = testClassDetector;
         _testsSuppressor = testsSuppressor;
     }
     
@@ -24,30 +40,26 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
     {
         var (affectedTypes, affectedMethods) = (0, 0);
         
-        foreach (var (testClass, detectedTestEngines) in DetectTests(assembly))
+        // for now suppresses only tests classes, but could be easily extended to test methods
+        foreach (var (testClass, detectedTestEngines) in _testClassDetector.Detect(assembly))
         {
-            var suppressionCriterion = _testsSuppressionResolver.ResolveCriteria(testClass.FullName);
             var affectedTestsInClass = detectedTestEngines.Sum(testEngine =>
-                _testsSuppressor.SuppressTests(testClass, testEngine, suppressionCriterion));
+            {
+                var (shouldBeSuppressed, testSelector) = _testSuppressionDecider.Decide(testClass.FullName, criteria.InclusionMode, criteria.TestSelectors);
+                return shouldBeSuppressed ?
+                    _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector))
+                    : 0;
+            });
 
             if (affectedTestsInClass <= 0)
             {
                 continue;
             }
+            
             affectedTypes++;
             affectedMethods += affectedTestsInClass;
         }
 
         return Task.FromResult(new AssemblyMutationResult(affectedTypes, affectedMethods));
     }
-    
-    private IEnumerable<(TypeDefinition testClass, IList<ITestEngine> testEngine)> DetectTests(AssemblyDefinition assembly) => assembly.Modules
-        .SelectMany(module => module.Types)
-        .GroupBy(type => _testEngineRecognizer.RecognizeTestEngines(type))
-        .Where(typesByTestEngine => typesByTestEngine.Key.Any()) // filter out types that are not test classes
-        .SelectMany(testClassesByTestEngine =>
-        {
-            var testEngine = testClassesByTestEngine.Key!;
-            return testClassesByTestEngine.Select(testClass => (testClass, testEngine));
-        });
 }

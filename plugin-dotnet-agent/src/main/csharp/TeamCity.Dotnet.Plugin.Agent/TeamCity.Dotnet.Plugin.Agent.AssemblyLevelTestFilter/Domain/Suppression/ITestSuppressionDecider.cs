@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
-public class ValidationResult
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
+
+internal interface ITestSuppressionDecider
 {
-    public bool IsValid { get; }
-    public string ErrorMessage { get; }
-
-    private ValidationResult(bool isValid, string errorMessage)
-    {
-        IsValid = isValid;
-        ErrorMessage = errorMessage;
-    }
-
-    public static ValidationResult Valid => new(true, string.Empty);
-
-    public static ValidationResult Invalid(string errorMessage) => new(false, errorMessage);
+    (bool shouldBeSuppressed, ITestSelector testSelector) Decide(string testSelectorQuery, bool inclusionMode, IReadOnlyDictionary<string, ITestSelector> testSelectors);
 }

@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
-public class ValidationResult
+internal interface ITestSelector
 {
-    public bool IsValid { get; }
-    public string ErrorMessage { get; }
-
-    private ValidationResult(bool isValid, string errorMessage)
-    {
-        IsValid = isValid;
-        ErrorMessage = errorMessage;
-    }
-
-    public static ValidationResult Valid => new(true, string.Empty);
-
-    public static ValidationResult Invalid(string errorMessage) => new(false, errorMessage);
+    string Query { get; }
 }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
-public class ValidationResult
+internal static class TargetTypeExtensions
 {
-    public bool IsValid { get; }
-    public string ErrorMessage { get; }
-
-    private ValidationResult(bool isValid, string errorMessage)
+    public static string FileExtension(this TargetType targetType)
     {
-        IsValid = isValid;
-        ErrorMessage = errorMessage;
+        return targetType switch
+        {
+            TargetType.Directory => "",
+            TargetType.Solution => ".sln",
+            TargetType.Project => ".csproj",
+            TargetType.Assembly => ".dll",
+            _ => throw new ArgumentOutOfRangeException(nameof(targetType), targetType, "Unknown TargetType value."),
+        };
     }
-
-    public static ValidationResult Valid => new(true, string.Empty);
-
-    public static ValidationResult Invalid(string errorMessage) => new(false, errorMessage);
 }
