@@ -45,7 +45,7 @@ public class CommandValidator<T> : IHostedService where T : class
             return Task.CompletedTask;
         }
 
-        _logger.LogError($"Command validation failed:\n{validationResult.ErrorMessage}");
+        _logger.LogError("Command validation failed:\\n{ValidationResultErrorMessage}", validationResult.ErrorMessage);
         _applicationLifetime.StopApplication();
 
         return Task.CompletedTask;
@@ -67,6 +67,7 @@ public class CommandValidator<T> : IHostedService where T : class
             if (requiredAttribute != null && value == null)
             {
                 validationErrors.Add(requiredAttribute.ErrorMessage);
+                continue;
             }
 
             foreach (var attribute in validationAttributes)

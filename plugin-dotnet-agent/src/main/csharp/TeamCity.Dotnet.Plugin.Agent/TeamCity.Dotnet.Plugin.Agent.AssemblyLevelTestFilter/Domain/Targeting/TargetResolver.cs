@@ -25,10 +25,9 @@ internal class TargetResolver : ITargetResolver
         _strategies = strategies.ToDictionary(s => s.TargetType);
     }
 
-    public IAsyncEnumerable<FileInfo> ResolveAsync(string target)
+    public IEnumerable<FileInfo> Resolve(string target)
     {
         var fileInfo = new FileInfo(target);
-
         if (!fileInfo.Exists)
         {
             throw new FileNotFoundException($"Target '{target}' not found.");
@@ -36,7 +35,24 @@ internal class TargetResolver : ITargetResolver
 
         var extension = fileInfo.Extension.ToLowerInvariant();
         var targetType = GetTargetType(extension, fileInfo);
-        return _strategies[targetType].FindAssembliesAsync(target);
+
+        // resolve all targets in the hierarchy
+        var queue = new Queue<(FileInfo, TargetType)>();
+        queue.Enqueue((fileInfo, targetType));
+        while (queue.Count != 0)
+        {
+            var (file, fileTargetType) = queue.Dequeue();
+            if (fileTargetType == TargetType.Assembly)
+            {
+                yield return file;
+                continue;
+            }
+            
+            foreach (var (f, t) in _strategies[fileTargetType].FindAssembliesAsync(file.FullName))
+            {
+                queue.Enqueue((f, t));
+            }
+        }
     }
 
     private static TargetType GetTargetType(string extension, FileSystemInfo fileInfo)

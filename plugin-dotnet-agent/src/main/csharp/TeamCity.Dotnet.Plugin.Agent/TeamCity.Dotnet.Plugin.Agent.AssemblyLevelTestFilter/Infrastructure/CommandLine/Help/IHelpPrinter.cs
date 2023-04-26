@@ -18,7 +18,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Help;
 
-internal interface IHelpService
+internal interface IHelpPrinter
 {
-    void ShowHelpAsync(Command command);
+    void ShowHelp(Command command);
 }

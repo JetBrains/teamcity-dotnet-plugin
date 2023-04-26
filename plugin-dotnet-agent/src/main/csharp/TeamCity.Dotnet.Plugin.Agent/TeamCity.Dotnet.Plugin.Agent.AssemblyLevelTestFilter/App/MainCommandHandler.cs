@@ -22,23 +22,24 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App;
 
 internal class MainCommandHandler : ICommandHandler<MainCommand>
 {
-    private readonly IHelpService _helpService;
+    private readonly IHelpPrinter _helpPrinter;
     private readonly ILogger<MainCommandHandler> _logger;
 
-    public MainCommandHandler(IHelpService helpService, ILogger<MainCommandHandler> logger)
+    public MainCommandHandler(IHelpPrinter helpPrinter, ILogger<MainCommandHandler> logger)
     {
-        _helpService = helpService;
+        _helpPrinter = helpPrinter;
         _logger = logger;
     }
 
-    public async Task ExecuteAsync(MainCommand command)
+    public Task ExecuteAsync(MainCommand command)
     {
         if (command.Help)
         {
-            _helpService.ShowHelpAsync(command);
-            return;
+            _helpPrinter.ShowHelp(command);
+            return Task.CompletedTask;
         }
 
         _logger.LogInformation($"No subcommand found in {nameof(MainCommand)}");
+        return Task.CompletedTask;
     }
 }

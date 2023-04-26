@@ -20,12 +20,12 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
 {
     public TargetType TargetType => TargetType.Assembly;
     
-    public async IAsyncEnumerable<FileInfo> FindAssembliesAsync(string target)
+    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
     {
         var fileInfo = new FileInfo(target);
         if (fileInfo.Exists)
         {
-            yield return await Task.FromResult(fileInfo);
+            yield return (fileInfo, TargetType.Assembly);
         }
     }
 }

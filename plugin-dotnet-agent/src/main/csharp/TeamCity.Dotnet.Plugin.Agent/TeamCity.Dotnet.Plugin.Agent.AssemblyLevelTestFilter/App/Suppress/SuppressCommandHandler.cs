@@ -26,7 +26,7 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
 
 internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
 {
-    private readonly IHelpService _helpService;
+    private readonly IHelpPrinter _helpPrinter;
     private readonly ITargetResolver _targetResolver;
     private readonly ITestSelectorsFactory _testSelectorsFactory;
     private readonly IAssemblyPatcher _assemblyPatcher;
@@ -34,14 +34,14 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     private readonly ILogger<SuppressCommandHandler> _logger;
 
     public SuppressCommandHandler(
-        IHelpService helpService,
+        IHelpPrinter helpPrinter,
         ITargetResolver targetResolver,
         ITestSelectorsFactory testSelectorsFactory,
         IAssemblyPatcher assemblyPatcher,
         IBackupMetadataSaver backupMetadataSaver,
         ILogger<SuppressCommandHandler> logger)
     {
-        _helpService = helpService;
+        _helpPrinter = helpPrinter;
         _targetResolver = targetResolver;
         _testSelectorsFactory = testSelectorsFactory;
         _assemblyPatcher = assemblyPatcher;
@@ -51,9 +51,11 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     
     public async Task ExecuteAsync(SuppressCommand command)
     {
+        _logger.LogDebug("Executing suppress command: {@SuppressCommand}", command);
+
         if (command.Help)
         {
-            _helpService.ShowHelpAsync(command);
+            _helpPrinter.ShowHelp(command);
             return;
         }
 
@@ -63,17 +65,31 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
             InclusionMode = command.InclusionMode
         };
 
-        await foreach (var targetAssembly in _targetResolver.ResolveAsync(command.Target))
+        _logger.LogDebug("Patching criteria created: {PatchingCriteria}", patchingCriteria);
+
+        foreach (var targetAssembly in _targetResolver.Resolve(command.Target))
         {
+            _logger.LogDebug("Resolving target assembly: {TargetAssembly}", targetAssembly);
+
             var patchingResult = await _assemblyPatcher.TryPatchAsync(targetAssembly, patchingCriteria);
             if (patchingResult.IsAssemblyPatched)
             {
+                _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
+
                 await _backupMetadataSaver.SaveAsync(new BackupAssemblyMetadata
                 {
                     Path = patchingResult.AssemblyPath,
                     BackupPath = patchingResult.BackupPath
                 });
+
+                _logger.LogDebug("Backup metadata saved for {PatchingResult}", patchingResult);
+            }
+            else
+            {
+                _logger.LogDebug("Assembly not patched: {TargetAssembly}", targetAssembly);
             }
         }
+
+        _logger.LogDebug("Suppress command execution completed");
     }
 }

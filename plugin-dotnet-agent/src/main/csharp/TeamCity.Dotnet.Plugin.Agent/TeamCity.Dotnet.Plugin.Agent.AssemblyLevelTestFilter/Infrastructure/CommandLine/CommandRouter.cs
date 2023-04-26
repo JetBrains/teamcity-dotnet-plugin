@@ -16,6 +16,7 @@
 
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
@@ -26,9 +27,9 @@ internal class CommandRouter<TCommand> : IHostedService
     private readonly TCommand _command;
     private readonly IEnumerable<ICommandHandler> _commandHandlers;
 
-    public CommandRouter(TCommand command, IEnumerable<ICommandHandler> commandHandlers)
+    public CommandRouter(IOptions<TCommand> options, IEnumerable<ICommandHandler> commandHandlers)
     {
-        _command = command;
+        _command = options.Value;
         _commandHandlers = commandHandlers;
     }
     

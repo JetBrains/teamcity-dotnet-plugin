@@ -17,13 +17,13 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddSingletonByInterface<TInterface>(this IServiceCollection services) =>
         AddServicesByInterface<TInterface>(services, ServiceLifetime.Singleton);
-    
+
     public static IServiceCollection AddSingletonByImplementationType<TInterface>(this IServiceCollection services) =>
         AddServicesByImplementationType<TInterface>(services, ServiceLifetime.Singleton);
 
@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
 
         Assembly.GetCallingAssembly()
             .GetTypes()
-            .Where(type => !type.IsInterface && !type.IsAbstract && interfaceType.IsAssignableFrom(type))
+            .Where(type => type is { IsInterface: false, IsAbstract: false } && interfaceType.IsAssignableFrom(type))
             .Select(type => new
             {
                 ServiceType = type.GetInterfaces().FirstOrDefault(i => i == interfaceType),
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
             })
             .Where(x => x.ServiceType != null)
             .ToList()
-            .ForEach(x => services.Add(new ServiceDescriptor(x.ServiceType, x.ImplementationType, lifetime)));
+            .ForEach(x => services.Add(new ServiceDescriptor(x.ServiceType!, x.ImplementationType, lifetime)));
 
         return services;
     }

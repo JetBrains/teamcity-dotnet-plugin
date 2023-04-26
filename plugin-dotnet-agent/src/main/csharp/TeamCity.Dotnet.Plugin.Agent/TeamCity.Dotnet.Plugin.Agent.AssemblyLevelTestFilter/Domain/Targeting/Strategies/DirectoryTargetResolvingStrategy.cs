@@ -18,16 +18,9 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.
 
 internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
 {
-    private readonly IEnumerable<ITargetResolvingStrategy> _strategies;
-
-    public DirectoryTargetResolvingStrategy(IEnumerable<ITargetResolvingStrategy> strategies)
-    {
-        _strategies = strategies;
-    }
-
     public TargetType TargetType => TargetType.Directory;
 
-    public async IAsyncEnumerable<FileInfo> FindAssembliesAsync(string target)
+    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
     {
         var directory = new DirectoryInfo(target);
         var slnFiles = directory.GetFiles(GetSearchPattern(TargetType.Solution), SearchOption.TopDirectoryOnly);
@@ -39,33 +32,25 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         // 2. if there are multiple projects in the directory
         // 3. if there are both solutions and projects in the directory
         // 4. if there are no solutions or projects in the directory
-        if (slnFiles.Any())
+        if (slnFiles.Length != 0)
         {
-            var strategy = _strategies.First(s => s.TargetType == TargetType.Solution);
             foreach (var slnFile in slnFiles)
             {
-                await foreach (var assemblyFile in strategy.FindAssembliesAsync(slnFile.FullName))
-                {
-                    yield return assemblyFile;
-                }
+                yield return (slnFile, TargetType.Solution);
             }
         }
-        else if (csprojFiles.Any())
+        else if (csprojFiles.Length != 0)
         {
-            var strategy = _strategies.First(s => s.TargetType == TargetType.Project);
             foreach (var csprojFile in csprojFiles)
             {
-                await foreach (var assemblyFile in strategy.FindAssembliesAsync(csprojFile.FullName))
-                {
-                    yield return assemblyFile;
-                }
+                yield return (csprojFile, TargetType.Project);
             }
         }
         else
         {
-            foreach (var dllFile in directory.GetFiles(GetSearchPattern(TargetType.Assembly), SearchOption.AllDirectories))
+            foreach (var assemblyFile in directory.GetFiles(GetSearchPattern(TargetType.Assembly), SearchOption.AllDirectories))
             {
-                yield return dllFile;
+                yield return (assemblyFile, TargetType.Assembly);
             }
         }
     }

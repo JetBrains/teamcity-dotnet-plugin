@@ -21,18 +21,18 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 
 internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
 {
-    private readonly IHelpService _helpService;
+    private readonly IHelpPrinter _helpPrinter;
 
-    public RestoreCommandHandler(IHelpService helpService)
+    public RestoreCommandHandler(IHelpPrinter helpPrinter)
     {
-        _helpService = helpService;
+        _helpPrinter = helpPrinter;
     }
 
     public async Task ExecuteAsync(RestoreCommand command)
     {
         if (command.Help)
         {
-            _helpService.ShowHelpAsync(command);
+            _helpPrinter.ShowHelp(command);
             return;
         }
 

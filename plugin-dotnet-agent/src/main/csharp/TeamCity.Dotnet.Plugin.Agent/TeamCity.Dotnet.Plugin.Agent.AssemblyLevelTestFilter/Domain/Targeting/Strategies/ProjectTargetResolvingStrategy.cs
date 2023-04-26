@@ -23,7 +23,7 @@ internal class ProjectTargetResolvingStrategy : ITargetResolvingStrategy
 {
     public TargetType TargetType => TargetType.Project;
 
-    public async IAsyncEnumerable<FileInfo> FindAssembliesAsync(string target)
+    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
     {
         MSBuildLocator.RegisterDefaults();
         var projectFile = new FileInfo(target);
@@ -38,6 +38,6 @@ internal class ProjectTargetResolvingStrategy : ITargetResolvingStrategy
         }
             
         var assemblyFileInfo = new FileInfo(Path.Combine(projectFile.Directory.FullName, outputPath, targetFileName));
-        yield return await Task.FromResult(assemblyFileInfo);
+        yield return (assemblyFileInfo, TargetType.Assembly);
     }
 }
