@@ -17,11 +17,11 @@
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class CommandLineOptionAttribute : Attribute
+public class CommandOptionAttribute : Attribute
 {
     public IEnumerable<string> Options { get; }
 
-    public CommandLineOptionAttribute(params string[] options)
+    public CommandOptionAttribute(params string[] options)
     {
         Options = options;
     }

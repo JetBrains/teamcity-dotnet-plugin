@@ -32,7 +32,7 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
     {
         if (command.Help)
         {
-            _helpPrinter.ShowHelp(command);
+            _helpPrinter.PrintHelp(command);
             return;
         }
 

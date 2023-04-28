@@ -64,13 +64,4 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-    
-    public static void DisplayRegisteredServices(this IServiceCollection services)
-    {
-        Console.WriteLine("Registered services:");
-        foreach (var service in services)
-        {
-            Console.WriteLine($"ServiceType: {service.ServiceType.FullName}, ImplementationType: {service.ImplementationType?.FullName ?? "Factory/Instance"}");
-        }
-    }
 }

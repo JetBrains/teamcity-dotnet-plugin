@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
@@ -26,29 +26,39 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Help;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Console;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DependencyInjection;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
 
 internal static class Program
 {
-    public static void Main(string[] args) => Host
+    public static Task Main(string[] args) => Host
         .CreateDefaultBuilder(args)
         .ConfigureAppConfiguration((_, config) =>
         {
-            config.AddCommandLine(args, CommandLineOptions<MainCommand>.Mappings);
+            config.Add(new CommandLineConfigurationSource(args, CommandLineOptions<MainCommand>.GenerateMappingsForCommands()));
         })
         .ConfigureServices((hostContext, services) =>
         {
             services
-                .Configure<MainCommand>(hostContext.Configuration.GetSection("Settings"))
+                .Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)))
+                .AddSingleton<MainConsoleFormatter>()
                 .AddLogging(loggingBuilder =>
                 {
-                    loggingBuilder.AddConsole();
-                    loggingBuilder.SetMinimumLevel(LogLevel.Debug);
+                    loggingBuilder.ClearProviders(); // remove default logging providers
+                    loggingBuilder.AddFilter("Microsoft", LogLevel.None); // disable Microsoft logging
+
+                    loggingBuilder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
+                    loggingBuilder.AddConsole(options =>
+                    {
+                        options.FormatterName = nameof(MainConsoleFormatter);
+                        options.LogToStandardErrorThreshold = LogLevel.Error;
+                    });
+                    loggingBuilder.SetMinimumLevel(LogLevel.Information);
                 });
 
             // regular services
@@ -63,18 +73,15 @@ internal static class Program
                 .AddSingletonByInterface<ITargetResolvingStrategy>()
                 .AddSingletonByInterface<ITargetResolver>()
                 .AddSingletonByInterface<IAssemblyPatcher>()
+                .AddSingletonByInterface<ITestSelectorsFactory>()
                 .AddSingletonByInterface<IBackupMetadataSaver>()
                 .AddSingletonByInterface<IHelpPrinter>()
                 .AddSingletonByInterface<ICommandHandler>()
-                .AddSingleton<MainCommand>();
-
-            // hosted services
-            services
-                .AddHostedService<CommandValidator<MainCommand>>()  // if validator fails, the app will be stopped
-                .AddHostedService<CommandRouter<MainCommand>>();    // entrypoint for the app, finds and executes appropriate command handler
-            
-            services.DisplayRegisteredServices();
+                .AddSingletonByInterface<ICmdArgsValidator>()
+                .AddSingletonByInterface<ICommandValidator>();
+                
+            // hosted service as an entry point
+            services.AddHostedService<CommandRouter<MainCommand>>();
         })
-        .Build()
-        .Run();
+        .StartAsync();
 }

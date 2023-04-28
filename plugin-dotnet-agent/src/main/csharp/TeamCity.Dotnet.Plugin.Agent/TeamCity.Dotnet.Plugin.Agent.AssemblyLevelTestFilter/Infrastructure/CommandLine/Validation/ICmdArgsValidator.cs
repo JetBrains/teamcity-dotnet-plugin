@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
-[AttributeUsage(AttributeTargets.Property)]
-public class CommandLineOptionDescriptionAttribute : Attribute
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+
+internal interface ICmdArgsValidator
 {
-    public string Description { get; set; }
-
-    public CommandLineOptionDescriptionAttribute(string description)
-    {
-        Description = description;
-    }
+    ValidationResult Validate(Type commandType);
 }

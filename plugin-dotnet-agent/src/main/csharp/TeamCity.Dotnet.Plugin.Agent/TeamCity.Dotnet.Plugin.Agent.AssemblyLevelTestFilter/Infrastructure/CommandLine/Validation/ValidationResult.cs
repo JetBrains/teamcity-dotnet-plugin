@@ -16,7 +16,7 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
-public class ValidationResult
+internal class ValidationResult
 {
     public bool IsValid { get; }
     public string ErrorMessage { get; }

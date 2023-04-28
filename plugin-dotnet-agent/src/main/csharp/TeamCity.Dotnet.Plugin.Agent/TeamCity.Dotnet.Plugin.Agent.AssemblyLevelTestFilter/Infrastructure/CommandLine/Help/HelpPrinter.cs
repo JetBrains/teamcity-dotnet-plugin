@@ -17,6 +17,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Console;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Help;
 
@@ -29,23 +30,32 @@ internal class HelpPrinter : IHelpPrinter
         _logger = logger;
     }
     
-    public void ShowHelp(Command command)
+    public void PrintHelp(Command command)
     {
-        var commandProperties = command.GetType().GetProperties()
-            .Where(prop => prop.GetCustomAttribute<CommandLineOptionAttribute>() != null)
-            .ToList();
+        var commandProperties = command.GetType().GetProperties();
+        
+        var columnAligner = new ColumnAligner('\t', 4);
 
-        _logger.LogInformation("Options for {Name}:", command.GetType().Name);
+        _logger.LogInformation("Available commands and options:");
         foreach (var property in commandProperties)
         {
-            var optionAttribute = property.GetCustomAttribute<CommandLineOptionAttribute>()!;
-            var descriptionAttribute = property.GetCustomAttribute<CommandDescriptionAttribute>()!;
-
-            _logger.LogInformation(
-                "{Options}: {DescriptionAttributeDescription}",
-                string.Join(", ", optionAttribute.Options),
-                descriptionAttribute.Description
-            );
+            // print help for command
+            var commandAttribute = property.GetCustomAttribute<CommandAttribute>();
+            var commandDescriptionAttribute = property.GetCustomAttribute<CommandDescriptionAttribute>();
+            if (commandAttribute != null && commandDescriptionAttribute != null)
+            {
+                columnAligner.AddRow($"\t{commandAttribute.Command}\t{commandDescriptionAttribute.Description}");
+            }
+            
+            // print help for command option
+            var optionAttribute = property.GetCustomAttribute<CommandOptionAttribute>();
+            var optionDescriptionAttribute = property.GetCustomAttribute<CommandOptionDescriptionAttribute>();
+            if (optionAttribute != null)
+            {
+                columnAligner.AddRow($"\t{string.Join(" | ", optionAttribute.Options)}\t{optionDescriptionAttribute?.Description ?? "<no description>"}");
+            }
         }
+
+        columnAligner.Flush(message => _logger.LogInformation(message));
     }
 }

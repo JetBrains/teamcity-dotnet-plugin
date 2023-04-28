@@ -17,7 +17,7 @@
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class ValidateEnumAttribute : ValidationAttribute
+internal class ValidateEnumAttribute : ValidationAttribute
 {
     private readonly Type _enumType;
     

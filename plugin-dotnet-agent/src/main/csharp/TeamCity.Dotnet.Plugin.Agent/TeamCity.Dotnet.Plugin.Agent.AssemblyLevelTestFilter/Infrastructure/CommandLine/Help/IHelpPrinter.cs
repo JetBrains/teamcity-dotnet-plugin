@@ -20,5 +20,5 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Co
 
 internal interface IHelpPrinter
 {
-    void ShowHelp(Command command);
+    void PrintHelp(Command command);
 }

@@ -16,7 +16,7 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
-public class RequiredAttribute : ValidationAttribute
+internal class RequiredAttribute : ValidationAttribute
 {
     public override ValidationResult IsValid(object value)
     {

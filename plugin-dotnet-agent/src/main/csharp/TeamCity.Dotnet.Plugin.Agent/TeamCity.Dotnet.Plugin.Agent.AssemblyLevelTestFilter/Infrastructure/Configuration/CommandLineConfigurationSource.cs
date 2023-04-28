@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+using Microsoft.Extensions.Configuration;
 
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-internal abstract class ValidationAttribute : Attribute
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
+
+internal class CommandLineConfigurationSource : IConfigurationSource
 {
-    public string ErrorMessage { get; set; }
+    private readonly string[] _args;
+    private readonly IDictionary<string, string> _mappings;
 
-    protected ValidationAttribute(string errorMessage)
+    public CommandLineConfigurationSource(string[] args, IDictionary<string, string> mappings)
     {
-        ErrorMessage = errorMessage;
+        _args = args;
+        _mappings = mappings;
     }
 
-    public abstract ValidationResult IsValid(object value);
+    public IConfigurationProvider Build(IConfigurationBuilder builder)
+    {
+        return new CommandLineConfigurationProvider(_args, _mappings);
+    }
 }

@@ -15,67 +15,65 @@
  */
 
 using System.Reflection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
-public class CommandValidator<T> : IHostedService where T : class
+internal class CommandValidator : ICommandValidator
 {
-    private readonly T _settings;
-    private readonly IHostApplicationLifetime _applicationLifetime;
-    private readonly ILogger<CommandValidator<T>> _logger;
+    private readonly ICmdArgsValidator _cmdArgsValidator;
 
-    public CommandValidator(
-        IOptions<T> settings,
-        IHostApplicationLifetime applicationLifetime,
-        ILogger<CommandValidator<T>> logger)
+    public CommandValidator(ICmdArgsValidator cmdArgsValidator)
     {
-        _settings = settings.Value;
-        _applicationLifetime = applicationLifetime;
-        _logger = logger;
+        _cmdArgsValidator = cmdArgsValidator;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public ValidationResult Validate(Command command)
     {
-        var validationResult = Validate(_settings);
-        if (validationResult.IsValid)
-        {
-            return Task.CompletedTask;
-        }
-
-        _logger.LogError("Command validation failed:\\n{ValidationResultErrorMessage}", validationResult.ErrorMessage);
-        _applicationLifetime.StopApplication();
-
-        return Task.CompletedTask;
+        var argsValidationResult = _cmdArgsValidator.Validate(command.GetType());
+        return argsValidationResult.IsValid
+            ? ValidateProperties(command)
+            : argsValidationResult;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    private static ValidationResult Validate(T settings)
+    private ValidationResult ValidateProperties(Command command)
     {
         var validationErrors = new List<string>();
-        var properties = typeof(T).GetProperties();
 
-        foreach (var property in properties)
+        // check command properties
+        foreach (var property in command.GetType().GetProperties())
         {
-            var value = property.GetValue(settings);
+            var value = property.GetValue(command);
+            
+            if (value is Command { IsActive: true } nestedCommand)
+            {
+                var nestedValidationResult = ValidateProperties(nestedCommand);
+                if (!nestedValidationResult.IsValid)
+                {
+                    var commandAttribute = property.GetCustomAttribute<CommandAttribute>()!;
+                    validationErrors.Add($"Errors in command `{commandAttribute.Command}`:");
+                    validationErrors.Add(nestedValidationResult.ErrorMessage);
+                    continue;
+                }
+            }
+            
             var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
             var requiredAttribute = property.GetCustomAttribute<RequiredAttribute>();
 
-            if (requiredAttribute != null && value == null)
+            // check required attribute
+            if (requiredAttribute != null && (value == null || (string)value == string.Empty))
             {
-                validationErrors.Add(requiredAttribute.ErrorMessage);
+                validationErrors.Add(FormatValidationError(requiredAttribute.ErrorMessage));
                 continue;
             }
 
+            // check other validation attributes
             foreach (var attribute in validationAttributes)
             {
                 var validationResult = attribute.IsValid(value);
                 if (!validationResult.IsValid)
                 {
-                    validationErrors.Add(validationResult.ErrorMessage);
+                    validationErrors.Add(FormatValidationError(validationResult.ErrorMessage));
                 }
             }
         }
@@ -84,4 +82,6 @@ public class CommandValidator<T> : IHostedService where T : class
             ? ValidationResult.Invalid(string.Join(Environment.NewLine, validationErrors))
             : ValidationResult.Valid;
     }
+
+    private static string FormatValidationError(string message) => "  - " + message;
 }

@@ -14,31 +14,15 @@
  * limitations under the License.
  */
 
-using Microsoft.Extensions.Logging;
-
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
-public enum Verbosity
+[AttributeUsage(AttributeTargets.Property)]
+public class CommandOptionDescriptionAttribute : Attribute
 {
-    Quiet,      // no logs
-    Minimal,    // errors only
-    Normal,     // default (information logs)
-    Detailed,   // 
-    Diagnostic  // debug
-}
+    public string Description { get; set; }
 
-internal static class VerbosityExtensions
-{
-    public static LogLevel ToLogLevel(this Verbosity verbosity)
+    public CommandOptionDescriptionAttribute(string description)
     {
-        return verbosity switch
-        {
-            Verbosity.Quiet => LogLevel.None,
-            Verbosity.Minimal => LogLevel.Error,
-            Verbosity.Normal => LogLevel.Information,
-            Verbosity.Detailed => LogLevel.Debug,
-            Verbosity.Diagnostic => LogLevel.Trace,
-            _ => throw new ArgumentOutOfRangeException(nameof(verbosity), verbosity, null)
-        };
+        Description = description;
     }
 }

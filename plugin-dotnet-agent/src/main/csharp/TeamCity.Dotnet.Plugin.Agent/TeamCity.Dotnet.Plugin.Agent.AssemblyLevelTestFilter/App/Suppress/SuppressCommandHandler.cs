@@ -55,7 +55,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
 
         if (command.Help)
         {
-            _helpPrinter.ShowHelp(command);
+            _helpPrinter.PrintHelp(command);
             return;
         }
 
@@ -76,7 +76,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
             {
                 _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
 
-                await _backupMetadataSaver.SaveAsync(new BackupAssemblyMetadata
+                await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupAssemblyMetadata
                 {
                     Path = patchingResult.AssemblyPath,
                     BackupPath = patchingResult.BackupPath

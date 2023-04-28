@@ -16,7 +16,7 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
-public class ValidatePathAttribute : ValidationAttribute
+internal class ValidatePathAttribute : ValidationAttribute
 {
     private readonly bool _mustBeFile;
     private readonly bool _mustExist;
@@ -44,9 +44,9 @@ public class ValidatePathAttribute : ValidationAttribute
             switch (_mustBeFile)
             {
                 case true when !File.Exists(path):
-                    return ValidationResult.Invalid($"{path} file does not exist: {ErrorMessage}");
+                    return ValidationResult.Invalid($"{ErrorMessage}: `{path}` file does not exist");
                 case false when !Directory.Exists(path):
-                    return ValidationResult.Invalid($"{path} directory does not exist: {ErrorMessage}");
+                    return ValidationResult.Invalid($"{ErrorMessage}: `{path}` directory does not exist");
             }
         }
 
@@ -55,7 +55,7 @@ public class ValidatePathAttribute : ValidationAttribute
             var fileExtension = Path.GetExtension(path);
             if (!_allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                return ValidationResult.Invalid($"Invalid file extension for {path}: {ErrorMessage}");
+                return ValidationResult.Invalid($"{ErrorMessage}: invalid file extension for `{path}`");
             }
         }
 
