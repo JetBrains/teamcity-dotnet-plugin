@@ -15,20 +15,18 @@
  */
 
 using Microsoft.Extensions.Configuration;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 
-internal class CommandLineConfigurationSource<TCommand> : IConfigurationSource
-    where TCommand : Command
+internal class MyCommandLineConfigurationSource : IConfigurationSource
 {
-    private readonly string[] _args;
+    private readonly IDictionary<string, string> _mappings;
 
-    public CommandLineConfigurationSource(string[] args)
+    public MyCommandLineConfigurationSource(IDictionary<string, string> mappings)
     {
-        _args = args;
+        _mappings = mappings;
     }
 
     public IConfigurationProvider Build(IConfigurationBuilder builder) =>
-        new CommandLineConfigurationProvider<TCommand>(_args);
+        new CommandLineConfigurationProvider(_mappings);
 }

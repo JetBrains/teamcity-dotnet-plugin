@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,6 +29,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Help;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Console;
@@ -36,52 +39,60 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
 
 internal static class Program
 {
-    public static Task Main(string[] args) => Host
-        .CreateDefaultBuilder(args)
-        .ConfigureAppConfiguration((_, config) =>
-        {
-            config.Add(new CommandLineConfigurationSource<MainCommand>(args));
-        })
-        .ConfigureServices((hostContext, services) =>
-        {
-            services
-                .Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)))
-                .AddSingleton<MainConsoleFormatter>()
-                .AddLogging(loggingBuilder =>
-                {
-                    loggingBuilder.ClearProviders(); // remove default logging providers
-                    loggingBuilder.AddFilter("Microsoft", LogLevel.None); // disable Microsoft logging
-
-                    loggingBuilder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
-                    loggingBuilder.AddConsole(options =>
-                    {
-                        options.FormatterName = nameof(MainConsoleFormatter);
-                        options.LogToStandardErrorThreshold = LogLevel.Error;
-                    });
-                    loggingBuilder.SetMinimumLevel(LogLevel.Information);
-                });
-
-            // regular services
-            services
-                .AddSingletonByInterface<ITestSelectorParser>()
-                .AddSingletonByInterface<ITestEngine>()
-                .AddSingletonByImplementationType<ITestEngine>()
-                .AddSingletonByInterface<ITestEngineRecognizer>()
-                .AddSingletonByInterface<ITestClassDetector>()
-                .AddSingletonByInterface<ITestSuppressingStrategy>()
-                .AddSingletonByInterface<ITestsSuppressor>()
-                .AddSingletonByInterface<ITargetResolvingStrategy>()
-                .AddSingletonByInterface<ITargetResolver>()
-                .AddSingletonByInterface<IAssemblyPatcher>()
-                .AddSingletonByInterface<ITestSelectorsFactory>()
-                .AddSingletonByInterface<IBackupMetadataSaver>()
-                .AddSingletonByInterface<IHelpPrinter>()
-                .AddSingletonByInterface<ICommandHandler>()
-                .AddSingletonByInterface<ICmdArgsValidator>()
-                .AddSingletonByInterface<ICommandValidator>();
+    public static Task Main(string[] args)
+    {
+        var commandLineParsingResult = new CommandLineParser<MainCommand>().Parse(args);
+        
+        return Host
+            .CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((_, config) =>
+            {
                 
-            // hosted service as an entry point
-            services.AddHostedService<CommandRouter<MainCommand>>();
-        })
-        .StartAsync();
+                // config.AddCommandLine(args, commandLineParsingResult.SwitchMappings);
+                config.Add(new MyCommandLineConfigurationSource(commandLineParsingResult.SwitchMappings));
+            })
+            .ConfigureServices((hostContext, services) =>
+            {
+                services
+                    .Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)))
+                    .AddSingleton<MainConsoleFormatter>()
+                    .AddLogging(loggingBuilder =>
+                    {
+                        loggingBuilder.ClearProviders(); // remove default logging providers
+                        loggingBuilder.AddFilter("Microsoft", LogLevel.None); // disable Microsoft logging
+
+                        loggingBuilder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
+                        loggingBuilder.AddConsole(options =>
+                        {
+                            options.FormatterName = nameof(MainConsoleFormatter);
+                            options.LogToStandardErrorThreshold = LogLevel.Error;
+                        });
+                        loggingBuilder.SetMinimumLevel(LogLevel.Information);
+                    });
+
+                // regular services
+                services
+                    .AddSingleton(commandLineParsingResult)
+                    .AddSingletonByInterface<ITestSelectorParser>()
+                    .AddSingletonByInterface<ITestEngine>()
+                    .AddSingletonByImplementationType<ITestEngine>()
+                    .AddSingletonByInterface<ITestEngineRecognizer>()
+                    .AddSingletonByInterface<ITestClassDetector>()
+                    .AddSingletonByInterface<ITestSuppressingStrategy>()
+                    .AddSingletonByInterface<ITestsSuppressor>()
+                    .AddSingletonByInterface<ITargetResolvingStrategy>()
+                    .AddSingletonByInterface<ITargetResolver>()
+                    .AddSingletonByInterface<IAssemblyPatcher>()
+                    .AddSingletonByInterface<ITestSelectorsFactory>()
+                    .AddSingletonByInterface<IBackupMetadataSaver>()
+                    .AddSingletonByInterface<IHelpPrinter>()
+                    .AddSingletonByInterface<ICommandHandler>()
+                    .AddSingletonByInterface<ICmdArgsValidator>()
+                    .AddSingletonByInterface<ICommandValidator>();
+
+                // hosted service as an entry point
+                services.AddHostedService<CommandRouter<MainCommand>>();
+            })
+            .StartAsync();
+    }
 }

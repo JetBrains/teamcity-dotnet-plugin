@@ -16,24 +16,29 @@
 
 using System.Reflection;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
 internal class CommandValidator : ICommandValidator
 {
-    private readonly ICmdArgsValidator _cmdArgsValidator;
+    private readonly CommandLineParsingResult _commandLineParsingResult;
 
-    public CommandValidator(ICmdArgsValidator cmdArgsValidator)
+    public CommandValidator(CommandLineParsingResult commandLineParsingResult)
     {
-        _cmdArgsValidator = cmdArgsValidator;
+        _commandLineParsingResult = commandLineParsingResult;
     }
 
     public ValidationResult Validate(Command command)
     {
-        var argsValidationResult = _cmdArgsValidator.Validate(command.GetType());
-        return argsValidationResult.IsValid
-            ? ValidateProperties(command)
-            : argsValidationResult;
+        return _commandLineParsingResult.UnknownArguments.Count != 0
+            ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", _commandLineParsingResult.UnknownArguments)}")
+            : ValidateProperties(command);
+
+        // var argsValidationResult = _cmdArgsValidator.Validate(command.GetType());
+        // return argsValidationResult.IsValid
+        //     ? ValidateProperties(command)
+        //     : argsValidationResult;
     }
 
     private static ValidationResult ValidateProperties(Command command)

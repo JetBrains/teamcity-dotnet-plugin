@@ -54,6 +54,15 @@ internal class CommandRouter<TCommand> : IHostedService
     {
         var rootCommand = _options.Value;
         
+        // then we check if help is requested
+        var subCommand = GetSelectedSubcommand(rootCommand);
+        if (rootCommand.Help || subCommand is { IsActive: true, Help: true })
+        {
+            _helpPrinter.PrintHelp(subCommand ?? rootCommand);
+            _applicationLifetime.StopApplication();
+            return;
+        }
+        
         // at first we validate the command
         var validationResult = _commandValidator.Validate(rootCommand);
         if (!validationResult.IsValid)
@@ -61,15 +70,6 @@ internal class CommandRouter<TCommand> : IHostedService
             _logger.LogError("Command validation failed");
             _logger.LogError("{ValidationResultErrorMessage}", validationResult.ErrorMessage);
             _helpPrinter.PrintHelp(rootCommand);
-            _applicationLifetime.StopApplication();
-            return;
-        }
-        
-        // then we check if help is requested
-        var subCommand = GetSelectedSubcommand(rootCommand);
-        if (rootCommand.Help || subCommand is { IsActive: true, Help: true })
-        {
-            _helpPrinter.PrintHelp(subCommand ?? rootCommand);
             _applicationLifetime.StopApplication();
             return;
         }

@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-using Microsoft.Extensions.Configuration;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
 
-internal class CommandLineConfigurationProvider : ConfigurationProvider
+internal interface ICommandLineParser<TCommand>
+    where TCommand : Command
 {
-    private readonly IDictionary<string, string> _mappings;
-
-    public CommandLineConfigurationProvider(IDictionary<string, string> mappings)
-    {
-        _mappings = mappings;
-    }
-
-    public override void Load()
-    {
-        Data = _mappings!;
-    }
+    CommandLineParsingResult Parse(IEnumerable<string> args);
 }
-
