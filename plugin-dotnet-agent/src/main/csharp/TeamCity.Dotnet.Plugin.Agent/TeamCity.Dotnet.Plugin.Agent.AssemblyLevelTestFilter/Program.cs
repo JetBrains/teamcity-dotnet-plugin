@@ -40,7 +40,7 @@ internal static class Program
         .CreateDefaultBuilder(args)
         .ConfigureAppConfiguration((_, config) =>
         {
-            config.Add(new CommandLineConfigurationSource(args, CommandLineOptions<MainCommand>.GenerateMappingsForCommands()));
+            config.Add(new CommandLineConfigurationSource<MainCommand>(args));
         })
         .ConfigureServices((hostContext, services) =>
         {

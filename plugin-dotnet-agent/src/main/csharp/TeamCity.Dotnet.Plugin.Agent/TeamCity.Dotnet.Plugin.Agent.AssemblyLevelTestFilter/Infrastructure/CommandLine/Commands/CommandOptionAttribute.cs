@@ -18,11 +18,14 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Co
 
 [AttributeUsage(AttributeTargets.Property)]
 public class CommandOptionAttribute : Attribute
-{
+{ 
     public IEnumerable<string> Options { get; }
 
-    public CommandOptionAttribute(params string[] options)
+    public bool RequiresValue { get; }
+
+    public CommandOptionAttribute(bool requiresValue, params string[] options)
     {
+        RequiresValue = requiresValue;
         Options = options;
     }
 }

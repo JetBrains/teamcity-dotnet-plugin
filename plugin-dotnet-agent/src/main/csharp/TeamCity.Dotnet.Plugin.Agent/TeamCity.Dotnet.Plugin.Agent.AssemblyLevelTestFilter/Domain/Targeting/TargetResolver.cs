@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
 internal class TargetResolver : ITargetResolver
 {
     private readonly IDictionary<TargetType, ITargetResolvingStrategy> _strategies;
+    private readonly ILogger<TargetResolver> _logger;
 
-    public TargetResolver(IEnumerable<ITargetResolvingStrategy> strategies)
+    public TargetResolver(IEnumerable<ITargetResolvingStrategy> strategies, ILogger<TargetResolver> logger)
     {
         _strategies = strategies.ToDictionary(s => s.TargetType);
+        _logger = logger;
     }
 
     public IEnumerable<FileInfo> Resolve(string target)
     {
+        _logger.LogInformation("Resolving target: {Target}", target);
+
         var fileInfo = new FileInfo(target);
         if (!fileInfo.Exists)
         {
+            _logger.LogError("Target not found: {Target}", target);
             throw new FileNotFoundException($"Target '{target}' not found.");
         }
 
@@ -44,6 +51,7 @@ internal class TargetResolver : ITargetResolver
             var (file, fileTargetType) = queue.Dequeue();
             if (fileTargetType == TargetType.Assembly)
             {
+                _logger.LogInformation("Returning assembly: {Assembly}", file.FullName);
                 yield return file;
                 continue;
             }
@@ -80,4 +88,3 @@ internal class TargetResolver : ITargetResolver
         throw new NotSupportedException($"Unsupported target type: '{extension}'.");
     }
 }
-

@@ -14,104 +14,135 @@
  * limitations under the License.
  */
 
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 
-public class CommandLineConfigurationProvider : ConfigurationProvider
+internal class CommandLineConfigurationProvider<TCommand> : ConfigurationProvider
+    where TCommand : Command
 {
-    private readonly IDictionary<string, string> _mappings;
+    private const string True = "true";
     private readonly string[] _args;
+    private readonly Type _commandType;
 
-    public CommandLineConfigurationProvider(string[] args, IDictionary<string, string> mappings)
+    public CommandLineConfigurationProvider(string[] args)
     {
         _args = args;
-        _mappings = mappings;
+        _commandType = typeof(TCommand);
     }
 
+    // we need to assemble KV pairs from command line arguments corresponding to command options, e.g.
+    // RootCommand:SubCommand1:SubCommand2:IsActive     -->     true  – it's necessary to instantiate command object
+    // RootCommand:SubCommand1:Path                     -->     /path/from/command/line
+    // RootCommand:Help                                 -->     true
+    // etc
     public override void Load()
     {
-        Data = CreateArgsDictionary(_args, _mappings)!;
-    }
-    
-    private static IDictionary<string, string> CreateArgsDictionary(string[] args, IDictionary<string, string> mappings)
-    {
-        var result = new Dictionary<string, string>();
+        var commandPath = new List<string> { _commandType.Name };
         
-        // todo this code is a mess, need to be refactored
-
-        var argsPath = new List<string>();
-
-        for (var i = 0; i < args.Length; i++)
+        var result = new Dictionary<string, string>
         {
-            var argument = args[i];
-            string key;
-            string value;
+            { Key(commandPath, nameof(Command.IsActive)), True }  // RootCommand:IsActive --> true – always true for command
+        };
+        var arguments = new Queue<string>(_args);
+        var commandType = _commandType;
+        var prevKey = string.Empty;
+        
+        // we have 4 possibilities for every single argument:
+        // - it's a command
+        // - it's an option required value
+        // - it's a value for option defined in previous argument
+        // - it's an option flag
+        while (arguments.TryDequeue(out var argument))
+        {
+            var properties = commandType.GetProperties();
             
-            argsPath.Add(argument);
-            
-            var (mappingKey, typeQualificator) = FindMappingKey(mappings, argsPath);
-            
-            // if starts with command, not an option
-            if (i == 0 && !argument.StartsWith("-"))
+            // if prev argument was option required value – current argument is value
+            if (!string.IsNullOrWhiteSpace(prevKey))
             {
-                // every command has IsActive flag to indicate that command is present and activated
-                // it's needed to instantiate a command object
-                key = $"{mappings[mappingKey]}:{nameof(Command.IsActive)}";
-                value = "true";
+                var isArgumentOption = OnlyWithAttribute<CommandOptionAttribute>(properties)
+                    .Select(x => x.Item2)
+                    .SelectMany(a => a.Options)
+                    .Any(o => o == argument.ToLowerInvariant());
+                var isArgumentCommand = OnlyWithAttribute<CommandAttribute>(properties)
+                    .Select(x => x.Item2)
+                    .Any(a => a.Command == argument.ToLowerInvariant());
+                if (!isArgumentOption && !isArgumentCommand)
+                {
+                    result.Add(prevKey, argument);
+                    prevKey = string.Empty;    // reset key and value
+                    continue;
+                }
+                prevKey = string.Empty;    // reset key and value
             }
-            else
+
+            // check if argument is an option
+            var isOption = false;
+            foreach (var (optionProperty, optionAttribute) in OnlyWithAttribute<CommandOptionAttribute>(properties))
             {
-                // if no mapping found – skip
-                if (!mappings.TryGetValue(mappingKey, out var maybeKey))
+                // if current argument is option...
+                if (optionAttribute.Options.All(o => o != argument.ToLowerInvariant()))
                 {
                     continue;
                 }
-
-                key = maybeKey;
                 
-                // if next arg is not an option
-                if (i + 1 < args.Length && !args[i + 1].StartsWith("-"))
+                isOption = true;
+                
+                // ...and requires value – next argument is value
+                if (optionAttribute.RequiresValue)
                 {
-                    value = typeQualificator == "bool" ? "true" : args[i + 1];
-                    i++;
+                    prevKey = Key(commandPath, optionProperty.Name);
                 }
-                else // if next arg is an option
+                else
                 {
-                    // if option is bool type – means it's a flag and should be interpreted as "true"
-                    // if option without type – means it's unfinished flag and should be interpreted as an empty string
-                    value = typeQualificator == "bool" ? "true" : string.Empty;
+                    // ...and doesn't require value – it's a flag option – set true
+                    result.Add(Key(commandPath, optionProperty.Name), True);
                 }
+                break;
             }
-            
-            if (!string.IsNullOrEmpty(key))
-            {
-                result[key] = value;
-            }
-        }
-
-        return result;
-    }
-
-    private static (string key, string typeQualificator) FindMappingKey(IDictionary<string, string> mappings, IReadOnlyList<string> argsPath)
-    {
-        var key = string.Join(':', argsPath);
-        
-        foreach (var mapping in mappings)
-        {
-            var mappingKeyParts = mapping.Key.Split('|');
-            
-            var mappingKey = string.Join(':', mappingKeyParts[0].Split(':')[1..]);
-            if (mappingKey != key)
+            // if it was an option – skip checking if argument os a command
+            if (isOption)
             {
                 continue;
             }
-            
-            var typeQualificator = mappingKeyParts.Length == 1 ? string.Empty : mappingKeyParts[1];
-            return (mapping.Key, typeQualificator);
+
+            // check if argument is a command
+            foreach (var (commandProperty, commandAttribute) in OnlyWithAttribute<CommandAttribute>(properties))
+            {
+                // if current argument is a command...
+                if (commandAttribute.Command != argument.ToLowerInvariant())
+                {
+                    continue;
+                }
+                
+                // 1. set IsActive == true for current command to instantiate command object
+                result.Add(Key(commandPath, commandProperty.Name, nameof(Command.IsActive)), True);
+                    
+                // 2. set current command type as type of the command add command name to command path
+                // (go deeper in command tree)
+                commandType = commandProperty.PropertyType;
+                commandPath.Add(commandProperty.Name);
+                
+                break;
+            }
         }
 
-        return (string.Empty, string.Empty);
+        Data = result!;
+    }
+
+    private static IEnumerable<(PropertyInfo, TAttribute)> OnlyWithAttribute<TAttribute>(IEnumerable<PropertyInfo> properties) where TAttribute : Attribute =>
+        properties
+            .Select(p => (p, p.GetCustomAttribute<TAttribute>()))
+            .Where(x => x.Item2 != null)
+            .Select(x => (x.Item1, x.Item2!));
+    
+    private static string Key(IEnumerable<string> commandPath, params string[] segments)
+    {
+        var allSegments = commandPath.ToList();
+        allSegments.AddRange(segments);
+        return string.Join(':', allSegments);
     }
 }
+

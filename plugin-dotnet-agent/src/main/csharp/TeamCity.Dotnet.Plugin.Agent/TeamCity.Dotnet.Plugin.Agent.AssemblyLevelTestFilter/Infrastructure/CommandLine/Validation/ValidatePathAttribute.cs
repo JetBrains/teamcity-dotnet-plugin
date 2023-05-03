@@ -38,24 +38,43 @@ internal class ValidatePathAttribute : ValidationAttribute
         }
 
         var path = value.ToString();
-
-        if (_mustExist)
+        
+        // check if string is valid path
+        try
         {
-            switch (_mustBeFile)
-            {
-                case true when !File.Exists(path):
-                    return ValidationResult.Invalid($"{ErrorMessage}: `{path}` file does not exist");
-                case false when !Directory.Exists(path):
-                    return ValidationResult.Invalid($"{ErrorMessage}: `{path}` directory does not exist");
-            }
+            _ = Path.GetFullPath(path!);
+        }
+        catch (Exception ex)
+        {
+            return ValidationResult.Invalid($"{ErrorMessage}: {path} – this string is not a valid path: {ex.Message}");
         }
 
-        if (_mustBeFile && _allowedExtensions.Any())
+        if (!_mustExist)
         {
-            var fileExtension = Path.GetExtension(path);
-            if (!_allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+            return ValidationResult.Valid;
+        }
+        
+        if (_mustBeFile)
+        {
+            if (!File.Exists(path))
             {
-                return ValidationResult.Invalid($"{ErrorMessage}: invalid file extension for `{path}`");
+                return ValidationResult.Invalid($"{ErrorMessage}: {path} – file does not exist");
+            }
+                
+            if (_allowedExtensions.Any())
+            {
+                var fileExtension = Path.GetExtension(path);
+                if (!_allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+                {
+                    return ValidationResult.Invalid($"{ErrorMessage}: invalid file extension for path {path}");
+                }
+            }
+        }
+        else
+        {
+            if (!File.Exists(path) && !Directory.Exists(path))
+            {
+                return ValidationResult.Invalid($"{ErrorMessage}: {path} – file/directory does not exist");
             }
         }
 

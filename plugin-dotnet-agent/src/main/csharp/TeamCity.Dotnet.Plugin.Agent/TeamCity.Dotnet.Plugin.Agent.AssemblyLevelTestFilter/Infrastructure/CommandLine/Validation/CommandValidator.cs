@@ -36,7 +36,7 @@ internal class CommandValidator : ICommandValidator
             : argsValidationResult;
     }
 
-    private ValidationResult ValidateProperties(Command command)
+    private static ValidationResult ValidateProperties(Command command)
     {
         var validationErrors = new List<string>();
 

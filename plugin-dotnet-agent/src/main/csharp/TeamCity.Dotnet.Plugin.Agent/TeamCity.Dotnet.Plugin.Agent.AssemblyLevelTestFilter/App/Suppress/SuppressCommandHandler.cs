@@ -26,7 +26,6 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
 
 internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
 {
-    private readonly IHelpPrinter _helpPrinter;
     private readonly ITargetResolver _targetResolver;
     private readonly ITestSelectorsFactory _testSelectorsFactory;
     private readonly IAssemblyPatcher _assemblyPatcher;
@@ -34,14 +33,12 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     private readonly ILogger<SuppressCommandHandler> _logger;
 
     public SuppressCommandHandler(
-        IHelpPrinter helpPrinter,
         ITargetResolver targetResolver,
         ITestSelectorsFactory testSelectorsFactory,
         IAssemblyPatcher assemblyPatcher,
         IBackupMetadataSaver backupMetadataSaver,
         ILogger<SuppressCommandHandler> logger)
     {
-        _helpPrinter = helpPrinter;
         _targetResolver = targetResolver;
         _testSelectorsFactory = testSelectorsFactory;
         _assemblyPatcher = assemblyPatcher;
@@ -52,12 +49,6 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     public async Task ExecuteAsync(SuppressCommand command)
     {
         _logger.LogDebug("Executing suppress command: {@SuppressCommand}", command);
-
-        if (command.Help)
-        {
-            _helpPrinter.PrintHelp(command);
-            return;
-        }
 
         var patchingCriteria = new TestSuppressionPatchingCriteria
         {

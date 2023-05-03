@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
 using YamlDotNet.Serialization;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 
 internal class YamlBackupMetadataSaver : IBackupMetadataSaver
 {
+    private readonly ILogger<YamlBackupMetadataSaver> _logger;
+
+    public YamlBackupMetadataSaver(ILogger<YamlBackupMetadataSaver> logger)
+    {
+        _logger = logger;
+    }
     public async Task SaveAsync(string filePath, BackupAssemblyMetadata backupMetadata)
     {
+        _logger.LogDebug("Saving backup metadata {BackupMetadata} to file: {FilePath}", backupMetadata, filePath);
         await using var streamWriter = new StreamWriter(filePath, append: true);
         var serializer = new SerializerBuilder().Build();
         var yamlContent = serializer.Serialize(backupMetadata);
         await streamWriter.WriteAsync(yamlContent);
         await streamWriter.FlushAsync();
+        _logger.LogDebug("Backup metadata {BackupMetadata} saved to file: {FilePath}", backupMetadata, filePath);
     }
 }

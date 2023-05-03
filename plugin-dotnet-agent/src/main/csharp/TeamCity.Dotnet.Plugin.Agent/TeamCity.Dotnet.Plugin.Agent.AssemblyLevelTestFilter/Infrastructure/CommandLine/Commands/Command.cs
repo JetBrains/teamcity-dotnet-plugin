@@ -20,11 +20,11 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Co
 
 internal abstract class Command
 {
-    [CommandOption("-h", "--help", "-?")]
+    [CommandOption(requiresValue: false, "-h", "--help", "-?")]
     [CommandOptionDescription("Display help information")]
     public bool Help { get; set; } = false;
     
-    [CommandOption("-v", "--verbosity")]
+    [CommandOption(requiresValue: true,"-v", "--verbosity")]
     [CommandOptionDescription("Verbosity of output. Possible values: quiet, minimal, normal, detailed, diagnostic")]
     [ValidateEnum(typeof(Verbosity), errorMessage: "Invalid verbosity value. Possible values: quiet, minimal, normal, detailed, diagnostic")]
     public Verbosity Verbosity { get; set; } = Verbosity.Normal;

@@ -23,35 +23,55 @@ internal class CmdArgsValidator : ICmdArgsValidator
 {
     public ValidationResult Validate(Type commandType)
     {
-        var args = Environment.GetCommandLineArgs()[1..].ToHashSet();
-        var argsFromString = GetArgsFromCommandType(commandType);
-        var unknownArgs = args.Except(argsFromString).ToList();
+        var args = Environment.GetCommandLineArgs()[1..].ToList();
+        var argsInfo = GetArgsFromCommandType(commandType);
+        var unknownArgs = new List<string>();
+
+        for (var i = 0; i < args.Count; i++)
+        {
+            if (!argsInfo.ContainsKey(args[i]))
+            {
+                unknownArgs.Add(args[i]);
+            }
+            else if (argsInfo[args[i]])
+            {
+                i++; // skip value
+            }
+        }
+
         return unknownArgs.Count != 0
             ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", unknownArgs)}")
             : ValidationResult.Valid;
     }
 
-    private IEnumerable<string> GetArgsFromCommandType(Type commandType)
+    private static IReadOnlyDictionary<string, bool> GetArgsFromCommandType(Type commandType)
     {
-        var result = new HashSet<string>();
+        var result = new Dictionary<string, bool>();
         foreach (var property in commandType.GetProperties())
         {
             var command = property.GetCustomAttribute<CommandAttribute>()?.Command;
             if (command != null)
             {
-                result.Add(command);
-                
+                result.Add(command, false);
+
                 var argsFromNestedCommandType = GetArgsFromCommandType(property.PropertyType);
-                result.UnionWith(argsFromNestedCommandType);
+                foreach (var pair in argsFromNestedCommandType)
+                {
+                    result[pair.Key] = pair.Value;
+                }
             }
-            
-            var options = property.GetCustomAttribute<CommandOptionAttribute>()?.Options;
-            if (options != null)
+
+            var commandOption = property.GetCustomAttribute<CommandOptionAttribute>();
+            if (commandOption != null)
             {
-                result.UnionWith(options);
+                foreach (var option in commandOption.Options)
+                {
+                    result[option] = commandOption.RequiresValue;
+                }
             }
         }
 
         return result;
     }
+
 }

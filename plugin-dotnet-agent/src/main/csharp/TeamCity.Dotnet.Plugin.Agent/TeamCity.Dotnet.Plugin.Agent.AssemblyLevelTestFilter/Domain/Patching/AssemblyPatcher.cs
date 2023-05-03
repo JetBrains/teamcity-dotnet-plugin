@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
 using Mono.Cecil;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
@@ -21,23 +22,29 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
 internal class AssemblyPatcher : IAssemblyPatcher
 {
     private readonly IEnumerable<IAssemblyMutator> _mutators;
+    private readonly ILogger<AssemblyPatcher> _logger;
 
-    public AssemblyPatcher(IEnumerable<IAssemblyMutator> mutators)
+    public AssemblyPatcher(IEnumerable<IAssemblyMutator> mutators, ILogger<AssemblyPatcher> logger)
     {
         _mutators = mutators;
+        _logger = logger;
     }
 
     public async Task<AssemblyPatchingResult> TryPatchAsync(FileInfo assemblyFile, IAssemblyPatchingCriteria criteria)
     {
+        _logger.LogDebug("Patching assembly: {AssemblyFile}", assemblyFile.FullName);
+
         using var assembly = LoadAssembly(assemblyFile.FullName);
 
         var mutationResult = await SelectMutator(criteria).MutateAsync(assembly, criteria);
         if (mutationResult is { AffectedTypes: 0, AffectedMethods: 0 })
         {
+            _logger.LogDebug("No changes were made to the assembly: {AssemblyFile}", assemblyFile.FullName);
             return AssemblyPatchingResult.NotPatched(assemblyFile.FullName);
         }
 
         var (originalAssemblyPath, backupAssemblyPath) = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
+        _logger.LogInformation("Patched assembly: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}", originalAssemblyPath, backupAssemblyPath);
         return AssemblyPatchingResult.Patched(originalAssemblyPath, backupAssemblyPath, mutationResult);
     }
 
@@ -54,7 +61,8 @@ internal class AssemblyPatcher : IAssemblyPatcher
     }
 
     private IAssemblyMutator<IAssemblyPatchingCriteria> SelectMutator(IAssemblyPatchingCriteria criteria) =>
-        (IAssemblyMutator<IAssemblyPatchingCriteria>) _mutators.First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
+        (IAssemblyMutator<IAssemblyPatchingCriteria>) _mutators
+            .First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
 
     private static async Task<(string, string)> SaveAssemblyAsync(AssemblyDefinition assembly, string originalAssemblyPath)
     {
@@ -88,3 +96,4 @@ internal class AssemblyPatcher : IAssemblyPatcher
         return (originalAssemblyPath, backupAssemblyPath);
     }
 }
+
