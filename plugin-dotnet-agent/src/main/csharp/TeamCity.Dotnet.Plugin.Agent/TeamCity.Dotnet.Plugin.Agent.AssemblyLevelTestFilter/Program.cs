@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
@@ -32,8 +29,8 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Console;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DependencyInjection;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
 
@@ -47,28 +44,11 @@ internal static class Program
             .CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((_, config) =>
             {
-                
-                // config.AddCommandLine(args, commandLineParsingResult.SwitchMappings);
-                config.Add(new MyCommandLineConfigurationSource(commandLineParsingResult.SwitchMappings));
+                config.Add(new CommandLineConfigurationSource(commandLineParsingResult.SwitchMappings));
             })
             .ConfigureServices((hostContext, services) =>
             {
-                services
-                    .Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)))
-                    .AddSingleton<MainConsoleFormatter>()
-                    .AddLogging(loggingBuilder =>
-                    {
-                        loggingBuilder.ClearProviders(); // remove default logging providers
-                        loggingBuilder.AddFilter("Microsoft", LogLevel.None); // disable Microsoft logging
-
-                        loggingBuilder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
-                        loggingBuilder.AddConsole(options =>
-                        {
-                            options.FormatterName = nameof(MainConsoleFormatter);
-                            options.LogToStandardErrorThreshold = LogLevel.Error;
-                        });
-                        loggingBuilder.SetMinimumLevel(LogLevel.Information);
-                    });
+                services.Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)));
 
                 // regular services
                 services
@@ -87,11 +67,19 @@ internal static class Program
                     .AddSingletonByInterface<IBackupMetadataSaver>()
                     .AddSingletonByInterface<IHelpPrinter>()
                     .AddSingletonByInterface<ICommandHandler>()
-                    .AddSingletonByInterface<ICmdArgsValidator>()
+                    .AddSingletonByInterface<ILoggerConfigurator>()
                     .AddSingletonByInterface<ICommandValidator>();
 
                 // hosted service as an entry point
                 services.AddHostedService<CommandRouter<MainCommand>>();
+            })
+            .ConfigureLogging((_, loggingBuilder) =>
+            {
+                loggingBuilder
+                    .ClearProviders()
+                    .AddFilter("Microsoft", LogLevel.Trace)
+                    .SetMinimumLevel(LogLevel.Trace)
+                    .Services.AddSingleton<ILoggerProvider, CustomLoggerProvider<MainCommand>>();
             })
             .StartAsync();
     }

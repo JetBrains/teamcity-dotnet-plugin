@@ -25,8 +25,8 @@ internal abstract class Command
     public bool Help { get; set; } = false;
     
     [CommandOption(requiresValue: true,"-v", "--verbosity")]
-    [CommandOptionDescription("Verbosity of output. Possible values: quiet, minimal, normal, detailed, diagnostic")]
-    [ValidateEnum(typeof(Verbosity), errorMessage: "Invalid verbosity value. Possible values: quiet, minimal, normal, detailed, diagnostic")]
+    [CommandOptionDescription("Verbosity of output. Possible values: q[uiet], min[imal], n[ormal], det[ailed], diag[nostic]")]
+    [ValidateEnum(typeof(Verbosity), errorMessage: "Invalid verbosity value. Possible values: q[uiet], min[imal], n[ormal], d[etailed], diag[nostic]")]
     public Verbosity Verbosity { get; set; } = Verbosity.Normal;
     
     /// <summary>

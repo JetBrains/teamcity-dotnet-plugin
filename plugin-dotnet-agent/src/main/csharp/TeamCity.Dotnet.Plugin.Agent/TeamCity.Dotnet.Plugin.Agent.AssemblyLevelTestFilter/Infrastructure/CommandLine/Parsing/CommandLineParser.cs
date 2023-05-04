@@ -65,11 +65,6 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
                     .Select(x => x.Item2)
                     .SelectMany(a => a.Options)
                     .Any(o => o == argument.ToLowerInvariant());
-                // if (isArgumentOption)
-                // {
-                //     prevKey = string.Empty;    // reset key and value
-                //     continue;
-                // }
                 var isArgumentCommand = OnlyWithAttribute<CommandAttribute>(properties)
                     .Select(x => x.Item2)
                     .Any(a => a.Command == argument.ToLowerInvariant());
@@ -79,10 +74,6 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
                     prevKey = string.Empty;    // reset key and value
                     continue;
                 }
-                
-                // // unknown argument after option required value
-                // unknownArguments.Add(argument);
-                // prevKey = string.Empty;    // reset key and value
             }
 
             // check if argument is an option
@@ -145,6 +136,18 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
             
             // unknown argument
             unknownArguments.Add(argument);
+        }
+        
+        if (commandPath.Count <= 1)
+        {
+            return new CommandLineParsingResult(mappingsResult, unknownArguments);
+        }
+        
+        // if there is a several commands in command path
+        // put verbosity value to the root level command since it's valid only for root level command
+        if (mappingsResult.TryGetValue(Key(commandPath, nameof(Command.Verbosity)), out var verbosity))
+        {
+            mappingsResult.Add(Key(new[] { _commandType.Name }, nameof(Command.Verbosity)), verbosity);
         }
 
         return new CommandLineParsingResult(mappingsResult, unknownArguments);

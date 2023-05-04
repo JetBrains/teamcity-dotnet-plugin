@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
+using Microsoft.Extensions.Logging;
 
-internal record CommandLineParsingResult(
-    IDictionary<string, string> SwitchMappings,
-    IList<string> UnknownArguments
-);
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging;
+
+internal interface ILoggerConfigurator
+{
+    Verbosity Verbosity { get; }
+    
+    void Configure(ILoggingBuilder loggingBuilder);
+}

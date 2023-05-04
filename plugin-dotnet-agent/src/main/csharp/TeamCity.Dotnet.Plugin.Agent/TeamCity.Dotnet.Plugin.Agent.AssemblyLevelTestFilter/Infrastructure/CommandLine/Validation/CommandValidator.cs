@@ -34,11 +34,6 @@ internal class CommandValidator : ICommandValidator
         return _commandLineParsingResult.UnknownArguments.Count != 0
             ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", _commandLineParsingResult.UnknownArguments)}")
             : ValidateProperties(command);
-
-        // var argsValidationResult = _cmdArgsValidator.Validate(command.GetType());
-        // return argsValidationResult.IsValid
-        //     ? ValidateProperties(command)
-        //     : argsValidationResult;
     }
 
     private static ValidationResult ValidateProperties(Command command)

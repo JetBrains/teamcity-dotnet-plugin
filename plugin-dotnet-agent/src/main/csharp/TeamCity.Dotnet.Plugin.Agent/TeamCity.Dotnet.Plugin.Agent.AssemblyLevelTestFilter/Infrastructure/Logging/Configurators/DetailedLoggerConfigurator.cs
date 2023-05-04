@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
+using Microsoft.Extensions.Logging;
 
-internal record CommandLineParsingResult(
-    IDictionary<string, string> SwitchMappings,
-    IList<string> UnknownArguments
-);
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging.Configurators;
+
+internal class DetailedLoggerConfigurator : ILoggerConfigurator
+{
+    public Verbosity Verbosity => Verbosity.Detailed;
+
+    public void Configure(ILoggingBuilder loggingBuilder) => loggingBuilder
+        .SetMinimumLevel(LogLevel.Debug)
+        .AddFilter("Microsoft", LogLevel.Information)
+        .AddSimpleConsole(options => options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ");
+}

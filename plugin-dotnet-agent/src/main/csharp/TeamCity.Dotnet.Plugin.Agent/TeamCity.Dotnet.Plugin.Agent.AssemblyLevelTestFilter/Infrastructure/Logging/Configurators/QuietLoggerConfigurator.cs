@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging.Configurators;
 
-internal class MyCommandLineConfigurationSource : IConfigurationSource
+internal class QuietLoggerConfigurator : ILoggerConfigurator
 {
-    private readonly IDictionary<string, string> _mappings;
+    public Verbosity Verbosity => Verbosity.Quiet;
 
-    public MyCommandLineConfigurationSource(IDictionary<string, string> mappings)
-    {
-        _mappings = mappings;
-    }
-
-    public IConfigurationProvider Build(IConfigurationBuilder builder) =>
-        new CommandLineConfigurationProvider(_mappings);
+    public void Configure(ILoggingBuilder builder) => builder
+        .ClearProviders()
+        .SetMinimumLevel(LogLevel.None)
+        .AddFilter("Microsoft", LogLevel.None);
 }

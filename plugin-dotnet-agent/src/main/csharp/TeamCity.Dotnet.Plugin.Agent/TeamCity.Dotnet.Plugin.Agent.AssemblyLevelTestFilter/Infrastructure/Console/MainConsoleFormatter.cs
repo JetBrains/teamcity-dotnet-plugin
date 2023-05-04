@@ -24,13 +24,10 @@ internal class MainConsoleFormatter : ConsoleFormatter
 {
     private const string MessageFormat = "{0}";
 
-    public MainConsoleFormatter() : base(nameof(MainConsoleFormatter))
-    {
-    }
+    public MainConsoleFormatter() : base(nameof(MainConsoleFormatter)) {}
 
     public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider, TextWriter textWriter)
     {
-        // var logLevelString = logEntry.LogLevel.ToString().ToLower();
         var message = logEntry.Formatter(logEntry.State, logEntry.Exception);
         var dateTimeOffset = DateTimeOffset.UtcNow;
 
@@ -61,9 +58,5 @@ internal class MainConsoleFormatter : ConsoleFormatter
                 break;
         }
     }
-    
-    
-    
-    
 }
 

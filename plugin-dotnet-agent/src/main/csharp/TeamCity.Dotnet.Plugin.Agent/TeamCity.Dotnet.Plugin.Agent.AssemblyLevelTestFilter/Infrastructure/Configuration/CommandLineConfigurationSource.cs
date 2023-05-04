@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Configuration;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 
-internal interface ICmdArgsValidator
+internal class CommandLineConfigurationSource : IConfigurationSource
 {
-    ValidationResult Validate(Type commandType);
+    private readonly IDictionary<string, string> _mappings;
+
+    public CommandLineConfigurationSource(IDictionary<string, string> mappings)
+    {
+        _mappings = mappings;
+    }
+
+    public IConfigurationProvider Build(IConfigurationBuilder builder) =>
+        new CommandLineConfigurationProvider(_mappings);
 }
