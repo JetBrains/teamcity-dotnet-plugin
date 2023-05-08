@@ -27,6 +27,7 @@
   BS.DotnetParametersForm.mandatoryPaths["vstest"] = true;
   BS.DotnetParametersForm.coverageEnabled["vstest"] = true;
   BS.DotnetParametersForm.helpUrl["vstest"] = "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-vstest";
+  BS.DotnetParametersForm.supportsParallelTests["vstest"] = true;
   BS.DotnetParametersForm.initFunctions["vstest"] = function () {
     var optionId = BS.Util.escapeId('${params.testFilterKey}');
     var $testNames = $j('label[for="${params.testNamesKey}"]').closest('tr');

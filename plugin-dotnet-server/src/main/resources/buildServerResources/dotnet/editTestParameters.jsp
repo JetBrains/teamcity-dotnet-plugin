@@ -21,6 +21,7 @@
   BS.DotnetParametersForm.pathHint["test"] = "Specify paths to projects, solutions, and (since .NET SDK 3.1) test assemblies";
   BS.DotnetParametersForm.coverageEnabled["test"] = true;
   BS.DotnetParametersForm.helpUrl["test"] = "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test";
+  BS.DotnetParametersForm.supportsParallelTests["test"] = true;
   BS.DotnetParametersForm.initFunctions["test"] = function () {
     $j('label[for="${params.testCaseFilterKey}"]').text('Test case filter:').show();
   };

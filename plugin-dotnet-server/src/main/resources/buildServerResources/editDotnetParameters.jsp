@@ -42,6 +42,7 @@
     hideWorkingDirectory: [],
     mandatoryPaths: [],
     initFunctions: [],
+    supportsParallelTests: [],
     selectProjectFile: function (chosenFile) {
       var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
       var value = BS.Util.trimSpaces($paths.val());
@@ -154,6 +155,10 @@
           commandRow.addClass("advancedSettingHighlight");
         }
       }
+
+      var parallelTestsExecutionHint = $j(BS.Util.escapeId('parallel-tests-execution'));
+      var hideParallelTestsExecutionHint = !this.supportsParallelTests[commandName];
+      parallelTestsExecutionHint.toggleClass('hidden', hideParallelTestsExecutionHint);
 
       var init = BS.DotnetParametersForm.initFunctions[commandName];
       if (init) init();

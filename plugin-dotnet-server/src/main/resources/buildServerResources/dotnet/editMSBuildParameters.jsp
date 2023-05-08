@@ -21,6 +21,7 @@
   BS.DotnetParametersForm.pathHint["msbuild"] = "Specify paths to projects and solutions";
   BS.DotnetParametersForm.coverageEnabled["msbuild"] = true;
   BS.DotnetParametersForm.helpUrl["msbuild"] = "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-msbuild";
+  BS.DotnetParametersForm.supportsParallelTests["msbuild"] = true;
   BS.DotnetParametersForm.initFunctions["msbuild"] = function () {
     var $version = $j(BS.Util.escapeId('${params.msbuildVersionKey}'));
 
