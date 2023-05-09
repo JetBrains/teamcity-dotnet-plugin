@@ -138,6 +138,7 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
             unknownArguments.Add(argument);
         }
         
+        
         if (commandPath.Count <= 1)
         {
             return new CommandLineParsingResult(mappingsResult, unknownArguments);

@@ -18,7 +18,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
-internal abstract class Command
+public abstract class Command
 {
     [CommandOption(requiresValue: false, "-h", "--help", "-?")]
     [CommandOptionDescription("Display help information")]

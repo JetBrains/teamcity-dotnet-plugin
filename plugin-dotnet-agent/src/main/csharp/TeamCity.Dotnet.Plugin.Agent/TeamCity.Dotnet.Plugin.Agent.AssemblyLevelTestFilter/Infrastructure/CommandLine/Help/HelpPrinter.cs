@@ -56,6 +56,7 @@ internal class HelpPrinter : IHelpPrinter
             }
         }
 
+        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
         columnAligner.Flush(message => _logger.LogInformation(message));
     }
 }

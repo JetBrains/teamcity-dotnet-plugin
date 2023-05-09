@@ -32,6 +32,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Config
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DependencyInjection;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging;
 
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
 
 internal static class Program
