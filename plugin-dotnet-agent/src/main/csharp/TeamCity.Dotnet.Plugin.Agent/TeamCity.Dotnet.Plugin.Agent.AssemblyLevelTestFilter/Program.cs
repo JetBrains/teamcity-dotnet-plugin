@@ -45,7 +45,7 @@ internal static class Program
             .CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((_, config) =>
             {
-                config.Add(new CommandLineConfigurationSource(commandLineParsingResult.SwitchMappings));
+                config.Add(new CommandLineConfigurationSource(commandLineParsingResult.Mappings));
             })
             .ConfigureServices((hostContext, services) =>
             {
@@ -53,7 +53,7 @@ internal static class Program
 
                 // regular services
                 services
-                    .AddSingleton(commandLineParsingResult)
+                    .AddSingleton<IConfigurationParsingResult>(commandLineParsingResult)
                     .AddSingletonByInterface<ITestSelectorParser>()
                     .AddSingletonByInterface<ITestEngine>()
                     .AddSingletonByImplementationType<ITestEngine>()

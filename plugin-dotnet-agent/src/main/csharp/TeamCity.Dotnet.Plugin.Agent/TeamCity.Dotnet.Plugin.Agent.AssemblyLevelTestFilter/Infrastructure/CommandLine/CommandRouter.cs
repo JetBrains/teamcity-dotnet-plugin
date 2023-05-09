@@ -54,7 +54,7 @@ internal class CommandRouter<TCommand> : IHostedService
     {
         var rootCommand = _options.Value;
         
-        // then we check if help is requested
+        // if help is requested
         var subCommand = GetSelectedSubcommand(rootCommand);
         if (rootCommand.Help || subCommand is { IsActive: true, Help: true })
         {
@@ -63,7 +63,7 @@ internal class CommandRouter<TCommand> : IHostedService
             return;
         }
         
-        // at first we validate the command
+        // then validate the command
         var validationResult = _commandValidator.Validate(rootCommand);
         if (!validationResult.IsValid)
         {
@@ -74,8 +74,8 @@ internal class CommandRouter<TCommand> : IHostedService
             return;
         }
 
-        // then we execute the command if subcommand is specified
-        if (subCommand == null)
+        // then execute the command if subcommand is specified
+        if (subCommand is not { IsActive: true })
         {
             _logger.LogWarning("No command or root level options specified");
             _helpPrinter.PrintHelp(rootCommand);
@@ -94,7 +94,7 @@ internal class CommandRouter<TCommand> : IHostedService
     private ICommandHandler GetCommandHandler(Command selectedCommand)
     {
         var handler = _commandHandlers
-            .First(handler => handler.GetType().GetInterfaces().First().GetGenericArguments()[0] == selectedCommand.GetType());
+            .First(handler => handler.GetType().GetInterfaces().Any(i => i.GenericTypeArguments.Contains(selectedCommand.GetType())));
         if (handler == null)
         {
             throw new InvalidOperationException($"No handler found for {selectedCommand.GetType()}");

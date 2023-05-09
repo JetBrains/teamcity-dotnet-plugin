@@ -35,7 +35,7 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
     // RootCommand:SubCommand1:Path                     -->     /path/from/command/line
     // RootCommand:Help                                 -->     true
     // etc
-    public CommandLineParsingResult Parse(IEnumerable<string> args)
+    public IConfigurationParsingResult Parse(IEnumerable<string> args)
     {
         var commandPath = new List<string> { _commandType.Name };
         

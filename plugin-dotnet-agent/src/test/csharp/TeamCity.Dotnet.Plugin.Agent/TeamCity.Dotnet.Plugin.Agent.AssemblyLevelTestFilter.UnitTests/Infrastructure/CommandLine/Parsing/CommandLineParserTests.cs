@@ -33,9 +33,9 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(1, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -48,10 +48,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Help", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Help", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -64,9 +64,9 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(1, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -79,10 +79,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Verbosity", "detailed");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Verbosity", "detailed");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -95,10 +95,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Flag", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Flag", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -111,10 +111,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:String", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:String", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -127,10 +127,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:RequiringValueString", "VALUE");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:RequiringValueString", "VALUE");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -143,9 +143,9 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(1, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Theory]
@@ -161,10 +161,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Enum", val.ToString());
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Enum", val.ToString());
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -177,10 +177,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        Assert.Equal(1, result.UnknownArguments.Count);
-        Assert.Contains(result.UnknownArguments, a => a == "UNKNOWN");
+        Assert.Equal(1, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        Assert.Equal(1, result.UnknownParameters.Count);
+        Assert.Contains(result.UnknownParameters, a => a == "UNKNOWN");
     }
     
     [Fact]
@@ -193,10 +193,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:IsActive", "true");
-        Assert.Empty(result.UnknownArguments);
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
+        Assert.Empty(result.UnknownParameters);
     }
     
     [Fact]
@@ -209,10 +209,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(3, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:Help", "true");
+        Assert.Equal(3, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:Help", "true");
     }
     
     [Fact]
@@ -225,11 +225,11 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(4, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:Verbosity", "quiet");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Verbosity", "quiet");
+        Assert.Equal(4, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:Verbosity", "quiet");
+        AssertContainsKv(result.Mappings, "TestCommand:Verbosity", "quiet");
     }
     
     [Fact]
@@ -242,10 +242,10 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(3, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:NestedOption", "VALUE");
+        Assert.Equal(3, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:NestedOption", "VALUE");
     }
     
     [Fact]
@@ -258,11 +258,11 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(2, result.SwitchMappings.Count);
-        AssertContainsKv(result.SwitchMappings, "TestCommand:IsActive", "true");
-        AssertContainsKv(result.SwitchMappings, "TestCommand:Aaa:IsActive", "true");
-        Assert.Equal(1, result.UnknownArguments.Count);
-        Assert.Contains(result.UnknownArguments, a => a == "bbb");
+        Assert.Equal(2, result.Mappings.Count);
+        AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
+        AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
+        Assert.Equal(1, result.UnknownParameters.Count);
+        Assert.Contains(result.UnknownParameters, a => a == "bbb");
     }
     
     private static void AssertContainsKv(IDictionary<string, string> dictionary, string key, string value) =>

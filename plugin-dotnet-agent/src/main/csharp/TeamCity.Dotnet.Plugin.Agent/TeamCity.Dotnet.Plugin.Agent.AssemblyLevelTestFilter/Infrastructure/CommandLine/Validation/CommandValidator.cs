@@ -22,17 +22,17 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Co
 
 internal class CommandValidator : ICommandValidator
 {
-    private readonly CommandLineParsingResult _commandLineParsingResult;
+    private readonly IConfigurationParsingResult _commandLineParsingResult;
 
-    public CommandValidator(CommandLineParsingResult commandLineParsingResult)
+    public CommandValidator(IConfigurationParsingResult commandLineParsingResult)
     {
         _commandLineParsingResult = commandLineParsingResult;
     }
 
     public ValidationResult Validate(Command command)
     {
-        return _commandLineParsingResult.UnknownArguments.Count != 0
-            ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", _commandLineParsingResult.UnknownArguments)}")
+        return _commandLineParsingResult.UnknownParameters.Count != 0
+            ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", _commandLineParsingResult.UnknownParameters)}")
             : ValidateProperties(command);
     }
 

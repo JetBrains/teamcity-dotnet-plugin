@@ -21,5 +21,5 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Co
 internal interface ICommandLineParser<TCommand>
     where TCommand : Command
 {
-    CommandLineParsingResult Parse(IEnumerable<string> args);
+    IConfigurationParsingResult Parse(IEnumerable<string> args);
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
 internal class ValidatePathAttribute : ValidationAttribute
@@ -21,10 +23,21 @@ internal class ValidatePathAttribute : ValidationAttribute
     private readonly bool _mustBeFile;
     private readonly bool _mustExist;
     private readonly IEnumerable<string> _allowedExtensions;
+    private readonly IFileSystem _fileSystem;
 
     public ValidatePathAttribute(bool mustBeFile, bool mustExist, string errorMessage, params string[] allowedExtensions)
         : base(errorMessage)
     {
+        _mustBeFile = mustBeFile;
+        _mustExist = mustExist;
+        _allowedExtensions = allowedExtensions;
+        _fileSystem = new FileSystemWrapper();
+    }
+    
+    public ValidatePathAttribute(IFileSystem fileSystem, bool mustBeFile, bool mustExist, string errorMessage, params string[] allowedExtensions)
+        : base(errorMessage)
+    {
+        _fileSystem = fileSystem;
         _mustBeFile = mustBeFile;
         _mustExist = mustExist;
         _allowedExtensions = allowedExtensions;
@@ -42,7 +55,7 @@ internal class ValidatePathAttribute : ValidationAttribute
         // check if string is valid path
         try
         {
-            _ = Path.GetFullPath(path!);
+            _ = _fileSystem.GetFullPath(path!);
         }
         catch (Exception ex)
         {
@@ -56,14 +69,14 @@ internal class ValidatePathAttribute : ValidationAttribute
         
         if (_mustBeFile)
         {
-            if (!File.Exists(path))
+            if (!_fileSystem.FileExists(path!))
             {
                 return ValidationResult.Invalid($"{ErrorMessage}: {path} – file does not exist");
             }
                 
             if (_allowedExtensions.Any())
             {
-                var fileExtension = Path.GetExtension(path);
+                var fileExtension = _fileSystem.GetExtension(path!);
                 if (!_allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
                 {
                     return ValidationResult.Invalid($"{ErrorMessage}: invalid file extension for path {path}");
@@ -72,7 +85,7 @@ internal class ValidatePathAttribute : ValidationAttribute
         }
         else
         {
-            if (!File.Exists(path) && !Directory.Exists(path))
+            if (!_fileSystem.FileExists(path!) && !_fileSystem.DirectoryExists(path!))
             {
                 return ValidationResult.Invalid($"{ErrorMessage}: {path} – file/directory does not exist");
             }

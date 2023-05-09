@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
-internal record CommandLineParsingResult(
-    IDictionary<string, string> Mappings,
-    IList<string> UnknownParameters
-) : IConfigurationParsingResult;
+internal class FileSystemWrapper : IFileSystem
+{
+    public string GetFullPath(string path) => Path.GetFullPath(path);
+
+    public bool FileExists(string path) => File.Exists(path);
+
+    public bool DirectoryExists(string path) => Directory.Exists(path);
+
+    public string GetExtension(string path) => Path.GetExtension(path);
+}
