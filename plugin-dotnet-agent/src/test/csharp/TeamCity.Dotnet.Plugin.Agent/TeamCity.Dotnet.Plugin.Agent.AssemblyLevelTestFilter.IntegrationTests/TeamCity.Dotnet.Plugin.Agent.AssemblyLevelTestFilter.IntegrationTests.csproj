@@ -30,4 +30,12 @@
       <ProjectReference Include="..\..\..\..\main\csharp\TeamCity.Dotnet.Plugin.Agent\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.csproj" />
     </ItemGroup>
 
+    <Target Name="CopySourceFiles" BeforeTargets="Build">
+        <ItemGroup>
+            <MainProjectDirPath Include="..\..\..\..\main\csharp\TeamCity.Dotnet.Plugin.Agent\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter" />
+            <SourceFiles Include="%(MainProjectDirPath.FullPath)\**\*.cs;%(MainProjectDirPath.FullPath)\*.csproj" Exclude="%(MainProjectDirPath.FullPath)\obj\**;%(MainProjectDirPath.FullPath)\bin\**" />
+        </ItemGroup>
+        <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(TargetDir)sources" />
+    </Target>
+
 </Project>

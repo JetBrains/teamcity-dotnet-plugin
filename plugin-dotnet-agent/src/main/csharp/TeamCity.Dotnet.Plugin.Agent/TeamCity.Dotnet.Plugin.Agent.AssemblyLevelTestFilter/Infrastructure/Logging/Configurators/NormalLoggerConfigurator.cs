@@ -33,7 +33,6 @@ internal class NormalLoggerConfigurator : ILoggerConfigurator
         builder.AddConsole(options =>
         {
             options.FormatterName = nameof(MainConsoleFormatter);
-            options.LogToStandardErrorThreshold = LogLevel.Information;
         });
         builder.SetMinimumLevel(LogLevel.Information);
     }
