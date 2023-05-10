@@ -16,11 +16,13 @@
 
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 
-internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingStrategy
+internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : ITestSuppressingStrategy
     where TTestEngine : ITestEngine
+    where TTestSelector : ITestSelector
 {
     protected BaseSuppressingStrategy(TTestEngine testEngine)
     {
@@ -36,29 +38,43 @@ internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingS
                 .Any(TestEngine.TestMethodAttributes.Contains)
             );
     
-    protected void RemoveAllTestAttributes(TypeDefinition type)
+    protected TestSuppressionResult RemoveAllTestAttributes(TypeDefinition type)
     {
-        RemoveTestAttributesFromMethods(type);
-        RemoveTestAttributesFromClass(type);
+        var (suppressedTests, suppressedClasses) = RemoveTestAttributesFromClass(type);
+        suppressedTests += RemoveTestAttributesFromMethods(type);
+        return new TestSuppressionResult(suppressedTests, suppressedClasses);
     }
 
-    private void RemoveTestAttributesFromMethods(TypeDefinition testClass)
+    public abstract TestSuppressionResult SuppressTestsBySelector(TypeDefinition type, TTestSelector testSelector);
+
+    public TestSuppressionResult SuppressTests(TypeDefinition type, ITestSelector testSelector) =>
+        SuppressTestsBySelector(type, (TTestSelector) testSelector);
+
+    private int RemoveTestAttributesFromMethods(TypeDefinition testClass)
     {
+        var suppressedTests = 0;
         foreach (var method in GetTestMethods(testClass))
         {
             foreach (var testAttribute in GetMethodsTestAttributes(method))
             {
                 method.CustomAttributes.Remove(testAttribute);
             }
+            suppressedTests++;
         }
+
+        return suppressedTests;
     }
 
-    private void RemoveTestAttributesFromClass(TypeDefinition testClass)
+    private (int, int) RemoveTestAttributesFromClass(TypeDefinition testClass)
     {
+        var (suppressedTests, suppressedClasses) = (0, 0);
         foreach (var testAttribute in GetTypeTestAttributes(testClass))
         {
+            suppressedTests += GetTestMethods(testClass).Count();
+            suppressedClasses++;
             testClass.CustomAttributes.Remove(testAttribute);
         }
+        return (suppressedTests, suppressedClasses);
     }
 
     private List<CustomAttribute> GetMethodsTestAttributes(MethodDefinition method)
@@ -67,7 +83,7 @@ internal abstract class BaseSuppressingStrategy<TTestEngine> : ITestSuppressingS
             .Where(a => TestEngine.TestMethodAttributes.Contains(a.AttributeType.FullName))
             .ToList();
     }
-    
+
     private List<CustomAttribute> GetTypeTestAttributes(TypeDefinition testClass)
     {
         return testClass.CustomAttributes

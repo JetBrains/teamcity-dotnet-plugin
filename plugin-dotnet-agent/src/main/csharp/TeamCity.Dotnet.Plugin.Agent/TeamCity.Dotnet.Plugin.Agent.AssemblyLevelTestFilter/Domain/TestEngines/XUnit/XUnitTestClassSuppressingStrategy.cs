@@ -20,9 +20,10 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.XUnit;
 
-internal class XUnitTestClassSuppressingStrategy : BaseSuppressingStrategy<XUnit>, ITestSuppressingStrategy<XUnit, TestClassSelector>
+internal class XUnitTestClassSuppressingStrategy : BaseSuppressingStrategy<XUnit, TestClassSelector>, ITestSuppressingStrategy<XUnit, TestClassSelector>
 {
     public XUnitTestClassSuppressingStrategy(XUnit testEngine) : base(testEngine) {}
 
-    public void SuppressTests(TypeDefinition type, TestClassSelector testSelector) => RemoveAllTestAttributes(type);
+    public override TestSuppressionResult SuppressTestsBySelector(TypeDefinition type, TestClassSelector testSelector) =>
+        RemoveAllTestAttributes(type);
 }

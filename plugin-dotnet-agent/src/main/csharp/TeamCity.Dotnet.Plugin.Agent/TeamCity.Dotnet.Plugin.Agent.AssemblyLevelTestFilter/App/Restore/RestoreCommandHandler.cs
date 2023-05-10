@@ -28,14 +28,11 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
         _helpPrinter = helpPrinter;
     }
 
-    public async Task ExecuteAsync(RestoreCommand command)
+    public Task ExecuteAsync(RestoreCommand command)
     {
-        if (command.Help)
-        {
-            _helpPrinter.PrintHelp(command);
-            return;
-        }
+        if (!command.Help) throw new NotImplementedException();
+        _helpPrinter.PrintHelp(command);
+        return Task.CompletedTask;
 
-        throw new NotImplementedException();
     }
 }

@@ -70,7 +70,7 @@ internal class CommandValidator : ICommandValidator
             // check other validation attributes
             foreach (var attribute in validationAttributes)
             {
-                var validationResult = attribute.IsValid(value);
+                var validationResult = attribute.IsValid(value!);
                 if (!validationResult.IsValid)
                 {
                     validationErrors.Add(FormatValidationError(validationResult.ErrorMessage));

@@ -78,7 +78,7 @@ public class VerbosityTypeConverter : TypeConverter
     private IEnumerable<string> GetAliases(Verbosity verbosity)
     {
         var fieldInfo = verbosity.GetType().GetField(verbosity.ToString());
-        var aliasAttributes = (AliasAttribute[])Attribute.GetCustomAttributes(fieldInfo, typeof(AliasAttribute));
+        var aliasAttributes = (AliasAttribute[])Attribute.GetCustomAttributes(fieldInfo!, typeof(AliasAttribute));
         return aliasAttributes.Select(attribute => attribute.Alias).ToList();
     }
 }

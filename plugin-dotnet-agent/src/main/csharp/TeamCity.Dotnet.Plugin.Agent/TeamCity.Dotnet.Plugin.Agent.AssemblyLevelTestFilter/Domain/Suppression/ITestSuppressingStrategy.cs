@@ -20,11 +20,14 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 
-internal interface ITestSuppressingStrategy {}
+internal interface ITestSuppressingStrategy
+{
+    TestSuppressionResult SuppressTests(TypeDefinition type, ITestSelector testSelector);
+}
 
 internal interface ITestSuppressingStrategy<TTestEngine, in TTestSelector> : ITestSuppressingStrategy
     where TTestEngine : ITestEngine
     where TTestSelector : ITestSelector
 {
-    public void SuppressTests(TypeDefinition type, TTestSelector testSelector);
+    TestSuppressionResult SuppressTestsBySelector(TypeDefinition type, TTestSelector testSelector);
 }

@@ -36,14 +36,14 @@ internal class TestsSuppressor : ITestsSuppressor
         _logger.LogDebug("TestsSuppressor initialized with {StrategyCount} suppressing strategies", _suppressingStrategies.Count);
     }
     
-    public int SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters)
+    public TestSuppressionResult SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters)
     {
         try
         {
             var suppressionStrategy = ResolveSuppressingStrategy(parameters.TestEngine, parameters.TestSelector);
-            suppressionStrategy.SuppressTests(testClass, parameters.TestSelector);
+            var suppressionResult = suppressionStrategy.SuppressTests(testClass, parameters.TestSelector);
             _logger.LogInformation("Tests suppressed successfully for {TestClass}", testClass.FullName);
-            return 0;
+            return suppressionResult;
         }
         catch (Exception ex)
         {
@@ -52,15 +52,13 @@ internal class TestsSuppressor : ITestsSuppressor
         }
     }
     
-    private ITestSuppressingStrategy<TEngine, TTestsQuery> ResolveSuppressingStrategy<TEngine, TTestsQuery>(TEngine testEngine, TTestsQuery testsQuery)
-        where TEngine : ITestEngine
-        where TTestsQuery : ITestSelector
+    private ITestSuppressingStrategy ResolveSuppressingStrategy(ITestEngine testEngine, ITestSelector testsQuery)
     {
         var key = (testEngine.GetType(), testsQuery.GetType());
         if (_suppressingStrategies.TryGetValue(key, out var suppressingStrategy))
         {
             _logger.LogDebug("Suppressing strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);
-            return (ITestSuppressingStrategy<TEngine, TTestsQuery>) suppressingStrategy;
+            return suppressingStrategy;
         }
         
         _logger.LogError("No suppressing strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);

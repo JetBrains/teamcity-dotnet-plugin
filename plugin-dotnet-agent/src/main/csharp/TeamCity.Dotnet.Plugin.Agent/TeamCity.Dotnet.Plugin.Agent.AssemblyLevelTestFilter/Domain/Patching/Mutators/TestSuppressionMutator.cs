@@ -46,9 +46,13 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
             var affectedTestsInClass = detectedTestEngines.Sum(testEngine =>
             {
                 var (shouldBeSuppressed, testSelector) = _testSuppressionDecider.Decide(testClass.FullName, criteria.InclusionMode, criteria.TestSelectors);
-                return shouldBeSuppressed ?
-                    _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector))
-                    : 0;
+                if (shouldBeSuppressed)
+                {
+                    var suppressionResult = _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector));
+                    return suppressionResult.SuppressedTests;
+                }
+
+                return 0;
             });
 
             if (affectedTestsInClass <= 0)
@@ -62,4 +66,7 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
 
         return Task.FromResult(new AssemblyMutationResult(affectedTypes, affectedMethods));
     }
+
+    public Task<AssemblyMutationResult> MutateAsync(AssemblyDefinition assembly, IAssemblyPatchingCriteria criteria) =>
+        MutateAsync(assembly, (TestSuppressionPatchingCriteria) criteria);
 }

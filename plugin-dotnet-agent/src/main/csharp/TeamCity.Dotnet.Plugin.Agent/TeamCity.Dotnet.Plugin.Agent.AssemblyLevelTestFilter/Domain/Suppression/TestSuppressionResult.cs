@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
-
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 
-internal interface ITestsSuppressor
-{
-    TestSuppressionResult SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters);
-}
+public record struct TestSuppressionResult(int SuppressedTests, int SuppressedClasses);

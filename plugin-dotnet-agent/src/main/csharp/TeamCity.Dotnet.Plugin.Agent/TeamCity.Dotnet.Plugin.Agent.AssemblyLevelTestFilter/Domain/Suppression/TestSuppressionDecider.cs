@@ -41,24 +41,22 @@ internal class TestSuppressionDecider : ITestSuppressionDecider
 
             throw new InvalidOperationException($"Test selector with query '{testSelectorQuery}' not found in testSelectors.");
         }
+
+        if (isParametrized)
+        {
+            var paramStartIndex = testSelectorQuery.IndexOf("(");
+            var paramEndIndex = testSelectorQuery.IndexOf(")");
+            className = querySegments.Last().Substring(0, paramStartIndex - querySegments.Length + 1);
+            var parametersString = testSelectorQuery.Substring(paramStartIndex + 1, paramEndIndex - paramStartIndex - 1);
+            var parameters = parametersString.Split(',').Select(p => p.Trim()).ToList();
+            var selector = new ParamTestClassSelector(namespaces, className, parameters);
+            return (true, selector);
+        }
         else
         {
-            if (isParametrized)
-            {
-                var paramStartIndex = testSelectorQuery.IndexOf("(");
-                var paramEndIndex = testSelectorQuery.IndexOf(")");
-                className = querySegments.Last().Substring(0, paramStartIndex - querySegments.Length + 1);
-                var parametersString = testSelectorQuery.Substring(paramStartIndex + 1, paramEndIndex - paramStartIndex - 1);
-                var parameters = parametersString.Split(',').Select(p => p.Trim()).ToList();
-                var selector = new ParamTestClassSelector(namespaces, className, parameters);
-                return (true, selector);
-            }
-            else
-            {
-                className = querySegments.Last();
-                var selector = new TestClassSelector(namespaces, className);
-                return (true, selector);
-            }
+            className = querySegments.Last();
+            var selector = new TestClassSelector(namespaces, className);
+            return (true, selector);
         }
     }
 }

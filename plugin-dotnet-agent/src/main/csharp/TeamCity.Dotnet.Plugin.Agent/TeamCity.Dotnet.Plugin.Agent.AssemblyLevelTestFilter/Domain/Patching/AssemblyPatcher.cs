@@ -36,15 +36,18 @@ internal class AssemblyPatcher : IAssemblyPatcher
 
         using var assembly = LoadAssembly(assemblyFile.FullName);
 
-        var mutationResult = await SelectMutator(criteria).MutateAsync(assembly, criteria);
+        var mutator = SelectMutator(criteria);
+        
+        var mutationResult = await mutator.MutateAsync(assembly, criteria);
         if (mutationResult is { AffectedTypes: 0, AffectedMethods: 0 })
         {
-            _logger.LogDebug("No changes were made to the assembly: {AssemblyFile}", assemblyFile.FullName);
+            _logger.LogInformation("No changes were made to the assembly: {AssemblyFile}", assemblyFile.FullName);
             return AssemblyPatchingResult.NotPatched(assemblyFile.FullName);
         }
 
         var (originalAssemblyPath, backupAssemblyPath) = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
         _logger.LogInformation("Patched assembly: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}", originalAssemblyPath, backupAssemblyPath);
+        _logger.LogInformation("Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)", mutationResult.AffectedTypes, mutationResult.AffectedMethods);
         return AssemblyPatchingResult.Patched(originalAssemblyPath, backupAssemblyPath, mutationResult);
     }
 
@@ -60,9 +63,8 @@ internal class AssemblyPatcher : IAssemblyPatcher
         });
     }
 
-    private IAssemblyMutator<IAssemblyPatchingCriteria> SelectMutator(IAssemblyPatchingCriteria criteria) =>
-        (IAssemblyMutator<IAssemblyPatchingCriteria>) _mutators
-            .First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
+    private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>
+        _mutators.First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
 
     private static async Task<(string, string)> SaveAssemblyAsync(AssemblyDefinition assembly, string originalAssemblyPath)
     {
