@@ -19,8 +19,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.NUnit;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.RoslynExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
 
@@ -72,30 +73,25 @@ internal class NUnitTestProjectGenerator : ITestProjectGenerator<NUnit>
     {
         var unitTest = CompilationUnit()
             .WithUsings(
-                List(new[]
-                {
-                    UsingDirective(QualifiedName(IdentifierName("NUnit"), IdentifierName("Framework"))),
-                    UsingDirective(IdentifierName("System"))
-                }))
+                Using("System"),
+                Using("NUnit.Framework")
+            )
             .WithMembers(
                 SingletonList<MemberDeclarationSyntax>(
-                    NamespaceDeclaration(
-                            QualifiedName(
-                                IdentifierName(projectName),
-                                IdentifierName("Tests")))
+                    Namespace(projectName, "Tests")
                         .WithMembers(
                             SingletonList<MemberDeclarationSyntax>(
                                 ClassDeclaration("MyTests")
                                     .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
                                     .WithAttributeLists(SingletonList(AttributeList(
                                 SingletonSeparatedList(Attribute(IdentifierName("TestFixture"))))))
-                                    .WithMembers(
-                                        SingletonList<MemberDeclarationSyntax>(
-                                            MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier("MyTest"))
-                                                .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
-                                                .WithAttributeLists(SingletonList(AttributeList(
-                                            SingletonSeparatedList(Attribute(IdentifierName("Test"))))))
-                                                .WithBody(Block())))))));
+                                    .WithMembers(SingletonList(
+                                        PublicMethodWithAttribute("MyTest", "Test", Block())
+                                    ))
+                            )
+                        )
+                )
+            );
 
         return ($"{projectName}.Tests.MyTests.cs", unitTest.NormalizeWhitespace().ToFullString());
     }
