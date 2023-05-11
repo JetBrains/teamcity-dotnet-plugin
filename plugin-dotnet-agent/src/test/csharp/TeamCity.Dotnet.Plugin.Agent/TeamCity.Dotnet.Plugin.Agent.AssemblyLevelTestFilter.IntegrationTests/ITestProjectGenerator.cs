@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-using System.Runtime.CompilerServices;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] // for moq
-[assembly: InternalsVisibleTo("TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests")]
-[assembly: InternalsVisibleTo("TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests")]
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
+
+internal interface ITestProjectGenerator<in TTestEngine>
+    where TTestEngine : ITestEngine
+{
+    ITestEngine TestEngine { get; }
+    
+    Task GenerateAsync(string directoryPath, string projectName);
+}
