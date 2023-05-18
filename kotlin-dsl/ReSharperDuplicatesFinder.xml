@@ -16,9 +16,12 @@
   -->
 
 <dsl-extension kind="buildStep" type="dotnet-tools-dupfinder" generateDslJar="true">
+    <deprecated>
+        Deprecated, was previously used to set up a Duplicates finder (ReSharper) build step.
+    </deprecated>
     <class name="ReSharperDuplicates">
         <description>
-            A [Duplicates finder (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?duplicates-finder-resharper)
+            Deprecated, was previously used to set up a [Duplicates finder (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?duplicates-finder-resharper)
             to find C# and VB duplicate code.
         </description>
     </class>
