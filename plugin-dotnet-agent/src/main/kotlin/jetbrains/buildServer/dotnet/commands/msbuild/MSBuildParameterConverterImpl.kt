@@ -16,16 +16,23 @@
 
 package jetbrains.buildServer.dotnet.commands.msbuild
 
+import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.util.StringUtil
 
 class MSBuildParameterConverterImpl(
     private val _parameterService: ParametersService,
+    private val _environment: Environment
 ) : MSBuildParameterConverter {
     private val hasParametersEscapingBeenEnabled get() =
         _parameterService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_PARAMETERS_ESCAPE)
+            ?.let { it.trim().equals("true", ignoreCase = true) }
+            ?: false
+    private val hasTrailingBackslashQuotBeenDisabled get() =
+        _parameterService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_DISABLE_TRAILING_BACKSLASH_QUOTATION)
             ?.let { it.trim().equals("true", ignoreCase = true) }
             ?: false
 
@@ -35,7 +42,7 @@ class MSBuildParameterConverterImpl(
             .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
             .map { parameter ->
                 val normalizedName = normalizeName(parameter.name)
-                val normalizedValue = normalizeValue(parameter.value) { shouledBeEscaped(parameter.type, it, allParamsEscapingEnabled) }
+                val normalizedValue = normalizeValue(parameter.value) { shouldBeEscaped(parameter.type, it, allParamsEscapingEnabled) }
                 "-p:${normalizedName}=${normalizedValue}"
             }
     }
@@ -47,13 +54,32 @@ class MSBuildParameterConverterImpl(
             }.toCharArray()
         )
 
-    fun normalizeValue(value: String, shouledBeEscaped: (Char) -> Boolean): String {
-        val str = String(escapeSymbols(value.asSequence(), shouledBeEscaped).toList().toCharArray())
-        if (str.isBlank() || SpecialCharacters.any { str.contains(it)}) {
+    fun normalizeValue(value: String, shouldBeEscaped: (Char) -> Boolean): String {
+        val str = String(escapeSymbols(value.asSequence(), shouldBeEscaped).toList().toCharArray())
+        if (isDoubleQuoteRequired(str)) {
             return StringUtil.doubleQuote(StringUtil.unquoteString(str))
         }
 
         return str
+    }
+
+    private fun isDoubleQuoteRequired(str: String): Boolean {
+        val isEndWithOneBackslash = countTrailingBackslashes(str) == 2 // one backslash is escaping
+        return str.isBlank()
+                || SpecialCharacters.any { str.contains(it) }
+                || (!hasTrailingBackslashQuotBeenDisabled && isEndWithOneBackslash && _environment.os == OSType.WINDOWS)
+    }
+
+    private fun countTrailingBackslashes(str: String): Int {
+        var backslashesCount = 0
+        val chars = str.toCharArray()
+        for (i in (0..chars.lastIndex).reversed()) {
+            if (chars[i] != '\\') {
+                break
+            }
+            backslashesCount++
+        }
+        return backslashesCount
     }
 
     private fun isValidInitialElementNameCharacter(c: Char) =
@@ -68,7 +94,7 @@ class MSBuildParameterConverterImpl(
         (c == '_') ||
         (c == '-')
 
-    private fun escapeSymbols(chars: Sequence<Char>, shouledBeEscaped: (Char) -> Boolean): Sequence<Char> = sequence {
+    private fun escapeSymbols(chars: Sequence<Char>, shouldBeEscaped: (Char) -> Boolean): Sequence<Char> = sequence {
         var lastIsSlash = false
         for (char in chars) {
             lastIsSlash = false
@@ -78,13 +104,13 @@ class MSBuildParameterConverterImpl(
                     lastIsSlash = true
                 }
 
-                shouledBeEscaped(char) -> yieldAll(escape(char))
+                shouldBeEscaped(char) -> yieldAll(escape(char))
                 else -> yield(char)
             }
         }
 
         // https://youtrack.jetbrains.com/issue/TW-72915
-        if(lastIsSlash) {
+        if (lastIsSlash) {
             yield('\\')
         }
     }
@@ -99,7 +125,7 @@ class MSBuildParameterConverterImpl(
     companion object {
         private val SpecialCharacters = hashSetOf(' ', '%', ';')
 
-        internal fun shouledBeEscaped(parameterType: MSBuildParameterType, char: Char, allParamsEscapingEnabled: Boolean) = when {
+        internal fun shouldBeEscaped(parameterType: MSBuildParameterType, char: Char, allParamsEscapingEnabled: Boolean) = when {
             // invisible
             char.isISOControl() -> true
             // predefined parameters
