@@ -20,11 +20,13 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.VirtualContext
+import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterType
+import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -33,6 +35,9 @@ import org.testng.annotations.Test
 class MSBuildParameterConverterTest {
     @MockK
     private lateinit var _parameterServiceMock: ParametersService
+
+    @MockK
+    private lateinit var _environment: Environment
 
     @BeforeMethod
     fun setUp() {
@@ -78,7 +83,7 @@ class MSBuildParameterConverterTest {
     @Test(dataProvider = "casesNames")
     fun shouldNormalizeName(name: String, expectedName: String) {
         // Given
-        val converter = MSBuildParameterConverterImpl(_parameterServiceMock)
+        val converter = MSBuildParameterConverterImpl(_parameterServiceMock, _environment)
 
         // When
         val actualName = converter.normalizeName(name)
@@ -126,10 +131,12 @@ class MSBuildParameterConverterTest {
         expectedValue: String
     ) {
         // arrange
-        val converter = MSBuildParameterConverterImpl(_parameterServiceMock)
+        every { _environment.os } answers { OSType.UNIX }
+        every { _parameterServiceMock.tryGetParameter(any(), any()) } answers { "" }
+        val converter = MSBuildParameterConverterImpl(_parameterServiceMock, _environment)
 
         // act
-        val actualValue = converter.normalizeValue(value) { char -> MSBuildParameterConverterImpl.shouledBeEscaped(parameterType, char, false) }
+        val actualValue = converter.normalizeValue(value) { char -> MSBuildParameterConverterImpl.shouldBeEscaped(parameterType, char, false) }
 
         // assert
         Assert.assertEquals(actualValue, expectedValue)
@@ -139,7 +146,7 @@ class MSBuildParameterConverterTest {
     fun `should convert only if non-empty parameter name and non-empty parameter value are presented`() {
         // arrange
         every { _parameterServiceMock.tryGetParameter(any(), any()) } answers { null }
-        val converter = MSBuildParameterConverterImpl(_parameterServiceMock)
+        val converter = MSBuildParameterConverterImpl(_parameterServiceMock, _environment)
 
         // act
         val actualParams = converter.convert(
@@ -191,12 +198,47 @@ class MSBuildParameterConverterTest {
     ) {
         // arrange
         every { _parameterServiceMock.tryGetParameter(any(), any()) } answers { allParamsEscapingEnabled }
-        val converter = MSBuildParameterConverterImpl(_parameterServiceMock)
+        val converter = MSBuildParameterConverterImpl(_parameterServiceMock, _environment)
 
         // act
         val actualParams = converter.convert(parameters).toList()
 
         // assert
         Assert.assertEquals(actualParams, expected)
+    }
+
+    @DataProvider
+    fun casesForTrailingSlashQuotation(): Array<Array<Any>> = arrayOf(
+        // cases with special characters - always quoting
+        arrayOf("value 123\\", OSType.UNIX, "\"value 123\\\\\"", "false"),
+        arrayOf("value 123\\", OSType.WINDOWS, "\"value 123\\\\\"", "false"),
+
+        // cases without special characters - quoting only for Windows and if it's one trailing slash
+        arrayOf("value123\\", OSType.UNIX, "value123\\\\", "false"),
+        arrayOf("value123\\", OSType.WINDOWS, "\"value123\\\\\"", "false"),
+        arrayOf("value123\\", OSType.WINDOWS, "value123\\\\", "true"), // feature disabled - no quotation
+        arrayOf("value123\\\\", OSType.WINDOWS, "value123\\\\\\", "false"),
+        arrayOf("value123\\\\\\", OSType.WINDOWS, "value123\\\\\\\\", "false"),
+        arrayOf("\\value123", OSType.WINDOWS, "\\value123", "false"),
+        arrayOf("value\\123", OSType.WINDOWS, "value\\123", "false"),
+        arrayOf("value\\123\\", OSType.WINDOWS, "\"value\\123\\\\\"", "false"),
+    )
+    @Test(dataProvider = "casesForTrailingSlashQuotation")
+    fun `should convert value when escaping trailing backslash`(value: String,
+                                                                osType: OSType,
+                                                                expectedValue: String,
+                                                                hasTrailingBackslashQuotationBeenDisabled: String?) {
+        // arrange
+        every { _parameterServiceMock.tryGetParameter(any(), DotnetConstants.PARAM_MSBUILD_DISABLE_TRAILING_BACKSLASH_QUOTATION) } answers {
+            hasTrailingBackslashQuotationBeenDisabled ?: ""
+        }
+        every { _environment.os } answers { osType }
+        val converter = MSBuildParameterConverterImpl(_parameterServiceMock, _environment)
+
+        // act
+        val actualValue = converter.normalizeValue(value) { char -> MSBuildParameterConverterImpl.shouldBeEscaped(MSBuildParameterType.Unknown, char, true) }
+
+        // assert
+        Assert.assertEquals(actualValue, expectedValue)
     }
 }
