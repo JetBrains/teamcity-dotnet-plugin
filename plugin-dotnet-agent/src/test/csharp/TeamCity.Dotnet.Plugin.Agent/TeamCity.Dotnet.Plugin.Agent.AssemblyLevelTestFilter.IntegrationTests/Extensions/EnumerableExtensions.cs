@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
-
-internal interface ITestProjectGenerator<in TTestEngine>
-    where TTestEngine : ITestEngine
+public static class EnumerableExtensions
 {
-    ITestEngine TestEngine { get; }
-    
-    Task GenerateAsync(string directoryPath, string projectName);
+    public static bool ContainsSameElements<T>(this IEnumerable<T> source, IEnumerable<T> target) =>
+        source.OrderDescending().SequenceEqual(target.OrderDescending());
 }

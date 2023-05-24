@@ -24,39 +24,24 @@ internal class TestSuppressionDecider : ITestSuppressionDecider
     {
         if (string.IsNullOrWhiteSpace(testSelectorQuery))
         {
-            throw new ArgumentException("Test selector query cannot be empty or null.", nameof(testSelectorQuery));
+            throw new ArgumentException("Test selector query cannot be empty or null", nameof(testSelectorQuery));
         }
 
-        var isParametrized = testSelectorQuery.Contains("(");
-        var querySegments = testSelectorQuery.Split('.');
+        // works only for test class selectors without parameters
+        var (namespaces, className) = Parse(testSelectorQuery);
+
+        return testSelectors.TryGetValue(testSelectorQuery, out var existingSelector)
+            ? (shouldBeSuppressed: !inclusionMode, testSelector: existingSelector)
+            : (shouldBeSuppressed: inclusionMode, testSelector: new TestClassSelector(namespaces, className));
+    }
+
+    private static (IList<string>, string) Parse(string testSelectorQuery)
+    {
+        var parenthesisIndex = testSelectorQuery.IndexOf('(');
+        var querySegments = parenthesisIndex != -1
+            ? testSelectorQuery[..parenthesisIndex].Split('.')
+            : testSelectorQuery.Split('.');
         IList<string> namespaces = querySegments.Take(querySegments.Length - 1).ToList();
-        string className;
-
-        if (inclusionMode)
-        {
-            if (testSelectors.TryGetValue(testSelectorQuery, out var existingSelector))
-            {
-                return (false, existingSelector);
-            }
-
-            throw new InvalidOperationException($"Test selector with query '{testSelectorQuery}' not found in testSelectors.");
-        }
-
-        if (isParametrized)
-        {
-            var paramStartIndex = testSelectorQuery.IndexOf("(");
-            var paramEndIndex = testSelectorQuery.IndexOf(")");
-            className = querySegments.Last().Substring(0, paramStartIndex - querySegments.Length + 1);
-            var parametersString = testSelectorQuery.Substring(paramStartIndex + 1, paramEndIndex - paramStartIndex - 1);
-            var parameters = parametersString.Split(',').Select(p => p.Trim()).ToList();
-            var selector = new ParamTestClassSelector(namespaces, className, parameters);
-            return (true, selector);
-        }
-        else
-        {
-            className = querySegments.Last();
-            var selector = new TestClassSelector(namespaces, className);
-            return (true, selector);
-        }
+        return (namespaces, querySegments.Last());
     }
 }

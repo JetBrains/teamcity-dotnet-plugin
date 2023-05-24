@@ -48,7 +48,7 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
                 var (shouldBeSuppressed, testSelector) = _testSuppressionDecider.Decide(testClass.FullName, criteria.InclusionMode, criteria.TestSelectors);
                 if (shouldBeSuppressed)
                 {
-                    var suppressionResult = _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector));
+                    var suppressionResult = _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector!));
                     return suppressionResult.SuppressedTests;
                 }
 

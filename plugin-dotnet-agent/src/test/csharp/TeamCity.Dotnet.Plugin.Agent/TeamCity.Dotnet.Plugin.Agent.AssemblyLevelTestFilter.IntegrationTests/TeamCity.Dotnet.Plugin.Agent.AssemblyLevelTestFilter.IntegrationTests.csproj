@@ -24,10 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\NUnitTestSources\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\..\..\main\csharp\TeamCity.Dotnet.Plugin.Agent\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.csproj" />
     </ItemGroup>
 

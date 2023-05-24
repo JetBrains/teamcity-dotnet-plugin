@@ -73,6 +73,7 @@ internal class TestSelectorsFactory : ITestSelectorsFactory
             if (testSelector != null)
             {
                 registry[testSelector.Query] = testSelector;
+                _logger.LogDebug("Loaded test selector for suppression: {TestQuery}", testSelector.Query);
             }
         }
 

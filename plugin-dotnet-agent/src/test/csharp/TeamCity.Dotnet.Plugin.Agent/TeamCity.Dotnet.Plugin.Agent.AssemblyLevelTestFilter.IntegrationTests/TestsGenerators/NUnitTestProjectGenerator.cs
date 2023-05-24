@@ -16,23 +16,22 @@
 
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.NUnit;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.RoslynExtensions;
+using static TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions.RoslynExtensions;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestsGenerators;
 
-internal class NUnitTestProjectGenerator : ITestProjectGenerator<NUnit>
+internal class NUnitTestProjectGenerator : ITestProjectGenerator
 {
     public ITestEngine TestEngine { get; } = new NUnit();
 
-    public async Task GenerateAsync(string directoryPath, string projectName)
+    public async Task GenerateAsync(string directoryPath, string projectName, params TestClassDescription[] testClasses)
     {
         var(csprojFileName, csprojFileContent) = GenerateCsproj(projectName);
-        var (csFileName, csFileContent) = GenerateNUnitTestsSourceFile(projectName);
+        var (csFileName, csFileContent) = GenerateNUnitTestsSourceFile(projectName, testClasses);
         var filesMap = new Dictionary<string, string>
         {
             { csprojFileName, csprojFileContent },
@@ -69,8 +68,23 @@ internal class NUnitTestProjectGenerator : ITestProjectGenerator<NUnit>
         return ($"{projectName}.csproj", project.ToString());
     }
 
-    private static (string fileName, string content) GenerateNUnitTestsSourceFile(string projectName)
+    private static (string fileName, string content) GenerateNUnitTestsSourceFile(string projectName, params TestClassDescription[] testClasses)
     {
+        var namespaceMembers = new List<MemberDeclarationSyntax>();
+
+        foreach (var testClass in testClasses)
+        {
+            var classMembers = new List<MemberDeclarationSyntax>();
+
+            foreach (var methodName in testClass.TestMethodsNames)
+            {
+                classMembers.Add(PublicMethodWithAttribute(methodName, "Test", Block()));
+            }
+
+            var classDeclaration = PublicClassWithAttribute(testClass.ClassName, "TestFixture", classMembers.ToArray());
+            namespaceMembers.Add(classDeclaration);
+        }
+
         var unitTest = CompilationUnit()
             .WithUsings(
                 Using("System"),
@@ -78,21 +92,11 @@ internal class NUnitTestProjectGenerator : ITestProjectGenerator<NUnit>
             )
             .WithMembers(
                 SingletonList<MemberDeclarationSyntax>(
-                    Namespace(projectName, "Tests")
-                        .WithMembers(
-                            SingletonList<MemberDeclarationSyntax>(
-                                ClassDeclaration("MyTests")
-                                    .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
-                                    .WithAttributeLists(SingletonList(AttributeList(
-                                SingletonSeparatedList(Attribute(IdentifierName("TestFixture"))))))
-                                    .WithMembers(SingletonList(
-                                        PublicMethodWithAttribute("MyTest", "Test", Block())
-                                    ))
-                            )
-                        )
+                    Namespace(projectName)
+                        .WithMembers(List(namespaceMembers))
                 )
             );
 
-        return ($"{projectName}.Tests.MyTests.cs", unitTest.NormalizeWhitespace().ToFullString());
+        return ($"{projectName}.Tests.cs", unitTest.NormalizeWhitespace().ToFullString());
     }
 }
