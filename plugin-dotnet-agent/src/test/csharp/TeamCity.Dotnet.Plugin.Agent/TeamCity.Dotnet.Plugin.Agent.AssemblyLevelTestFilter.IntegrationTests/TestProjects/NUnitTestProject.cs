@@ -18,20 +18,23 @@ using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.XUnit;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.NUnit;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions.RoslynExtensions;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestsGenerators;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestProjects;
 
-internal class XUnitTestProjectGenerator : ITestProjectGenerator
+internal class NUnitTestProject : ITestProject
 {
-    public ITestEngine TestEngine { get; } = new XUnit();
+    public ITestEngine TestEngine { get; } = new NUnit();
 
-    public async Task GenerateAsync(string directoryPath, string projectName, params TestClassDescription[] testClasses)
+    public async Task GenerateAsync(DotnetVersion dotnetVersion, string directoryPath, string projectName,
+        params TestClassDescription[] testClasses)
     {
-        var(csprojFileName, csprojFileContent) = GenerateCsproj(projectName);
-        var (csFileName, csFileContent) = GenerateXUnitTestsSourceFile(projectName, testClasses);
+        var(csprojFileName, csprojFileContent) = GenerateCsproj(dotnetVersion, projectName);
+        var (csFileName, csFileContent) = GenerateNUnitTestsSourceFile(projectName, testClasses);
         var filesMap = new Dictionary<string, string>
         {
             { csprojFileName, csprojFileContent },
@@ -44,23 +47,23 @@ internal class XUnitTestProjectGenerator : ITestProjectGenerator
         }
     }
 
-    private static (string fileName, string content) GenerateCsproj(string projectName)
+    private static (string fileName, string content) GenerateCsproj(DotnetVersion dotnetVersion, string projectName)
     {
         var project = new XDocument(
             new XElement("Project",
                 new XAttribute("Sdk", "Microsoft.NET.Sdk"),
 
                 new XElement("PropertyGroup",
-                    new XElement("TargetFramework", "net8.0"),
+                    new XElement("TargetFramework", dotnetVersion.GetMoniker()),
                     new XElement("IsPackable", "false")),
 
                 new XElement("ItemGroup",
                     new XElement("PackageReference",
-                        new XAttribute("Include", "xunit"),
-                        new XAttribute("Version", "2.4.1")),
+                        new XAttribute("Include", "NUnit"),
+                        new XAttribute("Version", "3.13.3")),
                     new XElement("PackageReference",
-                        new XAttribute("Include", "xunit.runner.visualstudio"),
-                        new XAttribute("Version", "2.4.3")),
+                        new XAttribute("Include", "NUnit3TestAdapter"),
+                        new XAttribute("Version", "4.2.1")),
                     new XElement("PackageReference",
                         new XAttribute("Include", "Microsoft.NET.Test.Sdk"),
                         new XAttribute("Version", "17.3.2")))));
@@ -68,7 +71,7 @@ internal class XUnitTestProjectGenerator : ITestProjectGenerator
         return ($"{projectName}.csproj", project.ToString());
     }
 
-    private static (string fileName, string content) GenerateXUnitTestsSourceFile(string projectName, params TestClassDescription[] testClasses)
+    private static (string fileName, string content) GenerateNUnitTestsSourceFile(string projectName, params TestClassDescription[] testClasses)
     {
         var namespaceMembers = new List<MemberDeclarationSyntax>();
 
@@ -78,17 +81,17 @@ internal class XUnitTestProjectGenerator : ITestProjectGenerator
 
             foreach (var methodName in testClass.TestMethodsNames)
             {
-                classMembers.Add(PublicMethodWithAttribute(methodName, "Fact", Block()));
+                classMembers.Add(PublicMethodWithAttribute(methodName, "Test", Block()));
             }
 
-            var classDeclaration = PublicClass(testClass.ClassName, classMembers.ToArray());
+            var classDeclaration = PublicClassWithAttribute(testClass.ClassName, "TestFixture", classMembers.ToArray());
             namespaceMembers.Add(classDeclaration);
         }
 
         var unitTest = CompilationUnit()
             .WithUsings(
                 Using("System"),
-                Using("Xunit")
+                Using("NUnit.Framework")
             )
             .WithMembers(
                 SingletonList<MemberDeclarationSyntax>(

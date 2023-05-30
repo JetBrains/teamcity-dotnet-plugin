@@ -2,22 +2,34 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
-        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <IsPackable>true</IsPackable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>11.0</LangVersion>
+        <OutputType>Exe</OutputType>
+        <EntryPointExe>TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Program.Main</EntryPointExe>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildVersion>
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net7.0'">17.6.3</MicrosoftBuildVersion>
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net8.0'">17.6.3</MicrosoftBuildVersion>
+
+        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net6.0'">6.0.0</MicrosoftExtensionsVersion>
+        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net7.0'">7.0.0</MicrosoftExtensionsVersion>
+        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net8.0'">8.0.0-preview.4.23259.5</MicrosoftExtensionsVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Build" Version="17.5.0" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" ExcludeAssets="runtime" />
       <PackageReference Include="Microsoft.Build.Locator" Version="1.5.5" ExcludeAssets="runtime" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0-preview.3.23174.8" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.3.23174.8" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Mono.Cecil" Version="0.11.4" />
       <PackageReference Include="YamlDotNet" Version="13.1.0" />
     </ItemGroup>

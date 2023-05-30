@@ -49,11 +49,10 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     {
         _logger.LogDebug("Executing suppress command: {@SuppressCommand}", command);
 
-        var patchingCriteria = new TestSuppressionPatchingCriteria
-        {
-            TestSelectors = await _testSelectorsFactory.LoadFromAsync(command.TestsFilePath),
-            InclusionMode = command.InclusionMode
-        };
+        var patchingCriteria = new TestSuppressionPatchingCriteria(
+            TestSelectors: await _testSelectorsFactory.LoadFromAsync(command.TestsFilePath),
+            InclusionMode: command.InclusionMode
+        );
 
         _logger.LogDebug("Patching criteria created: {PatchingCriteria}", patchingCriteria);
 
@@ -66,11 +65,10 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
             {
                 _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
 
-                await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupAssemblyMetadata
-                {
-                    Path = patchingResult.AssemblyPath,
-                    BackupPath = patchingResult.BackupPath
-                });
+                await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupAssemblyMetadata(
+                    Path: patchingResult.AssemblyPath,
+                    BackupPath: patchingResult.BackupPath
+                ));
 
                 _logger.LogDebug("Backup metadata saved for {PatchingResult}", patchingResult);
             }

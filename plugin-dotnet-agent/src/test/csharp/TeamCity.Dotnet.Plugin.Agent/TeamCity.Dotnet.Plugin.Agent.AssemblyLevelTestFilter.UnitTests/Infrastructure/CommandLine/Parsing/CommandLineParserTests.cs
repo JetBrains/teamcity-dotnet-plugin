@@ -278,12 +278,12 @@ public class CommandLineParserTests
         
         [CommandOption(false, "--flag", "-f")]
         public bool Flag { get; set; }
-        
+
         [CommandOption(false, "--string", "-s")]
-        public string String { get; set; }
-        
+        public string String { get; set; } = "";
+
         [CommandOption(true, "--req-string", "-rs")]
-        public string RequiringValueString { get; set; }
+        public string RequiringValueString { get; set; } = "";
         
         [CommandOption(true, "--enum", "-e")]
         public TestEnum Enum { get; set; }
@@ -291,8 +291,8 @@ public class CommandLineParserTests
     
     private class AaaCommand : Command
     {
-        [CommandOption(true,"--nested-option", "-no")]
-        public string NestedOption { get; set; }
+        [CommandOption(true, "--nested-option", "-no")]
+        public string NestedOption { get; set; } = "";
     }
     
     private class BbbCommand : Command {}

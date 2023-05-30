@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
-
-internal record TestSuppressionPatchingCriteria(
-    IReadOnlyDictionary<string, ITestSelector> TestSelectors,
-    bool InclusionMode
-) : IAssemblyPatchingCriteria;
+[CollectionDefinition(".NET containers")]
+public class DotnetContainersCollection : ICollectionFixture<DotnetTestContainerFixture> {}

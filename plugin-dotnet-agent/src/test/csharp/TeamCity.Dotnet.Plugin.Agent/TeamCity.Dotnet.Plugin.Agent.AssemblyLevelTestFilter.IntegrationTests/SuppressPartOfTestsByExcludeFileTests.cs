@@ -15,28 +15,37 @@
 //  */
 
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestsGenerators;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestProjects;
 using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
 
-public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetContainerFixture>
+public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetTestContainerFixture>
 {
-    private readonly DotnetContainerFixture _fixture;
+    private readonly DotnetTestContainerFixture _fixture;
 
-    public SuppressPartOfTestsByExcludeFileTests(DotnetContainerFixture fixture, ITestOutputHelper output)
+    public SuppressPartOfTestsByExcludeFileTests(DotnetTestContainerFixture fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
-        _fixture.Init(output);
+        _fixture.Output = output;
     }
 
     [Theory]
-    [InlineData(typeof(NUnitTestProjectGenerator))]
-    [InlineData(typeof(XUnitTestProjectGenerator))]
-    [InlineData(typeof(MsTestTestProjectGenerator))]
-    public async Task Run(Type testProjectGeneratorType)
+    [InlineData(typeof(XUnitTestProject), DotnetVersion.v8_0_Preview)]
+    [InlineData(typeof(XUnitTestProject), DotnetVersion.v7_0)]
+    [InlineData(typeof(XUnitTestProject), DotnetVersion.v6_0)]
+    [InlineData(typeof(NUnitTestProject), DotnetVersion.v8_0_Preview)]
+    [InlineData(typeof(NUnitTestProject), DotnetVersion.v7_0)]
+    [InlineData(typeof(NUnitTestProject), DotnetVersion.v6_0)]
+    [InlineData(typeof(MsTestTestProject), DotnetVersion.v8_0_Preview)]
+    [InlineData(typeof(MsTestTestProject), DotnetVersion.v7_0)]
+    [InlineData(typeof(MsTestTestProject), DotnetVersion.v6_0)]
+    public async Task Run(Type testProjectGeneratorType, DotnetVersion dotnetVersion)
     {
         // arrange
+        await _fixture.ReinitContainerWith(dotnetVersion);
+        
         const string projectName = "MyTestProject";
         var testClass0 = new TestClassDescription("TestClass0", "Test0", "Test1", "Test2");
         var testClass1 = new TestClassDescription("TestClass1", "Test0", "Test1", "Test2", "Test3");
@@ -47,8 +56,13 @@ public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetContain
         var testClassesToExclude = new[] { testClass0, testClass2 };
         var testNamesToExclude = testClassesToExclude.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetAssemblyPath) =
-            await _fixture.CreateTestProject(testProjectGeneratorType, projectName, allTestClasses, testClassesToExclude);
+        var (testQueriesFilePath, targetAssemblyPath) = await _fixture.CreateTestProject(
+            testProjectGeneratorType, 
+            dotnetVersion,
+            projectName,
+            allTestClasses,
+            testClassesToExclude
+        );
 
         // act
         var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetAssemblyPath);

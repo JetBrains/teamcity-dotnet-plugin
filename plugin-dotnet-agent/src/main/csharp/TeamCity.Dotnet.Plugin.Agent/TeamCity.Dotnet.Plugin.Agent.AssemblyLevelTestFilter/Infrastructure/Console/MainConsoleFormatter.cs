@@ -28,7 +28,7 @@ internal class MainConsoleFormatter : ConsoleFormatter
 
     public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider, TextWriter textWriter)
     {
-        var message = logEntry.Formatter(logEntry.State, logEntry.Exception);
+        var message = logEntry.Formatter!(logEntry.State, logEntry.Exception);
         var dateTimeOffset = DateTimeOffset.UtcNow;
 
         message = message.Replace(logEntry.Category, "").Trim('\n'); // remove category

@@ -16,9 +16,4 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 
-internal record BackupAssemblyMetadata
-{
-    public required string Path { get; init; }
-    
-    public required string BackupPath { get; init; }
-};
+internal record BackupAssemblyMetadata(string Path, string BackupPath);

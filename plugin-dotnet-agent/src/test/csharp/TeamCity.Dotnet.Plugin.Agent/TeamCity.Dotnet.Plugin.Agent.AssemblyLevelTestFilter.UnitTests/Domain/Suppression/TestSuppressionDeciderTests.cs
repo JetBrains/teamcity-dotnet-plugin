@@ -43,7 +43,7 @@ public class TestSuppressionDeciderTests
     [Fact]
     public void Decide_ShouldThrowArgumentException_WhenTestSelectorQueryIsNull()
     {
-        Assert.Throws<ArgumentException>(() => _decider.Decide(null, false, _testSelectors));
+        Assert.Throws<ArgumentException>(() => _decider.Decide(null!, false, _testSelectors));
     }
 
     [Theory]
