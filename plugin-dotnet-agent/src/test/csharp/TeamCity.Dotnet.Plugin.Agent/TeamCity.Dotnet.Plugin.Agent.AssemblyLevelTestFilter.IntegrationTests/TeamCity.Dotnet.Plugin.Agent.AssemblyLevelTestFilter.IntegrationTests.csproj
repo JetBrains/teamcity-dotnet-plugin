@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +28,10 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\main\csharp\TeamCity.Dotnet.Plugin.Agent\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.csproj" />
     </ItemGroup>
+
+    <Target Name="CopyBaseDockerfile" AfterTargets="Build">
+        <Copy SourceFiles="Fixtures\dotnet-sdk.dockerfile" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" Retries="3" RetryDelayMilliseconds="1000" />
+    </Target>
 
     <Target Name="PublishDependentProject" BeforeTargets="Build">
         <PropertyGroup>

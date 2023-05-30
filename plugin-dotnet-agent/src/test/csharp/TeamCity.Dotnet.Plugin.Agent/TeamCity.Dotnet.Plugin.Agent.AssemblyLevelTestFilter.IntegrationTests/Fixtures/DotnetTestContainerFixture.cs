@@ -38,11 +38,11 @@ public class DotnetTestContainerFixture : IDisposable
     public DotnetTestContainerFixture()
     {
         _testSetup = new ConcurrentDictionary<DotnetVersion, DotnetTestSetup>();
-        Parallel.ForEach(Enum.GetValues<DotnetVersion>(), dotnetVersion =>
+        foreach(var dotnetVersion in Enum.GetValues<DotnetVersion>())
         {
             var testSetup = new DotnetTestSetup(dotnetVersion);
             _testSetup.TryAdd(dotnetVersion, testSetup);
-        });
+        }
     }
 
     public async Task ReinitContainerWith(DotnetVersion dotnetVersion)
@@ -115,7 +115,7 @@ public class DotnetTestContainerFixture : IDisposable
 
     public Task RunFilterApp(string argsStr) => ExecAsync($"dotnet {DotnetTestSetup.AppPath} {argsStr}");
 
-    public async Task<IReadOnlyList<string>> GetTestNames(string trxReportFilePath)
+    private async Task<IReadOnlyList<string>> GetTestNames(string trxReportFilePath)
     {
         // parse trx report
         var execResult = await ExecAsync($"cat {trxReportFilePath}", silent: true);

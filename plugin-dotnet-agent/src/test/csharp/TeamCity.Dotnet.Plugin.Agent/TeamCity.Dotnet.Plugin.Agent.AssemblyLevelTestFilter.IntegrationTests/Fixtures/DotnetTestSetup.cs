@@ -14,25 +14,49 @@
  * limitations under the License.
  */
 
+using System.Collections.Concurrent;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
+using DotNet.Testcontainers.Images;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
 
 internal class DotnetTestSetup : IDisposable
 {
+    private static object _lock = new();
+    private static readonly ConcurrentDictionary<DotnetVersion, IImage> DockerImages;
     private const string WorkDirPath = "/app";
     private const string TestsQueriesFileName = "tests-list.txt";
-    private readonly string _hostAppSourcesPath = $"{Directory.GetCurrentDirectory()}/published-app-binaries";
+    private readonly string _hostAppSourcesPath = $"{CurrentDirectory}/published-app-binaries";
     private const string AppName = "TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll";
+
+    static DotnetTestSetup()
+    {
+        DockerImages = new ConcurrentDictionary<DotnetVersion, IImage>();
+    }
+
+    private static string CurrentDirectory => Directory.GetCurrentDirectory();
 
     public DotnetTestSetup(DotnetVersion dotnetVersion)
     {
+        if (!DockerImages.ContainsKey(dotnetVersion))
+        {
+            lock (_lock)
+            {
+                if (!DockerImages.ContainsKey(dotnetVersion))
+                {
+                    Parallel.ForEach(Enum.GetValues<DotnetVersion>(), dv =>
+                    {
+                        DockerImages.TryAdd(dv, new DotnetSdkImage(dv));
+                    });
+                }
+            }
+        }
+
         var id = Guid.NewGuid();
-        HostTestProjectPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/test-project__dotnet_{dotnetVersion}__{id}").FullName;
-        Container = RunContainer(dotnetVersion, id);
+        HostTestProjectPath = Directory.CreateDirectory($"{CurrentDirectory}/test-project__dotnet_{dotnetVersion}__{id}").FullName;
+        Container = RunContainer(dotnetVersion, id).Result;
     }
 
     public static string MountedTestProjectSourcesDirPath => "/mounted__test-project-sources";
@@ -55,17 +79,17 @@ internal class DotnetTestSetup : IDisposable
 
     public void ClearTestProjectDir() => ClearDirectory(HostTestProjectPath);
 
-    private IContainer RunContainer(DotnetVersion dotnetVersion, Guid id)
+    private async Task<IContainer> RunContainer(DotnetVersion dotnetVersion, Guid id)
     {
         var container = new ContainerBuilder()
-            .WithImage($"mcr.microsoft.com/dotnet/sdk:{dotnetVersion.GetDockerTag()}")
+            .WithImage(DockerImages[dotnetVersion])
             .WithName($"tc-dotnet-plugin-agent-tests-filter__integration-tests__dotnet_{dotnetVersion}__{id}")
             .WithWorkingDirectory(WorkDirPath)
             .WithCommand("tail", "-f", "/dev/null")
             .WithBindMount(HostTestProjectPath, MountedTestProjectSourcesDirPath, AccessMode.ReadOnly)
             .WithBindMount(_hostAppSourcesPath, MountedFilterAppSourcesDirPath, AccessMode.ReadOnly)
             .Build();
-        container.StartAsync().Wait();
+        await container.StartAsync();
         return container;
     }
 

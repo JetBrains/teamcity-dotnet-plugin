@@ -21,15 +21,15 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DotnetVersion
 {
-    [DockerTag("8.0-preview")]
+    [DockerTag("8.0-preview-alpine")]
     [Moniker("net8.0")]
     v8_0_Preview,
     
-    [DockerTag("7.0")]
+    [DockerTag("7.0-alpine")]
     [Moniker("net7.0")]
     v7_0,
     
-    [DockerTag("6.0")]
+    [DockerTag("6.0-alpine")]
     [Moniker("net6.0")]
     v6_0,
 }
