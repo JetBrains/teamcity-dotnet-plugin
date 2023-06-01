@@ -5,27 +5,30 @@ using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
 
-public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestContainerFixture>
+public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerFixture>
 {
     private readonly DotnetTestContainerFixture _fixture;
 
-    public SuppressPartOfTestsByIncludeFileTests(DotnetTestContainerFixture fixture, ITestOutputHelper output)
+    public SuppressTestsByTargetTypeTests(DotnetTestContainerFixture fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
         _fixture.Init(output);
     }
 
     [Theory]
-    [InlineData(typeof(XUnitTestProject), DotnetVersion.v8_0_Preview)]
-    [InlineData(typeof(XUnitTestProject), DotnetVersion.v7_0)]
-    [InlineData(typeof(XUnitTestProject), DotnetVersion.v6_0)]
-    [InlineData(typeof(NUnitTestProject), DotnetVersion.v8_0_Preview)]
-    [InlineData(typeof(NUnitTestProject), DotnetVersion.v7_0)]
-    [InlineData(typeof(NUnitTestProject), DotnetVersion.v6_0)]
-    [InlineData(typeof(MsTestTestProject), DotnetVersion.v8_0_Preview)]
-    [InlineData(typeof(MsTestTestProject), DotnetVersion.v7_0)]
-    [InlineData(typeof(MsTestTestProject), DotnetVersion.v6_0)]
-    public async Task Run(Type testProjectGeneratorType, DotnetVersion dotnetVersion)
+    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v8_0_Preview)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v7_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v6_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v8_0_Preview)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v7_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v6_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v8_0_Preview)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v7_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v6_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v8_0_Preview)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v7_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v6_0)]
+    public async Task Run(DotnetTestContainerFixture.TargetType targetType, DotnetVersion dotnetVersion)
     {
         // arrange
         await _fixture.ReinitContainerWith(dotnetVersion);
@@ -33,18 +36,17 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
         const string projectName = "MyTestProject";
         var testClass0 = new TestClassDescription("TestClass0", "Test0", "Test1", "Test2");
         var testClass1 = new TestClassDescription("TestClass1", "Test0", "Test1", "Test2", "Test3");
-        var testClass2 = new TestClassDescription("TestClass2", "Test0", "Test1");
-        var allTestClasses = new[] { testClass0, testClass1, testClass2 };
+        var allTestClasses = new[] { testClass0, testClass1 };
         var allTestsNames = allTestClasses.GetFullTestMethodsNames(projectName);
-        var testClassesToInclude = new[] { testClass0, testClass2 };
+        var testClassesToInclude = new[] { testClass0 };
         var testNamesToInclude = testClassesToInclude.GetFullTestMethodsNames(projectName);
         var testNamesToExclude = testClass1.GetFullTestMethodsNames(projectName);
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
-            testProjectGeneratorType,
+            typeof(XUnitTestProject),   // it doesn't matter which project type we use here, because we are testing the target overriding
             dotnetVersion,
             projectName,
-            DotnetTestContainerFixture.TargetType.Assembly,
+            targetType,
             allTestClasses,
             testClassesToInclude
         );
@@ -55,12 +57,12 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
         var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
 
         // assert
-        Assert.Equal(9, beforeTestNamesExecuted.Count);
+        Assert.Equal(7, beforeTestNamesExecuted.Count);
         Assert.True(allTestsNames.ContainsSameElements(beforeTestNamesExecuted));
-        Assert.Contains($"Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9", beforeTestOutput.Stdout);
+        Assert.Contains($"Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7", beforeTestOutput.Stdout);
         Assert.Equal(testNamesToInclude.Count, afterTestNamesExecuted.Count);
         Assert.True(testNamesToInclude.ContainsSameElements(afterTestNamesExecuted));
         Assert.False(testNamesToExclude.Intersect(afterTestNamesExecuted).Any());
-        Assert.Contains($"Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5", afterTestOutput.Stdout);
+        Assert.Contains($"Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3", afterTestOutput.Stdout);
     }
 }

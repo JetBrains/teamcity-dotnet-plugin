@@ -15,15 +15,25 @@
  */
 
 using Microsoft.Build.Construction;
+using Microsoft.Extensions.Logging;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
 internal class SolutionTargetResolvingStrategy : ITargetResolvingStrategy
 {
+    private readonly ILogger<SolutionTargetResolvingStrategy> _logger;
+    
     public TargetType TargetType => TargetType.Solution;
 
-    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
+    public SolutionTargetResolvingStrategy(ILogger<SolutionTargetResolvingStrategy> logger)
     {
+        _logger = logger;
+    }
+
+    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    {
+        _logger.LogInformation("Resolving target solution: {Target}", target);
+        
         var solutionFile = new FileInfo(target);
         var solution = SolutionFile.Parse(solutionFile.FullName);
 
@@ -31,10 +41,13 @@ internal class SolutionTargetResolvingStrategy : ITargetResolvingStrategy
         {
             if (project.ProjectType != SolutionProjectType.KnownToBeMSBuildFormat)
             {
+                _logger.LogDebug("Skipping project of unknown type: {Project}", project.AbsolutePath);
                 continue;
             }
 
-            yield return (new FileInfo(project.AbsolutePath), TargetType.Project);
+            var projectFile = new FileInfo(project.AbsolutePath);
+            _logger.LogInformation("Resolved project by target solution: {Project}", projectFile.FullName);
+            yield return (projectFile, TargetType.Project);
         }
     }
 }

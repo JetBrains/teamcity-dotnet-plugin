@@ -16,7 +16,7 @@
 
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestProjects;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
@@ -28,7 +28,7 @@ public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetTestCon
     public SuppressPartOfTestsByExcludeFileTests(DotnetTestContainerFixture fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
-        _fixture.Output = output;
+        _fixture.Init(output);
     }
 
     [Theory]
@@ -56,18 +56,19 @@ public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetTestCon
         var testClassesToExclude = new[] { testClass0, testClass2 };
         var testNamesToExclude = testClassesToExclude.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetAssemblyPath) = await _fixture.CreateTestProject(
+        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             testProjectGeneratorType, 
             dotnetVersion,
             projectName,
+            DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
             testClassesToExclude
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetAssemblyPath);
-        await _fixture.RunFilterApp($"suppress -t {targetAssemblyPath} -l {testQueriesFilePath} -v detailed");
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetAssemblyPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -v detailed");
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
 
         // assert
         Assert.Equal(9, beforeTestNamesExecuted.Count);

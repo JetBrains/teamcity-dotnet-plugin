@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
 internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
 {
+    private readonly ILogger<DirectoryTargetResolvingStrategy> _logger;
+    
     public TargetType TargetType => TargetType.Directory;
 
-    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
+    public DirectoryTargetResolvingStrategy(ILogger<DirectoryTargetResolvingStrategy> logger)
     {
+        _logger = logger;
+    }
+
+    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    {
+        _logger.LogInformation("Resolving target directory: {Target}", target);
+        
         var directory = new DirectoryInfo(target);
         var slnFiles = directory.GetFiles(GetSearchPattern(TargetType.Solution), SearchOption.TopDirectoryOnly);
         var csprojFiles = directory.GetFiles(GetSearchPattern(TargetType.Project), SearchOption.TopDirectoryOnly);
@@ -36,6 +47,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         {
             foreach (var slnFile in slnFiles)
             {
+                _logger.LogInformation("Resolved solution in target directory: {Solution}", slnFile.FullName);
                 yield return (slnFile, TargetType.Solution);
             }
         }
@@ -43,6 +55,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         {
             foreach (var csprojFile in csprojFiles)
             {
+                _logger.LogInformation("Resolved project in target directory: {Project}", csprojFile.FullName);
                 yield return (csprojFile, TargetType.Project);
             }
         }
@@ -50,6 +63,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         {
             foreach (var assemblyFile in directory.GetFiles(GetSearchPattern(TargetType.Assembly), SearchOption.AllDirectories))
             {
+                _logger.LogInformation("Resolved assembly in target directory: {Assembly}", assemblyFile.FullName);
                 yield return (assemblyFile, TargetType.Assembly);
             }
         }

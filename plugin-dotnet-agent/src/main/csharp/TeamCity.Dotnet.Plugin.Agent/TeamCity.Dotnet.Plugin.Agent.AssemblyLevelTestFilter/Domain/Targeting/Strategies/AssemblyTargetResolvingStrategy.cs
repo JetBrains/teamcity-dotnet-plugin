@@ -14,18 +14,77 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
+using Mono.Cecil;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
 internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
 {
+    private readonly ILogger<AssemblyTargetResolvingStrategy> _logger;
+    private readonly IReadOnlyList<ITestEngine> _testEngines;
+
     public TargetType TargetType => TargetType.Assembly;
-    
-    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
+
+    public AssemblyTargetResolvingStrategy(
+        ILogger<AssemblyTargetResolvingStrategy> logger,
+        IEnumerable<ITestEngine> testEngines)
     {
-        var fileInfo = new FileInfo(target);
-        if (fileInfo.Exists)
+        _logger = logger;
+        _testEngines = testEngines.ToList();
+    }
+    
+    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    {
+        _logger.LogInformation("Resolving target assembly: {Target}", target);
+        
+        var file = new FileInfo(target);
+        if (!file.Exists)
         {
-            yield return (fileInfo, TargetType.Assembly);
+            _logger.LogError("Target assembly not found: {Target}", target);
+            yield break;
+        }
+
+        var (isAssembly, detectedEngines) = TryDetectEngines(file.FullName);
+        if (!isAssembly)
+        {
+            _logger.LogDebug("Target assembly is not a .NET assembly: {Target}", target);
+            yield break;
+        }
+        if (detectedEngines == null || detectedEngines.Length == 0)
+        {
+            _logger.LogDebug("Target assembly doesn't contain tests written on supported test frameworks: {Target}", target);
+            yield break;
+        }
+        
+        _logger.LogInformation("In assembly {Target} found tests written on followed test frameworks: {Engines}", target, string.Join(", ", detectedEngines));
+        _logger.LogInformation("Resolved assembly: {Assembly}", file.FullName);
+        yield return (file, TargetType.Assembly);
+    }
+
+    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(string filePath)
+    {
+        try
+        {
+            using var assembly = AssemblyDefinition.ReadAssembly(filePath);
+            var assemblyReferences = assembly.MainModule.AssemblyReferences;
+            if (assemblyReferences == null || assemblyReferences.Count == 0)
+            {
+                return (true, null);
+            }
+            
+            _logger.LogDebug("Examing assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", filePath, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
+
+            var detectedEngines = _testEngines
+                .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
+                .Select(te => te.Name)
+                .ToArray();
+            return (true, detectedEngines);
+        }
+        catch (BadImageFormatException)
+        {
+            return (false, null);
         }
     }
 }

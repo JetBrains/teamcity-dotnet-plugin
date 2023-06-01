@@ -20,5 +20,5 @@ internal interface ITargetResolvingStrategy
 {
     TargetType TargetType { get; }
     
-    IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target);
+    IEnumerable<(FileInfo, TargetType)> Resolve(string target);
 }

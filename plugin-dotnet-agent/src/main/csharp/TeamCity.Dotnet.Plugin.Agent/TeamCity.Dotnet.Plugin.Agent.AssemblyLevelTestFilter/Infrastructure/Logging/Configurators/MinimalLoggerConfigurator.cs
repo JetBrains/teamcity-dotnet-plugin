@@ -29,10 +29,10 @@ internal class MinimalLoggerConfigurator : ILoggerConfigurator
         builder.ClearProviders();
         builder.AddFilter("Microsoft", LogLevel.None);
         
-        builder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
+        builder.AddConsoleFormatter<NormalConsoleFormatter, ConsoleFormatterOptions>();
         builder.AddConsole(options =>
         {
-            options.FormatterName = nameof(MainConsoleFormatter);
+            options.FormatterName = nameof(NormalConsoleFormatter);
             options.LogToStandardErrorThreshold = LogLevel.Warning;
         });
         builder.SetMinimumLevel(LogLevel.Warning);

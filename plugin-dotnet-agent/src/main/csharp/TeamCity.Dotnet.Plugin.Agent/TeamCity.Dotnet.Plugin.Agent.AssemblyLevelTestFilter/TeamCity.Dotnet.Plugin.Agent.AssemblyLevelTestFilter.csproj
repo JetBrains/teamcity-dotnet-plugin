@@ -10,6 +10,7 @@
         <OutputType>Exe</OutputType>
         <EntryPointExe>TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Program.Main</EntryPointExe>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
         
         <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildVersion>
         <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net7.0'">17.6.3</MicrosoftBuildVersion>
@@ -21,8 +22,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" ExcludeAssets="runtime" />
-      <PackageReference Include="Microsoft.Build.Locator" Version="1.5.5" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+      <PackageReference Include="Microsoft.Build.Locator" Version="1.5.5" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
@@ -30,7 +31,7 @@
       <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+      <PackageReference Include="Mono.Cecil" Version="0.11.5" />
       <PackageReference Include="YamlDotNet" Version="13.1.0" />
     </ItemGroup>
 

@@ -19,13 +19,18 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngine
 internal class MsTest : ITestEngine
 {
     public string Name => "MSTest";
+    
+    public IEnumerable<string> AssembliesNames => new[]
+    {
+        "Microsoft.VisualStudio.TestPlatform.TestFramework"
+    };
 
-    public IList<string> TestClassAttributes { get; } = new List<string>
+    public IReadOnlyList<string> TestClassAttributes { get; } = new []
     {
         "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute"
     };
 
-    public IList<string> TestMethodAttributes { get; } = new List<string>
+    public IReadOnlyList<string> TestMethodAttributes { get; } = new []
     {
         "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute",
         "Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethodAttribute"

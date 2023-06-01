@@ -47,8 +47,6 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     
     public async Task ExecuteAsync(SuppressCommand command)
     {
-        _logger.LogDebug("Executing suppress command: {@SuppressCommand}", command);
-
         var patchingCriteria = new TestSuppressionPatchingCriteria(
             TestSelectors: await _testSelectorsFactory.LoadFromAsync(command.TestsFilePath),
             InclusionMode: command.InclusionMode
@@ -56,14 +54,16 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
 
         _logger.LogDebug("Patching criteria created: {PatchingCriteria}", patchingCriteria);
 
-        foreach (var targetAssembly in _targetResolver.Resolve(command.Target))
+        var patchedAssembliesCounter = 0;
+        foreach (var assembly in _targetResolver.Resolve(command.Target))
         {
-            _logger.LogDebug("Resolving target assembly: {TargetAssembly}", targetAssembly);
+            _logger.LogDebug("Trying to patch assembly: {Assembly}", assembly);
 
-            var patchingResult = await _assemblyPatcher.TryPatchAsync(targetAssembly, patchingCriteria);
+            var patchingResult = await _assemblyPatcher.TryPatchAsync(assembly, patchingCriteria);
             if (patchingResult.IsAssemblyPatched)
             {
                 _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
+                patchedAssembliesCounter++;
 
                 await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupAssemblyMetadata(
                     Path: patchingResult.AssemblyPath,
@@ -74,10 +74,10 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
             }
             else
             {
-                _logger.LogDebug("Assembly not patched: {TargetAssembly}", targetAssembly);
+                _logger.LogDebug("Assembly not patched: {TargetAssembly}", assembly);
             }
         }
-
+        _logger.LogInformation("Patching finished: {PatchedAssembliesCounter} assemblies patched", patchedAssembliesCounter);
         _logger.LogDebug("Suppress command execution completed");
     }
 }

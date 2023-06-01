@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,10 @@ internal static class Program
 {
     public static Task Main(string[] args)
     {
+        Console.WriteLine("TeamCity.Dotnet.Plugin.Agent – .NET Assembly Level Test Filter");
+        Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
+        Console.WriteLine();
+        
         var commandLineParsingResult = new CommandLineParser<MainCommand>().Parse(args);
         
         return Host

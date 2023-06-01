@@ -19,14 +19,19 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngine
 internal class NUnit : ITestEngine
 {
     public string Name => "NUnit";
+    
+    public IEnumerable<string> AssembliesNames => new[]
+    {
+        "nunit.framework"
+    };
 
-    public IList<string> TestClassAttributes { get; } = new List<string>
+    public IReadOnlyList<string> TestClassAttributes { get; } = new []
     {
         "NUnit.Framework.TestFixtureAttribute",
         "NUnit.Framework.TestFixtureSourceAttribute"
     };
 
-    public IList<string> TestMethodAttributes { get; } = new List<string>
+    public IReadOnlyList<string> TestMethodAttributes { get; } = new []
     {
         "NUnit.Framework.TestAttribute",
         "NUnit.Framework.TestCaseAttribute",

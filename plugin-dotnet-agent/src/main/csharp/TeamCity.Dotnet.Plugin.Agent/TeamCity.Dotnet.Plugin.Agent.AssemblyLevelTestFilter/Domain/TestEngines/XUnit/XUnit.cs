@@ -20,12 +20,17 @@ internal class XUnit : ITestEngine
 {
     public string Name => "xUnit";
 
-    public IList<string> TestClassAttributes { get; } = new List<string>
+    public IEnumerable<string> AssembliesNames => new[]
+    {
+        "xunit.core",
+    };
+
+    public IReadOnlyList<string> TestClassAttributes { get; } = new []
     {
         "Xunit.FactAttribute"
     };
 
-    public IList<string> TestMethodAttributes { get; } = new List<string>
+    public IReadOnlyList<string> TestMethodAttributes { get; } = new []
     {
         "Xunit.TheoryAttribute",
         "Xunit.FactAttribute"

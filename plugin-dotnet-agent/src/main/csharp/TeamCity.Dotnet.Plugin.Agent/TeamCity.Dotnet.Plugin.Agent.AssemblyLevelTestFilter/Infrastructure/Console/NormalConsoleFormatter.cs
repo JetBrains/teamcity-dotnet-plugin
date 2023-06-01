@@ -20,21 +20,18 @@ using Microsoft.Extensions.Logging.Console;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Console;
 
-internal class MainConsoleFormatter : ConsoleFormatter
+internal class NormalConsoleFormatter : ConsoleFormatter
 {
     private const string MessageFormat = "{0}";
 
-    public MainConsoleFormatter() : base(nameof(MainConsoleFormatter)) {}
+    public NormalConsoleFormatter() : base(nameof(NormalConsoleFormatter)) {}
 
     public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider, TextWriter textWriter)
     {
         var message = logEntry.Formatter!(logEntry.State, logEntry.Exception);
-        var dateTimeOffset = DateTimeOffset.UtcNow;
 
         message = message.Replace(logEntry.Category, "").Trim('\n'); // remove category
-        message = message.Replace(dateTimeOffset.ToString("yyyy-MM-dd HH:mm:ss.fff"), "").Trim('\n'); // remove timestamp
 
-        
         switch (logEntry.LogLevel)
         {
             case LogLevel.Trace:
@@ -53,10 +50,10 @@ internal class MainConsoleFormatter : ConsoleFormatter
             case LogLevel.Critical:
                 textWriter.WriteLine(MessageFormat, message.Red());
                 break;
+            case LogLevel.None:
             default:
                 textWriter.WriteLine(MessageFormat, message.Blue());
                 break;
         }
     }
 }
-

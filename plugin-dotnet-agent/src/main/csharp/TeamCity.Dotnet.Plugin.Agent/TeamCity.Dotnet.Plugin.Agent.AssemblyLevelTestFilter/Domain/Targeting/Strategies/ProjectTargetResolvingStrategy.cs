@@ -16,28 +16,49 @@
 
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
+using Microsoft.Extensions.Logging;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
 internal class ProjectTargetResolvingStrategy : ITargetResolvingStrategy
 {
+    private readonly ILogger<ProjectTargetResolvingStrategy> _logger;
+    
     public TargetType TargetType => TargetType.Project;
-
-    public IEnumerable<(FileInfo, TargetType)> FindAssembliesAsync(string target)
+    
+    public ProjectTargetResolvingStrategy(ILogger<ProjectTargetResolvingStrategy> logger)
     {
-        MSBuildLocator.RegisterDefaults();
+        _logger = logger;
+        var instance = MSBuildLocator.RegisterDefaults();
+        _logger.LogDebug(
+            "Target project resolver uses MSBuild from {InstallationName} {InstallationVersion} located at the path {InstallationPath}",
+            instance.Name,
+            instance.Version,
+            instance.MSBuildPath
+        );
+    }
+
+    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    {
+        _logger.LogInformation("Resolving target project: {Target}", target);
+        
         var projectFile = new FileInfo(target);
         var project = new Project(projectFile.FullName);
         var outputPath = project.GetPropertyValue("OutputPath");
-        var outputType = project.GetPropertyValue("OutputType");
-        var targetFileName = project.GetPropertyValue("TargetFileName");
-
-        if (!outputType.Equals("Library", StringComparison.OrdinalIgnoreCase) || projectFile.Directory == null)
+        var targetFileName = project.GetPropertyValue("TargetFileName") ?? projectFile.Name.Replace(".csproj", string.Empty);
+        
+        var fullPath = Path
+            .Combine(projectFile.Directory!.FullName, outputPath, targetFileName)
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        var assemblyFileInfo = new FileInfo(fullPath);
+        if (!assemblyFileInfo.Exists)
         {
+            _logger.LogWarning("Target project output file {TargetProjectOutputFile} does not exist", assemblyFileInfo);
             yield break;
         }
-            
-        var assemblyFileInfo = new FileInfo(Path.Combine(projectFile.Directory.FullName, outputPath, targetFileName));
+        
+        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
         yield return (assemblyFileInfo, TargetType.Assembly);
     }
 }

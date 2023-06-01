@@ -19,6 +19,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
 
+[Serializable]
 internal class SuppressCommand : Command
 {
     [CommandOption(requiresValue: true,"-t", "--target")]
@@ -38,7 +39,7 @@ internal class SuppressCommand : Command
     public bool InclusionMode { get; set; } = false;
     
     [CommandOption(requiresValue: true,"-b", "--backup")]
-    [CommandOptionDescription("Backup original assemblies metadata file path")]
-    [ValidatePath(mustBeFile: true, mustExist: false, errorMessage: "Invalid backup file path", ".yaml")]
-    public string BackupFilePath { get; set; } = "backup-metadata.yaml";
+    [CommandOptionDescription("Backup original assemblies metadata file path (.csv)")]
+    [ValidatePath(mustBeFile: true, mustExist: false, errorMessage: "Invalid backup file path. Should be .csv", ".csv")]
+    public string BackupFilePath { get; set; } = "backup-metadata.csv";
 }

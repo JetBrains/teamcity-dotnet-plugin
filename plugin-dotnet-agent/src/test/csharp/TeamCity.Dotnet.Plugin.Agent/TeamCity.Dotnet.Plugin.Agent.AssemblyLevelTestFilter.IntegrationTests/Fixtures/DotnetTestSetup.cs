@@ -88,6 +88,8 @@ internal class DotnetTestSetup : IDisposable
             .WithCommand("tail", "-f", "/dev/null")
             .WithBindMount(HostTestProjectPath, MountedTestProjectSourcesDirPath, AccessMode.ReadOnly)
             .WithBindMount(_hostAppSourcesPath, MountedFilterAppSourcesDirPath, AccessMode.ReadOnly)
+            .WithCleanUp(true)
+            .WithAutoRemove(true)
             .Build();
         await container.StartAsync();
         return container;

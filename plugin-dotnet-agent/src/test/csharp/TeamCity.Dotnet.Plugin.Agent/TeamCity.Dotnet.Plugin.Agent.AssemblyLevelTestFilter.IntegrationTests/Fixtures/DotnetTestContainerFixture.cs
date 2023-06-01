@@ -19,7 +19,7 @@ using System.Diagnostics;
 using System.Xml.Linq;
 using DotNet.Testcontainers.Containers;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestProjects;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
@@ -33,21 +33,27 @@ public class DotnetTestContainerFixture : IDisposable
     
     private DotnetTestSetup TestSetup  => _testSetup[_dotnetVersion];
 
-    public ITestOutputHelper Output { get; set; } = null!;
+    public ITestOutputHelper Output { get; private set; } = null!;
     
     public DotnetTestContainerFixture()
     {
         _testSetup = new ConcurrentDictionary<DotnetVersion, DotnetTestSetup>();
-        foreach(var dotnetVersion in Enum.GetValues<DotnetVersion>())
-        {
-            var testSetup = new DotnetTestSetup(dotnetVersion);
-            _testSetup.TryAdd(dotnetVersion, testSetup);
-        }
+    }
+
+    public void Init(ITestOutputHelper output)
+    {
+        Output = output;
+        Output.WriteLine("Initializing test setup...");
     }
 
     public async Task ReinitContainerWith(DotnetVersion dotnetVersion)
     {
         _dotnetVersion = dotnetVersion;
+        if (!_testSetup.ContainsKey(dotnetVersion))
+        {
+            var testSetup = new DotnetTestSetup(dotnetVersion);
+            _testSetup.TryAdd(dotnetVersion, testSetup);
+        }
         await Prepare();
     }
     
@@ -77,16 +83,18 @@ public class DotnetTestContainerFixture : IDisposable
         return result;
     }
 
-    public async Task<(string queriesFilePath, string targetDllPath)> CreateTestProject(
+    public async Task<(string queriesFilePath, string targetPath)> CreateTestProject(
         Type testProjectType,
         DotnetVersion dotnetVersion,
         string projectName,
+        TargetType targetType,
         TestClassDescription[] projectTestClasses,
         params TestClassDescription[] testQueriesFileTestClasses
     ) {
         // generate test project
         var testProject = (ITestProject) Activator.CreateInstance(testProjectType)!;
-        await testProject.GenerateAsync(_dotnetVersion, TestSetup.HostTestProjectPath, projectName, projectTestClasses);
+        var withSolution = targetType == TargetType.Solution;
+        await testProject.GenerateAsync(_dotnetVersion, TestSetup.HostTestProjectPath, projectName, withSolution, projectTestClasses);
         
         // generate tests queries file
         var content = string.Join('\n', testQueriesFileTestClasses.Select(tc => $"{projectName}.{tc.ClassName}"));
@@ -94,13 +102,23 @@ public class DotnetTestContainerFixture : IDisposable
         
         // copy test project and tests queries file to container
         await ExecAsync($"cp -a {DotnetTestSetup.MountedTestProjectSourcesDirPath}/. {DotnetTestSetup.TestProjectSourcesDirPath}");
+        
+        // build test project
         var testProjectBuildResult = await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath}");
         if (testProjectBuildResult.ExitCode != 0)
         {
             throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);
         }
+        
         var moniker = dotnetVersion.GetMoniker();
-        var targetDllPath = $"{DotnetTestSetup.TestProjectSourcesDirPath}/bin/Debug/{moniker}/{projectName}.dll";
+        var targetDllPath = targetType switch
+        {
+            TargetType.Directory => DotnetTestSetup.TestProjectSourcesDirPath,
+            TargetType.Project => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.csproj",
+            TargetType.Solution => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.sln",
+            TargetType.Assembly => $"{DotnetTestSetup.TestProjectSourcesDirPath}/bin/Debug/{moniker}/{projectName}.dll",
+            _ => throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null)
+        };
         
         return (DotnetTestSetup.TestsQueriesFilePath, targetDllPath);
     }
@@ -108,7 +126,7 @@ public class DotnetTestContainerFixture : IDisposable
     public async Task<(ExecResult, IReadOnlyList<string>)> RunTests(string targetAssemblyPath)
     {
         var trxReportFilePath = $"{DotnetTestSetup.TestProjectSourcesDirPath}/report__{Guid.NewGuid()}.trx";
-        var testOutput = await ExecAsync($"dotnet test {targetAssemblyPath} -l:trx;LogFileName={trxReportFilePath}");
+        var testOutput = await ExecAsync($"dotnet test {targetAssemblyPath} --no-build -l:trx;LogFileName={trxReportFilePath}");
         var testNamesExecuted = await GetTestNames(trxReportFilePath);
         return (testOutput, testNamesExecuted);
     }
@@ -135,7 +153,7 @@ public class DotnetTestContainerFixture : IDisposable
 
     private async Task Prepare()
     {
-        Output.WriteLine($"Reinitializing container {Container.Name}...");
+        Output.WriteLine($"Preparing container {Container.Name}...");
         
         // filter app
         var appDirCreateResult = await ExecAsync($"mkdir {DotnetTestSetup.AppDirPath}");
@@ -153,7 +171,7 @@ public class DotnetTestContainerFixture : IDisposable
             await ExecAsync($"rm -r {DotnetTestSetup.TestProjectSourcesDirPath}");
         }
         
-        Output.WriteLine($"Container {Container.Name} reinitialized");
+        Output.WriteLine($"Container {Container.Name} prepared for test");
     }
 
     public void Dispose()
@@ -163,5 +181,13 @@ public class DotnetTestContainerFixture : IDisposable
             testSetup.Value.Dispose();
         }
         _testSetup.Clear();
+    }
+
+    public enum TargetType
+    {
+        Directory,
+        Project,
+        Solution,
+        Assembly
     }
 }

@@ -29,10 +29,10 @@ internal class NormalLoggerConfigurator : ILoggerConfigurator
         builder.ClearProviders();
         builder.AddFilter("Microsoft", LogLevel.None);
         
-        builder.AddConsoleFormatter<MainConsoleFormatter, ConsoleFormatterOptions>();
+        builder.AddConsoleFormatter<NormalConsoleFormatter, ConsoleFormatterOptions>();
         builder.AddConsole(options =>
         {
-            options.FormatterName = nameof(MainConsoleFormatter);
+            options.FormatterName = nameof(NormalConsoleFormatter);
         });
         builder.SetMinimumLevel(LogLevel.Information);
     }

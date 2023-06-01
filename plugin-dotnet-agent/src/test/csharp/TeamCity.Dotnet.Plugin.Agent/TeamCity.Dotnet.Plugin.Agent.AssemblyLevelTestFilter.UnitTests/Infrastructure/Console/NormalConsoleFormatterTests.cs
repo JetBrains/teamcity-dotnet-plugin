@@ -20,7 +20,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Consol
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Infrastructure.Console;
 
-public class MainConsoleFormatterTests
+public class NormalConsoleFormatterTests
 {
     [Theory]
     [InlineData(LogLevel.Trace, "\x1b[36mHello, World!\x1b[39m\n")]
@@ -32,7 +32,7 @@ public class MainConsoleFormatterTests
     public void Write_WritesFormattedMessage(LogLevel logLevel, string expectedOutput)
     {
         // arrange
-        var formatter = new MainConsoleFormatter();
+        var formatter = new NormalConsoleFormatter();
         var logEntry = new LogEntry<string>(
             logLevel: logLevel,
             category: "TestCategory",

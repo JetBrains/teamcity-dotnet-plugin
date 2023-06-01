@@ -16,19 +16,20 @@
 
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.TestProjects;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests;
 
-public class SuppressAllTheTestsByIncludingNotExistingClassTests : IClassFixture<DotnetTestContainerFixture>
+[Collection(".NET containers")]
+public class SuppressAllTheTestsByIncludingNotExistingClassTests
 {
     private readonly DotnetTestContainerFixture _fixture;
 
     public SuppressAllTheTestsByIncludingNotExistingClassTests(DotnetTestContainerFixture fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
-        _fixture.Output = output;
+        _fixture.Init(output);
     }
 
     [Theory]
@@ -53,18 +54,19 @@ public class SuppressAllTheTestsByIncludingNotExistingClassTests : IClassFixture
         var testClassesInProject = new[] { testClass0, testClass1 };
         var testNamesToInclude = testClassesInProject.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetAssemblyPath) = await _fixture.CreateTestProject(
+        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             testProjectGeneratorType, 
             dotnetVersion,
             projectName,
+            DotnetTestContainerFixture.TargetType.Assembly,
             testClassesInProject,
             testClass2
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetAssemblyPath);
-        await _fixture.RunFilterApp($"suppress -t {targetAssemblyPath} -l {testQueriesFilePath} -i -v detailed");
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetAssemblyPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed");
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
 
         // assert
         Assert.Equal(7, beforeTestNamesExecuted.Count);

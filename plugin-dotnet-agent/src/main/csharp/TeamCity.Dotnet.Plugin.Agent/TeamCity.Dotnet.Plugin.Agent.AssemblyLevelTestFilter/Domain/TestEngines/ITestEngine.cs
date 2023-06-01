@@ -20,7 +20,9 @@ internal interface ITestEngine
 {
     public string Name { get; }
     
-    public IList<string> TestClassAttributes { get; }
+    public IEnumerable<string> AssembliesNames { get; }
+
+    public IReadOnlyList<string> TestClassAttributes { get; }
     
-    public IList<string> TestMethodAttributes { get; }
+    public IReadOnlyList<string> TestMethodAttributes { get; }
 }

@@ -20,6 +20,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App;
 
+[Serializable]
 internal class MainCommand : Command
 {
     [Command("suppress")]

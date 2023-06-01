@@ -28,47 +28,53 @@ internal class TargetResolver : ITargetResolver
         _strategies = strategies.ToDictionary(s => s.TargetType);
         _logger = logger;
     }
+    
+    private ITargetResolvingStrategy AssemblyStrategy => _strategies[TargetType.Assembly];
 
     public IEnumerable<FileInfo> Resolve(string target)
     {
         _logger.LogInformation("Resolving target: {Target}", target);
 
-        var fileInfo = new FileInfo(target);
-        if (!fileInfo.Exists)
+        var originalTargetFile = new FileInfo(target);
+        if (!originalTargetFile.Exists && !Directory.Exists(target))
         {
             _logger.LogError("Target not found: {Target}", target);
             throw new FileNotFoundException($"Target '{target}' not found.");
         }
+        
+        var supposedTargetType = SpeculateTargetType(originalTargetFile);
 
-        var extension = fileInfo.Extension.ToLowerInvariant();
-        var targetType = GetTargetType(extension, fileInfo);
-
-        // resolve all targets in the hierarchy
+        // resolve all targets in the hierarchy using BFS
         var queue = new Queue<(FileInfo, TargetType)>();
-        queue.Enqueue((fileInfo, targetType));
+        
+        queue.Enqueue((originalTargetFile, supposedTargetType));
         while (queue.Count != 0)
         {
-            var (file, fileTargetType) = queue.Dequeue();
-            if (fileTargetType == TargetType.Assembly)
+            var (targetFile, targetType) = queue.Dequeue();
+            foreach (var (resolvedTargetFile, resolvedTargetType) in _strategies[targetType].Resolve(targetFile.FullName))
             {
-                _logger.LogInformation("Returning assembly: {Assembly}", file.FullName);
-                yield return file;
-                continue;
-            }
-            
-            foreach (var (f, t) in _strategies[fileTargetType].FindAssembliesAsync(file.FullName))
-            {
-                queue.Enqueue((f, t));
+                if (resolvedTargetType == TargetType.Assembly)
+                {
+                    foreach(var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
+                    {
+                        yield return resolvedAssembly;
+                    }
+                    continue;
+                }
+                
+                queue.Enqueue((resolvedTargetFile, resolvedTargetType));
             }
         }
     }
 
-    private static TargetType GetTargetType(string extension, FileSystemInfo fileInfo)
+    private static TargetType SpeculateTargetType(FileSystemInfo fileInfo)
     {
         if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
         {
             return TargetType.Directory;
         }
+        
+        var extension = fileInfo.Extension.ToLowerInvariant();
         
         if (extension == TargetType.Assembly.FileExtension())
         {

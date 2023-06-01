@@ -1,6 +1,9 @@
 ﻿ARG DOTNET_SDK_IMAGE_TAG=7.0
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_IMAGE_TAG} AS build
 
+# fix for issue with MSBuild
+# RUN ln -s /usr/share/dotnet/host/fxr/7.0.5/libhostfxr.so /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.5/libhostfxr.so
+
 WORKDIR /app
 
 # restore all necessary packages before tests started to make sure that all packages are cached

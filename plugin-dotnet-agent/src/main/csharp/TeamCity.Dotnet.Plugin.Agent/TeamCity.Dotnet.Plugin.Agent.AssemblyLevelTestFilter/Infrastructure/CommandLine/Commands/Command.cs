@@ -18,6 +18,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
 
+[Serializable]
 public abstract class Command
 {
     [CommandOption(requiresValue: false, "-h", "--help", "-?")]
