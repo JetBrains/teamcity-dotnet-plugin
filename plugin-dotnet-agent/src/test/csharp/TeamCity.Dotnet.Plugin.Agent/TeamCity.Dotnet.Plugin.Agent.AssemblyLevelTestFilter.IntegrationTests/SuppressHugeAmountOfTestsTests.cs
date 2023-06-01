@@ -35,6 +35,7 @@ public class SuppressHugeAmountOfTestsTests : IClassFixture<DotnetTestContainerF
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here
             dotnetVersion,
             projectName,
+            withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly, // it doesn't matter which target type we use here
             allTestClasses,
             testClassesToInclude

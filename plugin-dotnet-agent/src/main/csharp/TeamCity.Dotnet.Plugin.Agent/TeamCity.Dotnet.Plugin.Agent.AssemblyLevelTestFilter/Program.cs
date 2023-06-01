@@ -58,7 +58,7 @@ internal static class Program
 
                 // regular services
                 services
-                    .AddSingleton<IConfigurationParsingResult>(commandLineParsingResult)
+                    .AddSingleton(commandLineParsingResult)
                     .AddSingletonByInterface<ITestSelectorParser>()
                     .AddSingletonByInterface<ITestEngine>()
                     .AddSingletonByImplementationType<ITestEngine>()

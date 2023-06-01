@@ -46,6 +46,7 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here, because we are testing the target overriding
             dotnetVersion,
             projectName,
+            withoutDebugSymbols: false,
             targetType,
             allTestClasses,
             testClassesToInclude

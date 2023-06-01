@@ -58,6 +58,7 @@ public class SuppressAllTheTestsByExcludeFileTests
             testProjectGeneratorType,
             dotnetVersion,
             projectName,
+            withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
             allTestClasses

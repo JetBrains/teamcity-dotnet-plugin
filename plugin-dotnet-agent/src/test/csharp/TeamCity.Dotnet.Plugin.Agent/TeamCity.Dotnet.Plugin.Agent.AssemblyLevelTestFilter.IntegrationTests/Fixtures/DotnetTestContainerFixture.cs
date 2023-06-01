@@ -87,6 +87,7 @@ public class DotnetTestContainerFixture : IDisposable
         Type testProjectType,
         DotnetVersion dotnetVersion,
         string projectName,
+        bool withoutDebugSymbols,
         TargetType targetType,
         TestClassDescription[] projectTestClasses,
         params TestClassDescription[] testQueriesFileTestClasses
@@ -104,7 +105,8 @@ public class DotnetTestContainerFixture : IDisposable
         await ExecAsync($"cp -a {DotnetTestSetup.MountedTestProjectSourcesDirPath}/. {DotnetTestSetup.TestProjectSourcesDirPath}");
         
         // build test project
-        var testProjectBuildResult = await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath}");
+        var debugSymbolsArg = withoutDebugSymbols ? "-p:DebugType=None -p:DebugSymbols=false" : "";
+        var testProjectBuildResult = await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg}");
         if (testProjectBuildResult.ExitCode != 0)
         {
             throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);

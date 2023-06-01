@@ -58,6 +58,7 @@ public class SuppressAllTheTestsByIncludingNotExistingClassTests
             testProjectGeneratorType, 
             dotnetVersion,
             projectName,
+            withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly,
             testClassesInProject,
             testClass2

@@ -44,6 +44,7 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
             testProjectGeneratorType,
             dotnetVersion,
             projectName,
+            withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
             testClassesToInclude
