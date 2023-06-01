@@ -79,7 +79,8 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
                 return (true, null);
             }
             
-            _logger.LogDebug("Examine assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", file, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
+            _logger.LogDebug("Examine assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", 
+                file, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
 
             var detectedEngines = _testEngines
                 .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))

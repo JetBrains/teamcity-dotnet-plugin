@@ -33,9 +33,11 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
 
     public async Task ExecuteAsync(RestoreCommand command)
     {
-        var backupMetadataFilePath = Path.GetFullPath(command.BackupMetadataFilePath);
+        _logger.LogInformation("Restore command execution started");
         
+        var backupMetadataFilePath = Path.GetFullPath(command.BackupMetadataFilePath);
         _logger.LogInformation("Restoring assemblies by metadata from the file {BackupMetadataFilePath}", backupMetadataFilePath);
+        
         await _backupRestore.RestoreAsync(backupMetadataFilePath);
         
         _logger.LogDebug("Restore command execution completed");

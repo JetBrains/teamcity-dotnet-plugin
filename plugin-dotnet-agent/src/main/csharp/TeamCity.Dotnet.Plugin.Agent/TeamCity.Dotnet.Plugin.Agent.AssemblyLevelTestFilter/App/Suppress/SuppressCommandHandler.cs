@@ -47,6 +47,8 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     
     public async Task ExecuteAsync(SuppressCommand command)
     {
+        _logger.LogInformation("Suppress command execution started");
+        
         var patchingCriteria = new TestSuppressionPatchingCriteria(
             TestSelectors: await _testSelectorsFactory.LoadFromAsync(command.TestsFilePath),
             InclusionMode: command.InclusionMode
@@ -74,7 +76,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
             }
         }
         _logger.LogInformation("Patching finished: {PatchedAssembliesCounter} assemblies patched", patchedAssembliesCounter);
-        _logger.LogDebug("Suppress command execution completed");
+        _logger.LogInformation("Suppress command execution completed");
     }
 
     private async Task SaveBackupMetadata(SuppressCommand command, AssemblyPatchingResult patchingResult)

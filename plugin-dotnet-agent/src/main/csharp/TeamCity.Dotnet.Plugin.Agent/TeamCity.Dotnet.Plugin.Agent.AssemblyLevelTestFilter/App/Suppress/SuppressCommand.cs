@@ -19,7 +19,6 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
 
-[Serializable]
 internal class SuppressCommand : Command
 {
     [CommandOption(requiresValue: true,"-t", "--target")]

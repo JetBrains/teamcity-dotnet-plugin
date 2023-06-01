@@ -66,10 +66,11 @@ internal class AssemblyPatcher : IAssemblyPatcher
     {
         var assemblyResolver = new DefaultAssemblyResolver();
         assemblyResolver.AddSearchDirectory(AppDomain.CurrentDomain.BaseDirectory);
+        var hasSymbols = File.Exists(Path.ChangeExtension(assemblyPath, ".pdb"));
         return AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
         {
             AssemblyResolver = assemblyResolver,
-            ReadSymbols = true,                     // read debug symbols if available
+            ReadSymbols = hasSymbols,   // read debug symbols if available
         });
     }
 
@@ -90,7 +91,7 @@ internal class AssemblyPatcher : IAssemblyPatcher
         // deal with debug symbols
         var originalSymbolsPath = Path.ChangeExtension(originalAssemblyPath, ".pdb");
         var backupSymbolsPath = originalSymbolsPath + "_backup";
-        var hasSymbols = File.Exists(originalSymbolsPath);
+        var hasSymbols = assembly.MainModule.HasSymbols && File.Exists(originalSymbolsPath);
         if (hasSymbols)
         {
             await CopyFile(originalSymbolsPath, backupSymbolsPath);
@@ -99,7 +100,7 @@ internal class AssemblyPatcher : IAssemblyPatcher
         // save the modified assembly on disk in tmp location and preserve debug symbols if available
         await using (var destinationStream = File.Create(tmpAssemblyPath))
         {
-            assembly.Write(destinationStream, new WriterParameters { WriteSymbols = true });
+            assembly.Write(destinationStream, new WriterParameters { WriteSymbols = hasSymbols });
         }
 
         // replace the original assembly with the modified one

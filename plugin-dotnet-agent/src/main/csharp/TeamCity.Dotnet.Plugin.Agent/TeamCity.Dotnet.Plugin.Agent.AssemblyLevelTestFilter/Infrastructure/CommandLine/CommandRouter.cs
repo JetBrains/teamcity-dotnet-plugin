@@ -15,7 +15,6 @@
  */
 
 using System.Reflection;
-using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -86,7 +85,6 @@ internal class CommandRouter<TCommand> : IHostedService
         
         var handler = GetCommandHandler(subCommand);
         
-        _logger.LogInformation("Executing command: {Command}", JsonSerializer.Serialize(subCommand));
         await ExecuteHandler(handler, subCommand);
         
         _applicationLifetime.StopApplication();

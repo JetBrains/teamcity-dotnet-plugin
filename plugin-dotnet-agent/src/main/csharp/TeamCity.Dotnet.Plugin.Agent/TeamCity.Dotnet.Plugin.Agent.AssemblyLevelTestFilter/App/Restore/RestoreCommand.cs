@@ -19,7 +19,6 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 
-[Serializable]
 internal class RestoreCommand : Command
 {
     [CommandOption(requiresValue: true,"-b", "--backup-metadata")]
