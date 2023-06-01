@@ -65,11 +65,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
                 _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
                 patchedAssembliesCounter++;
 
-                await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupAssemblyMetadata(
-                    Path: patchingResult.AssemblyPath,
-                    BackupPath: patchingResult.BackupPath
-                ));
-
+                await SaveBackupMetadata(command, patchingResult);
                 _logger.LogDebug("Backup metadata saved for {PatchingResult}", patchingResult);
             }
             else
@@ -79,5 +75,21 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
         }
         _logger.LogInformation("Patching finished: {PatchedAssembliesCounter} assemblies patched", patchedAssembliesCounter);
         _logger.LogDebug("Suppress command execution completed");
+    }
+
+    private async Task SaveBackupMetadata(SuppressCommand command, AssemblyPatchingResult patchingResult)
+    {
+        await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupFileMetadata(
+            Path: patchingResult.AssemblyPath,
+            BackupPath: patchingResult.BackupAssemblyPath
+        ));
+
+        if (patchingResult.HasSymbols)
+        {
+            await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupFileMetadata(
+                Path: patchingResult.SymbolsPath!,
+                BackupPath: patchingResult.BackupSymbolsPath!
+            ));
+        }
     }
 }

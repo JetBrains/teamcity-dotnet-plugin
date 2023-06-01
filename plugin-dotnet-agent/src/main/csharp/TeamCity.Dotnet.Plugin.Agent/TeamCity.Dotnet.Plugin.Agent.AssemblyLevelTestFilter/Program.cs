@@ -73,6 +73,7 @@ internal static class Program
                     .AddSingletonByInterface<IAssemblyPatcher>()
                     .AddSingletonByInterface<ITestSelectorsFactory>()
                     .AddSingletonByInterface<IBackupMetadataSaver>()
+                    .AddSingletonByInterface<IBackupRestore>()
                     .AddSingletonByInterface<IHelpPrinter>()
                     .AddSingletonByInterface<ICommandHandler>()
                     .AddSingletonByInterface<ILoggerConfigurator>()

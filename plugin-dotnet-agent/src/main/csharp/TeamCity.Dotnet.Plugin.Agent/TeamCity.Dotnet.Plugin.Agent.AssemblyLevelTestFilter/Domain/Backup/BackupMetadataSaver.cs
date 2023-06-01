@@ -27,7 +27,7 @@ internal class BackupMetadataSaver : IBackupMetadataSaver
         _logger = logger;
     }
     
-    public async Task SaveAsync(string filePath, BackupAssemblyMetadata backupMetadata)
+    public async Task SaveAsync(string filePath, BackupFileMetadata backupMetadata)
     {
         filePath = Path.GetFullPath(filePath);
         

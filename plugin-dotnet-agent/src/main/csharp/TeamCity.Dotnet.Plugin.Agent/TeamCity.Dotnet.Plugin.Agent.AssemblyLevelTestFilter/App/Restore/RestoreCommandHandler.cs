@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
+using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Help;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 
 internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
 {
-    private readonly IHelpPrinter _helpPrinter;
+    private readonly IBackupRestore _backupRestore;
+    private readonly ILogger<RestoreCommandHandler> _logger;
 
-    public RestoreCommandHandler(IHelpPrinter helpPrinter)
+    public RestoreCommandHandler(IBackupRestore backupRestore, ILogger<RestoreCommandHandler> logger)
     {
-        _helpPrinter = helpPrinter;
+        _backupRestore = backupRestore;
+        _logger = logger;
     }
 
-    public Task ExecuteAsync(RestoreCommand command)
+    public async Task ExecuteAsync(RestoreCommand command)
     {
-        if (!command.Help) throw new NotImplementedException();
-        _helpPrinter.PrintHelp(command);
-        return Task.CompletedTask;
-
+        var backupMetadataFilePath = Path.GetFullPath(command.BackupMetadataFilePath);
+        
+        _logger.LogInformation("Restoring assemblies by metadata from the file {BackupMetadataFilePath}", backupMetadataFilePath);
+        await _backupRestore.RestoreAsync(backupMetadataFilePath);
+        
+        _logger.LogDebug("Restore command execution completed");
     }
 }

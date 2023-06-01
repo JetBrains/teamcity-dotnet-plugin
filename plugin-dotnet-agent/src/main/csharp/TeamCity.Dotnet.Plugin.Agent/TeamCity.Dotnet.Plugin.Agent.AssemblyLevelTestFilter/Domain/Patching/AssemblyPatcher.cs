@@ -45,10 +45,21 @@ internal class AssemblyPatcher : IAssemblyPatcher
             return AssemblyPatchingResult.NotPatched(assemblyFile.FullName);
         }
 
-        var (originalAssemblyPath, backupAssemblyPath) = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
-        _logger.LogInformation("Patched assembly: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}", originalAssemblyPath, backupAssemblyPath);
-        _logger.LogInformation("Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)", mutationResult.AffectedTypes, mutationResult.AffectedMethods);
-        return AssemblyPatchingResult.Patched(originalAssemblyPath, backupAssemblyPath, mutationResult);
+        var savingResult = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
+        
+        _logger.LogInformation(
+            "Patched assembly: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}, symbols: {HasSymbols}",
+            savingResult.OriginalAssemblyPath, savingResult.BackupAssemblyPath, savingResult.BackupSymbolsPath == null);
+        _logger.LogInformation("Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)", 
+            mutationResult.AffectedTypes, mutationResult.AffectedMethods);
+        
+        return AssemblyPatchingResult.Patched(
+            assemblyPath: savingResult.OriginalAssemblyPath,
+            backupAssemblyPath: savingResult.BackupAssemblyPath,
+            symbolsPath: savingResult.OriginalSymbolsPath,
+            backupSymbolsPath: savingResult.BackupSymbolsPath,
+            mutationResult: mutationResult
+        );
     }
 
     private static AssemblyDefinition LoadAssembly(string assemblyPath)
@@ -59,30 +70,30 @@ internal class AssemblyPatcher : IAssemblyPatcher
         {
             AssemblyResolver = assemblyResolver,
             ReadSymbols = true,                     // read debug symbols if available
-            ReadWrite = true,                       // allow writing to the assembly
         });
     }
 
     private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>
         _mutators.First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
 
-    private static async Task<(string, string)> SaveAssemblyAsync(AssemblyDefinition assembly, string originalAssemblyPath)
+    private static async Task<SavingResult> SaveAssemblyAsync(AssemblyDefinition assembly, string originalAssemblyPath)
     {
         var backupAssemblyPath = originalAssemblyPath + "_backup";
         var tmpAssemblyPath = originalAssemblyPath + "_tmp";
-
+        
         // backup the original assembly
-        await using (var sourceStream = File.OpenRead(originalAssemblyPath))
-        await using (var destinationStream = File.Create(backupAssemblyPath))
-        {
-            await sourceStream.CopyToAsync(destinationStream);
-        }
+        await CopyFile(originalAssemblyPath, backupAssemblyPath);
 
         // make a tmp copy of the original assembly
-        await using (var sourceStream = File.OpenRead(originalAssemblyPath))
-        await using (var destinationStream = File.Create(tmpAssemblyPath))
+        await CopyFile(originalAssemblyPath, tmpAssemblyPath);
+        
+        // deal with debug symbols
+        var originalSymbolsPath = Path.ChangeExtension(originalAssemblyPath, ".pdb");
+        var backupSymbolsPath = originalSymbolsPath + "_backup";
+        var hasSymbols = File.Exists(originalSymbolsPath);
+        if (hasSymbols)
         {
-            await sourceStream.CopyToAsync(destinationStream);
+            await CopyFile(originalSymbolsPath, backupSymbolsPath);
         }
 
         // save the modified assembly on disk in tmp location and preserve debug symbols if available
@@ -95,7 +106,27 @@ internal class AssemblyPatcher : IAssemblyPatcher
         File.Delete(originalAssemblyPath);
         File.Move(tmpAssemblyPath, originalAssemblyPath);
 
-        return (originalAssemblyPath, backupAssemblyPath);
+        if (!hasSymbols)
+        {
+            originalSymbolsPath = null;
+            backupSymbolsPath = null;
+        }
+
+        return new SavingResult(originalAssemblyPath, backupAssemblyPath, originalSymbolsPath, backupSymbolsPath);
     }
+
+    private static async Task CopyFile(string source, string target)
+    {
+        await using var sourceStream = File.OpenRead(source);
+        await using var destinationStream = File.Create(target);
+        await sourceStream.CopyToAsync(destinationStream);
+    }
+    
+    private record struct SavingResult(
+        string OriginalAssemblyPath,
+        string BackupAssemblyPath,
+        string? OriginalSymbolsPath,
+        string? BackupSymbolsPath
+    );
 }
 

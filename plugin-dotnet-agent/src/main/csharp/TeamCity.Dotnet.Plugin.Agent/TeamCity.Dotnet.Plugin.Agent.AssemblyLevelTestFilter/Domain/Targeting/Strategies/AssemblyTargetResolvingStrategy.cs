@@ -46,7 +46,7 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
             yield break;
         }
 
-        var (isAssembly, detectedEngines) = TryDetectEngines(file.FullName);
+        var (isAssembly, detectedEngines) = TryDetectEngines(file);
         if (!isAssembly)
         {
             _logger.LogDebug("Target assembly is not a .NET assembly: {Target}", target);
@@ -58,23 +58,28 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
             yield break;
         }
         
-        _logger.LogInformation("In assembly {Target} found tests written on followed test frameworks: {Engines}", target, string.Join(", ", detectedEngines));
+        _logger.LogInformation("Assembly {Target} depends on following test frameworks: {Engines}", target, string.Join(", ", detectedEngines));
         _logger.LogInformation("Resolved assembly: {Assembly}", file.FullName);
         yield return (file, TargetType.Assembly);
     }
 
-    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(string filePath)
+    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileInfo file)
     {
+        if (file.Extension != ".dll" && file.Extension != ".exe")
+        {
+            return (false, null);
+        }
+        
         try
         {
-            using var assembly = AssemblyDefinition.ReadAssembly(filePath);
+            using var assembly = AssemblyDefinition.ReadAssembly(file.FullName);
             var assemblyReferences = assembly.MainModule.AssemblyReferences;
             if (assemblyReferences == null || assemblyReferences.Count == 0)
             {
                 return (true, null);
             }
             
-            _logger.LogDebug("Examing assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", filePath, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
+            _logger.LogDebug("Examine assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", file, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
 
             var detectedEngines = _testEngines
                 .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
