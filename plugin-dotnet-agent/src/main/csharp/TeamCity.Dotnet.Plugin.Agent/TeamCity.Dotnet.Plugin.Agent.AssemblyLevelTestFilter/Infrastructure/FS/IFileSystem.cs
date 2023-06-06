@@ -19,7 +19,12 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS
 public interface IFileSystem
 {
     string GetFullPath(string path);
+    
     bool FileExists(string path);
+    
     bool DirectoryExists(string path);
+    
     string GetExtension(string path);
+    
+    Task AppendTextInFileAsync(string filePath, string content);
 }

@@ -15,27 +15,28 @@
  */
 
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 
 internal class BackupMetadataSaver : IBackupMetadataSaver
 {
+    private readonly IFileSystem _fileSystem;
     private readonly ILogger<BackupMetadataSaver> _logger;
 
-    public BackupMetadataSaver(ILogger<BackupMetadataSaver> logger)
+    public BackupMetadataSaver(IFileSystem fileSystem, ILogger<BackupMetadataSaver> logger)
     {
+        _fileSystem = fileSystem;
         _logger = logger;
     }
     
     public async Task SaveAsync(string filePath, BackupFileMetadata backupMetadata)
     {
-        filePath = Path.GetFullPath(filePath);
+        filePath = _fileSystem.GetFullPath(filePath);
         
         _logger.LogDebug("Saving backup metadata {BackupMetadata} to the file {FilePath}", backupMetadata, filePath);
         
-        await using var streamWriter = new StreamWriter(filePath, append: true);
-        await streamWriter.WriteLineAsync($"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"");
-        await streamWriter.FlushAsync();
+        await _fileSystem.AppendTextInFileAsync(filePath, $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"");
         
         _logger.LogDebug("Backup metadata {BackupMetadata} saved to the file {FilePath}", backupMetadata, filePath);
     }

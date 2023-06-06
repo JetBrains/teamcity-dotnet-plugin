@@ -25,4 +25,6 @@ internal class FileSystemWrapper : IFileSystem
     public bool DirectoryExists(string path) => Directory.Exists(path);
 
     public string GetExtension(string path) => Path.GetExtension(path);
+    
+    public Task AppendTextInFileAsync(string filePath, string content) => File.AppendAllTextAsync(filePath, content);
 }
