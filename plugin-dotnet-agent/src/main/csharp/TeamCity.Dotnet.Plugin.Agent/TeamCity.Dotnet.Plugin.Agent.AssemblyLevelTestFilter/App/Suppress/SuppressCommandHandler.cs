@@ -75,6 +75,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
                 _logger.LogDebug("Assembly not patched: {TargetAssembly}", assembly);
             }
         }
+        
         _logger.LogInformation("Patching finished: {PatchedAssembliesCounter} assemblies patched", patchedAssembliesCounter);
         _logger.LogInformation("Suppress command execution completed");
     }
