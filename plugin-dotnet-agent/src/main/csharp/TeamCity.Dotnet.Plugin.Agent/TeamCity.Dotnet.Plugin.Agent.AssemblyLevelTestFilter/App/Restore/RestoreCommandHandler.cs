@@ -17,17 +17,23 @@
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 
 internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
 {
     private readonly IBackupRestore _backupRestore;
+    private readonly IFileSystem _fileSystem;
     private readonly ILogger<RestoreCommandHandler> _logger;
 
-    public RestoreCommandHandler(IBackupRestore backupRestore, ILogger<RestoreCommandHandler> logger)
+    public RestoreCommandHandler(
+        IBackupRestore backupRestore,
+        IFileSystem fileSystem,
+        ILogger<RestoreCommandHandler> logger)
     {
         _backupRestore = backupRestore;
+        _fileSystem = fileSystem;
         _logger = logger;
     }
 
@@ -35,7 +41,7 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
     {
         _logger.LogInformation("Restore command execution started");
         
-        var backupMetadataFilePath = Path.GetFullPath(command.BackupMetadataFilePath);
+        var backupMetadataFilePath = _fileSystem.GetFullPath(command.BackupMetadataFilePath);
         _logger.LogInformation("Restoring assemblies by metadata from the file {BackupMetadataFilePath}", backupMetadataFilePath);
         
         await _backupRestore.RestoreAsync(backupMetadataFilePath);
