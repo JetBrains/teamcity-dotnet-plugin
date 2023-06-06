@@ -50,6 +50,7 @@ public class BackupMetadataSaverTests
         await _saver.SaveAsync(filePath, backupMetadata);
 
         // Assert
-        _fileSystemMock.Verify(fs => fs.AppendTextInFileAsync(fullPath, expectedText), Times.Once);
+        _fileSystemMock.Verify(fs =>
+            fs.AppendAllLinesAsync(fullPath, It.Is<IEnumerable<string>>(e => e.Contains(expectedText))), Times.Once);
     }
 }

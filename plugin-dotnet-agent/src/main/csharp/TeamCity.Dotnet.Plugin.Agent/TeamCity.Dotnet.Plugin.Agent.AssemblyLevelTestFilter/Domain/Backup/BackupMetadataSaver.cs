@@ -36,7 +36,7 @@ internal class BackupMetadataSaver : IBackupMetadataSaver
         
         _logger.LogDebug("Saving backup metadata {BackupMetadata} to the file {FilePath}", backupMetadata, filePath);
         
-        await _fileSystem.AppendTextInFileAsync(filePath, $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"");
+        await _fileSystem.AppendAllLinesAsync(filePath, new [] { $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"" });
         
         _logger.LogDebug("Backup metadata {BackupMetadata} saved to the file {FilePath}", backupMetadata, filePath);
     }

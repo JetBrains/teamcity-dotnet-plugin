@@ -26,5 +26,5 @@ internal class FileSystemWrapper : IFileSystem
 
     public string GetExtension(string path) => Path.GetExtension(path);
     
-    public Task AppendTextInFileAsync(string filePath, string content) => File.AppendAllTextAsync(filePath, content);
+    public Task AppendAllLinesAsync(string filePath, IEnumerable<string> content) => File.AppendAllLinesAsync(filePath, content);
 }

@@ -26,5 +26,5 @@ public interface IFileSystem
     
     string GetExtension(string path);
     
-    Task AppendTextInFileAsync(string filePath, string content);
+    Task AppendAllLinesAsync(string filePath, IEnumerable<string> content);
 }
