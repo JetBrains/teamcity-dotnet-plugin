@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.IO;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 internal class FileSystemWrapper : IFileSystem
@@ -21,6 +23,21 @@ internal class FileSystemWrapper : IFileSystem
     public string GetFullPath(string path) => Path.GetFullPath(path);
 
     public bool FileExists(string path) => File.Exists(path);
+
+    public void FileDelete(string path) => File.Delete(path);
+
+    public void FileMove(string sourcePath, string destinationPath) => File.Move(sourcePath, destinationPath);
+
+    public async IAsyncEnumerable<(string, int)> ReadLinesAsync(string path)
+    {
+        var lineNumber = 0;
+        using var reader = new StreamReader(path);
+        while (await reader.ReadLineAsync() is {} line)
+        {
+            lineNumber++;
+            yield return (line, lineNumber);
+        }
+    }
 
     public bool DirectoryExists(string path) => Directory.Exists(path);
 

@@ -21,6 +21,12 @@ public interface IFileSystem
     string GetFullPath(string path);
     
     bool FileExists(string path);
+
+    void FileDelete(string path);
+
+    void FileMove(string sourcePath, string destinationPath);
+
+    IAsyncEnumerable<(string, int)> ReadLinesAsync(string path);
     
     bool DirectoryExists(string path);
     
