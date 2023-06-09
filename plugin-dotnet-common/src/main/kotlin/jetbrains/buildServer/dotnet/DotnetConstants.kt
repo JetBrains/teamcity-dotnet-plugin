@@ -43,6 +43,7 @@ object DotnetConstants {
     const val PARAM_SUPPORT_MSBUILD_BITNESS = "teamcity.internal.dotnet.msbuild.bitness"
     const val PARAM_MSBUILD_PARAMETERS_ESCAPE = "teamcity.internal.dotnet.msbuild.parameters.escape"
     const val PARAM_MSBUILD_DISABLE_TRAILING_BACKSLASH_QUOTATION = "teamcity.internal.dotnet.msbuild.parameters.disable.trailing.backslash.quotation"
+    const val PARAM_MSBUILD_DISABLE_CUSTOM_VSTEST_LOGGERS = "teamcity.internal.dotnet.msbuild.parameters.disable.custom.vstest.loggers"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables

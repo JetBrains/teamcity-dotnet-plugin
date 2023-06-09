@@ -21,130 +21,47 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.OSType
-import jetbrains.buildServer.util.StringUtil
 
 class MSBuildParameterConverterImpl(
     private val _parameterService: ParametersService,
     private val _environment: Environment
 ) : MSBuildParameterConverter {
-    private val hasParametersEscapingBeenEnabled get() =
-        _parameterService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_PARAMETERS_ESCAPE)
-            ?.let { it.trim().equals("true", ignoreCase = true) }
-            ?: false
-    private val hasTrailingBackslashQuotBeenDisabled get() =
-        _parameterService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MSBUILD_DISABLE_TRAILING_BACKSLASH_QUOTATION)
-            ?.let { it.trim().equals("true", ignoreCase = true) }
-            ?: false
+    private val isParametersEscapingEnabled
+        get() =
+            _parameterService.tryGetParameter(
+                ParameterType.Configuration,
+                DotnetConstants.PARAM_MSBUILD_PARAMETERS_ESCAPE
+            )
+                ?.let { it.trim().equals("true", ignoreCase = true) }
+                ?: false
+    private val isTrailingBackslashQuotationDisabled
+        get() =
+            _parameterService.tryGetParameter(
+                ParameterType.Configuration,
+                DotnetConstants.PARAM_MSBUILD_DISABLE_TRAILING_BACKSLASH_QUOTATION
+            )
+                ?.let { it.trim().equals("true", ignoreCase = true) }
+                ?: false
 
     override fun convert(parameters: Sequence<MSBuildParameter>): Sequence<String> {
-        val allParamsEscapingEnabled = hasParametersEscapingBeenEnabled
+        // copy to not have behaviour changes in the middle of params sequence processing
+        val isParametersEscapingEnabled = isParametersEscapingEnabled
+        val isTrailingBackslashQuotationDisabled = isTrailingBackslashQuotationDisabled
+
         return parameters
             .filter { parameter -> parameter.name.isNotBlank() && parameter.value.isNotBlank() }
             .map { parameter ->
-                val normalizedName = normalizeName(parameter.name)
-                val normalizedValue = normalizeValue(parameter.value) { shouldBeEscaped(parameter.type, it, allParamsEscapingEnabled) }
+                val normalizedName = MSBuildParameterNormalizer.normalizeName(parameter.name)
+
+                val fullEscaping = isParametersEscapingEnabled || parameter.type == MSBuildParameterType.Predefined
+                val quoteTrailingBackslash = !isTrailingBackslashQuotationDisabled && _environment.os == OSType.WINDOWS
+                val normalizedValue = MSBuildParameterNormalizer.normalizeAndQuoteValue(
+                    parameter.value,
+                    fullEscaping,
+                    quoteTrailingBackslash
+                )
+
                 "-p:${normalizedName}=${normalizedValue}"
             }
-    }
-
-    fun normalizeName(name: String) =
-        String(
-            name.mapIndexed { index: Int, c: Char ->
-                if ( if(index == 0) isValidInitialElementNameCharacter(c) else isValidSubsequentElementNameCharacter(c) ) c else '_'
-            }.toCharArray()
-        )
-
-    fun normalizeValue(value: String, shouldBeEscaped: (Char) -> Boolean): String {
-        val str = String(escapeSymbols(value.asSequence(), shouldBeEscaped).toList().toCharArray())
-        if (isDoubleQuoteRequired(str)) {
-            return StringUtil.doubleQuote(StringUtil.unquoteString(str))
-        }
-
-        return str
-    }
-
-    private fun isDoubleQuoteRequired(str: String): Boolean {
-        val isEndWithOneBackslash = countTrailingBackslashes(str) == 2 // one backslash is escaping
-        return str.isBlank()
-                || SpecialCharacters.any { str.contains(it) }
-                || (!hasTrailingBackslashQuotBeenDisabled && isEndWithOneBackslash && _environment.os == OSType.WINDOWS)
-    }
-
-    private fun countTrailingBackslashes(str: String): Int {
-        var backslashesCount = 0
-        val chars = str.toCharArray()
-        for (i in (0..chars.lastIndex).reversed()) {
-            if (chars[i] != '\\') {
-                break
-            }
-            backslashesCount++
-        }
-        return backslashesCount
-    }
-
-    private fun isValidInitialElementNameCharacter(c: Char) =
-        (c >= 'A' && c <= 'Z') ||
-        (c >= 'a' && c <= 'z') ||
-        (c == '_')
-
-    private fun isValidSubsequentElementNameCharacter(c: Char) =
-        (c >= 'A' && c <= 'Z') ||
-        (c >= 'a' && c <= 'z') ||
-        (c >= '0' && c <= '9') ||
-        (c == '_') ||
-        (c == '-')
-
-    private fun escapeSymbols(chars: Sequence<Char>, shouldBeEscaped: (Char) -> Boolean): Sequence<Char> = sequence {
-        var lastIsSlash = false
-        for (char in chars) {
-            lastIsSlash = false
-            when {
-                char == '\\' -> {
-                    yield('\\')
-                    lastIsSlash = true
-                }
-
-                shouldBeEscaped(char) -> yieldAll(escape(char))
-                else -> yield(char)
-            }
-        }
-
-        // https://youtrack.jetbrains.com/issue/TW-72915
-        if (lastIsSlash) {
-            yield('\\')
-        }
-    }
-
-    fun escape(char: Char) = sequence {
-        yield('%')
-        for (c in String.format("%02X", char.code.toByte())) {
-            yield(c)
-        }
-    }
-
-    companion object {
-        private val SpecialCharacters = hashSetOf(' ', '%', ';')
-
-        internal fun shouldBeEscaped(parameterType: MSBuildParameterType, char: Char, allParamsEscapingEnabled: Boolean) = when {
-            // invisible
-            char.isISOControl() -> true
-            // predefined parameters
-            allParamsEscapingEnabled || parameterType == MSBuildParameterType.Predefined -> when {
-                char.isLetterOrDigit() -> false
-                char == ' ' -> false
-                char == '\\' -> false
-                char == '/' -> false
-                char == '.' -> false
-                char == '-' -> false
-                char == '_' -> false
-                char == '%' -> false
-                char == ':' -> false
-                char == ')' -> false
-                char == '(' -> false
-                else -> true
-            }
-            char == '"' -> true
-            else -> false
-        }
     }
 }

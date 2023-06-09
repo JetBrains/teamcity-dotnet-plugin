@@ -29,21 +29,24 @@ class DotnetCommonArgumentsProviderTest {
     @DataProvider
     fun testData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(false, listOf("rspArg", "customArg")),
-                arrayOf(true, listOf("l:/logger", "/nodeReuse:false", "customArg")))
+            arrayOf(true, listOf("rspArg", "customArg")),
+            arrayOf(false, listOf("l:/logger", "/nodeReuse:false", "customArg"))
+        )
     }
 
     @Test(dataProvider = "testData")
-    fun shouldGetArguments(avoidUsingRspFiles: Boolean, expectedArguments: List<String>) {
+    fun shouldGetArguments(useRspFile: Boolean, expectedArguments: List<String>) {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
-                avoidUsingRspFiles,
-                ArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),
-                ArgumentsProviderStub(sequenceOf(CommandLineArgument("customArg"))),
-                listOf(
-                        ArgumentsProviderStub(sequenceOf(CommandLineArgument("l:/logger"))),
-                        ArgumentsProviderStub(sequenceOf(CommandLineArgument("/nodeReuse:false")))))
+            useRspFile,
+            ArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),
+            ArgumentsProviderStub(sequenceOf(CommandLineArgument("customArg"))),
+            listOf(
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("l:/logger"))),
+                ArgumentsProviderStub(sequenceOf(CommandLineArgument("/nodeReuse:false")))
+            )
+        )
 
         // When
         val actualArguments = argumentsProvider.getArguments(context).map { it.value }.toList()

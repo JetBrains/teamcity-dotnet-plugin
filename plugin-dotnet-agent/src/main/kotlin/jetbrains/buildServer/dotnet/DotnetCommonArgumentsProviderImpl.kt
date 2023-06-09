@@ -19,14 +19,13 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineArgument
 
 class DotnetCommonArgumentsProviderImpl(
-        private val _avoidUsingRspFiles: Boolean,
-        private val _responseFileArgumentsProvider: ArgumentsProvider,
-        private val _customArgumentsProvider: ArgumentsProvider,
-        private val _argumentsProviders: List<ArgumentsProvider>)
-    : DotnetCommonArgumentsProvider {
+    private val _useRspFile: Boolean,
+    private val _responseFileArgumentsProvider: ArgumentsProvider,
+    private val _customArgumentsProvider: ArgumentsProvider,
+    private val _argumentsProviders: List<ArgumentsProvider>
+) : DotnetCommonArgumentsProvider {
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val avoidUsingRspFiles = _avoidUsingRspFiles
-        if (!avoidUsingRspFiles) {
+        if (_useRspFile) {
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
         } else {
             for (argumentsProvider in _argumentsProviders) {

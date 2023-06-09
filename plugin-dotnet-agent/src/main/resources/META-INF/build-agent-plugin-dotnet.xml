@@ -135,7 +135,7 @@
     <constructor-arg type="String" name="name" value="http-cache in user directory"/>
     <constructor-arg type="String" name="command" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
@@ -143,7 +143,7 @@
     <constructor-arg type="String" name="name" value="global-packages in user directory"/>
     <constructor-arg type="String" name="command" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
@@ -151,7 +151,7 @@
     <constructor-arg type="String" name="name" value="temp-cache in user directory"/>
     <constructor-arg type="String" name="command" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="stdEnvironmentVariables"/>
   </bean>
 
@@ -159,7 +159,7 @@
     <constructor-arg type="String" name="name" value="http-cache in 'system/dotnet/.http' directory"/>
     <constructor-arg type="String" name="command" value="http-cache"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Deep"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="teamcityEnvironmentVariables"/>
   </bean>
 
@@ -167,7 +167,7 @@
     <constructor-arg type="String" name="name" value="global-packages in 'system/dotnet/.net' directory"/>
     <constructor-arg type="String" name="command" value="global-packages"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Medium"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="teamcityEnvironmentVariables"/>
   </bean>
 
@@ -175,7 +175,7 @@
     <constructor-arg type="String" name="name" value="temp-cache in 'temp/buildTmp' directory"/>
     <constructor-arg type="String" name="command" value="temp"/>
     <constructor-arg type="jetbrains.buildServer.agent.runner.CleanType" name="type" value="Light"/>
-    <constructor-arg ref="dotnetToolProvider" />
+    <constructor-arg ref="dotnetToolProvider"/>
     <constructor-arg ref="teamcityEnvironmentVariables"/>
   </bean>
 
@@ -218,7 +218,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="rootDotnetCommandStreamResolver"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true" />
+  <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
   </bean>
@@ -338,12 +338,12 @@
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver" />
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver" id="testCommandsStreamResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver" />
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver" id="composedDotnetCommandStreamResolver" />
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver" id="composedDotnetCommandStreamResolver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandStreamResolver" id="rootDotnetCommandStreamResolver">
     <constructor-arg>
       <list>
@@ -374,7 +374,9 @@
   <bean class="jetbrains.buildServer.dotnet.logging.LoggerParametersImpl">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildVSTestLoggerParametersProvider" id="msbuildVSTestLoggerParametersProvider">
+    <constructor-arg ref="dotnetCustomArgumentsProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.SharedCompilationArgumentsProvider" id="sharedCompilationArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildLoggerArgumentsProvider" id="msBuildLoggerArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerArgumentsProvider" id="vstestLoggerArgumentsProvider"/>
@@ -388,7 +390,7 @@
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetCommonArgumentsProvider" primary="true">
-    <constructor-arg name="_avoidUsingRspFiles" value="false"/>
+    <constructor-arg name="_useRspFile" value="true"/>
     <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg>
@@ -400,7 +402,7 @@
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetCommonArgumentsProviderImpl" id="dotnetAssembliesArgumentsProvider">
-    <constructor-arg name="_avoidUsingRspFiles" value="true"/>
+    <constructor-arg name="_useRspFile" value="false"/>
     <constructor-arg ref="dotnetCommonResponseFileArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg>
@@ -530,8 +532,8 @@
   <bean class="jetbrains.buildServer.inspect.ArtifactServiceImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlReaderImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlWriterImpl"/>
-  <bean class="jetbrains.buildServer.inspect.ProcessResolverImpl" />
-  <bean class="jetbrains.buildServer.inspect.ArgumentsProviderImpl" />
+  <bean class="jetbrains.buildServer.inspect.ProcessResolverImpl"/>
+  <bean class="jetbrains.buildServer.inspect.ArgumentsProviderImpl"/>
 
   <!--Resharper Inspections-->
   <bean class="jetbrains.buildServer.inspect.InspectionConfigurationFile" id="inspectionConfigurationFile"/>
