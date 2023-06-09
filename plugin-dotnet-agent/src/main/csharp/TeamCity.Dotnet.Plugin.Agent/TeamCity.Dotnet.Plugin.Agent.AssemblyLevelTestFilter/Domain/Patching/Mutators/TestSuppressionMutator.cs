@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching.Mutators;
 
@@ -36,7 +36,7 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         _testsSuppressor = testsSuppressor;
     }
     
-    public Task<AssemblyMutationResult> MutateAsync(AssemblyDefinition assembly, TestSuppressionPatchingCriteria criteria)
+    public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, TestSuppressionPatchingCriteria criteria)
     {
         var (affectedTypes, affectedMethods) = (0, 0);
         
@@ -67,6 +67,6 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         return Task.FromResult(new AssemblyMutationResult(affectedTypes, affectedMethods));
     }
 
-    public Task<AssemblyMutationResult> MutateAsync(AssemblyDefinition assembly, IAssemblyPatchingCriteria criteria) =>
+    public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
         MutateAsync(assembly, (TestSuppressionPatchingCriteria) criteria);
 }

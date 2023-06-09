@@ -15,10 +15,11 @@
  */
 
 using Mono.Cecil;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 
 internal interface ITestsSuppressor
 {
-    TestSuppressionResult SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters);
+    TestSuppressionResult SuppressTests(IDotnetType type, TestSuppressionParameters parameters);
 }

@@ -15,18 +15,29 @@
  */
 
 using Microsoft.Extensions.Logging;
-using Mono.Cecil;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
 
 internal class AssemblyPatcher : IAssemblyPatcher
 {
+    private const string BackupFilePostfix = "_backup";
+    private const string TempFilePostfix = "_tmp";
     private readonly IEnumerable<IAssemblyMutator> _mutators;
+    private readonly IFileSystem _fileSystem;
+    private readonly IAssemblyLoader _assemblyLoader;
     private readonly ILogger<AssemblyPatcher> _logger;
 
-    public AssemblyPatcher(IEnumerable<IAssemblyMutator> mutators, ILogger<AssemblyPatcher> logger)
+    public AssemblyPatcher(
+        IEnumerable<IAssemblyMutator> mutators,
+        IFileSystem fileSystem,
+        IAssemblyLoader assemblyLoader,
+        ILogger<AssemblyPatcher> logger)
     {
         _mutators = mutators;
+        _fileSystem = fileSystem;
+        _assemblyLoader = assemblyLoader;
         _logger = logger;
     }
 
@@ -62,50 +73,44 @@ internal class AssemblyPatcher : IAssemblyPatcher
         );
     }
 
-    private static AssemblyDefinition LoadAssembly(string assemblyPath)
+    private IDotnetAssembly LoadAssembly(string assemblyPath)
     {
-        var assemblyResolver = new DefaultAssemblyResolver();
-        assemblyResolver.AddSearchDirectory(AppDomain.CurrentDomain.BaseDirectory);
-        var hasSymbols = File.Exists(Path.ChangeExtension(assemblyPath, ".pdb"));
-        return AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
-        {
-            AssemblyResolver = assemblyResolver,
-            ReadSymbols = hasSymbols,   // read debug symbols if available
-        });
+        var hasSymbols = _fileSystem.FileExists(_fileSystem.ChangeFileExtension(assemblyPath, FileExtension.Symbols));
+        return _assemblyLoader.LoadAssembly(assemblyPath, hasSymbols);
     }
 
     private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>
         _mutators.First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
 
-    private static async Task<SavingResult> SaveAssemblyAsync(AssemblyDefinition assembly, string originalAssemblyPath)
+    private async Task<SavingResult> SaveAssemblyAsync(IDotnetAssembly assembly, string originalAssemblyPath)
     {
-        var backupAssemblyPath = originalAssemblyPath + "_backup";
-        var tmpAssemblyPath = originalAssemblyPath + "_tmp";
+        var backupAssemblyPath = GetBackupFilePath(originalAssemblyPath);
+        var tmpAssemblyPath = GetTempFilePath(originalAssemblyPath);
         
         // backup the original assembly
-        await CopyFile(originalAssemblyPath, backupAssemblyPath);
+        await _fileSystem.CopyFile(originalAssemblyPath, backupAssemblyPath);
 
         // make a tmp copy of the original assembly
-        await CopyFile(originalAssemblyPath, tmpAssemblyPath);
+        await _fileSystem.CopyFile(originalAssemblyPath, tmpAssemblyPath);
         
         // deal with debug symbols
-        var originalSymbolsPath = Path.ChangeExtension(originalAssemblyPath, ".pdb");
-        var backupSymbolsPath = originalSymbolsPath + "_backup";
-        var hasSymbols = assembly.MainModule.HasSymbols && File.Exists(originalSymbolsPath);
+        var originalSymbolsPath = _fileSystem.ChangeFileExtension(originalAssemblyPath, FileExtension.Symbols);
+        var backupSymbolsPath = GetBackupFilePath(originalSymbolsPath);
+        var hasSymbols = assembly.HasSymbols && _fileSystem.FileExists(originalSymbolsPath);
         if (hasSymbols)
         {
-            await CopyFile(originalSymbolsPath, backupSymbolsPath);
+            await _fileSystem.CopyFile(originalSymbolsPath, backupSymbolsPath);
         }
 
         // save the modified assembly on disk in tmp location and preserve debug symbols if available
-        await using (var destinationStream = File.Create(tmpAssemblyPath))
+        await using (var destinationStream = _fileSystem.CreateFile(tmpAssemblyPath))
         {
-            assembly.Write(destinationStream, new WriterParameters { WriteSymbols = hasSymbols });
+            assembly.Write(destinationStream, hasSymbols);
         }
 
         // replace the original assembly with the modified one
-        File.Delete(originalAssemblyPath);
-        File.Move(tmpAssemblyPath, originalAssemblyPath);
+        _fileSystem.DeleteFile(originalAssemblyPath);
+        _fileSystem.MoveFile(tmpAssemblyPath, originalAssemblyPath);
 
         if (!hasSymbols)
         {
@@ -115,14 +120,11 @@ internal class AssemblyPatcher : IAssemblyPatcher
 
         return new SavingResult(originalAssemblyPath, backupAssemblyPath, originalSymbolsPath, backupSymbolsPath);
     }
-
-    private static async Task CopyFile(string source, string target)
-    {
-        await using var sourceStream = File.OpenRead(source);
-        await using var destinationStream = File.Create(target);
-        await sourceStream.CopyToAsync(destinationStream);
-    }
     
+    private static string GetBackupFilePath(string originalPath) => $"{originalPath}{BackupFilePostfix}";
+    
+    private static string GetTempFilePath(string originalPath) => $"{originalPath}{TempFilePostfix}";
+
     private record struct SavingResult(
         string OriginalAssemblyPath,
         string BackupAssemblyPath,

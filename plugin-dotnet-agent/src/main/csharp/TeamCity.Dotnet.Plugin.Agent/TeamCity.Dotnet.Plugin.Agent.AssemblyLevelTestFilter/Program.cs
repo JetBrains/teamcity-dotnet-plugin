@@ -31,6 +31,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DependencyInjection;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging;
 
@@ -61,6 +62,7 @@ internal static class Program
                 services
                     .AddSingleton(commandLineParsingResult)
                     .AddSingletonByInterface<IFileSystem>()
+                    .AddSingletonByInterface<IAssemblyLoader>()
                     .AddSingletonByInterface<ITestSelectorParser>()
                     .AddSingletonByInterface<ITestEngine>()
                     .AddSingletonByImplementationType<ITestEngine>()

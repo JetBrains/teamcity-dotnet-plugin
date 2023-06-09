@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
 
 internal interface IAssemblyMutator
 {
-    Task<AssemblyMutationResult> MutateAsync(AssemblyDefinition assembly, IAssemblyPatchingCriteria criteria);
+    Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria);
 }
 
 internal interface IAssemblyMutator<in TPatchingCriteria> : IAssemblyMutator
     where TPatchingCriteria : IAssemblyPatchingCriteria
 {
-    Task<AssemblyMutationResult> MutateAsync(AssemblyDefinition assembly, TPatchingCriteria criteria);
+    Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, TPatchingCriteria criteria);
 }

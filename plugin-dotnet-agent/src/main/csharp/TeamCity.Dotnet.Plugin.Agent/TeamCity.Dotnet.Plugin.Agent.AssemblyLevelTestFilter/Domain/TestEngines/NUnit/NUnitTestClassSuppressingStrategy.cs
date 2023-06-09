@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.NUnit;
 
@@ -25,6 +25,6 @@ internal class NUnitTestClassSuppressingStrategy : BaseSuppressingStrategy<NUnit
     public NUnitTestClassSuppressingStrategy(NUnit testEngine) : base(testEngine) {}
 
     
-    public override TestSuppressionResult SuppressTestsBySelector(TypeDefinition type, TestClassSelector testSelector) =>
+    public override TestSuppressionResult SuppressTestsBySelector(IDotnetType type, TestClassSelector testSelector) =>
         RemoveAllTestAttributes(type);
 }

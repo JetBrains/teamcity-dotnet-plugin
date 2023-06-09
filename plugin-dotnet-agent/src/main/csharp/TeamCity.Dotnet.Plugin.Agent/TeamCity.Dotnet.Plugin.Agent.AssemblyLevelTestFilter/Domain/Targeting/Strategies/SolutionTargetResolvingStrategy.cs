@@ -16,25 +16,36 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
-internal class SolutionTargetResolvingStrategy : ITargetResolvingStrategy
+internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy, ITargetResolvingStrategy
 {
     private readonly ILogger<SolutionTargetResolvingStrategy> _logger;
     
-    public TargetType TargetType => TargetType.Solution;
+    public override TargetType TargetType => TargetType.Solution;
 
-    public SolutionTargetResolvingStrategy(ILogger<SolutionTargetResolvingStrategy> logger)
+    public SolutionTargetResolvingStrategy(
+        IFileSystem fileSystem,
+        ILogger<SolutionTargetResolvingStrategy> logger) : base(fileSystem, logger)
     {
         _logger = logger;
     }
 
-    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    protected override IEnumerable<string> AllowedTargetExtensions => new []{ FileExtension.Solution, FileExtension.SolutionFilter };
+
+    public override IEnumerable<(FileInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target solution: {Target}", target);
-        
-        var solutionFile = new FileInfo(target);
+
+        var solutionFile = TryToGetTargetFile(target);
+        if (solutionFile == null)
+        {
+            _logger.LogWarning("Invalid solution target: {Target}", target);
+            yield break;
+        }
+
         var solution = SolutionFile.Parse(solutionFile.FullName);
 
         foreach (var project in solution.ProjectsInOrder)
@@ -47,6 +58,7 @@ internal class SolutionTargetResolvingStrategy : ITargetResolvingStrategy
 
             var projectFile = new FileInfo(project.AbsolutePath);
             _logger.LogInformation("Resolved project by target solution: {Project}", projectFile.FullName);
+            
             yield return (projectFile, TargetType.Project);
         }
     }

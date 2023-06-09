@@ -17,36 +17,40 @@
 using Microsoft.Extensions.Logging;
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
-internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
+internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, ITargetResolvingStrategy
 {
     private readonly ILogger<AssemblyTargetResolvingStrategy> _logger;
     private readonly IReadOnlyList<ITestEngine> _testEngines;
 
-    public TargetType TargetType => TargetType.Assembly;
+    public override TargetType TargetType => TargetType.Assembly;
 
     public AssemblyTargetResolvingStrategy(
+        IFileSystem fileSystem,
         ILogger<AssemblyTargetResolvingStrategy> logger,
-        IEnumerable<ITestEngine> testEngines)
+        IEnumerable<ITestEngine> testEngines) : base(fileSystem, logger)
     {
         _logger = logger;
         _testEngines = testEngines.ToList();
     }
-    
-    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+
+    protected override IEnumerable<string> AllowedTargetExtensions => new [] { FileExtension.Dll, FileExtension.Exe };
+
+    public override IEnumerable<(FileInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target assembly: {Target}", target);
-        
-        var file = new FileInfo(target);
-        if (!file.Exists)
+
+        var assemblyFile = TryToGetTargetFile(target);
+        if (assemblyFile == null)
         {
-            _logger.LogError("Target assembly not found: {Target}", target);
+            _logger.LogWarning("Invalid assembly target file: {Target}", target);
             yield break;
         }
 
-        var (isAssembly, detectedEngines) = TryDetectEngines(file);
+        var (isAssembly, detectedEngines) = TryDetectEngines(assemblyFile);
         if (!isAssembly)
         {
             _logger.LogDebug("Target assembly is not a .NET assembly: {Target}", target);
@@ -59,17 +63,12 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
         }
         
         _logger.LogInformation("Assembly {Target} depends on following test frameworks: {Engines}", target, string.Join(", ", detectedEngines));
-        _logger.LogInformation("Resolved assembly: {Assembly}", file.FullName);
-        yield return (file, TargetType.Assembly);
+        _logger.LogInformation("Resolved assembly: {Assembly}", assemblyFile.FullName);
+        yield return (assemblyFile, TargetType.Assembly);
     }
 
-    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileInfo file)
+    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileSystemInfo file)
     {
-        if (file.Extension != ".dll" && file.Extension != ".exe")
-        {
-            return (false, null);
-        }
-        
         try
         {
             using var assembly = AssemblyDefinition.ReadAssembly(file.FullName);
@@ -90,6 +89,7 @@ internal class AssemblyTargetResolvingStrategy : ITargetResolvingStrategy
         }
         catch (BadImageFormatException)
         {
+            _logger.LogWarning("Can't read target assembly definition: {Target}", file.FullName);
             return (false, null);
         }
     }

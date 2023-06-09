@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-using System.IO;
-
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 internal class FileSystemWrapper : IFileSystem
@@ -23,10 +21,34 @@ internal class FileSystemWrapper : IFileSystem
     public string GetFullPath(string path) => Path.GetFullPath(path);
 
     public bool FileExists(string path) => File.Exists(path);
+    
+    public (FileInfo?, Exception?) GetFileInfo(string path)
+    {
+        if (!FileExists(path))
+        {
+            return (null, new Exception($"File not found: {path}"));
+        }
+        
+        try
+        {
+            return (new FileInfo(path), null);
+        }
+        catch (Exception exception)
+        {
+            return (null, new Exception($"Can't get file info for {path}", exception));
+        }
+    }
 
-    public void FileDelete(string path) => File.Delete(path);
+    public void DeleteFile(string path) => File.Delete(path);
 
-    public void FileMove(string sourcePath, string destinationPath) => File.Move(sourcePath, destinationPath);
+    public void MoveFile(string sourcePath, string destinationPath) => File.Move(sourcePath, destinationPath);
+    
+    public async Task CopyFile(string source, string target)
+    {
+        await using var sourceStream = File.OpenRead(source);
+        await using var destinationStream = File.Create(target);
+        await sourceStream.CopyToAsync(destinationStream);
+    }
 
     public async IAsyncEnumerable<(string, int)> ReadLinesAsync(string path)
     {
@@ -43,5 +65,12 @@ internal class FileSystemWrapper : IFileSystem
 
     public string GetExtension(string path) => Path.GetExtension(path);
     
+    public bool FileHasOneOfExtension(string path, IEnumerable<string> extensions) =>
+        extensions.Any(extension => path.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
+
+    public string ChangeFileExtension(string path, string extension) => Path.ChangeExtension(path, extension);
+
     public Task AppendAllLinesAsync(string filePath, IEnumerable<string> content) => File.AppendAllLinesAsync(filePath, content);
+    
+    public FileStream CreateFile(string path) => File.Create(path);
 }

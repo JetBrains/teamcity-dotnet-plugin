@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
+using Mono.Cecil;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal record TestClass(IDotnetType Type, IList<ITestEngine> TestEngines);
+internal interface IDotnetType
+{
+    public string FullName { get; }
+    
+    IEnumerable<CustomAttribute> CustomAttributes { get; }
+    
+    IEnumerable<MethodDefinition> Methods { get; }
+    
+    void RemoveCustomAttribute(CustomAttribute customAttribute);
+}

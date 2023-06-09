@@ -69,7 +69,7 @@ internal class BackupRestore : IBackupRestore
                 {
                     try
                     {
-                        _fileSystem.FileDelete(originalFilePath);
+                        _fileSystem.DeleteFile(originalFilePath);
                     }
                     catch (Exception ex)
                     {
@@ -78,7 +78,7 @@ internal class BackupRestore : IBackupRestore
                 }
 
                 // rename the backup file to the original one
-                _fileSystem.FileMove(backupFilePath, originalFilePath);
+                _fileSystem.MoveFile(backupFilePath, originalFilePath);
                 _logger.LogInformation("File {BackupFilePath} restored to {OriginalFilePath}", backupFilePath, originalFilePath);
             }
             catch (Exception ex)
@@ -95,7 +95,7 @@ internal class BackupRestore : IBackupRestore
         // remove the backup metadata CSV file
         try
         {
-            _fileSystem.FileDelete(csvFilePath);
+            _fileSystem.DeleteFile(csvFilePath);
             _logger.LogError("Backup metadata file {BackupCsvPath} removed", csvFilePath);
         }
         catch (Exception ex)

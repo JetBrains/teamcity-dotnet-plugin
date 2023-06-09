@@ -16,29 +16,21 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
-public interface IFileSystem
+public static class FileExtension
 {
-    string GetFullPath(string path);
+    public const string Txt = ".txt";
     
-    bool FileExists(string path);
-
-    (FileInfo?, Exception?) GetFileInfo(string path);
-
-    FileStream CreateFile(string path);
+    public const string Csv = ".csv";
     
-    void DeleteFile(string path);
-
-    void MoveFile(string sourcePath, string destinationPath);
-
-    Task CopyFile(string source, string target);
-
-    IAsyncEnumerable<(string, int)> ReadLinesAsync(string path);
-
-    bool DirectoryExists(string path);
-
-    string GetExtension(string path);
+    public const string Dll = ".dll";
     
-    string ChangeFileExtension(string path, string extension);
-
-    Task AppendAllLinesAsync(string filePath, IEnumerable<string> content);
+    public const string Exe = ".exe";
+    
+    public const string Symbols = ".pdb";
+    
+    public const string CSharpProject = ".csproj";
+    
+    public const string Solution = ".sln";
+    
+    public const string SolutionFilter = ".slnf";
 }

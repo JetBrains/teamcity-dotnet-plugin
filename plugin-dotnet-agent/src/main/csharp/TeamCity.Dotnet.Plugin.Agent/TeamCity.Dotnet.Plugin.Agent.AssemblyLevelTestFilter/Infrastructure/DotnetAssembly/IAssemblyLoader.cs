@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
-
-internal record TestClass(IDotnetType Type, IList<ITestEngine> TestEngines);
+internal interface IAssemblyLoader
+{
+    IDotnetAssembly LoadAssembly(string assemblyPath, bool withSymbols);
+}

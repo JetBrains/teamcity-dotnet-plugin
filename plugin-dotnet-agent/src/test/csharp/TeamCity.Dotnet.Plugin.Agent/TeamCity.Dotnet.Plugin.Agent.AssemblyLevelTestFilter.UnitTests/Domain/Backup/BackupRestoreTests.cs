@@ -66,8 +66,8 @@ public class BackupRestoreTests
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Never);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Never);
     }
 
     [Fact]
@@ -88,9 +88,9 @@ public class BackupRestoreTests
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileDelete(csvFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(csvFilePath), Times.Once);
     }
         
         [Fact]
@@ -108,8 +108,8 @@ public class BackupRestoreTests
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(It.IsAny<string>()), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileMove(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(It.IsAny<string>()), Times.Once);
+        _fileSystemMock.Verify(fs => fs.MoveFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
@@ -130,8 +130,8 @@ public class BackupRestoreTests
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Never);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -147,14 +147,14 @@ public class BackupRestoreTests
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
         _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
         _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileDelete(originalFilePath)).Throws<Exception>();
+        _fileSystemMock.Setup(fs => fs.DeleteFile(originalFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -170,14 +170,14 @@ public class BackupRestoreTests
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
         _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
         _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileMove(backupFilePath, originalFilePath)).Throws<Exception>();
+        _fileSystemMock.Setup(fs => fs.MoveFile(backupFilePath, originalFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -193,15 +193,15 @@ public class BackupRestoreTests
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
         _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
         _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileDelete(csvFilePath)).Throws<Exception>();
+        _fileSystemMock.Setup(fs => fs.DeleteFile(csvFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.FileDelete(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileMove(backupFilePath, originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.FileDelete(csvFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.DeleteFile(csvFilePath), Times.Once);
     }
 
 

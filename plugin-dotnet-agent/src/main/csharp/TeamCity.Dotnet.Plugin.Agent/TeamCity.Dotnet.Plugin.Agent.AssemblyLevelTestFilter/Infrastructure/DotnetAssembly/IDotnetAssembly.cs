@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
-
-internal record TestClass(IDotnetType Type, IList<ITestEngine> TestEngines);
+internal interface IDotnetAssembly : IDisposable
+{
+    bool HasSymbols { get; }
+    
+    IEnumerable<IDotnetType> Types { get; }
+    
+    void Write(FileStream destinationFileStream, bool withSymbols);
+}

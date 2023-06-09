@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 
 internal interface ITestClassDetector
 {
-    IEnumerable<TestClass> Detect(AssemblyDefinition assemblyDefinition);
+    IEnumerable<TestClass> Detect(IDotnetAssembly assembly);
 }

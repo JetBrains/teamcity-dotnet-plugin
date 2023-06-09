@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
+using System.Runtime.CompilerServices;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
-
-internal record TestClass(IDotnetType Type, IList<ITestEngine> TestEngines);
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] // for moq

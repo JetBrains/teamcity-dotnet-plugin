@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 
@@ -36,7 +37,7 @@ internal class TestsSuppressor : ITestsSuppressor
         _logger.LogDebug("TestsSuppressor initialized with {StrategyCount} suppressing strategies", _suppressingStrategies.Count);
     }
     
-    public TestSuppressionResult SuppressTests(TypeDefinition testClass, TestSuppressionParameters parameters)
+    public TestSuppressionResult SuppressTests(IDotnetType testClass, TestSuppressionParameters parameters)
     {
         try
         {
