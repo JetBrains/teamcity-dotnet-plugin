@@ -36,7 +36,7 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         _testsSuppressor = testsSuppressor;
     }
     
-    public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, TestSuppressionPatchingCriteria criteria)
+    public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, TestSuppressionPatchingCriteria criteria)
     {
         var (affectedTypes, affectedMethods) = (0, 0);
         
@@ -45,7 +45,8 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         {
             var affectedTestsInClass = detectedTestEngines.Sum(testEngine =>
             {
-                var (shouldBeSuppressed, testSelector) = _testSuppressionDecider.Decide(testClass.FullName, criteria.InclusionMode, criteria.TestSelectors);
+                var (shouldBeSuppressed, testSelector) =
+                    _testSuppressionDecider.Decide(testClass.FullName, criteria.InclusionMode, criteria.TestSelectors);
                 if (shouldBeSuppressed)
                 {
                     var suppressionResult = _testsSuppressor.SuppressTests(testClass, new TestSuppressionParameters(testEngine, testSelector!));
@@ -67,6 +68,6 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         return Task.FromResult(new AssemblyMutationResult(affectedTypes, affectedMethods));
     }
 
-    public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
+    public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
         MutateAsync(assembly, (TestSuppressionPatchingCriteria) criteria);
 }
