@@ -38,6 +38,11 @@ internal class TestsSuppressor : ITestsSuppressor
     
     public TestSuppressionResult SuppressTests(IDotnetType testClass, TestSuppressionParameters parameters)
     {
+        _logger.LogDebug(
+            "Suppressing tests for {TestClass} with {TestEngine} engine by selector: {TestSelector}",
+            testClass.FullName, parameters.TestEngine.GetType(), parameters.TestSelector.Query
+        );
+        
         try
         {
             var suppressionStrategy = ResolveSuppressingStrategy(parameters.TestEngine, parameters.TestSelector);
