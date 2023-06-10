@@ -31,8 +31,8 @@ internal class TestEngineRecognizer : ITestEngineRecognizer
         _testEngines.Where(engine => HasTestClassAttribute(engine, type) || HasTestMethodAttribute(engine, type)).ToList();
 
     private static bool HasTestClassAttribute(ITestEngine engine, IDotnetType type) =>
-        type.CustomAttributes.Any(attr => engine.TestClassAttributes.Contains(attr.AttributeType.FullName));
+        type.CustomAttributes.Any(attr => engine.TestClassAttributes.Contains(attr.FullName));
 
     private static bool HasTestMethodAttribute(ITestEngine engine, IDotnetType type) =>
-        type.Methods.Any(method => method.CustomAttributes.Any(attr => engine.TestMethodAttributes.Contains(attr.AttributeType.FullName)));
+        type.Methods.Any(method => method.CustomAttributes.Any(attr => engine.TestMethodAttributes.Contains(attr.FullName)));
 }

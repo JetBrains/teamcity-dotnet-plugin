@@ -18,13 +18,14 @@ using Mono.Cecil;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IDotnetType
+internal class DotnetCustomAttribute : IDotnetCustomAttribute
 {
-    public string FullName { get; }
-    
-    IEnumerable<IDotnetCustomAttribute> CustomAttributes { get; }
-    
-    IEnumerable<IDotnetMethod> Methods { get; }
+    public DotnetCustomAttribute(CustomAttribute customAttribute)
+    {
+        CustomAttribute = customAttribute;
+    }
 
-    void RemoveCustomAttribute(IDotnetCustomAttribute customAttribute);
+    public CustomAttribute CustomAttribute { get; }
+
+    public string FullName => CustomAttribute.AttributeType.FullName;
 }

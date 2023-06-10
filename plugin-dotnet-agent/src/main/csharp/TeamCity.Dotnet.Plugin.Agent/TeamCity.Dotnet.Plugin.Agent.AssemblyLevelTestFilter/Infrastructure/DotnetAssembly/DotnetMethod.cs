@@ -18,13 +18,21 @@ using Mono.Cecil;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IDotnetType
+internal class DotnetMethod : IDotnetMethod
 {
-    public string FullName { get; }
-    
-    IEnumerable<IDotnetCustomAttribute> CustomAttributes { get; }
-    
-    IEnumerable<IDotnetMethod> Methods { get; }
+    private readonly MethodDefinition _methodDefinition;
 
-    void RemoveCustomAttribute(IDotnetCustomAttribute customAttribute);
+    public DotnetMethod(MethodDefinition methodDefinition)
+    {
+        _methodDefinition = methodDefinition;
+    }
+
+    public IEnumerable<IDotnetCustomAttribute> CustomAttributes =>
+        _methodDefinition.CustomAttributes.Select(attr => new DotnetCustomAttribute(attr));
+
+    public void RemoveCustomAttribute(IDotnetCustomAttribute attribute)
+    {
+        var wrapper = (DotnetCustomAttribute) attribute;
+        _methodDefinition.CustomAttributes.Remove(wrapper.CustomAttribute);
+    }
 }

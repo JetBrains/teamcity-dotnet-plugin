@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
-
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IDotnetType
+internal interface IDotnetCustomAttribute
 {
-    public string FullName { get; }
-    
-    IEnumerable<IDotnetCustomAttribute> CustomAttributes { get; }
-    
-    IEnumerable<IDotnetMethod> Methods { get; }
-
-    void RemoveCustomAttribute(IDotnetCustomAttribute customAttribute);
+    string FullName { get; }
 }

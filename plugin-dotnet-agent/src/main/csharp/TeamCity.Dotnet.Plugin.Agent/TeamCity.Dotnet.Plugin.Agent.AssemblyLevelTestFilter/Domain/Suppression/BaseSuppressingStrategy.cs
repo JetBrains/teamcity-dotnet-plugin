@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
@@ -32,10 +31,10 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
 
     private TTestEngine TestEngine { get; }
 
-    private IEnumerable<MethodDefinition> GetTestMethods(IDotnetType type) =>
+    private IEnumerable<IDotnetMethod> GetTestMethods(IDotnetType type) =>
         type.Methods
             .Where(method => method.CustomAttributes
-                .Select(a => a.AttributeType.FullName)
+                .Select(a => a.FullName)
                 .Any(TestEngine.TestMethodAttributes.Contains)
             );
     
@@ -58,7 +57,7 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
         {
             foreach (var testAttribute in GetMethodsTestAttributes(method))
             {
-                method.CustomAttributes.Remove(testAttribute);
+                method.RemoveCustomAttribute(testAttribute);
             }
             suppressedTests++;
         }
@@ -78,17 +77,17 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
         return (suppressedTests, suppressedClasses);
     }
 
-    private List<CustomAttribute> GetMethodsTestAttributes(ICustomAttributeProvider method)
+    private List<IDotnetCustomAttribute> GetMethodsTestAttributes(IDotnetMethod method)
     {
         return method.CustomAttributes
-            .Where(a => TestEngine.TestMethodAttributes.Contains(a.AttributeType.FullName))
+            .Where(a => TestEngine.TestMethodAttributes.Contains(a.FullName))
             .ToList();
     }
 
-    private List<CustomAttribute> GetTypeTestAttributes(IDotnetType testClass)
+    private List<IDotnetCustomAttribute> GetTypeTestAttributes(IDotnetType testClass)
     {
         return testClass.CustomAttributes
-            .Where(a => TestEngine.TestClassAttributes.Contains(a.AttributeType.FullName))
+            .Where(a => TestEngine.TestClassAttributes.Contains(a.FullName))
             .ToList();
     }
 }

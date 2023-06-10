@@ -29,12 +29,15 @@ internal class DotnetType : IDotnetType
 
     public string FullName => _typeDefinition.FullName;
     
-    public IEnumerable<CustomAttribute> CustomAttributes => _typeDefinition.CustomAttributes;
+    public IEnumerable<IDotnetCustomAttribute> CustomAttributes =>
+        _typeDefinition.CustomAttributes.Select(a => new DotnetCustomAttribute(a));
     
-    public IEnumerable<MethodDefinition> Methods => _typeDefinition.Methods;
+    public IEnumerable<IDotnetMethod> Methods =>
+        _typeDefinition.Methods.Select(m => new DotnetMethod(m));
     
-    public void RemoveCustomAttribute(CustomAttribute customAttribute)
+    public void RemoveCustomAttribute(IDotnetCustomAttribute customAttribute)
     {
-        _typeDefinition.CustomAttributes.Remove(customAttribute);
+        var wrapper = (DotnetCustomAttribute) customAttribute;
+        _typeDefinition.CustomAttributes.Remove(wrapper.CustomAttribute);
     }
 }
