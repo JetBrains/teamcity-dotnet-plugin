@@ -28,7 +28,7 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.App;
 public class SuppressCommandHandlerTests
 {
     private readonly Mock<ITargetResolver> _mockTargetResolver;
-    private readonly Mock<ITestSelectorsFactory> _mockTestSelectorsFactory;
+    private readonly Mock<ITestSelectorsLoader> _mockTestSelectorsFactory;
     private readonly Mock<IAssemblyPatcher> _mockAssemblyPatcher;
     private readonly Mock<IBackupMetadataSaver> _mockBackupMetadataSaver;
     private readonly SuppressCommandHandler _handler;
@@ -38,7 +38,7 @@ public class SuppressCommandHandlerTests
     public SuppressCommandHandlerTests()
     {
         _mockTargetResolver = new Mock<ITargetResolver>();
-        _mockTestSelectorsFactory = new Mock<ITestSelectorsFactory>();
+        _mockTestSelectorsFactory = new Mock<ITestSelectorsLoader>();
         _mockAssemblyPatcher = new Mock<IAssemblyPatcher>();
         _mockBackupMetadataSaver = new Mock<IBackupMetadataSaver>();
         var mockLogger = new Mock<ILogger<SuppressCommandHandler>>();
@@ -63,7 +63,7 @@ public class SuppressCommandHandlerTests
         var patchingResult2 =
             AssemblyPatchingResult.Patched(targetAssembly2.Name, backupAssemblyPath2, assemblySymbolsPath, backupAssemblySymbolsPath, assemblyMutationResult);
         _mockTestSelectorsFactory
-            .Setup(m => m.LoadFromAsync(It.IsAny<string>()))
+            .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
             .Setup(m => m.Resolve(It.IsAny<string>()))
@@ -80,7 +80,7 @@ public class SuppressCommandHandlerTests
         
         // assert
         _mockTestSelectorsFactory.Verify(m =>
-            m.LoadFromAsync(It.Is<string>(s => s == _testCommand.TestsFilePath)),
+            m.LoadTestSelectorsFromAsync(It.Is<string>(s => s == _testCommand.TestsFilePath)),
             Times.Once
         );
         _mockAssemblyPatcher.Verify(m =>
@@ -121,7 +121,7 @@ public class SuppressCommandHandlerTests
         var patchingResult =
             AssemblyPatchingResult.NotPatched(targetAssembly.Name);
         _mockTestSelectorsFactory
-            .Setup(m => m.LoadFromAsync(It.IsAny<string>()))
+            .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
             .Setup(m => m.Resolve(It.IsAny<string>()))
@@ -135,7 +135,7 @@ public class SuppressCommandHandlerTests
         
         // assert
         _mockTestSelectorsFactory.Verify(m =>
-            m.LoadFromAsync(It.Is<string>(s => s == _testCommand.TestsFilePath)),
+            m.LoadTestSelectorsFromAsync(It.Is<string>(s => s == _testCommand.TestsFilePath)),
             Times.Once
         );
         _mockAssemblyPatcher.Verify(m =>

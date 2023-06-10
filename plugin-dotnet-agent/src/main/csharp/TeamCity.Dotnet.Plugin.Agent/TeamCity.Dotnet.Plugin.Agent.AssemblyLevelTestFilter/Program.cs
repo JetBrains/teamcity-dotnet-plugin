@@ -75,7 +75,7 @@ internal static class Program
                     .AddSingletonByInterface<ITargetResolvingStrategy>()
                     .AddSingletonByInterface<ITargetResolver>()
                     .AddSingletonByInterface<IAssemblyPatcher>()
-                    .AddSingletonByInterface<ITestSelectorsFactory>()
+                    .AddSingletonByInterface<ITestSelectorsLoader>()
                     .AddSingletonByInterface<IBackupMetadataSaver>()
                     .AddSingletonByInterface<IBackupRestore>()
                     .AddSingletonByInterface<IHelpPrinter>()

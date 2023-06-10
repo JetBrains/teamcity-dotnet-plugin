@@ -19,6 +19,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Patching;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
@@ -26,20 +27,20 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
 internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
 {
     private readonly ITargetResolver _targetResolver;
-    private readonly ITestSelectorsFactory _testSelectorsFactory;
+    private readonly ITestSelectorsLoader _testSelectorsLoader;
     private readonly IAssemblyPatcher _assemblyPatcher;
     private readonly IBackupMetadataSaver _backupMetadataSaver;
     private readonly ILogger<SuppressCommandHandler> _logger;
 
     public SuppressCommandHandler(
         ITargetResolver targetResolver,
-        ITestSelectorsFactory testSelectorsFactory,
+        ITestSelectorsLoader testSelectorsLoader,
         IAssemblyPatcher assemblyPatcher,
         IBackupMetadataSaver backupMetadataSaver,
         ILogger<SuppressCommandHandler> logger)
     {
         _targetResolver = targetResolver;
-        _testSelectorsFactory = testSelectorsFactory;
+        _testSelectorsLoader = testSelectorsLoader;
         _assemblyPatcher = assemblyPatcher;
         _backupMetadataSaver = backupMetadataSaver;
         _logger = logger;
@@ -50,7 +51,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
         _logger.LogInformation("Suppress command execution started");
         
         var patchingCriteria = new TestSuppressionPatchingCriteria(
-            TestSelectors: await _testSelectorsFactory.LoadFromAsync(command.TestsFilePath),
+            TestSelectors: await _testSelectorsLoader.LoadTestSelectorsFromAsync(command.TestsFilePath),
             InclusionMode: command.InclusionMode
         );
 

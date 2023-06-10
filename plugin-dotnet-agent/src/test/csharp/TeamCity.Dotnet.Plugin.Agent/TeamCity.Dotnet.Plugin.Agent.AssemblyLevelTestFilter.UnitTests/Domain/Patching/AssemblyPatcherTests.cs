@@ -26,7 +26,6 @@ public class AssemblyPatcherTests
 {
     private readonly Mock<IFileSystem> _fileSystemMock;
     private readonly Mock<IAssemblyLoader> _assemblyLoader;
-    private readonly Mock<ILogger<AssemblyPatcher>> _loggerMock;
     private readonly TestPatchingCriteria _testCriteria = new();
     private readonly TestMutator _mutator;
     private readonly IAssemblyPatcher _assemblyPatcher;
@@ -35,10 +34,10 @@ public class AssemblyPatcherTests
     {
         _fileSystemMock = new Mock<IFileSystem>();
         _assemblyLoader = new Mock<IAssemblyLoader>();
-        _loggerMock = new Mock<ILogger<AssemblyPatcher>>();
+        Mock<ILogger<AssemblyPatcher>> loggerMock = new();
         _mutator = new TestMutator();
         _assemblyPatcher = new AssemblyPatcher(
-            new[] { _mutator }, _fileSystemMock.Object, _assemblyLoader.Object, _loggerMock.Object);
+            new[] { _mutator }, _fileSystemMock.Object, _assemblyLoader.Object, loggerMock.Object);
     }
     
     [Fact]
@@ -126,12 +125,12 @@ public class AssemblyPatcherTests
     
     internal class TestMutator : IAssemblyMutator<TestPatchingCriteria>
     {
-        internal AssemblyMutationResult? Result { get; set; }
+        internal AssemblyMutationResult Result { get; set; } = AssemblyMutationResult.Empty!;
         
-        public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, TestPatchingCriteria criteria) =>
+        public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, TestPatchingCriteria criteria) =>
             Task.FromResult(Result);
 
-        public Task<AssemblyMutationResult?> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
+        public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
             Task.FromResult(Result);
     }
 }

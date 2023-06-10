@@ -15,6 +15,7 @@
  */
 
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
@@ -27,25 +28,41 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelect
 internal class TestSelectorParser : ITestSelectorParser
 {
     private static readonly Regex Regex = new (@"^(?<namespaces>([^.]+\.)*)(?<class>[^(]+)(\((?<params>[^)]+)\))?$");
-    
-    public ITestSelector? ParseTestQuery(string testQueryLine)
+    private readonly ILogger<TestSelectorParser> _logger;
+
+    public TestSelectorParser(ILogger<TestSelectorParser> logger)
     {
-        if (string.IsNullOrWhiteSpace(testQueryLine))
-            return null;
-
-        var match = Regex.Match(testQueryLine);
-
-        if (!match.Success)
+        _logger = logger;
+    }
+    
+    public bool TryParseTestQuery(string testQuery, out ITestSelector? testSelector)
+    {
+        testSelector = null;
+        
+        _logger.LogDebug("Parsing test query: {TestQuery}", testQuery);
+        if (string.IsNullOrWhiteSpace(testQuery))
         {
-            throw new ArgumentException($"Invalid test query format: {testQueryLine}");
+            _logger.LogWarning("Test query couldn't be empty: {TestQuery}", testQuery);
+            return false;
+        }
+
+        var match = Regex.Match(testQuery);
+        if (!testQuery.Contains('.') || !match.Success)
+        {
+            _logger.LogWarning("Invalid test query format: {TestQuery}", testQuery);
+            return false;
         }
 
         var namespaces = match.Groups["namespaces"].Value.Split('.').Where(s => !string.IsNullOrEmpty(s)).ToList();
         var className = match.Groups["class"].Value;
-
-        return match.Groups["params"].Success
+        
+        testSelector = match.Groups["params"].Success
             ? new ParamTestClassSelector(namespaces, className, ParseParameters(match.Groups["params"].Value))
             : new TestClassSelector(namespaces, className);
+        
+        _logger.LogDebug("Test query successfully parsed: {TestQuery}", testQuery);
+        
+        return true;
     }
 
     private static List<string> ParseParameters(string paramString) =>

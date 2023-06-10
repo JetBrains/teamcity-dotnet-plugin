@@ -18,5 +18,5 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelect
 
 internal interface ITestSelectorParser
 {
-    ITestSelector? ParseTestQuery(string value);
+    bool TryParseTestQuery(string testQuery, out ITestSelector? testSelector);
 }

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
-
-internal interface ITestSelectorsFactory
+internal interface ITestSelectorsLoader
 {
-    Task<IReadOnlyDictionary<string, ITestSelector>> LoadFromAsync(string filePath);
+    Task<IReadOnlyDictionary<string, ITestSelector>> LoadTestSelectorsFromAsync(string filePath);
 }
