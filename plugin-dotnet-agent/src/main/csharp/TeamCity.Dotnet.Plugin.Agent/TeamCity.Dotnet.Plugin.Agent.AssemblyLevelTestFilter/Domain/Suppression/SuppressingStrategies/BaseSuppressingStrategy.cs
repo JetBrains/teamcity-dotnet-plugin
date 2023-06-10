@@ -18,7 +18,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppression.SuppressingStrategies;
 
 internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : ITestSuppressingStrategy
     where TTestEngine : ITestEngine
@@ -70,9 +70,8 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
         var (suppressedTests, suppressedClasses) = (0, 0);
         foreach (var testAttribute in GetTypeTestAttributes(testClass))
         {
-            suppressedTests += GetTestMethods(testClass).Count();
-            suppressedClasses++;
             testClass.RemoveCustomAttribute(testAttribute);
+            suppressedClasses++;
         }
         return (suppressedTests, suppressedClasses);
     }

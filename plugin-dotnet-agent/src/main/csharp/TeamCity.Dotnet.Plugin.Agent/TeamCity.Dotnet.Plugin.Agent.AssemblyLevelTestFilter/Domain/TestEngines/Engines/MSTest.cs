@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.XUnit;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.Engines;
 
-internal class XUnit : ITestEngine
+internal class MsTest : ITestEngine
 {
-    public string Name => "xUnit";
-
+    public string Name => "MSTest";
+    
     public IEnumerable<string> AssembliesNames => new[]
     {
-        "xunit.core",
+        "Microsoft.VisualStudio.TestPlatform.TestFramework"
     };
 
     public IReadOnlyList<string> TestClassAttributes { get; } = new []
     {
-        "Xunit.FactAttribute"
+        "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute"
     };
 
     public IReadOnlyList<string> TestMethodAttributes { get; } = new []
     {
-        "Xunit.TheoryAttribute",
-        "Xunit.FactAttribute"
+        "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute",
+        "Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethodAttribute"
     };
 }

@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.MsTest;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines.Engines;
 
-internal class MsTest : ITestEngine
+internal class NUnit : ITestEngine
 {
-    public string Name => "MSTest";
+    public string Name => "NUnit";
     
     public IEnumerable<string> AssembliesNames => new[]
     {
-        "Microsoft.VisualStudio.TestPlatform.TestFramework"
+        "nunit.framework"
     };
 
     public IReadOnlyList<string> TestClassAttributes { get; } = new []
     {
-        "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute"
+        "NUnit.Framework.TestFixtureAttribute",
+        "NUnit.Framework.TestFixtureSourceAttribute"
     };
 
     public IReadOnlyList<string> TestMethodAttributes { get; } = new []
     {
-        "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute",
-        "Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethodAttribute"
+        "NUnit.Framework.TestAttribute",
+        "NUnit.Framework.TestCaseAttribute",
+        "NUnit.Framework.TestCaseSourceAttribute"
     };
 }
