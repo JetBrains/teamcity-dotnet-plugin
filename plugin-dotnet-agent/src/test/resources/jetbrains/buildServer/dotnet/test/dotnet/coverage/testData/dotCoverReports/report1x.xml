@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root Name="Root" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+  <Assembly Name="dll1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+      <Type Name="slowTest1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="16" Column="31" EndLine="16" EndColumn="32" />
+          <Statement FileIndex="1" Line="17" Column="7" EndLine="17" EndColumn="13" />
+          <Statement FileIndex="1" Line="18" Column="5" EndLine="18" EndColumn="6" />
+        </Member>
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="19" Column="31" EndLine="19" EndColumn="32" />
+          <Statement FileIndex="1" Line="20" Column="7" EndLine="20" EndColumn="13" />
+          <Statement FileIndex="1" Line="21" Column="5" EndLine="21" EndColumn="6" />
+        </Member>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="22" Column="31" EndLine="22" EndColumn="32" />
+          <Statement FileIndex="1" Line="23" Column="7" EndLine="23" EndColumn="13" />
+          <Statement FileIndex="1" Line="24" Column="5" EndLine="24" EndColumn="6" />
+        </Member>
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="25" Column="31" EndLine="25" EndColumn="32" />
+          <Statement FileIndex="1" Line="26" Column="7" EndLine="26" EndColumn="13" />
+          <Statement FileIndex="1" Line="27" Column="5" EndLine="27" EndColumn="6" />
+        </Member>
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="1" Line="28" Column="31" EndLine="28" EndColumn="32" />
+          <Statement FileIndex="1" Line="30" Column="5" EndLine="30" EndColumn="6" />
+        </Member>
+        <Member Name="Main" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Statement FileIndex="1" Line="9" Column="44" EndLine="9" EndColumn="45" />
+          <Statement FileIndex="1" Line="10" Column="7" EndLine="10" EndColumn="13" />
+          <Statement FileIndex="1" Line="11" Column="7" EndLine="11" EndColumn="13" />
+          <Statement FileIndex="1" Line="12" Column="7" EndLine="12" EndColumn="13" />
+          <Statement FileIndex="1" Line="13" Column="7" EndLine="13" EndColumn="13" />
+          <Statement FileIndex="1" Line="14" Column="7" EndLine="14" EndColumn="45" />
+          <Statement FileIndex="1" Line="15" Column="5" EndLine="15" EndColumn="6" />
+        </Member>
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0">
+          <Statement FileIndex="1" Line="32" Column="31" EndLine="32" EndColumn="32" />
+          <Statement FileIndex="1" Line="34" Column="5" EndLine="34" EndColumn="6" />
+        </Member>
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0">
+          <Statement FileIndex="1" Line="35" Column="31" EndLine="35" EndColumn="32" />
+          <Statement FileIndex="1" Line="37" Column="5" EndLine="37" EndColumn="6" />
+        </Member>
+      </Type>
+    </Namespace>
+  </Assembly>
+  <File Name="e:\Work\TeamCity\trunk\buildserver\dotNet\coverage\tests\testData\testAssemblies\dll1.cs" Index="1" />
+</Root>

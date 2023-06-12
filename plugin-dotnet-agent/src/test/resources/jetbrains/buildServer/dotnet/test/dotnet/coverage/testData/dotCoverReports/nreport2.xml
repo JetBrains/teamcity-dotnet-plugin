@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root Name="Root" CoveredStatements="183" TotalStatements="305" CoveragePercent="60" DotCoverVersion="1.0">
+  <Assembly Name="ClassLibrary1" CoveredStatements="183" TotalStatements="305" CoveragePercent="60">
+    <Namespace Name="ClassLibrary1" CoveredStatements="87" TotalStatements="207" CoveragePercent="42">
+      <Type Name="Class6" CoveredStatements="42" TotalStatements="49" CoveragePercent="86">
+        <Type Name="&lt;&gt;c__DisplayClassf" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+          <Member Name="&lt;Test_03&gt;b__a" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+            <Statement FileIndex="239" Line="30" Column="58" EndLine="30" EndColumn="67" Covered="True" />
+          </Member>
+          <Member Name="&lt;Test_03&gt;b__b" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+            <Statement FileIndex="239" Line="30" Column="91" EndLine="30" EndColumn="110" Covered="True" />
+          </Member>
+          <Member Name="&lt;Test_03&gt;b__c" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+            <Statement FileIndex="239" Line="30" Column="136" EndLine="30" EndColumn="156" Covered="True" />
+          </Member>
+        </Type>
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="&lt;Foo&gt;b__15" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="86" Column="48" EndLine="86" EndColumn="82" Covered="True" />
+        </Member>
+        <Member Name="&lt;Foo&gt;b__16" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="86" Column="95" EndLine="86" EndColumn="108" Covered="True" />
+        </Member>
+        <Member Name="&lt;Foo&gt;b__17" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="86" Column="130" EndLine="86" EndColumn="149" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_01&gt;b__0" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="15" Column="48" EndLine="15" EndColumn="53" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_01&gt;b__1" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="15" Column="66" EndLine="15" EndColumn="71" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_02&gt;b__4" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="22" Column="79" EndLine="22" EndColumn="83" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_02&gt;b__5" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="22" Column="109" EndLine="22" EndColumn="113" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_02&gt;b__6" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="23" Column="58" EndLine="23" EndColumn="70" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_03&gt;b__d" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="31" Column="63" EndLine="31" EndColumn="75" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_04&gt;b__11" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="239" Line="39" Column="21" EndLine="43" EndColumn="35" Covered="True" />
+          <Statement FileIndex="239" Line="44" Column="21" EndLine="44" EndColumn="31" Covered="True" />
+          <Statement FileIndex="239" Line="45" Column="21" EndLine="55" EndColumn="24" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_04&gt;b__12" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="239" Line="41" Column="35" EndLine="41" EndColumn="64" Covered="True" />
+          <Statement FileIndex="239" Line="42" Column="35" EndLine="42" EndColumn="45" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_04&gt;b__13" CoveredStatements="4" TotalStatements="4" CoveragePercent="100">
+          <Statement FileIndex="239" Line="47" Column="23" EndLine="47" EndColumn="53" Covered="True" />
+          <Statement FileIndex="239" Line="48" Column="23" EndLine="48" EndColumn="33" Covered="True" />
+          <Statement FileIndex="239" Line="49" Column="23" EndLine="49" EndColumn="56" Covered="True" />
+          <Statement FileIndex="239" Line="50" Column="23" EndLine="54" EndColumn="26" Covered="True" />
+        </Member>
+        <Member Name="&lt;Test_04&gt;b__14" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="239" Line="52" Column="25" EndLine="52" EndColumn="57" Covered="True" />
+          <Statement FileIndex="239" Line="53" Column="25" EndLine="53" EndColumn="35" Covered="True" />
+        </Member>
+        <Member Name="DoTheFoo" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="239" Line="73" Column="7" EndLine="73" EndColumn="11" Covered="True" />
+          <Statement FileIndex="239" Line="74" Column="5" EndLine="74" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Foo" CoveredStatements="1" TotalStatements="1" CoveragePercent="100">
+          <Statement FileIndex="239" Line="86" Column="7" EndLine="86" EndColumn="161" Covered="True" />
+        </Member>
+        <Member Name="Foo2" CoveredStatements="4" TotalStatements="4" CoveragePercent="100">
+          <Statement FileIndex="239" Line="78" Column="7" EndLine="78" EndColumn="31" Covered="True" />
+          <Statement FileIndex="239" Line="79" Column="7" EndLine="79" EndColumn="26" Covered="True" />
+          <Statement FileIndex="239" Line="80" Column="7" EndLine="80" EndColumn="26" Covered="True" />
+          <Statement FileIndex="239" Line="81" Column="7" EndLine="81" EndColumn="26" Covered="True" />
+        </Member>
+        <Member Name="Test_01" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="239" Line="15" Column="7" EndLine="15" EndColumn="90" Covered="True" />
+          <Statement FileIndex="239" Line="16" Column="7" EndLine="16" EndColumn="43" Covered="True" />
+          <Statement FileIndex="239" Line="17" Column="5" EndLine="17" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Test_02" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="239" Line="22" Column="7" EndLine="22" EndColumn="115" Covered="True" />
+          <Statement FileIndex="239" Line="23" Column="7" EndLine="23" EndColumn="74" Covered="True" />
+          <Statement FileIndex="239" Line="24" Column="5" EndLine="24" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Test_03" CoveredStatements="4" TotalStatements="4" CoveragePercent="100">
+          <Statement FileIndex="239" Line="29" Column="7" EndLine="29" EndColumn="28" Covered="True" />
+          <Statement FileIndex="239" Line="30" Column="7" EndLine="30" EndColumn="158" Covered="True" />
+          <Statement FileIndex="239" Line="31" Column="7" EndLine="31" EndColumn="79" Covered="True" />
+          <Statement FileIndex="239" Line="32" Column="5" EndLine="32" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Test_04" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="239" Line="37" Column="7" EndLine="57" EndColumn="11" Covered="True" />
+          <Statement FileIndex="239" Line="58" Column="5" EndLine="58" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="62" Column="7" EndLine="62" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="63" Column="7" EndLine="63" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="64" Column="7" EndLine="64" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="65" Column="7" EndLine="65" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="66" Column="7" EndLine="66" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="67" Column="7" EndLine="67" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="68" Column="5" EndLine="68" EndColumn="6" Covered="False" />
+        </Member>
+      </Type>
+      <Type Name="ClassWithParts" CoveredStatements="36" TotalStatements="36" CoveragePercent="100">
+        <Type Name="AAA" CoveredStatements="26" TotalStatements="26" CoveragePercent="100">
+          <Type Name="ZZZ" CoveredStatements="14" TotalStatements="14" CoveragePercent="100">
+            <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+            <Member Name="EEE" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+              <Statement FileIndex="236" Line="16" Column="11" EndLine="16" EndColumn="48" Covered="True" />
+              <Statement FileIndex="236" Line="17" Column="11" EndLine="17" EndColumn="35" Covered="True" />
+              <Statement FileIndex="236" Line="18" Column="11" EndLine="18" EndColumn="35" Covered="True" />
+              <Statement FileIndex="236" Line="19" Column="11" EndLine="19" EndColumn="35" Covered="True" />
+              <Statement FileIndex="236" Line="20" Column="11" EndLine="20" EndColumn="35" Covered="True" />
+              <Statement FileIndex="236" Line="21" Column="11" EndLine="21" EndColumn="35" Covered="True" />
+              <Statement FileIndex="236" Line="22" Column="11" EndLine="22" EndColumn="18" Covered="True" />
+            </Member>
+            <Member Name="PPP" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+              <Statement FileIndex="237" Line="16" Column="11" EndLine="16" EndColumn="48" Covered="True" />
+              <Statement FileIndex="237" Line="17" Column="11" EndLine="17" EndColumn="35" Covered="True" />
+              <Statement FileIndex="237" Line="18" Column="11" EndLine="18" EndColumn="35" Covered="True" />
+              <Statement FileIndex="237" Line="19" Column="11" EndLine="19" EndColumn="35" Covered="True" />
+              <Statement FileIndex="237" Line="20" Column="11" EndLine="20" EndColumn="35" Covered="True" />
+              <Statement FileIndex="237" Line="21" Column="11" EndLine="21" EndColumn="35" Covered="True" />
+              <Statement FileIndex="237" Line="22" Column="11" EndLine="22" EndColumn="18" Covered="True" />
+            </Member>
+          </Type>
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+          <Member Name="A" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+            <Statement FileIndex="234" Line="14" Column="9" EndLine="14" EndColumn="40" Covered="True" />
+            <Statement FileIndex="234" Line="15" Column="9" EndLine="15" EndColumn="33" Covered="True" />
+            <Statement FileIndex="234" Line="16" Column="9" EndLine="16" EndColumn="33" Covered="True" />
+            <Statement FileIndex="234" Line="17" Column="9" EndLine="17" EndColumn="33" Covered="True" />
+            <Statement FileIndex="234" Line="18" Column="9" EndLine="18" EndColumn="33" Covered="True" />
+            <Statement FileIndex="234" Line="19" Column="9" EndLine="19" EndColumn="33" Covered="True" />
+            <Statement FileIndex="234" Line="20" Column="9" EndLine="20" EndColumn="16" Covered="True" />
+          </Member>
+          <Member Name="BBB" CoveredStatements="5" TotalStatements="5" CoveragePercent="100">
+            <Statement FileIndex="235" Line="12" Column="9" EndLine="12" EndColumn="43" Covered="True" />
+            <Statement FileIndex="235" Line="13" Column="9" EndLine="13" EndColumn="33" Covered="True" />
+            <Statement FileIndex="235" Line="14" Column="9" EndLine="14" EndColumn="33" Covered="True" />
+            <Statement FileIndex="235" Line="15" Column="9" EndLine="15" EndColumn="33" Covered="True" />
+            <Statement FileIndex="235" Line="16" Column="9" EndLine="16" EndColumn="16" Covered="True" />
+          </Member>
+        </Type>
+        <Member Name=".ctor" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+          <Statement FileIndex="233" Line="16" Column="5" EndLine="16" EndColumn="33" Covered="True" />
+          <Statement FileIndex="233" Line="18" Column="7" EndLine="18" EndColumn="21" Covered="True" />
+          <Statement FileIndex="233" Line="19" Column="7" EndLine="19" EndColumn="23" Covered="True" />
+          <Statement FileIndex="233" Line="21" Column="7" EndLine="21" EndColumn="27" Covered="True" />
+          <Statement FileIndex="233" Line="22" Column="7" EndLine="22" EndColumn="27" Covered="True" />
+          <Statement FileIndex="233" Line="23" Column="5" EndLine="23" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name=".ctor" CoveredStatements="4" TotalStatements="4" CoveragePercent="100">
+          <Statement FileIndex="233" Line="10" Column="5" EndLine="10" EndColumn="28" Covered="True" />
+          <Statement FileIndex="233" Line="12" Column="7" EndLine="12" EndColumn="21" Covered="True" />
+          <Statement FileIndex="233" Line="13" Column="7" EndLine="13" EndColumn="23" Covered="True" />
+          <Statement FileIndex="233" Line="14" Column="5" EndLine="14" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="NUnitSampleTests" CoveredStatements="9" TotalStatements="10" CoveragePercent="90">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="SomeFailingTest" CoveredStatements="1" TotalStatements="2" CoveragePercent="50">
+          <Statement FileIndex="235" Line="45" Column="13" EndLine="45" EndColumn="34" Covered="True" />
+          <Statement FileIndex="235" Line="46" Column="9" EndLine="46" EndColumn="10" Covered="False" />
+        </Member>
+        <Member Name="SomePassingTest" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="235" Line="40" Column="13" EndLine="40" EndColumn="35" Covered="True" />
+          <Statement FileIndex="235" Line="41" Column="9" EndLine="41" EndColumn="10" Covered="True" />
+        </Member>
+        <Member Name="TestMoreFoo" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="235" Line="57" Column="11" EndLine="57" EndColumn="32" Covered="True" />
+          <Statement FileIndex="235" Line="58" Column="9" EndLine="58" EndColumn="10" Covered="True" />
+        </Member>
+        <Member Name="TestMoreFoo2" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="238" Line="14" Column="7" EndLine="14" EndColumn="30" Covered="True" />
+          <Statement FileIndex="238" Line="15" Column="5" EndLine="15" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="WON" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="235" Line="51" Column="11" EndLine="51" EndColumn="45" Covered="True" />
+          <Statement FileIndex="235" Line="52" Column="9" EndLine="52" EndColumn="10" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="ThisIsNotUsedClass1" CoveredStatements="0" TotalStatements="28" CoveragePercent="0">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="ThisIsNotUsedMethod" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="95" Column="7" EndLine="95" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="96" Column="7" EndLine="96" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="97" Column="7" EndLine="97" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="98" Column="7" EndLine="98" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="99" Column="7" EndLine="99" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="100" Column="7" EndLine="100" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="101" Column="5" EndLine="101" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod2" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="104" Column="7" EndLine="104" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="105" Column="7" EndLine="105" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="106" Column="7" EndLine="106" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="107" Column="7" EndLine="107" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="108" Column="7" EndLine="108" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="109" Column="7" EndLine="109" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="110" Column="5" EndLine="110" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod3" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="113" Column="7" EndLine="113" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="114" Column="7" EndLine="114" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="115" Column="7" EndLine="115" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="116" Column="7" EndLine="116" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="117" Column="7" EndLine="117" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="118" Column="7" EndLine="118" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="119" Column="5" EndLine="119" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod4" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="122" Column="7" EndLine="122" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="123" Column="7" EndLine="123" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="124" Column="7" EndLine="124" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="125" Column="7" EndLine="125" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="126" Column="7" EndLine="126" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="127" Column="7" EndLine="127" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="128" Column="5" EndLine="128" EndColumn="6" Covered="False" />
+        </Member>
+      </Type>
+      <Type Name="ThisIsNotUsedClass2" CoveredStatements="0" TotalStatements="28" CoveragePercent="0">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="ThisIsNotUsedMethod" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="135" Column="7" EndLine="135" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="136" Column="7" EndLine="136" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="137" Column="7" EndLine="137" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="138" Column="7" EndLine="138" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="139" Column="7" EndLine="139" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="140" Column="7" EndLine="140" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="141" Column="5" EndLine="141" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod2" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="144" Column="7" EndLine="144" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="145" Column="7" EndLine="145" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="146" Column="7" EndLine="146" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="147" Column="7" EndLine="147" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="148" Column="7" EndLine="148" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="149" Column="7" EndLine="149" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="150" Column="5" EndLine="150" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod3" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="153" Column="7" EndLine="153" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="154" Column="7" EndLine="154" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="155" Column="7" EndLine="155" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="156" Column="7" EndLine="156" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="157" Column="7" EndLine="157" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="158" Column="7" EndLine="158" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="159" Column="5" EndLine="159" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod4" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="162" Column="7" EndLine="162" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="163" Column="7" EndLine="163" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="164" Column="7" EndLine="164" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="165" Column="7" EndLine="165" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="166" Column="7" EndLine="166" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="167" Column="7" EndLine="167" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="168" Column="5" EndLine="168" EndColumn="6" Covered="False" />
+        </Member>
+      </Type>
+      <Type Name="ThisIsNotUsedClass3" CoveredStatements="0" TotalStatements="28" CoveragePercent="0">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="ThisIsNotUsedMethod" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="175" Column="7" EndLine="175" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="176" Column="7" EndLine="176" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="177" Column="7" EndLine="177" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="178" Column="7" EndLine="178" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="179" Column="7" EndLine="179" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="180" Column="7" EndLine="180" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="181" Column="5" EndLine="181" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod2" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="184" Column="7" EndLine="184" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="185" Column="7" EndLine="185" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="186" Column="7" EndLine="186" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="187" Column="7" EndLine="187" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="188" Column="7" EndLine="188" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="189" Column="7" EndLine="189" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="190" Column="5" EndLine="190" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod3" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="193" Column="7" EndLine="193" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="194" Column="7" EndLine="194" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="195" Column="7" EndLine="195" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="196" Column="7" EndLine="196" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="197" Column="7" EndLine="197" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="198" Column="7" EndLine="198" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="199" Column="5" EndLine="199" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod4" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="202" Column="7" EndLine="202" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="203" Column="7" EndLine="203" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="204" Column="7" EndLine="204" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="205" Column="7" EndLine="205" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="206" Column="7" EndLine="206" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="207" Column="7" EndLine="207" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="208" Column="5" EndLine="208" EndColumn="6" Covered="False" />
+        </Member>
+      </Type>
+      <Type Name="ThisIsNotUsedClass4" CoveredStatements="0" TotalStatements="28" CoveragePercent="0">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="ThisIsNotUsedMethod" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="215" Column="7" EndLine="215" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="216" Column="7" EndLine="216" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="217" Column="7" EndLine="217" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="218" Column="7" EndLine="218" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="219" Column="7" EndLine="219" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="220" Column="7" EndLine="220" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="221" Column="5" EndLine="221" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod2" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="224" Column="7" EndLine="224" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="225" Column="7" EndLine="225" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="226" Column="7" EndLine="226" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="227" Column="7" EndLine="227" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="228" Column="7" EndLine="228" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="229" Column="7" EndLine="229" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="230" Column="5" EndLine="230" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod3" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="233" Column="7" EndLine="233" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="234" Column="7" EndLine="234" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="235" Column="7" EndLine="235" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="236" Column="7" EndLine="236" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="237" Column="7" EndLine="237" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="238" Column="7" EndLine="238" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="239" Column="5" EndLine="239" EndColumn="6" Covered="False" />
+        </Member>
+        <Member Name="ThisIsNotUsedMethod4" CoveredStatements="0" TotalStatements="7" CoveragePercent="0">
+          <Statement FileIndex="239" Line="242" Column="7" EndLine="242" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="243" Column="7" EndLine="243" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="244" Column="7" EndLine="244" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="245" Column="7" EndLine="245" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="246" Column="7" EndLine="246" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="247" Column="7" EndLine="247" EndColumn="45" Covered="False" />
+          <Statement FileIndex="239" Line="248" Column="5" EndLine="248" EndColumn="6" Covered="False" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Namespace Name="NA" CoveredStatements="24" TotalStatements="24" CoveragePercent="100">
+      <Type Name="A" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="12" Column="7" EndLine="12" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="13" Column="7" EndLine="13" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="14" Column="7" EndLine="14" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="14" Column="28" EndLine="14" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="15" Column="7" EndLine="15" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="15" Column="28" EndLine="15" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="16" Column="7" EndLine="16" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="17" Column="5" EndLine="17" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="B" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="26" Column="7" EndLine="26" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="27" Column="7" EndLine="27" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="28" Column="7" EndLine="28" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="28" Column="28" EndLine="28" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="29" Column="7" EndLine="29" EndColumn="28" Covered="True" />
+          <Statement FileIndex="240" Line="29" Column="29" EndLine="29" EndColumn="33" Covered="True" />
+          <Statement FileIndex="240" Line="30" Column="7" EndLine="30" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="31" Column="5" EndLine="31" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="C" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="40" Column="7" EndLine="40" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="41" Column="7" EndLine="41" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="42" Column="7" EndLine="42" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="42" Column="28" EndLine="42" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="43" Column="7" EndLine="43" EndColumn="28" Covered="True" />
+          <Statement FileIndex="240" Line="43" Column="29" EndLine="43" EndColumn="33" Covered="True" />
+          <Statement FileIndex="240" Line="44" Column="7" EndLine="44" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="45" Column="5" EndLine="45" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Namespace Name="NA.NB" CoveredStatements="16" TotalStatements="16" CoveragePercent="100">
+      <Type Name="A" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="57" Column="7" EndLine="57" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="58" Column="7" EndLine="58" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="59" Column="7" EndLine="59" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="59" Column="28" EndLine="59" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="60" Column="7" EndLine="60" EndColumn="38" Covered="True" />
+          <Statement FileIndex="240" Line="60" Column="39" EndLine="60" EndColumn="43" Covered="True" />
+          <Statement FileIndex="240" Line="61" Column="7" EndLine="61" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="62" Column="5" EndLine="62" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="B" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="71" Column="7" EndLine="71" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="72" Column="7" EndLine="72" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="73" Column="7" EndLine="73" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="73" Column="28" EndLine="73" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="74" Column="7" EndLine="74" EndColumn="38" Covered="True" />
+          <Statement FileIndex="240" Line="74" Column="39" EndLine="74" EndColumn="43" Covered="True" />
+          <Statement FileIndex="240" Line="75" Column="7" EndLine="75" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="76" Column="5" EndLine="76" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Namespace Name="NA.NB.NC" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+      <Type Name="A" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="88" Column="7" EndLine="88" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="89" Column="7" EndLine="89" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="90" Column="7" EndLine="90" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="90" Column="28" EndLine="90" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="91" Column="7" EndLine="91" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="91" Column="28" EndLine="91" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="92" Column="7" EndLine="92" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="93" Column="5" EndLine="93" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Namespace Name="NA.NB.NC.ND" CoveredStatements="24" TotalStatements="24" CoveragePercent="100">
+      <Type Name="A" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="105" Column="7" EndLine="105" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="106" Column="7" EndLine="106" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="107" Column="7" EndLine="107" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="107" Column="28" EndLine="107" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="108" Column="7" EndLine="108" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="108" Column="28" EndLine="108" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="109" Column="7" EndLine="109" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="110" Column="5" EndLine="110" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="B" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="119" Column="7" EndLine="119" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="120" Column="7" EndLine="120" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="121" Column="7" EndLine="121" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="121" Column="28" EndLine="121" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="122" Column="7" EndLine="122" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="122" Column="28" EndLine="122" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="123" Column="7" EndLine="123" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="124" Column="5" EndLine="124" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="C" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="133" Column="7" EndLine="133" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="134" Column="7" EndLine="134" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="135" Column="7" EndLine="135" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="135" Column="28" EndLine="135" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="136" Column="7" EndLine="136" EndColumn="28" Covered="True" />
+          <Statement FileIndex="240" Line="136" Column="29" EndLine="136" EndColumn="33" Covered="True" />
+          <Statement FileIndex="240" Line="137" Column="7" EndLine="137" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="138" Column="5" EndLine="138" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Namespace Name="NA.NB.NC.ND.NE" CoveredStatements="22" TotalStatements="24" CoveragePercent="92">
+      <Type Name="A" CoveredStatements="7" TotalStatements="8" CoveragePercent="88">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="7" TotalStatements="8" CoveragePercent="88">
+          <Statement FileIndex="240" Line="150" Column="7" EndLine="150" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="151" Column="7" EndLine="151" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="152" Column="7" EndLine="152" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="152" Column="28" EndLine="152" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="153" Column="7" EndLine="153" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="153" Column="28" EndLine="153" EndColumn="32" Covered="False" />
+          <Statement FileIndex="240" Line="154" Column="7" EndLine="154" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="155" Column="5" EndLine="155" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="B" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Statement FileIndex="240" Line="164" Column="7" EndLine="164" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="165" Column="7" EndLine="165" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="166" Column="7" EndLine="166" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="166" Column="28" EndLine="166" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="167" Column="7" EndLine="167" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="167" Column="28" EndLine="167" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="168" Column="7" EndLine="168" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="169" Column="5" EndLine="169" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+      <Type Name="C" CoveredStatements="7" TotalStatements="8" CoveragePercent="88">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="Test_" CoveredStatements="7" TotalStatements="8" CoveragePercent="88">
+          <Statement FileIndex="240" Line="178" Column="7" EndLine="178" EndColumn="17" Covered="True" />
+          <Statement FileIndex="240" Line="179" Column="7" EndLine="179" EndColumn="11" Covered="True" />
+          <Statement FileIndex="240" Line="180" Column="7" EndLine="180" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="180" Column="28" EndLine="180" EndColumn="32" Covered="True" />
+          <Statement FileIndex="240" Line="181" Column="7" EndLine="181" EndColumn="27" Covered="True" />
+          <Statement FileIndex="240" Line="181" Column="28" EndLine="181" EndColumn="32" Covered="False" />
+          <Statement FileIndex="240" Line="182" Column="7" EndLine="182" EndColumn="48" Covered="True" />
+          <Statement FileIndex="240" Line="183" Column="5" EndLine="183" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+    <Type Name="&lt;&gt;f__AnonymousType0" CoveredStatements="0" TotalStatements="0" CoveragePercent="0">
+      <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="Equals" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="get_x" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="get_xx" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="get_xxx" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="get_xxxx" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="GetHashCode" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="ToString" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+    </Type>
+    <Type Name="ClassWithoutNamespace" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+      <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      <Member Name="Doo" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+        <Statement FileIndex="235" Line="30" Column="5" EndLine="30" EndColumn="34" Covered="True" />
+        <Statement FileIndex="235" Line="31" Column="3" EndLine="31" EndColumn="4" Covered="True" />
+      </Member>
+    </Type>
+  </Assembly>
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\PlatformProcessRunner\src\PlatformSwitchBase.cs" Index="1" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\Utils\Hashset.cs" Index="2" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\Utils\OneToManyMap.cs" Index="3" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ComponentContainer.cs" Index="4" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ComponentContainerAssemblyBinderBase.cs" Index="5" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ComponentContainerAssemblyBinder.cs" Index="6" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ComponentContainerException.cs" Index="7" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ComponentsExecutable.cs" Index="8" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\ContainerBase.cs" Index="9" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\DependentAssemblyWithComponentsAttribute.cs" Index="10" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\EnshureLoadedBinder.cs" Index="11" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\EnsureLoaded.cs" Index="12" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\JetContainer.cs" Index="13" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\Log4NetDefaultConfigAttribute.cs" Index="14" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\Log4netDefaultLoggerInitializer.cs" Index="15" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\LogManagerHelper.cs" Index="16" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\MapTypeAttribute.cs" Index="17" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\MeansImplicitUseAttribute.cs" Index="18" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\JetContainer\src\TeamCityAppender.cs" Index="19" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\AntPatternState.cs" Index="20" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\AntPatternUtil.cs" Index="21" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\DirectoryScanner.cs" Index="22" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\FileSystemPath.cs" Index="23" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\RealDirectoryEntry.cs" Index="24" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\RealFileEntry.cs" Index="25" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\RealFileSystem.cs" Index="26" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\RealRootDirectory.cs" Index="27" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FsScanner\Wildcard.cs" Index="28" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\CurrentEnvironment.cs" Index="29" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\IRunProcess.cs" Index="30" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\ParseUtil.cs" Index="31" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\ProcessRun.cs" Index="32" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\RunInRuntime.cs" Index="33" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\RemoteUnhandledExceptionLogger.cs" Index="34" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\EternalMarshalByRef.cs" Index="35" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\RunProcess.cs" Index="36" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Runtime\RunThread.cs" Index="37" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\AppDomainWrapper.cs" Index="38" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\AssemblyHelper.cs" Index="39" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\AssemblyResolver.cs" Index="40" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\CommandLineHelper.cs" Index="41" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\CommandLineParseException.cs" Index="42" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\CommandLineParser.cs" Index="43" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\EnvironmentUtil.cs" Index="44" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ExceptionFormatter.cs" Index="45" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\FileUtil.cs" Index="46" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\Hashset.cs" Index="47" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\JavaPropertiesFile.cs" Index="48" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\NUnitNameUtil.cs" Index="49" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\PluginManager.cs" Index="50" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ProcessRunnerBase.cs" Index="51" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ProcessRunner.cs" Index="52" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ProcessRunnerWithOutput.cs" Index="53" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ServiceMessageFormatter.cs" Index="54" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ServiceMessageProperty.cs" Index="55" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\ShutdownHelper.cs" Index="56" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\SleepUtil.cs" Index="57" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\StringsHelper.cs" Index="58" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\Utils\src\StringUtil.cs" Index="59" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\CommandLine\CommandLineArgumentsParser.cs" Index="60" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\CommandLine\TeamCityImplicitArgumentsParser.cs" Index="61" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\CommandLine\TestRunArgumentsFactory.cs" Index="62" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\CommandLine\XmlTestArgumentsParser.cs" Index="63" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\NUnitLauncher2.cs" Index="64" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitBootstrap\src\RunnerFactory.cs" Index="65" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Binder\ConvertibleArgumentAttribute.cs" Index="66" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Binder\ConvertToStringArray.cs" Index="67" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Binder\PropertyBindAttribute.cs" Index="68" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Binder\TeamCityPropertiesBinder.cs" Index="69" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\AgentFlowAwareFlowIdGeneratorImpl.cs" Index="70" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\BasicLogger.cs" Index="71" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\BlockMessageImpl.cs" Index="72" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\MessageValueWriterWrapper.cs" Index="73" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\BuildStatusServiceMessageImpl.cs" Index="74" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\DirecrotyWildcardResolverImpl.cs" Index="75" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\SimpleFlowId.cs" Index="76" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\DisposableFlow.cs" Index="77" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\FakeAgentLogger.cs" Index="78" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\FlowEnvironment.cs" Index="79" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\FlowIdGeneratorImpl.cs" Index="80" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\FlowInfoLoggerImpl.cs" Index="81" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ImportDataServiceMessageImpl.cs" Index="82" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ImportMSTestsServiceMessageImpl.cs" Index="83" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\LoggerThreadBase.cs" Index="84" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\LoggingContextImpl.cs" Index="85" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\MessageLoggerImpl.cs" Index="86" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\PausableLoggerThread.cs" Index="87" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ProcessRunImpl.cs" Index="88" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\RemoteLoggerImpl.cs" Index="89" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ReportBuildNumberServiceMessageImpl.cs" Index="90" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ReportBuildStatisticsServiceMessage.cs" Index="91" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\ServiceMessageDetectorImpl.cs" Index="92" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\StringTrimmer.cs" Index="93" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\TeamcityDetector.cs" Index="94" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\TeamCityServiceMessageImpl.cs" Index="95" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\TestMessageImpl.cs" Index="96" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\TextMessageImpl.cs" Index="97" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\UploadArtifactsServiceMessageImpl.cs" Index="98" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Impl\XMLRPCLogger.cs" Index="99" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Util\SerializableTextMessage.cs" Index="100" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Util\StandardOutputsCapturer.cs" Index="101" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Util\XmlRpcDebugProxy.cs" Index="102" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\AgentUtil.cs" Index="103" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\IAgentDotNetFrameworkLookup.cs" Index="104" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\LoggerModeChanger.cs" Index="105" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CommonLoggers\src\Property.cs" Index="106" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnit\NUnitArguments.cs" Index="107" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnit\NUnitFormatter.cs" Index="108" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnit\NUnitPluginTypeBase.cs" Index="109" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnit\NUnitPluginTypeFactory.cs" Index="110" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnit\NUnitTestArguments.cs" Index="111" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnitFactory\NUnitRunnerFactory.cs" Index="112" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnitImplicitParser.cs" Index="113" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnitPluginCommandLineParser.cs" Index="114" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitCommon\src\NUnitVSTSUtil.cs" Index="115" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\Arguments\PlatfromTypeInfo.cs" Index="116" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\Arguments\PluginArgument.cs" Index="117" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\Arguments\PluginType.cs" Index="118" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\Arguments\TestRunArguments.cs" Index="119" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\Arguments\TestRunArgumentsHelper.cs" Index="120" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\AsProcess.cs" Index="121" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\PlugableRunFactory.cs" Index="122" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\PriorityComparer.cs" Index="123" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\TestNamesSet.cs" Index="124" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\TestRunnerHelper.cs" Index="125" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\XmlSerializerFactory.cs" Index="126" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\TestRunnerCommon\src\XmlTestArguments.cs" Index="127" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageArgumentsParserBase.cs" Index="128" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageArgumentsCommandlineParserBase.cs" Index="129" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverArgumentsParser.cs" Index="130" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverArtuments.cs" Index="131" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageRunner.cs" Index="132" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageArgumetsBase.cs" Index="133" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverFiltersParser.cs" Index="134" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\TeamCityCoverageSharedSettings.cs" Index="135" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverSettings.cs" Index="136" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverSettingsXml.cs" Index="137" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageTeamCityFactoryBase.cs" Index="138" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverTeamCityFactory.cs" Index="139" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageType.cs" Index="140" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\DotCover\DotCoverType.cs" Index="141" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\FakeCover\CoverageDisabledChecker.cs" Index="142" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\FakeCover\CoverageDisabledPluginType.cs" Index="143" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCover3Arguments.cs" Index="144" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverTeamCityFactoryBase.cs" Index="145" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCover3TeamCityFactory.cs" Index="146" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCover3Type.cs" Index="147" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverArguments.cs" Index="148" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverArgumentsBase.cs" Index="149" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverArgumentsParser.cs" Index="150" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageArgumentsMSBuildParserBase.cs" Index="151" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverMSBuildArgumentsParser.cs" Index="152" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverTeamCityFactory.cs" Index="153" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\NCoverType.cs" Index="154" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\TeamCityCoverageContantsNCover.cs" Index="155" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\NCover\TeamCityCoverageContantsNCover3.cs" Index="156" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverArguments.cs" Index="157" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverArgumentsParser.cs" Index="158" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverMSBuildArgumentsParser.cs" Index="159" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverServerRegistrar.cs" Index="160" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverTeamCityFactory.cs" Index="161" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\PartCoverType.cs" Index="162" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\PartCover\TeamCityCoverageContantsPartCover.cs" Index="163" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoverageArgumentPluginParser.cs" Index="164" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoveragePlugin.cs" Index="165" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\CoveragePluginType.cs" Index="166" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\FilesAsArtifactsPublisher.cs" Index="167" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\ReportCoverageResultServiceMessage.cs" Index="168" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\TeamCityCoverageArguments.cs" Index="169" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\CoverageSupport\src\TeamCityCoverageSettings.cs" Index="170" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\Plugins\NUnit22.cs" Index="171" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\Plugins\NUnit22VSTS.cs" Index="172" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\Plugins\NUnit24.cs" Index="173" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\Plugins\NUnit25.cs" Index="174" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\CrossAppDomain.cs" Index="175" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\GatherReferencesDomain.cs" Index="176" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\NUnitAutoPluginType.cs" Index="177" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\TestPluginSelector.cs" Index="178" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnit-Auto\src\TestPluginSelectorFactory.cs" Index="179" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestExeArguments.cs" Index="180" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestExeArgumentsPluginType.cs" Index="181" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestExeProcess.cs" Index="182" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestExeTestRunnerFactory.cs" Index="183" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestTargetGenerator.cs" Index="184" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\Executable\MSTestTeamCityImplicitParametersParser.cs" Index="185" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestArgumentsParser.cs" Index="186" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestException.cs" Index="187" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestLauncher.cs" Index="188" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestPluginType.cs" Index="189" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestRunParameters.cs" Index="190" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestTestRunner.cs" Index="191" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\MSTestSupport\src\MSTestTestRunnerFactory.cs" Index="192" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ActionFactoryBase.cs" Index="193" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\DisposableHandler.cs" Index="194" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\AssemblyTest.cs" Index="195" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\AssemblyTestFactory.cs" Index="196" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\BuildException.cs" Index="197" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\TryOneAssembly.cs" Index="198" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\TryOneAssemblyTest.cs" Index="199" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\DisposeOneAssembly.cs" Index="200" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\DisposeOneAssemblyActionFactory.cs" Index="201" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ErrorLoggerImpl.cs" Index="202" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ExplicitCheckHelper.cs" Index="203" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ForAllOtherOrderingStrategy.cs" Index="204" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\InitAssemblyAction.cs" Index="205" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\LoadAssembliesActionFactory.cs" Index="206" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\LoadTestDomainAction.cs" Index="207" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\LoadTestDomainActionFactory.cs" Index="208" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\MyEventPump.cs" Index="209" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NotStrategy.cs" Index="210" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitEventListenerBase.cs" Index="211" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitPerAssemblyTestRunnerImpl.cs" Index="212" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitPluginType.cs" Index="213" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitRunnerBase.cs" Index="214" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitTestDomain.cs" Index="215" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnitTestRunnerImpl.cs" Index="216" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\OneProcessNUnitRunnerFactory.cs" Index="217" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ProcessResultAction.cs" Index="218" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\ProcessResultActionFactory.cs" Index="219" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\RunTestAction.cs" Index="220" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\RunTestActionFactory.cs" Index="221" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\SimpleOrderingStrategy.cs" Index="222" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\TestOrderingInfo.cs" Index="223" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\TestOrderingInfoImpl.cs" Index="224" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\ExplicitAttributeFilter.cs" Index="225" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\Formatter.cs" Index="226" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\NUnitEventListener.cs" Index="227" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\NUnitListenerProxy.cs" Index="228" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\NUnitRunner.cs" Index="229" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\RemoteAddinsLoader.cs" Index="230" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5\StrategyFilter.cs" Index="231" />
+  <File Name="e:\Work\TeamCity\trunk\dotnet-listeners\src\NUnitLauncher\src\NUnit-2.5.7\MyRemoteTestRunner.cs" Index="232" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class2.cs" Index="233" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class1.cs" Index="234" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\NUnitSampleTests.cs" Index="235" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class3.cs" Index="236" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class4.cs" Index="237" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class5.cs" Index="238" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class6.cs" Index="239" />
+  <File Name="e:\temp\DotCoverTests\ClassLibrary1\ClassLibrary1\Class7.cs" Index="240" />
+</Root>

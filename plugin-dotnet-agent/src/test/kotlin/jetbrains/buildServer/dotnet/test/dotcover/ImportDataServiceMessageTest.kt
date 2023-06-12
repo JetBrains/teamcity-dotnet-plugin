@@ -26,9 +26,9 @@ class ImportDataServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf("dotNetCoverage", "dotcover", Path("dotCoverHome"), "##teamcity[importData type='dotNetCoverage' tool='dotcover' path='dotCoverHome']"),
-                arrayOf("dotNetCoverage", "dotCover", Path("dotCover Home"), "##teamcity[importData type='dotNetCoverage' tool='dotCover' path='dotCover Home']"),
-                arrayOf("dotNetCoverage", "", Path(""), "##teamcity[importData type='dotNetCoverage']"))
+                arrayOf("dotNetCoverageDotnetRunner", "dotcover", Path("dotCoverHome"), "##teamcity[importData type='dotNetCoverageDotnetRunner' tool='dotcover' path='dotCoverHome']"),
+                arrayOf("dotNetCoverageDotnetRunner", "dotCover", Path("dotCover Home"), "##teamcity[importData type='dotNetCoverageDotnetRunner' tool='dotCover' path='dotCover Home']"),
+                arrayOf("dotNetCoverageDotnetRunner", "", Path(""), "##teamcity[importData type='dotNetCoverageDotnetRunner']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")

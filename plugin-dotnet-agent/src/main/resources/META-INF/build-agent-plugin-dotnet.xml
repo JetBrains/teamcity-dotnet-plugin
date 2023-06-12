@@ -496,6 +496,33 @@
     <constructor-arg ref="vstestToolResolver"/>
   </bean>
 
+  <!-- dotNet coverage -->
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessorEventsSubscription"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorsHolderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessorReportPublisherImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageStatisticsPublisherImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.ArtifactsUploaderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.utils.FileServiceImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.utils.TempFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.GenerateIndexPagePostProcessor"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.SequencerImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageArtifactsPublisherImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportsMerger"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessor"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageDataProcessor"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolderImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.CoverageConstants$ServiceMessageSetup"/>
+
+  <!-- dotCover reports -->
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverVersionFetcher"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverReportGenerator"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverParametersFactory"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverPropertiesExtension"/>
+  <bean class="jetbrains.buildServer.dotcover.report.BundledDotCover"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverReportRunnerFactory"/>
+  <bean class="jetbrains.buildServer.dotcover.report.DotCoverVersionChecker"/>
+
   <!-- dotCover workflow composer -->
   <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>

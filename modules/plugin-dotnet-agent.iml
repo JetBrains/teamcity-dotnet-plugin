@@ -30,5 +30,7 @@
     <orderEntry type="library" name="DotNetCompileLibs" level="project" />
     <orderEntry type="library" name="loggingLibrary" level="project" />
     <orderEntry type="library" scope="TEST" name="DotNetTestLibs" level="project" />
+    <orderEntry type="library" name="coverage-report-builder" level="project" />
+    <orderEntry type="module" module-name="test-api" scope="TEST" />
   </component>
 </module>

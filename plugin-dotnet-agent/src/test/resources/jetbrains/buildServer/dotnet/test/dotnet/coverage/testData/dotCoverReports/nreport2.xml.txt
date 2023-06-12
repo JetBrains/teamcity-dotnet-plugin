@@ -1,0 +1,94 @@
+ClassLibrary1!    <>f__AnonymousType0
+  ->.<>f__AnonymousType0
+ClassLibrary1!    ClassWithoutNamespace
+  ->.ClassWithoutNamespace
+    method::1/1
+    stmt:  :2/2
+ClassLibrary1!  ClassLibrary1  Class6
+  ->ClassLibrary1.Class6
+    method::20/21
+    stmt:  :39/46
+    ClassLibrary1!  ClassLibrary1  Class6+<>c__DisplayClassf
+      ->ClassLibrary1.Class6+<>c__DisplayClassf
+        method::3/3
+        stmt:  :3/3
+ClassLibrary1!  ClassLibrary1  ClassWithParts
+  ->ClassLibrary1.ClassWithParts
+    method::1/1
+    stmt:  :10/10
+    ClassLibrary1!  ClassLibrary1  ClassWithParts+AAA
+      ->ClassLibrary1.ClassWithParts+AAA
+        method::2/2
+        stmt:  :12/12
+        ClassLibrary1!  ClassLibrary1  ClassWithParts+AAA+ZZZ
+          ->ClassLibrary1.ClassWithParts+AAA+ZZZ
+            method::2/2
+            stmt:  :14/14
+ClassLibrary1!  ClassLibrary1  NUnitSampleTests
+  ->ClassLibrary1.NUnitSampleTests
+    method::5/5
+    stmt:  :9/10
+ClassLibrary1!  ClassLibrary1  ThisIsNotUsedClass1
+  ->ClassLibrary1.ThisIsNotUsedClass1
+    method::0/4
+    stmt:  :0/28
+ClassLibrary1!  ClassLibrary1  ThisIsNotUsedClass2
+  ->ClassLibrary1.ThisIsNotUsedClass2
+    method::0/4
+    stmt:  :0/28
+ClassLibrary1!  ClassLibrary1  ThisIsNotUsedClass3
+  ->ClassLibrary1.ThisIsNotUsedClass3
+    method::0/4
+    stmt:  :0/28
+ClassLibrary1!  ClassLibrary1  ThisIsNotUsedClass4
+  ->ClassLibrary1.ThisIsNotUsedClass4
+    method::0/4
+    stmt:  :0/28
+ClassLibrary1!  NA  A
+  ->NA.A
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA  B
+  ->NA.B
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA  C
+  ->NA.C
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB  A
+  ->NA.NB.A
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB  B
+  ->NA.NB.B
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC  A
+  ->NA.NB.NC.A
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC.ND  A
+  ->NA.NB.NC.ND.A
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC.ND  B
+  ->NA.NB.NC.ND.B
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC.ND  C
+  ->NA.NB.NC.ND.C
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC.ND.NE  A
+  ->NA.NB.NC.ND.NE.A
+    method::1/1
+    stmt:  :7/8
+ClassLibrary1!  NA.NB.NC.ND.NE  B
+  ->NA.NB.NC.ND.NE.B
+    method::1/1
+    stmt:  :8/8
+ClassLibrary1!  NA.NB.NC.ND.NE  C
+  ->NA.NB.NC.ND.NE.C
+    method::1/1
+    stmt:  :7/8
