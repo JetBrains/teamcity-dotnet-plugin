@@ -43,26 +43,28 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
 
     protected override IEnumerable<string> AllowedTargetExtensions => new[] { FileExtension.CSharpProject };
 
-    public override IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    public override IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target project: {Target}", target);
         
-        var projectFile = TryToGetTargetFile(target);
-        if (projectFile == null)
+        var targetPathSystemInfo = TryToGetTargetFile(target);
+        if (targetPathSystemInfo == null)
         {
             _logger.LogWarning("Invalid project target: {Target}", target);
             yield break;
         }
         
-        var outputAssemblyPath = GetOutputAssemblyPath(projectFile);
-        var assemblyFileInfo = new FileInfo(outputAssemblyPath);
-        if (!assemblyFileInfo.Exists)
+        var projectFile = targetPathSystemInfo as FileInfo;
+        
+        var outputAssemblyPath = GetOutputAssemblyPath(projectFile!);
+        var (assemblyFileInfo, exception) = FileSystem.GetFileInfo(outputAssemblyPath);
+        if (exception != null)
         {
-            _logger.LogWarning("Target project output file {TargetProjectOutputFile} does not exist", assemblyFileInfo);
+            _logger.LogWarning("Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
             yield break;
         }
         
-        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
+        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo!.FullName);
         yield return (assemblyFileInfo, TargetType.Assembly);
     }
 

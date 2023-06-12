@@ -30,6 +30,14 @@ public static class FileExtension
     
     public const string CSharpProject = ".csproj";
     
+    public const string FSharpProject = ".fsproj";
+    
+    public const string VisualBasicProject = ".vbproj";
+    
+    public const string MsBuildProject = ".msbuildproj";
+    
+    public const string MsBuildProject2 = ".proj";
+
     public const string Solution = ".sln";
     
     public const string SolutionFilter = ".slnf";

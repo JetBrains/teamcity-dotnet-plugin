@@ -35,7 +35,7 @@ internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
 
     protected override IEnumerable<string> AllowedTargetExtensions => new []{ FileExtension.Solution, FileExtension.SolutionFilter };
 
-    public override IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    public override IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target solution: {Target}", target);
 

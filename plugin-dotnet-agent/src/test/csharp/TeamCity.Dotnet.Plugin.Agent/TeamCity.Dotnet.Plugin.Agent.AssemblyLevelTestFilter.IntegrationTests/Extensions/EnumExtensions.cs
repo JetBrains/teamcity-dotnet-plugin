@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-using System.ComponentModel;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;

@@ -20,5 +20,5 @@ internal interface ITargetResolvingStrategy
 {
     TargetType TargetType { get; }
     
-    IEnumerable<(FileInfo, TargetType)> Resolve(string target);
+    IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target);
 }

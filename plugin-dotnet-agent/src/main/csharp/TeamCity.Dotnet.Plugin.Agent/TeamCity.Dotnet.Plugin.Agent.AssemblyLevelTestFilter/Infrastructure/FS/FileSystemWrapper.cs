@@ -39,6 +39,50 @@ internal class FileSystemWrapper : IFileSystem
         }
     }
 
+    public (DirectoryInfo?, Exception?) GetDirectoryInfo(string path)
+    {
+        if (!DirectoryExists(path))
+        {
+            return (null, new Exception($"Directory not found: {path}"));
+        }
+        
+        try
+        {
+            return (new DirectoryInfo(path), null);
+        }
+        catch (Exception exception)
+        {
+            return (null, new Exception($"Can't get directory info for {path}", exception));
+        }
+    }
+
+    public (FileSystemInfo?, Exception?) GetFileSystemInfo(string path)
+    {
+        try
+        {
+            var fileInfo = new FileInfo(path);
+            var directoryInfo = new DirectoryInfo(path);
+
+            if (fileInfo.Exists)
+            {
+                return (fileInfo, null);
+            }
+            
+            if (directoryInfo.Exists)
+            {
+                return (directoryInfo, null);
+            }
+                
+            return (null, new Exception($"Path not found: {path}"));
+        } 
+        catch (Exception exception)
+        {
+            return (null, new Exception($"Can't get file system info for the path {path}", exception));
+        }
+    }
+
+    public bool IsFile(FileSystemInfo fileSystemInfo) => fileSystemInfo is FileInfo;
+
     public void DeleteFile(string path) => File.Delete(path);
 
     public void MoveFile(string sourcePath, string destinationPath) => File.Move(sourcePath, destinationPath);

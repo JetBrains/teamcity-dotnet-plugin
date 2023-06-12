@@ -23,7 +23,13 @@ public interface IFileSystem
     bool FileExists(string path);
 
     (FileInfo?, Exception?) GetFileInfo(string path);
+    
+    (DirectoryInfo?, Exception?) GetDirectoryInfo(string path);
 
+    (FileSystemInfo?, Exception?) GetFileSystemInfo(string path);
+    
+    bool IsFile(FileSystemInfo fileSystemInfo);
+    
     FileStream CreateFile(string path);
     
     void DeleteFile(string path);

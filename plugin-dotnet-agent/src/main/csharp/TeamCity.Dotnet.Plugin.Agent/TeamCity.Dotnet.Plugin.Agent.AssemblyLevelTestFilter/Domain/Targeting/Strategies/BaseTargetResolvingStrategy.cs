@@ -21,14 +21,14 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.
 
 internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
 {
-    private readonly IFileSystem _fileSystem;
+    protected readonly IFileSystem FileSystem;
     private readonly ILogger<BaseTargetResolvingStrategy> _logger;
 
     protected BaseTargetResolvingStrategy(
         IFileSystem fileSystem,
         ILogger<BaseTargetResolvingStrategy> logger)
     {
-        _fileSystem = fileSystem;
+        FileSystem = fileSystem;
         _logger = logger;
     }
 
@@ -36,26 +36,27 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
     
     protected abstract IEnumerable<string> AllowedTargetExtensions { get; }
 
-    public abstract IEnumerable<(FileInfo, TargetType)> Resolve(string target);
+    public abstract IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target);
 
-    protected FileInfo? TryToGetTargetFile(string target)
+    protected FileSystemInfo? TryToGetTargetFile(string target)
     {
-        if (!_fileSystem.FileExists(target))
+        if (!FileSystem.FileExists(target))
         {
             _logger.LogWarning("Target {TargetType} not found: {Target}", TargetType, target);
             return null;
         }
 
-        var (assemblyFile, exception) = _fileSystem.GetFileInfo(target);
+        var (pathFileSystemInfo, exception) = FileSystem.GetFileSystemInfo(target);
         if (exception != null)
         {
-            _logger.Log(LogLevel.Warning, exception,"Can't access to target {TargetType} file: {Target}", TargetType, target);
+            _logger.Log(LogLevel.Warning, exception,"Can't access to target {TargetType} path: {Target}", TargetType, target);
             return null;
         }
-        if (AllowedTargetExtensions.All(e => e != assemblyFile!.Extension))
+        
+        if (FileSystem.IsFile(pathFileSystemInfo!) && AllowedTargetExtensions.All(e => e != pathFileSystemInfo!.Extension))
         {
             _logger.LogWarning(
-                "Target {TargetType} has unsupported extension: {Target}. Supported extensions are: {AllowedExtensions}", 
+                "Target file {TargetType} has unsupported extension: {Target}. Supported extensions are: {AllowedExtensions}", 
                 TargetType,
                 target,
                 AllowedTargetExtensions
@@ -63,6 +64,6 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
             return null;
         }
 
-        return assemblyFile;
+        return pathFileSystemInfo;
     }
 }

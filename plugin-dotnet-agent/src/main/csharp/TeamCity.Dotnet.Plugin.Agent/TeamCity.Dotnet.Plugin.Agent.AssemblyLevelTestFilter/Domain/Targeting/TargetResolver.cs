@@ -15,16 +15,22 @@
  */
 
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
 internal class TargetResolver : ITargetResolver
 {
     private readonly IDictionary<TargetType, ITargetResolvingStrategy> _strategies;
+    private readonly IFileSystem _fileSystem;
     private readonly ILogger<TargetResolver> _logger;
 
-    public TargetResolver(IEnumerable<ITargetResolvingStrategy> strategies, ILogger<TargetResolver> logger)
+    public TargetResolver(
+        IEnumerable<ITargetResolvingStrategy> strategies,
+        IFileSystem fileSystem,
+        ILogger<TargetResolver> logger)
     {
+        _fileSystem = fileSystem;
         _strategies = strategies.ToDictionary(s => s.TargetType);
         _logger = logger;
     }
@@ -35,29 +41,45 @@ internal class TargetResolver : ITargetResolver
     {
         _logger.LogInformation("Resolving target: {Target}", target);
 
-        var originalTargetFile = new FileInfo(target);
-        if (!originalTargetFile.Exists && !Directory.Exists(target))
+        var (originalTargetPath, exception) = _fileSystem.GetFileSystemInfo(target);
+        if (exception != null)
         {
-            _logger.LogError("Target not found: {Target}", target);
-            throw new FileNotFoundException($"Target '{target}' not found.");
+            _logger.LogError(exception, "Target not available: {Target}", target);
+            throw new FileNotFoundException($"Target '{target}' not available");
         }
         
-        var supposedTargetType = SpeculateTargetType(originalTargetFile);
-
-        // resolve all targets in the hierarchy using BFS
-        var queue = new Queue<(FileInfo, TargetType)>();
+        var supposedTargetType = SpeculateTargetType(originalTargetPath!);
         
-        queue.Enqueue((originalTargetFile, supposedTargetType));
+        // if target is an assembly, we can process once and return it right away
+        if (supposedTargetType == TargetType.Assembly)
+        {
+            foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(originalTargetPath!.FullName))
+            {
+                yield return (FileInfo) resolvedAssembly;
+            }
+            yield break;
+        }
+
+        // if target is not an assembly, resolve all targets in the hierarchy using BFS
+        var queue = new Queue<(FileSystemInfo, TargetType)>();
+        
+        queue.Enqueue((originalTargetPath!, supposedTargetType));
         while (queue.Count != 0)
         {
-            var (targetFile, targetType) = queue.Dequeue();
-            foreach (var (resolvedTargetFile, resolvedTargetType) in _strategies[targetType].Resolve(targetFile.FullName))
+            var (currentFileSystemInfo, targetType) = queue.Dequeue();
+            if (!_strategies.TryGetValue(targetType, out var strategy))
+            {
+                _logger.LogError("No target resolution strategy for target type: {TargetType}", targetType);
+                continue;
+            }
+            
+            foreach (var (resolvedTargetFile, resolvedTargetType) in strategy.Resolve(currentFileSystemInfo.FullName))
             {
                 if (resolvedTargetType == TargetType.Assembly)
                 {
-                    foreach(var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
+                    foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
                     {
-                        yield return resolvedAssembly;
+                        yield return (FileInfo) resolvedAssembly;
                     }
                     continue;
                 }
@@ -66,27 +88,27 @@ internal class TargetResolver : ITargetResolver
             }
         }
     }
-
-    private static TargetType SpeculateTargetType(FileSystemInfo fileInfo)
+    
+    private  TargetType SpeculateTargetType(FileSystemInfo fileSystemInfo)
     {
-        if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+        if (!_fileSystem.IsFile(fileSystemInfo))
         {
             return TargetType.Directory;
         }
         
-        var extension = fileInfo.Extension.ToLowerInvariant();
+        var extension = fileSystemInfo.Extension.ToLowerInvariant();
         
-        if (extension == TargetType.Assembly.FileExtension())
+        if (TargetType.Assembly.GetPossibleFileExtension().Contains(extension))
         {
             return TargetType.Assembly;
         }
 
-        if (extension == TargetType.Project.FileExtension())
+        if (TargetType.Project.GetPossibleFileExtension().Contains(extension))
         {
             return TargetType.Project;
         }
 
-        if (extension == TargetType.Solution.FileExtension())
+        if (TargetType.Solution.GetPossibleFileExtension().Contains(extension))
         {
             return TargetType.Solution;
         }

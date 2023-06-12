@@ -96,7 +96,7 @@ internal class BackupRestore : IBackupRestore
         try
         {
             _fileSystem.DeleteFile(csvFilePath);
-            _logger.LogError("Backup metadata file {BackupCsvPath} removed", csvFilePath);
+            _logger.LogInformation("Backup metadata file {BackupCsvPath} removed", csvFilePath);
         }
         catch (Exception ex)
         {

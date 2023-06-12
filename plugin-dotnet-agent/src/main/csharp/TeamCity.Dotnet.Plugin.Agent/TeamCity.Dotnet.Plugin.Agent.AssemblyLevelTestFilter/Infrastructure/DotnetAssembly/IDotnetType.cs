@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-using Mono.Cecil;
-
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
 internal interface IDotnetType

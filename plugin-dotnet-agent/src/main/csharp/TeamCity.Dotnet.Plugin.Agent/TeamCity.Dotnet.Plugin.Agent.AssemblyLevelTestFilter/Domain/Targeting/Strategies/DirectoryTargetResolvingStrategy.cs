@@ -15,27 +15,39 @@
  */
 
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
 internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
 {
+    private readonly IFileSystem _fileSystem;
     private readonly ILogger<DirectoryTargetResolvingStrategy> _logger;
     
     public TargetType TargetType => TargetType.Directory;
 
-    public DirectoryTargetResolvingStrategy(ILogger<DirectoryTargetResolvingStrategy> logger)
+    public DirectoryTargetResolvingStrategy(
+        IFileSystem fileSystem,
+        ILogger<DirectoryTargetResolvingStrategy> logger)
     {
+        _fileSystem = fileSystem;
         _logger = logger;
     }
 
-    public IEnumerable<(FileInfo, TargetType)> Resolve(string target)
+    public IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target directory: {Target}", target);
         
-        var directory = new DirectoryInfo(target);
-        var slnFiles = directory.GetFiles(GetSearchPattern(TargetType.Solution), SearchOption.TopDirectoryOnly);
-        var csprojFiles = directory.GetFiles(GetSearchPattern(TargetType.Project), SearchOption.TopDirectoryOnly);
+        var (directory, exception) = _fileSystem.GetDirectoryInfo(target);
+        if (exception != null)
+        {
+            _logger.LogError(exception, "Failed to resolve target directory: {Target}", target);
+        }
+        
+        var slnFiles = GetFileSearchPattern(TargetType.Solution)
+            .SelectMany(sp => directory!.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
+        var csprojFiles = GetFileSearchPattern(TargetType.Project)
+            .SelectMany(sp =>directory!.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
 
         // not sure how to handle this
         // TODO need to test how `dotnet test` handles this:
@@ -43,7 +55,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         // 2. if there are multiple projects in the directory
         // 3. if there are both solutions and projects in the directory
         // 4. if there are no solutions or projects in the directory
-        if (slnFiles.Length != 0)
+        if (slnFiles.Count != 0)
         {
             foreach (var slnFile in slnFiles)
             {
@@ -51,7 +63,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
                 yield return (slnFile, TargetType.Solution);
             }
         }
-        else if (csprojFiles.Length != 0)
+        else if (csprojFiles.Count != 0)
         {
             foreach (var csprojFile in csprojFiles)
             {
@@ -61,13 +73,17 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         }
         else
         {
-            foreach (var assemblyFile in directory.GetFiles(GetSearchPattern(TargetType.Assembly), SearchOption.AllDirectories))
+            foreach (var fileSearchPattern in GetFileSearchPattern(TargetType.Assembly))
             {
-                _logger.LogInformation("Resolved assembly in target directory: {Assembly}", assemblyFile.FullName);
-                yield return (assemblyFile, TargetType.Assembly);
+                foreach (var assemblyFile in directory!.GetFiles(fileSearchPattern, SearchOption.AllDirectories))
+                {
+                    _logger.LogInformation("Resolved assembly in target directory: {Assembly}", assemblyFile.FullName);
+                    yield return (assemblyFile, TargetType.Assembly);
+                }
             }
         }
     }
 
-    private static string GetSearchPattern(TargetType targetType) => $"*{targetType.FileExtension()}";
+    private static IEnumerable<string> GetFileSearchPattern(TargetType targetType) =>
+        targetType.GetPossibleFileExtension().Select(ext => $"*{ext}");
 }
