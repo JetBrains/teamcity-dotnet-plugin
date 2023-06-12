@@ -27,7 +27,7 @@ class DotnetSdksProviderImpl(
     override fun getSdks(dotnetExecutable: File): Sequence<DotnetSdk> {
         val sdksPath = File(dotnetExecutable.parent, "sdk")
         if(!_fileSystemService.isExists(sdksPath) || !_fileSystemService.isDirectory(sdksPath)) {
-            LOG.warn("The directory <$sdksPath> does not exists.")
+            LOG.warn("The directory <$sdksPath> does not exist.")
         }
 
         LOG.debug("Try getting the list of .NET SDK from directory <$sdksPath>.")

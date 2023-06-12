@@ -41,7 +41,7 @@ class DotnetVersionProviderImpl(
                         versionArgs,
                         emptyList()))
 
-        if (versionResult == null || versionResult.exitCode !=0 || versionResult.errorOutput.filter { it.isNotBlank() }.any()) {
+        if (versionResult == null || versionResult.isError) {
             LOG.warn("The error occurred getting the dotnet CLI version.")
             return Version.Empty
         }

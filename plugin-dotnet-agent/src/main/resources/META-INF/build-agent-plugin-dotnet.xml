@@ -246,6 +246,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetResultsObserver" id="nugetResultsObserver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.FileBasedDotnetWorkloadProvider"/>
 
   <!--Dotnet agent properties providers-->
   <bean class="jetbrains.buildServer.dotnet.discovery.DotnetRuntimeAgentPropertiesProvider" id="dotnetRuntimeAgentPropertiesProvider"/>
@@ -288,6 +289,9 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.MSTestAgentPropertiesProvider" id="msTestAgentPropertiesProvider">
     <constructor-arg ref="visualStudioTestProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.discovery.DotnetWorkloadAgentPropertiesProvider" id="dotnetWorkloadAgentPropertiesProvider">
+    <constructor-arg ref="dotnetToolProvider"/>
   </bean>
 
   <bean class="jetbrains.buildServer.visualStudio.JsonVisualStudioInstanceParser"/>

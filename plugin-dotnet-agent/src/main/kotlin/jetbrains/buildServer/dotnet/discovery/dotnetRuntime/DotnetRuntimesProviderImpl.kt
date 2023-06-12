@@ -33,7 +33,7 @@ class DotnetRuntimesProviderImpl(
         val dotnetPath = File(_toolProvider.getPath(DotnetConstants.EXECUTABLE))
         val runtimesPath = File(dotnetPath.parent, "shared")
         if (!_fileSystemService.isExists(runtimesPath) || !_fileSystemService.isDirectory(runtimesPath)) {
-            LOG.warn("The directory <$runtimesPath> does not exists.")
+            LOG.warn("The directory <$runtimesPath> does not exist.")
         }
 
         LOG.debug("Try getting the list of .NET Runtimes from directory <$runtimesPath>.")
