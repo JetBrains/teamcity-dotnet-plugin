@@ -25,7 +25,7 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Domain.
 public class AssemblyPatcherTests
 {
     private readonly Mock<IFileSystem> _fileSystemMock;
-    private readonly Mock<IAssemblyLoader> _assemblyLoader;
+    private readonly Mock<IDotnetAssemblyLoader> _assemblyLoader;
     private readonly TestPatchingCriteria _testCriteria = new();
     private readonly TestMutator _mutator;
     private readonly IAssemblyPatcher _assemblyPatcher;
@@ -33,7 +33,7 @@ public class AssemblyPatcherTests
     public AssemblyPatcherTests()
     {
         _fileSystemMock = new Mock<IFileSystem>();
-        _assemblyLoader = new Mock<IAssemblyLoader>();
+        _assemblyLoader = new Mock<IDotnetAssemblyLoader>();
         Mock<ILogger<AssemblyPatcher>> loggerMock = new();
         _mutator = new TestMutator();
         _assemblyPatcher = new AssemblyPatcher(

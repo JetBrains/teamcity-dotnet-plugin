@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+using Mono.Cecil;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IDotnetAssembly : IDisposable
+internal class DotnetAssemblyReference : IDotnetAssemblyReference
 {
-    bool HasSymbols { get; }
-    
-    IEnumerable<IDotnetAssemblyReference> AssemblyReferences { get; }
+    private readonly AssemblyNameReference _assemblyNameReference;
 
-    IEnumerable<IDotnetType> Types { get; }
+    public DotnetAssemblyReference(AssemblyNameReference assemblyNameReference)
+    {
+        _assemblyNameReference = assemblyNameReference;
+    }
     
-    void Write(FileStream destinationFileStream, bool withSymbols);
+    public string FullName => _assemblyNameReference.FullName;
+
+    public string Name => _assemblyNameReference.Name;
 }

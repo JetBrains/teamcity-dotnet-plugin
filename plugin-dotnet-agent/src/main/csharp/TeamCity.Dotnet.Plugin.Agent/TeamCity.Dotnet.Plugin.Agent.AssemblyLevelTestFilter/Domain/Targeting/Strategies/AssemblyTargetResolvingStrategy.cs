@@ -15,8 +15,8 @@
  */
 
 using Microsoft.Extensions.Logging;
-using Mono.Cecil;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
@@ -24,6 +24,7 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.
 internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, ITargetResolvingStrategy
 {
     private readonly ILogger<AssemblyTargetResolvingStrategy> _logger;
+    private readonly IDotnetAssemblyLoader _assemblyLoader;
     private readonly IReadOnlyList<ITestEngine> _testEngines;
 
     public override TargetType TargetType => TargetType.Assembly;
@@ -31,9 +32,11 @@ internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
     public AssemblyTargetResolvingStrategy(
         IFileSystem fileSystem,
         ILogger<AssemblyTargetResolvingStrategy> logger,
-        IEnumerable<ITestEngine> testEngines) : base(fileSystem, logger)
+        IEnumerable<ITestEngine> testEngines,
+        IDotnetAssemblyLoader assemblyLoader) : base(fileSystem, logger)
     {
         _logger = logger;
+        _assemblyLoader = assemblyLoader;
         _testEngines = testEngines.ToList();
     }
 
@@ -67,30 +70,27 @@ internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
         yield return (assemblyFile, TargetType.Assembly);
     }
 
-    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileSystemInfo file)
+    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileSystemInfo assemblyFile)
     {
-        try
+        using var assembly = _assemblyLoader.LoadAssembly(assemblyFile.FullName, false);
+        if (assembly == null)
         {
-            using var assembly = AssemblyDefinition.ReadAssembly(file.FullName);
-            var assemblyReferences = assembly.MainModule.AssemblyReferences;
-            if (assemblyReferences == null || assemblyReferences.Count == 0)
-            {
-                return (true, null);
-            }
-            
-            _logger.LogDebug("Examine assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", 
-                file, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
-
-            var detectedEngines = _testEngines
-                .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
-                .Select(te => te.Name)
-                .ToArray();
-            return (true, detectedEngines);
-        }
-        catch (BadImageFormatException)
-        {
-            _logger.LogWarning("Can't read target assembly definition: {Target}", file.FullName);
             return (false, null);
         }
+        
+        var assemblyReferences = assembly.AssemblyReferences.ToList();
+        if (!assemblyReferences.Any())
+        {
+            return (true, null);
+        }
+        
+        _logger.LogDebug("Examine assembly {Assembly} references:\n\t\t\t\t{AssemblyAttrs}", 
+            assemblyFile, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
+
+        var detectedEngines = _testEngines
+            .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
+            .Select(te => te.Name)
+            .ToArray();
+        return (true, detectedEngines);
     }
 }

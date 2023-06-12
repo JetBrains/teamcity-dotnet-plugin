@@ -16,7 +16,7 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IAssemblyLoader
+internal interface IDotnetAssemblyLoader
 {
-    IDotnetAssembly LoadAssembly(string assemblyPath, bool withSymbols);
+    IDotnetAssembly? LoadAssembly(string assemblyPath, bool withSymbols);
 }

@@ -28,7 +28,10 @@ internal class DotnetAssembly : IDotnetAssembly
     }
 
     public bool HasSymbols => _assemblyDefinition.MainModule.HasSymbols;
-    
+
+    public IEnumerable<IDotnetAssemblyReference> AssemblyReferences =>
+        _assemblyDefinition.MainModule.AssemblyReferences.Select(ar => new DotnetAssemblyReference(ar));
+
     public void Write(FileStream destinationFileStream, bool withSymbols)
     {
         _assemblyDefinition.Write(destinationFileStream, new WriterParameters { WriteSymbols = withSymbols });

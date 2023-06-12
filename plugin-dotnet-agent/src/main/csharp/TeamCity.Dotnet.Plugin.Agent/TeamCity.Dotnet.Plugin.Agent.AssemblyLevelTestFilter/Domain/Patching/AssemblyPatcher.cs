@@ -26,13 +26,13 @@ internal class AssemblyPatcher : IAssemblyPatcher
     private const string TempFilePostfix = "_tmp";
     private readonly IEnumerable<IAssemblyMutator> _mutators;
     private readonly IFileSystem _fileSystem;
-    private readonly IAssemblyLoader _assemblyLoader;
+    private readonly IDotnetAssemblyLoader _assemblyLoader;
     private readonly ILogger<AssemblyPatcher> _logger;
 
     public AssemblyPatcher(
         IEnumerable<IAssemblyMutator> mutators,
         IFileSystem fileSystem,
-        IAssemblyLoader assemblyLoader,
+        IDotnetAssemblyLoader assemblyLoader,
         ILogger<AssemblyPatcher> logger)
     {
         _mutators = mutators;
@@ -76,7 +76,13 @@ internal class AssemblyPatcher : IAssemblyPatcher
     private IDotnetAssembly LoadAssembly(string assemblyPath)
     {
         var hasSymbols = _fileSystem.FileExists(_fileSystem.ChangeFileExtension(assemblyPath, FileExtension.Symbols));
-        return _assemblyLoader.LoadAssembly(assemblyPath, hasSymbols);
+        var assembly = _assemblyLoader.LoadAssembly(assemblyPath, hasSymbols);
+        if (assembly == null)
+        {
+            throw new Exception($"Failed to load assembly {assemblyPath}");
+        }
+
+        return assembly;
     }
 
     private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>

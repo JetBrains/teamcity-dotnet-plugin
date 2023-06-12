@@ -16,13 +16,9 @@
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
-internal interface IDotnetAssembly : IDisposable
+internal interface IDotnetAssemblyReference
 {
-    bool HasSymbols { get; }
+    string FullName { get; }
     
-    IEnumerable<IDotnetAssemblyReference> AssemblyReferences { get; }
-
-    IEnumerable<IDotnetType> Types { get; }
-    
-    void Write(FileStream destinationFileStream, bool withSymbols);
+    string Name { get; }
 }

@@ -62,7 +62,7 @@ internal static class Program
                 services
                     .AddSingleton(commandLineParsingResult)
                     .AddSingletonByInterface<IFileSystem>()
-                    .AddSingletonByInterface<IAssemblyLoader>()
+                    .AddSingletonByInterface<IDotnetAssemblyLoader>()
                     .AddSingletonByInterface<ITestSelectorParser>()
                     .AddSingletonByInterface<ITestEngine>()
                     .AddSingletonByImplementationType<ITestEngine>()
