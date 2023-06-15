@@ -1,26 +1,9 @@
-/*
- * Copyright 2000-2023 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Domain.Targeting.Strategies;
 
@@ -48,66 +31,100 @@ public class AssemblyTargetResolvingStrategyTests
     [Fact]
     public void Resolve_ShouldYieldBreak_WhenFileDoesNotExist()
     {
+        // arrange
         const string target = "invalid";
+        _fileSystemMock.Setup(fs => fs.File.Exists(target)).Returns(false);
 
-        _fileSystemMock.Setup(fs => fs.FileExists(target)).Returns(false);
-
+        // act
         var result = _strategy.Resolve(target);
 
+        // assert
         Assert.Empty(result);
     }
 
     [Fact]
     public void Resolve_ShouldYieldBreak_WhenUnsupportedExtension()
     {
+        // arrange
         const string target = "target.unsupported";
-
-        _fileSystemMock.Setup(fs => fs.FileExists(target)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((new FileInfo(target), default));
-
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        _fileSystemMock.Setup(fs => fs.File.Exists(target)).Returns(true);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
+    
+        // act
         var result = _strategy.Resolve(target);
-
+    
+        // assert
         Assert.Empty(result);
     }
-
+    
     [Fact]
     public void Resolve_ShouldYieldBreak_WhenNotNetAssembly()
     {
+        // arrange
         const string target = "target.dll";
-
-        _fileSystemMock.Setup(fs => fs.FileExists(target)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((new FileInfo(target), default));
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(fs => fs.Exists).Returns(true);
+        targetFileInfoMock.Setup(fs => fs.Extension).Returns(".dll");
+        _fileSystemMock
+            .Setup(m => m.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(Mock.Of<IDirectoryInfo>());
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
         _assemblyLoaderMock.Setup(a => a.LoadAssembly(target, false)).Returns(default(IDotnetAssembly));
-
+    
+        // act
         var result = _strategy.Resolve(target);
-
+    
+        // assert
         Assert.Empty(result);
     }
-
+    
     [Fact]
     public void Resolve_ShouldYieldBreak_WhenNoSupportedTestFrameworks()
     {
+        // arrange
         const string target = "target.dll";
-
-        _fileSystemMock.Setup(fs => fs.FileExists(target)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((new FileInfo(target), default));
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(fs => fs.Exists).Returns(true);
+        targetFileInfoMock.Setup(fs => fs.Extension).Returns(".dll");
+        _fileSystemMock
+            .Setup(m => m.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(Mock.Of<IDirectoryInfo>());
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
         var assemblyMock = new Mock<IDotnetAssembly>();
         _assemblyLoaderMock.Setup(a => a.LoadAssembly(target, false)).Returns(assemblyMock.Object);
-
+    
+        // act
         var result = _strategy.Resolve(target);
-
+    
+        // assert
         Assert.Empty(result);
     }
-
+    
     [Fact]
     public void Resolve_ShouldReturnResolvedAssembly_WhenSupportedTestFrameworks()
     {
+        // arrange
         const string target = "target.dll";
-        var targetFileSystemInfo = new FileInfo(target);
-        
-        _fileSystemMock.Setup(fs => fs.FileExists(target)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetFileSystemInfo, default));
-        
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(fs => fs.Exists).Returns(true);
+        targetFileInfoMock.Setup(fs => fs.Extension).Returns(".dll");
+        _fileSystemMock
+            .Setup(m => m.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(Mock.Of<IDirectoryInfo>());
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
         var assemblyMock = new Mock<IDotnetAssembly>();
         var dotnetAssemblyReferenceMock = new Mock<IDotnetAssemblyReference>();
         dotnetAssemblyReferenceMock
@@ -120,11 +137,13 @@ public class AssemblyTargetResolvingStrategyTests
         _assemblyLoaderMock
             .Setup(a => a.LoadAssembly(It.IsAny<string>(), false))
             .Returns(assemblyMock.Object);
-
+    
+        // act
         var result = _strategy.Resolve(target).ToList();
-
+    
+        // assert
         Assert.Single(result);
-        Assert.Equal(targetFileSystemInfo.FullName, result[0].Item1.FullName);
+        Assert.Equal(target, result[0].Item1.FullName);
         Assert.Equal(_strategy.TargetType, result[0].Item2);
     }
     

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
@@ -30,14 +31,14 @@ internal class TargetResolver : ITargetResolver
         IFileSystem fileSystem,
         ILogger<TargetResolver> logger)
     {
-        _fileSystem = fileSystem;
         _strategies = strategies.ToDictionary(s => s.TargetType);
+        _fileSystem = fileSystem;
         _logger = logger;
     }
     
     private ITargetResolvingStrategy AssemblyStrategy => _strategies[TargetType.Assembly];
 
-    public IEnumerable<FileInfo> Resolve(string target)
+    public IEnumerable<IFileInfo> Resolve(string target)
     {
         _logger.LogInformation("Resolving target: {Target}", target);
 
@@ -55,13 +56,13 @@ internal class TargetResolver : ITargetResolver
         {
             foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(originalTargetPath!.FullName))
             {
-                yield return (FileInfo) resolvedAssembly;
+                yield return (IFileInfo) resolvedAssembly;
             }
             yield break;
         }
 
         // if target is not an assembly, resolve all targets in the hierarchy using BFS
-        var queue = new Queue<(FileSystemInfo, TargetType)>();
+        var queue = new Queue<(IFileSystemInfo, TargetType)>();
         
         queue.Enqueue((originalTargetPath!, supposedTargetType));
         while (queue.Count != 0)
@@ -79,7 +80,7 @@ internal class TargetResolver : ITargetResolver
                 {
                     foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
                     {
-                        yield return (FileInfo) resolvedAssembly;
+                        yield return (IFileInfo) resolvedAssembly;
                     }
                     continue;
                 }
@@ -89,9 +90,9 @@ internal class TargetResolver : ITargetResolver
         }
     }
     
-    private  TargetType SpeculateTargetType(FileSystemInfo fileSystemInfo)
+    private  TargetType SpeculateTargetType(IFileSystemInfo fileSystemInfo)
     {
-        if (!_fileSystem.IsFile(fileSystemInfo))
+        if (fileSystemInfo.IsDirectory())
         {
             return TargetType.Directory;
         }

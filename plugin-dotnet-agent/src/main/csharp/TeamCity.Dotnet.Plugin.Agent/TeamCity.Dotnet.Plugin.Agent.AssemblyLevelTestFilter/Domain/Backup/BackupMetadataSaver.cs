@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 
@@ -32,11 +32,12 @@ internal class BackupMetadataSaver : IBackupMetadataSaver
     
     public async Task SaveAsync(string filePath, BackupFileMetadata backupMetadata)
     {
-        filePath = _fileSystem.GetFullPath(filePath);
+        filePath = _fileSystem.Path.GetFullPath(filePath);
         
         _logger.LogDebug("Saving backup metadata {BackupMetadata} to the file {FilePath}", backupMetadata, filePath);
-        
-        await _fileSystem.AppendAllLinesAsync(filePath, new [] { $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"" });
+
+        IEnumerable<string> content = new [] { $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"" };
+        await _fileSystem.File.AppendAllLinesAsync(filePath, content);
         
         _logger.LogDebug("Backup metadata {BackupMetadata} saved to the file {FilePath}", backupMetadata, filePath);
     }

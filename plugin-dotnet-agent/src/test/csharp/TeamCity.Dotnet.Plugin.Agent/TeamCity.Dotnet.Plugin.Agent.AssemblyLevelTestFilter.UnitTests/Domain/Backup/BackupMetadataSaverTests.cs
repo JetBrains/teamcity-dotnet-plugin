@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Domain.Backup;
 
@@ -44,13 +44,22 @@ public class BackupMetadataSaverTests
         const string fullPath = "full_path_to_file";
         var backupMetadata = new BackupFileMetadata("backup_path", "original_path");
         var expectedText = $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"";
-        _fileSystemMock.Setup(fs => fs.GetFullPath(filePath)).Returns(fullPath);
+        var path = new Mock<IPath>();
+        path.Setup(p => p.GetFullPath(filePath)).Returns(fullPath);
+        _fileSystemMock.Setup(fs => fs.Path).Returns(path.Object);
+        var fileMock = new Mock<IFile>();
+        _fileSystemMock.Setup(m => m.File).Returns(fileMock.Object);
 
         // Act
         await _saver.SaveAsync(filePath, backupMetadata);
 
         // Assert
         _fileSystemMock.Verify(fs =>
-            fs.AppendAllLinesAsync(fullPath, It.Is<IEnumerable<string>>(e => e.Contains(expectedText))), Times.Once);
+            fs.File.AppendAllLinesAsync(
+                fullPath,
+                It.Is<IEnumerable<string>>(e => e.Contains(expectedText)),
+                It.IsAny<CancellationToken>()
+            ),
+            Times.Once);
     }
 }

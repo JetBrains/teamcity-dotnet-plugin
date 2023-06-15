@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
@@ -23,15 +24,18 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
 {
     private readonly ITestSelectorParser _testSelectorParser;
     private readonly IFileSystem _fileSystem;
+    private readonly IFileReader _fileReader;
     private readonly ILogger<TestSelectorsLoader> _logger;
 
     public TestSelectorsLoader(
         ITestSelectorParser testSelectorParser,
         IFileSystem fileSystem,
+        IFileReader fileReader,
         ILogger<TestSelectorsLoader> logger)
     {
         _testSelectorParser = testSelectorParser;
         _fileSystem = fileSystem;
+        _fileReader = fileReader;
         _logger = logger;
     }
 
@@ -49,11 +53,11 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
         return await LoadSelectors(testSelectorsFile);
     }
 
-    private async Task<IReadOnlyDictionary<string, ITestSelector>> LoadSelectors(FileInfo testSelectorsFile)
+    private async Task<IReadOnlyDictionary<string, ITestSelector>> LoadSelectors(IFileSystemInfo testSelectorsFile)
     {
         var registry = new Dictionary<string, ITestSelector>();
 
-        await foreach (var (line, lineNumber) in _fileSystem.ReadLinesAsync(testSelectorsFile.FullName))
+        await foreach (var (line, lineNumber) in _fileReader.ReadLinesAsync(testSelectorsFile.FullName))
         {
             _logger.LogDebug("Reading {LineNumber} line from test query file: {TestQueryFileLine}", lineNumber, line);
             
@@ -86,9 +90,9 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
         return registry;
     }
     
-    private FileInfo? TryToGetSelectorsFile(string filePath)
+    private IFileInfo? TryToGetSelectorsFile(string filePath)
     {
-        if (!_fileSystem.FileExists(filePath))
+        if (!_fileSystem.File.Exists(filePath))
         {
             _logger.LogWarning("Test selectors file not found: {Target}", filePath);
             return null;

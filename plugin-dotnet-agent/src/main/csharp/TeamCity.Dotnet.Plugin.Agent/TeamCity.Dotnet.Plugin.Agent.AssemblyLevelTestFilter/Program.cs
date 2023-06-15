@@ -1,19 +1,4 @@
-﻿/*
- * Copyright 2000-2023 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+﻿using System.IO.Abstractions;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +19,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Depend
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.MsBuild;
 
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
@@ -61,7 +47,10 @@ internal static class Program
                 // regular services
                 services
                     .AddSingleton(commandLineParsingResult)
-                    .AddSingletonByInterface<IFileSystem>()
+                    .AddSingleton<IFileSystem, FileSystem>()
+                    .AddSingletonByInterface<IFileReader>()
+                    .AddSingletonByInterface<IFileCopier>()
+                    .AddSingletonByInterface<IMsBuildLocator>()
                     .AddSingletonByInterface<IDotnetAssemblyLoader>()
                     .AddSingletonByInterface<ITestSelectorParser>()
                     .AddSingletonByInterface<ITestEngine>()

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
@@ -25,23 +26,26 @@ internal class AssemblyPatcher : IAssemblyPatcher
     private const string BackupFilePostfix = "_backup";
     private const string TempFilePostfix = "_tmp";
     private readonly IEnumerable<IAssemblyMutator> _mutators;
-    private readonly IFileSystem _fileSystem;
     private readonly IDotnetAssemblyLoader _assemblyLoader;
+    private readonly IFileSystem _fileSystem;
+    private readonly IFileCopier _fileCopier;
     private readonly ILogger<AssemblyPatcher> _logger;
 
     public AssemblyPatcher(
         IEnumerable<IAssemblyMutator> mutators,
-        IFileSystem fileSystem,
         IDotnetAssemblyLoader assemblyLoader,
+        IFileSystem fileSystem,
+        IFileCopier fileCopier,
         ILogger<AssemblyPatcher> logger)
     {
         _mutators = mutators;
-        _fileSystem = fileSystem;
         _assemblyLoader = assemblyLoader;
+        _fileSystem = fileSystem;
+        _fileCopier = fileCopier;
         _logger = logger;
     }
 
-    public async Task<AssemblyPatchingResult> TryPatchAsync(FileInfo assemblyFile, IAssemblyPatchingCriteria criteria)
+    public async Task<AssemblyPatchingResult> TryPatchAsync(IFileInfo assemblyFile, IAssemblyPatchingCriteria criteria)
     {
         _logger.LogDebug("Patching assembly: {AssemblyFile}", assemblyFile.FullName);
 
@@ -75,7 +79,7 @@ internal class AssemblyPatcher : IAssemblyPatcher
 
     private IDotnetAssembly LoadAssembly(string assemblyPath)
     {
-        var hasSymbols = _fileSystem.FileExists(_fileSystem.ChangeFileExtension(assemblyPath, FileExtension.Symbols));
+        var hasSymbols = _fileSystem.File.Exists(_fileSystem.Path.ChangeExtension(assemblyPath, FileExtension.Symbols));
         var assembly = _assemblyLoader.LoadAssembly(assemblyPath, hasSymbols);
         if (assembly == null)
         {
@@ -94,29 +98,26 @@ internal class AssemblyPatcher : IAssemblyPatcher
         var tmpAssemblyPath = GetTempFilePath(originalAssemblyPath);
         
         // backup the original assembly
-        await _fileSystem.CopyFile(originalAssemblyPath, backupAssemblyPath);
+        await _fileCopier.CopyFile(originalAssemblyPath, backupAssemblyPath);
 
         // make a tmp copy of the original assembly
-        await _fileSystem.CopyFile(originalAssemblyPath, tmpAssemblyPath);
+        await _fileCopier.CopyFile(originalAssemblyPath, tmpAssemblyPath);
         
         // deal with debug symbols
-        var originalSymbolsPath = _fileSystem.ChangeFileExtension(originalAssemblyPath, FileExtension.Symbols);
+        var originalSymbolsPath = _fileSystem.Path.ChangeExtension(originalAssemblyPath, FileExtension.Symbols);
         var backupSymbolsPath = GetBackupFilePath(originalSymbolsPath);
-        var hasSymbols = assembly.HasSymbols && _fileSystem.FileExists(originalSymbolsPath);
+        var hasSymbols = assembly.HasSymbols && _fileSystem.File.Exists(originalSymbolsPath);
         if (hasSymbols)
         {
-            await _fileSystem.CopyFile(originalSymbolsPath, backupSymbolsPath);
+            await _fileCopier.CopyFile(originalSymbolsPath, backupSymbolsPath);
         }
 
         // save the modified assembly on disk in tmp location and preserve debug symbols if available
-        await using (var destinationStream = _fileSystem.CreateFile(tmpAssemblyPath))
-        {
-            assembly.Write(destinationStream, hasSymbols);
-        }
+        assembly.SaveTo(tmpAssemblyPath, hasSymbols);
 
         // replace the original assembly with the modified one
-        _fileSystem.DeleteFile(originalAssemblyPath);
-        _fileSystem.MoveFile(tmpAssemblyPath, originalAssemblyPath);
+        _fileSystem.File.Delete(originalAssemblyPath);
+        _fileSystem.File.Move(tmpAssemblyPath, originalAssemblyPath);
 
         if (!hasSymbols)
         {

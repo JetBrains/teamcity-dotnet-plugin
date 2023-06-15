@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
@@ -23,15 +24,17 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Domain.
 
 public class BackupRestoreTests
 {
-    private readonly Mock<IFileSystem> _fileSystemMock;
+    private readonly Mock<FileSystem> _fileSystemMock;
+    private readonly Mock<IFileReader> _fileReaderMock;
     private readonly Mock<ILogger<BackupRestore>> _loggerMock;
     private readonly BackupRestore _backupRestore;
 
     public BackupRestoreTests()
     {
-        _fileSystemMock = new Mock<IFileSystem>();
+        _fileSystemMock = new Mock<FileSystem>();
+        _fileReaderMock = new Mock<IFileReader>();
         _loggerMock = new Mock<ILogger<BackupRestore>>();
-        _backupRestore = new BackupRestore(_fileSystemMock.Object, _loggerMock.Object);
+        _backupRestore = new BackupRestore(_fileSystemMock.Object, _fileReaderMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -40,13 +43,15 @@ public class BackupRestoreTests
         // arrange
         const string csvFilePath = "path_to_csv";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(false);
+        var fileMock = new Mock<IFile>();
+        fileMock.Setup(m => m.Exists(csvFilePath)).Returns(false);
+        _fileSystemMock.Setup(fs => fs.File).Returns(fileMock.Object);
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.ReadLinesAsync(It.IsAny<string>()), Times.Never);
+        _fileSystemMock.Verify(fs => fs.File.OpenRead(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
@@ -57,17 +62,22 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        var fileMock = new Mock<IFile>();
+        fileMock.Setup(m => m.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File).Returns(fileMock.Object);
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(false);
+        var backupFileMock = new Mock<IFile>();
+        backupFileMock.Setup(m => m.Exists(backupFilePath)).Returns(false);
+        _fileSystemMock.Setup(fs => fs.File).Returns(backupFileMock.Object);
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Never);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Never);
     }
 
     [Fact]
@@ -78,19 +88,20 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(backupFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(originalFilePath)).Returns(true);
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.DeleteFile(csvFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(csvFilePath), Times.Once);
     }
         
         [Fact]
@@ -100,16 +111,17 @@ public class BackupRestoreTests
         const string csvFilePath = "path_to_csv";
         var invalidLine = "\"invalid_line\"";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(new[] {(invalidLine, 1)}));
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(It.IsAny<string>()), Times.Once);
-        _fileSystemMock.Verify(fs => fs.MoveFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _fileSystemMock.Verify(fs => fs.File.Delete(It.IsAny<string>()), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
@@ -120,18 +132,18 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(backupFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(originalFilePath)).Returns(false);
+        _fileReaderMock.Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(false);
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Never);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Never);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -142,19 +154,20 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(backupFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(originalFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Delete(originalFilePath)).Throws<Exception>();
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.DeleteFile(originalFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -165,19 +178,20 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(backupFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(originalFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Move(backupFilePath, originalFilePath)).Throws<Exception>();
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.MoveFile(backupFilePath, originalFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Once);
     }
 
     [Fact]
@@ -188,20 +202,21 @@ public class BackupRestoreTests
         const string backupFilePath = "path_to_backup";
         const string originalFilePath = "path_to_original";
 
-        _fileSystemMock.Setup(fs => fs.FileExists(csvFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.ReadLinesAsync(csvFilePath))
+        _fileSystemMock.Setup(fs => fs.File.Exists(csvFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(backupFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Exists(originalFilePath)).Returns(true);
+        _fileSystemMock.Setup(fs => fs.File.Delete(csvFilePath)).Throws<Exception>();
+        _fileReaderMock
+            .Setup(m => m.ReadLinesAsync(csvFilePath))
             .Returns(new TestAsyncEnumerable<(string, int)>(GetLines(backupFilePath, originalFilePath)));
-        _fileSystemMock.Setup(fs => fs.FileExists(backupFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.FileExists(originalFilePath)).Returns(true);
-        _fileSystemMock.Setup(fs => fs.DeleteFile(csvFilePath)).Throws<Exception>();
 
         // act
         await _backupRestore.RestoreAsync(csvFilePath);
 
         // assert
-        _fileSystemMock.Verify(fs => fs.DeleteFile(originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.MoveFile(backupFilePath, originalFilePath), Times.Once);
-        _fileSystemMock.Verify(fs => fs.DeleteFile(csvFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Move(backupFilePath, originalFilePath), Times.Once);
+        _fileSystemMock.Verify(fs => fs.File.Delete(csvFilePath), Times.Once);
     }
 
 

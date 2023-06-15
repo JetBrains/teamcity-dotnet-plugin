@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 
@@ -41,7 +41,7 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
     {
         _logger.LogInformation("Restore command execution started");
         
-        var backupMetadataFilePath = _fileSystem.GetFullPath(command.BackupMetadataFilePath);
+        var backupMetadataFilePath = _fileSystem.Path.GetFullPath(command.BackupMetadataFilePath);
         _logger.LogInformation("Restoring assemblies by metadata from the file {BackupMetadataFilePath}", backupMetadataFilePath);
         
         await _backupRestore.RestoreAsync(backupMetadataFilePath);

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+
+using System.IO.Abstractions;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
 internal interface ITargetResolver
 {
-    IEnumerable<FileInfo> Resolve(string target);
+    IEnumerable<IFileInfo> Resolve(string target);
 }

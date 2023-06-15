@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Domain.Targeting;
 
@@ -59,7 +59,7 @@ public class TargetResolverTests
     public void Resolve_ShouldThrowFileNotFoundException_WhenTargetNotExists()
     {
         // arrange
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(It.IsAny<string>())).Returns((null, new Exception()));
+        _fileSystemMock.Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>())).Throws<Exception>();
 
         // act, assert
         Assert.Throws<FileNotFoundException>(() => _targetResolver.Resolve("").ToList());
@@ -70,10 +70,18 @@ public class TargetResolverTests
     {
         // arrange
         const string target = "target.unknown";
-        var targetFileSystemInfo = new FileInfo(target);
-        
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetFileSystemInfo, default));
-        _fileSystemMock.Setup(fs => fs.IsFile(targetFileSystemInfo)).Returns(true);
+        var fileInfoMock = new Mock<IFileInfo>();
+        var directoryInfoMock = new Mock<IDirectoryInfo>();
+        fileInfoMock.Setup(m => m.Exists).Returns(true);
+        fileInfoMock.Setup(m => m.FullName).Returns(target);
+        fileInfoMock.Setup(m => m.Extension).Returns(".unknown");
+        directoryInfoMock.Setup(m => m.Exists).Returns(false);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(fileInfoMock.Object);
+        _fileSystemMock
+            .Setup(fs => fs.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(directoryInfoMock.Object);
 
         // act, assert
         Assert.Throws<NotSupportedException>(() => _targetResolver.Resolve(target).ToList());
@@ -84,20 +92,29 @@ public class TargetResolverTests
     {
         // arrange
         const string target = "target.dll";
-        var targetFile = new FileInfo(target);
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        var directoryInfoMock = new Mock<IDirectoryInfo>();
+        targetFileInfoMock.Setup(m => m.Exists).Returns(true);
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(m => m.Extension).Returns(".dll");
+        directoryInfoMock.Setup(m => m.Exists).Returns(false);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
+        _fileSystemMock
+            .Setup(fs => fs.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(directoryInfoMock.Object);
 
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetFile, default));
-        _fileSystemMock.Setup(fs => fs.IsFile(It.IsAny<FileSystemInfo>())).Returns(true);
         _assemblyStrategy
             .Setup(s => s.Resolve(It.IsAny<string>()))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (new FileInfo(target), TargetType.Assembly) });
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (targetFileInfoMock.Object, TargetType.Assembly) });
 
         // act
         var result = _targetResolver.Resolve(target);
 
         // assert
         Assert.Single(result);
-        _assemblyStrategy.Verify(s => s.Resolve(targetFile.FullName), Times.Once);
+        _assemblyStrategy.Verify(s => s.Resolve(target), Times.Once);
     }
 
     [Fact]
@@ -105,97 +122,142 @@ public class TargetResolverTests
     {
         // arrange
         const string target = "target.csproj";
-        var targetFile = new FileInfo(target);
-        var resolvedAssembly = new FileInfo("assembly.dll");
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        var directoryInfoMock = new Mock<IDirectoryInfo>();
+        targetFileInfoMock.Setup(m => m.Exists).Returns(true);
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(m => m.Extension).Returns(".csproj");
+        directoryInfoMock.Setup(m => m.Exists).Returns(false);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
+        _fileSystemMock
+            .Setup(fs => fs.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(directoryInfoMock.Object);
 
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetFile, default));
-        _fileSystemMock.Setup(fs => fs.IsFile(It.IsAny<FileSystemInfo>())).Returns(true);
+        const string resolvedAssemblyPath = "assembly.dll";
+        var resolvedAssemblyMock = new Mock<IFileInfo>();
+        resolvedAssemblyMock.Setup(m => m.Exists).Returns(true);
+        resolvedAssemblyMock.Setup(m => m.FullName).Returns(resolvedAssemblyPath);
+    
         _projectStrategy
-            .Setup(s => s.Resolve(targetFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssembly, TargetType.Assembly) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
         _assemblyStrategy
-            .Setup(s => s.Resolve(resolvedAssembly.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssembly, TargetType.Assembly) });
-
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
+    
         // act
         var result = _targetResolver.Resolve(target);
-
+    
         // assert
         Assert.Single(result);
-        _projectStrategy.Verify(s => s.Resolve(targetFile.FullName), Times.Once);
-        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssembly.FullName), Times.Once);
+        _projectStrategy.Verify(s => s.Resolve(target), Times.Once);
+        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssemblyPath), Times.Once);
     }
-
+    
     [Fact]
     public void Resolve_ShouldResolve_WhenTargetIsSolution()
     {
         // arrange
         const string target = "target.sln";
-        var targetFile = new FileInfo(target);
-        const string project = "project.csproj";
-        var resolvedProjectFile = new FileInfo(project);
-        const string assembly = "assembly.dll";
-        var resolvedAssemblyFile = new FileInfo(assembly);
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        var directoryInfoMock = new Mock<IDirectoryInfo>();
+        targetFileInfoMock.Setup(m => m.Exists).Returns(true);
+        targetFileInfoMock.Setup(m => m.FullName).Returns(target);
+        targetFileInfoMock.Setup(m => m.Extension).Returns(".sln");
+        directoryInfoMock.Setup(m => m.Exists).Returns(false);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
+        _fileSystemMock
+            .Setup(fs => fs.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(directoryInfoMock.Object);
+        
+        const string resolvedProjectPath = "project.csproj";
+        var resolvedProjectMock = new Mock<IFileInfo>();
+        resolvedProjectMock.Setup(m => m.Exists).Returns(true);
+        resolvedProjectMock.Setup(m => m.FullName).Returns(resolvedProjectPath);
 
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetFile, default));
-        _fileSystemMock.Setup(fs => fs.IsFile(It.IsAny<FileSystemInfo>())).Returns(true);
+        const string resolvedAssemblyPath = "assembly.dll";
+        var resolvedAssemblyMock = new Mock<IFileInfo>();
+        resolvedAssemblyMock.Setup(m => m.Exists).Returns(true);
+        resolvedAssemblyMock.Setup(m => m.FullName).Returns(resolvedAssemblyPath);
+    
         _solutionStrategy
-            .Setup(s => s.Resolve(targetFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedProjectFile, TargetType.Project) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedProjectMock.Object, TargetType.Project) });
         _projectStrategy
-            .Setup(s => s.Resolve(resolvedProjectFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssemblyFile, TargetType.Assembly) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
         _assemblyStrategy
-            .Setup(s => s.Resolve(resolvedAssemblyFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssemblyFile, TargetType.Assembly) });
-
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
+    
         // act
         var result = _targetResolver.Resolve(target);
-
+    
         // assert
         Assert.Single(result);
-        _solutionStrategy.Verify(s => s.Resolve(targetFile.FullName), Times.Once);
-        _projectStrategy.Verify(s => s.Resolve(resolvedProjectFile.FullName), Times.Once);
-        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssemblyFile.FullName), Times.Once);
+        _solutionStrategy.Verify(s => s.Resolve(target), Times.Once);
+        _projectStrategy.Verify(s => s.Resolve(resolvedProjectPath), Times.Once);
+        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssemblyPath), Times.Once);
     }
-
+    
     [Fact]
     public void Resolve_ShouldResolve_WhenTargetIsDirectory()
     {
         // arrange
         const string target = "target";
-        var targetDirectory = new DirectoryInfo(target);
-        const string solution = "solution.sln";
-        var resolvedSolutionFile = new FileInfo(solution);
-        const string project = "project.csproj";
-        var resolvedProjectFile = new FileInfo(project);
-        const string assembly = "assembly.dll";
-        var resolvedAssemblyFile = new FileInfo(assembly);
+        var targetFileInfoMock = new Mock<IFileInfo>();
+        var directoryInfoMock = new Mock<IDirectoryInfo>();
+        targetFileInfoMock.Setup(m => m.Exists).Returns(false);
+        directoryInfoMock.Setup(m => m.Exists).Returns(true);
+        directoryInfoMock.Setup(m => m.FullName).Returns(target);
+        _fileSystemMock
+            .Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>()))
+            .Returns(targetFileInfoMock.Object);
+        _fileSystemMock
+            .Setup(fs => fs.DirectoryInfo.Wrap(It.IsAny<DirectoryInfo>()))
+            .Returns(directoryInfoMock.Object);
+        
+        const string resolvedSolutionPath = "solution.sln";
+        var resolvedSolutionMock = new Mock<IFileInfo>();
+        resolvedSolutionMock.Setup(m => m.Exists).Returns(true);
+        resolvedSolutionMock.Setup(m => m.FullName).Returns(resolvedSolutionPath);
+        
+        const string resolvedProjectPath = "project.csproj";
+        var resolvedProjectMock = new Mock<IFileInfo>();
+        resolvedProjectMock.Setup(m => m.Exists).Returns(true);
+        resolvedProjectMock.Setup(m => m.FullName).Returns(resolvedProjectPath);
 
-        _fileSystemMock.Setup(fs => fs.GetFileSystemInfo(target)).Returns((targetDirectory, default));
-        _fileSystemMock.Setup(fs => fs.IsFile(targetDirectory)).Returns(false);
+        const string resolvedAssemblyPath = "assembly.dll";
+        var resolvedAssemblyMock = new Mock<IFileInfo>();
+        resolvedAssemblyMock.Setup(m => m.Exists).Returns(true);
+        resolvedAssemblyMock.Setup(m => m.FullName).Returns(resolvedAssemblyPath);
+        
         _directoryStrategy
-            .Setup(s => s.Resolve(targetDirectory.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedSolutionFile, TargetType.Solution) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedSolutionMock.Object, TargetType.Solution) });
         _solutionStrategy
-            .Setup(s => s.Resolve(resolvedSolutionFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedProjectFile, TargetType.Project) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedProjectMock.Object, TargetType.Project) });
         _projectStrategy
-            .Setup(s => s.Resolve(resolvedProjectFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssemblyFile, TargetType.Assembly) });
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
         _assemblyStrategy
-            .Setup(s => s.Resolve(resolvedAssemblyFile.FullName))
-            .Returns(new List<(FileSystemInfo, TargetType)> { (resolvedAssemblyFile, TargetType.Assembly) });
-
+            .Setup(s => s.Resolve(It.IsAny<string>()))
+            .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
+    
         // act
         var result = _targetResolver.Resolve(target);
-
+    
         // assert
         Assert.Single(result);
-        _directoryStrategy.Verify(s => s.Resolve(targetDirectory.FullName), Times.Once);
-        _solutionStrategy.Verify(s => s.Resolve(resolvedSolutionFile.FullName), Times.Once);
-        _projectStrategy.Verify(s => s.Resolve(resolvedProjectFile.FullName), Times.Once);
-        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssemblyFile.FullName), Times.Once);
+        _directoryStrategy.Verify(s => s.Resolve(target), Times.Once);
+        _solutionStrategy.Verify(s => s.Resolve(resolvedSolutionPath), Times.Once);
+        _projectStrategy.Verify(s => s.Resolve(resolvedProjectPath), Times.Once);
+        _assemblyStrategy.Verify(s => s.Resolve(resolvedAssemblyPath), Times.Once);
     }
 }
 

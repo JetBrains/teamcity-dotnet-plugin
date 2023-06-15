@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Restore;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Backup;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.App;
 
@@ -49,7 +49,9 @@ public class RestoreCommandHandlerTests
         };
 
         var fullPath = "full_path_to_metadata";
-        _fileSystemMock.Setup(fs => fs.GetFullPath(command.BackupMetadataFilePath)).Returns(fullPath);
+        var pathMock = new Mock<IPath>();
+        _fileSystemMock.Setup(m => m.Path).Returns(pathMock.Object);
+        pathMock.Setup(m => m.GetFullPath(command.BackupMetadataFilePath)).Returns(fullPath);
 
         // act
         await _handler.ExecuteAsync(command);

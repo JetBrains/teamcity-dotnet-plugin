@@ -32,8 +32,9 @@ internal class DotnetAssembly : IDotnetAssembly
     public IEnumerable<IDotnetAssemblyReference> AssemblyReferences =>
         _assemblyDefinition.MainModule.AssemblyReferences.Select(ar => new DotnetAssemblyReference(ar));
 
-    public void Write(FileStream destinationFileStream, bool withSymbols)
+    public void SaveTo(string filePath, bool withSymbols)
     {
+        using var destinationFileStream = File.Create(filePath);
         _assemblyDefinition.Write(destinationFileStream, new WriterParameters { WriteSymbols = withSymbols });
     }
 

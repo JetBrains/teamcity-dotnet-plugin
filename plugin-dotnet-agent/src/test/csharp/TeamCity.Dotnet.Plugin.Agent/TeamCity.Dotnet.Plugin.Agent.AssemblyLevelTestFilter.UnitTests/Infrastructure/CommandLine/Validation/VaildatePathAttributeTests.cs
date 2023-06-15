@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Infrastructure.CommandLine.Validation;
 
@@ -34,7 +34,9 @@ public class ValidatePathAttributeTests
     {
         // arrange
         var attribute = new ValidatePathAttribute(_mockFileSystem.Object, false, false, "Invalid path");
-        _mockFileSystem.Setup(fs => fs.GetFullPath(It.IsAny<string>())).Throws(new ArgumentException());
+        var pathMock = new Mock<IPath>();
+        pathMock.Setup(m => m.GetFullPath(It.IsAny<string>())).Throws(new ArgumentException());
+        _mockFileSystem.Setup(fs => fs.Path).Returns(pathMock.Object);
 
         // act
         var result = attribute.IsValid("Invalid\\Path");
@@ -49,7 +51,9 @@ public class ValidatePathAttributeTests
     {
         // arrange
         var attribute = new ValidatePathAttribute(_mockFileSystem.Object, true, true, "Missing file");
-        _mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
+        var fileMock = new Mock<IFile>();
+        fileMock.Setup(m => m.Exists(It.IsAny<string>())).Returns(false);
+        _mockFileSystem.Setup(fs => fs.File).Returns(fileMock.Object);
 
         // act
         var result = attribute.IsValid("C:\\path\\to\\missing\\file.txt");
@@ -64,8 +68,12 @@ public class ValidatePathAttributeTests
     {
         // arrange
         var attribute = new ValidatePathAttribute(_mockFileSystem.Object, true, true, "Invalid extension", ".txt");
-        _mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        _mockFileSystem.Setup(fs => fs.GetExtension(It.IsAny<string>())).Returns(".docx");
+        var fileMock = new Mock<IFile>();
+        fileMock.Setup(m => m.Exists(It.IsAny<string>())).Returns(true);
+        _mockFileSystem.Setup(fs => fs.File).Returns(fileMock.Object);
+        var pathMock = new Mock<IPath>();
+        pathMock.Setup(m => m.GetFullPath(It.IsAny<string>())).Returns(".docx");
+        _mockFileSystem.Setup(fs => fs.Path).Returns(pathMock.Object);
 
         // act
         var result = attribute.IsValid("C:\\path\\to\\file.docx");
@@ -79,9 +87,15 @@ public class ValidatePathAttributeTests
     public void IsValid_WithValidFile_ShouldReturnValidResult()
     {
         // arrange
-        var attribute = new ValidatePathAttribute(_mockFileSystem.Object, true, true, "Invalid extension", ".txt");
-        _mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        _mockFileSystem.Setup(fs => fs.GetExtension(It.IsAny<string>())).Returns(".txt");
+        const string extension = ".txt";
+        var attribute = new ValidatePathAttribute(_mockFileSystem.Object, true, true, "Invalid extension", extension);
+        var fileMock = new Mock<IFile>();
+        fileMock.Setup(m => m.Exists(It.IsAny<string>())).Returns(true);
+        _mockFileSystem.Setup(fs => fs.File).Returns(fileMock.Object);
+        var pathMock = new Mock<IPath>();
+        pathMock.Setup(m => m.GetFullPath(It.IsAny<string>())).Returns(extension);
+        _mockFileSystem.Setup(fs => fs.Path).Returns(pathMock.Object);
+        _mockFileSystem.Setup(m => m.Path.GetExtension(It.IsAny<string>())).Returns(extension);
 
         // act
         var result = attribute.IsValid("C:\\path\\to\\file.txt");

@@ -24,5 +24,5 @@ internal interface IDotnetAssembly : IDisposable
 
     IEnumerable<IDotnetType> Types { get; }
     
-    void Write(FileStream destinationFileStream, bool withSymbols);
+    void SaveTo(string filePath, bool withSymbols);
 }

@@ -14,6 +14,7 @@
 //  * limitations under the License.
 //  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
@@ -36,16 +37,10 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
     
     protected abstract IEnumerable<string> AllowedTargetExtensions { get; }
 
-    public abstract IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target);
+    public abstract IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target);
 
-    protected FileSystemInfo? TryToGetTargetFile(string target)
+    protected IFileSystemInfo? TryToGetTargetFile(string target)
     {
-        if (!FileSystem.FileExists(target))
-        {
-            _logger.LogWarning("Target {TargetType} not found: {Target}", TargetType, target);
-            return null;
-        }
-
         var (pathFileSystemInfo, exception) = FileSystem.GetFileSystemInfo(target);
         if (exception != null)
         {
@@ -53,7 +48,7 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
             return null;
         }
         
-        if (FileSystem.IsFile(pathFileSystemInfo!) && AllowedTargetExtensions.All(e => e != pathFileSystemInfo!.Extension))
+        if (pathFileSystemInfo!.IsFile() && AllowedTargetExtensions.All(e => e != pathFileSystemInfo!.Extension))
         {
             _logger.LogWarning(
                 "Target file {TargetType} has unsupported extension: {Target}. Supported extensions are: {AllowedExtensions}", 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Build.Construction;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
@@ -35,7 +36,7 @@ internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
 
     protected override IEnumerable<string> AllowedTargetExtensions => new []{ FileExtension.Solution, FileExtension.SolutionFilter };
 
-    public override IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
+    public override IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target solution: {Target}", target);
 
@@ -46,9 +47,14 @@ internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
             yield break;
         }
 
-        var solution = SolutionFile.Parse(solutionFile.FullName);
+        var (solution, solutionParsingException) = ParseSolution(solutionFile.FullName);
+        if (solutionParsingException != null)
+        {
+            _logger.LogWarning(solutionParsingException,"Target solution {TargetProject} is invalid", solutionFile.FullName);
+            yield break;
+        }
 
-        foreach (var project in solution.ProjectsInOrder)
+        foreach (var project in solution!.ProjectsInOrder)
         {
             if (project.ProjectType != SolutionProjectType.KnownToBeMSBuildFormat)
             {
@@ -56,10 +62,21 @@ internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
                 continue;
             }
 
-            var projectFile = new FileInfo(project.AbsolutePath);
+            var projectFile = FileSystem.FileInfo.New(project.AbsolutePath);
             _logger.LogInformation("Resolved project by target solution: {Project}", projectFile.FullName);
             
             yield return (projectFile, TargetType.Project);
+        }
+    }
+    
+    private static (SolutionFile?, Exception?) ParseSolution(string solutionFilePath)
+    {
+        try
+        {
+            return (SolutionFile.Parse(solutionFilePath), null);
+        } catch (Exception exception)
+        {
+            return (null, exception);
         }
     }
 }

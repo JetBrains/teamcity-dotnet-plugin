@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 
@@ -34,7 +35,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         _logger = logger;
     }
 
-    public IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
+    public IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target directory: {Target}", target);
         

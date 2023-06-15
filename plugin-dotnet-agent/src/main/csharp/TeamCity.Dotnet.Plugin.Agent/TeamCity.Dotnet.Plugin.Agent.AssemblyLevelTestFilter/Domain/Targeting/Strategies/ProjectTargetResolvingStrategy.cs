@@ -1,23 +1,10 @@
-/*
- * Copyright 2000-2023 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+using System.IO.Abstractions;
+using System.Xml.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.MsBuild;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
@@ -29,21 +16,16 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
     
     public ProjectTargetResolvingStrategy(
         IFileSystem fileSystem,
+        IMsBuildLocator msBuildLocator,
         ILogger<ProjectTargetResolvingStrategy> logger) : base(fileSystem, logger)
     {
         _logger = logger;
-        var instance = MSBuildLocator.RegisterDefaults();
-        _logger.LogDebug(
-            "Target project resolver uses MSBuild from {InstallationName} {InstallationVersion} located at the path {InstallationPath}",
-            instance.Name,
-            instance.Version,
-            instance.MSBuildPath
-        );
+        _ = msBuildLocator.RegisterDefaults();
     }
 
     protected override IEnumerable<string> AllowedTargetExtensions => new[] { FileExtension.CSharpProject };
 
-    public override IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
+    public override IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target project: {Target}", target);
         
@@ -54,13 +36,19 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
             yield break;
         }
         
-        var projectFile = targetPathSystemInfo as FileInfo;
+        var projectFile = targetPathSystemInfo as IFileInfo;
         
-        var outputAssemblyPath = GetOutputAssemblyPath(projectFile!);
-        var (assemblyFileInfo, exception) = FileSystem.GetFileInfo(outputAssemblyPath);
-        if (exception != null)
+        var (outputAssemblyPath, projectParsingException) = GetOutputAssemblyPath(projectFile!);
+        if (projectParsingException != null)
         {
-            _logger.LogWarning("Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
+            _logger.LogWarning(projectParsingException,"Target project {TargetProject} is invalid", projectFile!.FullName);
+            yield break;
+        }
+        
+        var (assemblyFileInfo, assemblyInfoException) = FileSystem.GetFileInfo(outputAssemblyPath);
+        if (assemblyInfoException != null)
+        {
+            _logger.LogWarning(assemblyInfoException, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
             yield break;
         }
         
@@ -68,20 +56,27 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
         yield return (assemblyFileInfo, TargetType.Assembly);
     }
 
-    private static string GetOutputAssemblyPath(FileInfo projectFile)
+    private static (string?, Exception?) GetOutputAssemblyPath(IFileInfo projectFile)
     {
-        var project = new Project(projectFile.FullName);
-        
-        // currently we support only default output path and default target file name
-        // TODO: support 
-        var outputPath = project.GetPropertyValue("OutputPath");
-        var targetFileName =
-            project.GetPropertyValue("TargetFileName")
-            ?? projectFile.Name.Replace(FileExtension.CSharpProject, string.Empty);
+        try
+        {
+            var project = new Project(projectFile.FullName);
 
-        return Path
-            .Combine(projectFile.Directory!.FullName, outputPath, targetFileName)
-            .Replace('\\', Path.DirectorySeparatorChar)
-            .Replace('/', Path.DirectorySeparatorChar);
+            // TODO: currently we support only default output path and default target file name
+            var outputPath = project.GetPropertyValue("OutputPath");
+            var targetFileName =
+                project.GetPropertyValue("TargetFileName")
+                ?? projectFile.Name.Replace(FileExtension.CSharpProject, string.Empty);
+
+            var result = Path
+                .Combine(projectFile.Directory!.FullName, outputPath, targetFileName)
+                .Replace('\\', Path.DirectorySeparatorChar)
+                .Replace('/', Path.DirectorySeparatorChar);
+            
+            return (result, null);
+        } catch (Exception exception)
+        {
+            return (null, exception);
+        }
     }
 }

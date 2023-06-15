@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using System.IO.Abstractions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Validation;
 
@@ -31,7 +31,7 @@ internal class ValidatePathAttribute : ValidationAttribute
         _mustBeFile = mustBeFile;
         _mustExist = mustExist;
         _allowedExtensions = allowedExtensions;
-        _fileSystem = new FileSystemWrapper();
+        _fileSystem = new FileSystem();
     }
     
     public ValidatePathAttribute(IFileSystem fileSystem, bool mustBeFile, bool mustExist, string errorMessage, params string[] allowedExtensions)
@@ -55,7 +55,7 @@ internal class ValidatePathAttribute : ValidationAttribute
         // check if string is valid path
         try
         {
-            _ = _fileSystem.GetFullPath(path!);
+            _ = _fileSystem.Path.GetFullPath(path!);
         }
         catch (Exception ex)
         {
@@ -69,14 +69,14 @@ internal class ValidatePathAttribute : ValidationAttribute
         
         if (_mustBeFile)
         {
-            if (!_fileSystem.FileExists(path!))
+            if (!_fileSystem.File.Exists(path!))
             {
                 return ValidationResult.Invalid($"{ErrorMessage}: {path} – file does not exist");
             }
                 
             if (_allowedExtensions.Any())
             {
-                var fileExtension = _fileSystem.GetExtension(path!);
+                var fileExtension = _fileSystem.Path.GetExtension(path!);
                 if (!_allowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
                 {
                     return ValidationResult.Invalid($"{ErrorMessage}: invalid file extension for path {path}");
@@ -85,7 +85,7 @@ internal class ValidatePathAttribute : ValidationAttribute
         }
         else
         {
-            if (!_fileSystem.FileExists(path!) && !_fileSystem.DirectoryExists(path!))
+            if (!_fileSystem.File.Exists(path!) && !_fileSystem.Directory.Exists(path!))
             {
                 return ValidationResult.Invalid($"{ErrorMessage}: {path} – file/directory does not exist");
             }

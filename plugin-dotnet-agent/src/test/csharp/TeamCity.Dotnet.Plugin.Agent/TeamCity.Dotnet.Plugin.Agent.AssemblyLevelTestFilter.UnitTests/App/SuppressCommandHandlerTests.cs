@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.App.Suppress;
@@ -49,8 +50,14 @@ public class SuppressCommandHandlerTests
     public async Task ExecuteAsync_ShouldPatchAssemblyAndSaveBackupMetadata_WhenPatchingIsSuccessful()
     {
         // arrange
-        var targetAssembly1 = new FileInfo("TestAssembly1");
-        var targetAssembly2 = new FileInfo("TestAssembly2");
+        const string targetAssembly1 = "TestAssembly1";
+        var targetAssembly1Mock = new Mock<IFileInfo>();
+        targetAssembly1Mock.Setup(m => m.FullName).Returns(targetAssembly1);
+        
+        const string targetAssembly2 = "TestAssembly2";
+        var targetAssembly2Mock = new Mock<IFileInfo>();
+        targetAssembly2Mock.Setup(m => m.FullName).Returns(targetAssembly2);
+        
         var testSelectors = new Dictionary<string, ITestSelector>();
         var assemblyMutationResult = new AssemblyMutationResult(0, 0);
         const string backupAssemblyPath1 = "BackupAssemblyPath1";
@@ -58,20 +65,20 @@ public class SuppressCommandHandlerTests
         const string assemblySymbolsPath = "assemblySymbolsPath1";
         const string backupAssemblySymbolsPath = "BackupAssemblySymbolsPath1";
         var patchingResult1 =
-            AssemblyPatchingResult.Patched(targetAssembly1.Name, backupAssemblyPath1, null, null, assemblyMutationResult);
+            AssemblyPatchingResult.Patched(targetAssembly1, backupAssemblyPath1, null, null, assemblyMutationResult);
         var patchingResult2 =
-            AssemblyPatchingResult.Patched(targetAssembly2.Name, backupAssemblyPath2, assemblySymbolsPath, backupAssemblySymbolsPath, assemblyMutationResult);
+            AssemblyPatchingResult.Patched(targetAssembly2, backupAssemblyPath2, assemblySymbolsPath, backupAssemblySymbolsPath, assemblyMutationResult);
         _mockTestSelectorsFactory
             .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
             .Setup(m => m.Resolve(It.IsAny<string>()))
-            .Returns(new[] { targetAssembly1, targetAssembly2 });
+            .Returns(new[] { targetAssembly1Mock.Object, targetAssembly2Mock.Object });
         _mockAssemblyPatcher
-            .Setup(m => m.TryPatchAsync(targetAssembly1, It.IsAny<TestSuppressionPatchingCriteria>()))
+            .Setup(m => m.TryPatchAsync(targetAssembly1Mock.Object, It.IsAny<TestSuppressionPatchingCriteria>()))
             .ReturnsAsync(patchingResult1);
         _mockAssemblyPatcher
-            .Setup(m => m.TryPatchAsync(targetAssembly2, It.IsAny<TestSuppressionPatchingCriteria>()))
+            .Setup(m => m.TryPatchAsync(targetAssembly2Mock.Object, It.IsAny<TestSuppressionPatchingCriteria>()))
             .ReturnsAsync(patchingResult2);
         
         // act
@@ -83,23 +90,23 @@ public class SuppressCommandHandlerTests
             Times.Once
         );
         _mockAssemblyPatcher.Verify(m =>
-            m.TryPatchAsync(targetAssembly1, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
+            m.TryPatchAsync(targetAssembly1Mock.Object, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
             Times.Once
         );
         _mockAssemblyPatcher.Verify(m =>
-            m.TryPatchAsync(targetAssembly2, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
+            m.TryPatchAsync(targetAssembly2Mock.Object, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>
             m.SaveAsync(
                 _testCommand.BackupFilePath,
-                It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly1.Name && fm.BackupPath == backupAssemblyPath1)),
+                It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly1 && fm.BackupPath == backupAssemblyPath1)),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>
                 m.SaveAsync(
                     _testCommand.BackupFilePath,
-                    It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly2.Name && fm.BackupPath == backupAssemblyPath2 )),
+                    It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly2 && fm.BackupPath == backupAssemblyPath2 )),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>
@@ -115,18 +122,21 @@ public class SuppressCommandHandlerTests
     {
         
         // arrange
-        var targetAssembly = new FileInfo("TestAssembly1");
+        const string targetAssembly = "TestAssembly1";
+        var targetAssemblyMock = new Mock<IFileInfo>();
+        targetAssemblyMock.Setup(m => m.FullName).Returns(targetAssembly);
+        
         var testSelectors = new Dictionary<string, ITestSelector>();
         var patchingResult =
-            AssemblyPatchingResult.NotPatched(targetAssembly.Name);
+            AssemblyPatchingResult.NotPatched(targetAssembly);
         _mockTestSelectorsFactory
             .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
             .Setup(m => m.Resolve(It.IsAny<string>()))
-            .Returns(new[] { targetAssembly });
+            .Returns(new[] { targetAssemblyMock.Object });
         _mockAssemblyPatcher
-            .Setup(m => m.TryPatchAsync(targetAssembly, It.IsAny<TestSuppressionPatchingCriteria>()))
+            .Setup(m => m.TryPatchAsync(targetAssemblyMock.Object, It.IsAny<TestSuppressionPatchingCriteria>()))
             .ReturnsAsync(patchingResult);
         
         // act
@@ -138,7 +148,7 @@ public class SuppressCommandHandlerTests
             Times.Once
         );
         _mockAssemblyPatcher.Verify(m =>
-            m.TryPatchAsync(targetAssembly, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
+            m.TryPatchAsync(targetAssemblyMock.Object, It.Is<TestSuppressionPatchingCriteria>(c => c.InclusionMode == _testCommand.InclusionMode && c.TestSelectors == testSelectors)),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>

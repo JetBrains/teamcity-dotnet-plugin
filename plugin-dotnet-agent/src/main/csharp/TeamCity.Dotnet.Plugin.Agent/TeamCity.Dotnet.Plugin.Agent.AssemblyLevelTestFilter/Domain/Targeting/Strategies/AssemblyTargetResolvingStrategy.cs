@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
@@ -42,7 +43,7 @@ internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
 
     protected override IEnumerable<string> AllowedTargetExtensions => new [] { FileExtension.Dll, FileExtension.Exe };
 
-    public override IEnumerable<(FileSystemInfo, TargetType)> Resolve(string target)
+    public override IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target assembly: {Target}", target);
 
@@ -70,7 +71,7 @@ internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
         yield return (assemblyFile, TargetType.Assembly);
     }
 
-    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(FileSystemInfo assemblyFile)
+    private (bool isAssembly, string[]? detectedEngines) TryDetectEngines(IFileSystemInfo assemblyFile)
     {
         using var assembly = _assemblyLoader.LoadAssembly(assemblyFile.FullName, false);
         if (assembly == null)
