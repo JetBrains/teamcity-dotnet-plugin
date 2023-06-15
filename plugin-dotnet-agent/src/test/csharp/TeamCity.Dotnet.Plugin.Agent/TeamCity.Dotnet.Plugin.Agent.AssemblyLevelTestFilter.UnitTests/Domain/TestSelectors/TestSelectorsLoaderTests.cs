@@ -91,8 +91,7 @@ public class TestSelectorsLoaderTests
         // arrange
         var testSelector = new Mock<ITestSelector>();
         testSelector.Setup(ts => ts.Query).Returns("valid_selector");
-    
-        var filePath = "/path/to/file";
+
         var fileInfoMock = new Mock<IFileInfo>();
         _fileSystemMock.Setup(fs => fs.File.Exists(It.IsAny<string>())).Returns(true);
         _fileSystemMock.Setup(m => m.File.Exists(It.IsAny<string>())).Returns(true);

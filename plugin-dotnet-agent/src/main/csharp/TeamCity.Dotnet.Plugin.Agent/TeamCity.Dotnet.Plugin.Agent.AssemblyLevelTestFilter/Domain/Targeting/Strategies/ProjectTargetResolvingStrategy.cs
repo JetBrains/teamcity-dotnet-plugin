@@ -45,7 +45,7 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
             yield break;
         }
         
-        var (assemblyFileInfo, assemblyInfoException) = FileSystem.GetFileInfo(outputAssemblyPath);
+        var (assemblyFileInfo, assemblyInfoException) = FileSystem.GetFileInfo(outputAssemblyPath!);
         if (assemblyInfoException != null)
         {
             _logger.LogWarning(assemblyInfoException, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
