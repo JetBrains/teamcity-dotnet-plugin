@@ -13,31 +13,7 @@ internal class NormalConsoleFormatter : ConsoleFormatter
     public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider, TextWriter textWriter)
     {
         var message = logEntry.Formatter!(logEntry.State, logEntry.Exception);
-
         message = message.Replace(logEntry.Category, "").Trim('\n'); // remove category
-
-        switch (logEntry.LogLevel)
-        {
-            case LogLevel.Trace:
-                textWriter.WriteLine(MessageFormat, message.Cyan());
-                break;
-            case LogLevel.Debug:
-                textWriter.WriteLine(MessageFormat, message.Magenta());
-                break;
-            case LogLevel.Information:
-                textWriter.WriteLine(MessageFormat, message);
-                break;
-            case LogLevel.Warning:
-                textWriter.WriteLine(MessageFormat, message.Yellow());
-                break;
-            case LogLevel.Error:
-            case LogLevel.Critical:
-                textWriter.WriteLine(MessageFormat, message.Red());
-                break;
-            case LogLevel.None:
-            default:
-                textWriter.WriteLine(MessageFormat, message.Blue());
-                break;
-        }
+        textWriter.WriteLine(MessageFormat, message);
     }
 }

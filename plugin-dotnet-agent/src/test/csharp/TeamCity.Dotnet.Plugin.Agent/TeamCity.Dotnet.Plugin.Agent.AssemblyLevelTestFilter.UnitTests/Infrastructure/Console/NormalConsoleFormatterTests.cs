@@ -7,13 +7,13 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests.Infrast
 public class NormalConsoleFormatterTests
 {
     [Theory]
-    [InlineData(LogLevel.Trace, "\x1b[36mHello, World!\x1b[39m\n")]
-    [InlineData(LogLevel.Debug, "\x1b[35mHello, World!\x1b[39m\n")]
-    [InlineData(LogLevel.Information, "Hello, World!\n")]
-    [InlineData(LogLevel.Warning, "\x1b[33mHello, World!\x1b[39m\n")]
-    [InlineData(LogLevel.Error, "\x1b[31mHello, World!\x1b[39m\n")]
-    [InlineData(LogLevel.Critical, "\x1b[31mHello, World!\x1b[39m\n")]
-    public void Write_WritesFormattedMessage(LogLevel logLevel, string expectedOutput)
+    [InlineData(LogLevel.Trace)]
+    [InlineData(LogLevel.Debug)]
+    [InlineData(LogLevel.Information)]
+    [InlineData(LogLevel.Warning)]
+    [InlineData(LogLevel.Error)]
+    [InlineData(LogLevel.Critical)]
+    public void Write_WritesFormattedMessage(LogLevel logLevel)
     {
         // arrange
         var formatter = new NormalConsoleFormatter();
@@ -32,6 +32,6 @@ public class NormalConsoleFormatterTests
         var actualOutput = stringWriter.ToString();
 
         // assert
-        Assert.Equal(expectedOutput, actualOutput);
+        Assert.Equal("Hello, World!\n", actualOutput);
     }
 }
