@@ -15,65 +15,95 @@
  */
 
 plugins {
-  id 'com.github.rodm.teamcity-agent' version '1.4.1'
-  id 'de.undercouch.download' version '5.2.1'
-  id 'plugin.conventions'
+    id 'com.github.rodm.teamcity-agent' version '1.4.1'
+    id 'de.undercouch.download' version '5.2.1'
+    id 'plugin.conventions'
 }
 
 teamcity {
-  version = project.teamcityVersion
-  allowSnapshotVersions = true
-  agent {
-    descriptor = project.file('teamcity-plugin.xml')
-    files {
-      into('tools') {
-        from('tools')
-      }
+    version = project.teamcityVersion
+    allowSnapshotVersions = true
+    agent {
+        descriptor = project.file('teamcity-plugin.xml')
+        files {
+            into('tools') {
+                from('tools')
+            }
+        }
     }
-  }
 }
 
 dependencies {
-  implementation project(':plugin-dotnet-common')
-  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-  provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
-  implementation 'commons-io:commons-io:2.11.0'
-  implementation fileTree(dir: "$project.projectDir.parentFile/lib/compile", include: ['coverage-report*.jar'])
+    implementation project(':plugin-dotnet-common')
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation fileTree(dir: "$project.projectDir.parentFile/lib/compile", include: ['coverage-report*.jar'])
 
-  testImplementation 'org.testng:testng:7.5'
-  testImplementation 'org.jmock:jmock:2.12.0'
-  testImplementation 'org.hamcrest:hamcrest-all:1.3'
-  testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
-  testImplementation 'io.mockk:mockk:1.13.2'
-  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-  testImplementation fileTree(dir: "$project.projectDir.parentFile/lib/test", include: ['freemarker*.jar'])
+    testImplementation 'org.testng:testng:7.5'
+    testImplementation 'org.jmock:jmock:2.12.0'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
+    testImplementation 'io.mockk:mockk:1.13.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation fileTree(dir: "$project.projectDir.parentFile/lib/test", include: ['freemarker*.jar'])
 }
 
 class PreparePackagesTask extends DefaultTask {
-  @TaskAction
-  def run() {
-    ant.delete(dir: './tools')
-    ant.mkdir(dir: './tools')
+    @TaskAction
+    def run() {
+        ant.delete(dir: './tools')
+        ant.mkdir(dir: './tools')
 
-    def integrationPackageVersion = '1.0.28'
-    def integrationPackageId = 'TeamCity.Dotnet.Integration/' + integrationPackageVersion
+        def integrationPackageVersion = '1.0.28'
+        def integrationPackageId = 'TeamCity.Dotnet.Integration/' + integrationPackageVersion
 
-    println 'Processing ' + integrationPackageId
-    ant.delete(dir: './packages')
-    ant.mkdir(dir: './packages')
-    ant.get(src: 'https://www.nuget.org/api/v2/package/' +  integrationPackageId, dest: './packages/package.zip', skipexisting: 'true')
-    ant.unzip(src: './packages/package.zip', dest: './packages')
-    ant.move(todir: './tools', overwrite: 'true', force: 'true') {
-      fileset(dir: './packages/build/_common', includes: '**/*')
+        println 'Processing ' + integrationPackageId
+        ant.delete(dir: './packages')
+        ant.mkdir(dir: './packages')
+        ant.get(src: 'https://www.nuget.org/api/v2/package/' + integrationPackageId, dest: './packages/package.zip', skipexisting: 'true')
+        ant.unzip(src: './packages/package.zip', dest: './packages')
+        ant.move(todir: './tools', overwrite: 'true', force: 'true') {
+            fileset(dir: './packages/build/_common', includes: '**/*')
+        }
+        ant.delete(dir: './packages')
     }
-    ant.delete(dir: './packages')
-  }
 }
 
 task preparePackagesTask(type: PreparePackagesTask)
 
-agentPlugin.dependsOn(preparePackagesTask)
+task unitTestDotnet(type: Exec) {
+    commandLine 'dotnet', 'test',
+        './src/test/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests'
+}
+
+task integrationTestDotnet(type: Exec) {
+    commandLine 'dotnet', 'test',
+        './src/test/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests',
+        '--logger', '"console;verbosity=detailed"'
+}
+
+task buildDotnet(type: Exec) {
+    mustRunAfter preparePackagesTask
+    dependsOn unitTestDotnet
+
+    commandLine 'dotnet', 'publish',
+        './src/main/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter',
+        '--configuration', 'Release',
+        '--framework', 'net6.0',    // publish only for .NET 6.0 to make it compatible with higher versions
+        '--output', './tools/AssemblyLevelTestFilter'
+}
+
+task cleanDotnet(type: Exec) {
+    delete './tools/AssemblyLevelTestFilter'
+    commandLine 'dotnet', 'clean',
+        './src/main/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.sln'
+}
+
+clean.dependsOn(cleanDotnet)
+test.dependsOn(unitTestDotnet)
+agentPlugin.dependsOn(preparePackagesTask, buildDotnet)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact
