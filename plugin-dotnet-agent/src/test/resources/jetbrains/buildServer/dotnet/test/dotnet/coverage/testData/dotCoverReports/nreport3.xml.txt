@@ -1,0 +1,1348 @@
+6c522f2b-1c1c-47f1-a7bd-71167f8ab19e!    XmlRpcProxyb9be8172-77a9-499e-94bb-5ea7274f3782
+  ->.XmlRpcProxyb9be8172-77a9-499e-94bb-5ea7274f3782
+9piiondj!  Microsoft.Xml.Serialization.GeneratedAssembly  SettingsSerializer
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.SettingsSerializer
+9piiondj!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializationReaderSettings
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderSettings
+9piiondj!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializationWriterSettings
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationWriterSettings
+9piiondj!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializer1
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializer1
+9piiondj!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializerContract
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract
+CookComputing.XmlRpc.TC.Rebuilt!    <PrivateImplementationDetails>
+  ->.<PrivateImplementationDetails>
+    CookComputing.XmlRpc.TC.Rebuilt!    <PrivateImplementationDetails>+$$struct0x6000227-1
+      ->.<PrivateImplementationDetails>+$$struct0x6000227-1
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  Fault
+  ->CookComputing.XmlRpc.Fault
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  IHttpRequest
+  ->CookComputing.XmlRpc.IHttpRequest
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  IHttpRequestHandler
+  ->CookComputing.XmlRpc.IHttpRequestHandler
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  IHttpResponse
+  ->CookComputing.XmlRpc.IHttpResponse
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  IXmlRpcProxy
+  ->CookComputing.XmlRpc.IXmlRpcProxy
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  MappingAction
+  ->CookComputing.XmlRpc.MappingAction
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  RequestResponseLogger
+  ->CookComputing.XmlRpc.RequestResponseLogger
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  SystemMethodsBase
+  ->CookComputing.XmlRpc.SystemMethodsBase
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  Util
+  ->CookComputing.XmlRpc.Util
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcAsyncResult
+  ->CookComputing.XmlRpc.XmlRpcAsyncResult
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcBeginAttribute
+  ->CookComputing.XmlRpc.XmlRpcBeginAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcBoolean
+  ->CookComputing.XmlRpc.XmlRpcBoolean
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcClientFormatterSink
+  ->CookComputing.XmlRpc.XmlRpcClientFormatterSink
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcClientFormatterSinkProvider
+  ->CookComputing.XmlRpc.XmlRpcClientFormatterSinkProvider
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcClientProtocol
+  ->CookComputing.XmlRpc.XmlRpcClientProtocol
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcDateTime
+  ->CookComputing.XmlRpc.XmlRpcDateTime
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcDocWriter
+  ->CookComputing.XmlRpc.XmlRpcDocWriter
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcDouble
+  ->CookComputing.XmlRpc.XmlRpcDouble
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcDupXmlRpcMethodNames
+  ->CookComputing.XmlRpc.XmlRpcDupXmlRpcMethodNames
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcEndAttribute
+  ->CookComputing.XmlRpc.XmlRpcEndAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcException
+  ->CookComputing.XmlRpc.XmlRpcException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcFaultException
+  ->CookComputing.XmlRpc.XmlRpcFaultException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcHttpRequest
+  ->CookComputing.XmlRpc.XmlRpcHttpRequest
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcHttpResponse
+  ->CookComputing.XmlRpc.XmlRpcHttpResponse
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcHttpServerProtocol
+  ->CookComputing.XmlRpc.XmlRpcHttpServerProtocol
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcIllFormedXmlException
+  ->CookComputing.XmlRpc.XmlRpcIllFormedXmlException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcInt
+  ->CookComputing.XmlRpc.XmlRpcInt
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcInvalidParametersException
+  ->CookComputing.XmlRpc.XmlRpcInvalidParametersException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcInvalidReturnType
+  ->CookComputing.XmlRpc.XmlRpcInvalidReturnType
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcInvalidXmlRpcException
+  ->CookComputing.XmlRpc.XmlRpcInvalidXmlRpcException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcLogger
+  ->CookComputing.XmlRpc.XmlRpcLogger
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMappingSerializeException
+  ->CookComputing.XmlRpc.XmlRpcMappingSerializeException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMemberAttribute
+  ->CookComputing.XmlRpc.XmlRpcMemberAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMethodAttribute
+  ->CookComputing.XmlRpc.XmlRpcMethodAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMethodAttributeException
+  ->CookComputing.XmlRpc.XmlRpcMethodAttributeException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMethodInfo
+  ->CookComputing.XmlRpc.XmlRpcMethodInfo
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMissingMappingAttribute
+  ->CookComputing.XmlRpc.XmlRpcMissingMappingAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcMissingUrl
+  ->CookComputing.XmlRpc.XmlRpcMissingUrl
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcNonRegularArrayException
+  ->CookComputing.XmlRpc.XmlRpcNonRegularArrayException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcNonSerializedMember
+  ->CookComputing.XmlRpc.XmlRpcNonSerializedMember
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcNonStandard
+  ->CookComputing.XmlRpc.XmlRpcNonStandard
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcNullParameterException
+  ->CookComputing.XmlRpc.XmlRpcNullParameterException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcNullReferenceException
+  ->CookComputing.XmlRpc.XmlRpcNullReferenceException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcParameterAttribute
+  ->CookComputing.XmlRpc.XmlRpcParameterAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcParameterInfo
+  ->CookComputing.XmlRpc.XmlRpcParameterInfo
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcProxyGen
+  ->CookComputing.XmlRpc.XmlRpcProxyGen
+    CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcProxyGen+MethodData
+      ->CookComputing.XmlRpc.XmlRpcProxyGen+MethodData
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcRequest
+  ->CookComputing.XmlRpc.XmlRpcRequest
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcRequestEventArgs
+  ->CookComputing.XmlRpc.XmlRpcRequestEventArgs
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcRequestEventHandler
+  ->CookComputing.XmlRpc.XmlRpcRequestEventHandler
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcResponse
+  ->CookComputing.XmlRpc.XmlRpcResponse
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcResponseEventArgs
+  ->CookComputing.XmlRpc.XmlRpcResponseEventArgs
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcResponseEventHandler
+  ->CookComputing.XmlRpc.XmlRpcResponseEventHandler
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcReturnValueAttribute
+  ->CookComputing.XmlRpc.XmlRpcReturnValueAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcSerializer
+  ->CookComputing.XmlRpc.XmlRpcSerializer
+    CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcSerializer+FaultStruct
+      ->CookComputing.XmlRpc.XmlRpcSerializer+FaultStruct
+    CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcSerializer+FaultStructStringCode
+      ->CookComputing.XmlRpc.XmlRpcSerializer+FaultStructStringCode
+    CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcSerializer+ParseStack
+      ->CookComputing.XmlRpc.XmlRpcSerializer+ParseStack
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServerException
+  ->CookComputing.XmlRpc.XmlRpcServerException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServerFormatterSink
+  ->CookComputing.XmlRpc.XmlRpcServerFormatterSink
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServerFormatterSinkProvider
+  ->CookComputing.XmlRpc.XmlRpcServerFormatterSinkProvider
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServerProtocol
+  ->CookComputing.XmlRpc.XmlRpcServerProtocol
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcService
+  ->CookComputing.XmlRpc.XmlRpcService
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServiceAttribute
+  ->CookComputing.XmlRpc.XmlRpcServiceAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcServiceInfo
+  ->CookComputing.XmlRpc.XmlRpcServiceInfo
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcStruct
+  ->CookComputing.XmlRpc.XmlRpcStruct
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcType
+  ->CookComputing.XmlRpc.XmlRpcType
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcTypeMismatchException
+  ->CookComputing.XmlRpc.XmlRpcTypeMismatchException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcUnexpectedTypeException
+  ->CookComputing.XmlRpc.XmlRpcUnexpectedTypeException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcUnsupportedMethodException
+  ->CookComputing.XmlRpc.XmlRpcUnsupportedMethodException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcUnsupportedTypeException
+  ->CookComputing.XmlRpc.XmlRpcUnsupportedTypeException
+CookComputing.XmlRpc.TC.Rebuilt!  CookComputing.XmlRpc  XmlRpcUrlAttribute
+  ->CookComputing.XmlRpc.XmlRpcUrlAttribute
+CookComputing.XmlRpc.TC.Rebuilt!  Headblender.XmlRpc  XmlRpcProxyCodeGen
+  ->Headblender.XmlRpc.XmlRpcProxyCodeGen
+    CookComputing.XmlRpc.TC.Rebuilt!  Headblender.XmlRpc  XmlRpcProxyCodeGen+BuildMethodDelegate
+      ->Headblender.XmlRpc.XmlRpcProxyCodeGen+BuildMethodDelegate
+    CookComputing.XmlRpc.TC.Rebuilt!  Headblender.XmlRpc  XmlRpcProxyCodeGen+MethodData
+      ->Headblender.XmlRpc.XmlRpcProxyCodeGen+MethodData
+CookComputing.XmlRpc.TC.Rebuilt!  Headblender.XmlRpc  XmlRpcProxyCodeGenOptions
+  ->Headblender.XmlRpc.XmlRpcProxyCodeGenOptions
+CookComputing.XmlRpc.TC.Rebuilt!  xmlrpc  Tracer
+  ->xmlrpc.Tracer
+PK.EP.Data!  PK.EP.Data  AddressesListParserException
+  ->PK.EP.Data.AddressesListParserException
+    method::0/1
+    stmt:  :0/4
+PK.EP.Data!  PK.EP.Data  AddressesParser
+  ->PK.EP.Data.AddressesParser
+    method::8/9
+    stmt:  :28/37
+    PK.EP.Data!  PK.EP.Data  AddressesParser+HandleParseError
+      ->PK.EP.Data.AddressesParser+HandleParseError
+PK.EP.Data!  PK.EP.Data  Adressee
+  ->PK.EP.Data.Adressee
+PK.EP.Data!  PK.EP.Data  FileAttach
+  ->PK.EP.Data.FileAttach
+    method::1/1
+    stmt:  :2/6
+PK.EP.Data!  PK.EP.Data  MalformedEmailException
+  ->PK.EP.Data.MalformedEmailException
+    method::0/1
+    stmt:  :0/2
+PK.EP.Data!  PK.EP.Data  SMTPSettings
+  ->PK.EP.Data.SMTPSettings
+PK.EP.Data!  PK.EP.Data  Settings
+  ->PK.EP.Data.Settings
+PK.EP.Data!  PK.EP.Data  SettingsManager
+  ->PK.EP.Data.SettingsManager
+    method::6/7
+    stmt:  :23/31
+PK.EP.Data!  PK.EP.Data  SettingsManagerException
+  ->PK.EP.Data.SettingsManagerException
+    method::0/1
+    stmt:  :0/4
+PK.EP.SMTP!  PK.EP.SMTP  CaseInsensitiveEquality
+  ->PK.EP.SMTP.CaseInsensitiveEquality
+    method::0/2
+    stmt:  :0/2
+PK.EP.SMTP!  PK.EP.SMTP  Email
+  ->PK.EP.SMTP.Email
+    method::1/1
+    stmt:  :7/7
+PK.EP.SMTP!  PK.EP.SMTP  FileStreamCache
+  ->PK.EP.SMTP.FileStreamCache
+    method::0/3
+    stmt:  :0/14
+PK.EP.SMTP!  PK.EP.SMTP  IProgress
+  ->PK.EP.SMTP.IProgress
+PK.EP.SMTP!  PK.EP.SMTP  SmtpSender
+  ->PK.EP.SMTP.SmtpSender
+    method::0/4
+    stmt:  :0/19
+PK.EP.SMTP!  PK.EP.SMTP  SmtpSenderThread
+  ->PK.EP.SMTP.SmtpSenderThread
+    method::0/5
+    stmt:  :0/32
+    PK.EP.SMTP!  PK.EP.SMTP  SmtpSenderThread+DError
+      ->PK.EP.SMTP.SmtpSenderThread+DError
+    PK.EP.SMTP!  PK.EP.SMTP  SmtpSenderThread+DFinishSending
+      ->PK.EP.SMTP.SmtpSenderThread+DFinishSending
+    PK.EP.SMTP!  PK.EP.SMTP  SmtpSenderThread+DSendingTo
+      ->PK.EP.SMTP.SmtpSenderThread+DSendingTo
+    PK.EP.SMTP!  PK.EP.SMTP  SmtpSenderThread+DStartSending
+      ->PK.EP.SMTP.SmtpSenderThread+DStartSending
+PK.EP.SMTP!  PK.EP.SMTP  TemplateManager
+  ->PK.EP.SMTP.TemplateManager
+    method::7/8
+    stmt:  :7/8
+    PK.EP.SMTP!  PK.EP.SMTP  TemplateManager+<>c__DisplayClass1
+      ->PK.EP.SMTP.TemplateManager+<>c__DisplayClass1
+        method::1/1
+        stmt:  :1/1
+PK.EP.SMTP!  PK.EP.SMTP  TemplateParameter
+  ->PK.EP.SMTP.TemplateParameter
+    method::2/2
+    stmt:  :7/7
+PK.EP.Tests!  PK.EP.Tests  AddressesParserTest
+  ->PK.EP.Tests.AddressesParserTest
+    method::11/17
+    stmt:  :25/39
+PK.EP.Tests!  PK.EP.Tests  SettingsTest
+  ->PK.EP.Tests.SettingsTest
+    method::9/9
+    stmt:  :63/64
+PK.EP.Tests!  PK.EP.Tests  TemplateManagerTest
+  ->PK.EP.Tests.TemplateManagerTest
+    method::7/7
+    stmt:  :17/17
+PK.EP.Tests!  PK.EP.Tests  TestBase
+  ->PK.EP.Tests.TestBase
+    method::0/2
+    stmt:  :0/3
+PK.EP.Util!  PK.EP.Util  Action
+  ->PK.EP.Util.Action
+PK.EP.Util!  PK.EP.Util  Func
+  ->PK.EP.Util.Func
+PK.EP.Util!  PK.EP.Util  Func
+  ->PK.EP.Util.Func
+PK.EP.Util!  PK.EP.Util  Lazy
+  ->PK.EP.Util.Lazy
+PK.EP.Util!  PK.EP.Util  Log4netDefaultLoggerInitializer
+  ->PK.EP.Util.Log4netDefaultLoggerInitializer
+    method::0/7
+    stmt:  :0/62
+PK.EP.Util!  PK.EP.Util  LogManagerHelper
+  ->PK.EP.Util.LogManagerHelper
+    method::1/1
+    stmt:  :2/2
+PK.EP.Util!  PK.EP.Util  Utils
+  ->PK.EP.Util.Utils
+    method::1/6
+    stmt:  :5/35
+    PK.EP.Util!  PK.EP.Util  Utils+<Filter>d__6
+      ->PK.EP.Util.Utils+<Filter>d__6
+        method::1/1
+        stmt:  :5/5
+    PK.EP.Util!  PK.EP.Util  Utils+<Map>d__0
+      ->PK.EP.Util.Utils+<Map>d__0
+        method::1/1
+        stmt:  :4/4
+PK.EP.Util!  PK.EP.Util  VoidDelegate
+  ->PK.EP.Util.VoidDelegate
+PK.EP.Util!  System.Runtime.CompilerServices  ExtensionAttribute
+  ->System.Runtime.CompilerServices.ExtensionAttribute
+log4net!    <PrivateImplementationDetails>{09B08C78-8842-4FB5-9C1C-D468A267C0C8}
+  ->.<PrivateImplementationDetails>{09B08C78-8842-4FB5-9C1C-D468A267C0C8}
+    log4net!    <PrivateImplementationDetails>{09B08C78-8842-4FB5-9C1C-D468A267C0C8}+__StaticArrayInitTypeSize=54
+      ->.<PrivateImplementationDetails>{09B08C78-8842-4FB5-9C1C-D468A267C0C8}+__StaticArrayInitTypeSize=54
+log4net!  log4net.Appender  AdoNetAppender
+  ->log4net.Appender.AdoNetAppender
+log4net!  log4net.Appender  AdoNetAppenderParameter
+  ->log4net.Appender.AdoNetAppenderParameter
+log4net!  log4net.Appender  AnsiColorTerminalAppender
+  ->log4net.Appender.AnsiColorTerminalAppender
+    log4net!  log4net.Appender  AnsiColorTerminalAppender+AnsiAttributes
+      ->log4net.Appender.AnsiColorTerminalAppender+AnsiAttributes
+    log4net!  log4net.Appender  AnsiColorTerminalAppender+AnsiColor
+      ->log4net.Appender.AnsiColorTerminalAppender+AnsiColor
+    log4net!  log4net.Appender  AnsiColorTerminalAppender+LevelColors
+      ->log4net.Appender.AnsiColorTerminalAppender+LevelColors
+log4net!  log4net.Appender  AppenderCollection
+  ->log4net.Appender.AppenderCollection
+    log4net!  log4net.Appender  AppenderCollection+Enumerator
+      ->log4net.Appender.AppenderCollection+Enumerator
+    log4net!  log4net.Appender  AppenderCollection+IAppenderCollectionEnumerator
+      ->log4net.Appender.AppenderCollection+IAppenderCollectionEnumerator
+    log4net!  log4net.Appender  AppenderCollection+ReadOnlyAppenderCollection
+      ->log4net.Appender.AppenderCollection+ReadOnlyAppenderCollection
+    log4net!  log4net.Appender  AppenderCollection+Tag
+      ->log4net.Appender.AppenderCollection+Tag
+log4net!  log4net.Appender  AppenderSkeleton
+  ->log4net.Appender.AppenderSkeleton
+log4net!  log4net.Appender  AspNetTraceAppender
+  ->log4net.Appender.AspNetTraceAppender
+log4net!  log4net.Appender  BufferingAppenderSkeleton
+  ->log4net.Appender.BufferingAppenderSkeleton
+log4net!  log4net.Appender  BufferingForwardingAppender
+  ->log4net.Appender.BufferingForwardingAppender
+log4net!  log4net.Appender  ColoredConsoleAppender
+  ->log4net.Appender.ColoredConsoleAppender
+    log4net!  log4net.Appender  ColoredConsoleAppender+Colors
+      ->log4net.Appender.ColoredConsoleAppender+Colors
+    log4net!  log4net.Appender  ColoredConsoleAppender+CONSOLE_SCREEN_BUFFER_INFO
+      ->log4net.Appender.ColoredConsoleAppender+CONSOLE_SCREEN_BUFFER_INFO
+    log4net!  log4net.Appender  ColoredConsoleAppender+COORD
+      ->log4net.Appender.ColoredConsoleAppender+COORD
+    log4net!  log4net.Appender  ColoredConsoleAppender+LevelColors
+      ->log4net.Appender.ColoredConsoleAppender+LevelColors
+    log4net!  log4net.Appender  ColoredConsoleAppender+SMALL_RECT
+      ->log4net.Appender.ColoredConsoleAppender+SMALL_RECT
+log4net!  log4net.Appender  ConsoleAppender
+  ->log4net.Appender.ConsoleAppender
+log4net!  log4net.Appender  DebugAppender
+  ->log4net.Appender.DebugAppender
+log4net!  log4net.Appender  EventLogAppender
+  ->log4net.Appender.EventLogAppender
+    log4net!  log4net.Appender  EventLogAppender+Level2EventLogEntryType
+      ->log4net.Appender.EventLogAppender+Level2EventLogEntryType
+log4net!  log4net.Appender  FileAppender
+  ->log4net.Appender.FileAppender
+    log4net!  log4net.Appender  FileAppender+ExclusiveLock
+      ->log4net.Appender.FileAppender+ExclusiveLock
+    log4net!  log4net.Appender  FileAppender+LockingModelBase
+      ->log4net.Appender.FileAppender+LockingModelBase
+    log4net!  log4net.Appender  FileAppender+LockingStream
+      ->log4net.Appender.FileAppender+LockingStream
+        log4net!  log4net.Appender  FileAppender+LockingStream+LockStateException
+          ->log4net.Appender.FileAppender+LockingStream+LockStateException
+    log4net!  log4net.Appender  FileAppender+MinimalLock
+      ->log4net.Appender.FileAppender+MinimalLock
+log4net!  log4net.Appender  ForwardingAppender
+  ->log4net.Appender.ForwardingAppender
+log4net!  log4net.Appender  IAppender
+  ->log4net.Appender.IAppender
+log4net!  log4net.Appender  IBulkAppender
+  ->log4net.Appender.IBulkAppender
+log4net!  log4net.Appender  LocalSyslogAppender
+  ->log4net.Appender.LocalSyslogAppender
+    log4net!  log4net.Appender  LocalSyslogAppender+LevelSeverity
+      ->log4net.Appender.LocalSyslogAppender+LevelSeverity
+    log4net!  log4net.Appender  LocalSyslogAppender+SyslogFacility
+      ->log4net.Appender.LocalSyslogAppender+SyslogFacility
+    log4net!  log4net.Appender  LocalSyslogAppender+SyslogSeverity
+      ->log4net.Appender.LocalSyslogAppender+SyslogSeverity
+log4net!  log4net.Appender  MemoryAppender
+  ->log4net.Appender.MemoryAppender
+log4net!  log4net.Appender  NetSendAppender
+  ->log4net.Appender.NetSendAppender
+log4net!  log4net.Appender  OutputDebugStringAppender
+  ->log4net.Appender.OutputDebugStringAppender
+log4net!  log4net.Appender  RemoteSyslogAppender
+  ->log4net.Appender.RemoteSyslogAppender
+    log4net!  log4net.Appender  RemoteSyslogAppender+LevelSeverity
+      ->log4net.Appender.RemoteSyslogAppender+LevelSeverity
+    log4net!  log4net.Appender  RemoteSyslogAppender+SyslogFacility
+      ->log4net.Appender.RemoteSyslogAppender+SyslogFacility
+    log4net!  log4net.Appender  RemoteSyslogAppender+SyslogSeverity
+      ->log4net.Appender.RemoteSyslogAppender+SyslogSeverity
+log4net!  log4net.Appender  RemotingAppender
+  ->log4net.Appender.RemotingAppender
+    log4net!  log4net.Appender  RemotingAppender+IRemoteLoggingSink
+      ->log4net.Appender.RemotingAppender+IRemoteLoggingSink
+log4net!  log4net.Appender  RollingFileAppender
+  ->log4net.Appender.RollingFileAppender
+    log4net!  log4net.Appender  RollingFileAppender+DefaultDateTime
+      ->log4net.Appender.RollingFileAppender+DefaultDateTime
+    log4net!  log4net.Appender  RollingFileAppender+IDateTime
+      ->log4net.Appender.RollingFileAppender+IDateTime
+    log4net!  log4net.Appender  RollingFileAppender+RollingMode
+      ->log4net.Appender.RollingFileAppender+RollingMode
+    log4net!  log4net.Appender  RollingFileAppender+RollPoint
+      ->log4net.Appender.RollingFileAppender+RollPoint
+log4net!  log4net.Appender  SmtpAppender
+  ->log4net.Appender.SmtpAppender
+    log4net!  log4net.Appender  SmtpAppender+SmtpAuthentication
+      ->log4net.Appender.SmtpAppender+SmtpAuthentication
+log4net!  log4net.Appender  SmtpPickupDirAppender
+  ->log4net.Appender.SmtpPickupDirAppender
+log4net!  log4net.Appender  TelnetAppender
+  ->log4net.Appender.TelnetAppender
+    log4net!  log4net.Appender  TelnetAppender+SocketHandler
+      ->log4net.Appender.TelnetAppender+SocketHandler
+        log4net!  log4net.Appender  TelnetAppender+SocketHandler+SocketClient
+          ->log4net.Appender.TelnetAppender+SocketHandler+SocketClient
+log4net!  log4net.Appender  TextWriterAppender
+  ->log4net.Appender.TextWriterAppender
+log4net!  log4net.Appender  TraceAppender
+  ->log4net.Appender.TraceAppender
+log4net!  log4net.Appender  UdpAppender
+  ->log4net.Appender.UdpAppender
+log4net!  log4net.Config  AliasDomainAttribute
+  ->log4net.Config.AliasDomainAttribute
+log4net!  log4net.Config  AliasRepositoryAttribute
+  ->log4net.Config.AliasRepositoryAttribute
+log4net!  log4net.Config  BasicConfigurator
+  ->log4net.Config.BasicConfigurator
+log4net!  log4net.Config  ConfiguratorAttribute
+  ->log4net.Config.ConfiguratorAttribute
+log4net!  log4net.Config  DOMConfigurator
+  ->log4net.Config.DOMConfigurator
+log4net!  log4net.Config  DOMConfiguratorAttribute
+  ->log4net.Config.DOMConfiguratorAttribute
+log4net!  log4net.Config  DomainAttribute
+  ->log4net.Config.DomainAttribute
+log4net!  log4net.Config  Log4NetConfigurationSectionHandler
+  ->log4net.Config.Log4NetConfigurationSectionHandler
+log4net!  log4net.Config  PluginAttribute
+  ->log4net.Config.PluginAttribute
+log4net!  log4net.Config  RepositoryAttribute
+  ->log4net.Config.RepositoryAttribute
+log4net!  log4net.Config  SecurityContextProviderAttribute
+  ->log4net.Config.SecurityContextProviderAttribute
+log4net!  log4net.Config  XmlConfigurator
+  ->log4net.Config.XmlConfigurator
+    log4net!  log4net.Config  XmlConfigurator+ConfigureAndWatchHandler
+      ->log4net.Config.XmlConfigurator+ConfigureAndWatchHandler
+log4net!  log4net.Config  XmlConfiguratorAttribute
+  ->log4net.Config.XmlConfiguratorAttribute
+log4net!  log4net.Core  CompactRepositorySelector
+  ->log4net.Core.CompactRepositorySelector
+log4net!  log4net.Core  DefaultRepositorySelector
+  ->log4net.Core.DefaultRepositorySelector
+log4net!  log4net.Core  ErrorCode
+  ->log4net.Core.ErrorCode
+log4net!  log4net.Core  FixFlags
+  ->log4net.Core.FixFlags
+log4net!  log4net.Core  IAppenderAttachable
+  ->log4net.Core.IAppenderAttachable
+log4net!  log4net.Core  IErrorHandler
+  ->log4net.Core.IErrorHandler
+log4net!  log4net.Core  IFixingRequired
+  ->log4net.Core.IFixingRequired
+log4net!  log4net.Core  ILogger
+  ->log4net.Core.ILogger
+log4net!  log4net.Core  ILoggerWrapper
+  ->log4net.Core.ILoggerWrapper
+log4net!  log4net.Core  IOptionHandler
+  ->log4net.Core.IOptionHandler
+log4net!  log4net.Core  IRepositorySelector
+  ->log4net.Core.IRepositorySelector
+log4net!  log4net.Core  ITriggeringEventEvaluator
+  ->log4net.Core.ITriggeringEventEvaluator
+log4net!  log4net.Core  Level
+  ->log4net.Core.Level
+log4net!  log4net.Core  LevelCollection
+  ->log4net.Core.LevelCollection
+    log4net!  log4net.Core  LevelCollection+Enumerator
+      ->log4net.Core.LevelCollection+Enumerator
+    log4net!  log4net.Core  LevelCollection+ILevelCollectionEnumerator
+      ->log4net.Core.LevelCollection+ILevelCollectionEnumerator
+    log4net!  log4net.Core  LevelCollection+ReadOnlyLevelCollection
+      ->log4net.Core.LevelCollection+ReadOnlyLevelCollection
+    log4net!  log4net.Core  LevelCollection+Tag
+      ->log4net.Core.LevelCollection+Tag
+log4net!  log4net.Core  LevelEvaluator
+  ->log4net.Core.LevelEvaluator
+log4net!  log4net.Core  LevelMap
+  ->log4net.Core.LevelMap
+log4net!  log4net.Core  LocationInfo
+  ->log4net.Core.LocationInfo
+log4net!  log4net.Core  LogException
+  ->log4net.Core.LogException
+log4net!  log4net.Core  LogImpl
+  ->log4net.Core.LogImpl
+log4net!  log4net.Core  LoggerManager
+  ->log4net.Core.LoggerManager
+log4net!  log4net.Core  LoggerRepositoryCreationEventArgs
+  ->log4net.Core.LoggerRepositoryCreationEventArgs
+log4net!  log4net.Core  LoggerRepositoryCreationEventHandler
+  ->log4net.Core.LoggerRepositoryCreationEventHandler
+log4net!  log4net.Core  LoggerWrapperImpl
+  ->log4net.Core.LoggerWrapperImpl
+log4net!  log4net.Core  LoggingEvent
+  ->log4net.Core.LoggingEvent
+log4net!  log4net.Core  LoggingEventData
+  ->log4net.Core.LoggingEventData
+log4net!  log4net.Core  SecurityContext
+  ->log4net.Core.SecurityContext
+log4net!  log4net.Core  SecurityContextProvider
+  ->log4net.Core.SecurityContextProvider
+log4net!  log4net.Core  WrapperCreationHandler
+  ->log4net.Core.WrapperCreationHandler
+log4net!  log4net.Core  WrapperMap
+  ->log4net.Core.WrapperMap
+log4net!  log4net.DateFormatter  AbsoluteTimeDateFormatter
+  ->log4net.DateFormatter.AbsoluteTimeDateFormatter
+log4net!  log4net.DateFormatter  DateTimeDateFormatter
+  ->log4net.DateFormatter.DateTimeDateFormatter
+log4net!  log4net.DateFormatter  IDateFormatter
+  ->log4net.DateFormatter.IDateFormatter
+log4net!  log4net.DateFormatter  Iso8601DateFormatter
+  ->log4net.DateFormatter.Iso8601DateFormatter
+log4net!  log4net.DateFormatter  SimpleDateFormatter
+  ->log4net.DateFormatter.SimpleDateFormatter
+log4net!  log4net.Filter  DenyAllFilter
+  ->log4net.Filter.DenyAllFilter
+log4net!  log4net.Filter  FilterDecision
+  ->log4net.Filter.FilterDecision
+log4net!  log4net.Filter  FilterSkeleton
+  ->log4net.Filter.FilterSkeleton
+log4net!  log4net.Filter  IFilter
+  ->log4net.Filter.IFilter
+log4net!  log4net.Filter  LevelMatchFilter
+  ->log4net.Filter.LevelMatchFilter
+log4net!  log4net.Filter  LevelRangeFilter
+  ->log4net.Filter.LevelRangeFilter
+log4net!  log4net.Filter  LoggerMatchFilter
+  ->log4net.Filter.LoggerMatchFilter
+log4net!  log4net.Filter  MdcFilter
+  ->log4net.Filter.MdcFilter
+log4net!  log4net.Filter  NdcFilter
+  ->log4net.Filter.NdcFilter
+log4net!  log4net.Filter  PropertyFilter
+  ->log4net.Filter.PropertyFilter
+log4net!  log4net.Filter  StringMatchFilter
+  ->log4net.Filter.StringMatchFilter
+log4net!  log4net  GlobalContext
+  ->log4net.GlobalContext
+log4net!  log4net  ILog
+  ->log4net.ILog
+log4net!  log4net.Layout  ExceptionLayout
+  ->log4net.Layout.ExceptionLayout
+log4net!  log4net.Layout  ILayout
+  ->log4net.Layout.ILayout
+log4net!  log4net.Layout  IRawLayout
+  ->log4net.Layout.IRawLayout
+log4net!  log4net.Layout  Layout2RawLayoutAdapter
+  ->log4net.Layout.Layout2RawLayoutAdapter
+log4net!  log4net.Layout  LayoutSkeleton
+  ->log4net.Layout.LayoutSkeleton
+log4net!  log4net.Layout.Pattern  AppDomainPatternConverter
+  ->log4net.Layout.Pattern.AppDomainPatternConverter
+log4net!  log4net.Layout.Pattern  DatePatternConverter
+  ->log4net.Layout.Pattern.DatePatternConverter
+log4net!  log4net.Layout.Pattern  ExceptionPatternConverter
+  ->log4net.Layout.Pattern.ExceptionPatternConverter
+log4net!  log4net.Layout.Pattern  FileLocationPatternConverter
+  ->log4net.Layout.Pattern.FileLocationPatternConverter
+log4net!  log4net.Layout.Pattern  FullLocationPatternConverter
+  ->log4net.Layout.Pattern.FullLocationPatternConverter
+log4net!  log4net.Layout.Pattern  IdentityPatternConverter
+  ->log4net.Layout.Pattern.IdentityPatternConverter
+log4net!  log4net.Layout.Pattern  LevelPatternConverter
+  ->log4net.Layout.Pattern.LevelPatternConverter
+log4net!  log4net.Layout.Pattern  LineLocationPatternConverter
+  ->log4net.Layout.Pattern.LineLocationPatternConverter
+log4net!  log4net.Layout.Pattern  LoggerPatternConverter
+  ->log4net.Layout.Pattern.LoggerPatternConverter
+log4net!  log4net.Layout.Pattern  MessagePatternConverter
+  ->log4net.Layout.Pattern.MessagePatternConverter
+log4net!  log4net.Layout.Pattern  MethodLocationPatternConverter
+  ->log4net.Layout.Pattern.MethodLocationPatternConverter
+log4net!  log4net.Layout.Pattern  NamedPatternConverter
+  ->log4net.Layout.Pattern.NamedPatternConverter
+log4net!  log4net.Layout.Pattern  NdcPatternConverter
+  ->log4net.Layout.Pattern.NdcPatternConverter
+log4net!  log4net.Layout.Pattern  PatternLayoutConverter
+  ->log4net.Layout.Pattern.PatternLayoutConverter
+log4net!  log4net.Layout.Pattern  PropertyPatternConverter
+  ->log4net.Layout.Pattern.PropertyPatternConverter
+log4net!  log4net.Layout.Pattern  RelativeTimePatternConverter
+  ->log4net.Layout.Pattern.RelativeTimePatternConverter
+log4net!  log4net.Layout.Pattern  ThreadPatternConverter
+  ->log4net.Layout.Pattern.ThreadPatternConverter
+log4net!  log4net.Layout.Pattern  TypeNamePatternConverter
+  ->log4net.Layout.Pattern.TypeNamePatternConverter
+log4net!  log4net.Layout.Pattern  UserNamePatternConverter
+  ->log4net.Layout.Pattern.UserNamePatternConverter
+log4net!  log4net.Layout.Pattern  UtcDatePatternConverter
+  ->log4net.Layout.Pattern.UtcDatePatternConverter
+log4net!  log4net.Layout  PatternLayout
+  ->log4net.Layout.PatternLayout
+    log4net!  log4net.Layout  PatternLayout+ConverterInfo
+      ->log4net.Layout.PatternLayout+ConverterInfo
+log4net!  log4net.Layout  RawLayoutConverter
+  ->log4net.Layout.RawLayoutConverter
+log4net!  log4net.Layout  RawPropertyLayout
+  ->log4net.Layout.RawPropertyLayout
+log4net!  log4net.Layout  RawTimeStampLayout
+  ->log4net.Layout.RawTimeStampLayout
+log4net!  log4net.Layout  RawUtcTimeStampLayout
+  ->log4net.Layout.RawUtcTimeStampLayout
+log4net!  log4net.Layout  SimpleLayout
+  ->log4net.Layout.SimpleLayout
+log4net!  log4net.Layout  XmlLayout
+  ->log4net.Layout.XmlLayout
+log4net!  log4net.Layout  XmlLayoutBase
+  ->log4net.Layout.XmlLayoutBase
+log4net!  log4net.Layout  XmlLayoutSchemaLog4j
+  ->log4net.Layout.XmlLayoutSchemaLog4j
+log4net!  log4net  LogManager
+  ->log4net.LogManager
+log4net!  log4net  LogicalThreadContext
+  ->log4net.LogicalThreadContext
+log4net!  log4net  MDC
+  ->log4net.MDC
+log4net!  log4net  NDC
+  ->log4net.NDC
+log4net!  log4net.ObjectRenderer  DefaultRenderer
+  ->log4net.ObjectRenderer.DefaultRenderer
+log4net!  log4net.ObjectRenderer  IObjectRenderer
+  ->log4net.ObjectRenderer.IObjectRenderer
+log4net!  log4net.ObjectRenderer  RendererMap
+  ->log4net.ObjectRenderer.RendererMap
+log4net!  log4net.Plugin  IPlugin
+  ->log4net.Plugin.IPlugin
+log4net!  log4net.Plugin  IPluginFactory
+  ->log4net.Plugin.IPluginFactory
+log4net!  log4net.Plugin  PluginCollection
+  ->log4net.Plugin.PluginCollection
+    log4net!  log4net.Plugin  PluginCollection+Enumerator
+      ->log4net.Plugin.PluginCollection+Enumerator
+    log4net!  log4net.Plugin  PluginCollection+IPluginCollectionEnumerator
+      ->log4net.Plugin.PluginCollection+IPluginCollectionEnumerator
+    log4net!  log4net.Plugin  PluginCollection+ReadOnlyPluginCollection
+      ->log4net.Plugin.PluginCollection+ReadOnlyPluginCollection
+    log4net!  log4net.Plugin  PluginCollection+Tag
+      ->log4net.Plugin.PluginCollection+Tag
+log4net!  log4net.Plugin  PluginMap
+  ->log4net.Plugin.PluginMap
+log4net!  log4net.Plugin  PluginSkeleton
+  ->log4net.Plugin.PluginSkeleton
+log4net!  log4net.Plugin  RemoteLoggingServerPlugin
+  ->log4net.Plugin.RemoteLoggingServerPlugin
+    log4net!  log4net.Plugin  RemoteLoggingServerPlugin+RemoteLoggingSinkImpl
+      ->log4net.Plugin.RemoteLoggingServerPlugin+RemoteLoggingSinkImpl
+log4net!  log4net.Repository.Hierarchy  DefaultLoggerFactory
+  ->log4net.Repository.Hierarchy.DefaultLoggerFactory
+    log4net!  log4net.Repository.Hierarchy  DefaultLoggerFactory+LoggerImpl
+      ->log4net.Repository.Hierarchy.DefaultLoggerFactory+LoggerImpl
+log4net!  log4net.Repository.Hierarchy  Hierarchy
+  ->log4net.Repository.Hierarchy.Hierarchy
+    log4net!  log4net.Repository.Hierarchy  Hierarchy+LevelEntry
+      ->log4net.Repository.Hierarchy.Hierarchy+LevelEntry
+    log4net!  log4net.Repository.Hierarchy  Hierarchy+PropertyEntry
+      ->log4net.Repository.Hierarchy.Hierarchy+PropertyEntry
+log4net!  log4net.Repository.Hierarchy  ILoggerFactory
+  ->log4net.Repository.Hierarchy.ILoggerFactory
+log4net!  log4net.Repository.Hierarchy  Logger
+  ->log4net.Repository.Hierarchy.Logger
+log4net!  log4net.Repository.Hierarchy  LoggerCreationEventArgs
+  ->log4net.Repository.Hierarchy.LoggerCreationEventArgs
+log4net!  log4net.Repository.Hierarchy  LoggerCreationEventHandler
+  ->log4net.Repository.Hierarchy.LoggerCreationEventHandler
+log4net!  log4net.Repository.Hierarchy  LoggerKey
+  ->log4net.Repository.Hierarchy.LoggerKey
+log4net!  log4net.Repository.Hierarchy  ProvisionNode
+  ->log4net.Repository.Hierarchy.ProvisionNode
+log4net!  log4net.Repository.Hierarchy  RootLogger
+  ->log4net.Repository.Hierarchy.RootLogger
+log4net!  log4net.Repository.Hierarchy  XmlHierarchyConfigurator
+  ->log4net.Repository.Hierarchy.XmlHierarchyConfigurator
+    log4net!  log4net.Repository.Hierarchy  XmlHierarchyConfigurator+ConfigUpdateMode
+      ->log4net.Repository.Hierarchy.XmlHierarchyConfigurator+ConfigUpdateMode
+log4net!  log4net.Repository  IBasicRepositoryConfigurator
+  ->log4net.Repository.IBasicRepositoryConfigurator
+log4net!  log4net.Repository  ILoggerRepository
+  ->log4net.Repository.ILoggerRepository
+log4net!  log4net.Repository  IXmlRepositoryConfigurator
+  ->log4net.Repository.IXmlRepositoryConfigurator
+log4net!  log4net.Repository  LoggerRepositoryConfigurationChangedEventHandler
+  ->log4net.Repository.LoggerRepositoryConfigurationChangedEventHandler
+log4net!  log4net.Repository  LoggerRepositoryConfigurationResetEventHandler
+  ->log4net.Repository.LoggerRepositoryConfigurationResetEventHandler
+log4net!  log4net.Repository  LoggerRepositoryShutdownEventHandler
+  ->log4net.Repository.LoggerRepositoryShutdownEventHandler
+log4net!  log4net.Repository  LoggerRepositorySkeleton
+  ->log4net.Repository.LoggerRepositorySkeleton
+log4net!  log4net  ThreadContext
+  ->log4net.ThreadContext
+log4net!  log4net.Util  AppenderAttachedImpl
+  ->log4net.Util.AppenderAttachedImpl
+log4net!  log4net.Util  CompositeProperties
+  ->log4net.Util.CompositeProperties
+log4net!  log4net.Util  ContextPropertiesBase
+  ->log4net.Util.ContextPropertiesBase
+log4net!  log4net.Util  CountingQuietTextWriter
+  ->log4net.Util.CountingQuietTextWriter
+log4net!  log4net.Util  CyclicBuffer
+  ->log4net.Util.CyclicBuffer
+log4net!  log4net.Util  EmptyCollection
+  ->log4net.Util.EmptyCollection
+log4net!  log4net.Util  EmptyDictionary
+  ->log4net.Util.EmptyDictionary
+log4net!  log4net.Util  FormattingInfo
+  ->log4net.Util.FormattingInfo
+log4net!  log4net.Util  GlobalContextProperties
+  ->log4net.Util.GlobalContextProperties
+log4net!  log4net.Util  LevelMapping
+  ->log4net.Util.LevelMapping
+log4net!  log4net.Util  LevelMappingEntry
+  ->log4net.Util.LevelMappingEntry
+log4net!  log4net.Util  LogLog
+  ->log4net.Util.LogLog
+log4net!  log4net.Util  LogicalThreadContextProperties
+  ->log4net.Util.LogicalThreadContextProperties
+log4net!  log4net.Util  NativeError
+  ->log4net.Util.NativeError
+log4net!  log4net.Util  NullDictionaryEnumerator
+  ->log4net.Util.NullDictionaryEnumerator
+log4net!  log4net.Util  NullEnumerator
+  ->log4net.Util.NullEnumerator
+log4net!  log4net.Util  NullSecurityContext
+  ->log4net.Util.NullSecurityContext
+log4net!  log4net.Util  OnlyOnceErrorHandler
+  ->log4net.Util.OnlyOnceErrorHandler
+log4net!  log4net.Util  OptionConverter
+  ->log4net.Util.OptionConverter
+log4net!  log4net.Util  PatternConverter
+  ->log4net.Util.PatternConverter
+log4net!  log4net.Util  PatternParser
+  ->log4net.Util.PatternParser
+    log4net!  log4net.Util  PatternParser+StringLengthComparer
+      ->log4net.Util.PatternParser+StringLengthComparer
+log4net!  log4net.Util  PatternString
+  ->log4net.Util.PatternString
+    log4net!  log4net.Util  PatternString+ConverterInfo
+      ->log4net.Util.PatternString+ConverterInfo
+log4net!  log4net.Util.PatternStringConverters  AppDomainPatternConverter
+  ->log4net.Util.PatternStringConverters.AppDomainPatternConverter
+log4net!  log4net.Util.PatternStringConverters  DatePatternConverter
+  ->log4net.Util.PatternStringConverters.DatePatternConverter
+log4net!  log4net.Util.PatternStringConverters  EnvironmentPatternConverter
+  ->log4net.Util.PatternStringConverters.EnvironmentPatternConverter
+log4net!  log4net.Util.PatternStringConverters  IdentityPatternConverter
+  ->log4net.Util.PatternStringConverters.IdentityPatternConverter
+log4net!  log4net.Util.PatternStringConverters  LiteralPatternConverter
+  ->log4net.Util.PatternStringConverters.LiteralPatternConverter
+log4net!  log4net.Util.PatternStringConverters  NewLinePatternConverter
+  ->log4net.Util.PatternStringConverters.NewLinePatternConverter
+log4net!  log4net.Util.PatternStringConverters  ProcessIdPatternConverter
+  ->log4net.Util.PatternStringConverters.ProcessIdPatternConverter
+log4net!  log4net.Util.PatternStringConverters  PropertyPatternConverter
+  ->log4net.Util.PatternStringConverters.PropertyPatternConverter
+log4net!  log4net.Util.PatternStringConverters  RandomStringPatternConverter
+  ->log4net.Util.PatternStringConverters.RandomStringPatternConverter
+log4net!  log4net.Util.PatternStringConverters  UserNamePatternConverter
+  ->log4net.Util.PatternStringConverters.UserNamePatternConverter
+log4net!  log4net.Util.PatternStringConverters  UtcDatePatternConverter
+  ->log4net.Util.PatternStringConverters.UtcDatePatternConverter
+log4net!  log4net.Util  PropertiesDictionary
+  ->log4net.Util.PropertiesDictionary
+log4net!  log4net.Util  ProtectCloseTextWriter
+  ->log4net.Util.ProtectCloseTextWriter
+log4net!  log4net.Util  QuietTextWriter
+  ->log4net.Util.QuietTextWriter
+log4net!  log4net.Util  ReadOnlyPropertiesDictionary
+  ->log4net.Util.ReadOnlyPropertiesDictionary
+log4net!  log4net.Util  ReaderWriterLock
+  ->log4net.Util.ReaderWriterLock
+log4net!  log4net.Util  ReusableStringWriter
+  ->log4net.Util.ReusableStringWriter
+log4net!  log4net.Util  SystemInfo
+  ->log4net.Util.SystemInfo
+log4net!  log4net.Util  SystemStringFormat
+  ->log4net.Util.SystemStringFormat
+log4net!  log4net.Util  TextWriterAdapter
+  ->log4net.Util.TextWriterAdapter
+log4net!  log4net.Util  ThreadContextProperties
+  ->log4net.Util.ThreadContextProperties
+log4net!  log4net.Util  ThreadContextStack
+  ->log4net.Util.ThreadContextStack
+    log4net!  log4net.Util  ThreadContextStack+AutoPopStackFrame
+      ->log4net.Util.ThreadContextStack+AutoPopStackFrame
+    log4net!  log4net.Util  ThreadContextStack+StackFrame
+      ->log4net.Util.ThreadContextStack+StackFrame
+log4net!  log4net.Util  ThreadContextStacks
+  ->log4net.Util.ThreadContextStacks
+log4net!  log4net.Util  Transform
+  ->log4net.Util.Transform
+log4net!  log4net.Util.TypeConverters  BooleanConverter
+  ->log4net.Util.TypeConverters.BooleanConverter
+log4net!  log4net.Util.TypeConverters  ConversionNotSupportedException
+  ->log4net.Util.TypeConverters.ConversionNotSupportedException
+log4net!  log4net.Util.TypeConverters  ConverterRegistry
+  ->log4net.Util.TypeConverters.ConverterRegistry
+log4net!  log4net.Util.TypeConverters  EncodingConverter
+  ->log4net.Util.TypeConverters.EncodingConverter
+log4net!  log4net.Util.TypeConverters  IConvertFrom
+  ->log4net.Util.TypeConverters.IConvertFrom
+log4net!  log4net.Util.TypeConverters  IConvertTo
+  ->log4net.Util.TypeConverters.IConvertTo
+log4net!  log4net.Util.TypeConverters  IPAddressConverter
+  ->log4net.Util.TypeConverters.IPAddressConverter
+log4net!  log4net.Util.TypeConverters  PatternLayoutConverter
+  ->log4net.Util.TypeConverters.PatternLayoutConverter
+log4net!  log4net.Util.TypeConverters  PatternStringConverter
+  ->log4net.Util.TypeConverters.PatternStringConverter
+log4net!  log4net.Util.TypeConverters  TypeConverter
+  ->log4net.Util.TypeConverters.TypeConverter
+log4net!  log4net.Util.TypeConverters  TypeConverterAttribute
+  ->log4net.Util.TypeConverters.TypeConverterAttribute
+log4net!  log4net.Util  WindowsSecurityContext
+  ->log4net.Util.WindowsSecurityContext
+    log4net!  log4net.Util  WindowsSecurityContext+DisposableImpersonationContext
+      ->log4net.Util.WindowsSecurityContext+DisposableImpersonationContext
+    log4net!  log4net.Util  WindowsSecurityContext+ImpersonationMode
+      ->log4net.Util.WindowsSecurityContext+ImpersonationMode
+log4net.TC.Rebuilt!    <PrivateImplementationDetails>
+  ->.<PrivateImplementationDetails>
+    log4net.TC.Rebuilt!    <PrivateImplementationDetails>+$ArrayType$56
+      ->.<PrivateImplementationDetails>+$ArrayType$56
+log4net.TC.Rebuilt!  log4net.Appender  AdoNetAppender
+  ->log4net.Appender.AdoNetAppender
+log4net.TC.Rebuilt!  log4net.Appender  AdoNetAppenderParameter
+  ->log4net.Appender.AdoNetAppenderParameter
+log4net.TC.Rebuilt!  log4net.Appender  AnsiColorTerminalAppender
+  ->log4net.Appender.AnsiColorTerminalAppender
+    log4net.TC.Rebuilt!  log4net.Appender  AnsiColorTerminalAppender+AnsiAttributes
+      ->log4net.Appender.AnsiColorTerminalAppender+AnsiAttributes
+    log4net.TC.Rebuilt!  log4net.Appender  AnsiColorTerminalAppender+AnsiColor
+      ->log4net.Appender.AnsiColorTerminalAppender+AnsiColor
+    log4net.TC.Rebuilt!  log4net.Appender  AnsiColorTerminalAppender+LevelColors
+      ->log4net.Appender.AnsiColorTerminalAppender+LevelColors
+log4net.TC.Rebuilt!  log4net.Appender  AppenderCollection
+  ->log4net.Appender.AppenderCollection
+    log4net.TC.Rebuilt!  log4net.Appender  AppenderCollection+Enumerator
+      ->log4net.Appender.AppenderCollection+Enumerator
+    log4net.TC.Rebuilt!  log4net.Appender  AppenderCollection+IAppenderCollectionEnumerator
+      ->log4net.Appender.AppenderCollection+IAppenderCollectionEnumerator
+    log4net.TC.Rebuilt!  log4net.Appender  AppenderCollection+ReadOnlyAppenderCollection
+      ->log4net.Appender.AppenderCollection+ReadOnlyAppenderCollection
+    log4net.TC.Rebuilt!  log4net.Appender  AppenderCollection+Tag
+      ->log4net.Appender.AppenderCollection+Tag
+log4net.TC.Rebuilt!  log4net.Appender  AppenderSkeleton
+  ->log4net.Appender.AppenderSkeleton
+log4net.TC.Rebuilt!  log4net.Appender  AspNetTraceAppender
+  ->log4net.Appender.AspNetTraceAppender
+log4net.TC.Rebuilt!  log4net.Appender  BufferingAppenderSkeleton
+  ->log4net.Appender.BufferingAppenderSkeleton
+log4net.TC.Rebuilt!  log4net.Appender  BufferingForwardingAppender
+  ->log4net.Appender.BufferingForwardingAppender
+log4net.TC.Rebuilt!  log4net.Appender  ConsoleAppender
+  ->log4net.Appender.ConsoleAppender
+log4net.TC.Rebuilt!  log4net.Appender  DebugAppender
+  ->log4net.Appender.DebugAppender
+log4net.TC.Rebuilt!  log4net.Appender  EventLogAppender
+  ->log4net.Appender.EventLogAppender
+    log4net.TC.Rebuilt!  log4net.Appender  EventLogAppender+Level2EventLogEntryType
+      ->log4net.Appender.EventLogAppender+Level2EventLogEntryType
+log4net.TC.Rebuilt!  log4net.Appender  FileAppender
+  ->log4net.Appender.FileAppender
+    log4net.TC.Rebuilt!  log4net.Appender  FileAppender+ExclusiveLock
+      ->log4net.Appender.FileAppender+ExclusiveLock
+    log4net.TC.Rebuilt!  log4net.Appender  FileAppender+LockingModelBase
+      ->log4net.Appender.FileAppender+LockingModelBase
+    log4net.TC.Rebuilt!  log4net.Appender  FileAppender+LockingStream
+      ->log4net.Appender.FileAppender+LockingStream
+        log4net.TC.Rebuilt!  log4net.Appender  FileAppender+LockingStream+LockStateException
+          ->log4net.Appender.FileAppender+LockingStream+LockStateException
+    log4net.TC.Rebuilt!  log4net.Appender  FileAppender+MinimalLock
+      ->log4net.Appender.FileAppender+MinimalLock
+log4net.TC.Rebuilt!  log4net.Appender  ForwardingAppender
+  ->log4net.Appender.ForwardingAppender
+log4net.TC.Rebuilt!  log4net.Appender  IAppender
+  ->log4net.Appender.IAppender
+log4net.TC.Rebuilt!  log4net.Appender  IBulkAppender
+  ->log4net.Appender.IBulkAppender
+log4net.TC.Rebuilt!  log4net.Appender  LocalSyslogAppender
+  ->log4net.Appender.LocalSyslogAppender
+    log4net.TC.Rebuilt!  log4net.Appender  LocalSyslogAppender+LevelSeverity
+      ->log4net.Appender.LocalSyslogAppender+LevelSeverity
+    log4net.TC.Rebuilt!  log4net.Appender  LocalSyslogAppender+SyslogFacility
+      ->log4net.Appender.LocalSyslogAppender+SyslogFacility
+    log4net.TC.Rebuilt!  log4net.Appender  LocalSyslogAppender+SyslogSeverity
+      ->log4net.Appender.LocalSyslogAppender+SyslogSeverity
+log4net.TC.Rebuilt!  log4net.Appender  MemoryAppender
+  ->log4net.Appender.MemoryAppender
+log4net.TC.Rebuilt!  log4net.Appender  RemoteSyslogAppender
+  ->log4net.Appender.RemoteSyslogAppender
+    log4net.TC.Rebuilt!  log4net.Appender  RemoteSyslogAppender+LevelSeverity
+      ->log4net.Appender.RemoteSyslogAppender+LevelSeverity
+    log4net.TC.Rebuilt!  log4net.Appender  RemoteSyslogAppender+SyslogFacility
+      ->log4net.Appender.RemoteSyslogAppender+SyslogFacility
+    log4net.TC.Rebuilt!  log4net.Appender  RemoteSyslogAppender+SyslogSeverity
+      ->log4net.Appender.RemoteSyslogAppender+SyslogSeverity
+log4net.TC.Rebuilt!  log4net.Appender  RemotingAppender
+  ->log4net.Appender.RemotingAppender
+    log4net.TC.Rebuilt!  log4net.Appender  RemotingAppender+IRemoteLoggingSink
+      ->log4net.Appender.RemotingAppender+IRemoteLoggingSink
+log4net.TC.Rebuilt!  log4net.Appender  RollingFileAppender
+  ->log4net.Appender.RollingFileAppender
+    log4net.TC.Rebuilt!  log4net.Appender  RollingFileAppender+DefaultDateTime
+      ->log4net.Appender.RollingFileAppender+DefaultDateTime
+    log4net.TC.Rebuilt!  log4net.Appender  RollingFileAppender+IDateTime
+      ->log4net.Appender.RollingFileAppender+IDateTime
+    log4net.TC.Rebuilt!  log4net.Appender  RollingFileAppender+RollingMode
+      ->log4net.Appender.RollingFileAppender+RollingMode
+    log4net.TC.Rebuilt!  log4net.Appender  RollingFileAppender+RollPoint
+      ->log4net.Appender.RollingFileAppender+RollPoint
+log4net.TC.Rebuilt!  log4net.Appender  SmtpAppender
+  ->log4net.Appender.SmtpAppender
+    log4net.TC.Rebuilt!  log4net.Appender  SmtpAppender+SmtpAuthentication
+      ->log4net.Appender.SmtpAppender+SmtpAuthentication
+log4net.TC.Rebuilt!  log4net.Appender  SmtpPickupDirAppender
+  ->log4net.Appender.SmtpPickupDirAppender
+log4net.TC.Rebuilt!  log4net.Appender  TelnetAppender
+  ->log4net.Appender.TelnetAppender
+    log4net.TC.Rebuilt!  log4net.Appender  TelnetAppender+SocketHandler
+      ->log4net.Appender.TelnetAppender+SocketHandler
+        log4net.TC.Rebuilt!  log4net.Appender  TelnetAppender+SocketHandler+SocketClient
+          ->log4net.Appender.TelnetAppender+SocketHandler+SocketClient
+log4net.TC.Rebuilt!  log4net.Appender  TextWriterAppender
+  ->log4net.Appender.TextWriterAppender
+log4net.TC.Rebuilt!  log4net.Appender  TraceAppender
+  ->log4net.Appender.TraceAppender
+log4net.TC.Rebuilt!  log4net.Appender  UdpAppender
+  ->log4net.Appender.UdpAppender
+log4net.TC.Rebuilt!  log4net.Config  AliasDomainAttribute
+  ->log4net.Config.AliasDomainAttribute
+log4net.TC.Rebuilt!  log4net.Config  AliasRepositoryAttribute
+  ->log4net.Config.AliasRepositoryAttribute
+log4net.TC.Rebuilt!  log4net.Config  BasicConfigurator
+  ->log4net.Config.BasicConfigurator
+log4net.TC.Rebuilt!  log4net.Config  ConfiguratorAttribute
+  ->log4net.Config.ConfiguratorAttribute
+log4net.TC.Rebuilt!  log4net.Config  DOMConfigurator
+  ->log4net.Config.DOMConfigurator
+log4net.TC.Rebuilt!  log4net.Config  DOMConfiguratorAttribute
+  ->log4net.Config.DOMConfiguratorAttribute
+log4net.TC.Rebuilt!  log4net.Config  DomainAttribute
+  ->log4net.Config.DomainAttribute
+log4net.TC.Rebuilt!  log4net.Config  Log4NetConfigurationSectionHandler
+  ->log4net.Config.Log4NetConfigurationSectionHandler
+log4net.TC.Rebuilt!  log4net.Config  PluginAttribute
+  ->log4net.Config.PluginAttribute
+log4net.TC.Rebuilt!  log4net.Config  RepositoryAttribute
+  ->log4net.Config.RepositoryAttribute
+log4net.TC.Rebuilt!  log4net.Config  SecurityContextProviderAttribute
+  ->log4net.Config.SecurityContextProviderAttribute
+log4net.TC.Rebuilt!  log4net.Config  XmlConfigurator
+  ->log4net.Config.XmlConfigurator
+    log4net.TC.Rebuilt!  log4net.Config  XmlConfigurator+ConfigureAndWatchHandler
+      ->log4net.Config.XmlConfigurator+ConfigureAndWatchHandler
+log4net.TC.Rebuilt!  log4net.Config  XmlConfiguratorAttribute
+  ->log4net.Config.XmlConfiguratorAttribute
+log4net.TC.Rebuilt!  log4net.Core  CompactRepositorySelector
+  ->log4net.Core.CompactRepositorySelector
+log4net.TC.Rebuilt!  log4net.Core  DefaultRepositorySelector
+  ->log4net.Core.DefaultRepositorySelector
+log4net.TC.Rebuilt!  log4net.Core  ErrorCode
+  ->log4net.Core.ErrorCode
+log4net.TC.Rebuilt!  log4net.Core  FixFlags
+  ->log4net.Core.FixFlags
+log4net.TC.Rebuilt!  log4net.Core  IAppenderAttachable
+  ->log4net.Core.IAppenderAttachable
+log4net.TC.Rebuilt!  log4net.Core  IErrorHandler
+  ->log4net.Core.IErrorHandler
+log4net.TC.Rebuilt!  log4net.Core  IFixingRequired
+  ->log4net.Core.IFixingRequired
+log4net.TC.Rebuilt!  log4net.Core  ILogger
+  ->log4net.Core.ILogger
+log4net.TC.Rebuilt!  log4net.Core  ILoggerWrapper
+  ->log4net.Core.ILoggerWrapper
+log4net.TC.Rebuilt!  log4net.Core  IOptionHandler
+  ->log4net.Core.IOptionHandler
+log4net.TC.Rebuilt!  log4net.Core  IRepositorySelector
+  ->log4net.Core.IRepositorySelector
+log4net.TC.Rebuilt!  log4net.Core  ITriggeringEventEvaluator
+  ->log4net.Core.ITriggeringEventEvaluator
+log4net.TC.Rebuilt!  log4net.Core  Level
+  ->log4net.Core.Level
+log4net.TC.Rebuilt!  log4net.Core  LevelCollection
+  ->log4net.Core.LevelCollection
+    log4net.TC.Rebuilt!  log4net.Core  LevelCollection+Enumerator
+      ->log4net.Core.LevelCollection+Enumerator
+    log4net.TC.Rebuilt!  log4net.Core  LevelCollection+ILevelCollectionEnumerator
+      ->log4net.Core.LevelCollection+ILevelCollectionEnumerator
+    log4net.TC.Rebuilt!  log4net.Core  LevelCollection+ReadOnlyLevelCollection
+      ->log4net.Core.LevelCollection+ReadOnlyLevelCollection
+    log4net.TC.Rebuilt!  log4net.Core  LevelCollection+Tag
+      ->log4net.Core.LevelCollection+Tag
+log4net.TC.Rebuilt!  log4net.Core  LevelEvaluator
+  ->log4net.Core.LevelEvaluator
+log4net.TC.Rebuilt!  log4net.Core  LevelMap
+  ->log4net.Core.LevelMap
+log4net.TC.Rebuilt!  log4net.Core  LocationInfo
+  ->log4net.Core.LocationInfo
+log4net.TC.Rebuilt!  log4net.Core  LogException
+  ->log4net.Core.LogException
+log4net.TC.Rebuilt!  log4net.Core  LogImpl
+  ->log4net.Core.LogImpl
+log4net.TC.Rebuilt!  log4net.Core  LoggerManager
+  ->log4net.Core.LoggerManager
+log4net.TC.Rebuilt!  log4net.Core  LoggerRepositoryCreationEventArgs
+  ->log4net.Core.LoggerRepositoryCreationEventArgs
+log4net.TC.Rebuilt!  log4net.Core  LoggerRepositoryCreationEventHandler
+  ->log4net.Core.LoggerRepositoryCreationEventHandler
+log4net.TC.Rebuilt!  log4net.Core  LoggerWrapperImpl
+  ->log4net.Core.LoggerWrapperImpl
+log4net.TC.Rebuilt!  log4net.Core  LoggingEvent
+  ->log4net.Core.LoggingEvent
+log4net.TC.Rebuilt!  log4net.Core  LoggingEventData
+  ->log4net.Core.LoggingEventData
+log4net.TC.Rebuilt!  log4net.Core  SecurityContext
+  ->log4net.Core.SecurityContext
+log4net.TC.Rebuilt!  log4net.Core  SecurityContextProvider
+  ->log4net.Core.SecurityContextProvider
+log4net.TC.Rebuilt!  log4net.Core  WrapperCreationHandler
+  ->log4net.Core.WrapperCreationHandler
+log4net.TC.Rebuilt!  log4net.Core  WrapperMap
+  ->log4net.Core.WrapperMap
+log4net.TC.Rebuilt!  log4net.DateFormatter  AbsoluteTimeDateFormatter
+  ->log4net.DateFormatter.AbsoluteTimeDateFormatter
+log4net.TC.Rebuilt!  log4net.DateFormatter  DateTimeDateFormatter
+  ->log4net.DateFormatter.DateTimeDateFormatter
+log4net.TC.Rebuilt!  log4net.DateFormatter  IDateFormatter
+  ->log4net.DateFormatter.IDateFormatter
+log4net.TC.Rebuilt!  log4net.DateFormatter  Iso8601DateFormatter
+  ->log4net.DateFormatter.Iso8601DateFormatter
+log4net.TC.Rebuilt!  log4net.DateFormatter  SimpleDateFormatter
+  ->log4net.DateFormatter.SimpleDateFormatter
+log4net.TC.Rebuilt!  log4net.Filter  DenyAllFilter
+  ->log4net.Filter.DenyAllFilter
+log4net.TC.Rebuilt!  log4net.Filter  FilterDecision
+  ->log4net.Filter.FilterDecision
+log4net.TC.Rebuilt!  log4net.Filter  FilterSkeleton
+  ->log4net.Filter.FilterSkeleton
+log4net.TC.Rebuilt!  log4net.Filter  IFilter
+  ->log4net.Filter.IFilter
+log4net.TC.Rebuilt!  log4net.Filter  LevelMatchFilter
+  ->log4net.Filter.LevelMatchFilter
+log4net.TC.Rebuilt!  log4net.Filter  LevelRangeFilter
+  ->log4net.Filter.LevelRangeFilter
+log4net.TC.Rebuilt!  log4net.Filter  LoggerMatchFilter
+  ->log4net.Filter.LoggerMatchFilter
+log4net.TC.Rebuilt!  log4net.Filter  MdcFilter
+  ->log4net.Filter.MdcFilter
+log4net.TC.Rebuilt!  log4net.Filter  NdcFilter
+  ->log4net.Filter.NdcFilter
+log4net.TC.Rebuilt!  log4net.Filter  PropertyFilter
+  ->log4net.Filter.PropertyFilter
+log4net.TC.Rebuilt!  log4net.Filter  StringMatchFilter
+  ->log4net.Filter.StringMatchFilter
+log4net.TC.Rebuilt!  log4net  GlobalContext
+  ->log4net.GlobalContext
+log4net.TC.Rebuilt!  log4net  ILog
+  ->log4net.ILog
+log4net.TC.Rebuilt!  log4net.Layout  ExceptionLayout
+  ->log4net.Layout.ExceptionLayout
+log4net.TC.Rebuilt!  log4net.Layout  ILayout
+  ->log4net.Layout.ILayout
+log4net.TC.Rebuilt!  log4net.Layout  IRawLayout
+  ->log4net.Layout.IRawLayout
+log4net.TC.Rebuilt!  log4net.Layout  Layout2RawLayoutAdapter
+  ->log4net.Layout.Layout2RawLayoutAdapter
+log4net.TC.Rebuilt!  log4net.Layout  LayoutSkeleton
+  ->log4net.Layout.LayoutSkeleton
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  AppDomainPatternConverter
+  ->log4net.Layout.Pattern.AppDomainPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  DatePatternConverter
+  ->log4net.Layout.Pattern.DatePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  ExceptionPatternConverter
+  ->log4net.Layout.Pattern.ExceptionPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  FileLocationPatternConverter
+  ->log4net.Layout.Pattern.FileLocationPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  FullLocationPatternConverter
+  ->log4net.Layout.Pattern.FullLocationPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  IdentityPatternConverter
+  ->log4net.Layout.Pattern.IdentityPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  LevelPatternConverter
+  ->log4net.Layout.Pattern.LevelPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  LineLocationPatternConverter
+  ->log4net.Layout.Pattern.LineLocationPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  LoggerPatternConverter
+  ->log4net.Layout.Pattern.LoggerPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  MessagePatternConverter
+  ->log4net.Layout.Pattern.MessagePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  MethodLocationPatternConverter
+  ->log4net.Layout.Pattern.MethodLocationPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  NamedPatternConverter
+  ->log4net.Layout.Pattern.NamedPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  NdcPatternConverter
+  ->log4net.Layout.Pattern.NdcPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  PatternLayoutConverter
+  ->log4net.Layout.Pattern.PatternLayoutConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  PropertyPatternConverter
+  ->log4net.Layout.Pattern.PropertyPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  RelativeTimePatternConverter
+  ->log4net.Layout.Pattern.RelativeTimePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  ThreadPatternConverter
+  ->log4net.Layout.Pattern.ThreadPatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  TypeNamePatternConverter
+  ->log4net.Layout.Pattern.TypeNamePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  UserNamePatternConverter
+  ->log4net.Layout.Pattern.UserNamePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout.Pattern  UtcDatePatternConverter
+  ->log4net.Layout.Pattern.UtcDatePatternConverter
+log4net.TC.Rebuilt!  log4net.Layout  PatternLayout
+  ->log4net.Layout.PatternLayout
+    log4net.TC.Rebuilt!  log4net.Layout  PatternLayout+ConverterInfo
+      ->log4net.Layout.PatternLayout+ConverterInfo
+log4net.TC.Rebuilt!  log4net.Layout  RawLayoutConverter
+  ->log4net.Layout.RawLayoutConverter
+log4net.TC.Rebuilt!  log4net.Layout  RawPropertyLayout
+  ->log4net.Layout.RawPropertyLayout
+log4net.TC.Rebuilt!  log4net.Layout  RawTimeStampLayout
+  ->log4net.Layout.RawTimeStampLayout
+log4net.TC.Rebuilt!  log4net.Layout  RawUtcTimeStampLayout
+  ->log4net.Layout.RawUtcTimeStampLayout
+log4net.TC.Rebuilt!  log4net.Layout  SimpleLayout
+  ->log4net.Layout.SimpleLayout
+log4net.TC.Rebuilt!  log4net.Layout  XmlLayout
+  ->log4net.Layout.XmlLayout
+log4net.TC.Rebuilt!  log4net.Layout  XmlLayoutBase
+  ->log4net.Layout.XmlLayoutBase
+log4net.TC.Rebuilt!  log4net.Layout  XmlLayoutSchemaLog4j
+  ->log4net.Layout.XmlLayoutSchemaLog4j
+log4net.TC.Rebuilt!  log4net  LogManager
+  ->log4net.LogManager
+log4net.TC.Rebuilt!  log4net  LogicalThreadContext
+  ->log4net.LogicalThreadContext
+log4net.TC.Rebuilt!  log4net  MDC
+  ->log4net.MDC
+log4net.TC.Rebuilt!  log4net  NDC
+  ->log4net.NDC
+log4net.TC.Rebuilt!  log4net.ObjectRenderer  DefaultRenderer
+  ->log4net.ObjectRenderer.DefaultRenderer
+log4net.TC.Rebuilt!  log4net.ObjectRenderer  IObjectRenderer
+  ->log4net.ObjectRenderer.IObjectRenderer
+log4net.TC.Rebuilt!  log4net.ObjectRenderer  RendererMap
+  ->log4net.ObjectRenderer.RendererMap
+log4net.TC.Rebuilt!  log4net.Plugin  IPlugin
+  ->log4net.Plugin.IPlugin
+log4net.TC.Rebuilt!  log4net.Plugin  IPluginFactory
+  ->log4net.Plugin.IPluginFactory
+log4net.TC.Rebuilt!  log4net.Plugin  PluginCollection
+  ->log4net.Plugin.PluginCollection
+    log4net.TC.Rebuilt!  log4net.Plugin  PluginCollection+Enumerator
+      ->log4net.Plugin.PluginCollection+Enumerator
+    log4net.TC.Rebuilt!  log4net.Plugin  PluginCollection+IPluginCollectionEnumerator
+      ->log4net.Plugin.PluginCollection+IPluginCollectionEnumerator
+    log4net.TC.Rebuilt!  log4net.Plugin  PluginCollection+ReadOnlyPluginCollection
+      ->log4net.Plugin.PluginCollection+ReadOnlyPluginCollection
+    log4net.TC.Rebuilt!  log4net.Plugin  PluginCollection+Tag
+      ->log4net.Plugin.PluginCollection+Tag
+log4net.TC.Rebuilt!  log4net.Plugin  PluginMap
+  ->log4net.Plugin.PluginMap
+log4net.TC.Rebuilt!  log4net.Plugin  PluginSkeleton
+  ->log4net.Plugin.PluginSkeleton
+log4net.TC.Rebuilt!  log4net.Plugin  RemoteLoggingServerPlugin
+  ->log4net.Plugin.RemoteLoggingServerPlugin
+    log4net.TC.Rebuilt!  log4net.Plugin  RemoteLoggingServerPlugin+RemoteLoggingSinkImpl
+      ->log4net.Plugin.RemoteLoggingServerPlugin+RemoteLoggingSinkImpl
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  DefaultLoggerFactory
+  ->log4net.Repository.Hierarchy.DefaultLoggerFactory
+    log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  DefaultLoggerFactory+LoggerImpl
+      ->log4net.Repository.Hierarchy.DefaultLoggerFactory+LoggerImpl
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  Hierarchy
+  ->log4net.Repository.Hierarchy.Hierarchy
+    log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  Hierarchy+LevelEntry
+      ->log4net.Repository.Hierarchy.Hierarchy+LevelEntry
+    log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  Hierarchy+PropertyEntry
+      ->log4net.Repository.Hierarchy.Hierarchy+PropertyEntry
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  ILoggerFactory
+  ->log4net.Repository.Hierarchy.ILoggerFactory
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  Logger
+  ->log4net.Repository.Hierarchy.Logger
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  LoggerCreationEventArgs
+  ->log4net.Repository.Hierarchy.LoggerCreationEventArgs
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  LoggerCreationEventHandler
+  ->log4net.Repository.Hierarchy.LoggerCreationEventHandler
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  LoggerKey
+  ->log4net.Repository.Hierarchy.LoggerKey
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  ProvisionNode
+  ->log4net.Repository.Hierarchy.ProvisionNode
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  RootLogger
+  ->log4net.Repository.Hierarchy.RootLogger
+log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  XmlHierarchyConfigurator
+  ->log4net.Repository.Hierarchy.XmlHierarchyConfigurator
+    log4net.TC.Rebuilt!  log4net.Repository.Hierarchy  XmlHierarchyConfigurator+ConfigUpdateMode
+      ->log4net.Repository.Hierarchy.XmlHierarchyConfigurator+ConfigUpdateMode
+log4net.TC.Rebuilt!  log4net.Repository  IBasicRepositoryConfigurator
+  ->log4net.Repository.IBasicRepositoryConfigurator
+log4net.TC.Rebuilt!  log4net.Repository  ILoggerRepository
+  ->log4net.Repository.ILoggerRepository
+log4net.TC.Rebuilt!  log4net.Repository  IXmlRepositoryConfigurator
+  ->log4net.Repository.IXmlRepositoryConfigurator
+log4net.TC.Rebuilt!  log4net.Repository  LoggerRepositoryConfigurationChangedEventHandler
+  ->log4net.Repository.LoggerRepositoryConfigurationChangedEventHandler
+log4net.TC.Rebuilt!  log4net.Repository  LoggerRepositoryConfigurationResetEventHandler
+  ->log4net.Repository.LoggerRepositoryConfigurationResetEventHandler
+log4net.TC.Rebuilt!  log4net.Repository  LoggerRepositoryShutdownEventHandler
+  ->log4net.Repository.LoggerRepositoryShutdownEventHandler
+log4net.TC.Rebuilt!  log4net.Repository  LoggerRepositorySkeleton
+  ->log4net.Repository.LoggerRepositorySkeleton
+log4net.TC.Rebuilt!  log4net  ThreadContext
+  ->log4net.ThreadContext
+log4net.TC.Rebuilt!  log4net.Util  AppenderAttachedImpl
+  ->log4net.Util.AppenderAttachedImpl
+log4net.TC.Rebuilt!  log4net.Util  CompositeProperties
+  ->log4net.Util.CompositeProperties
+log4net.TC.Rebuilt!  log4net.Util  ContextPropertiesBase
+  ->log4net.Util.ContextPropertiesBase
+log4net.TC.Rebuilt!  log4net.Util  CountingQuietTextWriter
+  ->log4net.Util.CountingQuietTextWriter
+log4net.TC.Rebuilt!  log4net.Util  CyclicBuffer
+  ->log4net.Util.CyclicBuffer
+log4net.TC.Rebuilt!  log4net.Util  EmptyCollection
+  ->log4net.Util.EmptyCollection
+log4net.TC.Rebuilt!  log4net.Util  EmptyDictionary
+  ->log4net.Util.EmptyDictionary
+log4net.TC.Rebuilt!  log4net.Util  FormattingInfo
+  ->log4net.Util.FormattingInfo
+log4net.TC.Rebuilt!  log4net.Util  GlobalContextProperties
+  ->log4net.Util.GlobalContextProperties
+log4net.TC.Rebuilt!  log4net.Util  LevelMapping
+  ->log4net.Util.LevelMapping
+log4net.TC.Rebuilt!  log4net.Util  LevelMappingEntry
+  ->log4net.Util.LevelMappingEntry
+log4net.TC.Rebuilt!  log4net.Util  LogLog
+  ->log4net.Util.LogLog
+log4net.TC.Rebuilt!  log4net.Util  LogicalThreadContextProperties
+  ->log4net.Util.LogicalThreadContextProperties
+log4net.TC.Rebuilt!  log4net.Util  NullDictionaryEnumerator
+  ->log4net.Util.NullDictionaryEnumerator
+log4net.TC.Rebuilt!  log4net.Util  NullEnumerator
+  ->log4net.Util.NullEnumerator
+log4net.TC.Rebuilt!  log4net.Util  NullSecurityContext
+  ->log4net.Util.NullSecurityContext
+log4net.TC.Rebuilt!  log4net.Util  OnlyOnceErrorHandler
+  ->log4net.Util.OnlyOnceErrorHandler
+log4net.TC.Rebuilt!  log4net.Util  OptionConverter
+  ->log4net.Util.OptionConverter
+log4net.TC.Rebuilt!  log4net.Util  PatternConverter
+  ->log4net.Util.PatternConverter
+log4net.TC.Rebuilt!  log4net.Util  PatternParser
+  ->log4net.Util.PatternParser
+    log4net.TC.Rebuilt!  log4net.Util  PatternParser+StringLengthComparer
+      ->log4net.Util.PatternParser+StringLengthComparer
+log4net.TC.Rebuilt!  log4net.Util  PatternString
+  ->log4net.Util.PatternString
+    log4net.TC.Rebuilt!  log4net.Util  PatternString+ConverterInfo
+      ->log4net.Util.PatternString+ConverterInfo
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  AppDomainPatternConverter
+  ->log4net.Util.PatternStringConverters.AppDomainPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  DatePatternConverter
+  ->log4net.Util.PatternStringConverters.DatePatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  EnvironmentPatternConverter
+  ->log4net.Util.PatternStringConverters.EnvironmentPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  IdentityPatternConverter
+  ->log4net.Util.PatternStringConverters.IdentityPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  LiteralPatternConverter
+  ->log4net.Util.PatternStringConverters.LiteralPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  NewLinePatternConverter
+  ->log4net.Util.PatternStringConverters.NewLinePatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  ProcessIdPatternConverter
+  ->log4net.Util.PatternStringConverters.ProcessIdPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  PropertyPatternConverter
+  ->log4net.Util.PatternStringConverters.PropertyPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  RandomStringPatternConverter
+  ->log4net.Util.PatternStringConverters.RandomStringPatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  UserNamePatternConverter
+  ->log4net.Util.PatternStringConverters.UserNamePatternConverter
+log4net.TC.Rebuilt!  log4net.Util.PatternStringConverters  UtcDatePatternConverter
+  ->log4net.Util.PatternStringConverters.UtcDatePatternConverter
+log4net.TC.Rebuilt!  log4net.Util  PropertiesDictionary
+  ->log4net.Util.PropertiesDictionary
+log4net.TC.Rebuilt!  log4net.Util  ProtectCloseTextWriter
+  ->log4net.Util.ProtectCloseTextWriter
+log4net.TC.Rebuilt!  log4net.Util  QuietTextWriter
+  ->log4net.Util.QuietTextWriter
+log4net.TC.Rebuilt!  log4net.Util  ReadOnlyPropertiesDictionary
+  ->log4net.Util.ReadOnlyPropertiesDictionary
+log4net.TC.Rebuilt!  log4net.Util  ReaderWriterLock
+  ->log4net.Util.ReaderWriterLock
+log4net.TC.Rebuilt!  log4net.Util  ReusableStringWriter
+  ->log4net.Util.ReusableStringWriter
+log4net.TC.Rebuilt!  log4net.Util  SystemInfo
+  ->log4net.Util.SystemInfo
+log4net.TC.Rebuilt!  log4net.Util  SystemStringFormat
+  ->log4net.Util.SystemStringFormat
+log4net.TC.Rebuilt!  log4net.Util  TextWriterAdapter
+  ->log4net.Util.TextWriterAdapter
+log4net.TC.Rebuilt!  log4net.Util  ThreadContextProperties
+  ->log4net.Util.ThreadContextProperties
+log4net.TC.Rebuilt!  log4net.Util  ThreadContextStack
+  ->log4net.Util.ThreadContextStack
+    log4net.TC.Rebuilt!  log4net.Util  ThreadContextStack+AutoPopStackFrame
+      ->log4net.Util.ThreadContextStack+AutoPopStackFrame
+    log4net.TC.Rebuilt!  log4net.Util  ThreadContextStack+StackFrame
+      ->log4net.Util.ThreadContextStack+StackFrame
+log4net.TC.Rebuilt!  log4net.Util  ThreadContextStacks
+  ->log4net.Util.ThreadContextStacks
+log4net.TC.Rebuilt!  log4net.Util  Transform
+  ->log4net.Util.Transform
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  BooleanConverter
+  ->log4net.Util.TypeConverters.BooleanConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  ConversionNotSupportedException
+  ->log4net.Util.TypeConverters.ConversionNotSupportedException
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  ConverterRegistry
+  ->log4net.Util.TypeConverters.ConverterRegistry
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  EncodingConverter
+  ->log4net.Util.TypeConverters.EncodingConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  IConvertFrom
+  ->log4net.Util.TypeConverters.IConvertFrom
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  IConvertTo
+  ->log4net.Util.TypeConverters.IConvertTo
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  IPAddressConverter
+  ->log4net.Util.TypeConverters.IPAddressConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  PatternLayoutConverter
+  ->log4net.Util.TypeConverters.PatternLayoutConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  PatternStringConverter
+  ->log4net.Util.TypeConverters.PatternStringConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  TypeConverter
+  ->log4net.Util.TypeConverters.TypeConverter
+log4net.TC.Rebuilt!  log4net.Util.TypeConverters  TypeConverterAttribute
+  ->log4net.Util.TypeConverters.TypeConverterAttribute
+paafbp5t!    <PrivateImplementationDetails>{8B362005-A673-49A6-9173-432B65C59536}
+  ->.<PrivateImplementationDetails>{8B362005-A673-49A6-9173-432B65C59536}
+paafbp5t!  Microsoft.Xml.Serialization.GeneratedAssembly  TestRunArgumentsSerializer
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.TestRunArgumentsSerializer
+paafbp5t!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializationReaderTestRunArguments
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderTestRunArguments
+paafbp5t!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializationWriterTestRunArguments
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationWriterTestRunArguments
+paafbp5t!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializer1
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializer1
+paafbp5t!  Microsoft.Xml.Serialization.GeneratedAssembly  XmlSerializerContract
+  ->Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract

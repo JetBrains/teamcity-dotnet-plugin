@@ -18,9 +18,7 @@ package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.inspect.DupFinderConstants.DEFAULT_DISCARD_COST
 import jetbrains.buildServer.inspect.DupFinderConstants.DEFAULT_INCLUDE_FILES
-import jetbrains.buildServer.serverSide.PropertiesProcessor
-import jetbrains.buildServer.serverSide.RunType
-import jetbrains.buildServer.serverSide.RunTypeRegistry
+import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
@@ -29,7 +27,7 @@ class DupFinderRunType(
         private val _pluginDescriptor: PluginDescriptor,
         private val _requirementsProvider: RequirementsProvider,
         private val _propertiesProcessor: PropertiesProcessor)
-    : RunType() {
+    : RunType(), Deprecation {
     init {
         runTypeRegistry.registerRunType(this)
     }
@@ -79,4 +77,11 @@ class DupFinderRunType(
     override fun getIconUrl(): String {
         return _pluginDescriptor.getPluginResourcesPath("resharper.svg")
     }
+
+    override fun getDeprecationType(): DeprecationType = DeprecationType.DEPRECATED_ALLOWED
+
+    override fun getDeprecationReason(): String =
+        "The Duplicates finder (ReSharper) runner is now deprecated. To continue using it, install JetBrains ReSharper Command Line Tools version 2021.2.0 and select this version under advanced options."
+
+    override fun getDeprecationReference(): String = "duplicates-finder-resharper"
 }

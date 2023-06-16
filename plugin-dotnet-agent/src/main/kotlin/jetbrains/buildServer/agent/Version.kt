@@ -82,6 +82,8 @@ class Version private constructor(
         private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
         val Empty: Version = Version(0, 0, 0, 0, 0, 0, null, null, null)
 
+        fun isValid(text: String) = VERSION_PATTERN.matches(text)
+
         fun parse(text: String): Version {
             VERSION_PATTERN.matchEntire(text)?.let {
 

@@ -26,9 +26,9 @@ class DotCoverServiceMessageTest {
     @DataProvider(name = "serviceMessageCases")
     fun serviceMessageCases(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(Path("dotCoverHome"), "##teamcity[dotNetCoverage dotcover_home='dotCoverHome']"),
-                arrayOf(Path("dotCover Home"), "##teamcity[dotNetCoverage dotcover_home='dotCover Home']"),
-                arrayOf(Path(""), "##teamcity[dotNetCoverage dotcover_home='']"))
+                arrayOf(Path("dotCoverHome"), "##teamcity[dotNetCoverageDotnetRunner dotcover_home='dotCoverHome']"),
+                arrayOf(Path("dotCover Home"), "##teamcity[dotNetCoverageDotnetRunner dotcover_home='dotCover Home']"),
+                arrayOf(Path(""), "##teamcity[dotNetCoverageDotnetRunner dotcover_home='']"))
     }
 
     @Test(dataProvider = "serviceMessageCases")

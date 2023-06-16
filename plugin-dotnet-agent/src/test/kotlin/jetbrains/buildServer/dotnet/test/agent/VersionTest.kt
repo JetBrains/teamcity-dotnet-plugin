@@ -157,4 +157,31 @@ class VersionTest {
         // Then
         Assert.assertEquals(actualVersion, expectedVersion)
     }
+
+    @DataProvider
+    fun testDataIsValid(): Array<Array<out Any?>> {
+        return arrayOf(
+            arrayOf("", false),
+            arrayOf("1", true),
+            arrayOf("10.0-A", true),
+            arrayOf("1.23.99", true),
+            arrayOf("1.23.99.88", true),
+            arrayOf("7.0.7600.16385.40715", true),
+            arrayOf(" Version:     1.0.0-beta-001598", true),
+            arrayOf("abc", false),
+            arrayOf("abc.xyz", false),
+            arrayOf("abc.", false),
+            arrayOf("1.", false),
+            arrayOf(".xyz", false),
+            arrayOf(".1", false),
+            arrayOf("abc.1", false),
+            arrayOf("1.abc", false),
+        )
+    }
+
+    @Test(dataProvider = "testDataIsValid")
+    fun testDataIsValid(text: String, isValid: Boolean) {
+        // Then
+        Assert.assertEquals(Version.isValid(text), isValid)
+    }
 }

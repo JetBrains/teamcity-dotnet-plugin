@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root Name="Root" CoveredStatements="101" TotalStatements="117" CoveragePercent="86">
+  <Assembly Name="dll1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+      <Type Name="slowTest1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="16" Column="31" EndLine="16" EndColumn="32" Covered="True" />
+          <Statement FileIndex="1" Line="17" Column="7" EndLine="17" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="18" Column="5" EndLine="18" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="19" Column="31" EndLine="19" EndColumn="32" Covered="True" />
+          <Statement FileIndex="1" Line="20" Column="7" EndLine="20" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="21" Column="5" EndLine="21" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="22" Column="31" EndLine="22" EndColumn="32" Covered="True" />
+          <Statement FileIndex="1" Line="23" Column="7" EndLine="23" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="24" Column="5" EndLine="24" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="1" Line="25" Column="31" EndLine="25" EndColumn="32" Covered="True" />
+          <Statement FileIndex="1" Line="26" Column="7" EndLine="26" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="27" Column="5" EndLine="27" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="1" Line="28" Column="31" EndLine="28" EndColumn="32" Covered="True" />
+          <Statement FileIndex="1" Line="30" Column="5" EndLine="30" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Main" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Statement FileIndex="1" Line="9" Column="44" EndLine="9" EndColumn="45" Covered="True" />
+          <Statement FileIndex="1" Line="10" Column="7" EndLine="10" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="11" Column="7" EndLine="11" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="12" Column="7" EndLine="12" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="13" Column="7" EndLine="13" EndColumn="13" Covered="True" />
+          <Statement FileIndex="1" Line="14" Column="7" EndLine="14" EndColumn="45" Covered="True" />
+          <Statement FileIndex="1" Line="15" Column="5" EndLine="15" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+  </Assembly>
+  <Assembly Name="dll2" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_2" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+      <Type Name="slowTest1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="2" Line="16" Column="31" EndLine="16" EndColumn="32" Covered="True" />
+          <Statement FileIndex="2" Line="17" Column="7" EndLine="17" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="18" Column="5" EndLine="18" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="2" Line="19" Column="31" EndLine="19" EndColumn="32" Covered="True" />
+          <Statement FileIndex="2" Line="20" Column="7" EndLine="20" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="21" Column="5" EndLine="21" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="2" Line="22" Column="31" EndLine="22" EndColumn="32" Covered="True" />
+          <Statement FileIndex="2" Line="23" Column="7" EndLine="23" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="24" Column="5" EndLine="24" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="2" Line="25" Column="31" EndLine="25" EndColumn="32" Covered="True" />
+          <Statement FileIndex="2" Line="26" Column="7" EndLine="26" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="27" Column="5" EndLine="27" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="2" Line="28" Column="31" EndLine="28" EndColumn="32" Covered="True" />
+          <Statement FileIndex="2" Line="30" Column="5" EndLine="30" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Main" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Statement FileIndex="2" Line="9" Column="44" EndLine="9" EndColumn="45" Covered="True" />
+          <Statement FileIndex="2" Line="10" Column="7" EndLine="10" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="11" Column="7" EndLine="11" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="12" Column="7" EndLine="12" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="13" Column="7" EndLine="13" EndColumn="13" Covered="True" />
+          <Statement FileIndex="2" Line="14" Column="7" EndLine="14" EndColumn="45" Covered="True" />
+          <Statement FileIndex="2" Line="15" Column="5" EndLine="15" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+  </Assembly>
+  <Assembly Name="dll3" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_3" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+      <Type Name="slowTest1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="3" Line="16" Column="31" EndLine="16" EndColumn="32" Covered="True" />
+          <Statement FileIndex="3" Line="17" Column="7" EndLine="17" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="18" Column="5" EndLine="18" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="3" Line="19" Column="31" EndLine="19" EndColumn="32" Covered="True" />
+          <Statement FileIndex="3" Line="20" Column="7" EndLine="20" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="21" Column="5" EndLine="21" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="3" Line="22" Column="31" EndLine="22" EndColumn="32" Covered="True" />
+          <Statement FileIndex="3" Line="23" Column="7" EndLine="23" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="24" Column="5" EndLine="24" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="3" Line="25" Column="31" EndLine="25" EndColumn="32" Covered="True" />
+          <Statement FileIndex="3" Line="26" Column="7" EndLine="26" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="27" Column="5" EndLine="27" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="3" Line="28" Column="31" EndLine="28" EndColumn="32" Covered="True" />
+          <Statement FileIndex="3" Line="30" Column="5" EndLine="30" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Main" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Statement FileIndex="3" Line="9" Column="44" EndLine="9" EndColumn="45" Covered="True" />
+          <Statement FileIndex="3" Line="10" Column="7" EndLine="10" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="11" Column="7" EndLine="11" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="12" Column="7" EndLine="12" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="13" Column="7" EndLine="13" EndColumn="13" Covered="True" />
+          <Statement FileIndex="3" Line="14" Column="7" EndLine="14" EndColumn="45" Covered="True" />
+          <Statement FileIndex="3" Line="15" Column="5" EndLine="15" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+  </Assembly>
+  <Assembly Name="dll4" CoveredStatements="38" TotalStatements="42" CoveragePercent="90">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_3" CoveredStatements="32" TotalStatements="36" CoveragePercent="89">
+      <Type Name="slowTest1" CoveredStatements="32" TotalStatements="36" CoveragePercent="89">
+        <Type Name="NestedClass" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+          <Type Name="NNestedClass" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+            <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+            <Member Name="NNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+              <Statement FileIndex="4" Line="54" Column="32" EndLine="54" EndColumn="33" Covered="True" />
+              <Statement FileIndex="4" Line="55" Column="13" EndLine="55" EndColumn="19" Covered="True" />
+              <Statement FileIndex="4" Line="56" Column="10" EndLine="56" EndColumn="11" Covered="True" />
+            </Member>
+          </Type>
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+          <Member Name="DoSomeNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+            <Statement FileIndex="4" Line="49" Column="34" EndLine="49" EndColumn="35" Covered="True" />
+            <Statement FileIndex="4" Line="50" Column="10" EndLine="50" EndColumn="16" Covered="True" />
+            <Statement FileIndex="4" Line="51" Column="7" EndLine="51" EndColumn="8" Covered="True" />
+          </Member>
+        </Type>
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="4" Line="26" Column="30" EndLine="26" EndColumn="31" Covered="True" />
+          <Statement FileIndex="4" Line="27" Column="7" EndLine="27" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="28" Column="5" EndLine="28" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="4" Line="29" Column="31" EndLine="29" EndColumn="32" Covered="True" />
+          <Statement FileIndex="4" Line="30" Column="7" EndLine="30" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="31" Column="5" EndLine="31" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="4" Line="32" Column="31" EndLine="32" EndColumn="32" Covered="True" />
+          <Statement FileIndex="4" Line="33" Column="7" EndLine="33" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="34" Column="5" EndLine="34" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="4" Line="35" Column="31" EndLine="35" EndColumn="32" Covered="True" />
+          <Statement FileIndex="4" Line="36" Column="7" EndLine="36" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="37" Column="5" EndLine="37" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100">
+          <Statement FileIndex="4" Line="38" Column="31" EndLine="38" EndColumn="32" Covered="True" />
+          <Statement FileIndex="4" Line="40" Column="5" EndLine="40" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="Main" CoveredStatements="12" TotalStatements="12" CoveragePercent="100">
+          <Statement FileIndex="4" Line="9" Column="51" EndLine="9" EndColumn="52" Covered="True" />
+          <Statement FileIndex="4" Line="10" Column="7" EndLine="10" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="11" Column="7" EndLine="11" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="12" Column="7" EndLine="12" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="13" Column="7" EndLine="13" EndColumn="13" Covered="True" />
+          <Statement FileIndex="4" Line="14" Column="7" EndLine="14" EndColumn="45" Covered="True" />
+          <Statement FileIndex="4" Line="16" Column="7" EndLine="16" EndColumn="25" Covered="True" />
+          <Statement FileIndex="4" Line="18" Column="7" EndLine="18" EndColumn="40" Covered="True" />
+          <Statement FileIndex="4" Line="20" Column="7" EndLine="20" EndColumn="48" Covered="True" />
+          <Statement FileIndex="4" Line="22" Column="7" EndLine="22" EndColumn="41" Covered="True" />
+          <Statement FileIndex="4" Line="24" Column="7" EndLine="24" EndColumn="50" Covered="True" />
+          <Statement FileIndex="4" Line="25" Column="5" EndLine="25" EndColumn="6" Covered="True" />
+        </Member>
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_3.ZZ" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+      <Type Name="NearClass" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+        <Type Name="NNeSstedClass" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+          <Member Name="NNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+            <Statement FileIndex="4" Line="70" Column="30" EndLine="70" EndColumn="31" Covered="True" />
+            <Statement FileIndex="4" Line="71" Column="10" EndLine="71" EndColumn="26" Covered="True" />
+            <Statement FileIndex="4" Line="72" Column="8" EndLine="72" EndColumn="9" Covered="True" />
+          </Member>
+        </Type>
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Member Name="DoSomeNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Statement FileIndex="4" Line="65" Column="32" EndLine="65" EndColumn="33" Covered="True" />
+          <Statement FileIndex="4" Line="66" Column="8" EndLine="66" EndColumn="24" Covered="True" />
+          <Statement FileIndex="4" Line="67" Column="5" EndLine="67" EndColumn="6" Covered="True" />
+        </Member>
+      </Type>
+    </Namespace>
+  </Assembly>
+  <File Name="e:\Work\TeamCity\trunk\buildserver\dotNet\coverage\tests\testData\testAssemblies\dll1.cs" Index="1" />
+  <File Name="e:\Work\TeamCity\trunk\buildserver\dotNet\coverage\tests\testData\testAssemblies\dll2.cs" Index="2" />
+  <File Name="e:\Work\TeamCity\trunk\buildserver\dotNet\coverage\tests\testData\testAssemblies\dll3.cs" Index="3" />
+  <File Name="e:\Work\TeamCity\trunk\buildserver\dotNet\coverage\tests\testData\testAssemblies\dll4.cs" Index="4" />
+</Root>

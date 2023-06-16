@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-agent-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-agent-plugin-v1-xml">
+  <tool-deployment>
+    <layout>
+      <executable-files>
+        <include name='runtime-dotnet.sh'/>
+        <include name='runtime.sh'/>
+        <include name='dotCover.sh'/>
+        <include name='dotCover.exe'/>
+        <include name='linux-x64/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-x64/dotnet/dotnet'/>
+        <include name='linux-x64/mono/bin/mono-sgen'/>
+        <include name='macos-x64/JetBrains.Profiler.PdbServer'/>
+        <include name='macos-x64/dotnet/dotnet'/>
+        <include name='macos-x64/mono/bin/mono-sgen'/>
+        <include name='macos-x64/mono/bin/env-wrapper'/>
+      </executable-files>
+    </layout>
+  </tool-deployment>
+</teamcity-agent-plugin>

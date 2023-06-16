@@ -187,7 +187,7 @@ class DotCoverWorkflowComposer(
         }
 
     companion object {
-        internal const val DotCoverDataProcessorType = "dotNetCoverage"
+        internal const val DotCoverDataProcessorType = CoverageConstants.COVERAGE_TYPE
         internal const val DotCoverToolName = "dotcover"
         internal const val DotCoverConfigExtension = "dotCover.xml"
         internal const val DotCoverSnapshotExtension = ".dcvr"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root Name="Root" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+  <Assembly Name="dll1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+      <Type Name="slowTest1" CoveredStatements="21" TotalStatements="25" CoveragePercent="84">
+        <Member Name="Main" CoveredStatements="7" TotalStatements="7" CoveragePercent="100" />
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+  </Assembly>
+</Root>

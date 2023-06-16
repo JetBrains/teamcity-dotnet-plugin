@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root Name="Root" CoveredStatements="38" TotalStatements="42" CoveragePercent="90">
+  <Assembly Name="dll4" CoveredStatements="38" TotalStatements="42" CoveragePercent="90">
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_3.ZZ" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+      <Type Name="NearClass" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+        <Member Name="DoSomeNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Type Name="NNeSstedClass" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+          <Member Name="NNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        </Type>
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+    <Namespace Name="Dll1.dll.dll.rulezz.teamcity_3" CoveredStatements="32" TotalStatements="36" CoveragePercent="89">
+      <Type Name="slowTest1" CoveredStatements="32" TotalStatements="36" CoveragePercent="89">
+        <Member Name="Main" CoveredStatements="12" TotalStatements="12" CoveragePercent="100" />
+        <Type Name="NestedClass" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+          <Member Name="DoSomeNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+          <Type Name="NNestedClass" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+            <Member Name="NNested" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+            <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+          </Type>
+          <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        </Type>
+        <Member Name="CCC" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="FFF" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="AAA" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="BBB" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" />
+        <Member Name="GGG" CoveredStatements="2" TotalStatements="2" CoveragePercent="100" />
+        <Member Name="WWW" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name="TTT" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" />
+        <Member Name=".ctor" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+      </Type>
+    </Namespace>
+  </Assembly>
+</Root>
