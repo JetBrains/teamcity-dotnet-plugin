@@ -45,7 +45,7 @@ internal class CommandValidator : ICommandValidator
             var requiredAttribute = property.GetCustomAttribute<RequiredAttribute>();
 
             // check required attribute
-            if (requiredAttribute != null && (value == null || (string)value == string.Empty))
+            if (requiredAttribute != null && string.IsNullOrEmpty(value as string))
             {
                 validationErrors.Add(FormatValidationError(requiredAttribute.ErrorMessage));
                 continue;
