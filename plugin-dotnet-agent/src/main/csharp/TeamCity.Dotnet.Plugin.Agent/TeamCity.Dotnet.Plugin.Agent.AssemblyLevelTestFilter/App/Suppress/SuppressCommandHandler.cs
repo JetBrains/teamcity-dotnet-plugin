@@ -67,14 +67,14 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
     private async Task SaveBackupMetadata(SuppressCommand command, AssemblyPatchingResult patchingResult)
     {
         await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupFileMetadata(
-            Path: patchingResult.AssemblyPath,
+            OriginalPath: patchingResult.AssemblyPath,
             BackupPath: patchingResult.BackupAssemblyPath
         ));
 
         if (patchingResult.HasSymbols)
         {
             await _backupMetadataSaver.SaveAsync(command.BackupFilePath, new BackupFileMetadata(
-                Path: patchingResult.SymbolsPath!,
+                OriginalPath: patchingResult.SymbolsPath!,
                 BackupPath: patchingResult.BackupSymbolsPath!
             ));
         }

@@ -26,7 +26,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         var directoryInfoResult = _fileSystem.TryGetDirectoryInfo(target);
         if (directoryInfoResult.IsError)
         {
-            _logger.LogError(directoryInfoResult.Exception, "Failed to resolve target directory: {Target}", target);
+            _logger.LogError(directoryInfoResult.ErrorValue, "Failed to resolve target directory: {Target}", target);
             yield break;
         }
 

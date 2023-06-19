@@ -29,7 +29,7 @@ internal class TargetResolver : ITargetResolver
         var originalTargetPathResult = _fileSystem.TryGetFileSystemInfo(target);
         if (originalTargetPathResult.IsError)
         {
-            _logger.LogError(originalTargetPathResult.Exception, "Target not available: {Target}", target);
+            _logger.LogError(originalTargetPathResult.ErrorValue, "Target not available: {Target}", target);
             throw new FileNotFoundException($"Target '{target}' not available");
         }
 

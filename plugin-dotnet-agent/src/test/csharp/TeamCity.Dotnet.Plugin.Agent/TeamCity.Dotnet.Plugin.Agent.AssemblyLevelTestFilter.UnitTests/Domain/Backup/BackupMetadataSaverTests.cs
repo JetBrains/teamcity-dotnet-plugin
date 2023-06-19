@@ -27,7 +27,7 @@ public class BackupMetadataSaverTests
         const string filePath = "path_to_file";
         const string fullPath = "full_path_to_file";
         var backupMetadata = new BackupFileMetadata("backup_path", "original_path");
-        var expectedText = $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.Path}\"";
+        var expectedText = $"\"{backupMetadata.BackupPath}\";\"{backupMetadata.OriginalPath}\"";
         var path = new Mock<IPath>();
         path.Setup(p => p.GetFullPath(filePath)).Returns(fullPath);
         _fileSystemMock.Setup(fs => fs.Path).Returns(path.Object);

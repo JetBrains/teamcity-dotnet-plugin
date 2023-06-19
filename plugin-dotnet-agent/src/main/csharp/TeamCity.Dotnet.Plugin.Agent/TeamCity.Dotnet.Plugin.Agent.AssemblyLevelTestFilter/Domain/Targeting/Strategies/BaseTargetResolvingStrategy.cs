@@ -28,7 +28,7 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
         var fileSystemInfoResult = FileSystem.TryGetFileSystemInfo(target);
         if (fileSystemInfoResult.IsError)
         {
-            _logger.Log(LogLevel.Warning, fileSystemInfoResult.Exception,"Can't access to target {TargetType} path: {Target}", TargetType, target);
+            _logger.Log(LogLevel.Warning, fileSystemInfoResult.ErrorValue,"Can't access to target {TargetType} path: {Target}", TargetType, target);
             return null;
         }
         

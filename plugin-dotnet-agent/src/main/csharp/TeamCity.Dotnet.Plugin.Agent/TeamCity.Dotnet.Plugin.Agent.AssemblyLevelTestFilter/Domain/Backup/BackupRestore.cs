@@ -31,52 +31,52 @@ internal class BackupRestore : IBackupRestore
         // read the csv file line by line
         await foreach (var (line, lineNumber) in _fileReader.ReadLinesAsync(csvFilePath))
         {
-            var paths = line.Split(';').Select(s => s.Trim('"')).ToArray();
-            if (paths.Length != 2)
+            var metadataEntryResult = BackupFileMetadata.FromString(line);
+            if (metadataEntryResult.IsError)
             {
-                _logger.LogInformation("Invalid line {LineNumber}: `{Line}`", lineNumber, line);
+                _logger.LogWarning("Invalid line {LineNumber}: {Reason}", lineNumber, metadataEntryResult.ErrorValue);
                 continue;
             }
 
-            var (backupFilePath, originalFilePath) = (paths[0], paths[1]);
+            var metadata = metadataEntryResult.Value;
             
-            _logger.LogDebug("Restoring {BackupFilePath} -> {OriginalFilePath}", backupFilePath, originalFilePath);
+            _logger.LogDebug("Restoring {BackupFilePath} -> {OriginalFilePath}", metadata.BackupPath, metadata.OriginalPath);
             
-            if (!_fileSystem.File.Exists(backupFilePath))
+            if (!_fileSystem.File.Exists(metadata.BackupPath))
             {
-                _logger.LogWarning("Backup file not found: {BackupFilePath}", backupFilePath);
+                _logger.LogWarning("Backup file not found: {BackupFilePath}", metadata.BackupPath);
                 continue;
             }
             
             try
             {
-                // delete the original file
-                if (!_fileSystem.File.Exists(originalFilePath))
+                // delete the file by original path
+                if (!_fileSystem.File.Exists(metadata.OriginalPath))
                 {
-                    _logger.LogWarning("Original file not found: {OriginalFilePath}", originalFilePath);
+                    _logger.LogWarning("Original file path not found: {OriginalFilePath}", metadata.OriginalPath);
                 }
                 else
                 {
                     try
                     {
-                        _fileSystem.File.Delete(originalFilePath);
+                        _fileSystem.File.Delete(metadata.OriginalPath);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("Error during the file {OriginalFilePath} removing: {Message}", originalFilePath, ex.Message);
+                        _logger.LogError("Error during the file {OriginalFilePath} removing: {Message}", metadata.OriginalPath, ex.Message);
                     }
                 }
 
                 // rename the backup file to the original one
-                _fileSystem.File.Move(backupFilePath, originalFilePath);
-                _logger.LogInformation("File {BackupFilePath} restored to {OriginalFilePath}", backupFilePath, originalFilePath);
+                _fileSystem.File.Move(metadata.BackupPath, metadata.OriginalPath);
+                _logger.LogInformation("File {BackupFilePath} restored to {OriginalFilePath}", metadata.BackupPath, metadata.OriginalPath);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     "Error during replacing {BackupFilePath} -> {OriginalFilePath}: {Message}",
-                    backupFilePath,
-                    originalFilePath,
+                    metadata.BackupPath,
+                    metadata.OriginalPath,
                     ex.Message
                 );
             }

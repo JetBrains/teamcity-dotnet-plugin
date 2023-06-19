@@ -1,7 +1,6 @@
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure;
 
 public abstract class Result<TSuccess, TError>
-    where TError : Exception
 {
     public abstract bool IsSuccess { get; }
     
@@ -9,7 +8,7 @@ public abstract class Result<TSuccess, TError>
     
     public abstract TSuccess Value { get; }
     
-    public abstract TError Exception { get; }
+    public abstract TError ErrorValue { get; }
 
     private Result() {}
     
@@ -30,14 +29,14 @@ public abstract class Result<TSuccess, TError>
         
         public override TSuccess Value { get; }
 
-        public override TError Exception => throw new InvalidOperationException("Attempt to get Error value from Success");
+        public override TError ErrorValue => throw new InvalidOperationException("Attempt to get Error value from Success");
     }
 
     private sealed class ErrorResult : Result<TSuccess, TError>
     {
         public ErrorResult(TError value)
         {
-            Exception = value;
+            ErrorValue = value;
         }
 
         public override bool IsSuccess => false;
@@ -46,6 +45,6 @@ public abstract class Result<TSuccess, TError>
         
         public override TSuccess Value => throw new InvalidOperationException("Attempt to get Success value from Error");
         
-        public override TError Exception { get; }
+        public override TError ErrorValue { get; }
     }
 }

@@ -85,7 +85,7 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
         var testSelectorsFileResult = _fileSystem.TryGetFileInfo(filePath);
         if (testSelectorsFileResult.IsError)
         {
-            _logger.Log(LogLevel.Warning, testSelectorsFileResult.Exception, "Can't access to test selectors file: {Target}", filePath);
+            _logger.Log(LogLevel.Warning, testSelectorsFileResult.ErrorValue, "Can't access to test selectors file: {Target}", filePath);
             return null;
         }
 

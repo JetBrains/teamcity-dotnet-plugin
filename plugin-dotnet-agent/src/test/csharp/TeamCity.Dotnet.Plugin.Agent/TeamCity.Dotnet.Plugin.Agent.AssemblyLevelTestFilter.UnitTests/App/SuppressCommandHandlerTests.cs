@@ -84,19 +84,19 @@ public class SuppressCommandHandlerTests
         _mockBackupMetadataSaver.Verify(m =>
             m.SaveAsync(
                 _testCommand.BackupFilePath,
-                It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly1 && fm.BackupPath == backupAssemblyPath1)),
+                It.Is<BackupFileMetadata>(fm => fm.OriginalPath == targetAssembly1 && fm.BackupPath == backupAssemblyPath1)),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>
                 m.SaveAsync(
                     _testCommand.BackupFilePath,
-                    It.Is<BackupFileMetadata>(fm => fm.Path == targetAssembly2 && fm.BackupPath == backupAssemblyPath2 )),
+                    It.Is<BackupFileMetadata>(fm => fm.OriginalPath == targetAssembly2 && fm.BackupPath == backupAssemblyPath2 )),
             Times.Once
         );
         _mockBackupMetadataSaver.Verify(m =>
                 m.SaveAsync(
                     _testCommand.BackupFilePath,
-                    It.Is<BackupFileMetadata>(fm => fm.Path == assemblySymbolsPath && fm.BackupPath == backupAssemblySymbolsPath )),
+                    It.Is<BackupFileMetadata>(fm => fm.OriginalPath == assemblySymbolsPath && fm.BackupPath == backupAssemblySymbolsPath )),
             Times.Once
         );
     }
