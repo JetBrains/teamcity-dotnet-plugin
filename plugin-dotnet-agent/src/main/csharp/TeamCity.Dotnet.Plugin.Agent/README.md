@@ -52,7 +52,7 @@ The metadata .csv file have the following format:
 ```
 dotnet ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
   restore \
-  --metadata-file <PATH_METADATA_FILE>
+  --backup-metadata <PATH_METADATA_FILE>
 ```
 - `<PATH_METADATA_FILE>`: The path to the CSV file containing the metadata of the suppressed assemblies.
 
