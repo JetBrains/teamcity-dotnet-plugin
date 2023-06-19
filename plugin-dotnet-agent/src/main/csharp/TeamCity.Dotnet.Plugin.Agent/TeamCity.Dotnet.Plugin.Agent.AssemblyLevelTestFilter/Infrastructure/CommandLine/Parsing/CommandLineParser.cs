@@ -30,7 +30,7 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
         var unknownArguments = new List<string>();
         var arguments = new Queue<string>(args);
         var commandType = _commandType;
-        var prevKey = string.Empty;
+        string prevKey = string.Empty;
         
         // we have 5 possibilities for every single argument:
         // - it's a command
@@ -43,85 +43,36 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
             var properties = commandType.GetProperties();
             
             // if prev argument was option required value – current argument is value
-            if (!string.IsNullOrWhiteSpace(prevKey))
+            if (!string.IsNullOrWhiteSpace(prevKey) && !IsArgumentOption(properties, argument) && !IsArgumentCommand(properties, argument))
             {
-                var isArgumentOption = OnlyWithAttribute<CommandOptionAttribute>(properties)
-                    .Select(x => x.Item2)
-                    .SelectMany(a => a.Options)
-                    .Any(o => o == argument.ToLowerInvariant());
-                var isArgumentCommand = OnlyWithAttribute<CommandAttribute>(properties)
-                    .Select(x => x.Item2)
-                    .Any(a => a.Command == argument.ToLowerInvariant());
-                if (!isArgumentOption && !isArgumentCommand)
-                {
-                    mappingsResult.Add(prevKey, argument);
-                    prevKey = string.Empty;    // reset key and value
-                    continue;
-                }
-            }
-
-            // check if argument is an option
-            var isOption = false;
-            foreach (var (optionProperty, optionAttribute) in OnlyWithAttribute<CommandOptionAttribute>(properties))
-            {
-                // if current argument is option...
-                if (optionAttribute.Options.All(o => o != argument.ToLowerInvariant()))
-                {
-                    continue;
-                }
-                
-                isOption = true;
-                
-                // ...and requires value – next argument is value
-                if (optionAttribute.RequiresValue)
-                {
-                    prevKey = Key(commandPath, optionProperty.Name);
-                }
-                else
-                {
-                    // ...and doesn't require value – it's a flag option – set true
-                    mappingsResult.Add(Key(commandPath, optionProperty.Name), True);
-                }
-                break;
-            }
-            // if it was an option – skip checking if argument os a command
-            if (isOption)
-            {
+                mappingsResult.Add(prevKey, argument);
+                prevKey = string.Empty;    // reset key and value
                 continue;
             }
 
-            // check if argument is a command
-            var isCommand = false;
-            foreach (var (commandProperty, commandAttribute) in OnlyWithAttribute<CommandAttribute>(properties))
+            var (isOption, key) = TryParseOption(properties, argument, commandPath, mappingsResult);
+            if (isOption)
             {
-                // if current argument is a command...
-                if (commandAttribute.Command != argument.ToLowerInvariant())
+                if (key != string.Empty)
                 {
-                    continue;
+                    prevKey = key;
                 }
-                
-                isCommand = true;
-                
-                // 1. set IsActive == true for current command to instantiate command object
-                mappingsResult.Add(Key(commandPath, commandProperty.Name, nameof(Command.IsActive)), True);
-                    
-                // 2. set current command type as type of the command add command name to command path
-                // (go deeper in command tree)
-                commandType = commandProperty.PropertyType;
-                commandPath.Add(commandProperty.Name);
-                
-                break;
+                continue;
             }
-            
+
+            var (isCommand, cmdType) = TryParseCommand(properties, argument, mappingsResult, commandPath);
             if (isCommand)
             {
+                if (cmdType != null)
+                {
+                    commandType = cmdType;
+                }
                 continue;
             }
             
             // unknown argument
             unknownArguments.Add(argument);
         }
-        
         
         if (commandPath.Count <= 1)
         {
@@ -137,6 +88,78 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
 
         return new CommandLineParsingResult(mappingsResult, unknownArguments);
     }
+
+    private static (bool, Type?) TryParseCommand(
+        IEnumerable<PropertyInfo> properties, string argument, IDictionary<string, string> mappingsResult, ICollection<string> commandPath)
+    {
+        var isCommand = false;
+        Type? commandType = null;
+        foreach (var (commandProperty, commandAttribute) in OnlyWithAttribute<CommandAttribute>(properties))
+        {
+            // if current argument is a command...
+            if (commandAttribute.Command != argument.ToLowerInvariant())
+            {
+                continue;
+            }
+
+            isCommand = true;
+
+            // 1. set IsActive == true for current command to instantiate command object
+            mappingsResult.Add(Key(commandPath, commandProperty.Name, nameof(Command.IsActive)), True);
+
+            // 2. set current command type as type of the command add command name to command path
+            // (go deeper in command tree)
+            commandType = commandProperty.PropertyType;
+            commandPath.Add(commandProperty.Name);
+
+            break;
+        }
+
+        return (isCommand, commandType);
+    }
+
+    private static (bool, string) TryParseOption(
+        IEnumerable<PropertyInfo> properties, string argument, IEnumerable<string> commandPath, IDictionary<string, string> mappingsResult)
+    {
+        var isOption = false;
+        var key = string.Empty;
+        foreach (var (optionProperty, optionAttribute) in OnlyWithAttribute<CommandOptionAttribute>(properties))
+        {
+            // if current argument is an option...
+            if (optionAttribute.Options.All(o => o != argument.ToLowerInvariant()))
+            {
+                continue;
+            }
+
+            isOption = true;
+
+            // ...and requires value – next argument is value
+            if (optionAttribute.RequiresValue)
+            {
+                key = Key(commandPath, optionProperty.Name);
+            }
+            else
+            {
+                // ...and doesn't require value – it's a flag option – set true
+                mappingsResult.Add(Key(commandPath, optionProperty.Name), True);
+            }
+
+            break;
+        }
+
+        return (isOption, key);
+    }
+
+    private static bool IsArgumentCommand(IEnumerable<PropertyInfo> properties, string argument) =>
+        OnlyWithAttribute<CommandAttribute>(properties)
+            .Select(x => x.Item2)
+            .Any(a => a.Command == argument.ToLowerInvariant());
+
+    private static bool IsArgumentOption(IEnumerable<PropertyInfo> properties, string argument) =>
+        OnlyWithAttribute<CommandOptionAttribute>(properties)
+            .Select(x => x.Item2)
+            .SelectMany(a => a.Options)
+            .Any(o => o == argument.ToLowerInvariant());
 
     private static IEnumerable<(PropertyInfo, TAttribute)> OnlyWithAttribute<TAttribute>(IEnumerable<PropertyInfo> properties) where TAttribute : Attribute =>
         properties
