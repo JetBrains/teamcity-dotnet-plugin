@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
@@ -25,14 +25,16 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
 
     protected IFileSystemInfo? TryToGetTargetFile(string target)
     {
-        var (pathFileSystemInfo, exception) = FileSystem.GetFileSystemInfo(target);
-        if (exception != null)
+        var fileSystemInfoResult = FileSystem.TryGetFileSystemInfo(target);
+        if (fileSystemInfoResult.IsError)
         {
-            _logger.Log(LogLevel.Warning, exception,"Can't access to target {TargetType} path: {Target}", TargetType, target);
+            _logger.Log(LogLevel.Warning, fileSystemInfoResult.Exception,"Can't access to target {TargetType} path: {Target}", TargetType, target);
             return null;
         }
         
-        if (pathFileSystemInfo!.IsFile() && AllowedTargetExtensions.All(e => e != pathFileSystemInfo!.Extension))
+        var pathFileSystemInfo = fileSystemInfoResult.Value;
+        
+        if (pathFileSystemInfo.IsFile() && AllowedTargetExtensions.All(e => e != pathFileSystemInfo.Extension))
         {
             _logger.LogWarning(
                 "Target file {TargetType} has unsupported extension: {Target}. Supported extensions are: {AllowedExtensions}", 

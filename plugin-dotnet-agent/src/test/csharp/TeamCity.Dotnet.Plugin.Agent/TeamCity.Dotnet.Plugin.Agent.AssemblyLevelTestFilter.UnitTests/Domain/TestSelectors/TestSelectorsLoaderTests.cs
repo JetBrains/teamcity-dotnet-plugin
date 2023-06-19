@@ -1,8 +1,8 @@
 using System.IO.Abstractions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
 using Moq;
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 
 #pragma warning disable CS1998
 

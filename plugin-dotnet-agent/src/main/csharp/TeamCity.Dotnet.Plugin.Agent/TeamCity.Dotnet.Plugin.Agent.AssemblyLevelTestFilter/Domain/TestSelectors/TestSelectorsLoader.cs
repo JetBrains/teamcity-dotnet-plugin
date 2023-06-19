@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 
@@ -82,13 +82,13 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
             return null;
         }
 
-        var (testSelectorsFile, exception) = _fileSystem.GetFileInfo(filePath);
-        if (exception != null)
+        var testSelectorsFileResult = _fileSystem.TryGetFileInfo(filePath);
+        if (testSelectorsFileResult.IsError)
         {
-            _logger.Log(LogLevel.Warning, exception,"Can't access to test selectors file: {Target}", filePath);
+            _logger.Log(LogLevel.Warning, testSelectorsFileResult.Exception, "Can't access to test selectors file: {Target}", filePath);
             return null;
         }
 
-        return testSelectorsFile;
+        return testSelectorsFileResult.Value;
     }
 }

@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
@@ -23,17 +23,19 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
     {
         _logger.LogInformation("Resolving target directory: {Target}", target);
         
-        var (directory, exception) = _fileSystem.GetDirectoryInfo(target);
-        if (exception != null)
+        var directoryInfoResult = _fileSystem.TryGetDirectoryInfo(target);
+        if (directoryInfoResult.IsError)
         {
-            _logger.LogError(exception, "Failed to resolve target directory: {Target}", target);
+            _logger.LogError(directoryInfoResult.Exception, "Failed to resolve target directory: {Target}", target);
             yield break;
         }
+
+        var directoryInfo = directoryInfoResult.Value;
         
         var slnFiles = GetFileSearchPattern(TargetType.Solution)
-            .SelectMany(sp => directory!.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
+            .SelectMany(sp => directoryInfo.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
         var csprojFiles = GetFileSearchPattern(TargetType.Project)
-            .SelectMany(sp =>directory!.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
+            .SelectMany(sp => directoryInfo.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
 
         // not sure how to handle this
         // TODO need to test how `dotnet test` handles this:
@@ -61,7 +63,7 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
         {
             foreach (var fileSearchPattern in GetFileSearchPattern(TargetType.Assembly))
             {
-                foreach (var assemblyFile in directory!.GetFiles(fileSearchPattern, SearchOption.AllDirectories))
+                foreach (var assemblyFile in directoryInfo.GetFiles(fileSearchPattern, SearchOption.AllDirectories))
                 {
                     _logger.LogInformation("Resolved assembly in target directory: {Assembly}", assemblyFile.FullName);
                     yield return (assemblyFile, TargetType.Assembly);

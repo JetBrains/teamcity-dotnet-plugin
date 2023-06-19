@@ -1,3 +1,6 @@
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileSystemExtensions;
+
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
 internal enum TargetType
@@ -15,18 +18,18 @@ internal static class TargetTypeExtensions
         switch (targetType)
         {
             case TargetType.Solution:
-                yield return Infrastructure.FS.FileExtension.Solution;
+                yield return FileExtension.Solution;
                 break;
             case TargetType.Project:
-                yield return Infrastructure.FS.FileExtension.CSharpProject;
-                yield return Infrastructure.FS.FileExtension.VisualBasicProject;
-                yield return Infrastructure.FS.FileExtension.FSharpProject;
-                yield return Infrastructure.FS.FileExtension.MsBuildProject;
-                yield return Infrastructure.FS.FileExtension.MsBuildProject2;
+                yield return FileExtension.CSharpProject;
+                yield return FileExtension.VisualBasicProject;
+                yield return FileExtension.FSharpProject;
+                yield return FileExtension.MsBuildProject;
+                yield return FileExtension.MsBuildProject2;
                 break;
             case TargetType.Assembly:
-                yield return Infrastructure.FS.FileExtension.Dll;
-                yield return Infrastructure.FS.FileExtension.Exe;
+                yield return FileExtension.Dll;
+                yield return FileExtension.Exe;
                 break;
             case TargetType.Directory:
                 throw new ArgumentOutOfRangeException(nameof(targetType), targetType, "Directory has no file extension");

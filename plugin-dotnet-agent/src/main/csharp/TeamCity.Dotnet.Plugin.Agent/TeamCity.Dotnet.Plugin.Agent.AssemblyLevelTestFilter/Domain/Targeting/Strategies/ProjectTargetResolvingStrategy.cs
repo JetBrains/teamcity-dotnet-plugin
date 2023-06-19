@@ -3,8 +3,9 @@ using System.Xml.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using Microsoft.Extensions.Logging;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.MsBuild;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
@@ -45,14 +46,16 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy, ITa
             yield break;
         }
         
-        var (assemblyFileInfo, assemblyInfoException) = FileSystem.GetFileInfo(outputAssemblyPath!);
-        if (assemblyInfoException != null)
+        var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPath!);
+        if (assemblyFileInfoResult.IsError)
         {
-            _logger.LogWarning(assemblyInfoException, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
+            _logger.LogWarning(assemblyFileInfoResult.Exception, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
             yield break;
         }
+
+        var assemblyFileInfo = assemblyFileInfoResult.Value;
         
-        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo!.FullName);
+        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
         yield return (assemblyFileInfo, TargetType.Assembly);
     }
 

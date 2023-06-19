@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 
-namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FS;
+namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 
 internal class FileCopier : IFileCopier
 {
