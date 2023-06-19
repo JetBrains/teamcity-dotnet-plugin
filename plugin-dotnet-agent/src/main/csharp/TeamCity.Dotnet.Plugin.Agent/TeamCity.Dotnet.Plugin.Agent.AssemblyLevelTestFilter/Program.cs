@@ -26,15 +26,15 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter;
 
 internal static class Program
 {
-    public static Task Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Console.WriteLine("TeamCity.Dotnet.Plugin.Agent – .NET Assembly Level Test Filter");
         Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
         Console.WriteLine();
         
         var commandLineParsingResult = new CommandLineParser<MainCommand>().Parse(args);
-        
-        return Host
+
+        var host = await Host
             .CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((_, config) =>
             {
@@ -70,10 +70,8 @@ internal static class Program
                     .AddSingletonByInterface<IHelpPrinter>()
                     .AddSingletonByInterface<ICommandHandler>()
                     .AddSingletonByInterface<ILoggerConfigurator>()
-                    .AddSingletonByInterface<ICommandValidator>();
-
-                // hosted service as an entry point
-                services.AddHostedService<CommandRouter<MainCommand>>();
+                    .AddSingletonByInterface<ICommandValidator>()
+                    .AddSingleton<CommandRouter<MainCommand>>();
             })
             .ConfigureLogging((_, loggingBuilder) =>
             {
@@ -83,6 +81,12 @@ internal static class Program
                     .SetMinimumLevel(LogLevel.Trace)
                     .Services.AddSingleton<ILoggerProvider, CustomLoggerProvider<MainCommand>>();
             })
+            .UseConsoleLifetime()
             .StartAsync();
+
+        var commandRouter = host.Services.GetRequiredService<CommandRouter<MainCommand>>();
+        
+        // entry point
+        await commandRouter.Route();
     }
 }

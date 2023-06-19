@@ -8,7 +8,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Comman
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine;
 
-internal class CommandRouter<TCommand> : IHostedService
+internal class CommandRouter<TCommand>
     where TCommand : Command
 {
     private readonly IOptions<TCommand> _options;
@@ -34,7 +34,7 @@ internal class CommandRouter<TCommand> : IHostedService
         _applicationLifetime = applicationLifetime;
     }
     
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public async Task Route()
     {
         var rootCommand = _options.Value;
         
@@ -73,8 +73,6 @@ internal class CommandRouter<TCommand> : IHostedService
         
         _applicationLifetime.StopApplication();
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     private ICommandHandler GetCommandHandler(Command selectedCommand)
     {

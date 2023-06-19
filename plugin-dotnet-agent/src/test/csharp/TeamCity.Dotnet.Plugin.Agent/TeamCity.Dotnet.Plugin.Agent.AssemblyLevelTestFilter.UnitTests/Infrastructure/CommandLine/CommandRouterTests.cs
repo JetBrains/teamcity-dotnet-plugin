@@ -49,7 +49,7 @@ public class CommandRouterTests
         _mockValidator.Setup(v => v.Validate(command)).Returns(ValidationResult.Valid);
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockNestedCommand1Handler.Verify(h => h.ExecuteAsync(subCommand), Times.Once);
@@ -64,7 +64,7 @@ public class CommandRouterTests
         _mockValidator.Setup(v => v.Validate(command)).Returns(ValidationResult.Valid);
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockHelpPrinter.Verify(h => h.PrintHelp(It.IsAny<Command>()), Times.Once);
@@ -79,7 +79,7 @@ public class CommandRouterTests
         _mockOptions.Setup(o => o.Value).Returns(command);
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockHelpPrinter.Verify(h => h.PrintHelp(It.IsAny<Command>()), Times.Once);
@@ -95,7 +95,7 @@ public class CommandRouterTests
         _mockValidator.Setup(v => v.Validate(command)).Returns(ValidationResult.Invalid("Invalid Command"));
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockHelpPrinter.Verify(h => h.PrintHelp(It.IsAny<Command>()), Times.Once);
@@ -111,7 +111,7 @@ public class CommandRouterTests
         _mockValidator.Setup(v => v.Validate(command)).Returns(ValidationResult.Invalid("Invalid Command"));
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockHelpPrinter.Verify(h => h.PrintHelp(command), Times.Once);
@@ -127,7 +127,7 @@ public class CommandRouterTests
         _mockOptions.Setup(o => o.Value).Returns(command);
 
         // Act
-        await _router.StartAsync(CancellationToken.None);
+        await _router.Route();
 
         // Assert
         _mockHelpPrinter.Verify(h => h.PrintHelp(It.IsAny<Command>()), Times.Once);
