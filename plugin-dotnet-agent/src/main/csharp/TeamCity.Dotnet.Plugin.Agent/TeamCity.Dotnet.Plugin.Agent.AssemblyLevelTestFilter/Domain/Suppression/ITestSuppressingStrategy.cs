@@ -13,5 +13,4 @@ internal interface ITestSuppressingStrategy<TTestEngine, in TTestSelector> : ITe
     where TTestEngine : ITestEngine
     where TTestSelector : ITestSelector
 {
-    TestSuppressionResult SuppressTestsBySelector(IDotnetType type, TTestSelector testSelector);
 }

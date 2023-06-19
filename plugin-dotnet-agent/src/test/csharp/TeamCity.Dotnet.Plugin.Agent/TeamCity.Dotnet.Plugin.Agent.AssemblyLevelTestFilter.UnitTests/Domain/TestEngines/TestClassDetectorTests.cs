@@ -49,7 +49,7 @@ public class TestClassDetectorTests
 
         var testEngineMock = new Mock<ITestEngine>();
         testEngineMock.Setup(e => e.Name).Returns("TestEngineName");
-        testEngineMock.Setup(e => e.AssembliesNames).Returns(new List<string> { "TestAssemblyName" });
+        testEngineMock.Setup(e => e.AssemblyNames).Returns(new List<string> { "TestAssemblyName" });
         testEngineMock.Setup(e => e.TestClassAttributes).Returns(new List<string> { "TestClassAttribute" });
         testEngineMock.Setup(e => e.TestMethodAttributes).Returns(new List<string> { "TestMethodAttribute" });
         
@@ -62,7 +62,7 @@ public class TestClassDetectorTests
         Assert.Equal(typeMock.Object, testClass.Type);
         Assert.Contains(testEngineMock.Object, testClass.TestEngines);
         Assert.Equal("TestEngineName", testClass.TestEngines.First().Name);
-        Assert.Contains("TestAssemblyName", testClass.TestEngines.First().AssembliesNames);
+        Assert.Contains("TestAssemblyName", testClass.TestEngines.First().AssemblyNames);
         Assert.Contains("TestClassAttribute", testClass.TestEngines.First().TestClassAttributes);
         Assert.Contains("TestMethodAttribute", testClass.TestEngines.First().TestMethodAttributes);
     }

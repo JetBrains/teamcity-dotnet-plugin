@@ -52,7 +52,7 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
                 continue;
             }
 
-            if (testQueryFileLine.TrimStart().StartsWith("#"))
+            if (testQueryFileLine.StartsWith("#"))
             {
                 _logger.LogDebug("Skip the control line from test query file: {TestQueryFileLine}", testQueryFileLine);
                 continue;

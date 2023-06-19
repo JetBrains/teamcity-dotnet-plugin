@@ -4,7 +4,7 @@ internal class XUnit : ITestEngine
 {
     public string Name => "xUnit";
 
-    public IEnumerable<string> AssembliesNames => new[]
+    public IEnumerable<string> AssemblyNames => new[]
     {
         "xunit.core",
     };

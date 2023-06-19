@@ -4,7 +4,7 @@ internal class MsTest : ITestEngine
 {
     public string Name => "MSTest";
     
-    public IEnumerable<string> AssembliesNames => new[]
+    public IEnumerable<string> AssemblyNames => new[]
     {
         "Microsoft.VisualStudio.TestPlatform.TestFramework"
     };

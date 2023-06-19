@@ -2,7 +2,6 @@ using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
@@ -74,7 +73,7 @@ internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, IT
             assemblyFile, string.Join("\n\t\t\t\t", assemblyReferences.Select(a => a.FullName)));
 
         var detectedEngines = _testEngines
-            .Where(te => te.AssembliesNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
+            .Where(te => te.AssemblyNames.Any(tca => assemblyReferences.Any(a => a.Name == tca)))
             .Select(te => te.Name)
             .ToArray();
         return (true, detectedEngines);

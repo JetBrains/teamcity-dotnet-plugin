@@ -99,7 +99,7 @@ public class TestsSuppressorTests
     internal class TestTestEngine : ITestEngine
     {
         public string Name => "TestTestEngine";
-        public IEnumerable<string> AssembliesNames => Array.Empty<string>();
+        public IEnumerable<string> AssemblyNames => Array.Empty<string>();
         public IReadOnlyList<string> TestClassAttributes => Array.Empty<string>();
         public IReadOnlyList<string> TestMethodAttributes => Array.Empty<string>();
     }

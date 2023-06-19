@@ -150,7 +150,7 @@ public class AssemblyTargetResolvingStrategyTests
     internal class TestTestEngine1 : ITestEngine
     {
         public string Name => "TestEngine1";
-        public IEnumerable<string> AssembliesNames { get; } = new[] { "assembly1", "assembly2" };
+        public IEnumerable<string> AssemblyNames { get; } = new[] { "assembly1", "assembly2" };
         public IReadOnlyList<string> TestClassAttributes => new List<string>();
         public IReadOnlyList<string> TestMethodAttributes => new List<string>();
     }
@@ -158,7 +158,7 @@ public class AssemblyTargetResolvingStrategyTests
     internal class TestTestEngine2 : ITestEngine
     {
         public string Name => "TestEngine2";
-        public IEnumerable<string> AssembliesNames { get; } = new[] { "assembly3", "assembly4" };
+        public IEnumerable<string> AssemblyNames { get; } = new[] { "assembly3", "assembly4" };
         public IReadOnlyList<string> TestClassAttributes => new List<string>();
         public IReadOnlyList<string> TestMethodAttributes => new List<string>();
     }

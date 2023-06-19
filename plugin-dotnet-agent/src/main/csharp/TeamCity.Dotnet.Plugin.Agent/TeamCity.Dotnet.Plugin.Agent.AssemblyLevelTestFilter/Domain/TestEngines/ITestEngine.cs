@@ -4,7 +4,7 @@ internal interface ITestEngine
 {
     public string Name { get; }
     
-    public IEnumerable<string> AssembliesNames { get; }
+    public IEnumerable<string> AssemblyNames { get; }
 
     public IReadOnlyList<string> TestClassAttributes { get; }
     

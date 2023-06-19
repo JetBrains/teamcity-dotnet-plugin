@@ -12,11 +12,6 @@ internal class TestClassDetector : ITestClassDetector
     }
     
     public IEnumerable<TestClass> Detect(IDotnetAssembly assembly) => assembly.Types
-        .GroupBy(type => _testEngineRecognizer.RecognizeTestEngines(type))
-        .Where(typesByTestEngine => typesByTestEngine.Key.Any()) // filter out types that are not test classes
-        .SelectMany(testClassesByTestEngine =>
-        {
-            var testEngine = testClassesByTestEngine.Key!;
-            return testClassesByTestEngine.Select(testClassType => new TestClass(testClassType, testEngine));
-        });
+        .Select(type => new TestClass(type, _testEngineRecognizer.RecognizeTestEngines(type)))
+        .Where(testClass => testClass.TestEngines.Any());
 }

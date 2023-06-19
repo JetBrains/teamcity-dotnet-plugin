@@ -24,22 +24,23 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
     
     protected TestSuppressionResult RemoveAllTestAttributes(IDotnetType type)
     {
-        var (suppressedTests, suppressedClasses) = RemoveTestAttributesFromClass(type);
-        suppressedTests += RemoveTestAttributesFromMethods(type);
+        var suppressedClasses = RemoveTestAttributesFromClass(type);
+        var suppressedTests = RemoveTestAttributesFromMethods(type);
         return new TestSuppressionResult(suppressedTests, suppressedClasses);
     }
 
-    public abstract TestSuppressionResult SuppressTestsBySelector(IDotnetType type, TTestSelector testSelector);
-
     public TestSuppressionResult SuppressTests(IDotnetType type, ITestSelector testSelector) =>
         SuppressTestsBySelector(type, (TTestSelector) testSelector);
+
+    private TestSuppressionResult SuppressTestsBySelector(IDotnetType type, TTestSelector testSelector) =>
+        RemoveAllTestAttributes(type);
 
     private int RemoveTestAttributesFromMethods(IDotnetType testClass)
     {
         var suppressedTests = 0;
         foreach (var method in GetTestMethods(testClass))
         {
-            foreach (var testAttribute in GetMethodsTestAttributes(method))
+            foreach (var testAttribute in GetTestMethodAttributes(method))
             {
                 method.RemoveCustomAttribute(testAttribute);
             }
@@ -49,28 +50,22 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
         return suppressedTests;
     }
 
-    private (int, int) RemoveTestAttributesFromClass(IDotnetType testClass)
+    private int RemoveTestAttributesFromClass(IDotnetType testClass)
     {
-        var (suppressedTests, suppressedClasses) = (0, 0);
-        foreach (var testAttribute in GetTypeTestAttributes(testClass))
+        var suppressedClasses = 0;
+        foreach (var testAttribute in GetTestClassAttributes(testClass))
         {
             testClass.RemoveCustomAttribute(testAttribute);
             suppressedClasses++;
         }
-        return (suppressedTests, suppressedClasses);
+        return suppressedClasses;
     }
 
-    private List<IDotnetCustomAttribute> GetMethodsTestAttributes(IDotnetMethod method)
-    {
-        return method.CustomAttributes
-            .Where(a => TestEngine.TestMethodAttributes.Contains(a.FullName))
-            .ToList();
-    }
+    private List<IDotnetCustomAttribute> GetTestMethodAttributes(IDotnetMethod method) => method.CustomAttributes
+        .Where(a => TestEngine.TestMethodAttributes.Contains(a.FullName))
+        .ToList();
 
-    private List<IDotnetCustomAttribute> GetTypeTestAttributes(IDotnetType testClass)
-    {
-        return testClass.CustomAttributes
-            .Where(a => TestEngine.TestClassAttributes.Contains(a.FullName))
-            .ToList();
-    }
+    private List<IDotnetCustomAttribute> GetTestClassAttributes(IDotnetType testClass) => testClass.CustomAttributes
+        .Where(a => TestEngine.TestClassAttributes.Contains(a.FullName))
+        .ToList();
 }

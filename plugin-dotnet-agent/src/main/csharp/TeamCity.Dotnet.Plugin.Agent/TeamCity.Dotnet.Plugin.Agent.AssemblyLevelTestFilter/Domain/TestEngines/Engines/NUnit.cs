@@ -4,7 +4,7 @@ internal class NUnit : ITestEngine
 {
     public string Name => "NUnit";
     
-    public IEnumerable<string> AssembliesNames => new[]
+    public IEnumerable<string> AssemblyNames => new[]
     {
         "nunit.framework"
     };

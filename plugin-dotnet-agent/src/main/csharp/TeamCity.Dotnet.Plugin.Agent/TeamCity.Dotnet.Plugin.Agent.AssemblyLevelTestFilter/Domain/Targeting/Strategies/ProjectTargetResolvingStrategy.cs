@@ -1,7 +1,5 @@
 using System.IO.Abstractions;
-using System.Xml.Linq;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Locator;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.MsBuild;
