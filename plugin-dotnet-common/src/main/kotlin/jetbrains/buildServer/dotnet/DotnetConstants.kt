@@ -55,6 +55,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_EXCLUDES_FILE = "teamcity.build.parallelTests.excludesFile"
     const val PARAM_PARALLEL_TESTS_INCLUDES_FILE = "teamcity.build.parallelTests.includesFile"
     const val PARAM_PARALLEL_TESTS_CURRENT_BATCH = "teamcity.build.parallelTests.currentBatch"
+    // true of false (true by default) - trim parameters of test class names that are passed to `dotnet test --filter <FILTER>` command
+    const val PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES = "teamcity.internal.parallelTests.groupParametrisedTestClasses"
     // True or False (False by default) - use exact match test filters for `dotnet test --filter <FILTER>` command in case of low performance reasoned by a huge amount of test classes via NUnit
     const val PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER = "teamcity.internal.dotnet.test.exact.match.filter"
     // Integer amount of tests that should be included in exact match test filter

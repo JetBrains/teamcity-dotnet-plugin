@@ -22,4 +22,5 @@ interface SplitTestsFilterSettings {
     val testClasses: Sequence<String>
     val useExactMatchFilter: Boolean
     val exactMatchFilterSize: Int
+    val trimTestClassParameters: Boolean
 }

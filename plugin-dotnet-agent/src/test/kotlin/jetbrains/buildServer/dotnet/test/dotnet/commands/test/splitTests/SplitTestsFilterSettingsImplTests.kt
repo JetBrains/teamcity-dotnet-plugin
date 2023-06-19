@@ -179,5 +179,50 @@ class SplitTestsFilterSettingsImplTests {
         }
     }
 
+    @Test
+    fun `should provide trim test class parameters flag if set to 'true'`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { "  true " }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertTrue(result)
+    }
+
+    @Test
+    fun `should provide trim test class parameters flag if set to 'false'`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { "  false " }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun `should provide trim test class parameters flag if property is unset`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { null }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertTrue(result)
+    }
+
     private fun create() = SplitTestsFilterSettingsImpl(_parametersServiceMock, _fileSystemServiceMock)
 }
