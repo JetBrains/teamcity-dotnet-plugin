@@ -12,7 +12,7 @@ internal class SuppressCommand : Command
     [ValidatePath(mustBeFile: false, mustExist: true, errorMessage: "Invalid target path", FileExtension.Solution, FileExtension.CSharpProject, FileExtension.Dll, FileExtension.Exe)]
     public string Target { get; set; } = string.Empty;
 
-    [CommandOption(requiresValue: true, "-l", "--tests-list")]
+    [CommandOption(requiresValue: true, "-l", "--test-list")]
     [CommandOptionDescription("Path to file with tests selectors list")]
     [Required(errorMessage: "Tests selectors file path is required and can't be empty")]
     [ValidatePath(mustBeFile: true, mustExist: true, errorMessage: "Invalid tests selectors file path", FileExtension.Txt)]
