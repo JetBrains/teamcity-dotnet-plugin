@@ -49,6 +49,7 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
             withoutDebugSymbols: false,
             targetType,
             allTestClasses,
+            buildTestProject: true,
             testClassesToInclude
         );
 

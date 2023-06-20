@@ -74,6 +74,7 @@ public class DotnetTestContainerFixture : IDisposable
         bool withoutDebugSymbols,
         TargetType targetType,
         TestClassDescription[] projectTestClasses,
+        bool buildTestProject = true,
         params TestClassDescription[] testQueriesFileTestClasses
     ) {
         // generate test project
@@ -87,15 +88,19 @@ public class DotnetTestContainerFixture : IDisposable
         
         // copy test project and tests queries file to container
         await ExecAsync($"cp -a {DotnetTestSetup.MountedTestProjectSourcesDirPath}/. {DotnetTestSetup.TestProjectSourcesDirPath}");
-        
-        // build test project
-        var debugSymbolsArg = withoutDebugSymbols ? "-p:DebugType=None -p:DebugSymbols=false" : "";
-        var testProjectBuildResult = await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg}");
-        if (testProjectBuildResult.ExitCode != 0)
+
+        if (buildTestProject)
         {
-            throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);
+            // build test project
+            var debugSymbolsArg = withoutDebugSymbols ? "-p:DebugType=None -p:DebugSymbols=false" : "";
+            var testProjectBuildResult =
+                await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg}");
+            if (testProjectBuildResult.ExitCode != 0)
+            {
+                throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);
+            }
         }
-        
+
         var moniker = dotnetVersion.GetMoniker();
         var targetDllPath = targetType switch
         {
@@ -117,7 +122,8 @@ public class DotnetTestContainerFixture : IDisposable
         return (testOutput, testNamesExecuted);
     }
 
-    public Task RunFilterApp(string argsStr) => ExecAsync($"dotnet {DotnetTestSetup.AppPath} {argsStr}");
+    public Task<ExecResult> RunFilterApp(string argsStr) => ExecAsync($"dotnet {DotnetTestSetup.AppPath} {argsStr}");
+
 
     private async Task<IReadOnlyList<string>> GetTestNames(string trxReportFilePath)
     {

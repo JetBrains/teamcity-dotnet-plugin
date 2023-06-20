@@ -46,6 +46,7 @@ public class SuppressNothingByExcludingNotExistingClassTests
             withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly,
             testClassesToInclude,
+            buildTestProject: true,
             testClass2
         );
 

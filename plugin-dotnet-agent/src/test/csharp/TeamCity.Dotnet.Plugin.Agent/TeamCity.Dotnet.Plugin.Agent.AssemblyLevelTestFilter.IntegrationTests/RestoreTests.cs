@@ -42,6 +42,7 @@ public class RestoreTests : IClassFixture<DotnetTestContainerFixture>
             withoutDebugSymbols,
             DotnetTestContainerFixture.TargetType.Project,
             allTestClasses,
+            buildTestProject: true,
             testClassesToExclude
         );
 

@@ -45,6 +45,7 @@ public class SuppressAllTheTestsByExcludeFileTests
             withoutDebugSymbols: false,
             DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
+            buildTestProject: true,
             allTestClasses
         );
 
