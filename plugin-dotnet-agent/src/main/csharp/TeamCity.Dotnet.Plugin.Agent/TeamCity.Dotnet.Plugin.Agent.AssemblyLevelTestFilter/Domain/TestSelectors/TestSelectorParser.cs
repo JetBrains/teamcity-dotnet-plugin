@@ -6,8 +6,10 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelect
 /// <summary>
 /// Parses test query string into <see cref="ITestSelector"/> instance
 /// Possible test query formats:
-/// NamespacesA.NamespaceB.NamespaceC.ClassName
-/// NamespacesA.NamespaceB.NamespaceC.ClassName(param1,param2)
+/// NamespaceA.NamespaceB.ClassName
+/// NamespaceA.NamespaceB.NamespaceC.ClassName(param1,param2)
+/// NamespaceA.ClassName(param1)
+/// ...
 /// </summary>
 internal class TestSelectorParser : ITestSelectorParser
 {
@@ -31,7 +33,7 @@ internal class TestSelectorParser : ITestSelectorParser
         }
 
         var match = Regex.Match(testQuery);
-        if (!testQuery.Contains('.') || !match.Success)
+        if (!HasNamespace(testQuery) || !match.Success)
         {
             _logger.LogWarning("Invalid test query format: {TestQuery}", testQuery);
             return false;
@@ -51,5 +53,7 @@ internal class TestSelectorParser : ITestSelectorParser
 
     private static List<string> ParseParameters(string paramString) =>
         paramString.Split(',').Select(p => p.Trim()).ToList();
+    
+    private static bool HasNamespace(string value) => value.Contains('.');
 }
 
