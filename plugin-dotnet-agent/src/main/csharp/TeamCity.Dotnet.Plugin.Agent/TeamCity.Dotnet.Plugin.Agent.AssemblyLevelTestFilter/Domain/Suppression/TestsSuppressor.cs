@@ -7,13 +7,13 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppressio
 
 internal class TestsSuppressor : ITestsSuppressor
 {
-    private readonly IDictionary<(Type, Type), ITestSuppressingStrategy> _suppressingStrategies;
+    private readonly IReadOnlyDictionary<(Type, Type), ITestSuppressingStrategy> _suppressingStrategies;
     private readonly ILogger<TestsSuppressor> _logger;
 
     public TestsSuppressor(IEnumerable<ITestSuppressingStrategy> suppressingStrategies, ILogger<TestsSuppressor> logger)
     {
         _suppressingStrategies = suppressingStrategies.ToDictionary(
-            strategy => GetStrategyTypeParameters(strategy.GetType()),
+            strategy => (strategy.TestEngineType, strategy.TestSelectorType),
             strategy => strategy
         );
         _logger = logger;
@@ -52,19 +52,5 @@ internal class TestsSuppressor : ITestsSuppressor
         
         _logger.LogError("No suppressing strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);
         throw new InvalidOperationException($"No suppressing strategy found for the given test engine and tests query combination: {key}");
-    }
-
-    private static (Type, Type) GetStrategyTypeParameters(Type strategyType)
-    {
-        var genericStrategyInterface = strategyType.GetInterfaces()
-            .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ITestSuppressingStrategy<,>));
-
-        if (genericStrategyInterface == null)
-        {
-            throw new InvalidOperationException($"The strategy type {strategyType} does not implement ITestSuppressingStrategy<TTestEngine, TTestsQuery>");
-        }
-
-        var typeParameters = genericStrategyInterface.GetGenericArguments();
-        return (typeParameters[0], typeParameters[1]);
     }
 }

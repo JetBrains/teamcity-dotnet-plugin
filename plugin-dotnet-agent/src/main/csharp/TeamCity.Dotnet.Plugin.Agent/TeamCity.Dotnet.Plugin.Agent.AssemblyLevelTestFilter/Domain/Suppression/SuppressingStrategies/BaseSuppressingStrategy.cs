@@ -14,20 +14,24 @@ internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : IT
     }
 
     private TTestEngine TestEngine { get; }
-
+    
     private IEnumerable<IDotnetMethod> GetTestMethods(IDotnetType type) =>
         type.Methods
             .Where(method => method.CustomAttributes
                 .Select(a => a.FullName)
                 .Any(TestEngine.TestMethodAttributes.Contains)
             );
-    
+
     protected TestSuppressionResult RemoveAllTestAttributes(IDotnetType type)
     {
         var suppressedClasses = RemoveTestAttributesFromClass(type);
         var suppressedTests = RemoveTestAttributesFromMethods(type);
         return new TestSuppressionResult(suppressedTests, suppressedClasses);
     }
+
+    public Type TestEngineType => typeof(TTestEngine);
+    
+    public Type TestSelectorType => typeof(TTestSelector);
 
     public TestSuppressionResult SuppressTests(IDotnetType type, ITestSelector testSelector) =>
         SuppressTestsBySelector(type, (TTestSelector) testSelector);

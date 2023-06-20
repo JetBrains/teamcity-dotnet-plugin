@@ -17,7 +17,9 @@ public class TestsSuppressorTests
     {
         // arrange
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
-        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy<TestTestEngine, TestTestSelector>>();
+        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy>();
+        suppressingStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
+        suppressingStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
         var suppressingStrategies = new[] { suppressingStrategyMock.Object };
@@ -62,7 +64,9 @@ public class TestsSuppressorTests
     {
         // arrange
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
-        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy<TestTestEngine, TestTestSelector>>();
+        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy>();
+        suppressingStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
+        suppressingStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
         var suppressingStrategies = new[] { suppressingStrategyMock.Object };
@@ -81,21 +85,6 @@ public class TestsSuppressorTests
         Assert.Throws<Exception>(act);
     }
 
-    [Fact]
-    public void TestsSuppressorConstructor_ShouldThrowException_WhenStrategyDoesNotImplementRequiredInterface()
-    {
-        // arrange
-        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy>(); // does not implement ITestSuppressingStrategy<,>
-        var suppressingStrategies = new[] { suppressingStrategyMock.Object };
-        var loggerMock = new Mock<ILogger<TestsSuppressor>>();
-
-        // act
-        Action act = () => new TestsSuppressor(suppressingStrategies, loggerMock.Object);
-
-        // assert
-        Assert.Throws<InvalidOperationException>(act);
-    }
-    
     internal class TestTestEngine : ITestEngine
     {
         public string Name => "TestTestEngine";

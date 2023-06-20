@@ -6,7 +6,7 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileS
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
-internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy, ITargetResolvingStrategy
+internal class AssemblyTargetResolvingStrategy : BaseTargetResolvingStrategy
 {
     private readonly ILogger<AssemblyTargetResolvingStrategy> _logger;
     private readonly IDotnetAssemblyLoader _assemblyLoader;

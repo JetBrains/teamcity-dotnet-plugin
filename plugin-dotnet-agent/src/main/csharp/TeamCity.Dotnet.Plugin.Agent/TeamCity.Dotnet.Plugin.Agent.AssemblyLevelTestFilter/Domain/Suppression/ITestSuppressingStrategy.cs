@@ -1,4 +1,3 @@
-using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestEngines;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.TestSelectors;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.DotnetAssembly;
 
@@ -6,11 +5,9 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Suppressio
 
 internal interface ITestSuppressingStrategy
 {
+    Type TestEngineType { get; }
+    
+    Type TestSelectorType { get; }
+    
     TestSuppressionResult SuppressTests(IDotnetType type, ITestSelector testSelector);
-}
-
-internal interface ITestSuppressingStrategy<TTestEngine, in TTestSelector> : ITestSuppressingStrategy
-    where TTestEngine : ITestEngine
-    where TTestSelector : ITestSelector
-{
 }
