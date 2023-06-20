@@ -13,12 +13,10 @@ internal class CommandValidator : ICommandValidator
         _commandLineParsingResult = commandLineParsingResult;
     }
 
-    public ValidationResult Validate(Command command)
-    {
-        return _commandLineParsingResult.UnknownParameters.Count != 0
+    public ValidationResult Validate(Command command) =>
+        _commandLineParsingResult.UnknownParameters.Count != 0
             ? ValidationResult.Invalid($"Unknown arguments: {string.Join(", ", _commandLineParsingResult.UnknownParameters)}")
             : ValidateProperties(command);
-    }
 
     private static ValidationResult ValidateProperties(Command command)
     {

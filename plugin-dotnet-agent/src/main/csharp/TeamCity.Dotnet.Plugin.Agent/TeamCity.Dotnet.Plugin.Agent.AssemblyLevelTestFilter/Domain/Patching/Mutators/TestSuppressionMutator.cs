@@ -35,7 +35,9 @@ internal class TestSuppressionMutator : IAssemblyMutator<TestSuppressionPatching
         _testClassDetector = testClassDetector;
         _testsSuppressor = testsSuppressor;
     }
-    
+
+    public Type PatchingCriteriaType => typeof(TestSuppressionPatchingCriteria);
+
     public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, TestSuppressionPatchingCriteria criteria)
     {
         var (affectedTypes, affectedMethods) = (0, 0);

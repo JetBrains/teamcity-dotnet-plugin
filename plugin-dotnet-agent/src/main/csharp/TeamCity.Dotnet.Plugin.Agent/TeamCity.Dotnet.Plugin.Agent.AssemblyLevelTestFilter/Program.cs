@@ -32,21 +32,19 @@ internal static class Program
         Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
         Console.WriteLine();
         
-        var commandLineParsingResult = new CommandLineParser<MainCommand>().Parse(args);
+
+        var configurationSource = new CommandLineConfigurationSource<MainCommand>(args);
 
         var host = await Host
             .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((_, config) =>
-            {
-                config.Add(new CommandLineConfigurationSource(commandLineParsingResult.Mappings));
-            })
+            .ConfigureAppConfiguration((_, config) => config.Add(configurationSource))
             .ConfigureServices((hostContext, services) =>
             {
                 services.Configure<MainCommand>(hostContext.Configuration.GetSection(nameof(MainCommand)));
 
                 // regular services
                 services
-                    .AddSingleton(commandLineParsingResult)
+                    .AddSingleton(configurationSource.ConfigurationParsingResult)
                     .AddSingleton<IFileSystem, FileSystem>()
                     .AddSingletonByInterface<IFileReader>()
                     .AddSingletonByInterface<IFileCopier>()

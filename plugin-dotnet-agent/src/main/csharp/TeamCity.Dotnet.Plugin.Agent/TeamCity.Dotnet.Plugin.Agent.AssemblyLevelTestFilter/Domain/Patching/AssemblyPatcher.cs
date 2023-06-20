@@ -75,7 +75,7 @@ internal class AssemblyPatcher : IAssemblyPatcher
     }
 
     private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>
-        _mutators.First(m => m.GetType().GetInterfaces().First().GetGenericArguments()[0] == criteria.GetType());
+        _mutators.First(m => m.PatchingCriteriaType == criteria.GetType());
 
     private async Task<SavingResult> SaveAssemblyAsync(IDotnetAssembly assembly, string originalAssemblyPath)
     {

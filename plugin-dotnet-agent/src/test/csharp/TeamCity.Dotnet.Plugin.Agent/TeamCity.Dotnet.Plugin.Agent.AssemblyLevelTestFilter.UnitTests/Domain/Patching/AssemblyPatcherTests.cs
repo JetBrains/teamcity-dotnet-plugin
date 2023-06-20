@@ -154,6 +154,8 @@ public class AssemblyPatcherTests
         public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, TestPatchingCriteria criteria) =>
             Task.FromResult(Result);
 
+        public Type PatchingCriteriaType => typeof(TestPatchingCriteria);
+
         public Task<AssemblyMutationResult> MutateAsync(IDotnetAssembly assembly, IAssemblyPatchingCriteria criteria) =>
             Task.FromResult(Result);
     }

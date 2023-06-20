@@ -1,16 +1,20 @@
 using Microsoft.Extensions.Configuration;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Commands;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.CommandLine.Parsing;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.Configuration;
 
-internal class CommandLineConfigurationSource : IConfigurationSource
+internal class CommandLineConfigurationSource<TCommand> : IConfigurationSource
+    where TCommand : Command
 {
-    private readonly IDictionary<string, string> _mappings;
-
-    public CommandLineConfigurationSource(IDictionary<string, string> mappings)
+    public CommandLineConfigurationSource(IEnumerable<string> commandLineArguments)
     {
-        _mappings = mappings;
+        var parser = new CommandLineParser<TCommand>();
+        ConfigurationParsingResult = parser.Parse(commandLineArguments);
     }
 
+    public IConfigurationParsingResult ConfigurationParsingResult { get; }
+
     public IConfigurationProvider Build(IConfigurationBuilder builder) =>
-        new CommandLineConfigurationProvider(_mappings);
+        new CommandLineConfigurationProvider(ConfigurationParsingResult.Mappings);
 }
