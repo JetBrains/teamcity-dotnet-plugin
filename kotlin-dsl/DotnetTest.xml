@@ -34,6 +34,9 @@
         <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
+        <param name="excludedPaths" dslName="excludedProjects">
+            <description>Specify paths to excluded projects. Wildcards are supported.</description>
+        </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
@@ -126,6 +129,7 @@
             <code>
                 dotnetTest {
                     projects = "tests/*.dll"
+                    excludedProjects = "tests/ExcludedTests.dll"
                     skipBuild = true
                 }
             </code>

@@ -87,6 +87,12 @@ class DotnetParametersProvider {
     val pathsKey: String
         get() = DotnetConstants.PARAM_PATHS
 
+    val excludedPathsKey: String
+        get() = DotnetConstants.PARAM_EXCLUDED_PATHS
+
+    val excludedPathsEnabled: Boolean
+        get() = InternalProperties.getBoolean(DotnetConstants.PARAM_TEST_EXCLUDED_PATHS_ENABLED) ?: false
+
     val platformKey: String
         get() = DotnetConstants.PARAM_PLATFORM
 

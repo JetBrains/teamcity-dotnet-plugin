@@ -23,6 +23,8 @@
 <script type="text/javascript">
   BS.DotnetParametersForm.pathName["vstest"] = "Test assemblies";
   BS.DotnetParametersForm.pathHint["vstest"] = "Specify paths to test assemblies";
+  BS.DotnetParametersForm.excludedPathName["vstest"] = "Excluded test assemblies";
+  BS.DotnetParametersForm.excludedPathHint["vstest"] = "Specify paths to excluded test assemblies";
   BS.DotnetParametersForm.projectArtifactsSelector["vstest"] = true;
   BS.DotnetParametersForm.mandatoryPaths["vstest"] = true;
   BS.DotnetParametersForm.coverageEnabled["vstest"] = true;

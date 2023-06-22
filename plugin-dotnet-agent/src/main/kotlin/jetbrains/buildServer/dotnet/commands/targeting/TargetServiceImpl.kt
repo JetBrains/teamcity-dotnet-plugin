@@ -18,12 +18,13 @@ package jetbrains.buildServer.dotnet.commands.targeting
 
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParameterType.Runner
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.PathType
+import jetbrains.buildServer.agent.runner.PathType.WorkingDirectory
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.CommandTarget
-import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_EXCLUDED_PATHS
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PATHS
 import java.io.File
 
 class TargetServiceImpl(
@@ -36,29 +37,49 @@ class TargetServiceImpl(
     : TargetService {
     override val targets: Sequence<CommandTarget>
         get() = sequence {
-            _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_PATHS)?.trim()?.let {
-                val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
-                val includeRulesStr = it.trim()
-                if (includeRulesStr.isEmpty()) {
-                    return@sequence
-                }
+            val workingDirectory = _pathsService.getPath(WorkingDirectory)
+            val includedTargets = resolveIncludedTargets(workingDirectory)
+            val excludedTargets = resolveExcludedTargets(workingDirectory).toSet()
 
-                // We need to resolve paths in the specified sequence where
-                // include rules may be mix of regular and wildcard paths
-                _argumentsService.split(includeRulesStr).forEach {
-                    if (wildCardPattern.matches(it)) {
-                        val targets = _pathMatcher.match(workingDirectory, listOf(it))
-                        if (targets.isEmpty()) {
-                            throw RunBuildException("Target files not found for pattern \"$it\"")
-                        }
-
-                        targets.forEach { yield(createCommandTarget(workingDirectory, it)) }
-                    } else {
-                        yield(createCommandTarget(workingDirectory, File(it)))
-                    }
-                }
-            }
+            includedTargets
+                .filter { !excludedTargets.contains(it) }
+                .forEach { yield(it) }
         }
+
+    private fun resolveIncludedTargets(workingDirectory: File): Sequence<CommandTarget> = sequence {
+        val includeRules = _parametersService.tryGetParameter(Runner, PARAM_PATHS)?.trim()
+        if (includeRules.isNullOrEmpty())
+            return@sequence
+
+        _argumentsService.split(includeRules).forEach { includeRule ->
+            if (wildCardPattern.matches(includeRule)) {
+                resolvePathsOfThrow(workingDirectory, includeRule)
+                    .forEach { yield(createCommandTarget(workingDirectory, it)) }
+            } else yield(createCommandTarget(workingDirectory, File(includeRule)))
+        }
+    }
+
+    private fun resolveExcludedTargets(workingDirectory: File): Sequence<CommandTarget> = sequence {
+        val excludeRules = _parametersService.tryGetParameter(Runner, PARAM_EXCLUDED_PATHS)?.trim()
+        if (excludeRules.isNullOrEmpty())
+            return@sequence
+
+        _argumentsService.split(excludeRules).forEach { excludeRule ->
+            if (wildCardPattern.matches(excludeRule))
+                _pathMatcher.match(workingDirectory, listOf(excludeRule)).forEach {
+                    yield(createCommandTarget(workingDirectory, it))
+                }
+            else yield(createCommandTarget(workingDirectory, File(excludeRule)))
+        }
+    }
+
+    private fun resolvePathsOfThrow(workingDirectory: File, pattern: String): List<File> {
+        val targets = _pathMatcher.match(workingDirectory, listOf(pattern))
+        if (targets.isEmpty()) {
+            throw RunBuildException("Target paths not found for pattern \"$pattern\"")
+        }
+        return targets
+    }
 
     private fun createCommandTarget(workingDirectory: File, target: File): CommandTarget {
         var targetFile: File = target

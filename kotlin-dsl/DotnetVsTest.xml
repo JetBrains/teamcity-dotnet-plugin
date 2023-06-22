@@ -34,6 +34,9 @@
         <param name="paths" dslName="assemblies">
             <description>Specify paths to test assemblies. Wildcards are supported.</description>
         </param>
+        <param name="excludedPaths" dslName="excludedAssemblies">
+            <description>Specify paths to excluded test assemblies. Wildcards are supported.</description>
+        </param>
         <param name="teamcity.build.workingDir" dslName="workingDir">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
@@ -146,6 +149,7 @@
             <code>
                 dotnetVsTest {
                     assemblies = "path\to\assemblies\*.dll"
+                    excludedAssemblies = "path\to\assemblies\ExcludedTests.dll"
                     version = DotnetVsTestStep.VSTestVersion.V17
                     filter = testName {
                         names = """

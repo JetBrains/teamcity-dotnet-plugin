@@ -46,6 +46,8 @@ object DotnetConstants {
     const val PARAM_MSBUILD_DISABLE_CUSTOM_VSTEST_LOGGERS = "teamcity.internal.dotnet.msbuild.parameters.disable.custom.vstest.loggers"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
+    // true or false (false by default) - enables a feature of adding an excluded target paths for `dotnet test` and `dotnet vstest` commands
+    const val PARAM_TEST_EXCLUDED_PATHS_ENABLED = "teamcity.internal.dotnet.test.excludedPaths.enabled"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
     // Default bitness X86 or X64, X86 - if it is not specified
@@ -80,6 +82,7 @@ object DotnetConstants {
     const val PARAM_SKIP_BUILD = "skipBuild"
     const val PARAM_OUTPUT_DIR = "outputDir"
     const val PARAM_PATHS = "paths"
+    const val PARAM_EXCLUDED_PATHS = "excludedPaths"
     const val PARAM_PLATFORM = "platform"
     const val PARAM_RUNTIME = "runtime"
     const val PARAM_TARGETS = "targets"

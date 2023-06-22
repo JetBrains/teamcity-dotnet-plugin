@@ -43,6 +43,10 @@
     mandatoryPaths: [],
     initFunctions: [],
     supportsParallelTests: [],
+    pathName: [],
+    pathHint: [],
+    excludedPathName: [],
+    excludedPathHint: [],
     selectProjectFile: function (chosenFile) {
       var $paths = $j(BS.Util.escapeId('${params.pathsKey}'));
       var value = BS.Util.trimSpaces($paths.val());
@@ -51,8 +55,14 @@
       $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
       BS.MultilineProperties.updateVisible();
     },
-    pathName: [],
-    pathHint: [],
+    selectFileToExclude: function (chosenFile) {
+      var $paths = $j(BS.Util.escapeId('${params.excludedPathsKey}'));
+      var value = BS.Util.trimSpaces($paths.val());
+
+      chosenFile = chosenFile.indexOf(" ") >= 0 ? '"' + chosenFile + '"' : chosenFile;
+      $paths.val(value.length > 0 ? value + " " + chosenFile : chosenFile);
+      BS.MultilineProperties.updateVisible();
+    },
     clearInputValues: function(row) {
       $j(row).find(':input').each(function(id, element) {
         var $element = $j(element);
@@ -98,6 +108,24 @@
       } else {
         pathsRow.addClass("hidden");
         BS.DotnetParametersForm.clearInputValues(pathsRow);
+      }
+
+      const excludedPathsName = BS.DotnetParametersForm.excludedPathName[commandName];
+      const excludedPathsRow = $j(BS.Util.escapeId('${params.excludedPathsKey}-row'));
+      if (excludedPathsName) {
+        const excludedPathsRowLabel = excludedPathsRow.find("label");
+        excludedPathsRowLabel.text(excludedPathsName + ':');
+
+        const excludedPathsHint = BS.DotnetParametersForm.excludedPathHint[commandName];
+        $j(BS.Util.escapeId('${params.excludedPathsKey}-hint')).text(excludedPathsHint);
+        const artifactsSelector = BS.DotnetParametersForm.projectArtifactsSelector[commandName];
+        excludedPathsRow.find('.vcsTreeSources').toggleClass('hidden', !!artifactsSelector);
+        excludedPathsRow.find('.vcsTreeFiles').toggleClass('hidden', !artifactsSelector);
+
+        excludedPathsRow.removeClass("hidden");
+      } else {
+        excludedPathsRow.addClass("hidden");
+        BS.DotnetParametersForm.clearInputValues(excludedPathsRow);
       }
 
       $j("div.wizzard").each(function(id, element) {
@@ -248,6 +276,30 @@
         </span>
   </td>
 </tr>
+
+<c:if test="${params.excludedPathsEnabled == true}">
+  <tr id="${params.excludedPathsKey}-row" class="advancedSetting dotnet test vstest">
+    <th class="noBorder"><label for="${params.excludedPathsKey}">Excluded test assemblies:</label></th>
+    <td>
+      <div class="position-relative">
+        <props:textProperty name="${params.excludedPathsKey}" className="longField" expandable="true"/>
+        <div class="vcsTreeSources">
+          <bs:vcsTree treeId="${params.excludedPathsKey}" callback="BS.DotnetParametersForm.selectFileToExclude"/>
+        </div>
+        <div class="vcsTreeFiles hidden">
+          <c:if test="${not buildForm.template}">
+            <bs:agentArtifactsTree fieldId="${params.excludedPathsKey}" buildTypeId="${buildForm.externalId}" filesOnly="true"/>
+          </c:if>
+        </div>
+      </div>
+      <span class="error" id="error_${params.excludedPathsKey}"></span>
+      <span class="smallNote">
+              <span id="${params.excludedPathsKey}-hint">Specify paths to excluded test assemblies</span>.
+              <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported.
+          </span>
+    </td>
+  </tr>
+</c:if>
 
 <props:workingDirectory/>
 
