@@ -49,4 +49,4 @@ plugin-dotnet-server/tools/
 plugin-dotnet-agent/tools/
 plugin-dotnet-server/packages/
 plugin-dotnet-agent/packages/
-plugin-dotnet-server/bundled-tool/
+plugin-dotnet-server/bundled-tools/

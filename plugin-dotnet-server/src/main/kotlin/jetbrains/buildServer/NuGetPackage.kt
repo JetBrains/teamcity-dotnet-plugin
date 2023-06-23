@@ -16,7 +16,6 @@
 
 package jetbrains.buildServer
 
-import jetbrains.buildServer.dotnet.SemanticVersion
 import java.net.URL
 
 data class NuGetPackage(

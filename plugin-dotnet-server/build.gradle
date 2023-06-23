@@ -29,8 +29,11 @@ teamcity {
       into('kotlin-dsl') {
         from("${rootProject.projectDir}/kotlin-dsl")
       }
-      into('server/bundled-tool') {
-        from('bundled-tool')
+      into('server/bundled-tools/JetBrains.ReSharper.CommandLineTool') {
+        from('bundled-tools/JetBrains.ReSharper.CommandLineTool')
+      }
+      into('server/bundled-tools/JetBrains.dotCover.CommandLineTool') {
+        from('bundled-tools/JetBrains.dotCover.CommandLineTool')
       }
     }
   }
@@ -42,6 +45,7 @@ dependencies {
   implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
   provided "org.jetbrains.teamcity.internal:server-tools:${teamcityVersion}"
+  provided "org.jetbrains.teamcity.internal:server:${teamcityVersion}"
   testImplementation 'org.testng:testng:7.5'
   testImplementation 'org.jmock:jmock-junit4:2.12.0'
   testImplementation 'io.mockk:mockk:1.13.2'
@@ -53,37 +57,61 @@ dependencies {
 class PreparePackagesTask extends DefaultTask {
   @TaskAction
   def run() {
-    ant.delete(dir: './bundled-tool')
-    ant.mkdir(dir: './bundled-tool')
+    ant.delete(dir: './bundled-tools')
+    ant.mkdir(dir: './bundled-tools')
 
-    def toolsPackageVersion = '2023.1.1'
-    def toolsPackageId = 'JetBrains.ReSharper.CommandLineTools/' + toolsPackageVersion
+    def reSharperToolsPackageVersion = '2023.1.1'
+    def reSharperToolsPackageId = 'JetBrains.ReSharper.CommandLineTools/' + reSharperToolsPackageVersion
+    def reSharperToolDescriptor = 'bundled-tool.xml'
+    def reSharperDir = 'JetBrains.ReSharper.CommandLineTool'
+    def reSharperZipFilename = 'jetbrains.resharper-clt.bundled.zip'
+    def reSharperNuSpecFilename = 'JetBrains.ReSharper.CommandLineTools.nuspec'
+    def reSharperMainPackageDir = './packages'
+    def reSharperMainPackagePattern = 'tools/**/*.*'
+    ant.mkdir(dir: "./bundled-tools/$reSharperDir")
+    preparePackages(reSharperToolsPackageId, reSharperToolDescriptor, reSharperDir, reSharperZipFilename,
+            reSharperNuSpecFilename, reSharperMainPackageDir, reSharperMainPackagePattern)
 
-    println 'Processing ' + toolsPackageId
+    def dotCoverToolsPackageVersion = '2021.2.2'
+    def dotCoverToolsPackageId = 'JetBrains.dotCover.CommandLineTools/' + dotCoverToolsPackageVersion
+    def dotCoverToolDescriptor = 'bundled-dot-cover.xml'
+    def dotCoverDir = 'JetBrains.dotCover.CommandLineTool'
+    def dotCoverZipFilename = 'JetBrains.dotCover.CommandLineTools.bundled.zip'
+    def dotCoverNuSpecFilename = 'JetBrains.dotCover.CommandLineTools.nuspec'
+    def dotCoverMainPackageDir = './packages/tools'
+    def dotCoverMainPackagePattern = '**/*.*'
+    ant.mkdir(dir: "./bundled-tools/$dotCoverDir")
+    preparePackages(dotCoverToolsPackageId, dotCoverToolDescriptor, dotCoverDir, dotCoverZipFilename,
+            dotCoverNuSpecFilename, dotCoverMainPackageDir, dotCoverMainPackagePattern)
+  }
+
+  def preparePackages(toolPackageId, toolDescriptor, toolDirectory, zipFilename, nuspecFilename,
+                      mainPackageDir, mainPackagePattern) {
+    println "Processing $toolPackageId"
     ant.delete(dir: './packages')
     ant.mkdir(dir: './packages')
     ant.mkdir(dir: './packages/pack')
-    ant.get(src: 'https://www.nuget.org/api/v2/package/' + toolsPackageId, dest: './packages/package.zip', skipexisting: 'true')
+    ant.get(src: "https://www.nuget.org/api/v2/package/$toolPackageId", dest: './packages/package.zip', skipexisting: 'true')
     ant.unzip(src: './packages/package.zip', dest: './packages')
     ant.move(todir: './packages/pack', overwrite: 'true', force: 'true') {
-      fileset(dir: './packages') {
-        include(name: 'tools/**/*.*')
+      fileset(dir: mainPackageDir) {
+        include(name: mainPackagePattern)
       }
     }
 
     ant.copy(todir: './packages', overwrite: 'true', force: 'true'){
-      fileset(file: './bundled-tool.xml')
+      fileset(file: "./$toolDescriptor")
     }
-    ant.move(file: './packages/bundled-tool.xml', tofile: './packages/pack/teamcity-plugin.xml', overwrite: 'true', force: 'true')
+    ant.move(file: "./packages/$toolDescriptor", tofile: './packages/pack/teamcity-plugin.xml', overwrite: 'true', force: 'true')
 
-    ant.zip(destfile: './bundled-tool/jetbrains.resharper-clt.bundled.zip') {
+    ant.zip(destfile: "./bundled-tools/$toolDirectory/$zipFilename") {
       fileset(dir: './packages/pack') {
         include(name: '**/*.*')
       }
     }
-    ant.move(file: './packages/JetBrains.ReSharper.CommandLineTools.nuspec', todir: './bundled-tool', overwrite: 'true', force: 'true')
-    ant.copy(todir: './bundled-tool', overwrite: 'true', force: 'true'){
-      fileset(file: './bundled-tool.xml')
+    ant.move(file: "./packages/$nuspecFilename", todir: "./bundled-tools/$toolDirectory", overwrite: 'true', force: 'true')
+    ant.copy(todir: "./bundled-tools/$toolDirectory", overwrite: 'true', force: 'true'){
+      fileset(file: "./$toolDescriptor")
     }
 
     ant.delete(dir: './packages')

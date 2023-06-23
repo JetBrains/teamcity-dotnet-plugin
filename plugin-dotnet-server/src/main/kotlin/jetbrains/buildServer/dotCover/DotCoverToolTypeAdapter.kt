@@ -16,29 +16,33 @@
 
 package jetbrains.buildServer.dotCover
 
-import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.tools.ToolTypeAdapter
 
 class DotCoverToolTypeAdapter : ToolTypeAdapter() {
-    override fun getType()= DotnetConstants.DOTCOVER_PACKAGE_TYPE
 
-    override fun getDisplayName() = DotnetConstants.DOTCOVER_PACKAGE_TOOL_TYPE_NAME
+    override fun getType() = CoverageConstants.DOTCOVER_PACKAGE_ID
+
+    override fun getDisplayName() = CoverageConstants.DOT_COVER_TOOL_TYPE_NAME
 
     override fun getDescription(): String = "Is used in JetBrains dotCover-specific build steps to get code coverage."
 
-    override fun getShortDisplayName() = DotnetConstants.DOTCOVER_PACKAGE_SHORT_TOOL_TYPE_NAME
+    override fun getShortDisplayName() = CoverageConstants.DOT_COVER_SHORT_TOOL_TYPE_NAME
 
-    override fun getTargetFileDisplayName() = DotnetConstants.DOTCOVER_PACKAGE_TARGET_FILE_DISPLAY_NAME
+    override fun getTargetFileDisplayName() = CoverageConstants.DOT_COVER_TARGET_FILE_DISPLAY_NAME
 
     override fun isSupportDownload() = true
 
-    override fun getToolSiteUrl() = "https://www.jetbrains.com/legal/docs/toolbox/user.html"
+    override fun getToolSiteUrl() = "https://www.jetbrains.com/dotcover/download/#section=commandline"
 
     override fun getToolLicenseUrl() = "https://www.jetbrains.com/dotcover/download/command_line_license.html"
 
     override fun getTeamCityHelpFile() = "JetBrains+dotCover"
 
-    override fun getValidPackageDescription() =  "Specify the path to a " + displayName + " (.nupkg).\n" +
-                "<br/>Download <em>${DotnetConstants.DOTCOVER_PACKAGE_TYPE}.&lt;VERSION&gt;.nupkg</em> from\n" +
-                "<a href=\"https://www.nuget.org/packages/${DotnetConstants.DOTCOVER_PACKAGE_TYPE}/\" target=\"_blank\" rel=\"noreferrer\">www.nuget.org</a>"
+    override fun getValidPackageDescription() = "Specify the path to a " + displayName +  " (.zip or .nupkg).\n" +
+            "<br/><br/>Supported tools for Windows:" +
+            "<br/><a href=\"https://www.jetbrains.com/dotcover/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.zip</a>" +
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.nupkg</a>" +
+            "<br/><br/>Supported cross-platform tool:" +
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.DotNetCliTool/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.DotNetCliTool.&lt;VERSION&gt;.nupkg</a>"
 }

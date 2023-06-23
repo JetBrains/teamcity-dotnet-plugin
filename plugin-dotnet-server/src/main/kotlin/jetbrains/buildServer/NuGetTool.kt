@@ -30,7 +30,7 @@ class NuGetTool(
 
     override fun getType() = _toolType
 
-    override fun getVersion() = _package.packageVersion.toString()
+    override fun getVersion() = _package.packageVersion
 
     override fun getId() = _toolType.type + "." + _package.packageVersion
 
