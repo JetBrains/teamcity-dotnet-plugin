@@ -46,6 +46,7 @@ public class SuppressAllTheTestsByExcludeFileTests
             DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
             buildTestProject: true,
+            withMsBuildBinaryLogs: false,
             allTestClasses
         );
 

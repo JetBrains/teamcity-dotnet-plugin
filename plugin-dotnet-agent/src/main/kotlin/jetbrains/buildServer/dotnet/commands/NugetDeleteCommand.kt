@@ -35,7 +35,7 @@ class NugetDeleteCommand(
 ): DotnetCommandBase(_parametersService, _resultsObserver) {
     override val commandType = DotnetCommandType.NuGetDelete
 
-    override val commandWords = sequenceOf("nuget", "delete")
+    override val command = sequenceOf("nuget", "delete")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()

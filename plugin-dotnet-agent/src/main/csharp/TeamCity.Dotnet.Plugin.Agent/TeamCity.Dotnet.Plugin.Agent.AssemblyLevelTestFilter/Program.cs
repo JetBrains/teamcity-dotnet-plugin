@@ -28,7 +28,8 @@ internal static class Program
     public static async Task Main(string[] args)
     {
         Console.WriteLine("TeamCity.Dotnet.Plugin.Agent – .NET Assembly Level Test Filter");
-        Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
+        Console.WriteLine($"Version: {Version}");
+        Console.WriteLine($"Author: {Company}");
         Console.WriteLine();
         
 
@@ -86,4 +87,13 @@ internal static class Program
         // entry point
         await commandRouter.Route();
     }
+    
+    private static string Version =>
+        Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+
+    private static string Company =>
+        GetAssemblyCustomAttribute<AssemblyCompanyAttribute>().Company;
+    
+    private static T GetAssemblyCustomAttribute<T>() where T : Attribute =>
+        (T) Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T))!;
 }

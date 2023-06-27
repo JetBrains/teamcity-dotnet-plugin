@@ -21,7 +21,8 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
-import jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettings
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -29,7 +30,7 @@ import java.io.File
 
 class DotnetFilterFactoryImplTest {
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
-    @MockK private lateinit var _splitTestsFilterSettings: SplitTestsFilterSettings
+    @MockK private lateinit var _testsSplittingSettings: TestsSplittingSettings
     @MockK private lateinit var _testRunSettingsFileProvider: TestRunSettingsFileProvider
 
     @BeforeMethod
@@ -39,15 +40,15 @@ class DotnetFilterFactoryImplTest {
     }
 
     @Test
-    public fun shouldCreateFilterUsingSettignsFileWhenFilterSizeMoreTheLimit() {
+    public fun `should create filter using settings file when filter size bigger than limit`() {
         // Given
         val factory = createInstance()
-        val filter = "z".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
+        val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
         val settingsFile = File("My.settings")
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splitTestsFilterSettings.isActive } returns true
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.TestClassNameFilter
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns settingsFile
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -56,14 +57,14 @@ class DotnetFilterFactoryImplTest {
     }
 
     @Test
-    public fun shouldUseFilterAsArgumentWhenCannotGenerateSettigsFile() {
+    public fun `should use filter as argument when cannot generate settings file`() {
         // Given
         val factory = createInstance()
-        val filter = "z".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
+        val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splitTestsFilterSettings.isActive } returns true
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.TestClassNameFilter
         every { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) } returns null
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
@@ -72,14 +73,14 @@ class DotnetFilterFactoryImplTest {
     }
 
     @Test
-    public fun shouldUseFilterAsArgumentWhenFilterIsLessOrEqTheLimit() {
+    public fun `should use filter as argument when filter is less or eq the limit`() {
         // Given
         val factory = createInstance()
-        val filter = "z".repeat(DotnetFilterFactoryImpl.MaxArgSize)
+        val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize)
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splitTestsFilterSettings.isActive } returns true
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.TestClassNameFilter
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
@@ -88,14 +89,14 @@ class DotnetFilterFactoryImplTest {
     }
 
     @Test
-    public fun shouldUseFilterAsArgumentWhenNoTestSplitting() {
+    public fun `should use filter as argument when no test splitting`() {
         // Given
         val factory = createInstance()
-        val filter = "z".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
+        val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
 
         // When
         every { _testsFilterProvider.filterExpression } returns filter
-        every { _splitTestsFilterSettings.isActive } returns false
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
         val actualFilter = factory.createFilter(DotnetCommandType.Test)
 
         // Then
@@ -103,5 +104,5 @@ class DotnetFilterFactoryImplTest {
         verify(exactly = 0) { _testRunSettingsFileProvider.tryGet(DotnetCommandType.Test) }
     }
 
-    private fun createInstance() = DotnetFilterFactoryImpl(_testsFilterProvider, _splitTestsFilterSettings, _testRunSettingsFileProvider)
+    private fun createInstance() = DotnetFilterFactoryImpl(_testsFilterProvider, _testsSplittingSettings, _testRunSettingsFileProvider)
 }

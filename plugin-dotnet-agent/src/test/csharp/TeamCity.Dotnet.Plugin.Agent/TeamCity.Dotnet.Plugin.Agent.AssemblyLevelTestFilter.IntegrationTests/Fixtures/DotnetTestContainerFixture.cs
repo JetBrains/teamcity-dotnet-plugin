@@ -75,6 +75,7 @@ public class DotnetTestContainerFixture : IDisposable
         TargetType targetType,
         TestClassDescription[] projectTestClasses,
         bool buildTestProject = true,
+        bool withMsBuildBinaryLogs = false,
         params TestClassDescription[] testQueriesFileTestClasses
     ) {
         // generate test project
@@ -93,8 +94,9 @@ public class DotnetTestContainerFixture : IDisposable
         {
             // build test project
             var debugSymbolsArg = withoutDebugSymbols ? "-p:DebugType=None -p:DebugSymbols=false" : "";
+            var binlog = withMsBuildBinaryLogs ? $"/bl:{DotnetTestSetup.TestProjectSourcesDirPath}/msbuild.binlog" : "";
             var testProjectBuildResult =
-                await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg}");
+                await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg} {binlog}");
             if (testProjectBuildResult.ExitCode != 0)
             {
                 throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);
@@ -104,6 +106,7 @@ public class DotnetTestContainerFixture : IDisposable
         var moniker = dotnetVersion.GetMoniker();
         var targetDllPath = targetType switch
         {
+            TargetType.MsBuildBinLog => DotnetTestSetup.TestProjectSourcesDirPath,
             TargetType.Directory => DotnetTestSetup.TestProjectSourcesDirPath,
             TargetType.Project => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.csproj",
             TargetType.Solution => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.sln",
@@ -122,7 +125,8 @@ public class DotnetTestContainerFixture : IDisposable
         return (testOutput, testNamesExecuted);
     }
 
-    public Task<ExecResult> RunFilterApp(string argsStr) => ExecAsync($"dotnet {DotnetTestSetup.AppPath} {argsStr}");
+    public Task<ExecResult> RunFilterApp(string argsStr) =>
+        ExecAsync($"dotnet --roll-forward LatestMajor {DotnetTestSetup.AppPath} {argsStr}");
 
 
     private async Task<IReadOnlyList<string>> GetTestNames(string trxReportFilePath)
@@ -151,7 +155,7 @@ public class DotnetTestContainerFixture : IDisposable
         var appDirCreateResult = await ExecAsync($"mkdir {DotnetTestSetup.AppDirPath}");
         if (appDirCreateResult.ExitCode == 0)
         {
-            await ExecAsync($"cp -a {DotnetTestSetup.MountedFilterAppSourcesDirPath}/{_dotnetVersion.GetMoniker()}/. {DotnetTestSetup.AppDirPath}");
+            await ExecAsync($"cp -a {DotnetTestSetup.MountedFilterAppSourcesDirPath}/net6.0/. {DotnetTestSetup.AppDirPath}");
         }
 
         // test project
@@ -180,6 +184,7 @@ public class DotnetTestContainerFixture : IDisposable
         Directory,
         Project,
         Solution,
-        Assembly
+        Assembly,
+        MsBuildBinLog
     }
 }

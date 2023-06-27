@@ -34,7 +34,7 @@ class PackCommand(
 
     override val commandType = DotnetCommandType.Pack
 
-    override val commandWords = sequenceOf("pack")
+    override val command = sequenceOf("pack")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

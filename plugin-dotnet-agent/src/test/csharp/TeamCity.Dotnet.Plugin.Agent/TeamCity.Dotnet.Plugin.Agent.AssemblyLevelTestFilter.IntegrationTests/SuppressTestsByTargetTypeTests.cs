@@ -1,3 +1,4 @@
+using DotNet.Testcontainers.Containers;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Extensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests.Fixtures.TestProjects;
@@ -28,6 +29,9 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
     [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v8_0_Preview)]
     [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v7_0)]
     [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v6_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v8_0_Preview)]
+    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v7_0)]
+    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v6_0)]
     public async Task Run(DotnetTestContainerFixture.TargetType targetType, DotnetVersion dotnetVersion)
     {
         // arrange
@@ -50,11 +54,13 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
             targetType,
             allTestClasses,
             buildTestProject: true,
+            targetType == DotnetTestContainerFixture.TargetType.MsBuildBinLog,
             testClassesToInclude
         );
 
         // act
         var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        await _fixture.ExecAsync("ls -la ./test-project");
         await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
         var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
 

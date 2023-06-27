@@ -37,7 +37,7 @@ class PublishCommand(
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.Publish
 
-    override val commandWords = sequenceOf("publish")
+    override val command = sequenceOf("publish")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

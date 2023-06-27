@@ -84,14 +84,16 @@ task integrationTestDotnet(type: Exec) {
         '--logger', '"console;verbosity=detailed"'
 }
 
-task buildDotnet(type: Exec) {
+task publishDotnet(type: Exec) {
     mustRunAfter preparePackagesTask
     dependsOn unitTestDotnet
 
     commandLine 'dotnet', 'publish',
         './src/main/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter',
         '--configuration', 'Release',
-        '--framework', 'net6.0',    // publish only for .NET 6.0 to make it compatible with higher versions
+        '--framework', 'net6.0',    // publish only for .NET 6.0 and make it compatible with higher versions via running with `--roll-forward LatestMajor`
+        '-p:Version=' + teamcityVersion,
+        '-p:Authors="JetBrains s.r.o"',
         '--output', './tools/AssemblyLevelTestFilter'
 }
 
@@ -103,7 +105,7 @@ task cleanDotnet(type: Exec) {
 
 clean.dependsOn(cleanDotnet)
 test.dependsOn(unitTestDotnet)
-agentPlugin.dependsOn(preparePackagesTask, buildDotnet)
+agentPlugin.dependsOn(preparePackagesTask, publishDotnet)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact

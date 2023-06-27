@@ -34,7 +34,7 @@ class BuildCommand(
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.Build
 
-    override val commandWords = sequenceOf("build")
+    override val command = sequenceOf("build")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

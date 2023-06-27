@@ -21,7 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolver
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import org.testng.Assert
@@ -38,7 +38,7 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _dotnetCommandsStreamResolver: DotnetCommandsStreamResolver
+    @MockK private lateinit var my_dotnetCommandsResolver: DotnetCommandsResolver
 
     @MockK private lateinit var _workflowContext: WorkflowContext
     @MockK private lateinit var _dotnetToolStateWorkflowComposer: ToolStateWorkflowComposer
@@ -55,14 +55,14 @@ class DotnetWorkflowComposerTest {
     private val _dotnetExecutable = ToolPath(Path("dotnet.exe"))
     private val _tokens = mutableListOf<Disposable>()
     private val _versionCmd = CommandLine(
-            null,
-            TargetType.SystemDiagnostics,
-            _dotnetExecutable.path,
-            Path(_workingDirectory.canonicalPath),
-            listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
-            _msbuildVars,
-            "dotnet --version",
-            listOf(StdOutText("Getting the .NET SDK version"))
+        null,
+        TargetType.SystemDiagnostics,
+        _dotnetExecutable.path,
+        Path(_workingDirectory.canonicalPath),
+        listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
+        _msbuildVars,
+        "dotnet --version",
+        listOf(StdOutText("Getting the .NET SDK version"))
     )
 
     @BeforeMethod
@@ -94,19 +94,21 @@ class DotnetWorkflowComposerTest {
     }
 
     @Test
-    fun shouldCompose() {
+    fun `should compose`() {
         // arrange
         val composer = createInstance()
 
         val msbuildCommand = mockk<DotnetCommand>() {
+            every { isAuxiliary } returns false
+            every { title } returns ""
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns ToolPath(_msbuildExecutable.path)
                 every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
+                    mockk<EnvironmentBuilder>() {
+                        every { build(any())  } answers { createToken() }
+                    })
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -120,7 +122,7 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = createDotnetCommand()
         val dotnetBuildCommand2 = createDotnetCommand()
 
-        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
+        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
@@ -146,49 +148,54 @@ class DotnetWorkflowComposerTest {
         verifyAllTokensWereDisposed()
 
         Assert.assertEquals(
-                actualCommandLines,
-                listOf(
-                        CommandLine(
-                                null,
-                                TargetType.Tool,
-                                _msbuildExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                _msbuildArgs,
-                                _msbuildVars,
-                                "msbuild",
-                                emptyList()),
-                        _versionCmd,
-                        CommandLine(
-                                null,
-                                TargetType.Tool,
-                                _dotnetExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                _dotnetArgs,
-                                _dotnetVars,
-                                "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))),
-                        CommandLine(
-                                null,
-                                TargetType.Tool,
-                                _dotnetExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                _dotnetArgs,
-                                _dotnetVars,
-                                "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
-                ))
+            actualCommandLines,
+            listOf(
+                CommandLine(
+                    null,
+                    TargetType.Tool,
+                    _msbuildExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    _msbuildArgs,
+                    _msbuildVars,
+                    "msbuild",
+                    emptyList()
+                ),
+                _versionCmd,
+                CommandLine(
+                    null,
+                    TargetType.Tool,
+                    _dotnetExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    _dotnetArgs,
+                    _dotnetVars,
+                    "dotnet",
+                    listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))
+                ),
+                CommandLine(
+                    null,
+                    TargetType.Tool,
+                    _dotnetExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    _dotnetArgs,
+                    _dotnetVars,
+                    "dotnet",
+                    listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))
+                )
+            ))
     }
 
     private fun createDotnetCommand(): DotnetCommand {
         return mockk<DotnetCommand>() {
+            every { isAuxiliary } returns false
+            every { title } returns ""
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
                 every { executable } returns _dotnetExecutable
                 every { platform } returns ToolPlatform.CrossPlatform
                 every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any()) } answers { createToken() }
-                        })
+                    mockk<EnvironmentBuilder>() {
+                        every { build(any()) } answers { createToken() }
+                    })
                 every { getArguments(any()) } returns _dotnetArgs.asSequence()
                 every { commandType } returns DotnetCommandType.Build
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -201,21 +208,23 @@ class DotnetWorkflowComposerTest {
     }
 
     @Test
-    fun shouldComposeForFailedTest() {
+    fun `should compose for failed test`() {
         // arrange
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.FailedTests), 1) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
+            every { isAuxiliary } returns false
+            every { title } returns ""
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
+                    mockk<EnvironmentBuilder>() {
+                        every { build(any())  } answers { createToken() }
+                    })
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -228,7 +237,7 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<Unit>>(0).onNext(Unit)
@@ -255,54 +264,60 @@ class DotnetWorkflowComposerTest {
         verifyAllTokensWereDisposed()
 
         Assert.assertEquals(
-                actualCommandLines,
-                listOf(
-                        CommandLine(
-                                null,
-                                TargetType.Tool,
-                                _msbuildExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                _msbuildArgs,
-                                _msbuildVars,
-                                "msbuild",
-                                emptyList()),
-                        CommandLine(
-                                null,
-                                TargetType.SystemDiagnostics,
-                                _dotnetExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
-                                _msbuildVars,
-                                "dotnet --version",
-                                listOf(StdOutText("Getting the .NET SDK version"))),
-                        CommandLine(
-                                null,
-                                TargetType.Tool,
-                                _dotnetExecutable.path,
-                                Path(_workingDirectory.canonicalPath),
-                                _dotnetArgs,
-                                _dotnetVars,
-                                "dotnet",
-                                listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header)))
-                ))
+            actualCommandLines,
+            listOf(
+                CommandLine(
+                    null,
+                    TargetType.Tool,
+                    _msbuildExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    _msbuildArgs,
+                    _msbuildVars,
+                    "msbuild",
+                    emptyList()
+                ),
+                CommandLine(
+                    null,
+                    TargetType.SystemDiagnostics,
+                    _dotnetExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    listOf(CommandLineArgument("--version", CommandLineArgumentType.Mandatory)),
+                    _msbuildVars,
+                    "dotnet --version",
+                    listOf(StdOutText("Getting the .NET SDK version"))
+                ),
+                CommandLine(
+                    null,
+                    TargetType.Tool,
+                    _dotnetExecutable.path,
+                    Path(_workingDirectory.canonicalPath),
+                    _dotnetArgs,
+                    _dotnetVars,
+                    "dotnet",
+                    listOf(StdOutText(".NET SDK ", Color.Header), StdOutText("3.0.0 ", Color.Header))
+                )
+            ))
     }
 
     @Test
-    fun shouldAbortBuildWhenFailed() {
+    fun `should abort build when failed`() {
         // arrange
         val composer = createInstance()
 
         every { _dotnetWorkflowAnalyzer.registerResult(any(), setOf(CommandResult.Fail), 1) } returns Unit
 
         val msbuildCommand = mockk<DotnetCommand>() {
+            every { isAuxiliary } returns false
+            every { title } returns ""
             every { toolResolver } returns mockk<ToolResolver>() {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
                 every { environmentBuilders } returns sequenceOf(
-                        mockk<EnvironmentBuilder>() {
-                            every { build(any())  } answers { createToken() }
-                        })
+                    mockk<EnvironmentBuilder>() {
+                        every { build(any())  } answers { createToken() }
+                    }
+                )
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -315,7 +330,7 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { _dotnetCommandsStreamResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
@@ -388,7 +403,7 @@ class DotnetWorkflowComposerTest {
         _commandRegistry,
         _parametersService,
         _virtualContext,
-        _dotnetCommandsStreamResolver,
+        my_dotnetCommandsResolver,
         )
 
     private fun createToken(): Disposable {

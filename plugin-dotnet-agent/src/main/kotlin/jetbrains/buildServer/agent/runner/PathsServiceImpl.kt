@@ -73,4 +73,7 @@ class PathsServiceImpl(
 
     override fun getTempFileName(extension: String): File =
         uniqueName(getPath(PathType.AgentTemp), extension)
+
+    override fun resolvePath(pathType: PathType, relativePath: String) =
+        getPath(PathType.Plugin).toPath().resolve(relativePath).toAbsolutePath()
 }

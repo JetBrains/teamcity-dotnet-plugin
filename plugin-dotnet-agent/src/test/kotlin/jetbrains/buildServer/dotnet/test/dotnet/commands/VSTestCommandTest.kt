@@ -128,9 +128,9 @@ class VSTestCommandTest {
 
     @Test(dataProvider = "argumentsData")
     fun shouldGetArguments(
-            filter: DotnetFilter,
-            parameters: Map<String, String>,
-            expectedArguments: List<String>) {
+        filter: DotnetFilter,
+        parameters: Map<String, String>,
+        expectedArguments: List<String>) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.VSTest) } returns filter

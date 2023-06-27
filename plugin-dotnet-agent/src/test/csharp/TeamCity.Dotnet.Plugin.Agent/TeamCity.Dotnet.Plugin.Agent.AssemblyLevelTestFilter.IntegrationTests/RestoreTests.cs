@@ -43,6 +43,7 @@ public class RestoreTests : IClassFixture<DotnetTestContainerFixture>
             DotnetTestContainerFixture.TargetType.Project,
             allTestClasses,
             buildTestProject: true,
+            withMsBuildBinaryLogs: false,
             testClassesToExclude
         );
 

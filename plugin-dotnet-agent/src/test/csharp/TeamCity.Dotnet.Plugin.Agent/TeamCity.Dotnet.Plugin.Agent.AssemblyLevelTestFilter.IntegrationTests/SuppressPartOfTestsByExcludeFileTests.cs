@@ -48,6 +48,7 @@ public class SuppressPartOfTestsByExcludeFileTests : IClassFixture<DotnetTestCon
             DotnetTestContainerFixture.TargetType.Assembly,
             allTestClasses,
             buildTestProject: true,
+            withMsBuildBinaryLogs: false,
             testClassesToExclude
         );
 

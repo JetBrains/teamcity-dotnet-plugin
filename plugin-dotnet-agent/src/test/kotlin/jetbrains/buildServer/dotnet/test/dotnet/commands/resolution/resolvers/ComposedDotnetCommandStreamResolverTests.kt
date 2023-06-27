@@ -25,8 +25,8 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.ToolResolver
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
+import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -47,7 +47,7 @@ class ComposedDotnetCommandStreamResolverTests {
         val result = resolver.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsStreamResolvingStage.FinalComposition)
+        Assert.assertEquals(result, DotnetCommandsResolvingStage.FinalComposition)
     }
 
     @Test
@@ -69,8 +69,8 @@ class ComposedDotnetCommandStreamResolverTests {
         every { commandMock1.toolResolver } answers { toolResolverMock1 }
         every { commandMock2.toolResolver } answers { toolResolverMock1 }
         every { commandMock3.toolResolver } answers { toolResolverMock2 }
-        every { commandMock1.commandWords } answers { sequenceOf("build") }
-        every { commandMock2.commandWords } answers { sequenceOf("nuget", "restore") }
+        every { commandMock1.command } answers { sequenceOf("build") }
+        every { commandMock2.command } answers { sequenceOf("nuget", "restore") }
         every { commandMock1.targetArguments } answers { sequenceOf(targetArgumentsMock1) }
         every { commandMock2.targetArguments } answers { sequenceOf(targetArgumentsMock2) }
         every { commandMock3.targetArguments } answers { sequenceOf(targetArgumentsMock3) }
@@ -109,5 +109,5 @@ class ComposedDotnetCommandStreamResolverTests {
         Assert.assertSame(composedCommand3Args[3], commandSpecificArgMock3)
     }
 
-    private fun create() = ComposedDotnetCommandStreamResolver()
+    private fun create() = ComposedDotnetCommandResolver()
 }

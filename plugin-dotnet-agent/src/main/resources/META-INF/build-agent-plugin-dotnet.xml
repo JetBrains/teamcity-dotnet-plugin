@@ -342,17 +342,22 @@
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsStreamResolver" id="parameterBasedDotnetCommandsStreamResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ExactMatchTestCommandsStreamResolver" id="testCommandsStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsStreamResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestNameTestsSplittingCommandsResolver" id="exactMatchTestCommandsStreamResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver" id="multiTargetDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandStreamResolver" id="composedDotnetCommandStreamResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandStreamResolver" id="rootDotnetCommandStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestSuppressTestsSplittingCommandsResolver" id="dotnetFilterTestCommandsStreamResolver">
+    <constructor-arg ref="dotnetBuildCommand"/>
+    <constructor-arg ref="teamCityDotnetToolCommand"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandResolver" id="multiTargetDotnetCommandsResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver" id="composedDotnetCommandStreamResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandResolver" id="rootDotnetCommandStreamResolver">
     <constructor-arg>
       <list>
         <ref bean="parameterBasedDotnetCommandsStreamResolver"/>
-        <ref bean="testCommandsStreamResolver"/>
+        <ref bean="exactMatchTestCommandsStreamResolver"/>
+        <ref bean="dotnetFilterTestCommandsStreamResolver"/>
         <ref bean="multiTargetDotnetCommandsResolver"/>
         <ref bean="composedDotnetCommandStreamResolver"/>
       </list>
@@ -446,14 +451,18 @@
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.CleanCommand" id="dotnetCleanCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.CustomCommand" id="customCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.custom.TeamCityDotnetTestSuppressorCommand" id="teamCityDotnetToolCommand">
+    <constructor-arg ref="customCommand"/>
+  </bean>
 
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.TestsListTempFileFactory" id="testsListTempFileFactory"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.CSharpIdentifierValidator" id="cSharpTestNameValidator"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.DotnetListTestsOutputValueProcessor" id="dotnetListTestsOutputValueProcessor"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsNamesManager" id="splitTestsNamesManager"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsListTempFileFactory" id="testsListTempFileFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.CSharpIdentifierValidator" id="cSharpTestNameValidator"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.DotnetListTestsOutputValueProcessor" id="dotnetListTestsOutputValueProcessor"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingTestNamesManager" id="splitTestsNamesManager"/>
   <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterProvider" id="splitTestsFilterProvider"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.splitTests.SplitTestsFilterSettingsImpl" id="splitTestsFilterSettings"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterProvider" id="splitTestsFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl" id="splitTestsFilterSettings"/>
   <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
     <constructor-arg>
       <list>

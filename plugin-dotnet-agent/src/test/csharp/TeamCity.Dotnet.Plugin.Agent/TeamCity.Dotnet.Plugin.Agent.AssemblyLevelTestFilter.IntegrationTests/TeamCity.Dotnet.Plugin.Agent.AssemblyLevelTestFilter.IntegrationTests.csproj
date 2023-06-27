@@ -39,8 +39,8 @@
             <FilterAppProject>$(FilterAppProjectDir)\TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.csproj</FilterAppProject>
         </PropertyGroup>
         <Exec Command="dotnet publish $(FilterAppProject) -o $(TargetDir)published-app-binaries\\net6.0 -f net6.0 -c Release" />
-        <Exec Command="dotnet publish $(FilterAppProject) -o $(TargetDir)published-app-binaries\\net7.0 -f net7.0 -c Release" />
-        <Exec Command="dotnet publish $(FilterAppProject) -o $(TargetDir)published-app-binaries\\net8.0 -f net8.0 -c Release" />
+<!--        <Exec Command="dotnet publish $(FilterAppProject) -o $(TargetDir)published-app-binaries\\net7.0 -f net7.0 -c Release" />-->
+<!--        <Exec Command="dotnet publish $(FilterAppProject) -o $(TargetDir)published-app-binaries\\net8.0 -f net8.0 -c Release" />-->
     </Target>
 
     <Target Name="CleanUpFilterAppBins" AfterTargets="Clean">

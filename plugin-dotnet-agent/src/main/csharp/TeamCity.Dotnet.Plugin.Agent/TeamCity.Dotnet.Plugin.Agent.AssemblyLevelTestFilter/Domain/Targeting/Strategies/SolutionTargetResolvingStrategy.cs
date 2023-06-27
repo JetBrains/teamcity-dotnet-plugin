@@ -51,6 +51,12 @@ internal class SolutionTargetResolvingStrategy : BaseTargetResolvingStrategy
             
             yield return (projectFile, TargetType.Project);
         }
+        
+        foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(solutionFile))
+        {
+            _logger.LogInformation("Resolved MSBuild .binlog file next to the target solution: {MsBuildBinlog}", msBuildBinlogFile.FullName);
+            yield return (msBuildBinlogFile, TargetType.MsBuildBinlog);
+        }
     }
     
     private static (SolutionFile?, Exception?) ParseSolution(string solutionFilePath)

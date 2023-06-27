@@ -76,7 +76,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", null, false)
+        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", null, true)
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When

@@ -44,7 +44,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
         foreach (var assembly in _targetResolver.Resolve(command.Target))
         {
             _logger.LogDebug("Trying to patch assembly: {Assembly}", assembly);
-
+            
             var patchingResult = await _assemblyPatcher.TryPatchAsync(assembly, patchingCriteria);
             if (patchingResult.IsAssemblyPatched)
             {

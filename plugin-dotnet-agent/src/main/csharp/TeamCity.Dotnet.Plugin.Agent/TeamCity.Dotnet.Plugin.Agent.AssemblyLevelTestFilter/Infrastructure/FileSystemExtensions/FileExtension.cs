@@ -25,4 +25,6 @@ public static class FileExtension
     public const string Solution = ".sln";
     
     public const string SolutionFilter = ".slnf";
+    
+    public const string MsBuildBinaryLog = ".binlog";
 }

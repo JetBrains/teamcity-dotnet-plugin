@@ -25,7 +25,11 @@ interface DotnetCommand : ArgumentsProvider {
 
     val commandType: DotnetCommandType
 
-    val commandWords: Sequence<String>
+    val command: Sequence<String>
+
+    val isAuxiliary: Boolean
+
+    val title: String
 
     val targetArguments: Sequence<TargetArguments>
 
@@ -35,3 +39,4 @@ interface DotnetCommand : ArgumentsProvider {
 
     val resultsObserver: Observer<CommandResultEvent>
 }
+

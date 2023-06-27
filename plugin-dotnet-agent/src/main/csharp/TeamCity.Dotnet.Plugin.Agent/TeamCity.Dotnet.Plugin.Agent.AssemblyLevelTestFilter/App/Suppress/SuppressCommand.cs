@@ -9,7 +9,8 @@ internal class SuppressCommand : Command
     [CommandOption(requiresValue: true,"-t", "--target")]
     [CommandOptionDescription("Path to target. It could be directory, .sln, .csproj, .dll or .exe")]
     [Required(errorMessage: "Target path is required and can't be empty")]
-    [ValidatePath(mustBeFile: false, mustExist: true, errorMessage: "Invalid target path", FileExtension.Solution, FileExtension.CSharpProject, FileExtension.Dll, FileExtension.Exe)]
+    [ValidatePath(mustBeFile: false, mustExist: true, errorMessage: "Invalid target path",
+        FileExtension.Solution, FileExtension.CSharpProject, FileExtension.Dll, FileExtension.Exe, FileExtension.MsBuildBinaryLog)]
     public string Target { get; set; } = string.Empty;
 
     [CommandOption(requiresValue: true, "-l", "--test-list")]

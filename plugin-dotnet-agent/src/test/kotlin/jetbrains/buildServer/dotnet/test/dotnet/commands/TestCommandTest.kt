@@ -25,6 +25,8 @@ import jetbrains.buildServer.dotnet.commands.TestCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
@@ -42,53 +44,61 @@ class TestCommandTest {
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _targetTypeProvider: TargetTypeProvider
     @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
+    @MockK private lateinit var _testsSplittingSettings: TestsSplittingSettings
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
-        every { _targetTypeProvider.getTargetType(any()) } answers { if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown }
+        every { _targetArgumentsProvider.getTargetArguments(any()) } answers {
+            arg<Sequence<CommandTarget>>(0)
+                .map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
+        }
+        every { _targetTypeProvider.getTargetType(any()) } answers {
+            if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown
+        }
         every { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
     }
 
     @DataProvider
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                        DotnetFilter("", null, false),
-                        listOf("customArg1")),
-                arrayOf(mapOf(
-                        Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
-                        Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                        DotnetFilter("", null, false),
-                        listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
-                        DotnetFilter("", null, false),
-                        listOf("--no-build", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
-                        DotnetFilter("", null, false),
-                        listOf("--output", "out", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
-                        DotnetFilter("myFilter", null, false),
-                        listOf("--filter", "myFilter", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
-                        DotnetFilter("myFilter", null, false),
-                        listOf("--filter", "myFilter", "--settings", "User.settings", "customArg1")),
-                arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter"), Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
-                        DotnetFilter("myFilter", File("Abc.settings"), false),
-                        listOf("--filter", "myFilter", "--settings", "Abc.settings", "customArg1"))
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
+                DotnetFilter("", null, false),
+                listOf("customArg1")),
+            arrayOf(mapOf(
+                Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
+                Pair(DotnetConstants.PARAM_CONFIG, "Release")),
+                DotnetFilter("", null, false),
+                listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
+                DotnetFilter("", null, false),
+                listOf("--no-build", "customArg1")),
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
+                DotnetFilter("", null, false),
+                listOf("--output", "out", "customArg1")),
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
+                DotnetFilter("myFilter", null, false),
+                listOf("--filter", "myFilter", "customArg1")),
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
+                DotnetFilter("myFilter", null, false),
+                listOf("--filter", "myFilter", "--settings", "User.settings", "customArg1")),
+            arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter"), Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
+                DotnetFilter("myFilter", File("Abc.settings"), false),
+                listOf("--filter", "myFilter", "--settings", "Abc.settings", "customArg1"))
         )
     }
 
     @Test(dataProvider = "testTestArgumentsData")
-    fun shouldGetArguments(
-            parameters: Map<String, String>,
-            filter: DotnetFilter,
-            expectedArguments: List<String>) {
+    fun `should get arguments`(
+        parameters: Map<String, String>,
+        filter: DotnetFilter,
+        expectedArguments: List<String>
+    ) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns filter
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
@@ -100,19 +110,20 @@ class TestCommandTest {
     @DataProvider
     fun projectsArgumentsData(): Array<Array<List<Any>>> {
         return arrayOf(
-                arrayOf(listOf("my.csproj"), listOf(listOf("my.csproj"))),
-                arrayOf(emptyList<String>(), emptyList<List<String>>()),
-                arrayOf(listOf("my.csproj", "my2.csproj"), listOf(listOf("my.csproj"), listOf("my2.csproj"))),
-                // https://youtrack.jetbrains.com/issue/TW-72213
-                arrayOf(listOf("my.csproj", "my2.dll", "my3.dll"), listOf(listOf("my.csproj"), listOf("my2.dll"), listOf("my3.dll"))),
-                // https://youtrack.jetbrains.com/issue/TW-72213
-                arrayOf(listOf("my.csproj", "my2.dll", "my3.dll", "my4.Sln", "my5.dll"), listOf(listOf("my.csproj"), listOf("my2.dll"), listOf("my3.dll"), listOf("my4.Sln"), listOf("my5.dll"))))
+            arrayOf(listOf("my.csproj"), listOf(listOf("my.csproj"))),
+            arrayOf(emptyList<String>(), emptyList<List<String>>()),
+            arrayOf(listOf("my.csproj", "my2.csproj"), listOf(listOf("my.csproj"), listOf("my2.csproj"))),
+            // https://youtrack.jetbrains.com/issue/TW-72213
+            arrayOf(listOf("my.csproj", "my2.dll", "my3.dll"), listOf(listOf("my.csproj"), listOf("my2.dll"), listOf("my3.dll"))),
+            // https://youtrack.jetbrains.com/issue/TW-72213
+            arrayOf(listOf("my.csproj", "my2.dll", "my3.dll", "my4.Sln", "my5.dll"), listOf(listOf("my.csproj"), listOf("my2.dll"), listOf("my3.dll"), listOf("my4.Sln"), listOf("my5.dll"))))
     }
 
     @Test(dataProvider = "projectsArgumentsData")
-    fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
+    fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
 
         // When
@@ -123,7 +134,7 @@ class TestCommandTest {
     }
 
     @Test
-    fun shouldProvideCommandType() {
+    fun `should provide command type`() {
         // Given
         val command = createCommand()
 
@@ -135,9 +146,10 @@ class TestCommandTest {
     }
 
     @Test
-    fun shouldShowMessageWhenTestSpitting() {
+    fun `should show message when test spitting`() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.TestClassNameFilter
 
         // When
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, true)
@@ -148,9 +160,10 @@ class TestCommandTest {
     }
 
     @Test
-    fun shouldNotShowMessageWhenNoTestSpitting() {
+    fun `should not show message when no test spitting`() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
+        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
 
         // When
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
@@ -161,10 +174,10 @@ class TestCommandTest {
     }
 
     fun createCommand(
-            parameters: Map<String, String> = emptyMap(),
-            targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()
+        parameters: Map<String, String> = emptyMap(),
+        targets: Sequence<String> = emptySequence(),
+        arguments: Sequence<CommandLineArgument> = emptySequence(),
+        testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()
     ): DotnetCommand {
         return TestCommand(
             ParametersServiceStub(parameters),
@@ -176,7 +189,8 @@ class TestCommandTest {
             _dotnetFilterFactory,
             _loggerService,
             _targetTypeProvider,
-            _targetArgumentsProvider
+            _targetArgumentsProvider,
+            _testsSplittingSettings
         )
     }
 }

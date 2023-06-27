@@ -4,10 +4,11 @@ namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting;
 
 internal enum TargetType
 {
+    MsBuildBinlog,
     Directory,
     Solution,
     Project,
-    Assembly
+    Assembly,
 }
 
 internal static class TargetTypeExtensions
@@ -29,6 +30,9 @@ internal static class TargetTypeExtensions
             case TargetType.Assembly:
                 yield return FileExtension.Dll;
                 yield return FileExtension.Exe;
+                break;
+            case TargetType.MsBuildBinlog:
+                yield return FileExtension.MsBuildBinaryLog;
                 break;
             case TargetType.Directory:
                 throw new ArgumentOutOfRangeException(nameof(targetType), targetType, "Directory has no file extension");

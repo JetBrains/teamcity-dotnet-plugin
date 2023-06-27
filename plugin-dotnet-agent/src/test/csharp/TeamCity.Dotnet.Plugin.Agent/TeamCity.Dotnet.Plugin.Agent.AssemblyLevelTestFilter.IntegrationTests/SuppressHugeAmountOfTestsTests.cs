@@ -39,6 +39,7 @@ public class SuppressHugeAmountOfTestsTests : IClassFixture<DotnetTestContainerF
             DotnetTestContainerFixture.TargetType.Assembly, // it doesn't matter which target type we use here
             allTestClasses,
             buildTestProject: true,
+            withMsBuildBinaryLogs: false,
             testClassesToInclude
         );
 

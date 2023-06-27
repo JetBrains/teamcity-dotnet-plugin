@@ -31,7 +31,7 @@ internal class TestsSuppressor : ITestsSuppressor
         {
             var suppressionStrategy = ResolveSuppressingStrategy(parameters.TestEngine, parameters.TestSelector);
             var suppressionResult = suppressionStrategy.SuppressTests(testClass, parameters.TestSelector);
-            _logger.LogInformation("Tests suppressed successfully for {TestClass}", testClass.FullName);
+            _logger.LogDebug("Tests suppressed successfully for {TestClass}", testClass.FullName);
             return suppressionResult;
         }
         catch (Exception ex)

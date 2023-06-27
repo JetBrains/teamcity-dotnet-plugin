@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using Microsoft.Build.Evaluation;
 using Microsoft.Extensions.Logging;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.MsBuild;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileSystemExtensions;
@@ -35,16 +36,16 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
             yield break;
         }
         
-        var projectFile = targetPathSystemInfo as IFileInfo;
+        var projectFile = (IFileInfo) targetPathSystemInfo;
         
-        var (outputAssemblyPath, projectParsingException) = GetOutputAssemblyPath(projectFile!);
-        if (projectParsingException != null)
+        var outputAssemblyPathResult = GetOutputAssemblyPath(projectFile!);
+        if (outputAssemblyPathResult.IsError)
         {
-            _logger.LogWarning(projectParsingException,"Target project {TargetProject} is invalid", projectFile!.FullName);
+            _logger.LogWarning(outputAssemblyPathResult.ErrorValue, "Target project {TargetProject} is invalid", projectFile!.FullName);
             yield break;
         }
         
-        var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPath!);
+        var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPathResult.Value);
         if (assemblyFileInfoResult.IsError)
         {
             _logger.LogWarning(assemblyFileInfoResult.ErrorValue, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
@@ -55,9 +56,15 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
         
         _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
         yield return (assemblyFileInfo, TargetType.Assembly);
+        
+        foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(projectFile))
+        {
+            _logger.LogInformation("Resolved MSBuild .binlog file next to the target project: {MsBuildBinlog}", msBuildBinlogFile.FullName);
+            yield return (msBuildBinlogFile, TargetType.MsBuildBinlog);
+        }
     }
 
-    private static (string?, Exception?) GetOutputAssemblyPath(IFileInfo projectFile)
+    private static Result<string, Exception> GetOutputAssemblyPath(IFileInfo projectFile)
     {
         try
         {
@@ -73,11 +80,11 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
                 .Combine(projectFile.Directory!.FullName, outputPath, targetFileName)
                 .Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
-            
-            return (result, null);
+
+            return Result<string, Exception>.Success(result);
         } catch (Exception exception)
         {
-            return (null, exception);
+            return Result<string, Exception>.Error(exception);
         }
     }
 }

@@ -54,10 +54,16 @@ class CommandExecutionAdapter(
     override fun processStarted(programCommandLine: String, workingDirectory: File) {
         if (!_commandLine.title.isNullOrBlank())
         {
-            if (_loggingStrategy == LoggingStrategy.HiddenInBuildLog) {
-                writeStandardOutput(_commandLine.title)
-            } else {
-                _blockToken = _loggerService.writeBlock(_commandLine.title)
+            when (_loggingStrategy) {
+                LoggingStrategy.Default -> {
+                    _blockToken = _loggerService.writeBlock(_commandLine.title)
+                }
+                LoggingStrategy.HiddenInBuildLog -> {
+                    writeStandardOutput(_commandLine.title)
+                }
+                LoggingStrategy.HiddenBlockInBuildLog -> {
+                    _blockToken = _loggerService.writeTraceBlock(_commandLine.title)
+                }
             }
         }
 
@@ -113,6 +119,7 @@ class CommandExecutionAdapter(
     private val _loggingStrategy: LoggingStrategy get() =
         when {
             _commandLine.chain.any { it.target == TargetType.SystemDiagnostics } -> LoggingStrategy.HiddenInBuildLog
+            _commandLine.chain.any { it.target == TargetType.AuxiliaryTool } -> LoggingStrategy.HiddenBlockInBuildLog
             else -> LoggingStrategy.Default
         }
 
@@ -125,6 +132,11 @@ class CommandExecutionAdapter(
 
             LoggingStrategy.HiddenInBuildLog ->
                 _loggerService.writeTrace(text)
+
+            LoggingStrategy.HiddenBlockInBuildLog ->
+                _outputReplacer.replace(text).forEach {
+                    _loggerService.writeTrace(text)
+                }
         }
     }
 
@@ -133,7 +145,7 @@ class CommandExecutionAdapter(
             LoggingStrategy.Default ->
                 _loggerService.writeStandardOutput(*text)
 
-            LoggingStrategy.HiddenInBuildLog ->
+            else ->
                 _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
         }
     }
@@ -146,8 +158,8 @@ class CommandExecutionAdapter(
     ): BuildProgressLogger by _baseLogger {
         override fun message(message: String?) {
             when (_loggingStrategy) {
-                LoggingStrategy.Default -> _baseLogger.message(message)
                 LoggingStrategy.HiddenInBuildLog -> if (message != null) _loggerService.writeTrace(message)
+                else -> _baseLogger.message(message)
             }
         }
 
@@ -164,6 +176,7 @@ class CommandExecutionAdapter(
 
     private enum class LoggingStrategy {
         Default,
-        HiddenInBuildLog
+        HiddenInBuildLog,
+        HiddenBlockInBuildLog,
     }
 }

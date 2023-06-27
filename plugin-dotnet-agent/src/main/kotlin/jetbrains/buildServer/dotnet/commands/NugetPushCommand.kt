@@ -38,7 +38,7 @@ class NugetPushCommand(
 
     override val commandType = DotnetCommandType.NuGetPush
 
-    override val commandWords = sequenceOf("nuget", "push")
+    override val command = sequenceOf("nuget", "push")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

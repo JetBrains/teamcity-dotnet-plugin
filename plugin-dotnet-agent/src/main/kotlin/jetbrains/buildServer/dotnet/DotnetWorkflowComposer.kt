@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolver
 import jetbrains.buildServer.rx.*
 import java.io.File
 
@@ -30,14 +30,14 @@ class DotnetWorkflowComposer(
     private val _commandRegistry: CommandRegistry,
     private val _parametersService: ParametersService,
     private val _virtualContext: VirtualContext,
-    private val _dotnetCommandsStreamResolver: DotnetCommandsStreamResolver,
+    private val _dotnetCommandsResolver: DotnetCommandsResolver,
 ) : SimpleWorkflowComposer {
     private val verbosityLevel get() = _parametersService
         .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
         ?.trim()
         ?.let { Verbosity.tryParse(it) }
 
-    private val dotnetCommands get() = _dotnetCommandsStreamResolver.resolve()
+    private val dotnetCommands get() = _dotnetCommandsResolver.resolve()
 
     override val target: TargetType = TargetType.Tool
 
@@ -62,8 +62,8 @@ class DotnetWorkflowComposer(
             if (version == null) {
                 val toolState = ToolState(
                     executable,
-                    observer<Path> { virtualDotnetExecutable = it },
-                    observer<Version> {
+                    observer { virtualDotnetExecutable = it },
+                    observer {
                         version = it
                         versions[executable.path.path] = it
                     }
@@ -103,12 +103,12 @@ class DotnetWorkflowComposer(
                 yield(
                     CommandLine(
                         baseCommandLine = null,
-                        target = TargetType.Tool,
+                        target = getTargetType(dotnetCommand),
                         executableFile = virtualPath,
                         workingDirectory = commandContext.workingDirectory.path,
                         arguments = args,
                         environmentVariables = _defaultEnvironmentVariables.getVariables(commandContext.toolVersion).toList(),
-                        title = getTitle(virtualPath, args),
+                        title = getTitle(virtualPath, args, dotnetCommand.title),
                         description = getDescription(commandContext),
                     )
                 )
@@ -118,7 +118,17 @@ class DotnetWorkflowComposer(
         _dotnetWorkflowAnalyzer.summarize(analyzerContext)
     }.let(::Workflow)
 
-    private fun getTitle(executableFile: Path, args: List<CommandLineArgument>) = sequence {
+    private fun getTargetType(command: DotnetCommand) = when {
+        command.isAuxiliary -> TargetType.AuxiliaryTool
+        else -> TargetType.Tool
+    }
+
+    private fun getTitle(executableFile: Path, args: List<CommandLineArgument>, title: String) = sequence {
+        if (title.isNotEmpty()) {
+            yield(title)
+            return@sequence
+        }
+
         yield(File(executableFile.path).nameWithoutExtension)
         yieldAll(args.filter { it.argumentType == CommandLineArgumentType.Mandatory }.map { it.value })
     }.joinToString(" ")

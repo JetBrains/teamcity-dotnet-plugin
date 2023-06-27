@@ -23,8 +23,8 @@ import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandStreamResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
+import jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandResolver
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -45,7 +45,7 @@ class MultiTargetDotnetCommandStreamResolverTests {
         val result = resolver.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsStreamResolvingStage.Targeting)
+        Assert.assertEquals(result, DotnetCommandsResolvingStage.Targeting)
     }
 
     @Test
@@ -81,7 +81,7 @@ class MultiTargetDotnetCommandStreamResolverTests {
         // assert
         Assert.assertEquals(result.size, 3)
         result.forEach {
-            Assert.assertTrue(it is MultiTargetDotnetCommandStreamResolver.SpecificTargetDotnetCommand)
+            Assert.assertTrue(it is MultiTargetDotnetCommandResolver.SpecificTargetDotnetCommand)
             Assert.assertEquals(it.targetArguments.count(), 1)
         }
         Assert.assertEquals(result[0].targetArguments.first(), targetArgumentsMock1)
@@ -110,7 +110,7 @@ class MultiTargetDotnetCommandStreamResolverTests {
         // assert
         Assert.assertEquals(result.size, 3)
         result.forEach {
-            Assert.assertTrue(it is MultiTargetDotnetCommandStreamResolver.SpecificTargetDotnetCommand)
+            Assert.assertTrue(it is MultiTargetDotnetCommandResolver.SpecificTargetDotnetCommand)
             Assert.assertEquals(it.targetArguments.count(), 1)
         }
         Assert.assertEquals(result[0].targetArguments.first().arguments.count(), 0)
@@ -121,5 +121,5 @@ class MultiTargetDotnetCommandStreamResolverTests {
         Assert.assertEquals(result[2].getArguments(mockk()), commandLineArgsMock2)
     }
 
-    private fun create() = MultiTargetDotnetCommandStreamResolver()
+    private fun create() = MultiTargetDotnetCommandResolver()
 }

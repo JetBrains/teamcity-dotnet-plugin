@@ -47,6 +47,7 @@ public class SuppressNothingByExcludingNotExistingClassTests
             DotnetTestContainerFixture.TargetType.Assembly,
             testClassesToInclude,
             buildTestProject: true,
+            withMsBuildBinaryLogs: false,
             testClass2
         );
 

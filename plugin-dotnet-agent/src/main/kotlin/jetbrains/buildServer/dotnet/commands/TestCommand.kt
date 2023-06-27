@@ -24,11 +24,12 @@ import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import java.io.File
 
 class TestCommand(
-    _parametersService: ParametersService,
+    parametersService: ParametersService,
     override val resultsAnalyzer: ResultsAnalyzer,
     override val toolResolver: DotnetToolResolver,
     private val _targetService: TargetService,
@@ -38,17 +39,18 @@ class TestCommand(
     private val _loggerService: LoggerService,
     private val _targetTypeProvider: TargetTypeProvider,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
-) : DotnetCommandBase(_parametersService) {
+    private val _testsSplittingSettings: TestsSplittingSettings,
+) : DotnetCommandBase(parametersService) {
     override val commandType = DotnetCommandType.Test
 
-    override val commandWords = sequenceOf("test")
+    override val command = sequenceOf("test")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
-        if (filter.isSplitting) {
+        if (filter.isSplittingByFilter) {
             _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
         }
 
@@ -91,7 +93,7 @@ class TestCommand(
             }
         }
 
-        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
+        if (skipBuild) {
             yield(CommandLineArgument("--no-build"))
         }
 
@@ -102,6 +104,10 @@ class TestCommand(
             yieldAll(_commonArgumentsProvider.getArguments(context))
         }
     }
+
+    private val skipBuild get() =
+        parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean() ||
+                _testsSplittingSettings.mode.isSuppressingMode
 
     private fun isAssembly(path: String) = _targetTypeProvider.getTargetType(File(path)) == CommandTargetType.Assembly
 }

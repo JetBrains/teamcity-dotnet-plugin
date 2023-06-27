@@ -26,15 +26,15 @@ import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class ListTestsCommand(
-    _parametersService: ParametersService,
+    parametersService: ParametersService,
     override val resultsAnalyzer: ResultsAnalyzer,
     override val toolResolver: DotnetToolResolver,
     private val _targetService: TargetService,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
-) : DotnetCommandBase(_parametersService) {
+) : DotnetCommandBase(parametersService) {
     override val commandType = DotnetCommandType.ListTests
 
-    override val commandWords = sequenceOf("test")
+    override val command = sequenceOf("test")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)

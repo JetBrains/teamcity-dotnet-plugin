@@ -13,14 +13,14 @@ The application provides two commands:
 
 1. **Suppress Command**: This command allows you to suppress tests by executing the following command:
 ```
-dotnet ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
+dotnet --roll-forward LatestMajor ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
   suppress \
   --target <PATH_TO_TARGET> \
   --test-list <PATH_TO_TEST_LIST_FILE> \
   --backup <PATH_TO_OUTPUT_METADATA_FILE> \
   --inclusion-mode
 ```
-- `<PATH_TO_TARGET>` – the target path where the test assemblies (.dll, .exe), .csproj, .sln or directory are located
+- `<PATH_TO_TARGET>` – the target path where the test assemblies (.dll, .exe), .csproj, .sln, .binlog or directory are located
 - `<PATH_TO_TEST_LIST_FILE>` – the path to the file (.txt) containing the list of test classes
 – `<PATH_TO_OUTPUT_METADATA_FILE>` – the path to the output metadata file (.csv) contains the semicolon-separated list of patched assemblies
 – `--inclusion-mode` – the flag indicates that should be suppressed all tests except ones from the test list file. Otherwise, the application works in exclusion mode: all the tests from the test list file should be suppressed.
@@ -50,7 +50,7 @@ The metadata .csv file have the following format:
 
 2. **Restore Command**: This command enables you to restore the original assemblies by executing the following command:
 ```
-dotnet ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
+dotnet --roll-forward LatestMajor ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
   restore \
   --backup-metadata <PATH_METADATA_FILE>
 ```
@@ -58,5 +58,6 @@ dotnet ./TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll \
 
 ## Restrictions
 
-– Currently supported only .NET 6.0.xxx, 7.0.xxx, 8.0.xxx
-– Target resolution for projects works only for Debug tests mode
+* Currently supported only .NET 6.0.xxx, 7.0.xxx, 8.0.xxx 
+* Assembled for `net6.0`; to make it compatible with installed framework with higher version use `--roll-forward LatestMajor`
+* Target resolution for projects works only for Debug tests mode

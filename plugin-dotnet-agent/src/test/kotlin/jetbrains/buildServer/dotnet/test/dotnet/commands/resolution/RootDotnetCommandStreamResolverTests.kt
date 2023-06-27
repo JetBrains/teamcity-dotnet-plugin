@@ -19,22 +19,22 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolver
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStreamResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandStreamResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolver
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
+import jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandResolver
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
 class RootDotnetCommandStreamResolverTests {
     @MockK
-    private lateinit var _resolverMock1: DotnetCommandsStreamResolver
+    private lateinit var _resolverMock1: DotnetCommandsResolver
 
     @MockK
-    private lateinit var _resolverMock2: DotnetCommandsStreamResolver
+    private lateinit var _resolverMock2: DotnetCommandsResolver
 
     @MockK
-    private lateinit var _resolverMock3: DotnetCommandsStreamResolver
+    private lateinit var _resolverMock3: DotnetCommandsResolver
 
     @BeforeMethod
     fun setup(){
@@ -51,15 +51,15 @@ class RootDotnetCommandStreamResolverTests {
         val result = resolver.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsStreamResolvingStage.Initial)
+        Assert.assertEquals(result, DotnetCommandsResolvingStage.Initial)
     }
 
     @Test
     fun `should be always applicable`() {
         // arrange
-        every { _resolverMock1.stage } answers { DotnetCommandsStreamResolvingStage.CommandRetrieve }
-        every { _resolverMock2.stage } answers { DotnetCommandsStreamResolvingStage.Targeting }
-        every { _resolverMock3.stage } answers { DotnetCommandsStreamResolvingStage.Transformation }
+        every { _resolverMock1.stage } answers { DotnetCommandsResolvingStage.CommandRetrieve }
+        every { _resolverMock2.stage } answers { DotnetCommandsResolvingStage.Targeting }
+        every { _resolverMock3.stage } answers { DotnetCommandsResolvingStage.Transformation }
 
         val resolver1ResultStream = mockk<DotnetCommandsStream>()
         every { _resolverMock1.resolve(any()) } answers { resolver1ResultStream }
@@ -83,5 +83,5 @@ class RootDotnetCommandStreamResolverTests {
         Assert.assertEquals(result, resolver3ResultStream)
     }
 
-    private fun create() = RootDotnetCommandStreamResolver(listOf(_resolverMock1, _resolverMock2, _resolverMock3))
+    private fun create() = RootDotnetCommandResolver(listOf(_resolverMock1, _resolverMock2, _resolverMock3))
 }

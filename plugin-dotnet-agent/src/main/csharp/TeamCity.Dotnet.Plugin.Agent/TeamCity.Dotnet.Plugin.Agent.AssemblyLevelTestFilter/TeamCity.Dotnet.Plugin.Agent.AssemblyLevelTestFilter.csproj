@@ -2,12 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFramework>net6.0</TargetFramework>
         <IsPackable>true</IsPackable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11.0</LangVersion>
-        <OutputType>Exe</OutputType>
+        <PublishSingleFile>false</PublishSingleFile>  <!-- Do not merge files since it's not compatible with UseAppHost == true-->
+        <UseAppHost>false</UseAppHost>                <!-- Disable generating of platform-specific executable files -->
         <EntryPointExe>TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Program.Main</EntryPointExe>
         <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
         
@@ -31,14 +32,9 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+      <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.820" />
       <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
       <PackageReference Include="YamlDotNet" Version="13.1.0" />
     </ItemGroup>
-
-    <!-- We don't need a platform specific executable file in disto -->
-    <Target Name="RemoveExeAfterPublish" AfterTargets="Publish">
-        <Delete Files="$(PublishDir)$(AssemblyName).exe" Condition="'$(OS)' == 'Windows_NT'" />
-        <Delete Files="$(PublishDir)$(AssemblyName)" Condition="'$(OS)' != 'Windows_NT'" />
-    </Target>
 
 </Project>

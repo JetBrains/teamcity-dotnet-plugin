@@ -41,7 +41,7 @@ class MSBuildCommand(
 
     override val commandType = DotnetCommandType.MSBuild
 
-    override val commandWords = sequenceOf("msbuild")
+    override val command = sequenceOf("msbuild")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
@@ -80,7 +80,7 @@ class MSBuildCommand(
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))
 
-        if (filter.isSplitting)
+        if (filter.isSplittingByFilter)
         {
             val msBuldParams = mutableListOf<MSBuildParameter>()
             if (filter.filter.isNotBlank()) {

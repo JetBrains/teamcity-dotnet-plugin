@@ -90,7 +90,7 @@ class ListTestsCommandTests {
         val command = createCommand()
 
         // act
-        val result = command.commandWords.toList()
+        val result = command.command.toList()
 
         // assert
         Assert.assertEquals(result.size, 1)

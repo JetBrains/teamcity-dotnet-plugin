@@ -40,14 +40,14 @@ class VSTestCommand(
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.VSTest
 
-    override val commandWords = sequenceOf("vstest")
+    override val command = sequenceOf("vstest")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
-        if (filter.isSplitting) {
+        if (filter.isSplittingByFilter) {
             _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
         }
 
@@ -63,7 +63,7 @@ class VSTestCommand(
         }
 
         if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "name") {
-            if (filter.isSplitting) {
+            if (filter.isSplittingByFilter) {
                 _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
             }
 

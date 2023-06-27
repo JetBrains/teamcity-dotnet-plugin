@@ -34,7 +34,7 @@ class RunCommand(
 
     override val commandType = DotnetCommandType.Run
 
-    override val commandWords = sequenceOf("run")
+    override val command = sequenceOf("run")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map {

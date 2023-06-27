@@ -1,4 +1,4 @@
-﻿ARG DOTNET_SDK_IMAGE_TAG=7.0
+﻿ARG DOTNET_SDK_IMAGE_TAG=6.0
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_IMAGE_TAG} AS build
 
 WORKDIR /app

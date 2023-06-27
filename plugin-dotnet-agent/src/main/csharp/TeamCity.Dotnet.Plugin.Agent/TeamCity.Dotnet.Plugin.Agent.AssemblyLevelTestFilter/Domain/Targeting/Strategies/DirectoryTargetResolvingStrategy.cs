@@ -4,26 +4,27 @@ using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSy
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
-internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
+internal class DirectoryTargetResolvingStrategy : BaseTargetResolvingStrategy
 {
-    private readonly IFileSystem _fileSystem;
     private readonly ILogger<DirectoryTargetResolvingStrategy> _logger;
-    
-    public TargetType TargetType => TargetType.Directory;
+
+
+    protected override IEnumerable<string> AllowedTargetExtensions => Array.Empty<string>();
 
     public DirectoryTargetResolvingStrategy(
         IFileSystem fileSystem,
-        ILogger<DirectoryTargetResolvingStrategy> logger)
+        ILogger<DirectoryTargetResolvingStrategy> logger) : base(fileSystem, logger)
     {
-        _fileSystem = fileSystem;
         _logger = logger;
     }
 
-    public IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
+    public override TargetType TargetType => TargetType.Directory;
+
+    public override IEnumerable<(IFileSystemInfo, TargetType)> Resolve(string target)
     {
         _logger.LogInformation("Resolving target directory: {Target}", target);
         
-        var directoryInfoResult = _fileSystem.TryGetDirectoryInfo(target);
+        var directoryInfoResult = FileSystem.TryGetDirectoryInfo(target);
         if (directoryInfoResult.IsError)
         {
             _logger.LogError(directoryInfoResult.ErrorValue, "Failed to resolve target directory: {Target}", target);
@@ -69,6 +70,12 @@ internal class DirectoryTargetResolvingStrategy : ITargetResolvingStrategy
                     yield return (assemblyFile, TargetType.Assembly);
                 }
             }
+        }
+        
+        foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(directoryInfo))
+        {
+            _logger.LogInformation("Resolved MSBuild .binlog file in the target directory: {MsBuildBinlog}", msBuildBinlogFile.FullName);
+            yield return (msBuildBinlogFile, TargetType.MsBuildBinlog);
         }
     }
 

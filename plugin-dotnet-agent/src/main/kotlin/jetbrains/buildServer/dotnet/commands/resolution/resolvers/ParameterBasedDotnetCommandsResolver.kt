@@ -1,0 +1,46 @@
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package jetbrains.buildServer.dotnet.commands.resolution.resolvers
+
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandResolverBase
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
+import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
+
+// Provides an initial command by build step parameter
+class ParameterBasedDotnetCommandsResolver(
+    private val _dotnetCommands: List<DotnetCommand>,
+    private val _parametersService: ParametersService,
+) : DotnetCommandResolverBase() {
+    private val _allKnownCommands: Map<String, DotnetCommand> =
+        _dotnetCommands.associateBy({ it.commandType.id }, { it })
+
+    override val stage = DotnetCommandsResolvingStage.CommandRetrieve
+
+    override fun shouldBeApplied(commands: DotnetCommandsStream) = !commands.any()
+
+    override fun apply(commands: DotnetCommandsStream) =
+        _parametersService
+            .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND)
+            ?.let { _allKnownCommands[it] }
+            ?.let { sequenceOf(it) }
+            ?: emptySequence()
+}
+

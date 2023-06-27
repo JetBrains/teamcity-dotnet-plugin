@@ -35,7 +35,7 @@ class RestoreCommand(
 ) : DotnetCommandBase(_parametersService) {
     override val commandType  = DotnetCommandType.Restore
 
-    override val commandWords = sequenceOf("restore")
+    override val command = sequenceOf("restore")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

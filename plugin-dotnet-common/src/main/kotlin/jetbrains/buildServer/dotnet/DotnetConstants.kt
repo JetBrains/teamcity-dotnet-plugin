@@ -59,6 +59,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER = "teamcity.internal.dotnet.test.exact.match.filter"
     // Integer amount of tests that should be included in exact match test filter
     const val PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE = "teamcity.internal.dotnet.test.exact.match.filter.size"
+    // True or False (False by default) - use test suppressing strategy to split tests
+    const val PARAM_PARALLEL_TESTS_USE_SUPPRESSING = "teamcity.internal.dotnet.test.suppressing"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
 

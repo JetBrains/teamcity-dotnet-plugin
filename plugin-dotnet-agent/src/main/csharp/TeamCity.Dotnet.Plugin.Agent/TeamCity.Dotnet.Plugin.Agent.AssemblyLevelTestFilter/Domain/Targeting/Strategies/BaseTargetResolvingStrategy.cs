@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infrastructure.FileSystemExtensions;
+using TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Infxrastructure.FileSystemExtensions;
 
 namespace TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.Domain.Targeting.Strategies;
 
@@ -46,5 +47,15 @@ internal abstract class BaseTargetResolvingStrategy : ITargetResolvingStrategy
         }
 
         return pathFileSystemInfo;
+    }
+    
+    protected IEnumerable<IFileInfo> TryFindMsBuildBinlogFiles(IFileSystemInfo fileSystemInfo)
+    {
+        var path = fileSystemInfo.IsDirectory()
+            ? fileSystemInfo.FullName
+            : ((IFileInfo)fileSystemInfo).Directory!.FullName;
+        return FileSystem.Directory
+            .GetFiles(path, "*" + FileExtension.MsBuildBinaryLog, SearchOption.TopDirectoryOnly)
+            .Select(p => FileSystem.FileInfo.New(p));
     }
 }

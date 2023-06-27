@@ -33,7 +33,7 @@ class CleanCommand(
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.Clean
 
-    override val commandWords = sequenceOf("clean")
+    override val command = sequenceOf("clean")
 
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }

@@ -32,6 +32,7 @@ public class SuppressNotBuiltProjectTests : IClassFixture<DotnetTestContainerFix
             DotnetTestContainerFixture.TargetType.Project,
             projectTestClasses: new[] { testClass },
             buildTestProject: false,  // in this test we a not going to build the project and see if the filter fails
+            withMsBuildBinaryLogs: false,
             testClass
         );
 

@@ -25,7 +25,7 @@ internal class TargetResolver : ITargetResolver
     public IEnumerable<IFileInfo> Resolve(string target)
     {
         _logger.LogInformation("Resolving target: {Target}", target);
-
+        
         var originalTargetPathResult = _fileSystem.TryGetFileSystemInfo(target);
         if (originalTargetPathResult.IsError)
         {
@@ -34,14 +34,17 @@ internal class TargetResolver : ITargetResolver
         }
 
         var originalTargetPath = originalTargetPathResult.Value;
-        
+
         var supposedTargetType = SpeculateTargetType(originalTargetPath);
         
+        var resolvedTargets = new HashSet<string>();
+
         // if target is an assembly, we can process once and return it right away
         if (supposedTargetType == TargetType.Assembly)
         {
             foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(originalTargetPath.FullName))
             {
+                resolvedTargets.Add(resolvedAssembly.FullName);
                 yield return (IFileInfo) resolvedAssembly;
             }
             yield break;
@@ -53,14 +56,19 @@ internal class TargetResolver : ITargetResolver
         queue.Enqueue((originalTargetPath, supposedTargetType));
         while (queue.Count != 0)
         {
-            var (currentFileSystemInfo, targetType) = queue.Dequeue();
+            var (currentTarget, targetType) = queue.Dequeue();
+            if (resolvedTargets.Contains(currentTarget.FullName))
+            {
+                continue;   // skip already resolved targets
+            }
+            
             if (!_strategies.TryGetValue(targetType, out var strategy))
             {
                 _logger.LogError("No target resolution strategy for target type: {TargetType}", targetType);
                 continue;
             }
-            
-            foreach (var (resolvedTargetFile, resolvedTargetType) in strategy.Resolve(currentFileSystemInfo.FullName))
+
+            foreach (var (resolvedTargetFile, resolvedTargetType) in strategy.Resolve(currentTarget.FullName))
             {
                 if (resolvedTargetType == TargetType.Assembly)
                 {
@@ -73,10 +81,12 @@ internal class TargetResolver : ITargetResolver
                 
                 queue.Enqueue((resolvedTargetFile, resolvedTargetType));
             }
+            
+            resolvedTargets.Add(currentTarget.FullName);
         }
     }
     
-    private  TargetType SpeculateTargetType(IFileSystemInfo fileSystemInfo)
+    private static TargetType SpeculateTargetType(IFileSystemInfo fileSystemInfo)
     {
         if (fileSystemInfo.IsDirectory())
         {
@@ -84,6 +94,11 @@ internal class TargetResolver : ITargetResolver
         }
         
         var extension = fileSystemInfo.Extension.ToLowerInvariant();
+        
+        if (TargetType.MsBuildBinlog.GetPossibleFileExtension().Contains(extension))
+        {
+            return TargetType.MsBuildBinlog;
+        }
         
         if (TargetType.Assembly.GetPossibleFileExtension().Contains(extension))
         {
