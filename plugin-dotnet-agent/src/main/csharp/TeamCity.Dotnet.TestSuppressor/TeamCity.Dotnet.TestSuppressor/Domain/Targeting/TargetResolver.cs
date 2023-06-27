@@ -22,7 +22,13 @@ internal class TargetResolver : ITargetResolver
     
     private ITargetResolvingStrategy AssemblyStrategy => _strategies[TargetType.Assembly];
 
-    public IEnumerable<IFileInfo> Resolve(string target)
+    public IEnumerable<IFileInfo> Resolve(IEnumerable<string> targets)
+    {
+        var resolvedTargets = new HashSet<string>();
+        return targets.SelectMany(t => Resolve(t, resolvedTargets));
+    }
+
+    private IEnumerable<IFileInfo> Resolve(string target, ISet<string> resolvedTargets)
     {
         _logger.LogInformation("Resolving target: {Target}", target);
         
@@ -36,8 +42,6 @@ internal class TargetResolver : ITargetResolver
         var originalTargetPath = originalTargetPathResult.Value;
 
         var supposedTargetType = SpeculateTargetType(originalTargetPath);
-        
-        var resolvedTargets = new HashSet<string>();
 
         // if target is an assembly, we can process once and return it right away
         if (supposedTargetType == TargetType.Assembly)
@@ -59,7 +63,8 @@ internal class TargetResolver : ITargetResolver
             var (currentTarget, targetType) = queue.Dequeue();
             if (resolvedTargets.Contains(currentTarget.FullName))
             {
-                continue;   // skip already resolved targets
+                _logger.LogInformation("Skip already resolved target: {Target}", currentTarget.FullName);
+                continue;
             }
             
             if (!_strategies.TryGetValue(targetType, out var strategy))
@@ -72,8 +77,15 @@ internal class TargetResolver : ITargetResolver
             {
                 if (resolvedTargetType == TargetType.Assembly)
                 {
+                    if (resolvedTargets.Contains(resolvedTargetFile.FullName))
+                    {
+                        _logger.LogInformation("Skip already resolved target: {Target}", resolvedTargetFile.FullName);
+                        continue;
+                    }
+                    
                     foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
                     {
+                        resolvedTargets.Add(resolvedAssembly.FullName);
                         yield return (IFileInfo) resolvedAssembly;
                     }
                     continue;

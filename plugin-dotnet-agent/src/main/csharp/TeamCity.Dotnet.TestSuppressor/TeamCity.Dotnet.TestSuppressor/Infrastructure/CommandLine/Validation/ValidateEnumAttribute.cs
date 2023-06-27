@@ -16,7 +16,7 @@ internal class ValidateEnumAttribute : ValidationAttribute
         ErrorMessage = $"Value must be one of the following: {string.Join(", ", Enum.GetNames(enumType))}";
     }
     
-    public override ValidationResult IsValid(object value) => Enum.IsDefined(_enumType, value)
+    public override ValidationResult Validate(object value) => Enum.IsDefined(_enumType, value)
         ? ValidationResult.Valid
         : ValidationResult.Invalid(ErrorMessage);
 }

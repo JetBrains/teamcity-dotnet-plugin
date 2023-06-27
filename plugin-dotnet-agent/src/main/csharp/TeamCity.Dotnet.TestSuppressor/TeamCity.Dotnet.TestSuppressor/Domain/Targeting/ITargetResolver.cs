@@ -4,5 +4,5 @@ namespace TeamCity.Dotnet.TestSuppressor.Domain.Targeting;
 
 internal interface ITargetResolver
 {
-    IEnumerable<IFileInfo> Resolve(string target);
+    IEnumerable<IFileInfo> Resolve(IEnumerable<string> targets);
 }

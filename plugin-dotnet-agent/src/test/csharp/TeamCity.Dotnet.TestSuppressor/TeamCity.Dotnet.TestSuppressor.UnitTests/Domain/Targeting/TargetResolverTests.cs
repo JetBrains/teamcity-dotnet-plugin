@@ -46,7 +46,7 @@ public class TargetResolverTests
         _fileSystemMock.Setup(fs => fs.FileInfo.Wrap(It.IsAny<FileInfo>())).Throws<Exception>();
 
         // act, assert
-        Assert.Throws<FileNotFoundException>(() => _targetResolver.Resolve("").ToList());
+        Assert.Throws<FileNotFoundException>(() => _targetResolver.Resolve(new[] { "" }).ToList());
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class TargetResolverTests
             .Returns(directoryInfoMock.Object);
 
         // act, assert
-        Assert.Throws<NotSupportedException>(() => _targetResolver.Resolve(target).ToList());
+        Assert.Throws<NotSupportedException>(() => _targetResolver.Resolve(new[] { target }).ToList());
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class TargetResolverTests
             .Returns(new List<(IFileSystemInfo, TargetType)> { (targetFileInfoMock.Object, TargetType.Assembly) });
 
         // act
-        var result = _targetResolver.Resolve(target);
+        var result = _targetResolver.Resolve(new[] { target });
 
         // assert
         Assert.Single(result);
@@ -132,7 +132,7 @@ public class TargetResolverTests
             .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
     
         // act
-        var result = _targetResolver.Resolve(target);
+        var result = _targetResolver.Resolve(new[] { target });
     
         // assert
         Assert.Single(result);
@@ -179,7 +179,7 @@ public class TargetResolverTests
             .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
     
         // act
-        var result = _targetResolver.Resolve(target);
+        var result = _targetResolver.Resolve(new[] { target });
     
         // assert
         Assert.Single(result);
@@ -234,7 +234,7 @@ public class TargetResolverTests
             .Returns(new List<(IFileSystemInfo, TargetType)> { (resolvedAssemblyMock.Object, TargetType.Assembly) });
     
         // act
-        var result = _targetResolver.Resolve(target);
+        var result = _targetResolver.Resolve(new[] { target });
     
         // assert
         Assert.Single(result);

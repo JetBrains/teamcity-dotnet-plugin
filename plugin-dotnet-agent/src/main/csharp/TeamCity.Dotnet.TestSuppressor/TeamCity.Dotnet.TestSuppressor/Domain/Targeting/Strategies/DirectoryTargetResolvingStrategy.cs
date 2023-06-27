@@ -37,6 +37,12 @@ internal class DirectoryTargetResolvingStrategy : BaseTargetResolvingStrategy
             .SelectMany(sp => directoryInfo.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
         var csprojFiles = GetFileSearchPattern(TargetType.Project)
             .SelectMany(sp => directoryInfo.GetFiles(sp, SearchOption.TopDirectoryOnly)).ToList();
+        
+        foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(directoryInfo))
+        {
+            _logger.LogInformation("Resolved MSBuild .binlog file in the target directory: {MsBuildBinlog}", msBuildBinlogFile.FullName);
+            yield return (msBuildBinlogFile, TargetType.MsBuildBinlog);
+        }
 
         // not sure how to handle this
         // TODO need to test how `dotnet test` handles this:
@@ -70,12 +76,6 @@ internal class DirectoryTargetResolvingStrategy : BaseTargetResolvingStrategy
                     yield return (assemblyFile, TargetType.Assembly);
                 }
             }
-        }
-        
-        foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(directoryInfo))
-        {
-            _logger.LogInformation("Resolved MSBuild .binlog file in the target directory: {MsBuildBinlog}", msBuildBinlogFile.FullName);
-            yield return (msBuildBinlogFile, TargetType.MsBuildBinlog);
         }
     }
 

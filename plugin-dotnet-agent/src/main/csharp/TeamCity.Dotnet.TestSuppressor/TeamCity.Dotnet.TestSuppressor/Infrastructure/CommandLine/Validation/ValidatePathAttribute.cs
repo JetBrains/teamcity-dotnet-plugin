@@ -27,15 +27,32 @@ internal class ValidatePathAttribute : ValidationAttribute
         _allowedExtensions = allowedExtensions;
     }
 
-    public override ValidationResult IsValid(object value)
+    public override ValidationResult Validate(object value)
     {
-        if (string.IsNullOrEmpty(value.ToString()))
+        if (value is not Array array)
+        {
+            return Validate(value as string);
+        }
+        
+        foreach (var item in array)
+        {
+            var validationResult = Validate(item as string);
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
+        }
+        return ValidationResult.Valid;
+
+    }
+
+    private ValidationResult Validate(string? path)
+    {
+        if (string.IsNullOrEmpty(path))
         {
             return ValidationResult.Invalid(ErrorMessage);
         }
 
-        var path = value.ToString();
-        
         // check if string is valid path
         try
         {

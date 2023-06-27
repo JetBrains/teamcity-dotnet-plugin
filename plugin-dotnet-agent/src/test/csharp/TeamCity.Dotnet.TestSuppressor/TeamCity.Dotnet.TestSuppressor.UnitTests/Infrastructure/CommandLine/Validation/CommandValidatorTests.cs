@@ -71,7 +71,7 @@ public class CommandValidatorTests
         {
         }
 
-        public override ValidationResult IsValid(object value)
+        public override ValidationResult Validate(object value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
             return value is true ? ValidationResult.Valid : ValidationResult.Invalid(ErrorMessage);

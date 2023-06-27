@@ -11,7 +11,7 @@ public class RequiredAttributeTests
         var attribute = new RequiredAttribute("Test error message");
 
         // act
-        var result = attribute.IsValid("some value");
+        var result = attribute.Validate("some value");
 
         // assert
         Assert.True(result.IsValid);
@@ -25,7 +25,7 @@ public class RequiredAttributeTests
         var attribute = new RequiredAttribute("Test error message");
 
         // act
-        var result = attribute.IsValid(null!);
+        var result = attribute.Validate(null!);
 
         // assert
         Assert.False(result.IsValid);

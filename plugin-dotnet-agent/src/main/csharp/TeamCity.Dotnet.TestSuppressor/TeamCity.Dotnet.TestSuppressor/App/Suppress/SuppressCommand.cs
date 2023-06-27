@@ -7,11 +7,11 @@ namespace TeamCity.Dotnet.TestSuppressor.App.Suppress;
 internal class SuppressCommand : Command
 {
     [CommandOption(requiresValue: true,"-t", "--target")]
-    [CommandOptionDescription("Path to target. It could be directory, .sln, .csproj, .dll or .exe")]
+    [CommandOptionDescription("Path to target. It could be directory, .sln, .csproj, .dll, .exe or .binlog")]
     [Required(errorMessage: "Target path is required and can't be empty")]
     [ValidatePath(mustBeFile: false, mustExist: true, errorMessage: "Invalid target path",
         FileExtension.Solution, FileExtension.CSharpProject, FileExtension.Dll, FileExtension.Exe, FileExtension.MsBuildBinaryLog)]
-    public string Target { get; set; } = string.Empty;
+    public string[] Targets { get; set; } = Array.Empty<string>();
 
     [CommandOption(requiresValue: true, "-l", "--test-list")]
     [CommandOptionDescription("Path to file with tests selectors list")]

@@ -92,7 +92,7 @@ task cleanDotnetTestSuppressor(type: Exec) {
 
 task publishDotnetTestSuppressor(type: Exec) {
     mustRunAfter preparePackagesTask
-    dependsOn unitTestDotnetTestSuppressor
+    dependsOn cleanDotnetTestSuppressor, unitTestDotnetTestSuppressor
 
     commandLine 'dotnet', 'publish',
         './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor',

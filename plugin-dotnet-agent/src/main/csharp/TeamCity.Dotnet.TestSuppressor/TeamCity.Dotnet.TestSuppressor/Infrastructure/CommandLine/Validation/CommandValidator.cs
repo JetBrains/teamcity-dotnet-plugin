@@ -40,19 +40,11 @@ internal class CommandValidator : ICommandValidator
             }
             
             var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
-            var requiredAttribute = property.GetCustomAttribute<RequiredAttribute>();
-
-            // check required attribute
-            if (requiredAttribute != null && string.IsNullOrEmpty(value as string))
-            {
-                validationErrors.Add(FormatValidationError(requiredAttribute.ErrorMessage));
-                continue;
-            }
 
             // check other validation attributes
             foreach (var attribute in validationAttributes)
             {
-                var validationResult = attribute.IsValid(value!);
+                var validationResult = attribute.Validate(value!);
                 if (!validationResult.IsValid)
                 {
                     validationErrors.Add(FormatValidationError(validationResult.ErrorMessage));

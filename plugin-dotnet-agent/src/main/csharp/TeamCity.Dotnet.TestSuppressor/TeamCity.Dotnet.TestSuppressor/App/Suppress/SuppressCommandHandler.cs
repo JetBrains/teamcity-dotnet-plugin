@@ -41,7 +41,7 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
         _logger.LogDebug("Patching criteria created: {PatchingCriteria}", patchingCriteria);
 
         var patchedAssembliesCounter = 0;
-        foreach (var assembly in _targetResolver.Resolve(command.Target))
+        foreach (var assembly in _targetResolver.Resolve(command.Targets))
         {
             _logger.LogDebug("Trying to patch assembly: {Assembly}", assembly);
             

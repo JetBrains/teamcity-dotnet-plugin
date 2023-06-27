@@ -18,7 +18,7 @@ public class ValidateEnumAttributeTests
         var attribute = new ValidateEnumAttribute(typeof(TestEnum));
 
         // act
-        var result = attribute.IsValid(TestEnum.Value1);
+        var result = attribute.Validate(TestEnum.Value1);
 
         // assert
         Assert.True(result.IsValid);
@@ -32,7 +32,7 @@ public class ValidateEnumAttributeTests
         var attribute = new ValidateEnumAttribute(typeof(TestEnum));
 
         // act
-        var result = attribute.IsValid("InvalidValue");
+        var result = attribute.Validate("InvalidValue");
 
         // assert
         Assert.False(result.IsValid);

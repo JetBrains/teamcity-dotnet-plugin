@@ -10,5 +10,5 @@ internal abstract class ValidationAttribute : Attribute
         ErrorMessage = errorMessage;
     }
 
-    public abstract ValidationResult IsValid(object value);
+    public abstract ValidationResult Validate(object value);
 }

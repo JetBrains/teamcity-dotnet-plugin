@@ -56,7 +56,7 @@ public class SuppressCommandHandlerTests
             .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
-            .Setup(m => m.Resolve(It.IsAny<string>()))
+            .Setup(m => m.Resolve(It.IsAny<IEnumerable<string>>()))
             .Returns(new[] { targetAssembly1Mock.Object, targetAssembly2Mock.Object });
         _mockAssemblyPatcher
             .Setup(m => m.TryPatchAsync(targetAssembly1Mock.Object, It.IsAny<TestSuppressionPatchingCriteria>()))
@@ -117,7 +117,7 @@ public class SuppressCommandHandlerTests
             .Setup(m => m.LoadTestSelectorsFromAsync(It.IsAny<string>()))
             .ReturnsAsync(testSelectors);
         _mockTargetResolver
-            .Setup(m => m.Resolve(It.IsAny<string>()))
+            .Setup(m => m.Resolve(It.IsAny<IEnumerable<string>>()))
             .Returns(new[] { targetAssemblyMock.Object });
         _mockAssemblyPatcher
             .Setup(m => m.TryPatchAsync(targetAssemblyMock.Object, It.IsAny<TestSuppressionPatchingCriteria>()))

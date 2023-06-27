@@ -17,6 +17,7 @@
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers
 
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -25,6 +26,7 @@ import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
+import kotlinx.coroutines.yield
 
 class TestSuppressTestsSplittingCommandsResolver(
     private val _buildDotnetCommand: DotnetCommand,
@@ -51,14 +53,15 @@ class TestSuppressTestsSplittingCommandsResolver(
         testCommand.targetArguments.forEach { targetArgument ->
             val targetPath = targetArgument.arguments.first().value
             val backupMetadataPath = newBackupMetadataFilePath()
+            var binlogPath = newBinlogFilePath()
 
             // 1. build the target
-            yield(_buildDotnetCommand)
+            yield(BuildWithBinaryLogCommand(_buildDotnetCommand, binlogPath))
 
-            // 2. mutate assemblies by the target path to filter out tests
+            // 2. mutate assemblies by the target path and .binlog file to filter out tests
             yield(SuppressTestsCommand(
                 _teamCityDotnetToolCommand,
-                targetPath,
+                sequenceOf(targetPath, binlogPath),
                 _testsSplittingSettings.testsClassesFilePath ?: "",
                 backupMetadataPath,
                 _testsSplittingSettings.filterType == TestsSplittingFilterType.Includes,
@@ -77,9 +80,23 @@ class TestSuppressTestsSplittingCommandsResolver(
 
     private fun newBackupMetadataFilePath() = _pathService.getTempFileName(BackupMetadataFileExtension).path
 
+    private fun newBinlogFilePath() = _pathService.getTempFileName(MSBuildBinaryLogFileExtensions).path
+
+    private class BuildWithBinaryLogCommand(
+        private val _originalBuildCommand: DotnetCommand,
+        private val _binlogPath: String,
+    ) : DotnetCommand by _originalBuildCommand {
+        override fun getArguments(context: DotnetBuildContext) = sequence {
+            // generates MSBuild binary log file (.binlog)
+            yield(CommandLineArgument("-bl:LogFile=\"$_binlogPath\""))
+
+            yieldAll(_originalBuildCommand.getArguments(context))
+        }
+    }
+
     private class SuppressTestsCommand(
         private val _teamCityDotnetToolCommand: DotnetCommand,
-        private val _targetPathArgument: String,
+        private val _targetPaths: Sequence<String>,
         private val _testListFilePathArgument: String,
         private val _backupMetadataFilePathArgument: String,
         private val _inclusionMode: Boolean,
@@ -91,8 +108,10 @@ class TestSuppressTestsSplittingCommandsResolver(
 
             yield(CommandLineArgument("suppress"))
 
-            yield(CommandLineArgument("--target"))
-            yield(CommandLineArgument(_targetPathArgument))
+            _targetPaths.forEach {
+                yield(CommandLineArgument("--target"))
+                yield(CommandLineArgument(it))
+            }
 
             yield(CommandLineArgument("--test-list"))
             yield(CommandLineArgument(_testListFilePathArgument))
@@ -124,5 +143,6 @@ class TestSuppressTestsSplittingCommandsResolver(
 
     companion object {
         private const val BackupMetadataFileExtension = ".csv"
+        private const val MSBuildBinaryLogFileExtensions = ".binlog"
     }
 }

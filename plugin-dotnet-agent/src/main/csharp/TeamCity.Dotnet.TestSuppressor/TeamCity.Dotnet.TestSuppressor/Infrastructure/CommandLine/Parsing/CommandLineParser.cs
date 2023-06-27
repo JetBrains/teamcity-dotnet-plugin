@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.CommandLine.Commands;
 
@@ -30,7 +31,7 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
         var unknownArguments = new List<string>();
         var arguments = new Queue<string>(args);
         var commandType = _commandType;
-        string prevKey = string.Empty;
+        var prevKey = string.Empty;
         
         // we have 5 possibilities for every single argument:
         // - it's a command
@@ -137,6 +138,13 @@ internal class CommandLineParser<TCommand> : ICommandLineParser<TCommand>
             if (optionAttribute.RequiresValue)
             {
                 key = Key(commandPath, optionProperty.Name);
+                
+                // if option is array – add index to key
+                if (optionProperty.PropertyType.IsArray)
+                {
+                    var index = mappingsResult.Count(kv => kv.Key.StartsWith($"{key}:"));
+                    key += $":{index}";
+                }
             }
             else
             {

@@ -23,7 +23,7 @@ public class ValidatePathAttributeTests
         _mockFileSystem.Setup(fs => fs.Path).Returns(pathMock.Object);
 
         // act
-        var result = attribute.IsValid("Invalid\\Path");
+        var result = attribute.Validate("Invalid\\Path");
 
         // assert
         Assert.False(result.IsValid);
@@ -40,7 +40,7 @@ public class ValidatePathAttributeTests
         _mockFileSystem.Setup(fs => fs.File).Returns(fileMock.Object);
 
         // act
-        var result = attribute.IsValid("C:\\path\\to\\missing\\file.txt");
+        var result = attribute.Validate("C:\\path\\to\\missing\\file.txt");
 
         // assert
         Assert.False(result.IsValid);
@@ -60,7 +60,7 @@ public class ValidatePathAttributeTests
         _mockFileSystem.Setup(fs => fs.Path).Returns(pathMock.Object);
 
         // act
-        var result = attribute.IsValid("C:\\path\\to\\file.docx");
+        var result = attribute.Validate("C:\\path\\to\\file.docx");
 
         // assert
         Assert.False(result.IsValid);
@@ -82,7 +82,7 @@ public class ValidatePathAttributeTests
         _mockFileSystem.Setup(m => m.Path.GetExtension(It.IsAny<string>())).Returns(extension);
 
         // act
-        var result = attribute.IsValid("C:\\path\\to\\file.txt");
+        var result = attribute.Validate("C:\\path\\to\\file.txt");
 
         // assert
         Assert.True(result.IsValid);
