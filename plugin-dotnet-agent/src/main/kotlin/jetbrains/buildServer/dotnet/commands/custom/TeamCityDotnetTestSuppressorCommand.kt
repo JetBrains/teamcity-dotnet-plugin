@@ -49,7 +49,7 @@ class TeamCityDotnetTestSuppressorCommand(
             ?: Verbosity.Normal
 
     companion object {
-        private const val ToolName = "TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.dll"
-        private const val RelativeToolPath = "tools/AssemblyLevelTestFilter/" + ToolName
+        private const val ToolName = "TeamCity.Dotnet.TestSuppressor.dll"
+        private const val RelativeToolPath = "tools/test-suppressor/" + ToolName
     }
 }

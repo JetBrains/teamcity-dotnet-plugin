@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.Dotnet.TestSuppressor", "TeamCity.Dotnet.TestSuppressor\TeamCity.Dotnet.TestSuppressor.csproj", "{B5E4C1EC-4375-4FD4-8015-61736A4A83F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.Dotnet.TestSuppressor.IntegrationTests", "..\..\..\test\csharp\TeamCity.Dotnet.TestSuppressor\TeamCity.Dotnet.TestSuppressor.IntegrationTests\TeamCity.Dotnet.TestSuppressor.IntegrationTests.csproj", "{22D8A7D7-F89F-425C-AA5E-430F21012CA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCity.Dotnet.TestSuppressor.UnitTests", "..\..\..\test\csharp\TeamCity.Dotnet.TestSuppressor\TeamCity.Dotnet.TestSuppressor.UnitTests\TeamCity.Dotnet.TestSuppressor.UnitTests.csproj", "{F5584988-FBA0-4A79-B236-30BD6AEFBD38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5E4C1EC-4375-4FD4-8015-61736A4A83F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E4C1EC-4375-4FD4-8015-61736A4A83F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E4C1EC-4375-4FD4-8015-61736A4A83F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E4C1EC-4375-4FD4-8015-61736A4A83F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D8A7D7-F89F-425C-AA5E-430F21012CA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D8A7D7-F89F-425C-AA5E-430F21012CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D8A7D7-F89F-425C-AA5E-430F21012CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D8A7D7-F89F-425C-AA5E-430F21012CA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5584988-FBA0-4A79-B236-30BD6AEFBD38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5584988-FBA0-4A79-B236-30BD6AEFBD38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5584988-FBA0-4A79-B236-30BD6AEFBD38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5584988-FBA0-4A79-B236-30BD6AEFBD38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

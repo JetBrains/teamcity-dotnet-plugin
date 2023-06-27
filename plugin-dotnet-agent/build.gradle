@@ -73,39 +73,39 @@ class PreparePackagesTask extends DefaultTask {
 
 task preparePackagesTask(type: PreparePackagesTask)
 
-task unitTestDotnet(type: Exec) {
+task unitTestDotnetTestSuppressor(type: Exec) {
     commandLine 'dotnet', 'test',
-        './src/test/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.UnitTests'
+        './src/test/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.UnitTests'
 }
 
-task integrationTestDotnet(type: Exec) {
+task integrationTestDotnetTestSuppressor(type: Exec) {
     commandLine 'dotnet', 'test',
-        './src/test/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter.IntegrationTests',
+        './src/test/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.IntegrationTests',
         '--logger', '"console;verbosity=detailed"'
 }
 
-task publishDotnet(type: Exec) {
+task cleanDotnetTestSuppressor(type: Exec) {
+    delete './tools/test-suppressor'
+    commandLine 'dotnet', 'clean',
+            './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.sln'
+}
+
+task publishDotnetTestSuppressor(type: Exec) {
     mustRunAfter preparePackagesTask
-    dependsOn unitTestDotnet
+    dependsOn unitTestDotnetTestSuppressor
 
     commandLine 'dotnet', 'publish',
-        './src/main/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.AssemblyLevelTestFilter',
+        './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor',
         '--configuration', 'Release',
         '--framework', 'net6.0',    // publish only for .NET 6.0 and make it compatible with higher versions via running with `--roll-forward LatestMajor`
         '-p:Version=' + teamcityVersion,
         '-p:Authors="JetBrains s.r.o"',
-        '--output', './tools/AssemblyLevelTestFilter'
+        '--output', './tools/test-suppressor'
 }
 
-task cleanDotnet(type: Exec) {
-    delete './tools/AssemblyLevelTestFilter'
-    commandLine 'dotnet', 'clean',
-        './src/main/csharp/TeamCity.Dotnet.Plugin.Agent/TeamCity.Dotnet.Plugin.Agent.sln'
-}
-
-clean.dependsOn(cleanDotnet)
-test.dependsOn(unitTestDotnet)
-agentPlugin.dependsOn(preparePackagesTask, publishDotnet)
+clean.dependsOn(cleanDotnetTestSuppressor)
+test.dependsOn(unitTestDotnetTestSuppressor)
+agentPlugin.dependsOn(preparePackagesTask, publishDotnetTestSuppressor)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact
