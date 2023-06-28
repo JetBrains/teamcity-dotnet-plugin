@@ -43,21 +43,15 @@ internal class SuppressCommandHandler : ICommandHandler<SuppressCommand>
         var patchedAssembliesCounter = 0;
         foreach (var assembly in _targetResolver.Resolve(command.Targets))
         {
-            _logger.LogDebug("Trying to patch assembly: {Assembly}", assembly);
-            
             var patchingResult = await _assemblyPatcher.TryPatchAsync(assembly, patchingCriteria);
-            if (patchingResult.IsAssemblyPatched)
+            if (!patchingResult.IsAssemblyPatched)
             {
-                _logger.LogInformation("Assembly patched successfully: {AssemblyPath}", patchingResult.AssemblyPath);
-                patchedAssembliesCounter++;
+                continue;
+            }
+            
+            patchedAssembliesCounter++;
 
-                await SaveBackupMetadata(command, patchingResult);
-                _logger.LogDebug("Backup metadata saved for {PatchingResult}", patchingResult);
-            }
-            else
-            {
-                _logger.LogDebug("Assembly not patched: {TargetAssembly}", assembly);
-            }
+            await SaveBackupMetadata(command, patchingResult);
         }
         
         _logger.LogInformation("Patching finished: {PatchedAssembliesCounter} assemblies patched", patchedAssembliesCounter);

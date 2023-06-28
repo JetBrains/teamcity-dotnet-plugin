@@ -36,7 +36,6 @@ class TestCommand(
     private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
     private val _assemblyArgumentsProvider: DotnetCommonArgumentsProvider,
     private val _dotnetFilterFactory: DotnetFilterFactory,
-    private val _loggerService: LoggerService,
     private val _targetTypeProvider: TargetTypeProvider,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
     private val _testsSplittingSettings: TestsSplittingSettings,
@@ -50,9 +49,6 @@ class TestCommand(
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
-        if (filter.isSplittingByFilter) {
-            _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
-        }
 
         if (filter.filter.isNotBlank()) {
             yield(CommandLineArgument("--filter"))

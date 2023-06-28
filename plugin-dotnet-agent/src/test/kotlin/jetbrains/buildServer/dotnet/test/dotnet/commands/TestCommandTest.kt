@@ -57,7 +57,7 @@ class TestCommandTest {
         every { _targetTypeProvider.getTargetType(any()) } answers {
             if("dll".equals(arg<File>(0).extension, true)) CommandTargetType.Assembly else CommandTargetType.Unknown
         }
-        every { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
+        every { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) } returns Unit
     }
 
     @DataProvider
@@ -146,20 +146,6 @@ class TestCommandTest {
     }
 
     @Test
-    fun `should show message when test spitting`() {
-        // Given
-        val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsSplittingSettings.mode } returns TestsSplittingMode.TestClassNameFilter
-
-        // When
-        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, true)
-        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
-
-        // Then
-        verify { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
-    }
-
-    @Test
     fun `should not show message when no test spitting`() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
@@ -170,7 +156,7 @@ class TestCommandTest {
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
-        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
     fun createCommand(
@@ -187,7 +173,6 @@ class TestCommandTest {
             ArgumentsProviderStub(arguments),
             ArgumentsProviderStub(arguments),
             _dotnetFilterFactory,
-            _loggerService,
             _targetTypeProvider,
             _targetArgumentsProvider,
             _testsSplittingSettings

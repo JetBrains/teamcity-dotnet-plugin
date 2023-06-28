@@ -48,7 +48,7 @@ internal class TargetResolver : ITargetResolver
         {
             foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(originalTargetPath.FullName))
             {
-                resolvedTargets.Add(resolvedAssembly.FullName);
+                MarkTargetAsResolved(resolvedTargets, resolvedAssembly);
                 yield return (IFileInfo) resolvedAssembly;
             }
             yield break;
@@ -61,9 +61,8 @@ internal class TargetResolver : ITargetResolver
         while (queue.Count != 0)
         {
             var (currentTarget, targetType) = queue.Dequeue();
-            if (resolvedTargets.Contains(currentTarget.FullName))
+            if (IsAlreadyResolved(resolvedTargets, currentTarget))
             {
-                _logger.LogInformation("Skip already resolved target: {Target}", currentTarget.FullName);
                 continue;
             }
             
@@ -77,15 +76,14 @@ internal class TargetResolver : ITargetResolver
             {
                 if (resolvedTargetType == TargetType.Assembly)
                 {
-                    if (resolvedTargets.Contains(resolvedTargetFile.FullName))
+                    if (IsAlreadyResolved(resolvedTargets, resolvedTargetFile))
                     {
-                        _logger.LogInformation("Skip already resolved target: {Target}", resolvedTargetFile.FullName);
                         continue;
                     }
                     
                     foreach (var (resolvedAssembly, _) in AssemblyStrategy.Resolve(resolvedTargetFile.FullName))
                     {
-                        resolvedTargets.Add(resolvedAssembly.FullName);
+                        MarkTargetAsResolved(resolvedTargets, resolvedAssembly);
                         yield return (IFileInfo) resolvedAssembly;
                     }
                     continue;
@@ -94,10 +92,10 @@ internal class TargetResolver : ITargetResolver
                 queue.Enqueue((resolvedTargetFile, resolvedTargetType));
             }
             
-            resolvedTargets.Add(currentTarget.FullName);
+            MarkTargetAsResolved(resolvedTargets, currentTarget);
         }
     }
-    
+
     private static TargetType SpeculateTargetType(IFileSystemInfo fileSystemInfo)
     {
         if (fileSystemInfo.IsDirectory())
@@ -128,5 +126,21 @@ internal class TargetResolver : ITargetResolver
         }
 
         throw new NotSupportedException($"Unsupported target type: '{extension}'.");
+    }
+
+    private static void MarkTargetAsResolved(ICollection<string> resolvedTargets, IFileSystemInfo resolvedTargetFile)
+    {
+        resolvedTargets.Add(resolvedTargetFile.FullName);
+    }
+
+    private bool IsAlreadyResolved(ICollection<string> resolvedTargets, IFileSystemInfo resolvedTargetFile)
+    {
+        if (!resolvedTargets.Contains(resolvedTargetFile.FullName))
+        {
+            return false;
+        }
+        
+        _logger.LogInformation("Skip already resolved target: {Target}", resolvedTargetFile.FullName);
+        return true;
     }
 }

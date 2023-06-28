@@ -35,7 +35,7 @@ class TeamCityDotnetTestSuppressorCommand(
     private val toolPath: Path
         get() = _pathsService.resolvePath(PathType.Plugin, RelativeToolPath)
 
-    protected val verbosity get() = when (dotnetVerbosity) {
+    private val verbosity get() = when (dotnetVerbosity) {
         Verbosity.Quiet -> "quiet"
         Verbosity.Minimal -> "minimal"
         Verbosity.Normal -> "normal"

@@ -31,7 +31,7 @@ internal class AssemblyPatcher : IAssemblyPatcher
 
     public async Task<AssemblyPatchingResult> TryPatchAsync(IFileInfo assemblyFile, IAssemblyPatchingCriteria criteria)
     {
-        _logger.LogDebug("Patching assembly: {AssemblyFile}", assemblyFile.FullName);
+        _logger.LogInformation("Trying to patch assembly: {AssemblyFile}", assemblyFile.FullName);
 
         using var assembly = LoadAssembly(assemblyFile.FullName);
 
@@ -47,10 +47,14 @@ internal class AssemblyPatcher : IAssemblyPatcher
         var savingResult = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
         
         _logger.LogInformation(
-            "Patched assembly: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}, symbols: {HasSymbols}",
-            savingResult.OriginalAssemblyPath, savingResult.BackupAssemblyPath, savingResult.BackupSymbolsPath == null);
-        _logger.LogInformation("Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)", 
-            mutationResult.AffectedTypes, mutationResult.AffectedMethods);
+            "Assembly patched successfully: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}, symbols: {HasSymbols}\n" +
+            "Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)",
+            savingResult.OriginalAssemblyPath,
+            savingResult.BackupAssemblyPath,
+            savingResult.BackupSymbolsPath == null,
+            mutationResult.AffectedTypes,
+            mutationResult.AffectedMethods
+        );
         
         return AssemblyPatchingResult.Patched(
             assemblyPath: savingResult.OriginalAssemblyPath,

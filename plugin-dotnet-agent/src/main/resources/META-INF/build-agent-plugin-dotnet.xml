@@ -342,24 +342,26 @@
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsStreamResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestNameTestsSplittingCommandsResolver" id="exactMatchTestCommandsStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestNameTestsSplittingCommandsResolver" id="testNameTestsSplittingCommandsResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.TestSuppressTestsSplittingCommandsResolver" id="dotnetFilterTestCommandsStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassTestsSplittingCommandsResolver" id="testClassTestsSplittingCommandsResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestSuppressTestsSplittingCommandsResolver" id="testSuppressTestsSplittingCommandsResolver">
     <constructor-arg ref="dotnetBuildCommand"/>
     <constructor-arg ref="teamCityDotnetToolCommand"/>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandResolver" id="multiTargetDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver" id="composedDotnetCommandStreamResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver" id="composedDotnetCommandsResolver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandResolver" id="rootDotnetCommandStreamResolver">
     <constructor-arg>
       <list>
-        <ref bean="parameterBasedDotnetCommandsStreamResolver"/>
-        <ref bean="exactMatchTestCommandsStreamResolver"/>
-        <ref bean="dotnetFilterTestCommandsStreamResolver"/>
+        <ref bean="parameterBasedDotnetCommandsResolver"/>
+        <ref bean="testNameTestsSplittingCommandsResolver"/>
+        <ref bean="testClassTestsSplittingCommandsResolver"/>
+        <ref bean="testSuppressTestsSplittingCommandsResolver"/>
         <ref bean="multiTargetDotnetCommandsResolver"/>
-        <ref bean="composedDotnetCommandStreamResolver"/>
+        <ref bean="composedDotnetCommandsResolver"/>
       </list>
     </constructor-arg>
   </bean>

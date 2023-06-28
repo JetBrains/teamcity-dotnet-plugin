@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
 
 import jetbrains.buildServer.agent.CommandResultAttribute
 import jetbrains.buildServer.agent.CommandResultEvent
 import jetbrains.buildServer.agent.CommandResultOutput
+import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandResolverBase
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
@@ -38,23 +39,17 @@ class TestNameTestsSplittingCommandsResolver(
     private val _testsSplittingSettings: TestsSplittingSettings,
     private val _listTestsDotnetCommand: DotnetCommand,
     private val _testsNamesSessionManager: TestsSplittingByNamesSessionManager,
-) : DotnetCommandResolverBase() {
+    private val _loggerService: LoggerService,
+) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService) {
     override val stage = DotnetCommandsResolvingStage.Transformation
 
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
         _testsSplittingSettings.mode == TestsSplittingMode.TestNameFilter
             && commands.any { it.commandType == DotnetCommandType.Test }
 
-    override fun apply(commands: DotnetCommandsStream) =
-        commands
-            .flatMap {
-                when (it.commandType) {
-                    DotnetCommandType.Test -> transform(it)
-                    else -> sequenceOf(it)
-                }
-            }
+    override val requirementsMessage = DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
 
-    private fun transform(testCommand: DotnetCommand) = sequence {
+    override protected fun transform(testCommand: DotnetCommand) = sequence {
         _testsNamesSessionManager.startSession().use { session ->
             // list all target's tests e.g. `dotnet test --list-tests` single command
             yield(ObservingListTestsDotnetCommand(

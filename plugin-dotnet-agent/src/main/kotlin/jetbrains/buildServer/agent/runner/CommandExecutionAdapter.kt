@@ -140,14 +140,10 @@ class CommandExecutionAdapter(
         }
     }
 
-    private fun writeStandardOutput(vararg text: StdOutText) {
-        when (_loggingStrategy) {
-            LoggingStrategy.Default ->
-                _loggerService.writeStandardOutput(*text)
-
-            else ->
-                _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
-        }
+    private fun writeStandardOutput(vararg text: StdOutText) = when (_loggingStrategy) {
+        LoggingStrategy.Default -> _loggerService.writeStandardOutput(*text)
+        LoggingStrategy.HiddenInBuildLog -> _loggerService.writeTrace(text.map { it.text }.joinToString(" "))
+        LoggingStrategy.HiddenBlockInBuildLog -> _loggerService.writeStandardOutput(*text)
     }
 
     private class SuppressingLogger(

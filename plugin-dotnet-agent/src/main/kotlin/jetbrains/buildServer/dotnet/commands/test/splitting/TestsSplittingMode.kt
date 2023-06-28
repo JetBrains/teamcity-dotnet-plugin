@@ -6,6 +6,8 @@ enum class TestsSplittingMode {
     TestNameFilter,       // use filter by test names
     Suppressing;          // test suppressing by test suppressing app
 
+    val isEnabled get() = this != Disabled
+
     val isFilterMode get() =
         this == TestClassNameFilter || this == TestNameFilter
 

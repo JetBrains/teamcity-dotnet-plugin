@@ -24,7 +24,7 @@ import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE
+import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
 import jetbrains.buildServer.dotnet.commands.VSTestCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
@@ -50,7 +50,7 @@ class VSTestCommandTest {
         MockKAnnotations.init(this)
         clearAllMocks()
         every { _targetArgumentsProvider.getTargetArguments(any()) } answers { arg<Sequence<CommandTarget>>(0).map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) } }
-        every { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) } returns Unit
+        every { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) } returns Unit
     }
 
     @DataProvider
@@ -224,7 +224,7 @@ class VSTestCommandTest {
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
-        verify { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+        verify { _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
     @Test
@@ -242,7 +242,7 @@ class VSTestCommandTest {
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version.Empty, Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
-        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE) }
+        verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
     fun createCommand(

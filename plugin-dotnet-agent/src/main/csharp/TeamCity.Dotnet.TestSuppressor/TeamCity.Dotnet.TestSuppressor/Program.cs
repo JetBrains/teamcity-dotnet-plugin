@@ -27,11 +27,10 @@ internal static class Program
 {
     public static async Task Main(string[] args)
     {
-        Console.WriteLine("TeamCity.Dotnet.Plugin.Agent – .NET Assembly Level Test Filter");
+        Console.WriteLine("TeamCity .NET Test Suppressor");
         Console.WriteLine($"Version: {Version}");
         Console.WriteLine($"Author: {Company}");
         Console.WriteLine();
-        
 
         var configurationSource = new CommandLineConfigurationSource<MainCommand>(args);
 

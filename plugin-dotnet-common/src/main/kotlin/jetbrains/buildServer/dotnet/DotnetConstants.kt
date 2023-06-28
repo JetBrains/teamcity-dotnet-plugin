@@ -30,7 +30,8 @@ object DotnetConstants {
     const val RUNNER_DESCRIPTION = "Provides .NET toolchain support for .NET projects"
     const val CLEANER_NAME = "$RUNNER_DISPLAY_NAME Cleaner"
     const val PARALLEL_TESTS_FEATURE_NAME = "Split tests by parallel groups"
-    const val PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE = "The \"$PARALLEL_TESTS_FEATURE_NAME\" feature requires Microsoft.NET.Test.Sdk version 16.0.0 or newer."
+    const val PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE = "The \"$PARALLEL_TESTS_FEATURE_NAME\" feature with filter requires Microsoft.NET.Test.Sdk version 16.0.0 or newer."
+    const val PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE = "The \"$PARALLEL_TESTS_FEATURE_NAME\" feature with test suppression requires Microsoft .NET SDK 6 or newer"
 
     const val TOOL_HOME = "DOTNET_HOME"
     const val INTEGRATION_PACKAGE_HOME = "DOTNET_INTEGRATION_PACKAGE_HOME"

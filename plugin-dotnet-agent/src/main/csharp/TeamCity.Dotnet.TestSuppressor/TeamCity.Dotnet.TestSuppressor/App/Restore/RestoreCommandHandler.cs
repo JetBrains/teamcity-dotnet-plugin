@@ -30,6 +30,6 @@ internal class RestoreCommandHandler : ICommandHandler<RestoreCommand>
         
         await _backupRestore.RestoreAsync(backupMetadataFilePath);
         
-        _logger.LogDebug("Restore command execution completed");
+        _logger.LogInformation("Restore command execution completed");
     }
 }

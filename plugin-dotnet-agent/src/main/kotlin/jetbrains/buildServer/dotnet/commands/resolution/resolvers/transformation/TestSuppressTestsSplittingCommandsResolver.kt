@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -26,7 +26,6 @@ import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
-import kotlinx.coroutines.yield
 
 class TestSuppressTestsSplittingCommandsResolver(
     private val _buildDotnetCommand: DotnetCommand,
@@ -34,22 +33,17 @@ class TestSuppressTestsSplittingCommandsResolver(
     private val _pathService: PathsService,
     private val _testsSplittingSettings: TestsSplittingSettings,
     private val _parameterService: ParametersService,
-) : DotnetCommandResolverBase() {
+    private val _loggerService: LoggerService,
+) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService){
     override val stage = DotnetCommandsResolvingStage.Transformation
 
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
          _testsSplittingSettings.mode.isSuppressingMode
             && commands.any { it.commandType == DotnetCommandType.Test }
 
-    override fun apply(commands: DotnetCommandsStream) =
-        commands.flatMap {
-            when (it.commandType) {
-                DotnetCommandType.Test -> transform(it)
-                else -> sequenceOf(it)
-            }
-        }
+    override val requirementsMessage: String = DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE
 
-    private fun transform(testCommand: DotnetCommand) = sequence {
+    override protected fun transform(testCommand: DotnetCommand) = sequence {
         testCommand.targetArguments.forEach { targetArgument ->
             val targetPath = targetArgument.arguments.first().value
             val backupMetadataPath = newBackupMetadataFilePath()

@@ -20,7 +20,7 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE
+import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_NAME
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
@@ -48,7 +48,7 @@ class VSTestCommand(
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(commandType);
         if (filter.isSplittingByFilter) {
-            _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_REQUIREMENTS_MESSAGE)
+            _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE)
         }
 
         if (filter.settingsFile != null) {
