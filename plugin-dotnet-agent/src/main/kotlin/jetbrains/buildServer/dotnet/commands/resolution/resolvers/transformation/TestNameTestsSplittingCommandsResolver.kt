@@ -47,19 +47,22 @@ class TestNameTestsSplittingCommandsResolver(
         _testsSplittingSettings.mode == TestsSplittingMode.TestNameFilter
             && commands.any { it.commandType == DotnetCommandType.Test }
 
-    override val requirementsMessage = DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
+    override fun transform(testCommand: DotnetCommand) = sequence {
+        _loggerService.writeBlock("dotnet test with filter based on tests names").use {
+            _loggerService.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE)
+            _testsNamesSessionManager.startSession().use { session ->
+                // list all target's tests e.g. `dotnet test --list-tests` single command
+                yield(
+                    ObservingListTestsDotnetCommand(
+                        _listTestsDotnetCommand,
+                        ExactMatchListTestsCommandResultHandler(session as TestsSplittingByNamesSaver),
+                        testCommand.targetArguments
+                    )
+                )
 
-    override protected fun transform(testCommand: DotnetCommand) = sequence {
-        _testsNamesSessionManager.startSession().use { session ->
-            // list all target's tests e.g. `dotnet test --list-tests` single command
-            yield(ObservingListTestsDotnetCommand(
-                _listTestsDotnetCommand,
-                ExactMatchListTestsCommandResultHandler(session as TestsSplittingByNamesSaver),
-                testCommand.targetArguments
-            ))
-
-            // repeat `dotnet test` commands for every chunk
-            yieldAll(session.forEveryTestsNamesChunk { testCommand })
+                // repeat `dotnet test` commands for every chunk
+                yieldAll(session.forEveryTestsNamesChunk { testCommand })
+            }
         }
     }
 

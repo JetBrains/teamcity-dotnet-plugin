@@ -30,9 +30,8 @@ class TestClassTestsSplittingCommandsResolver(
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
         super.shouldBeApplied(commands) && _testsSplittingSettings.mode == TestsSplittingMode.TestClassNameFilter
 
-    override val requirementsMessage: String = DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
-
-    override protected fun transform(testCommand: DotnetCommand) = sequence {
+    override fun transform(testCommand: DotnetCommand) = sequence {
+        _loggerService.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE)
         yield(testCommand)
     }
 }

@@ -38,7 +38,6 @@ class TestCommand(
     private val _dotnetFilterFactory: DotnetFilterFactory,
     private val _targetTypeProvider: TargetTypeProvider,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
-    private val _testsSplittingSettings: TestsSplittingSettings,
 ) : DotnetCommandBase(parametersService) {
     override val commandType = DotnetCommandType.Test
 
@@ -89,7 +88,7 @@ class TestCommand(
             }
         }
 
-        if (skipBuild) {
+        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
             yield(CommandLineArgument("--no-build"))
         }
 
@@ -101,9 +100,6 @@ class TestCommand(
         }
     }
 
-    private val skipBuild get() =
-        parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean() ||
-                _testsSplittingSettings.mode.isSuppressingMode
 
     private fun isAssembly(path: String) = _targetTypeProvider.getTargetType(File(path)) == CommandTargetType.Assembly
 }

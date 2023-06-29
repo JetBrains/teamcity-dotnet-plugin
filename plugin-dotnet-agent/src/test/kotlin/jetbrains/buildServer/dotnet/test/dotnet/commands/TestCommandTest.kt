@@ -44,7 +44,6 @@ class TestCommandTest {
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _targetTypeProvider: TargetTypeProvider
     @MockK private lateinit var _targetArgumentsProvider: TargetArgumentsProvider
-    @MockK private lateinit var _testsSplittingSettings: TestsSplittingSettings
 
     @BeforeMethod
     fun setUp() {
@@ -98,7 +97,6 @@ class TestCommandTest {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns filter
-        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
@@ -123,7 +121,6 @@ class TestCommandTest {
     fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
-        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
 
         // When
@@ -149,7 +146,6 @@ class TestCommandTest {
     fun `should not show message when no test spitting`() {
         // Given
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _testsSplittingSettings.mode } returns TestsSplittingMode.Disabled
 
         // When
         every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
@@ -175,7 +171,6 @@ class TestCommandTest {
             _dotnetFilterFactory,
             _targetTypeProvider,
             _targetArgumentsProvider,
-            _testsSplittingSettings
         )
     }
 }

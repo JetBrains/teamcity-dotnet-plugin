@@ -31,7 +31,6 @@ class CustomCommand(
     override val resultsAnalyzer: ResultsAnalyzer,
     override val toolResolver: DotnetToolResolver,
     private val _targetService: TargetService,
-    private val _targetArgumentsProvider: TargetArgumentsProvider,
 ) : DotnetCommandBase(parametersService) {
     override val commandType = DotnetCommandType.Custom
 
@@ -39,7 +38,7 @@ class CustomCommand(
     override val command = emptySequence<String>()
 
     override val targetArguments: Sequence<TargetArguments>
-        get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
+        get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = emptySequence()
 }

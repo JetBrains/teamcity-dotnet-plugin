@@ -21,15 +21,10 @@ abstract class TestsSplittingCommandsResolverBase(
         commands
             .flatMap {
                 when (it.commandType) {
-                    DotnetCommandType.Test -> {
-                        _loggerService.writeTrace(requirementsMessage)
-                        transform(it)
-                    }
+                    DotnetCommandType.Test -> transform(it)
                     else -> sequenceOf(it)
                 }
             }
-
-    protected abstract val requirementsMessage: String
 
     protected abstract fun transform(testCommand: DotnetCommand): Sequence<DotnetCommand>
 }
