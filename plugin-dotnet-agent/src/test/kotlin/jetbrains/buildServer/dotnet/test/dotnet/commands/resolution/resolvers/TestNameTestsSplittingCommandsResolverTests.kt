@@ -30,6 +30,7 @@ import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSession
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSessionManager
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
+import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -45,6 +46,9 @@ class TestNameTestsSplittingCommandsResolverTests {
         clearAllMocks()
         MockKAnnotations.init(this)
         justRun { _loggerServiceMock.writeTrace(any()) }
+        every { _loggerServiceMock.writeBlock(any()) } returns mockk<Disposable> {
+            justRun { dispose() }
+        }
     }
 
     @Test
@@ -135,6 +139,7 @@ class TestNameTestsSplittingCommandsResolverTests {
         Assert.assertEquals(result[1].commandType, DotnetCommandType.ListTests)
         Assert.assertSame(result[2], testCommandMock)
         Assert.assertSame(result[3], testCommandMock)
+        verify(exactly = 1) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = 1) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
@@ -183,6 +188,7 @@ class TestNameTestsSplittingCommandsResolverTests {
         verify (exactly = 1) { sessionMock.tryToSave(testName1) }
         Assert.assertEquals(attributesOfMarkerOutput.first(), CommandResultAttribute.Suppressed)
         Assert.assertEquals(attributesOfTestNamesOutput.first(), CommandResultAttribute.Suppressed)
+        verify(exactly = 1) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = 1) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
