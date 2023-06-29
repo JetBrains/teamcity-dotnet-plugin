@@ -87,7 +87,7 @@ task integrationTestDotnetTestSuppressor(type: Exec) {
 task cleanDotnetTestSuppressor(type: Exec) {
     delete './tools/test-suppressor'
     commandLine 'dotnet', 'clean',
-            './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.sln'
+        './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.sln'
 }
 
 task publishDotnetTestSuppressor(type: Exec) {

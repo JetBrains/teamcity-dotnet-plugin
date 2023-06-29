@@ -47,7 +47,7 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
         var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPathResult.Value);
         if (assemblyFileInfoResult.IsError)
         {
-            _logger.LogWarning(assemblyFileInfoResult.ErrorValue, "Target project output file {TargetProjectOutputFile} does not exist", projectFile!.FullName);
+            _logger.LogWarning(assemblyFileInfoResult.ErrorValue, "Evaluated target project output file {TargetProjectOutputFile} not found", projectFile!.FullName);
             yield break;
         }
 

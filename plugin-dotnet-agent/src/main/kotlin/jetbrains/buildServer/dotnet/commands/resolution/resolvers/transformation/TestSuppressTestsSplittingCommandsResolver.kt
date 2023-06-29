@@ -31,6 +31,7 @@ import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettin
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
 import jetbrains.buildServer.rx.use
 import java.nio.file.Paths
+import kotlin.io.path.exists
 
 class TestSuppressTestsSplittingCommandsResolver(
     private val _buildDotnetCommand: DotnetCommand,
@@ -79,8 +80,10 @@ class TestSuppressTestsSplittingCommandsResolver(
                 // 3. test the mutated assemblies by the target path with the test command that skips the build
                 yield(SkipBuildTestCommand(testCommand))
 
-                // 4. backup to the original assemblies
-                yield(RestoreSuppressedTestsCommand(_teamCityDotnetToolCommand, backupMetadataPath))
+                // 4. backup to the original assemblies if backup file exists
+                if (Paths.get(backupMetadataPath).exists()) {
+                    yield(RestoreSuppressedTestsCommand(_teamCityDotnetToolCommand, backupMetadataPath))
+                }
             }
         }
     }

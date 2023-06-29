@@ -41,7 +41,7 @@ public class SuppressNotBuiltProjectTests : IClassFixture<DotnetTestContainerFix
 
         // assert
         Assert.Contains(
-            expectedSubstring: "Target project output file /app/test-project/MyTestProject.csproj does not exist",
+            expectedSubstring: "Evaluated target project output file /app/test-project/MyTestProject.csproj not found",
             actualString: execResult.Stdout
         );
         Assert.Contains(
