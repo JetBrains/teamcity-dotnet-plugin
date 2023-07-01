@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers.transformation
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -35,7 +35,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestNameTestsSplittingCommandsResolverTests {
+class TestNameTestsSplittingCommandsResolverTest {
     @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
     @MockK private lateinit var _listTestsDotnetCommandMock: DotnetCommand
     @MockK private lateinit var _testsNamesSessionManagerMock: TestsSplittingByNamesSessionManager

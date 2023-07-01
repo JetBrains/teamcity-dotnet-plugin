@@ -18,18 +18,18 @@ package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformatio
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
 import jetbrains.buildServer.rx.use
+import java.io.File
 import java.nio.file.Paths
 import kotlin.io.path.exists
 
@@ -37,9 +37,8 @@ class TestSuppressTestsSplittingCommandsResolver(
     private val _buildDotnetCommand: DotnetCommand,
     private val _teamCityDotnetToolCommand: DotnetCommand,
     private val _pathService: PathsService,
+    private val _fileSystemService: FileSystemService,
     private val _testsSplittingSettings: TestsSplittingSettings,
-    private val _parameterService: ParametersService,
-    private val _targetService: TargetService,
     private val _loggerService: LoggerService,
     private val _targetTypeProvider: TargetTypeProvider,
 ) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService){
@@ -50,7 +49,11 @@ class TestSuppressTestsSplittingCommandsResolver(
             && commands.any { it.commandType == DotnetCommandType.Test }
 
     override fun transform(testCommand: DotnetCommand) = sequence {
-        testCommand.targetArguments.forEach { targetArguments ->
+        testCommand.targetArguments.forEach forEach@{ targetArguments ->
+            if (targetArguments.arguments.filter { it.argumentType == CommandLineArgumentType.Target }.count() == 0) {
+                return@forEach
+            }
+
             _loggerService.writeBlock("dotnet test with tests pre-suppression").use {
                 _loggerService.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE)
                 val backupMetadataPath = newBackupMetadataFilePath()
@@ -60,7 +63,7 @@ class TestSuppressTestsSplittingCommandsResolver(
                 targetArguments.arguments.map { it.value }
                     .filter { getTargetType(it) != CommandTargetType.Assembly }
                     .forEach { targetPath ->
-                        var binlogPath = newBinlogFilePath()
+                        val binlogPath = newBinlogFilePath()
                         binlogPaths += binlogPath
 
                         yield(BuildWithBinaryLogCommand(_buildDotnetCommand, binlogPath, targetPath))
@@ -81,7 +84,7 @@ class TestSuppressTestsSplittingCommandsResolver(
                 yield(SkipBuildTestCommand(testCommand))
 
                 // 4. backup to the original assemblies if backup file exists
-                if (Paths.get(backupMetadataPath).exists()) {
+                if (_fileSystemService.isExists(File(backupMetadataPath))) {
                     yield(RestoreSuppressedTestsCommand(_teamCityDotnetToolCommand, backupMetadataPath))
                 }
             }
@@ -98,10 +101,10 @@ class TestSuppressTestsSplittingCommandsResolver(
     private class BuildWithBinaryLogCommand(
         private val _originalBuildCommand: DotnetCommand,
         private val _binlogPath: String,
-        private val _targetPath: String
+        targetPath: String
     ) : DotnetCommand by _originalBuildCommand {
         override val targetArguments =
-            sequenceOf(TargetArguments(sequenceOf(CommandLineArgument(_targetPath, CommandLineArgumentType.Target))))
+            sequenceOf(TargetArguments(sequenceOf(CommandLineArgument(targetPath, CommandLineArgumentType.Target))))
 
         override fun getArguments(context: DotnetBuildContext) = sequence {
             // generates MSBuild binary log file (.binlog)

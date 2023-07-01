@@ -26,7 +26,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class RootDotnetCommandStreamResolverTests {
+class RootDotnetCommandStreamResolverTest {
     @MockK
     private lateinit var _resolverMock1: DotnetCommandsResolver
 

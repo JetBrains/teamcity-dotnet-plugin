@@ -45,7 +45,7 @@ class BuildCommandTest {
     }
 
     @DataProvider
-    fun testBuildArgumentsData(): Array<Array<Any>> {
+    fun `test build arguments sata`(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
@@ -59,7 +59,7 @@ class BuildCommandTest {
     }
 
     @Test(dataProvider = "testBuildArgumentsData")
-    fun shouldGetArguments(
+    fun `should get arguments`(
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
@@ -73,7 +73,7 @@ class BuildCommandTest {
     }
 
     @DataProvider
-    fun projectsArgumentsData(): Array<Array<Any>> {
+    fun `projects arguments data`(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(listOf("my.csproj") as Any, listOf(listOf("my.csproj"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),
@@ -81,7 +81,7 @@ class BuildCommandTest {
     }
 
     @Test(dataProvider = "projectsArgumentsData")
-    fun shouldProvideProjectsArguments(targets: List<String>, expectedArguments: List<List<String>>) {
+    fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
 
@@ -93,7 +93,7 @@ class BuildCommandTest {
     }
 
     @Test
-    fun shouldProvideCommandType() {
+    fun `should provide command type`() {
         // Given
         val command = createCommand()
 
@@ -105,7 +105,7 @@ class BuildCommandTest {
     }
 
     @Test
-    fun shouldProvideToolExecutableFile() {
+    fun `should provide tool executable file`() {
         // Given
         val command = createCommand()
 

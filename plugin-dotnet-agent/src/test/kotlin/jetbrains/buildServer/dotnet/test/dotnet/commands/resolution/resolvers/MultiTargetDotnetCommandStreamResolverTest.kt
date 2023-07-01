@@ -29,7 +29,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class MultiTargetDotnetCommandStreamResolverTests {
+class MultiTargetDotnetCommandStreamResolverTest {
     @BeforeMethod
     fun setup(){
         clearAllMocks()
