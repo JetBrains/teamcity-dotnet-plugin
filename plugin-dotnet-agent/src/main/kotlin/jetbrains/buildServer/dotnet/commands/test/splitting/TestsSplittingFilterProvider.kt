@@ -49,8 +49,22 @@ class TestsSplittingFilterProvider(
         }
 
         return _settings.testClasses.toList()
+            .map { testClassWithTrimmedParams(it) }
+            .distinct()
             .map { "$it." }       // to avoid collisions with overlapping test class names prefixes
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
+    }
+
+    private fun testClassWithTrimmedParams(testClass: String): String {
+        if (!_settings.trimTestClassParameters)
+            return testClass
+
+        val paramsStartIndex = testClass.indexOf("(")
+        val paramsEndIndex = testClass.lastIndexOf(")")
+        if (paramsStartIndex == -1 || paramsEndIndex != testClass.length - 1) {
+            return testClass
+        }
+        return testClass.substring(0, paramsStartIndex);
     }
 
     // FullyQualifiedName=Namespace.TestClass0.Test000 | FullyQualifiedName=Namespace.TestClass0.Test001 | ...

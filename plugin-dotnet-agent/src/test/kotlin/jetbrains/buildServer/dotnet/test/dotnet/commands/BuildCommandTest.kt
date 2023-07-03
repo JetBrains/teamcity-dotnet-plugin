@@ -45,7 +45,7 @@ class BuildCommandTest {
     }
 
     @DataProvider
-    fun `test build arguments sata`(): Array<Array<Any>> {
+    fun testBuildArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
                         listOf("customArg1")),
@@ -73,7 +73,7 @@ class BuildCommandTest {
     }
 
     @DataProvider
-    fun `projects arguments data`(): Array<Array<Any>> {
+    fun projectsArgumentsData(): Array<Array<Any>> {
         return arrayOf(
                 arrayOf(listOf("my.csproj") as Any, listOf(listOf("my.csproj"))),
                 arrayOf(emptyList<String>() as Any, emptyList<List<String>>()),

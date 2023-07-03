@@ -47,6 +47,8 @@ object DotnetConstants {
     const val PARAM_MSBUILD_DISABLE_CUSTOM_VSTEST_LOGGERS = "teamcity.internal.dotnet.msbuild.parameters.disable.custom.vstest.loggers"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
+    // true or false (false by default) - enables a feature of adding an excluded target paths for `dotnet test` and `dotnet vstest` commands
+    const val PARAM_TEST_EXCLUDED_PATHS_ENABLED = "teamcity.internal.dotnet.test.excludedPaths.enabled"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
     // Default bitness X86 or X64, X86 - if it is not specified
@@ -56,6 +58,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_EXCLUDES_FILE = "teamcity.build.parallelTests.excludesFile"
     const val PARAM_PARALLEL_TESTS_INCLUDES_FILE = "teamcity.build.parallelTests.includesFile"
     const val PARAM_PARALLEL_TESTS_CURRENT_BATCH = "teamcity.build.parallelTests.currentBatch"
+    // true of false (true by default) - trim parameters of test class names that are passed to `dotnet test --filter <FILTER>` command
+    const val PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES = "teamcity.internal.parallelTests.groupParametrisedTestClasses"
     // True or False (False by default) - use exact match test filters for `dotnet test --filter <FILTER>` command in case of low performance reasoned by a huge amount of test classes via NUnit
     const val PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER = "teamcity.internal.dotnet.test.exact.match.filter"
     // Integer amount of tests that should be included in exact match test filter
@@ -81,6 +85,7 @@ object DotnetConstants {
     const val PARAM_SKIP_BUILD = "skipBuild"
     const val PARAM_OUTPUT_DIR = "outputDir"
     const val PARAM_PATHS = "paths"
+    const val PARAM_EXCLUDED_PATHS = "excludedPaths"
     const val PARAM_PLATFORM = "platform"
     const val PARAM_RUNTIME = "runtime"
     const val PARAM_TARGETS = "targets"

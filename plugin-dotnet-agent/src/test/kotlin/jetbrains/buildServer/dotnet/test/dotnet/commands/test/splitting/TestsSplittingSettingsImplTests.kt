@@ -21,6 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
@@ -185,6 +186,51 @@ class TestsSplittingSettingsImplTests {
         listOf("Namespace.TestClass0", "Namespace.TestClass1", "Namespace.TestClass2").forEach {
             Assert.assertTrue(result.contains(it))
         }
+    }
+
+    @Test
+    fun `should provide trim test class parameters flag if set to 'true'`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { "  true " }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertTrue(result)
+    }
+
+    @Test
+    fun `should provide trim test class parameters flag if set to 'false'`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { "  false " }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun `should provide trim test class parameters flag if property is unset`() {
+        // arrange
+        every {
+            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+        } answers { null }
+        val settings = create()
+
+        // act
+        val result = settings.trimTestClassParameters
+
+        // assert
+        Assert.assertTrue(result)
     }
 
     private fun create() = TestsSplittingSettingsImpl(_parametersServiceMock, _fileSystemServiceMock)

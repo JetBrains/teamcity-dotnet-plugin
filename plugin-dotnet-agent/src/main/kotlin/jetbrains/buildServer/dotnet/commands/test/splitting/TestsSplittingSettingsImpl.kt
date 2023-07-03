@@ -65,6 +65,13 @@ class TestsSplittingSettingsImpl(
             .let { runCatching { it?.trim()?.toInt() ?: DefaultExactMatchTestsChunkSize } }
             .getOrDefault(DefaultExactMatchTestsChunkSize)
 
+    override val trimTestClassParameters: Boolean get() =
+        _parametersService
+            .tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
+            ?.trim()
+            ?.toBoolean()
+            ?: true
+
     override val testsClassesFilePath: String? get() =
         filterType
             .let {

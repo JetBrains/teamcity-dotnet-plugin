@@ -22,4 +22,5 @@ interface TestsSplittingSettings {
     val testClasses: Sequence<String>
     val exactMatchFilterSize: Int
     val testsClassesFilePath: String?
+    val trimTestClassParameters: Boolean
 }
