@@ -125,5 +125,5 @@ object DotnetConstants {
     const val CONFIG_SUFFIX_PATH = "_Path"
     const val CONFIG_SUFFIX_DOTNET_CLI = "DotNetCLI"
     const val CONFIG_SUFFIX_DOTNET_CLI_PATH = CONFIG_SUFFIX_DOTNET_CLI + CONFIG_SUFFIX_PATH
-    const val CONFIG_PREFIX_DOTNET_INSTALLED_WORKLOADS = "DotNetInstalledWorkloads"
+    const val CONFIG_PREFIX_DOTNET_WORKLOADS = "DotNetWorkloads"
 }
