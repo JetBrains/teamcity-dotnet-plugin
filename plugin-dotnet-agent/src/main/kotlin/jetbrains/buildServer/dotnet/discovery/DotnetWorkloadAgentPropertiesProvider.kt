@@ -4,7 +4,7 @@ import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.ToolInstanceType.DotNetCLI
 import jetbrains.buildServer.agent.ToolProvider
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_INSTALLED_WORKLOADS
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_WORKLOADS
 import jetbrains.buildServer.dotnet.DotnetConstants.EXECUTABLE
 import jetbrains.buildServer.dotnet.DotnetWorkloadProvider
 import java.io.File
@@ -23,7 +23,7 @@ class DotnetWorkloadAgentPropertiesProvider(
                 .map { groupedWorkloads ->
                     AgentProperty(
                         DotNetCLI,
-                        CONFIG_PREFIX_DOTNET_INSTALLED_WORKLOADS + "_" + groupedWorkloads.key,
+                        CONFIG_PREFIX_DOTNET_WORKLOADS + "_" + groupedWorkloads.key,
                         groupedWorkloads.value.joinToString(separator = ",") { it.name })
                 }.asSequence()
         }
