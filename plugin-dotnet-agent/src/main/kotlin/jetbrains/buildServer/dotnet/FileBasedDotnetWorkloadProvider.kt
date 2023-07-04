@@ -22,7 +22,7 @@ class FileBasedDotnetWorkloadProvider(
         }
 
         val sdkVersions = _versionEnumerator.enumerate(_sdksProvider.getSdks(dotnetExecutable))
-            .map { it.second.version }
+            .map { Version.parse(it.first) to it.second.version }
             .toList()
 
         val workloads = workloadsPath.listChildren()
@@ -35,7 +35,6 @@ class FileBasedDotnetWorkloadProvider(
                 mapToSdkVersions(Version.parse(workloadSdkFeatureBandFromPath(file)), sdkVersions)
                     .map { DotnetWorkload(file.name, it) }
             }
-            .distinct()
             .sortedWith(compareBy(DotnetWorkload::name, DotnetWorkload::sdkVersion))
             .toList()
 
@@ -50,9 +49,13 @@ class FileBasedDotnetWorkloadProvider(
     private fun File.isDirectoryExist() = _fileSystemService.isExists(this) && _fileSystemService.isDirectory(this)
     private fun workloadSdkFeatureBandFromPath(workloadFile: File) = workloadFile.parentFile.parentFile.name
 
-    private fun mapToSdkVersions(workloadSdkFeatureBand: Version, sdkVersions: List<Version>): List<Version> {
+    private fun mapToSdkVersions(
+        workloadSdkFeatureBand: Version,
+        sdkVersions: List<Pair<Version, Version>>
+    ): List<Version> {
         return sdkVersions
-            .filter { version -> isTheSameSdkFeatureBand(version, workloadSdkFeatureBand) }
+            .filter { version -> isTheSameSdkFeatureBand(version.second, workloadSdkFeatureBand) }
+            .map { version -> version.first }
             .ifEmpty { listOf(workloadSdkFeatureBand) }
     }
 
@@ -66,14 +69,14 @@ class FileBasedDotnetWorkloadProvider(
 
     private fun logSdksWithNotFoundWorkloads(
         workloadsPath: File,
-        sdkVersions: List<Version>,
+        sdkVersions: List<Pair<Version, Version>>,
         workloads: List<DotnetWorkload>
     ) {
         val versionsWithWorkloads = workloads.map { it.sdkVersion }.toSet()
 
         sdkVersions.forEach { sdkVersion ->
-            if (!versionsWithWorkloads.contains(sdkVersion)) {
-                LOG.info(".NET workloads are not found for .NET SDK $sdkVersion in directory \"$workloadsPath\"")
+            if (!versionsWithWorkloads.contains(sdkVersion.first)) {
+                LOG.info(".NET workloads are not found for .NET SDK ${sdkVersion.first} in directory \"$workloadsPath\"")
             }
         }
     }
