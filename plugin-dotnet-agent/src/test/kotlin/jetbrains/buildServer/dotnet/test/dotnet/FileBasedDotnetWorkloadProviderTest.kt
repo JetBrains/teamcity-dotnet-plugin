@@ -47,12 +47,28 @@ class FileBasedDotnetWorkloadProviderTest {
                     .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/ios")),
                 listOf("6.0", "6.0.101", "6.0.102", "7.1", "7.1.100", "8.0.100-preview.4.23260.5", "8.0", "8.0.100"),
                 listOf(
+                    DotnetWorkload("android", Version.parse("6.0")),
                     DotnetWorkload("android", Version.parse("6.0.101")),
                     DotnetWorkload("android", Version.parse("6.0.102")),
+                    DotnetWorkload("android", Version.parse("7.1")),
                     DotnetWorkload("android", Version.parse("7.1.100")),
                     DotnetWorkload("android", Version.parse("8.0.100-preview.4.23260.5")),
+                    DotnetWorkload("ios", Version.parse("6.0")),
                     DotnetWorkload("ios", Version.parse("6.0.101")),
                     DotnetWorkload("ios", Version.parse("6.0.102")),
+                )
+            ),
+            arrayOf(
+                VirtualFileSystemService()
+                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/android"))
+                    .addFile(File("metadata/workloads/6.0.200/InstalledWorkloads/ios"))
+                    .addFile(File("metadata/workloads/6.0.300/InstalledWorkloads/wasm-tools")),
+                listOf("6.0", "6.0.102", "6.0.204", "6.0.306"),
+                listOf(
+                    DotnetWorkload("android", Version.parse("6.0.102")),
+                    DotnetWorkload("ios", Version.parse("6.0.204")),
+                    DotnetWorkload("wasm-tools", Version.parse("6.0")),
+                    DotnetWorkload("wasm-tools", Version.parse("6.0.306")),
                 )
             ),
             arrayOf(
@@ -100,9 +116,7 @@ class FileBasedDotnetWorkloadProviderTest {
 
         val sdksMock = mockk<Sequence<DotnetSdk>>()
         every { _sdksProvider.getSdks(_dotnetExecutable) } returns sdksMock
-        every { _versionEnumerator.enumerate(sdksMock) } returns sdks.map {
-            "" to DotnetSdk(_dotnetExecutable, Version.parse(it))
-        }.asSequence()
+        every { _versionEnumerator.enumerate(sdksMock) } returns enumerateVersions(sdks)
 
         // when
         val actualResult = workloadProvider.getInstalledWorkloads(_dotnetExecutable)
@@ -110,6 +124,17 @@ class FileBasedDotnetWorkloadProviderTest {
         // then
         assertEquals(actualResult, expectedDotnetWorkloads)
     }
+
+    private fun enumerateVersions(sdks: List<String>) = sequence {
+        sdks
+            .map { Version.parse(it) }
+            .groupBy { Version(it.major, it.minor) }
+            .forEach { (version, group) ->
+                val maxVersion = group.maxByOrNull { it }!!
+                yield("${version.major}.${version.minor}" to DotnetSdk(_dotnetExecutable, maxVersion))
+                yieldAll(group.map { it.toString() to DotnetSdk(_dotnetExecutable, it) })
+            }
+    }.distinctBy { it.first }
 
     private fun createInstance(fileSystemService: FileSystemService): DotnetWorkloadProvider =
         FileBasedDotnetWorkloadProvider(fileSystemService, _sdksProvider, _versionEnumerator)
