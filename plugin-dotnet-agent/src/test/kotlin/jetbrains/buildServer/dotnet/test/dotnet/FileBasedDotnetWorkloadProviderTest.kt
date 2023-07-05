@@ -28,7 +28,7 @@ class FileBasedDotnetWorkloadProviderTest {
     @MockK
     private lateinit var _versionEnumerator: VersionEnumerator
 
-    private val _dotnetExecutable = File("dotnet")
+    private val _dotnetExecutable = File("sdk", "dotnet")
 
     @BeforeMethod
     fun setUp() {
@@ -41,11 +41,11 @@ class FileBasedDotnetWorkloadProviderTest {
         return arrayOf(
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/android"))
-                    .addFile(File("metadata/workloads/7.1.100/InstalledWorkloads/android"))
-                    .addFile(File("metadata/workloads/8.0.100-preview.4/InstalledWorkloads/android"))
-                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/ios")),
-                listOf("6.0", "6.0.101", "6.0.102", "7.1", "7.1.100", "8.0.100-preview.4.23260.5", "8.0", "8.0.100"),
+                    .addFile(File("sdk/metadata/workloads/6.0.100/InstalledWorkloads/android"))
+                    .addFile(File("sdk/metadata/workloads/7.1.100/InstalledWorkloads/android"))
+                    .addFile(File("sdk/metadata/workloads/8.0.100-preview.4/InstalledWorkloads/android"))
+                    .addFile(File("sdk/metadata/workloads/6.0.100/InstalledWorkloads/ios")),
+                listOf("6.0.101", "6.0.102", "7.1.100", "8.0.100-preview.4.23260.5", "8.0.100"),
                 listOf(
                     DotnetWorkload("android", Version.parse("6.0")),
                     DotnetWorkload("android", Version.parse("6.0.101")),
@@ -60,10 +60,10 @@ class FileBasedDotnetWorkloadProviderTest {
             ),
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/android"))
-                    .addFile(File("metadata/workloads/6.0.200/InstalledWorkloads/ios"))
-                    .addFile(File("metadata/workloads/6.0.300/InstalledWorkloads/wasm-tools")),
-                listOf("6.0", "6.0.102", "6.0.204", "6.0.306"),
+                    .addFile(File("sdk/metadata/workloads/6.0.100/InstalledWorkloads/android"))
+                    .addFile(File("sdk/metadata/workloads/6.0.200/InstalledWorkloads/ios"))
+                    .addFile(File("sdk/metadata/workloads/6.0.300/InstalledWorkloads/wasm-tools")),
+                listOf("6.0.102", "6.0.204", "6.0.306"),
                 listOf(
                     DotnetWorkload("android", Version.parse("6.0.102")),
                     DotnetWorkload("ios", Version.parse("6.0.204")),
@@ -73,7 +73,7 @@ class FileBasedDotnetWorkloadProviderTest {
             ),
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/android")),
+                    .addFile(File("sdk/metadata/workloads/6.0.100/InstalledWorkloads/android")),
                 emptyList<String>(),
                 listOf(
                     DotnetWorkload("android", Version.parse("6.0.100")),
@@ -81,19 +81,19 @@ class FileBasedDotnetWorkloadProviderTest {
             ),
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/6.0.100/InstalledWorkloads/androidDir/file")),
+                    .addFile(File("sdk/metadata/workloads/6.0.100/InstalledWorkloads/androidDir/file")),
                 emptyList<String>(),
                 emptyList<DotnetWorkload>()
             ),
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/invalidVersion/InstalledWorkloads/android")),
+                    .addFile(File("sdk/metadata/workloads/invalidVersion/InstalledWorkloads/android")),
                 emptyList<String>(),
                 emptyList<DotnetWorkload>()
             ),
             arrayOf(
                 VirtualFileSystemService()
-                    .addFile(File("metadata/workloads/InstalledPacks/InstalledWorkloads/android")),
+                    .addFile(File("sdk/metadata/workloads/InstalledPacks/InstalledWorkloads/android")),
                 emptyList<String>(),
                 emptyList<DotnetWorkload>()
             ),

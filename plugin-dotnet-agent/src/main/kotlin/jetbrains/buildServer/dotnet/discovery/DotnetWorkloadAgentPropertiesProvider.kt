@@ -11,14 +11,20 @@ import java.io.File
 
 class DotnetWorkloadAgentPropertiesProvider(
     private val _toolProvider: ToolProvider,
-    private val _dotnetWorkloadProvider: DotnetWorkloadProvider,
+    private val _fileBasedDotnetWorkloadProvider: DotnetWorkloadProvider,
+    private val _registryBasedDotnetWorkloadProvider: DotnetWorkloadProvider,
 ) : AgentPropertiesProvider {
 
     override val desription = ".NET Workload"
 
     override val properties: Sequence<AgentProperty>
         get() {
-            return _dotnetWorkloadProvider.getInstalledWorkloads(dotnetExecutableFile())
+            val dotnetExecutable = dotnetExecutableFile()
+            var workloads = _fileBasedDotnetWorkloadProvider.getInstalledWorkloads(dotnetExecutable)
+            if (workloads.isEmpty())
+                workloads = _registryBasedDotnetWorkloadProvider.getInstalledWorkloads(dotnetExecutable)
+            return workloads
+                .distinct()
                 .groupBy { it.sdkVersion }
                 .map { groupedWorkloads ->
                     AgentProperty(
