@@ -35,7 +35,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestNameTestsSplittingCommandsResolverTestMethod {
+class TestMethodNameTestsSplittingCommandsResolverTest {
     @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
     @MockK private lateinit var _listTestsDotnetCommandMock: DotnetCommand
     @MockK private lateinit var _testsNamesSessionManagerMock: TestsSplittingByNamesSessionManager
