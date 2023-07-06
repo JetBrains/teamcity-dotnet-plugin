@@ -343,10 +343,10 @@
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestNameTestsSplittingCommandsResolver" id="testNameTestsSplittingCommandsResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestMethodNameFilterTestSplittingCommandsResolver" id="testNameTestsSplittingCommandsResolver">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassTestsSplittingCommandsResolver" id="testClassTestsSplittingCommandsResolver"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassNameFilterTestSplittingCommandsResolver" id="testClassTestsSplittingCommandsResolver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestSuppressTestsSplittingCommandsResolver" id="testSuppressTestsSplittingCommandsResolver">
     <constructor-arg ref="dotnetBuildCommand"/>
     <constructor-arg ref="teamCityDotnetToolCommand"/>

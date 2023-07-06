@@ -26,7 +26,7 @@ import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestNameTestsSplittingCommandsResolver
+import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestMethodNameFilterTestSplittingCommandsResolver
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSession
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSessionManager
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
@@ -35,7 +35,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestNameTestsSplittingCommandsResolverTest {
+class TestNameTestsSplittingCommandsResolverTestMethod {
     @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
     @MockK private lateinit var _listTestsDotnetCommandMock: DotnetCommand
     @MockK private lateinit var _testsNamesSessionManagerMock: TestsSplittingByNamesSessionManager
@@ -192,7 +192,7 @@ class TestNameTestsSplittingCommandsResolverTest {
         verify(exactly = 1) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
-    private fun create() = TestNameTestsSplittingCommandsResolver(
+    private fun create() = TestMethodNameFilterTestSplittingCommandsResolver(
         _testsSplittingSettingsMock,
         _listTestsDotnetCommandMock,
         _testsNamesSessionManagerMock,

@@ -7,26 +7,26 @@ import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassTestsSplittingCommandsResolver
+import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassNameFilterTestSplittingCommandsResolver
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestClassTestsSplittingCommandsResolverTest {
+class TestClassNameFilterTestsSplittingCommandsResolverTest {
     @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
     @MockK private lateinit var _loggerServiceMock: LoggerService
     @MockK private lateinit var _testCommandMock: DotnetCommand
     @MockK private lateinit var _otherCommandMock: DotnetCommand
 
-    private lateinit var resolver: TestClassTestsSplittingCommandsResolver
+    private lateinit var resolver: TestClassNameFilterTestSplittingCommandsResolver
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        resolver = TestClassTestsSplittingCommandsResolver(_testsSplittingSettingsMock, _loggerServiceMock)
+        resolver = TestClassNameFilterTestSplittingCommandsResolver(_testsSplittingSettingsMock, _loggerServiceMock)
         justRun { _loggerServiceMock.writeTrace(any()) }
     }
 

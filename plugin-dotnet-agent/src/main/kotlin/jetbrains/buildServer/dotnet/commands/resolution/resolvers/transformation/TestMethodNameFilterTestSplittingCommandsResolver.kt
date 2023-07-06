@@ -16,9 +16,7 @@
 
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
 
-import jetbrains.buildServer.agent.CommandResultAttribute
-import jetbrains.buildServer.agent.CommandResultEvent
-import jetbrains.buildServer.agent.CommandResultOutput
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
@@ -35,7 +33,7 @@ import jetbrains.buildServer.rx.use
 
 // Transforms a `dotnet test` command to exact match filtered command if needed
 // It looks like a sequence of dotnet commands: `dotnet test --list-test` – to get all tests list – and then `dotnet test ...` N times
-class TestNameTestsSplittingCommandsResolver(
+class TestMethodNameFilterTestSplittingCommandsResolver(
     private val _testsSplittingSettings: TestsSplittingSettings,
     private val _listTestsDotnetCommand: DotnetCommand,
     private val _testsNamesSessionManager: TestsSplittingByNamesSessionManager,

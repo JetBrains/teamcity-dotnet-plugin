@@ -16,9 +16,7 @@
 
 package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.CommandLineArgumentType
-import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
@@ -31,7 +29,6 @@ import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilter
 import jetbrains.buildServer.rx.use
 import java.io.File
 import java.nio.file.Paths
-import kotlin.io.path.exists
 
 class TestSuppressTestsSplittingCommandsResolver(
     private val _buildDotnetCommand: DotnetCommand,
@@ -49,6 +46,15 @@ class TestSuppressTestsSplittingCommandsResolver(
             && commands.any { it.commandType == DotnetCommandType.Test }
 
     override fun transform(testCommand: DotnetCommand) = sequence {
+        val testsClassesFilePath = _testsSplittingSettings.testsClassesFilePath ?: ""
+        if (testsClassesFilePath.isBlank()) {
+            "Parallel tests with suppression mode in, however tests classes file path is empty".let {
+                LOG.warn(it)
+                _loggerService.writeErrorOutput(it)
+            }
+            return@sequence
+        }
+
         testCommand.targetArguments.forEach forEach@{ targetArguments ->
             if (targetArguments.arguments.filter { it.argumentType == CommandLineArgumentType.Target }.count() == 0) {
                 return@forEach
@@ -74,7 +80,7 @@ class TestSuppressTestsSplittingCommandsResolver(
                     SuppressTestsCommand(
                         _teamCityDotnetToolCommand,
                         targetArguments.arguments.map { it.value } + binlogPaths,
-                        _testsSplittingSettings.testsClassesFilePath ?: "",
+                        testsClassesFilePath,
                         backupMetadataPath,
                         _testsSplittingSettings.filterType == TestsSplittingFilterType.Includes,
                     )
@@ -172,6 +178,8 @@ class TestSuppressTestsSplittingCommandsResolver(
     }
 
     companion object {
+        private val LOG = Logger.getLogger(TestSuppressTestsSplittingCommandsResolver::class.java)
+
         private const val BackupMetadataFileExtension = ".csv"
         private const val MSBuildBinaryLogFileExtensions = ".binlog"
     }

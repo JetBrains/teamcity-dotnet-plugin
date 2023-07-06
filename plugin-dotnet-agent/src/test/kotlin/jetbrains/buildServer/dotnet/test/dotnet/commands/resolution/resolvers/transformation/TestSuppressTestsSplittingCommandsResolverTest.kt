@@ -65,9 +65,32 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     }
 
     @Test
+    fun `should not transform and log if tests classes file not present`() {
+        // arrange
+        _testsSplittingSettingsMock.let {
+            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.testsClassesFilePath } returns null
+        }
+        every { _testCommandMock.commandType } returns DotnetCommandType.Test
+        justRun { _loggerServiceMock.writeErrorOutput(any()) }
+
+        // act
+        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+
+        // assert
+        Assert.assertEquals(0, result.count())
+        verify(exactly = 1) { _loggerServiceMock.writeErrorOutput(any()) }
+        verify(exactly = 0) { _loggerServiceMock.writeBlock(any()) }
+        verify(exactly = 0) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE) }
+    }
+
+    @Test
     fun `should transform to empty command sequence if targets of test command is empty`() {
         // arrange
-        every { _testsSplittingSettingsMock.mode } returns TestsSplittingMode.Suppressing
+        _testsSplittingSettingsMock.let {
+            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.testsClassesFilePath } returns "exclude.txt"
+        }
         _testCommandMock.let {
             every { it.commandType } returns DotnetCommandType.Test
             every { it.targetArguments } returns emptySequence()
@@ -85,7 +108,10 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     @Test
     fun `should transform to empty command sequence if target argument doesn't contains command line arguments`() {
         // arrange
-        every { _testsSplittingSettingsMock.mode } returns TestsSplittingMode.Suppressing
+        _testsSplittingSettingsMock.let {
+            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.testsClassesFilePath } returns "exclude.txt"
+        }
         val targetArguments = mockk<TargetArguments> {
             every { arguments } returns emptySequence()
         }

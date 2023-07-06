@@ -23,7 +23,7 @@ import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 
-class TestClassTestsSplittingCommandsResolver(
+class TestClassNameFilterTestSplittingCommandsResolver(
     private val _testsSplittingSettings: TestsSplittingSettings,
     private val _loggerService: LoggerService,
 ) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService) {
