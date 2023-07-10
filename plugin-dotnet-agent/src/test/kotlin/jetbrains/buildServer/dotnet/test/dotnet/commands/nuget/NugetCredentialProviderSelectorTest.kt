@@ -34,165 +34,240 @@ import org.testng.annotations.Test
 import java.io.File
 
 class NugetCredentialProviderSelectorTest {
-    @MockK private lateinit var _parametersService: ParametersService
-    @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var _runtimesProvider: DotnetRuntimesProvider
+    @MockK
+    private lateinit var _parametersService: ParametersService
+
+    @MockK
+    private lateinit var _virtualContext: VirtualContext
+
+    @MockK
+    private lateinit var _runtimesProvider: DotnetRuntimesProvider
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
     }
 
     @DataProvider
     fun cases(): Array<Array<out Any?>> {
         return arrayOf(
-                // Disabled
-                arrayOf(
-                        Version(3, 1, 100),
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to "true"
-                        ),
-                        true,
-                        null
+            // Should not select when disabled
+            arrayOf(
+                Version(3, 1, 100),
+                sequenceOf(Version(3, 1, 100)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to "true",
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll"
                 ),
+                false,
+                null
+            ),
 
-                // Full .NET
-                arrayOf(
-                        Version.Empty,
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider4.0.0_Path" to "CredentialProvide.exe"
-                        ),
-                        true,
-                        "v_CredentialProvide.exe"
+            // Should select .NET Framework credentials provider when sdkVersion is Version.Empty
+            arrayOf(
+                Version.Empty,
+                sequenceOf(Version(3, 1, 100)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll"
                 ),
+                false,
+                "CredentialProvider.exe"
+            ),
 
-                // Simple case
-                arrayOf(
-                        Version.CredentialProviderVersion,
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider2.0.0_Path" to "CredentialProvide.dll"
-                        ),
-                        true,
-                        "v_CredentialProvide.dll"
+            // Simple case - should select by given SDK version
+            arrayOf(
+                Version(3, 1, 200),
+                emptySequence<Version>(),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll"
                 ),
+                false,
+                "CredentialProvider3.dll"
+            ),
 
-                // Has no any DotNetCredentialProvider
-                arrayOf(
-                        Version(3, 1, 200),
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider2.0.0_Path" to null,
-                                "DotNetCredentialProvider3.0.0_Path" to null
-                        ),
-                        true,
-                        null
+            // Should not select when there's no corresponding credential providers and runtimes
+            arrayOf(
+                Version(3, 1, 200),
+                emptySequence<Version>(),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider3.0.0_Path" to null
                 ),
+                false,
+                null
+            ),
 
-                // .NET 5
-                arrayOf(
-                        Version(5, 1, 100),
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to "FalsE",
-                                "DotNetCredentialProvider5.0.0_Path" to "CredentialProvide.dll"
-                        ),
-                        true,
-                        "v_CredentialProvide.dll"
+            // Should select .NET 5
+            arrayOf(
+                Version(5, 1, 100),
+                emptySequence<Version>(),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to "FalsE",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll"
                 ),
+                false,
+                "CredentialProvider5.dll"
+            ),
 
-                // Version too low
-                arrayOf(
-                        Version(2, 1, 399),
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider3.0.0_Path" to "CredentialProvide.dll"
-                        ),
-                        true,
-                        null
+            // Should not select when given SDK version is less than CredentialProviderVersion
+            arrayOf(
+                Version(2, 1, 399),
+                sequenceOf(Version(2, 1, 399)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll"
                 ),
+                false,
+                null
+            ),
 
-                // Should select the credential provider related to the available CredentialProvider and .NET runtime version
-                arrayOf(
-                        Version(5, 1, 100, "preview"),
-                        sequenceOf(Version(3, 1, 200)),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider1.0.0_Path" to "CredentialProvide1.dll",
-                                "DotNetCredentialProvider2.0.0_Path" to "CredentialProvide2.dll",
-                                "DotNetCredentialProvider3.0.0_Path" to "CredentialProvide3.dll",
-                                "DotNetCredentialProvider4.0.0_Path" to "CredentialProvide.exe",
-                                "DotNetCredentialProvider5.0.0_Path" to null
-                        ),
-                        false,
-                        "v_CredentialProvide3.dll"
+            // Should select credential provider according to available runtimes when failed by SDK version
+            arrayOf(
+                Version(5, 1, 100, "preview"),
+                sequenceOf(Version(3, 1, 200)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to null
                 ),
+                false,
+                "CredentialProvider3.dll"
+            ),
 
-                // Should select the credential provider related to an the newest available CredentialProvider and .NET runtime version
-                arrayOf(
-                        Version(5, 1, 100, "preview"),
-                        sequenceOf(Version(1, 2, 200), Version(2, 1, 300)),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider1.0.0_Path" to "CredentialProvide1.dll",
-                                "DotNetCredentialProvider2.0.0_Path" to "CredentialProvide2.dll",
-                                "DotNetCredentialProvider3.0.0_Path" to "CredentialProvide3.dll",
-                                "DotNetCredentialProvider4.0.0_Path" to "CredentialProvide.exe",
-                                "DotNetCredentialProvider5.0.0_Path" to null
-                        ),
-                        false,
-                        "v_CredentialProvide2.dll"
+            // Should select the greatest credential provider version when multiple runtimes correspond
+            arrayOf(
+                Version(5, 1, 100, "preview"),
+                sequenceOf(Version(1, 2, 200), Version(2, 1, 300)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to null
                 ),
+                false,
+                "CredentialProvider2.dll"
+            ),
 
-                // Should not select the credential provider when in virtual context
-                arrayOf(
-                        Version(5, 1, 100, "preview"),
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider1.0.0_Path" to "CredentialProvide1.dll",
-                                "DotNetCredentialProvider2.0.0_Path" to "CredentialProvide2.dll",
-                                "DotNetCredentialProvider3.0.0_Path" to "CredentialProvide3.dll",
-                                "DotNetCredentialProvider4.0.0_Path" to "CredentialProvide.exe",
-                                "DotNetCredentialProvider5.0.0_Path" to null
-                        ),
-                        true,
-                        null
+            // Should not select credential provider by available runtimes when in virtual context
+            arrayOf(
+                Version(5, 1, 100, "preview"),
+                sequenceOf(Version(3, 1, 100)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to null
                 ),
+                true,
+                null
+            ),
 
-                // Should not select the credential provider when Full .NET
-                arrayOf(
-                        Version.Empty,
-                        emptySequence<Version>(),
-                        mapOf(
-                                "teamcity.nuget.credentialprovider.disabled" to null,
-                                "DotNetCredentialProvider1.0.0_Path" to "CredentialProvide1.dll",
-                                "DotNetCredentialProvider2.0.0_Path" to "CredentialProvide2.dll",
-                                "DotNetCredentialProvider3.0.0_Path" to "CredentialProvide3.dll",
-                                "DotNetCredentialProvider4.0.0_Path" to null,
-                                "DotNetCredentialProvider5.0.0_Path" to null
-                        ),
-                        true,
-                        null
-                )
+            // Should not select credential provider by available runtimes when .NET Framework
+            arrayOf(
+                Version.Empty,
+                sequenceOf(Version(3, 1, 100)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to null,
+                    "DotNetCredentialProvider5.0.0_Path" to null
+                ),
+                false,
+                null
+            ),
+
+            // Should resolve path in virtual context
+            arrayOf(
+                Version(5, 1, 200),
+                emptySequence<Version>(),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll"
+                ),
+                true,
+                "v_CredentialProvider5.dll"
+            ),
+
+            // Should select greatest plugin version with available roll-forward runtime when there's no matching runtime
+            arrayOf(
+                Version(8, 0, 100, "preview"),
+                sequenceOf(Version(7, 1, 300)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll",
+                    "DotNetCredentialProvider7.0.0_Path" to null,
+                    "DotNetCredentialProvider8.0.0_Path" to null
+                ),
+                false,
+                "CredentialProvider6.dll"
+            ),
+
+            // Should not roll-forward plugin when there's matching runtime
+            arrayOf(
+                Version(8, 0, 100, "preview"),
+                sequenceOf(Version(5, 2, 200), Version(7, 1, 300)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
+                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to "CredentialProvider6.dll",
+                    "DotNetCredentialProvider7.0.0_Path" to null,
+                    "DotNetCredentialProvider8.0.0_Path" to null
+                ),
+                false,
+                "CredentialProvider5.dll"
+            )
         )
     }
 
     @Test(dataProvider = "cases")
     fun shouldSelectCredentialProvider(
-            sdkVersion: Version,
-            runtimes: Sequence<Version>,
-            params: Map<String, String?>,
-            isVirtual: Boolean,
-            expectedCredentialProvider: String?) {
+        sdkVersion: Version,
+        runtimes: Sequence<Version>,
+        params: Map<String, String?>,
+        isVirtual: Boolean,
+        expectedCredentialProvider: String?
+    ) {
         // Given
         val selector = createInstance()
 
@@ -204,6 +279,7 @@ class NugetCredentialProviderSelectorTest {
         every { _parametersService.getParameterNames(ParameterType.Configuration) } returns params.keys.asSequence()
         every { _runtimesProvider.getRuntimes() } returns runtimes.map { DotnetRuntime(File("."), it, "") }
         every { _virtualContext.isVirtual } returns isVirtual
+        every { _virtualContext.resolvePath(any()) } answers { (if (isVirtual) "v_" else "") + arg<String>(0) }
 
         val actualCredentialProvider = selector.trySelect(sdkVersion)
 
@@ -211,6 +287,5 @@ class NugetCredentialProviderSelectorTest {
         Assert.assertEquals(actualCredentialProvider, expectedCredentialProvider)
     }
 
-    private fun createInstance() =
-            NugetCredentialProviderSelectorImpl(_parametersService, _runtimesProvider, _virtualContext)
+    private fun createInstance() = NugetCredentialProviderSelectorImpl(_parametersService, _runtimesProvider, _virtualContext)
 }
