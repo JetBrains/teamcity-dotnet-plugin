@@ -33,20 +33,16 @@ class NugetEnvironmentVariables(
     private val _virtualContext: VirtualContext,
     private val _credentialProviderSelector: NugetCredentialProviderSelector,
     private val _nugetEnvironment: NugetEnvironment
-)
-    : EnvironmentVariables {
+) : EnvironmentVariables {
 
     private val _basePath get() = File(_pathsService.getPath(PathType.System), "dotnet")
 
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
-        var varsToOverride = _parametersService.tryGetParameter(ParameterType.Configuration,
-            DotnetConstants.PARAM_OVERRIDE_NUGET_VARS
-        )
+        val varsToOverride = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_OVERRIDE_NUGET_VARS)
             ?.uppercase()
-                ?.split(';')
-                ?.map { it.trim() }
-                ?.toHashSet()
-                ?: emptySet<String>()
+            ?.split(';')
+            ?.map { it.trim() }
+            ?.toHashSet() ?: emptySet()
 
         yieldEnvVar(varsToOverride, FORCE_NUGET_EXE_INTERACTIVE_ENV_VAR) { "" }
 
@@ -57,25 +53,25 @@ class NugetEnvironmentVariables(
 
         _credentialProviderSelector.trySelect(sdkVersion)?.let {
             val credentialProvider = it
-                yieldEnvVar(varsToOverride, NUGET_PLUGIN_PATH_ENV_VAR) {
-                    _virtualContext.resolvePath(credentialProvider)
-            }
+            yieldEnvVar(varsToOverride, NUGET_PLUGIN_PATH_ENV_VAR) { _virtualContext.resolvePath(credentialProvider) }
         }
 
         _parametersService
-                .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
-                ?.trim()
-                ?.let { Verbosity.tryParse(it) }
-                ?.let {
-                    yieldEnvVar(varsToOverride, NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR) { it.id }
-                }
+            .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
+            ?.trim()
+            ?.let { Verbosity.tryParse(it) }
+            ?.let { yieldEnvVar(varsToOverride, NUGET_RESTORE_MSBUILD_VERBOSITY_ENV_VAR) { it.id } }
     }
 
     private suspend fun SequenceScope<CommandLineEnvironmentVariable>.yieldEnvVar(
-            varsToOverride: Set<String>,
-            environmentVariableName: String, valueProvider: () -> String) {
-        if (varsToOverride.size == 0 || varsToOverride.contains(environmentVariableName.uppercase())) {
-            if (_environment.tryGetVariable(environmentVariableName).isNullOrBlank() && _parametersService.tryGetParameter(ParameterType.Environment, environmentVariableName).isNullOrBlank()) {
+        varsToOverride: Set<String>,
+        environmentVariableName: String,
+        valueProvider: () -> String
+    ) {
+        if (varsToOverride.isEmpty() || varsToOverride.contains(environmentVariableName.uppercase())) {
+            if (_environment.tryGetVariable(environmentVariableName).isNullOrBlank() &&
+                _parametersService.tryGetParameter(ParameterType.Environment, environmentVariableName).isNullOrBlank()
+            ) {
                 yield(CommandLineEnvironmentVariable(environmentVariableName, valueProvider()))
             }
         }
