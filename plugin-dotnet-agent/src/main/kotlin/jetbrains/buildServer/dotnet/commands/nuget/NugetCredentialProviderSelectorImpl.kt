@@ -48,12 +48,17 @@ class NugetCredentialProviderSelectorImpl(
             return null
         }
 
-        var credentialProviderPath = trySelectProviderBySdkMajorVersion(sdkMajorVersion)
+        var credentialProviderPath = trySelectBySdkMajorVersion(sdkMajorVersion)
         if (credentialProviderPath == null) {
-            LOG.debug("Couldn't find credential plugin for SDK major version $sdkMajorVersion")
+            LOG.debug("Couldn't find credential plugin matching SDK major version $sdkMajorVersion")
 
-            if (sdkVersion != Version.Empty && !_virtualContext.isVirtual) {
-                credentialProviderPath = trySelectProviderByAvailableRuntimes()
+            if (sdkVersion != Version.Empty) {
+                credentialProviderPath = if (!_virtualContext.isVirtual) {
+                    trySelectByAvailableRuntimes()
+                } else {
+                    // no runtimes info
+                    trySelectBySdkMajorVersionWithRollForward(sdkMajorVersion)
+                }
             }
         }
 
@@ -67,22 +72,16 @@ class NugetCredentialProviderSelectorImpl(
         return credentialProviderPath
     }
 
-    private fun trySelectProviderBySdkMajorVersion(sdkMajorVersion: Int): String? {
+    private fun trySelectBySdkMajorVersion(sdkMajorVersion: Int): String? {
         LOG.debug("Selecting credentials plugin by SDK major version $sdkMajorVersion")
         return _parametersService.tryGetParameter(ParameterType.Configuration, "$CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER$sdkMajorVersion.0.0$CONFIG_SUFFIX_PATH")
     }
 
-    private fun trySelectProviderByAvailableRuntimes(): String? {
+    private fun trySelectByAvailableRuntimes(): String? {
         val runtimeVersions = _runtimesProvider.getRuntimes().map { it.version.major }.toSet()
         LOG.debug("Selecting credentials plugin by available runtimes: $runtimeVersions")
 
-        val pluginVersionToNameMap = _parametersService.getParameterNames(ParameterType.Configuration)
-            .filter { it.startsWith(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER) }
-            .filter { it.endsWith(CONFIG_SUFFIX_PATH) }
-            .filter { _parametersService.tryGetParameter(ParameterType.Configuration, it) != null }
-            .map { Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) to it }
-            .filter { it.first != Version.Empty }
-            .associate { it.first to it.second }
+        val pluginVersionToNameMap = getAvailableCredentialProviders()
 
         var credentialProviderName = pluginVersionToNameMap
             .filter { runtimeVersions.contains(it.key.major) }
@@ -97,6 +96,22 @@ class NugetCredentialProviderSelectorImpl(
 
         return credentialProviderName?.let { _parametersService.tryGetParameter(ParameterType.Configuration, it) }
     }
+
+    private fun trySelectBySdkMajorVersionWithRollForward(sdkMajorVersion: Int): String? {
+        LOG.debug("Selecting credentials plugin to roll forward to SDK major version $sdkMajorVersion")
+
+        return getAvailableCredentialProviders()
+            .filter { sdkMajorVersion > it.key.major }
+            .maxByOrNull { it.key }?.value?.let { _parametersService.tryGetParameter(ParameterType.Configuration, it) }
+    }
+
+    private fun getAvailableCredentialProviders() = _parametersService.getParameterNames(ParameterType.Configuration)
+        .filter { it.startsWith(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER) }
+        .filter { it.endsWith(CONFIG_SUFFIX_PATH) }
+        .filter { _parametersService.tryGetParameter(ParameterType.Configuration, it) != null }
+        .map { Version.parse(it.substring(CONFIG_PREFIX_DOTNET_CREDENTIAL_PROVIDER.length, it.length - CONFIG_SUFFIX_PATH.length)) to it }
+        .filter { it.first != Version.Empty }
+        .associate { it.first to it.second }
 
     companion object {
         private val LOG = Logger.getLogger(NugetCredentialProviderSelectorImpl::class.java)
