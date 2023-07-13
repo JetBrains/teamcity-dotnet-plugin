@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Version>0.0.0</Version>
+        <Authors>JetBrains s.r.o.</Authors>
+        <Company>JetBrains s.r.o.</Company>
+
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>true</IsPackable>

@@ -99,7 +99,6 @@ task publishDotnetTestSuppressor(type: Exec) {
         '--configuration', 'Release',
         '--framework', 'net6.0',    // publish only for .NET 6.0 and make it compatible with higher versions via running with `--roll-forward LatestMajor`
         '-p:Version=' + teamcityVersion,
-        '-p:Authors="JetBrains s.r.o"',
         '--output', './tools/test-suppressor'
 }
 
