@@ -178,18 +178,31 @@ class NugetCredentialProviderSelectorTest {
 
             // Should not select credential provider by available runtimes when in virtual context
             arrayOf(
-                Version(5, 1, 100, "preview"),
-                sequenceOf(Version(3, 1, 100)),
+                Version(3, 1, 100, "preview"),
+                sequenceOf(Version(5, 1, 100)),
                 mapOf(
                     "teamcity.nuget.credentialprovider.disabled" to null,
-                    "DotNetCredentialProvider1.0.0_Path" to "CredentialProvider1.dll",
-                    "DotNetCredentialProvider2.0.0_Path" to "CredentialProvider2.dll",
-                    "DotNetCredentialProvider3.0.0_Path" to "CredentialProvider3.dll",
+                    "DotNetCredentialProvider3.0.0_Path" to null,
                     "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
-                    "DotNetCredentialProvider5.0.0_Path" to null
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to null
                 ),
                 true,
                 null
+            ),
+
+            // Should select credential provider if it can be roll forwarded to the sdk when in virtual context
+            arrayOf(
+                Version(6, 1, 100, "preview"),
+                sequenceOf(Version(5, 1, 100)),
+                mapOf(
+                    "teamcity.nuget.credentialprovider.disabled" to null,
+                    "DotNetCredentialProvider4.0.0_Path" to "CredentialProvider.exe",
+                    "DotNetCredentialProvider5.0.0_Path" to "CredentialProvider5.dll",
+                    "DotNetCredentialProvider6.0.0_Path" to null
+                ),
+                true,
+                "v_CredentialProvider5.dll"
             ),
 
             // Should not select credential provider by available runtimes when .NET Framework
