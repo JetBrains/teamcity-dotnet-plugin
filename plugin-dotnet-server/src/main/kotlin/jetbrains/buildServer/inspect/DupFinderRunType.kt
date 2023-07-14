@@ -81,7 +81,7 @@ class DupFinderRunType(
     override fun getDeprecationType(): DeprecationType = DeprecationType.DEPRECATED_ALLOWED
 
     override fun getDeprecationReason(): String =
-        "The Duplicates finder (ReSharper) runner is now deprecated. To continue using it, install JetBrains ReSharper Command Line Tools version 2021.2.0 and select this version under advanced options."
+        "The Duplicates finder (ReSharper) runner is now deprecated. To continue using it, install JetBrains ReSharper Command Line Tools version 2021.2.3 and select this version under advanced options."
 
     override fun getDeprecationReference(): String = "duplicates-finder-resharper"
 }
