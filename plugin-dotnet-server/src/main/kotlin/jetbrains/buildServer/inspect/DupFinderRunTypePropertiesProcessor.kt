@@ -28,6 +28,14 @@ class DupFinderRunTypePropertiesProcessor(
     : PropertiesProcessor {
     override fun process(properties: Map<String, String>): Collection<InvalidProperty> {
         val result: MutableList<InvalidProperty> = Vector()
+        val cltVersion = _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)
+
+        if (cltVersion > RequirementsResolverImpl.LastVersionWithDupFinder) {
+            result.add(InvalidProperty(CltConstants.CLT_PATH_PARAMETER,
+                "The last ReSharper CLT version to support DupFinder (ReSharper) runner is ${RequirementsResolverImpl.LastVersionWithDupFinder}. " +
+                        "To continue using the runner, install JetBrains ReSharper Command Line Tools version 2021.2.3 and select this version under advanced options in the runner settings."))
+        }
+
         val files = properties[DupFinderConstants.SETTINGS_INCLUDE_FILES]
         if (PropertiesUtil.isEmptyOrNull(files)) {
             result.add(InvalidProperty(DupFinderConstants.SETTINGS_INCLUDE_FILES, "Input files must be specified"))
@@ -47,7 +55,7 @@ class DupFinderRunTypePropertiesProcessor(
             IspectionToolPlatform.tryParse(it)
         }
 
-        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID) < RequirementsResolverImpl.CrossPlatformVersion) {
+        if (platform == IspectionToolPlatform.CrossPlatform && cltVersion < RequirementsResolverImpl.CrossPlatformVersion) {
             result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform duplicates finder, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 

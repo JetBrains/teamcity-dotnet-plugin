@@ -97,4 +97,7 @@
 
   <bean class="jetbrains.buildServer.script.discovery.CSharpScriptDiscoveryExtension" id="cSharpScriptDiscoveryExtension"/>
   <bean class="jetbrains.buildServer.script.discovery.ScriptDiscoverImpl" />
+
+  <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionReport" />
+  <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionPageExtension" />
 </beans>
