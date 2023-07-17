@@ -73,10 +73,11 @@ internal class DotnetTestSetup : IDisposable
             .WithBindMount(HostTestProjectPath, MountedTestProjectSourcesDirPath, AccessMode.ReadOnly)
             .WithBindMount(_hostAppSourcesPath, MountedFilterAppSourcesDirPath, AccessMode.ReadOnly)
             .WithCleanUp(true)
-            .WithAutoRemove(true)
-            .Build();
-        await container.StartAsync();
-        return container;
+            .WithAutoRemove(true);
+
+        var builtContainer = container.Build();
+        await builtContainer.StartAsync();
+        return builtContainer;
     }
 
     private static void ClearDirectory(string directoryPath)
