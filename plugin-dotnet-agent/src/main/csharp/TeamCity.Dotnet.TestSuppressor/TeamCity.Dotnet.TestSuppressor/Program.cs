@@ -88,7 +88,7 @@ internal static class Program
     }
     
     private static string Version =>
-        Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+        GetAssemblyCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
     private static string Company =>
         GetAssemblyCustomAttribute<AssemblyCompanyAttribute>().Company;
