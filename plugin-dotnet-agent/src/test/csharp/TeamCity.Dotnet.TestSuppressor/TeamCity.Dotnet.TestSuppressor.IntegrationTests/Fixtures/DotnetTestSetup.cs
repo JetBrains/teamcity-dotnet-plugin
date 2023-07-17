@@ -30,10 +30,7 @@ internal class DotnetTestSetup : IDisposable
             {
                 if (!DockerImages.ContainsKey(dotnetVersion))
                 {
-                    Parallel.ForEach(Enum.GetValues<DotnetVersion>(), dv =>
-                    {
-                        DockerImages.TryAdd(dv, new DotnetSdkImage(dv));
-                    });
+                    DockerImages.TryAdd(dotnetVersion, new DotnetSdkImage(dotnetVersion));
                 }
             }
         }
