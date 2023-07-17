@@ -53,7 +53,11 @@ dependencies {
 class PreparePackagesTask extends DefaultTask {
     @TaskAction
     def run() {
-        prepareToolsDir()
+        def toolsDir = new File(project.projectDir, 'tools')
+        def dotnetToolsDir = new File(project.projectDir, 'dotnet-tools')
+
+        ant.delete(dir: toolsDir)
+        ant.mkdir(dir: toolsDir)
 
         def integrationPackageVersion = '1.0.28'
         def integrationPackageId = 'TeamCity.Dotnet.Integration/' + integrationPackageVersion
@@ -64,34 +68,13 @@ class PreparePackagesTask extends DefaultTask {
         ant.get(src: 'https://www.nuget.org/api/v2/package/' + integrationPackageId, dest: './packages/package.zip', skipexisting: 'true')
         ant.unzip(src: './packages/package.zip', dest: './packages')
 
-        ant.move(todir: './tools', overwrite: 'true', force: 'true') {
+        // move downloaded packages to ./tools
+        ant.move(todir: toolsDir, overwrite: 'true', force: 'true') {
             fileset(dir: './packages/build/_common', includes: '**/*')
         }
-
         ant.delete(dir: './packages')
     }
-
-    private def prepareToolsDir() {
-        def toolsDir = new File(project.projectDir, 'tools')
-        if (toolsDir.exists()) {
-            if (isDotnetTasksDisabled()) {
-                // preserve .NET test-suppressor if it was built outside the Gradle script (on the CI)
-                ant.delete(dir: toolsDir, includes: "**/*", excludes: "test-suppressor/**")
-            } else {
-                // clean-up everything
-                ant.delete(dir: toolsDir)
-                ant.mkdir(dir: toolsDir)
-            }
-        } else {
-            ant.mkdir(dir: toolsDir)
-        }
-    }
-
-    private def isDotnetTasksDisabled() {
-        return project.hasProperty('dotnetTasks') && project.property('dotnetTasks').toString().equalsIgnoreCase('disabled')
-    }
 }
-
 
 task preparePackagesTask(type: PreparePackagesTask)
 
@@ -125,12 +108,28 @@ task publishDotnetTestSuppressor(type: Exec) {
         '--configuration', 'Release',
         '--framework', 'net6.0',    // publish only for .NET 6.0 and make it compatible with higher versions via running with `--roll-forward LatestMajor`
         '-p:Version=' + teamcityVersion,
-        '--output', './tools/test-suppressor'
+        '--output', './dotnet-tools/test-suppressor'
+}
+
+
+task moveDotnetToolsContents(type: Copy) {
+    mustRunAfter publishDotnetTestSuppressor
+    def sourceDir = file('./dotnet-tools')
+    if (!sourceDir.exists()) {
+        return
+    }
+
+    from sourceDir
+    into file('./tools')
+    
+    doLast {
+        sourceDir.delete()
+    }
 }
 
 clean.dependsOn(cleanDotnetTestSuppressor)
 test.dependsOn(unitTestDotnetTestSuppressor)
-agentPlugin.dependsOn(preparePackagesTask, publishDotnetTestSuppressor)
+agentPlugin.dependsOn(preparePackagesTask, publishDotnetTestSuppressor, moveDotnetToolsContents)
 
 agentPlugin.version = null
 agentPlugin.baseName = projectIds.artifact
