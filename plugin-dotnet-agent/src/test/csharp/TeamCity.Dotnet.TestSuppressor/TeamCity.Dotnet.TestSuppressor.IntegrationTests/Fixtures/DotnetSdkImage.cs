@@ -16,7 +16,12 @@ public class DotnetSdkImage : IImage
     {
         _dotnetVersion = dotnetVersion;
         _image = new DockerImage("localhost/teamcity/dotnet-test-suppressor/dotnet", "sdk", _dotnetVersion.GetDockerTag());
-        new ImageFromDockerfileBuilder()
+        BuildImageAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+    }
+
+    private async Task BuildImageAsync()
+    {
+        await new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(CurrentDirectory)
             .WithDockerfile(DockerfileName)
             .WithName(_image)
@@ -25,7 +30,7 @@ public class DotnetSdkImage : IImage
             .WithCleanUp(true)
             .Build()
             .CreateAsync()
-            .Wait();
+            .ConfigureAwait(false);
     }
 
     public string GetHostname() => _image.GetHostname();

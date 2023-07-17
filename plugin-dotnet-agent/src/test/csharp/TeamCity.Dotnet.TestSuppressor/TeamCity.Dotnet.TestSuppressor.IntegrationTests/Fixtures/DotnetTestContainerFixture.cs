@@ -38,7 +38,7 @@ public class DotnetTestContainerFixture : IDisposable
             var testSetup = new DotnetTestSetup(dotnetVersion);
             _testSetup.TryAdd(dotnetVersion, testSetup);
         }
-        await Prepare();
+        await Prepare().ConfigureAwait(false);
     }
     
     public async Task<ExecResult> ExecAsync(string command, bool silent = false)

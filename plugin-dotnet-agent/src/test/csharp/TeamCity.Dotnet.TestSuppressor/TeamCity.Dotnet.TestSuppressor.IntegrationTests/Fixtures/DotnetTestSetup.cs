@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Images;
 
@@ -8,36 +7,44 @@ namespace TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures;
 
 internal class DotnetTestSetup : IDisposable
 {
-    private static object _lock = new();
-    private static readonly ConcurrentDictionary<DotnetVersion, IImage> DockerImages;
+    private static readonly Lazy<ConcurrentDictionary<DotnetVersion, IImage>> LazyDockerImages;
+    
     private const string WorkDirPath = "/app";
     private const string TestsQueriesFileName = "tests-list.txt";
     private readonly string _hostAppSourcesPath = $"{CurrentDirectory}/published-app-binaries";
     private const string AppName = "TeamCity.Dotnet.TestSuppressor.dll";
 
+    private readonly Lazy<IContainer> _container;
+
     static DotnetTestSetup()
     {
-        DockerImages = new ConcurrentDictionary<DotnetVersion, IImage>();
+        LazyDockerImages = new Lazy<ConcurrentDictionary<DotnetVersion, IImage>>(() =>
+        {
+            var result = new ConcurrentDictionary<DotnetVersion, IImage>();
+            
+            // can't made it in parallel because of Docker Wormhole configuration fails to run in parallel
+            // it looks like deadlock in Testcontainers or Docker SDK
+            foreach(var dv in Enum.GetValues<DotnetVersion>())
+            {
+                result.TryAdd(dv, new DotnetSdkImage(dv));
+            }
+            
+            return result;
+        }, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
+    private static ConcurrentDictionary<DotnetVersion, IImage> DockerImages => LazyDockerImages.Value;
+    
     private static string CurrentDirectory => Directory.GetCurrentDirectory();
 
     public DotnetTestSetup(DotnetVersion dotnetVersion)
     {
-        if (!DockerImages.ContainsKey(dotnetVersion))
-        {
-            lock (_lock)
-            {
-                if (!DockerImages.ContainsKey(dotnetVersion))
-                {
-                    DockerImages.TryAdd(dotnetVersion, new DotnetSdkImage(dotnetVersion));
-                }
-            }
-        }
-
         var id = Guid.NewGuid();
         HostTestProjectPath = Directory.CreateDirectory($"{CurrentDirectory}/test-project__dotnet_{dotnetVersion}__{id}").FullName;
-        Container = RunContainer(dotnetVersion, id).Result;
+        _container = new Lazy<IContainer>(
+            () => RunContainer(dotnetVersion, id).ConfigureAwait(false).GetAwaiter().GetResult(),
+            LazyThreadSafetyMode.ExecutionAndPublication
+        );
     }
 
     public static string MountedTestProjectSourcesDirPath => "/mounted__test-project-sources";
@@ -56,7 +63,7 @@ internal class DotnetTestSetup : IDisposable
 
     public static string TestsQueriesFilePath => $"{TestProjectSourcesDirPath}/{TestsQueriesFileName}";
 
-    public IContainer Container { get; }
+    public IContainer Container => _container.Value;
 
     public void ClearTestProjectDir() => ClearDirectory(HostTestProjectPath);
 
@@ -67,14 +74,13 @@ internal class DotnetTestSetup : IDisposable
             .WithName($"tc-dotnet-test-suppressor__integration-tests__dotnet_{dotnetVersion}__{id}")
             .WithWorkingDirectory(WorkDirPath)
             .WithCommand("tail", "-f", "/dev/null")
-            .WithBindMount(HostTestProjectPath, MountedTestProjectSourcesDirPath, AccessMode.ReadOnly)
-            .WithBindMount(_hostAppSourcesPath, MountedFilterAppSourcesDirPath, AccessMode.ReadOnly)
+            .WithBindMount(HostTestProjectPath, MountedTestProjectSourcesDirPath)
+            .WithBindMount(_hostAppSourcesPath, MountedFilterAppSourcesDirPath)
             .WithCleanUp(true)
-            .WithAutoRemove(true);
-
-        var builtContainer = container.Build();
-        await builtContainer.StartAsync();
-        return builtContainer;
+            .WithAutoRemove(true)
+            .Build();
+        await container.StartAsync().ConfigureAwait(false);
+        return container;
     }
 
     private static void ClearDirectory(string directoryPath)
@@ -92,7 +98,7 @@ internal class DotnetTestSetup : IDisposable
 
     public void Dispose()
     {
-        Container.DisposeAsync().AsTask().Wait();
+        Container.DisposeAsync().AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
 
         ClearDirectory(HostTestProjectPath);
         Directory.Delete(HostTestProjectPath);

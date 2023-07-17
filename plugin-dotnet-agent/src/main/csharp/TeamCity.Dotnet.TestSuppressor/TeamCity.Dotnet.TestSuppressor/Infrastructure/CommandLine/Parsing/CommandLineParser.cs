@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Reflection;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.CommandLine.Commands;
 
