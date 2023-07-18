@@ -94,7 +94,6 @@ task integrationTestDotnetTestSuppressor(type: Exec) {
 task cleanDotnetTestSuppressor(type: Exec) {
     onlyIf { !isDotnetTasksDisabled }
     delete './tools/test-suppressor'
-    delete './dotnet-tools/test-suppressor'
     commandLine 'dotnet', 'clean',
         './src/main/csharp/TeamCity.Dotnet.TestSuppressor/TeamCity.Dotnet.TestSuppressor.sln'
 }
