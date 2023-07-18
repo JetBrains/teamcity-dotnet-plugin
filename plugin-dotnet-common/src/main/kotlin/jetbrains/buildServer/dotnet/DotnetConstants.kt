@@ -47,7 +47,7 @@ object DotnetConstants {
     const val PARAM_MSBUILD_DISABLE_CUSTOM_VSTEST_LOGGERS = "teamcity.internal.dotnet.msbuild.parameters.disable.custom.vstest.loggers"
     // On, MultiAdapterPath or Off (MultiAdapterPath by default)
     const val PARAM_TEST_REPORTING = "dotnet.cli.test.reporting"
-    // true or false (false by default) - enables a feature of adding an excluded target paths for `dotnet test` and `dotnet vstest` commands
+    // true or false (true by default) - enables a feature of adding an excluded target paths for `dotnet test` and `dotnet vstest` commands
     const val PARAM_TEST_EXCLUDED_PATHS_ENABLED = "teamcity.internal.dotnet.test.excludedPaths.enabled"
     // Semicolon separated list of variables to override FORCE_NUGET_EXE_INTERACTIVE;NUGET_HTTP_CACHE_PATH;NUGET_PACKAGES;NUGET_PLUGIN_PATHS;NUGET_RESTORE_MSBUILD_VERBOSITY (All by default), the empty string to not override at all - allows overriding NuGet environment variables
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
@@ -128,5 +128,5 @@ object DotnetConstants {
     const val CONFIG_SUFFIX_PATH = "_Path"
     const val CONFIG_SUFFIX_DOTNET_CLI = "DotNetCLI"
     const val CONFIG_SUFFIX_DOTNET_CLI_PATH = CONFIG_SUFFIX_DOTNET_CLI + CONFIG_SUFFIX_PATH
-    const val CONFIG_PREFIX_DOTNET_INSTALLED_WORKLOADS = "DotNetInstalledWorkloads"
+    const val CONFIG_PREFIX_DOTNET_WORKLOADS = "DotNetWorkloads"
 }

@@ -1,8 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.Path
@@ -20,8 +18,15 @@ import org.testng.annotations.Test
 import java.io.File
 
 class DotnetWorkloadAgentPropertiesProviderTest {
-    @MockK private lateinit var _toolProvider: ToolProvider
-    @MockK private lateinit var _dotnetWorkloadProvider: DotnetWorkloadProvider
+    @MockK
+    private lateinit var _toolProvider: ToolProvider
+
+    @MockK
+    private lateinit var _fileBasedDotnetWorkloadProvider: DotnetWorkloadProvider
+
+    @MockK
+    private lateinit var _registryBasedDotnetWorkloadProvider: DotnetWorkloadProvider
+
     private val _toolPath = Path("dotnet")
 
     @BeforeMethod
@@ -33,13 +38,13 @@ class DotnetWorkloadAgentPropertiesProviderTest {
     }
 
     @Test
-    fun shouldHaveCorrectDescription() {
+    fun `should have correct description`() {
         // Then
         assertEquals(createInstance().desription, ".NET Workload")
     }
 
     @DataProvider
-    fun testDataInstalledWorkloads(): Array<Array<List<Any>>> {
+    fun `workloads to expected agent properties`(): Array<Array<List<Any>>> {
         return arrayOf(
             arrayOf(
                 listOf(
@@ -48,32 +53,63 @@ class DotnetWorkloadAgentPropertiesProviderTest {
                     DotnetWorkload("ios", Version.parse("6.0.100")),
                 ),
                 listOf(
-                    AgentProperty(DotNetCLI, "DotNetInstalledWorkloads_6.0.100", "android,ios"),
-                    AgentProperty(DotNetCLI, "DotNetInstalledWorkloads_7.0.100", "android")
+                    AgentProperty(DotNetCLI, "DotNetWorkloads_6.0.100", "android,ios"),
+                    AgentProperty(DotNetCLI, "DotNetWorkloads_7.0.100", "android")
+                ),
+            ),
+            arrayOf(
+                listOf(
+                    DotnetWorkload("android", Version.parse("6.0.100")),
+                    DotnetWorkload("android", Version.parse("6.0.100")),
+                ),
+                listOf(
+                    AgentProperty(DotNetCLI, "DotNetWorkloads_6.0.100", "android")
                 ),
             ),
             arrayOf(emptyList(), listOf())
         )
     }
 
-    @Test(dataProvider = "testDataInstalledWorkloads")
-    fun shouldReturnDotnetInstalledWorkloadsAgentProperty(
+    @Test(dataProvider = "workloads to expected agent properties")
+    fun `should provide DotNetWorkloads agent properties retrieved from file system`(
         installedWorkloads: List<DotnetWorkload>,
         expectedAgentProperties: List<AgentProperty>
     ) {
-        // Given
-        every { _dotnetWorkloadProvider.getInstalledWorkloads(File(_toolPath.path)) } returns installedWorkloads
+        // given
+        every { _fileBasedDotnetWorkloadProvider.getInstalledWorkloads(File(_toolPath.path)) } returns installedWorkloads
+        if (installedWorkloads.isEmpty())
+            every { _registryBasedDotnetWorkloadProvider.getInstalledWorkloads(File(_toolPath.path)) } returns installedWorkloads
         val provider = createInstance()
 
-        // When
+        // when
         val actualProperties = provider.properties.toList()
 
-        // Then
+        // then
+        assertEquals(actualProperties, expectedAgentProperties)
+        if (installedWorkloads.isNotEmpty())
+            verify { _registryBasedDotnetWorkloadProvider wasNot Called }
+    }
+
+    @Test(dataProvider = "workloads to expected agent properties")
+    fun `should provide DotNetWorkloads agent properties retrieved from registry`(
+        installedWorkloads: List<DotnetWorkload>,
+        expectedAgentProperties: List<AgentProperty>
+    ) {
+        // given
+        every { _fileBasedDotnetWorkloadProvider.getInstalledWorkloads(File(_toolPath.path)) } returns emptyList()
+        every { _registryBasedDotnetWorkloadProvider.getInstalledWorkloads(File(_toolPath.path)) } returns installedWorkloads
+        val provider = createInstance()
+
+        // when
+        val actualProperties = provider.properties.toList()
+
+        // then
         assertEquals(actualProperties, expectedAgentProperties)
     }
 
     private fun createInstance() = DotnetWorkloadAgentPropertiesProvider(
         _toolProvider,
-        _dotnetWorkloadProvider
+        _fileBasedDotnetWorkloadProvider,
+        _registryBasedDotnetWorkloadProvider
     )
 }

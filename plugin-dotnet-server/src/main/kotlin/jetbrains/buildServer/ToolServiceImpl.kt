@@ -18,6 +18,7 @@ package jetbrains.buildServer
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.SemanticVersion
 import jetbrains.buildServer.dotnet.SemanticVersionParser
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
@@ -31,6 +32,7 @@ class ToolServiceImpl(
     private val _nuGetService: NuGetService,
     private val _fileSystemService: FileSystemService
 ) : ToolService {
+
     override fun getTools(toolType: ToolType, vararg packageIds: String): List<NuGetTool> {
         try {
             return packageIds
@@ -42,6 +44,18 @@ class ToolServiceImpl(
                 .reversed()
         } catch (e: Throwable) {
             throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
+        }
+    }
+
+    override fun getPackages(vararg packageIds: String): List<NuGetPackage> {
+        try {
+            return packageIds
+                .asSequence()
+                .flatMap { _nuGetService.getPackagesById(it) }
+                .toList()
+                .reversed()
+        } catch (e: Throwable) {
+            throw ToolException("Failed to download list of packages: " + e.message, e)
         }
     }
 
@@ -59,6 +73,15 @@ class ToolServiceImpl(
         return versionResult
     }
 
+    override fun getPackageVersion(toolPackage: File, vararg packageIds: String): SemanticVersion? {
+        if (!toolPackage.isPackageFileValid(packageIds)) {
+            return null
+        }
+
+        LOG.debug("Get package version for file \"$toolPackage\"")
+        return _packageVersionParser.tryParse(toolPackage.name)
+    }
+
     override fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File {
         LOG.debug("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
@@ -66,9 +89,12 @@ class ToolServiceImpl(
             .firstOrNull { it.version == toolVersion.version && it.id == toolVersion.id }
             ?: throw ToolException("Failed to find package $toolVersion")
 
-        val downloadUrl = downloadableTool.downloadUrl
+        return fetchToolPackage(toolVersion, targetDirectory, downloadableTool.downloadUrl, downloadableTool.destinationFileName)
+    }
+
+    override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File, downloadUrl: String, destinationFileName: String): File {
         LOG.debug("Start installing package \"${toolVersion.displayName}\" from: \"$downloadUrl\"")
-        val targetFile = File(targetDirectory, downloadableTool.destinationFileName)
+        val targetFile = File(targetDirectory, destinationFileName)
         try {
             _fileSystemService.write(targetFile) {
                 _httpDownloader.download(URL(downloadUrl), it)

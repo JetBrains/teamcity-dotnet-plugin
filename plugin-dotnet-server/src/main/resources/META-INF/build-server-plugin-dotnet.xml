@@ -60,10 +60,18 @@
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetSdkFetcher"/>
 
   <!--DotCover-->
-  <!--bean class="jetbrains.buildServer.dotCover.DotCoverToolTypeAdapter" id="dotCoverToolType"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverPackageIdResolver"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverToolComparator"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverPackageFilter" id="dotCoverPackageFilter"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverToolTypeAdapter" id="dotCoverToolType"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverToolProviderAdapter">
     <constructor-arg ref="dotCoverToolType"/>
-  </bean-->
+    <constructor-arg ref="dotCoverPackageFilter"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverToolUsageProvider">
+    <constructor-arg ref="dotCoverToolType"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverParametersPreprocessor"/>
 
   <!--Resharper-->
   <bean class="jetbrains.buildServer.inspect.RequirementsResolverImpl" />
@@ -97,4 +105,7 @@
 
   <bean class="jetbrains.buildServer.script.discovery.CSharpScriptDiscoveryExtension" id="cSharpScriptDiscoveryExtension"/>
   <bean class="jetbrains.buildServer.script.discovery.ScriptDiscoverImpl" />
+
+  <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionReport" />
+  <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionPageExtension" />
 </beans>

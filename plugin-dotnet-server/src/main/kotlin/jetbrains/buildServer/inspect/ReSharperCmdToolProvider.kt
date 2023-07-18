@@ -53,20 +53,20 @@ class ReSharperCmdToolProvider(
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
         _toolService.unpackToolPackage(toolPackage, "", targetDirectory, _packageId, JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)
         val pluginRoot = _pluginDescriptor.getPluginRoot();
-        val toolXmlFileFrom = File(pluginRoot, "server/bundled-tool/bundled-tool.xml")
+        val toolXmlFileFrom = File(pluginRoot, "server/bundled-tools/JetBrains.ReSharper.CommandLineTool/bundled-tool.xml")
         val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
         _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
     }
 
     override fun getBundledToolVersions(): MutableCollection<InstalledToolVersion> {
         val pluginRoot = _pluginDescriptor.getPluginRoot();
-        val bundledCltNuspecFile = File(pluginRoot, "server/bundled-tool/JetBrains.ReSharper.CommandLineTools.nuspec")
+        val bundledCltNuspecFile = File(pluginRoot, "server/bundled-tools/JetBrains.ReSharper.CommandLineTool/JetBrains.ReSharper.CommandLineTools.nuspec")
         if (!_fileSystem.isExists(bundledCltNuspecFile) || !_fileSystem.isFile(bundledCltNuspecFile)) {
             LOG.warn("Bundled ReSharper CLT nuspec file doesn't exist on path " + bundledCltNuspecFile.absolutePath)
             return super.getBundledToolVersions()
         }
 
-        val bundledToolPackage = File(pluginRoot, "server/bundled-tool/jetbrains.resharper-clt.bundled.zip")
+        val bundledToolPackage = File(pluginRoot, "server/bundled-tools/JetBrains.ReSharper.CommandLineTool/jetbrains.resharper-clt.bundled.zip")
         if (!_fileSystem.isExists(bundledToolPackage) || !_fileSystem.isFile(bundledToolPackage)) {
             LOG.warn("Bundled ReSharper CLT tool package doesn't exist on path " + bundledToolPackage.absolutePath)
             return super.getBundledToolVersions()

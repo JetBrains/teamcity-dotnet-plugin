@@ -45,5 +45,6 @@ class RequirementsResolverImpl : RequirementsResolver {
 
         private val RequiresNet461Version = Version(2018, 2)
         internal val CrossPlatformVersion = Version(2020, 2, 1)
+        internal val LastVersionWithDupFinder = Version(2021, 2, 3)
     }
 }
