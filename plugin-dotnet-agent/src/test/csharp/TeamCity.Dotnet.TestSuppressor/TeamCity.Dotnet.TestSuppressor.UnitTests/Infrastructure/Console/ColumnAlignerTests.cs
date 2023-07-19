@@ -16,11 +16,10 @@ public class ColumnAlignerTests
         columnAligner.AddRow("Name|Age|City");
         columnAligner.AddRow("John Doe|25|New York");
         columnAligner.AddRow("Jane Smith|30|Los Angeles");
-
-        const string expectedOutput = @"Name       Age City
-John Doe   25  New York
-Jane Smith 30  Los Angeles
-";
+        
+        var expectedOutput = $"Name       Age City{Environment.NewLine}" +
+                                  $"John Doe   25  New York{Environment.NewLine}" +
+                                  $"Jane Smith 30  Los Angeles{Environment.NewLine}";
 
         // Act
         columnAligner.Flush(Logger);
@@ -44,11 +43,10 @@ Jane Smith 30  Los Angeles
         columnAligner.AddRow("Name;Age;City");
         columnAligner.AddRow("John Doe;25;New York");
         columnAligner.AddRow("Jane Smith;30;Los Angeles");
-
-        const string expectedOutput = @"Name        Age  City
-John Doe    25   New York
-Jane Smith  30   Los Angeles
-";
+        
+        var expectedOutput = $"Name        Age  City{Environment.NewLine}" +
+                                  $"John Doe    25   New York{Environment.NewLine}" +
+                                  $"Jane Smith  30   Los Angeles{Environment.NewLine}";
 
         // Act
         columnAligner.Flush(Logger);
@@ -74,11 +72,10 @@ Jane Smith  30   Los Angeles
         columnAligner.Flush(Logger);
         var actualOutput = stringBuilder.ToString();
 
-        var expectedOutput = @"Name     Age City
-John Doe 25  New York
-";
+        var expectedOutput = $"Name     Age City{Environment.NewLine}" +
+                             $"John Doe 25  New York{Environment.NewLine}";
 
-        // Assert
-        Assert.Equal(expectedOutput, actualOutput);
+         // Assert
+         Assert.Equal(expectedOutput, actualOutput);
     }
 }
