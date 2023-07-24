@@ -12,6 +12,8 @@ class DotCoverToolVersionTest {
         return arrayOf(
             arrayOf(CoverageConstants.DOTCOVER_PACKAGE_ID, ""),
             arrayOf(CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID, "Cross-Platform"),
+            arrayOf(CoverageConstants.DOTCOVER_MACOS_ARM64_PACKAGE_ID, "MacOS-arm64"),
+            arrayOf(CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID, "Global-Tool"),
             arrayOf("unknown package", "")
         )
     }

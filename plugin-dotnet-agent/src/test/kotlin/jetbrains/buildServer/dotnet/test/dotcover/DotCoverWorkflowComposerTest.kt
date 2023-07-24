@@ -28,6 +28,7 @@ import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -45,6 +46,7 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    @MockK private lateinit var _toolResolver: DotnetToolResolver
     @MockK private lateinit var _blockToken: Disposable
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
@@ -580,6 +582,7 @@ class DotCoverWorkflowComposerTest {
                 _argumentsService,
                 _coverageFilterProvider,
                 _virtualContext,
-                _environmentVariables)
+                _environmentVariables,
+                _toolResolver)
     }
 }

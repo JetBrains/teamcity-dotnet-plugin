@@ -40,6 +40,8 @@ open class DotCoverToolVersion (
 
     fun getPostfix(packageId: String): String {
         return when (packageId) {
+            CoverageConstants.DOTCOVER_MACOS_ARM64_PACKAGE_ID -> CoverageConstants.DOTCOVER_MACOS_ARM64_POSTFIX
+            CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID -> CoverageConstants.DOTCOVER_GLOBAL_TOOL_POSTFIX
             CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID -> CoverageConstants.DOTCOVER_CROSS_PLATFORM_POSTFIX
             else -> CoverageConstants.DOTCOVER_POSTFIX
         }

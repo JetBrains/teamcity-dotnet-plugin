@@ -40,6 +40,8 @@ object CoverageConstants {
     // dotCover
     const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"
     const val DOTCOVER_CROSS_PLATFORM_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"
+    const val DOTCOVER_MACOS_ARM64_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools.macos-arm64"
+    const val DOTCOVER_GLOBAL_TOOL_PACKAGE_ID = "JetBrains.dotCover.GlobalTool"
     const val DOT_COVER_TOOL_TYPE_NAME = "JetBrains dotCover Command Line Tools"
     const val DOT_COVER_SHORT_TOOL_TYPE_NAME = "dotCover CLT"
     const val DOT_COVER_TARGET_FILE_DISPLAY_NAME = "dotCover CLT home directory"
@@ -49,6 +51,9 @@ object CoverageConstants {
     // dotCover tool postfixes
     const val DOTCOVER_POSTFIX = ""
     const val DOTCOVER_CROSS_PLATFORM_POSTFIX = "Cross-Platform"
+    const val DOTCOVER_MACOS_ARM64_POSTFIX = "MacOS-arm64"
+    const val DOTCOVER_GLOBAL_TOOL_POSTFIX = "Global-Tool"
+    const val DOTCOVER_GLOBAL_TOOL_DATA_LOCATION = "netcoreapp3.1/any/"
 
     const val PARAM_DOTCOVER = "dotcover"
     const val PARAM_DOTCOVER_HOME = "dotNetCoverage.dotCover.home.path"

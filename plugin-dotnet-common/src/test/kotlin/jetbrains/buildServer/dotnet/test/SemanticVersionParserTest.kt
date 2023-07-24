@@ -70,6 +70,10 @@ class SemanticVersionParserTest {
         arrayOf("JetBrains.dotCover.CommandLineTools.2023.2.1-eap03", SemanticVersion(2023, 2, 1, "eap03")),
         arrayOf("JetBrains.dotCover.DotNetCliTool.2022.3.0-eap07", SemanticVersion(2022, 3, 0, "eap07")),
         arrayOf("JetBrains.dotCover.DotNetCliTool.2020.3.3", SemanticVersion(2020, 3, 3)),
+        arrayOf("JetBrains.dotCover.CommandLineTools.macos-arm64.2023.2.0-eap04", SemanticVersion(2023, 2, 0, "eap04")),
+        arrayOf("JetBrains.dotCover.CommandLineTools.macos-arm64.2023.1.1", SemanticVersion(2023, 1, 1)),
+        arrayOf("JetBrains.dotCover.GlobalTool.2023.2.0-eap01", SemanticVersion(2023, 2, 0, "eap01")),
+        arrayOf("JetBrains.dotCover.GlobalTool.2023.3.1", SemanticVersion(2023, 3, 1)),
     )
 
     @Test(dataProvider = "getProjectFiles")

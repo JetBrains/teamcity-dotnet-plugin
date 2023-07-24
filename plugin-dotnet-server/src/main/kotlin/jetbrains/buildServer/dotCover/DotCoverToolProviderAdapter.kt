@@ -22,6 +22,8 @@ import jetbrains.buildServer.ToolService
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_MACOS_ARM64_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.find
@@ -72,7 +74,7 @@ class DotCoverToolProviderAdapter(
     }
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
-        val pathPrefix = if (toolPackage.name.lowercase().endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION)) "tools/" else ""
+        val pathPrefix = getPrefix(toolPackage)
         _toolService.unpackToolPackage(toolPackage, pathPrefix, targetDirectory, *DOT_COVER_PACKAGES)
 
         val pluginRoot = _pluginDescriptor.pluginRoot
@@ -136,9 +138,21 @@ class DotCoverToolProviderAdapter(
         .sortedWith(_toolComparator)
         .toMutableList()
 
+    private fun getPrefix(toolPackage: File): String {
+        var prefix = if (toolPackage.name.lowercase().endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION)) "tools/" else ""
+
+        val packageId = _packageIdResolver.resolvePackageId(toolPackage.name)
+        if (packageId == CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID) {
+            prefix += CoverageConstants.DOTCOVER_GLOBAL_TOOL_DATA_LOCATION
+        }
+
+        return prefix
+    }
+
     companion object {
         private val LOG: Logger = Logger.getInstance(DotCoverToolProviderAdapter::class.java.name)
-        private val DOT_COVER_PACKAGES = arrayOf(DOTCOVER_CROSS_PLATFORM_PACKAGE_ID, DOTCOVER_PACKAGE_ID)
+        private val DOT_COVER_PACKAGES = arrayOf(DOTCOVER_MACOS_ARM64_PACKAGE_ID, DOTCOVER_GLOBAL_TOOL_PACKAGE_ID,
+            DOTCOVER_CROSS_PLATFORM_PACKAGE_ID, DOTCOVER_PACKAGE_ID)
 
         fun getContents(doc: Document, xpath: String): Sequence<String> =
             doc.find<Element>(xpath).map { it.textContent }.filter { !it.isNullOrBlank() }

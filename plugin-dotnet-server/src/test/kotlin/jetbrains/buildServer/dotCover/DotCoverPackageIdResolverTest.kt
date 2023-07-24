@@ -18,7 +18,13 @@ class DotCoverPackageIdResolverTest {
             arrayOf("JetBrains.dotCover.DotNetCliTool.2022.3.0-eap01.nupkg", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
             arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.nupkg", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
             arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.zip", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
-            arrayOf("unknown package", null)
+            arrayOf("unknown package", null),
+
+            arrayOf("JetBrains.dotCover.CommandLineTools.macos-arm64.2021.3.0-eap05.nupkg", CoverageConstants.DOTCOVER_MACOS_ARM64_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.CommandLineTools.macos-arm64.2021.3.0-eap05.zip", CoverageConstants.DOTCOVER_MACOS_ARM64_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.GlobalTool.2021.1.0.nupkg", CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.GlobalTool.2023.1.0-eap08.nupkg", CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.GlobalTool.2023.1.0-eap08.zip", CoverageConstants.DOTCOVER_GLOBAL_TOOL_PACKAGE_ID),
         )
     }
 

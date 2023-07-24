@@ -20,6 +20,7 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
@@ -34,7 +35,8 @@ class DotCoverWorkflowComposer(
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider,
         private val _virtualContext: VirtualContext,
-        private val _environmentVariables: EnvironmentVariables)
+        private val _environmentVariables: EnvironmentVariables,
+        private val toolResolver: DotnetToolResolver)
     : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
@@ -52,7 +54,10 @@ class DotCoverWorkflowComposer(
                 return workflow
             }
 
-            dotCoverExecutablePath = File(dotCoverPath, dotCoverExecutableFile)
+//            dotCoverExecutablePath = File("$dotCoverPath/netcoreapp3.1/any/", dotCoverExecutableFile)
+//            dotCoverExecutablePath = File("/usr/local/share/dotnet/dotnet")
+            dotCoverExecutablePath = File(toolResolver.executable.virtualPath.path)
+//            dotCoverExecutablePath = File(dotCoverPath, dotCoverExecutableFile)
             if (_virtualContext.targetOSType != OSType.WINDOWS && !_fileSystemService.isExists(dotCoverExecutablePath)) {
                 throw RunBuildException("Cross-Platform dotCover is required.")
             }
@@ -127,11 +132,13 @@ class DotCoverWorkflowComposer(
                     }
                 }.use {
                     yield(CommandLine(
+//                            null,
                             baseCommandLine,
                             target,
                             Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
                             baseCommandLine.workingDirectory,
-                            createArguments(dotCoverProject).toList(),
+                            createArguments(dotCoverProject, baseCommandLine).toList(),
+//                            createArguments(dotCoverProject).toList(),
                             baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
                             baseCommandLine.title))
                 }
@@ -152,19 +159,19 @@ class DotCoverWorkflowComposer(
             return false
         }
 
-    private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
-        yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
+    private fun createArguments(dotCoverProject: DotCoverProject, baseCommandLine: CommandLine) = sequence {
+//    private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
+//        yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
+//        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
+        yield(CommandLineArgument("${_parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)}/dotnet-dotcover.dll", CommandLineArgumentType.Mandatory))
+//        yield(CommandLineArgument("test"))
+        yieldAll(baseCommandLine.arguments)
+        yield(CommandLineArgument("${argumentPrefix}XML=${dotCoverProject.configFile.path}", CommandLineArgumentType.Target))
         yield(CommandLineArgument("${argumentPrefix}ReturnTargetExitCode"))
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            var argPrefix = when(_virtualContext.targetOSType) {
-                OSType.WINDOWS -> "/"
-                else -> "--"
-            }
-
             val logFileName = _virtualContext.resolvePath(_fileSystemService.generateTempFile(File(it), "dotCover", ".log").canonicalPath)
-            yield(CommandLineArgument("${argPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("${argumentPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
@@ -175,6 +182,7 @@ class DotCoverWorkflowComposer(
     }
 
     private val dotCoverExecutableFile get() =
+//        "dotnet-dotcover.dll"
         when(_virtualContext.targetOSType) {
             OSType.WINDOWS -> "dotCover.exe"
             else -> "dotCover.sh"
@@ -183,7 +191,8 @@ class DotCoverWorkflowComposer(
     private val argumentPrefix get () =
         when(_virtualContext.targetOSType) {
             OSType.WINDOWS -> "/"
-            else -> "--"
+//            else -> "--"
+            else -> "--dc"
         }
 
     companion object {

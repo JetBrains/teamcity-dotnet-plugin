@@ -44,5 +44,9 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
             "<br/><a href=\"https://www.jetbrains.com/dotcover/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.zip</a>" +
             "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.nupkg</a>" +
             "<br/><br/>Supported cross-platform tool:" +
-            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.DotNetCliTool/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.DotNetCliTool.&lt;VERSION&gt;.nupkg</a>"
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.DotNetCliTool/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.DotNetCliTool.&lt;VERSION&gt;.nupkg</a>" +
+            "<br/><br/>Supported tools for MacOS arm64:" +
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools.macos-arm64/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.macos-arm64.&lt;VERSION&gt;.nupkg</a>" +
+            "<br/><br/>Supported tools for global tool:" +
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.GlobalTool/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.GlobalTool.&lt;VERSION&gt;.nupkg</a>";
 }

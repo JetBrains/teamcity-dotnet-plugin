@@ -27,6 +27,7 @@ import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.ProjectManager
 import jetbrains.buildServer.tools.ServerToolManager
+import jetbrains.buildServer.tools.ToolVersion
 import jetbrains.buildServer.util.VersionComparatorUtil
 import org.springframework.beans.factory.BeanFactory
 
@@ -53,31 +54,45 @@ class DotCoverCoverageType(
         yieldAll(super.getRequirements(parameters, factory))
 
         val requirements = mutableSetOf<Requirement>()
-        requirements += OUR_MINIMAL_REQUIREMENT
         if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
         val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
         val toolManager = factory.getBean(ServerToolManager::class.java)
         val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
         val projectManager = factory.getBean(ProjectManager::class.java)
         val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
-        if (toolVersion != null) {
-            val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
-            if (crossPaltform) {
-                requirements.clear()
-            } else {
-                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
-                if (dotnet461Based) {
-                    requirements.clear()
-                    requirements.add(OUR_NET_461_REQUIREMENT)
-                }
-            }
+
+        toolVersion?.let {
+            fillRequirementsByVersion(it.version, requirements)
+        } ?: run {
+            requirements += OUR_MINIMAL_REQUIREMENT
         }
 
         yieldAll(requirements)
     }
 
+    private fun fillRequirementsByVersion(toolVersion: String,
+                                          requirements: MutableCollection<Requirement>) {
+        when {
+            toolVersion.endsWith(CoverageConstants.DOTCOVER_CROSS_PLATFORM_POSTFIX) -> return
+            toolVersion.endsWith(CoverageConstants.DOTCOVER_MACOS_ARM64_POSTFIX) -> {
+                requirements += MACOS_REQUIREMENT
+                requirements += MACOS_ARM64_REQUIREMENT
+            }
+            toolVersion.endsWith(CoverageConstants.DOTCOVER_GLOBAL_TOOL_POSTFIX) -> {
+                return
+            }
+            else -> {
+                val isDotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion) <= 0
+                if (isDotnet461Based) requirements += OUR_NET_461_REQUIREMENT else requirements += OUR_MINIMAL_REQUIREMENT
+            }
+        }
+    }
+
     companion object {
         private val OUR_MINIMAL_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_3_5 + ")", null, RequirementType.EXISTS)
         private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_4_6_1 + ")", null, RequirementType.EXISTS)
+
+        private val MACOS_REQUIREMENT = Requirement(RequirementQualifier.EXACT_QUALIFIER + "teamcity.agent.jvm.os.name", "Mac", RequirementType.STARTS_WITH)
+        private val MACOS_ARM64_REQUIREMENT = Requirement(RequirementQualifier.EXACT_QUALIFIER + "teamcity.agent.jvm.os.arch", "aarch64", RequirementType.EQUALS)
     }
 }
