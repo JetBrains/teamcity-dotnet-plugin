@@ -18,41 +18,56 @@ package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.rx.disposableOf
-import jetbrains.buildServer.rx.filter
-import jetbrains.buildServer.rx.subscribe
-import jetbrains.buildServer.rx.use
+import jetbrains.buildServer.rx.*
 import jetbrains.buildServer.util.OSType
 
 open class InspectionWorkflowComposer(
-        private val _tool: InspectionTool,
-        private val _toolPathResolver: ProcessResolver,
-        private val _argumentsProvider: ArgumentsProvider,
-        private val _environmentProvider: EnvironmentProvider,
-        private val _outputObserver: OutputObserver,
-        private val _configurationFile: ConfigurationFile,
-        private val _buildInfo: BuildInfo,
-        private val _fileSystemService: FileSystemService,
-        private val _pathsService: PathsService,
-        private val _loggerService: LoggerService,
-        private val _artifacts: ArtifactService,
-        private val _virtualContext: VirtualContext)
-    : SimpleWorkflowComposer {
+    private val _tool: InspectionTool,
+    private val _toolStartCommandResolver: ToolStartCommandResolver,
+    private val _argumentsProvider: ArgumentsProvider,
+    private val _environmentProvider: EnvironmentProvider,
+    private val _outputObserver: OutputObserver,
+    private val _configurationFile: ConfigurationFile,
+    private val _buildInfo: BuildInfo,
+    private val _fileSystemService: FileSystemService,
+    private val _pathsService: PathsService,
+    private val _loggerService: LoggerService,
+    private val _artifacts: ArtifactService,
+    private val _virtualContext: VirtualContext,
+    private val _inspectionToolStateWorkflowComposer: InspectionToolStateWorkflowComposer,
+    private val _pluginParametersProvider: PluginParametersProvider
+) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) =
-            if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
+        if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
 
-    private fun createCommandLines(context: WorkflowContext) = sequence<CommandLine> {
-        val args = _argumentsProvider.getArguments(_tool)
+    private fun createCommandLines(context: WorkflowContext) = sequence {
+        val startCommand = _toolStartCommandResolver.resolve(_tool)
+
+        var toolVersion: Version = Version.Empty
+        if (_tool == InspectionTool.Inspectcode && _pluginParametersProvider.hasPluginParameters()) {
+            val toolState = InspectionToolState(
+                startCommand,
+                observer { toolVersion = it }
+            )
+            yieldAll(_inspectionToolStateWorkflowComposer.compose(context, toolState).commandLines)
+
+            if (toolVersion.isEmpty()) {
+                _loggerService.writeWarning("Unable to resolve ${_tool.displayName} tool version, version-specific settings may not work correctly")
+            }
+        }
+
+        val args = _argumentsProvider.getArguments(_tool, toolVersion)
         val virtualOutputPath = Path(_virtualContext.resolvePath((args.outputFile.absolutePath)))
-        var hasErrors = false;
-        val commandLine = createCommandLine(args, virtualOutputPath)
+        var hasErrors = false
+
+        val commandLine = createCommandLine(startCommand, args, virtualOutputPath, toolVersion)
         disposableOf(
-                context.filter { it.SourceId == commandLine.Id }.toOutput().subscribe(_outputObserver),
-                context.filter { it.SourceId == commandLine.Id }.toErrors().subscribe { hasErrors = true },
-                context.filter { it.SourceId == commandLine.Id }.toExitCodes().subscribe { exitCode -> onExit(exitCode, context, args, virtualOutputPath) }
+            context.filter { it.SourceId == commandLine.Id }.toOutput().subscribe(_outputObserver),
+            context.filter { it.SourceId == commandLine.Id }.toErrors().subscribe { hasErrors = true },
+            context.filter { it.SourceId == commandLine.Id }.toExitCodes().subscribe { exitCode -> onExit(exitCode, context, args, virtualOutputPath) }
         ).use {
             yield(commandLine)
         }
@@ -62,13 +77,20 @@ open class InspectionWorkflowComposer(
         }
     }
 
-    open protected fun createCommandLine(args: InspectionArguments, virtualOutputPath: Path): CommandLine {
-        val process = _toolPathResolver.resolve(_tool)
-        val cmdArgs = sequence<CommandLineArgument> {
-            yieldAll(process.startArguments)
+    protected open fun createCommandLine(
+        startCommand: ToolStartCommand,
+        args: InspectionArguments,
+        virtualOutputPath: Path,
+        toolVersion: Version
+    ): CommandLine {
+        val cmdArgs = sequence {
+            yieldAll(startCommand.startArguments)
             yield(CommandLineArgument("--config=${_virtualContext.resolvePath(args.configFile.absolutePath)}"))
             if (args.debug) {
                 yield(CommandLineArgument("--logFile=${_virtualContext.resolvePath(args.logFile.absolutePath)}"))
+            }
+            args.extensions?.let {
+                yield(CommandLineArgument("--eXtensions=$it"))
             }
 
             yieldAll(args.customArguments)
@@ -76,21 +98,21 @@ open class InspectionWorkflowComposer(
 
         _fileSystemService.write(args.configFile) {
             _configurationFile.create(
-                    it,
-                    virtualOutputPath,
-                    Path(_virtualContext.resolvePath(args.cachesHome.absolutePath)),
-                    args.debug)
+                it,
+                virtualOutputPath,
+                Path(_virtualContext.resolvePath(args.cachesHome.absolutePath)),
+                args.debug
+            )
         }
 
-        val commandLine = CommandLine(
-                null,
-                target,
-                process.executable,
-                Path(_pathsService.getPath(PathType.Checkout).path),
-                cmdArgs.toList(),
-                _environmentProvider.getEnvironmentVariables().toList())
-
-        return commandLine;
+        return CommandLine(
+            baseCommandLine = null,
+            target = target,
+            executableFile = startCommand.executable,
+            workingDirectory = Path(_pathsService.getPath(PathType.Checkout).path),
+            arguments = cmdArgs.toList(),
+            environmentVariables = _environmentProvider.getEnvironmentVariables(toolVersion).toList()
+        )
     }
 
     private fun onExit(exitCode: Int, context: WorkflowContext, args: InspectionArguments, virtualOutputPath: Path) {
@@ -100,19 +122,20 @@ open class InspectionWorkflowComposer(
 
         if (exitCode != 0) {
             if (
-                    exitCode < 0
-                    && _virtualContext.isVirtual
-                    && _virtualContext.targetOSType == OSType.WINDOWS) {
+                exitCode < 0
+                && _virtualContext.isVirtual
+                && _virtualContext.targetOSType == OSType.WINDOWS
+            ) {
                 _loggerService.writeWarning("Windows Nano Server is not supported.")
             }
 
-            _loggerService.buildFailureDescription("${_tool.dysplayName} execution failure.")
+            _loggerService.buildFailureDescription("${_tool.displayName} execution failure.")
             context.abort(BuildFinishedStatus.FINISHED_FAILED)
         } else {
             if (_artifacts.publish(_tool, args.outputFile, Path(_tool.reportArtifactName))) {
                 _loggerService.importData(_tool.dataProcessorType, virtualOutputPath)
             } else {
-                _loggerService.buildFailureDescription("Output xml from ${_tool.dysplayName} is not found or empty on path ${args.outputFile.canonicalPath}.")
+                _loggerService.buildFailureDescription("Output xml from ${_tool.displayName} is not found or empty on path ${args.outputFile.canonicalPath}.")
                 context.abort(BuildFinishedStatus.FINISHED_FAILED)
             }
         }

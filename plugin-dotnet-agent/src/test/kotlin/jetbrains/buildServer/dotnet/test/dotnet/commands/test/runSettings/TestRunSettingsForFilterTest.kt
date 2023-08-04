@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.test.runSettings
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.XmlDocumentServiceImpl
 import jetbrains.buildServer.build
 import jetbrains.buildServer.dotnet.*
@@ -50,44 +50,44 @@ class TestRunSettingsForFilterTest {
                         "aa=bb",
                         XmlDocumentServiceImpl().create(),
                         XmlDocumentServiceImpl().create().build(
-                                E("RunSettings", E("RunConfiguration", E("TestCaseFilter", "(aa=bb)")))
+                                DocElement("RunSettings", DocElement("RunConfiguration", DocElement("TestCaseFilter", "(aa=bb)")))
                         ).ownerDocument
                 ),
 
                 arrayOf(
                         "aa=bb",
                         XmlDocumentServiceImpl().create().build(
-                                E("RunSettings", E("RunConfiguration", E("TestCaseFilter", "xx=yy")))
+                                DocElement("RunSettings", DocElement("RunConfiguration", DocElement("TestCaseFilter", "xx=yy")))
                         ).ownerDocument,
                         XmlDocumentServiceImpl().create().build(
-                                E("RunSettings", E("RunConfiguration", E("TestCaseFilter", "(xx=yy)&(aa=bb)")))
+                                DocElement("RunSettings", DocElement("RunConfiguration", DocElement("TestCaseFilter", "(xx=yy)&(aa=bb)")))
                         ).ownerDocument
                 ),
 
                 arrayOf(
                         "aa=bb",
                         XmlDocumentServiceImpl().create().build(
-                                E("runSettings", E("runConfiguration", E("testCaseFilter", "xx=yy")))
+                                DocElement("runSettings", DocElement("runConfiguration", DocElement("testCaseFilter", "xx=yy")))
                         ).ownerDocument,
                         XmlDocumentServiceImpl().create().build(
-                                E("runSettings", E("runConfiguration", E("testCaseFilter", "(xx=yy)&(aa=bb)")))
+                                DocElement("runSettings", DocElement("runConfiguration", DocElement("testCaseFilter", "(xx=yy)&(aa=bb)")))
                         ).ownerDocument
                 ),
 
                 arrayOf(
                         "aa=bb",
                         XmlDocumentServiceImpl().create().build(
-                                E("RunSettings", E("Abc"), E("RunConfiguration", E("Xyz"), E("TestCaseFilter", "xx=yy")))
+                                DocElement("RunSettings", DocElement("Abc"), DocElement("RunConfiguration", DocElement("Xyz"), DocElement("TestCaseFilter", "xx=yy")))
                         ).ownerDocument,
                         XmlDocumentServiceImpl().create().build(
-                                E("RunSettings", E("Abc"), E("RunConfiguration", E("Xyz"), E("TestCaseFilter", "(xx=yy)&(aa=bb)")))
+                                DocElement("RunSettings", DocElement("Abc"), DocElement("RunConfiguration", DocElement("Xyz"), DocElement("TestCaseFilter", "(xx=yy)&(aa=bb)")))
                         ).ownerDocument
                 ),
 
                 arrayOf(
                         "aa=bb",
                         XmlDocumentServiceImpl().create().build(
-                                E("OtherRoot", E("RunConfiguration", E("TestCaseFilter", "(aa=bb)")))
+                                DocElement("OtherRoot", DocElement("RunConfiguration", DocElement("TestCaseFilter", "(aa=bb)")))
                         ).ownerDocument,
                         null
                 ),

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.inspect
+package jetbrains.buildServer.agent
 
-import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.Path
-
-data class InspectionProcess(val executable: Path, val startArguments: Collection<CommandLineArgument> = emptyList())
+/**
+ * Tries to find a version among tool output lines.
+ */
+interface ToolVersionOutputParser {
+    fun parse(output: Collection<String>): Version
+}

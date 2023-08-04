@@ -20,7 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -59,9 +59,9 @@ class InspectionConfigurationFileTest {
                             RUNNER_SETTING_SOLUTION_PATH to it
                         )
                     ),
-                    E("InspectCodeOptions",
-                        E("OutputFile", "output.xml"),
-                        E("SolutionFile", "My.sln")
+                    DocElement("InspectCodeOptions",
+                        DocElement("OutputFile", "output.xml"),
+                        DocElement("SolutionFile", "My.sln")
                     )
                 )
             }
@@ -80,18 +80,18 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH to "sln.DotSettings"
                     )
                 ),
-                E("InspectCodeOptions",
-                    E("Debug", "true"),
-                    E("IncludedProjects",
-                        E("IncludedProjects", "Abc"),
-                        E("IncludedProjects", "xyz")
+                DocElement("InspectCodeOptions",
+                    DocElement("Debug", "true"),
+                    DocElement("IncludedProjects",
+                        DocElement("IncludedProjects", "Abc"),
+                        DocElement("IncludedProjects", "xyz")
                     ),
-                    E("OutputFile", "output.xml"),
-                    E("SolutionFile", "My.sln"),
-                    E("CachesHomeDirectory", "cache"),
-                    E("CustomSettingsProfile", "sln.DotSettings"),
-                    E("SupressBuildInSettings", "true"),
-                    E("NoSolutionWideAnalysis", "true")
+                    DocElement("OutputFile", "output.xml"),
+                    DocElement("SolutionFile", "My.sln"),
+                    DocElement("CachesHomeDirectory", "cache"),
+                    DocElement("CustomSettingsProfile", "sln.DotSettings"),
+                    DocElement("SupressBuildInSettings", "true"),
+                    DocElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -107,16 +107,16 @@ class InspectionConfigurationFileTest {
                         CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "true"
                     )
                 ),
-                E("InspectCodeOptions",
-                    E("Debug", "true"),
-                    E("IncludedProjects",
-                        E("IncludedProjects", "Abc"),
-                        E("IncludedProjects", "xyz")
+                DocElement("InspectCodeOptions",
+                    DocElement("Debug", "true"),
+                    DocElement("IncludedProjects",
+                        DocElement("IncludedProjects", "Abc"),
+                        DocElement("IncludedProjects", "xyz")
                     ),
-                    E("OutputFile", "output.xml"),
-                    E("SolutionFile", "My.sln"),
-                    E("SupressBuildInSettings", "true"),
-                    E("NoSolutionWideAnalysis", "true")
+                    DocElement("OutputFile", "output.xml"),
+                    DocElement("SolutionFile", "My.sln"),
+                    DocElement("SupressBuildInSettings", "true"),
+                    DocElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -132,17 +132,17 @@ class InspectionConfigurationFileTest {
                         CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "True"
                     )
                 ),
-                E("InspectCodeOptions",
-                    E("Debug", "true"),
-                    E("IncludedProjects",
-                        E("IncludedProjects", "Abc"),
-                        E("IncludedProjects", "xyz")
+                DocElement("InspectCodeOptions",
+                    DocElement("Debug", "true"),
+                    DocElement("IncludedProjects",
+                        DocElement("IncludedProjects", "Abc"),
+                        DocElement("IncludedProjects", "xyz")
                     ),
-                    E("OutputFile", "output.xml"),
-                    E("SolutionFile", "My.sln"),
-                    E("CachesHomeDirectory", "cache"),
-                    E("SupressBuildInSettings", "true"),
-                    E("NoSolutionWideAnalysis", "true")
+                    DocElement("OutputFile", "output.xml"),
+                    DocElement("SolutionFile", "My.sln"),
+                    DocElement("CachesHomeDirectory", "cache"),
+                    DocElement("SupressBuildInSettings", "true"),
+                    DocElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -156,15 +156,15 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_SOLUTION_PATH to "My.sln"
                     )
                 ),
-                E("InspectCodeOptions",
-                    E("Debug", true.toString()),
-                    E("IncludedProjects",
-                        E("IncludedProjects", "Abc"),
-                        E("IncludedProjects", "xyz")
+                DocElement("InspectCodeOptions",
+                    DocElement("Debug", true.toString()),
+                    DocElement("IncludedProjects",
+                        DocElement("IncludedProjects", "Abc"),
+                        DocElement("IncludedProjects", "xyz")
                     ),
-                    E("OutputFile", "output.xml"),
-                    E("SolutionFile", "My.sln"),
-                    E("CachesHomeDirectory", "cache")
+                    DocElement("OutputFile", "output.xml"),
+                    DocElement("SolutionFile", "My.sln"),
+                    DocElement("CachesHomeDirectory", "cache")
                 )
             ),
 
@@ -178,13 +178,13 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_SOLUTION_PATH to "My.sln"
                     )
                 ),
-                E("InspectCodeOptions",
-                    E("IncludedProjects",
-                        E("IncludedProjects", "Abc"),
-                        E("IncludedProjects", "xyz")
+                DocElement("InspectCodeOptions",
+                    DocElement("IncludedProjects",
+                        DocElement("IncludedProjects", "Abc"),
+                        DocElement("IncludedProjects", "xyz")
                     ),
-                    E("OutputFile", "output.xml"),
-                    E("SolutionFile", "My.sln")
+                    DocElement("OutputFile", "output.xml"),
+                    DocElement("SolutionFile", "My.sln")
                 )
             ),
 
@@ -193,8 +193,8 @@ class InspectionConfigurationFileTest {
                 null,
                 false,
                 ParametersServiceStub(emptyMap()),
-                E("InspectCodeOptions",
-                    E("OutputFile", "Output.xml")
+                DocElement("InspectCodeOptions",
+                    DocElement("OutputFile", "Output.xml")
                 )
             ),
 
@@ -207,8 +207,8 @@ class InspectionConfigurationFileTest {
         // arrange
         val configFile = createInstance(case.parametersService)
         val stream = ByteArrayOutputStream()
-        var actualXml: E? = null
-        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<E>(0) }
+        var actualXml: DocElement? = null
+        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<DocElement>(0) }
 
         // act
         configFile.create(stream, case.outputFile, case.cachesHomeDirectory, case.debug)
@@ -228,6 +228,6 @@ class InspectionConfigurationFileTest {
         val cachesHomeDirectory: Path?,
         val debug: Boolean,
         val parametersService: ParametersService,
-        val expectedXml: E?,
+        val expectedXml: DocElement?,
     )
 }

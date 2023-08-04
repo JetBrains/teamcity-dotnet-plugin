@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.inspect.DownloadPluginSource
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -26,16 +26,16 @@ class DownloadPluginSourceTest {
     @DataProvider(name = "getPluginCases")
     fun getPluginCases(): Array<Array<out Any?>> {
         return arrayOf(
-                arrayOf("Abc/123", E("Download").a("Id", "Abc").a("Version", "123")),
-                arrayOf("Abc", E("Download")),
-                arrayOf("Abc/123/345", E("Download")),
-                arrayOf("", E("Download")),
-                arrayOf("  ", E("Download"))
+                arrayOf("Abc/123", DocElement("Download").a("Id", "Abc").a("Version", "123")),
+                arrayOf("Abc", DocElement("Download")),
+                arrayOf("Abc/123/345", DocElement("Download")),
+                arrayOf("", DocElement("Download")),
+                arrayOf("  ", DocElement("Download"))
         )
     }
 
     @Test(dataProvider = "getPluginCases")
-    fun shouldGetPlugin(specification: String, expectedPlugin: E) {
+    fun shouldGetPlugin(specification: String, expectedPlugin: DocElement) {
         // Given
         val source = createInstance()
 

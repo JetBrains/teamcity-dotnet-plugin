@@ -32,7 +32,7 @@ import org.testng.annotations.Test
 class DotnetVersionProviderTest {
     private lateinit var _ctx: Mockery
     private lateinit var _commandLineExecutor: CommandLineExecutor
-    private lateinit var _versionParser: VersionParser
+    private lateinit var _versionParser: ToolVersionOutputParser
     private lateinit var _dotnetToolResolver: DotnetToolResolver
     private lateinit var _buildStepContext: BuildStepContext
 
@@ -40,7 +40,7 @@ class DotnetVersionProviderTest {
     fun setUp() {
         _ctx = Mockery()
         _commandLineExecutor = _ctx.mock(CommandLineExecutor::class.java)
-        _versionParser = _ctx.mock(VersionParser::class.java)
+        _versionParser = _ctx.mock(ToolVersionOutputParser::class.java)
         _dotnetToolResolver = _ctx.mock(DotnetToolResolver::class.java)
         _buildStepContext = _ctx.mock(BuildStepContext::class.java)
     }
@@ -73,10 +73,10 @@ class DotnetVersionProviderTest {
         val getVersionResult = CommandLineResult(exitCode, stdOutVersion, stdErr)
         _ctx.checking(object : Expectations() {
             init {
-                oneOf<CommandLineExecutor>(_commandLineExecutor).tryExecute(versionCommandline)
+                oneOf(_commandLineExecutor).tryExecute(versionCommandline)
                 will(returnValue(getVersionResult))
 
-                allowing<VersionParser>(_versionParser).parse(stdOutVersion)
+                allowing(_versionParser).parse(stdOutVersion)
                 will(returnValue(Version(2, 2, 202)))
             }
         })

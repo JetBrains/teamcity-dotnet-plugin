@@ -36,7 +36,7 @@ class DotnetStateWorkflowComposerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var my_pathResolverWorkflowComposer: PathResolverWorkflowComposer
-    @MockK private lateinit var _versionParser: VersionParser
+    @MockK private lateinit var _versionParser: ToolVersionOutputParser
     @MockK private lateinit var _defaultEnvironmentVariables: EnvironmentVariables
     @MockK private lateinit var _context: WorkflowContext
 

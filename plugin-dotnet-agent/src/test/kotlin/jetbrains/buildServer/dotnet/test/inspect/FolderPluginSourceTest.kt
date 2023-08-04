@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.inspect.FolderPluginSource
@@ -32,28 +32,28 @@ class FolderPluginSourceTest {
                 arrayOf(
                         "MyFolder",
                         VirtualFileSystemService().addDirectory(File("MyFolder")),
-                        E("Folder").a("Path", File("MyFolder").canonicalFile.absolutePath)
+                        DocElement("Folder").a("Path", File("MyFolder").canonicalFile.absolutePath)
                 ),
                 arrayOf(
                         "MyFolder",
                         VirtualFileSystemService().addDirectory(File("MyFolder2")),
-                        E("Folder")
+                        DocElement("Folder")
                 ),
                 arrayOf(
                         "MyFolder",
                         VirtualFileSystemService().addFile(File("MyFolder")),
-                        E("Folder")
+                        DocElement("Folder")
                 ),
                 arrayOf(
                         "MyFolder",
                         VirtualFileSystemService(),
-                        E("Folder")
+                        DocElement("Folder")
                 )
         )
     }
 
     @Test(dataProvider = "getPluginCases")
-    fun shouldGetPlugin(specification: String, fileSystem: FileSystemService, expectedPlugin: E) {
+    fun shouldGetPlugin(specification: String, fileSystem: FileSystemService, expectedPlugin: DocElement) {
         // Given
         val source = createInstance(fileSystem)
 

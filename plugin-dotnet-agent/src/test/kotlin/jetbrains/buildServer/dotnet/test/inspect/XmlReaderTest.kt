@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.test.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.dotnet.test.agent.JsonParserTest
 import jetbrains.buildServer.inspect.XmlReaderImpl
 import org.testng.Assert
@@ -38,17 +38,17 @@ class XmlReaderTest {
         Assert.assertEquals(
                 actualResult,
                 listOf(
-                        E("Report").a("ToolsVersion", "203"),
-                        E("Information"),
-                        E("InspectionScope"),
-                        E("Element", "Solution"),
-                        E("IssueTypes"),
-                        E("IssueType").a("Id", "Arrange"),
-                        E("IssueType").a("Severity", "ERROR"),
-                        E("Text", "my text").a("atr", "val"),
-                        E("Issues"),
-                        E("Project").a("Name", "Clock"),
-                        E("Issue").a("TypeId", "Redundant")
+                        DocElement("Report").a("ToolsVersion", "203"),
+                        DocElement("Information"),
+                        DocElement("InspectionScope"),
+                        DocElement("Element", "Solution"),
+                        DocElement("IssueTypes"),
+                        DocElement("IssueType").a("Id", "Arrange"),
+                        DocElement("IssueType").a("Severity", "ERROR"),
+                        DocElement("Text", "my text").a("atr", "val"),
+                        DocElement("Issues"),
+                        DocElement("Project").a("Name", "Clock"),
+                        DocElement("Issue").a("TypeId", "Redundant")
                 )
         )
     }

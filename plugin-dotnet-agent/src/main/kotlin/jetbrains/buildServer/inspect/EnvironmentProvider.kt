@@ -17,7 +17,8 @@
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
+import jetbrains.buildServer.agent.Version
 
 interface EnvironmentProvider {
-    fun getEnvironmentVariables(): Sequence<CommandLineEnvironmentVariable>
+    fun getEnvironmentVariables(toolVersion: Version): Sequence<CommandLineEnvironmentVariable>
 }

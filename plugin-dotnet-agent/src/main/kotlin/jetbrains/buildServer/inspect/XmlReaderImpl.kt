@@ -16,9 +16,8 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import java.io.BufferedReader
-import java.io.FileInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import javax.xml.stream.XMLInputFactory
@@ -26,7 +25,7 @@ import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
 
 class XmlReaderImpl : XmlReader {
-    override fun read(xmlStream: InputStream) = sequence<E> {
+    override fun read(xmlStream: InputStream) = sequence<DocElement> {
         InputStreamReader(xmlStream, "UTF8").use {
             BufferedReader(it).use {
                 val xmlInFact = XMLInputFactory.newInstance()
@@ -34,7 +33,7 @@ class XmlReaderImpl : XmlReader {
                 var reader: XMLStreamReader? = null
                 try {
                     reader = xmlInFact.createXMLStreamReader(it)
-                    var nextElement: E? = null
+                    var nextElement: DocElement? = null
                     while (reader.hasNext()) {
                         try {
                             when (reader.eventType) {
@@ -43,7 +42,7 @@ class XmlReaderImpl : XmlReader {
                                         yield(nextElement)
                                     }
 
-                                    nextElement = E(if (reader.hasName()) reader.getLocalName() else "")
+                                    nextElement = DocElement(if (reader.hasName()) reader.getLocalName() else "")
                                     for (index in 0 until reader.getAttributeCount()) {
                                         nextElement.a(reader.getAttributeLocalName(index), reader.getAttributeValue(index))
                                     }
@@ -52,7 +51,7 @@ class XmlReaderImpl : XmlReader {
                                 XMLStreamConstants.CHARACTERS -> {
                                     if(!reader.isWhiteSpace && nextElement != null) {
                                         var atrs = nextElement.attributes
-                                        nextElement = E(nextElement.name, reader.text)
+                                        nextElement = DocElement(nextElement.name, reader.text)
                                         for(atr in atrs) {
                                             val value = atr.value
                                             if(value != null) {

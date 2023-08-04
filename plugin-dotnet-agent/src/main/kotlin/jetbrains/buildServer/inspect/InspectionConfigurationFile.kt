@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -40,15 +40,15 @@ class InspectionConfigurationFile(
                 .filter { !it.isNullOrBlank() }
 
         _xmlWriter.write(
-                E("InspectCodeOptions",
-                        E("Debug", if(debug) debug.toString() else null),
-                        E("IncludedProjects", includedProjects.map { E("IncludedProjects", it) } ),
-                        E("OutputFile", if(!outputFile.path.isNullOrEmpty()) outputFile.path else null),
-                        E("SolutionFile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_SOLUTION_PATH)?.trim()),
-                        E("CachesHomeDirectory", if(!cachesHomeDirectory?.path.isNullOrEmpty()) cachesHomeDirectory?.path else null),
-                        E("CustomSettingsProfile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH)),
-                        E("SupressBuildInSettings", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS)?.toBoolean()?.toString()),
-                        E("NoSolutionWideAnalysis", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS)?.toBoolean()?.toString())
+                DocElement("InspectCodeOptions",
+                        DocElement("Debug", if(debug) debug.toString() else null),
+                        DocElement("IncludedProjects", includedProjects.map { DocElement("IncludedProjects", it) } ),
+                        DocElement("OutputFile", if(!outputFile.path.isNullOrEmpty()) outputFile.path else null),
+                        DocElement("SolutionFile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_SOLUTION_PATH)?.trim()),
+                        DocElement("CachesHomeDirectory", if(!cachesHomeDirectory?.path.isNullOrEmpty()) cachesHomeDirectory?.path else null),
+                        DocElement("CustomSettingsProfile", _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH)),
+                        DocElement("SupressBuildInSettings", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_SUPRESS_BUILD_IN_SETTINGS)?.toBoolean()?.toString()),
+                        DocElement("NoSolutionWideAnalysis", _parametersService.tryGetParameter(ParameterType.Runner, CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS)?.toBoolean()?.toString())
                 ),
                 destinationStream
         )

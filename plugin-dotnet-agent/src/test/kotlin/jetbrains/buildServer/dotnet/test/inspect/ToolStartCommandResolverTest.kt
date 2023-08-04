@@ -28,10 +28,10 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.inspect.CltConstants.CLT_PATH_PARAMETER
 import jetbrains.buildServer.inspect.CltConstants.RUNNER_SETTING_CLT_PLATFORM
-import jetbrains.buildServer.inspect.InspectionProcess
+import jetbrains.buildServer.inspect.ToolStartCommand
 import jetbrains.buildServer.inspect.InspectionTool
 import jetbrains.buildServer.inspect.IspectionToolPlatform
-import jetbrains.buildServer.inspect.ProcessResolverImpl
+import jetbrains.buildServer.inspect.ToolStartCommandResolverImpl
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -39,7 +39,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class ProcessResolverTest {
+class ToolStartCommandResolverTest {
     @MockK
     private lateinit var _virtualContext: VirtualContext
 
@@ -61,7 +61,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.x86.exe")
                         ),
                         null
@@ -72,7 +72,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Dupfinder.toolName).path}.x86.exe")
                         ),
                         null
@@ -83,7 +83,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to "Abc")),
                         OSType.WINDOWS,
-                        InspectionProcess(
+                        ToolStartCommand(
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.exe")
                         ),
                         null
@@ -92,7 +92,7 @@ class ProcessResolverTest {
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(CLT_PATH_PARAMETER to "somePath")),
                         OSType.WINDOWS,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.exe")
                         ),
                         null
@@ -103,7 +103,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.CrossPlatform.id)),
                         OSType.WINDOWS,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path(""),
                                 listOf(
                                         CommandLineArgument("exec"),
@@ -122,7 +122,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.CrossPlatform.id)),
                         OSType.UNIX,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
@@ -133,7 +133,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX64.id)),
                         OSType.UNIX,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
@@ -144,7 +144,7 @@ class ProcessResolverTest {
                                 CLT_PATH_PARAMETER to "somePath",
                                 RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.UNIX,
-                        InspectionProcess (
+                        ToolStartCommand (
                                 Path("v_${File(File(File("somePath"), "tools"), InspectionTool.Inspectcode.toolName).path}.sh")
                         ),
                         null
@@ -154,34 +154,34 @@ class ProcessResolverTest {
                         ParametersServiceStub(mapOf(CLT_PATH_PARAMETER to "somePath")),
                         OSType.UNIX,
                         null,
-                        RunBuildException("Cannot run ${InspectionTool.Inspectcode.dysplayName}.")
+                        RunBuildException("Cannot run ${InspectionTool.Inspectcode.displayName}.")
                 ),
                 arrayOf(
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(CLT_PATH_PARAMETER to "somePath")),
                         OSType.MAC,
                         null,
-                        RunBuildException("Cannot run ${InspectionTool.Inspectcode.dysplayName}.")
+                        RunBuildException("Cannot run ${InspectionTool.Inspectcode.displayName}.")
                 ),
                 arrayOf(
                         InspectionTool.Inspectcode,
                         ParametersServiceStub(mapOf(RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX86.id)),
                         OSType.WINDOWS,
                         null,
-                        RunBuildException("Cannot find ${InspectionTool.Inspectcode.dysplayName}.")
+                        RunBuildException("Cannot find ${InspectionTool.Inspectcode.displayName}.")
                 )
         )
     }
 
     @Test(dataProvider = "resolveCases")
     fun shouldResolve(
-            tool: InspectionTool,
-            parametersService: ParametersService,
-            os: OSType,
-            expectedProcess: InspectionProcess?,
-            expectedException: RunBuildException?) {
+        tool: InspectionTool,
+        parametersService: ParametersService,
+        os: OSType,
+        expectedProcess: ToolStartCommand?,
+        expectedException: RunBuildException?) {
         // Given
-        var actualProcess: InspectionProcess? = null
+        var actualProcess: ToolStartCommand? = null
         val resolver = createInstance(parametersService)
         every { _virtualContext.targetOSType } returns os
 
@@ -199,5 +199,5 @@ class ProcessResolverTest {
     }
 
     private fun createInstance(parametersService: ParametersService) =
-            ProcessResolverImpl(parametersService, _virtualContext)
+            ToolStartCommandResolverImpl(parametersService, _virtualContext)
 }

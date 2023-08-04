@@ -16,9 +16,9 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import java.io.InputStream
 
 interface XmlReader {
-    fun read(xmlStream: InputStream): Sequence<E>
+    fun read(xmlStream: InputStream): Sequence<DocElement>
 }

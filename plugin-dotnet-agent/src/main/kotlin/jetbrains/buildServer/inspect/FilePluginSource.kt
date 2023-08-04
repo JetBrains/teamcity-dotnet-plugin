@@ -16,9 +16,8 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.util.FileUtil
 import java.io.File
 
 /**
@@ -26,14 +25,13 @@ import java.io.File
  * <File Path="C:\temp\file.nupkg"></File>
  */
 class FilePluginSource(
-        private val _fileSystemService: FileSystemService)
-    : PluginSource {
+    private val _fileSystemService: FileSystemService
+) : PluginSource {
     override val id = "file"
 
     override fun getPlugin(specification: String) =
-        File(specification).let {
-            file ->
-            val result = E("File")
+        File(specification).let { file ->
+            val result = DocElement("File")
             if (_fileSystemService.isExists(file) && _fileSystemService.isFile(file)) {
                 result.a("Path", file.canonicalFile.absolutePath)
             }

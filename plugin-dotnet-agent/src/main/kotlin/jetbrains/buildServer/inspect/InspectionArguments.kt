@@ -25,5 +25,6 @@ data class InspectionArguments(
     val logFile: File,
     val cachesHome: File,
     val debug: Boolean,
+    val extensions: String?,
     val customArguments: Collection<CommandLineArgument>,
 )

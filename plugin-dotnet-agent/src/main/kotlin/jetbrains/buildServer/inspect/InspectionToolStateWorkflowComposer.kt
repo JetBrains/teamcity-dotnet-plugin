@@ -16,9 +16,6 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
-import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.WorkflowComposer
 
-class DupFinderEnvironmentProvider : EnvironmentProvider {
-    override fun getEnvironmentVariables(toolVersion: Version) = emptySequence<CommandLineEnvironmentVariable>()
-}
+interface InspectionToolStateWorkflowComposer : WorkflowComposer<InspectionToolState>

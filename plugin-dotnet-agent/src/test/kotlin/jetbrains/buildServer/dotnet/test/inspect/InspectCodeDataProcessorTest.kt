@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.DataProcessorContext
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.inspections.*
@@ -111,52 +111,52 @@ class InspectCodeDataProcessorTest {
         return arrayOf(
                 arrayOf(
                         sequenceOf(
-                                E("Report").a("ToolsVersion", "203"),
-                                E("Information"),
-                                E("InspectionScope"),
-                                E("Element"),
-                                E("IssueTypes"),
-                                E("IssueType")
+                                DocElement("Report").a("ToolsVersion", "203"),
+                                DocElement("Information"),
+                                DocElement("InspectionScope"),
+                                DocElement("Element"),
+                                DocElement("IssueTypes"),
+                                DocElement("IssueType")
                                         .a("Id", "CSharpErrors")
                                         .a("Category", "C# Compiler Errors")
                                         .a("CategoryId", "CSharpErrors")
                                         .a("Severity", "ERROR"),
-                                E("IssueType")
+                                DocElement("IssueType")
                                         .a("Id", "RedundantUsingDirective")
                                         .a("Category", "Redundancies in Code")
                                         .a("CategoryId", "CodeRedundancy")
                                         .a("Description", "Redundant using directive")
                                         .a("Severity", "WARNING")
                                         .a("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=RedundantUsingDirective"),
-                                E("IssueType")
+                                DocElement("IssueType")
                                         .a("Id", "UnusedType.Global")
                                         .a("Category", "Redundancies in Symbol Declarations")
                                         .a("CategoryId", "DeclarationRedundancy")
                                         .a("Description", "Type is never used: Non-private accessibility")
                                         .a("Severity", "SUGGESTION")
                                         .a("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=UnusedType.Global"),
-                                E("Issues"),
-                                E("Project").a("Name", "Clock.Console"),
-                                E("Issue")
+                                DocElement("Issues"),
+                                DocElement("Project").a("Name", "Clock.Console"),
+                                DocElement("Issue")
                                         .a("TypeId", "RedundantUsingDirective")
                                         .a("File", "Clock.Console\\Program.cs")
                                         .a("Offset", "85-103")
                                         .a("Line", "5")
                                         .a("Message", "Using directive is not required by the code and can be safely removed"),
-                                E("Issue")
+                                DocElement("Issue")
                                         .a("TypeId", "CSharpErrors")
                                         .a("File", "Clock.Console\\Program.cs")
                                         .a("Offset", "99-102")
                                         .a("Line", "7")
                                         .a("Message", "Cannot resolve symbol 'IoC'"),
-                                E("Issue")
+                                DocElement("Issue")
                                         .a("TypeId", "UnusedType.Global")
                                         .a("File", "Clock.Console\\Program.cs")
                                         .a("Offset", "99-102")
                                         .a("Line", "9")
                                         .a("Message", "Abc"),
-                                E("Project").a("Name", "Clock.Xamarin.Android"),
-                                E("Issue")
+                                DocElement("Project").a("Name", "Clock.Xamarin.Android"),
+                                DocElement("Issue")
                                         .a("TypeId", "CSharpErrors")
                                         .a("File", "Clock.Xamarin.Android\\MainActivity.cs")
                                         .a("Offset", "1266-1292")
@@ -171,9 +171,9 @@ class InspectCodeDataProcessorTest {
 
     @Test(dataProvider = "processDataCases")
     fun shouldProcessData(
-            elements: Sequence<E>,
-            expectedTypes: Sequence<InspectionTypeInfo>,
-            expectedInstances: Sequence<InspectionInstance>) {
+        elements: Sequence<DocElement>,
+        expectedTypes: Sequence<InspectionTypeInfo>,
+        expectedInstances: Sequence<InspectionInstance>) {
         // Given
         var dataFile = File("DataFile.xml")
         val inputStream = PipedInputStream()

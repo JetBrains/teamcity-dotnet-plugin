@@ -27,7 +27,7 @@ class DotnetStateWorkflowComposer(
     private val _pathsService: PathsService,
     private val _virtualContext: VirtualContext,
     private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>,
-    private val _versionParser: VersionParser,
+    private val _versionParser: ToolVersionOutputParser,
     private val _defaultEnvironmentVariables: EnvironmentVariables
 ) : ToolStateWorkflowComposer {
     override val target: TargetType

@@ -16,9 +16,8 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.util.FileUtil
 import java.io.File
 
 /**
@@ -26,14 +25,13 @@ import java.io.File
  * <Folder Path="C:\temp"></Folder>
  */
 class FolderPluginSource(
-        private val _fileSystemService: FileSystemService)
-    : PluginSource {
+    private val _fileSystemService: FileSystemService
+) : PluginSource {
     override val id = "folder"
 
     override fun getPlugin(specification: String) =
-        File(specification).let {
-            directory ->
-            val result = E("Folder")
+        File(specification).let { directory ->
+            val result = DocElement("Folder")
             if (_fileSystemService.isExists(directory) && _fileSystemService.isDirectory(directory)) {
                 result.a("Path", directory.canonicalFile.absolutePath)
             }

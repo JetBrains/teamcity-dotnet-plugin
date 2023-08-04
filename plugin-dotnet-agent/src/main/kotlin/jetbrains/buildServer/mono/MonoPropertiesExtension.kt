@@ -26,8 +26,8 @@ class MonoPropertiesExtension(
         extensionHolder: ExtensionHolder,
         private val _toolProvider: ToolProvider,
         private val _commandLineExecutor: CommandLineExecutor,
-        private val _versionParser: VersionParser)
-    : AgentParametersSupplier {
+        private val _versionParser: ToolVersionOutputParser
+) : AgentParametersSupplier {
 
     init {
         extensionHolder.registerExtension(AgentParametersSupplier::class.java, javaClass.name, this)
@@ -45,7 +45,7 @@ class MonoPropertiesExtension(
                     emptyList())
             _commandLineExecutor.tryExecute(command)?.let {
                 val version = _versionParser.parse(it.standardOutput)
-                if (version != Version.Empty) {
+                if (!version.isEmpty()) {
                     LOG.info("Found Mono $it at ${command.executableFile.path}")
                     return mutableMapOf(Pair(MonoConstants.CONFIG_PATH, command.executableFile.path))
                 }

@@ -16,8 +16,10 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.rx.Observer
 
-interface PackagesProvider {
-    fun getPackages(specifications: String): E
-}
+class InspectionToolState(
+    val startCommand: ToolStartCommand,
+    val versionObserver: Observer<Version>
+)

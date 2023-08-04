@@ -23,47 +23,47 @@ import org.w3c.dom.NodeList
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-inline fun <reified T: Node> NodeList.asSequence() = sequence {
+inline fun <reified T : Node> NodeList.asSequence() = sequence {
     for (i in 0 until this@asSequence.length) {
         val node = this@asSequence.item(i)
-        if(node is T) {
+        if (node is T) {
             yield(node)
         }
     }
 }
 
-inline fun <reified T: Node> Node.find(xpath: String) =
-        XPathFactory.newInstance().newXPath().evaluate(xpath, this, XPathConstants.NODESET).let {
-            if(it is NodeList) it.asSequence<T>() else emptySequence<T>()
-        }
+inline fun <reified T : Node> Node.find(xpath: String) =
+    XPathFactory.newInstance().newXPath().evaluate(xpath, this, XPathConstants.NODESET).let {
+        if (it is NodeList) it.asSequence<T>() else emptySequence<T>()
+    }
 
-fun Node.build(elemen: E): Element {
-    val owner = if(this is Document) this else this.ownerDocument!!
-    val newElement = owner.createElement(elemen.name)
-    elemen.value?.let {
+fun Node.build(element: DocElement): Element {
+    val owner = if (this is Document) this else this.ownerDocument!!
+    val newElement = owner.createElement(element.name)
+    element.value?.let {
         newElement.textContent = it
     }
 
     this.appendChild(newElement)
-    for (attr in elemen.attributes) {
+    for (attr in element.attributes) {
         if (attr.name.isNotBlank() && attr.value?.isNotBlank() ?: false) {
             newElement.setAttribute(attr.name, attr.value)
         }
     }
 
-    for (nestedElement in elemen.elements.mapNotNull { it }.filter { !it.isEmpty }) {
+    for (nestedElement in element.elements.mapNotNull { it }.filter { !it.isEmpty }) {
         newElement.build(nestedElement)
     }
 
     return newElement
 }
 
-data class E(val name: String, val elements: Sequence<E?>, val value: String? = null) {
-    private val _attrs = mutableListOf<A>()
+data class DocElement(val name: String, val elements: Sequence<DocElement?>, val value: String? = null) {
+    private val _attrs = mutableListOf<DocElementAttribute>()
 
     public val attributes get() = _attrs.asSequence()
 
-    constructor(name: String, vararg nestedElements: E?)
+    constructor(name: String, vararg nestedElements: DocElement?)
             : this(name, nestedElements.asSequence())
 
     constructor(name: String, value: String?)
@@ -71,8 +71,8 @@ data class E(val name: String, val elements: Sequence<E?>, val value: String? = 
 
     val isEmpty: Boolean get() = value.isNullOrEmpty() && !attributes.any() && !elements.any()
 
-    fun a(name: String, value: String):E {
-        _attrs.add(A(name, value))
+    fun a(name: String, value: String): DocElement {
+        _attrs.add(DocElementAttribute(name, value))
         return this
     }
 
@@ -80,16 +80,17 @@ data class E(val name: String, val elements: Sequence<E?>, val value: String? = 
         attributes.filter { it.name.equals(name, true) }.firstOrNull()?.value
 
     override fun toString() =
-            when {
-                elements.filter { !(it?.isEmpty ?: true) }.any() -> {
-                    val nested = elements.filter { !(it?.isEmpty ?: true) }.joinToString("\n")
-                    "<$name${if (attributes.any()) " " else ""}${attributes.joinToString(" ")}>\n$nested\n</$name>"
-                }
-                value.isNullOrEmpty() -> ""
-                else -> "<$name${if (attributes.any()) " " else ""}${attributes.joinToString(" ")}>$value</$name>"
+        when {
+            elements.filter { !(it?.isEmpty ?: true) }.any() -> {
+                val nested = elements.filter { !(it?.isEmpty ?: true) }.joinToString("\n")
+                "<$name${if (attributes.any()) " " else ""}${attributes.joinToString(" ")}>\n$nested\n</$name>"
             }
+
+            value.isNullOrEmpty() -> ""
+            else -> "<$name${if (attributes.any()) " " else ""}${attributes.joinToString(" ")}>$value</$name>"
+        }
 }
 
-data class A(val name: String, val value: String?) {
-    override fun toString() = if(value != null) "$name='$value'" else ""
+data class DocElementAttribute(val name: String, val value: String?) {
+    override fun toString() = if (value != null) "$name='$value'" else ""
 }

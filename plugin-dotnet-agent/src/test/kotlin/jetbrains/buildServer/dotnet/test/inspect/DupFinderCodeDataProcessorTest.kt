@@ -21,21 +21,18 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.agent.DataProcessorContext
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.duplicates.DuplicatesReporter
 import jetbrains.buildServer.agent.inspections.InspectionInstance
-import jetbrains.buildServer.agent.inspections.InspectionReporter
 import jetbrains.buildServer.agent.inspections.InspectionTypeInfo
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.duplicator.DuplicateInfo
 import jetbrains.buildServer.inspect.DupFinderCodeDataProcessor
-import jetbrains.buildServer.inspect.InspectCodeDataProcessor
 import jetbrains.buildServer.inspect.XmlReader
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 import java.io.PipedInputStream
@@ -115,41 +112,41 @@ class DupFinderCodeDataProcessorTest {
     fun shouldProcessData() {
         // Given
         val elements = sequenceOf(
-                E("DuplicatesReport"),
-                E("Statistics"),
-                E("CodebaseCost", "611792"),
-                E("Duplicates"),
-                E("Duplicate")
+                DocElement("DuplicatesReport"),
+                DocElement("Statistics"),
+                DocElement("CodebaseCost", "611792"),
+                DocElement("Duplicates"),
+                DocElement("Duplicate")
                         .a("Cost", "10"),
-                E("Fragment"),
-                E("FileName", "IoC.Source\\IoC.cs"),
-                E("OffsetRange")
+                DocElement("Fragment"),
+                DocElement("FileName", "IoC.Source\\IoC.cs"),
+                DocElement("OffsetRange")
                         .a("Start", "123")
                         .a("End", "345"),
-                E("LineRange")
+                DocElement("LineRange")
                         .a("Start", "1")
                         .a("End", "5"),
-                E("Text", "Some text 1\nLine 2"),
-                E("Fragment"),
-                E("FileName", "IoC.Source\\IoC2.cs"),
-                E("OffsetRange")
+                DocElement("Text", "Some text 1\nLine 2"),
+                DocElement("Fragment"),
+                DocElement("FileName", "IoC.Source\\IoC2.cs"),
+                DocElement("OffsetRange")
                         .a("Start", "123")
                         .a("End", "345"),
-                E("LineRange")
+                DocElement("LineRange")
                         .a("Start", "2")
                         .a("End", "6"),
-                E("Text", "Some text 2\nLine 2"),
-                E("Duplicate")
+                DocElement("Text", "Some text 2\nLine 2"),
+                DocElement("Duplicate")
                         .a("Cost", "20"),
-                E("Fragment"),
-                E("FileName", "IoC.Source3\\IoC.cs"),
-                E("OffsetRange")
+                DocElement("Fragment"),
+                DocElement("FileName", "IoC.Source3\\IoC.cs"),
+                DocElement("OffsetRange")
                         .a("Start", "123")
                         .a("End", "345"),
-                E("LineRange")
+                DocElement("LineRange")
                         .a("Start", "3")
                         .a("End", "7"),
-                E("Text", "Some text 3\nLine 2")
+                DocElement("Text", "Some text 3\nLine 2")
         )
 
         var dataFile = File("DataFile.xml")

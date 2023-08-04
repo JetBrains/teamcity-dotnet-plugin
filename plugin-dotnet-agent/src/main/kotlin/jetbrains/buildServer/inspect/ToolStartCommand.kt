@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent
+package jetbrains.buildServer.inspect
 
-interface VersionParser {
-    fun parse(output: Collection<String>): Version
-}
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
+
+data class ToolStartCommand(val executable: Path, val startArguments: Collection<CommandLineArgument> = emptyList())

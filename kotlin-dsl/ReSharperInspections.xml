@@ -92,8 +92,8 @@
             <description>
                 Newline-delimited list of ReSharper plugins required for InspectCode in the following format:
                 - Download %pluginId%/%version%
-                - File %filePath%
-                - Folder %folderPath%
+                - File %filePath% (not supported for R# CLT 2021.3.0 and newer)
+                - Folder %folderPath% (not supported for R# CLT 2021.3.0 and newer)
                 To download plugins add the https://resharper-plugins.jetbrains.com/api/v2/ NuGet package source.
             </description>
         </param>

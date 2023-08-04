@@ -17,16 +17,16 @@
 package jetbrains.buildServer.agent
 
 class Version private constructor(
-        val major: Int,
-        val minor: Int,
-        val digits: Int,
-        val patch: Int,
-        val build: Int = 0,
-        val minorBuild: Int = 0,
-        val release: String? = null,
-        private val metadata: String? = null,
-        private val text: String? = null)
-    : Comparable<Version> {
+    val major: Int,
+    val minor: Int,
+    val digits: Int,
+    val patch: Int,
+    val build: Int = 0,
+    val minorBuild: Int = 0,
+    val release: String? = null,
+    private val metadata: String? = null,
+    private val text: String? = null
+) : Comparable<Version> {
 
     constructor(major: Int) : this(major, 0, 1, 0, 0, 0)
 
@@ -34,11 +34,11 @@ class Version private constructor(
 
     constructor(major: Int, minor: Int, patch: Int) : this(major, minor, 3, patch, 0, 0)
 
-    constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor,4, patch, 0, 0, release)
+    constructor(major: Int, minor: Int, patch: Int, release: String) : this(major, minor, 4, patch, 0, 0, release)
 
-    constructor(major: Int, minor: Int, patch: Int, build: Int) : this(major, minor,4, patch, build, 0, null)
+    constructor(major: Int, minor: Int, patch: Int, build: Int) : this(major, minor, 4, patch, build, 0, null)
 
-    constructor(major: Int, minor: Int, patch: Int, build: Int, minorBuild: Int) : this(major, minor,5, patch, build, minorBuild, null)
+    constructor(major: Int, minor: Int, patch: Int, build: Int, minorBuild: Int) : this(major, minor, 5, patch, build, minorBuild, null)
 
     private val versionString: String = buildString {
         append(major)
@@ -67,6 +67,10 @@ class Version private constructor(
         }
     }
 
+    fun isEmpty(): Boolean {
+        return this == Empty
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Version) return false
@@ -79,17 +83,46 @@ class Version private constructor(
 
     companion object {
         const val Separator = '.'
-        private val VERSION_PATTERN = Regex("^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$", RegexOption.IGNORE_CASE)
+        private val VERSION_PATTERN = Regex(
+            "^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+(([0-9A-Za-z-\\.]+)))?[^\\d^\\.]*$",
+            RegexOption.IGNORE_CASE
+        )
+        private val VERSION_PATTERN_SIMPLIFIED = Regex(
+            "^[^\\d^\\.]*([0-9]+)(?:\\.([0-9]+))?(?:\\.([0-9]+))?(?:[^\\n]+)?\$"
+        )
         val Empty: Version = Version(0, 0, 0, 0, 0, 0, null, null, null)
 
         fun isValid(text: String) = VERSION_PATTERN.matches(text)
 
-        fun parse(text: String): Version {
-            VERSION_PATTERN.matchEntire(text)?.let {
+        fun parse(versionStr: String): Version {
+            return parse(versionStr, VERSION_PATTERN, false)
+        }
 
-                val (majorStr, minorStr, patchStr, buildStr, minorBuildStr, releaseStr, metadataStr) = it.destructured
+        fun parseSimplified(versionStr: String): Version {
+            return parse(versionStr, VERSION_PATTERN_SIMPLIFIED, true)
+        }
+
+        private fun parse(versionStr: String, regex: Regex, simplified: Boolean): Version {
+            regex.matchEntire(versionStr)?.let {
+                val groupValues = it.groupValues
+
+                val majorStr = groupValues[1]
+                val minorStr = groupValues[2]
+                val patchStr = groupValues[3]
+                var buildStr = ""
+                var minorBuildStr = ""
+                var releaseStr = ""
+                var metadataStr = ""
+
+                if (!simplified) {
+                    buildStr = groupValues[4]
+                    minorBuildStr = groupValues[5]
+                    releaseStr = groupValues[6]
+                    metadataStr = groupValues[7]
+                }
+
                 var digits = 0
-                var newText: String = ""
+                var newText = ""
 
                 val major = majorStr.toIntOrNull()?.let {
                     newText += majorStr
@@ -145,11 +178,13 @@ class Version private constructor(
             return Empty
         }
 
+        // Distinguished versions:
         val LastVersionWithoutSharedCompilation: Version = Version(2, 1, 105)
         val MultiAdapterPathVersion: Version = Version(2, 1, 102)
         val MultiAdapterPath_5_0_103_Version: Version = Version(5, 0, 103)
         val NoMultiAdapterPathVersion: Version = Version(5, 0, 103)
         val CredentialProviderVersion: Version = Version(2, 1, 400)
         val NoArgsForNuGetPushNoSymbolsParameterVersion: Version = Version(6, 0, 200)
+        val FirstInspectcodeExtensionsOptionVersion: Version = Version(2021, 3, 0)
     }
 }

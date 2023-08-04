@@ -16,10 +16,10 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.E
+import jetbrains.buildServer.DocElement
 
 interface PluginSource {
     val id: String
 
-    fun getPlugin(specification: String): E
+    fun getPlugin(specification: String): DocElement
 }

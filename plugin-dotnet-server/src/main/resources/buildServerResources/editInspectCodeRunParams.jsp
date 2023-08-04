@@ -83,9 +83,9 @@
     <c:set var="note">
       Newline-delimited list of <a href="https://resharper-plugins.jetbrains.com/" target="_blank">ReSharper plugins</a> required for InspectCode in the following format:
       <ul style="margin: 0; padding-left: 1.5em;">
-        <li>Download %pluginId%/%version%</li>
-        <li>File %filePath%</li>
-        <li>Folder %folderPath%</li>
+        <li><b>Download %pluginId%/%version%</b></li>
+        <li><b>File %filePath%</b> (not supported for R# CLT 2021.3.0 and newer)</li>
+        <li><b>Folder %folderPath%</b> (not supported for R# CLT 2021.3.0 and newer)</li>
       </ul>
       To download plugins add the <em>https://resharper-plugins.jetbrains.com/api/v2/</em> NuGet package source.
     </c:set>

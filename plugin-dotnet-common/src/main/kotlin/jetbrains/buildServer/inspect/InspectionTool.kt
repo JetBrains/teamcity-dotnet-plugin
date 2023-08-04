@@ -16,9 +16,9 @@
 
 package jetbrains.buildServer.inspect
 
-enum class InspectionTool private constructor(
+enum class InspectionTool(
     val runnerType: String,
-    val dysplayName: String,
+    val displayName: String,
     val toolName: String,
     val reportArtifactName: String,
     val dataProcessorType: String,
