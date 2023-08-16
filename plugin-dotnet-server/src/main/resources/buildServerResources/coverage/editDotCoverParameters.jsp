@@ -33,9 +33,8 @@
   <th><label for="${params.dotCoverFiltersKey}">Assembly filters:</label></th>
   <td>
     <c:set var="note">
-      New-line separated list of assemblies to be included/exluded from the code coverage
-      following the <i>+:myassemblyName</i> or <i>-:myassemblyName</i> syntax (use the name only,
-      without the extension). The (*) wildcard is supported.<bs:help file="JetBrains+dotCover"/>
+      Type "<i>+:assemblyName</i>" to include or "<i>-:assemblyName</i>" to exclude assemblies to/from the code coverage.
+      Each rule should start from a new line. Use asterisk (*) as a wildcard for any string.<bs:help file="JetBrains+dotCover"/>
     </c:set>
     <props:multilineProperty name="${params.dotCoverFiltersKey}" className="longField" expanded="true" cols="60" rows="4" linkTitle="Assembly filters" note="${note}"/>
   </td>
@@ -45,9 +44,8 @@
   <th><label for="${params.dotCoverAttributeFiltersKey}">Attribute filters:</label></th>
   <td>
     <c:set var="note">
-      New-line separated list of attribute filters following the <i>-:attributeName</i> syntax
-      to exclude the code marked with attributes from code coverage.
-      The (*) wildcard is supported.<bs:help file="JetBrains+dotCover"/>
+      Type "<i>-:attributeName</i>" to exclude any code marked with this attribute from the code coverage.
+      Each rule should start from a new line. Use asterisk (*) as a wildcard for any string. <bs:help file="JetBrains+dotCover"/>
     </c:set>
     <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}" className="longField" cols="60" rows="4" linkTitle="Attribute filters" note="${note}"/>
     <span class="smallNote"><strong>Applicable to dotCover 2.0 or higher.</strong></span>
