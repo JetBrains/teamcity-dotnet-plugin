@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers.t
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
@@ -211,7 +212,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     }
 
     @Test
-    fun `should transform to 4 commands in with suppression in exclusion mode when filter type is exclusion`() {
+    fun `should transform to 4 commands with suppression in exclusion mode when filter type is exclusion`() {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
@@ -442,6 +443,73 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         verify(exactly = targetArguments.count()) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = targetArguments.count()) {
             _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE)
+        }
+    }
+
+    @Test
+    fun `should transform to sequence of commands including build command with filtered custom arguments`() {
+        // arrange
+        val testsListPath = "/path/to/tests-list.txt"
+        _testsSplittingSettingsMock.let {
+            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.filterType } returns TestsSplittingFilterType.Excludes
+            every { it.testsClassesFilePath } returns testsListPath
+        }
+        val targetPath = "/path/to/target"
+        val targetArguments = sequenceOf(
+            mockk<TargetArguments> {
+                every { arguments } returns sequenceOf(
+                    mockk {
+                        every { value } returns targetPath
+                        every { argumentType } returns CommandLineArgumentType.Target
+                    }
+                )
+            },
+        )
+        _testCommandMock.let {
+            every { it.commandType } returns DotnetCommandType.Test
+            every { it.targetArguments } returns targetArguments
+        }
+        val pathToBackupMetadataCsv = "/path/to/backup-metadata.csv"
+        val pathToBinlog = "/path/to/msbuild.binlog"
+        _pathServiceMock.let {
+            every { it.getTempFileName(".csv") } answers {
+                mockk { every { path } returns pathToBackupMetadataCsv }
+            }
+            every { it.getTempFileName(".binlog") } answers {
+                mockk { every { path } returns pathToBinlog }
+            }
+        }
+        every { _targetTypeProviderMock.getTargetType(any()) } returns CommandTargetType.Unknown
+        every { _teamCityDotnetToolCommandMock.getArguments(any()) } returns emptySequence()
+        every { _testCommandMock.getArguments(any()) } returns emptySequence()
+        every { _fileSystemService.isExists(any()) } returns true
+
+        every { _buildDotnetCommandMock.getArguments(any()) } returns sequence {
+            yield(CommandLineArgument("SHOULD_BE_KEPT", CommandLineArgumentType.Secondary))
+            yield(CommandLineArgument("-p:A0=V0", CommandLineArgumentType.Custom))
+            yield(CommandLineArgument("/p:A1=V1", CommandLineArgumentType.Custom))
+            yield(CommandLineArgument("\'-p:A2=V2\'", CommandLineArgumentType.Custom))
+            yield(CommandLineArgument("\"-p:A3=V3\"", CommandLineArgumentType.Custom))
+            yield(CommandLineArgument("`-p:A4=V4`", CommandLineArgumentType.Custom))
+            yield(CommandLineArgument("SHOULD_BE_FILTERED_OUT", CommandLineArgumentType.Custom))
+        }
+
+        // act
+        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+
+        // assert
+        result[0].let { buildCommand ->
+            val args = buildCommand.getArguments(mockk())
+            Assert.assertEquals(args.count(), 7)
+            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\""}, 1)
+            Assert.assertEquals(args.count { it.value == "SHOULD_BE_KEPT"}, 1)
+            Assert.assertEquals(args.count { it.value == "-p:A0=V0"}, 1)
+            Assert.assertEquals(args.count { it.value == "/p:A1=V1"}, 1)
+            Assert.assertEquals(args.count { it.value == "\'-p:A2=V2\'"}, 1)
+            Assert.assertEquals(args.count { it.value == "\"-p:A3=V3\""}, 1)
+            Assert.assertEquals(args.count { it.value == "`-p:A4=V4`"}, 1)
+            Assert.assertEquals(args.count { it.value == "SHOULD_BE_FILTERED_OUT"}, 0)
         }
     }
 }

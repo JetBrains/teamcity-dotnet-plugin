@@ -116,7 +116,24 @@ class TestSuppressTestsSplittingCommandsResolver(
             // generates MSBuild binary log file (.binlog)
             yield(CommandLineArgument("-bl:LogFile=\"$_binlogPath\""))
 
-            yieldAll(_originalBuildCommand.getArguments(context))
+            yieldAll(getBuildCommandArguments(context))
+        }
+
+        private fun getBuildCommandArguments(context: DotnetBuildContext) =
+            _originalBuildCommand.getArguments(context)
+                .filter { arg ->
+                    // filter out custom arguments (expect -p) explicitly since it's custom arguments
+                    // for `dotnet test` command, and might be not compatible with `dotnet build`
+                    arg.argumentType != CommandLineArgumentType.Custom || startsWithMSBuildSwitchPrefix(arg.value)
+                }
+
+        private fun startsWithMSBuildSwitchPrefix(arg: String): Boolean {
+            val unquotedArg = arg.trimStart('"').trimStart('\'').trimStart('`')
+            return CustomSwitchesPrefixes.any { unquotedArg.startsWith(it) }
+        }
+
+        companion object {
+            private val CustomSwitchesPrefixes = arrayOf("-p:", "/p:")
         }
     }
 
