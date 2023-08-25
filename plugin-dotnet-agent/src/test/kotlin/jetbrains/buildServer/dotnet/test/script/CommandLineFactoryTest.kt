@@ -39,10 +39,12 @@ class CommandLineFactoryTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _toolResolver: ToolResolver
     @MockK private lateinit var _nugetEnvironmentVariables: EnvironmentVariables
+    @MockK private lateinit var _testEnvironmentVariables: EnvironmentVariables
     @MockK private lateinit var _rspContentFactory: RspContentFactory
     @MockK private lateinit var _virtualContext: VirtualContext
 
-    private val _envVars = listOf(CommandLineEnvironmentVariable("env1", "val1"))
+    private val _nugetEnvVars = listOf(CommandLineEnvironmentVariable("env1", "val1"))
+    private val _testEnvVars = listOf(CommandLineEnvironmentVariable("env2", "val2"))
 
     @BeforeMethod
     fun setUp() {
@@ -50,7 +52,8 @@ class CommandLineFactoryTest {
         clearAllMocks()
 
         every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
-        every { _nugetEnvironmentVariables.getVariables(Version(6, 0, 0)) } returns _envVars.asSequence()
+        every { _nugetEnvironmentVariables.getVariables(Version(6, 0, 0)) } returns _nugetEnvVars.asSequence()
+        every { _testEnvironmentVariables.getVariables(Version(6, 0, 0)) } returns _testEnvVars.asSequence()
         every { _rspContentFactory.create() } returns sequenceOf("Line 1", "Line 2")
     }
 
@@ -83,7 +86,7 @@ class CommandLineFactoryTest {
                         CommandLineArgument("v_tool"),
                         CommandLineArgument("@v_" + rspFile)
                 ))
-        Assert.assertEquals(commandLine.environmentVariables, _envVars)
+        Assert.assertEquals(commandLine.environmentVariables, _nugetEnvVars + _testEnvVars)
         fileSystemService.read(rspFile) {
             BufferedReader(InputStreamReader(it)).use {
                 Assert.assertEquals(it.readLines(), listOf("Line 1", "Line 2"))
@@ -92,5 +95,12 @@ class CommandLineFactoryTest {
     }
 
     private fun createInstance(fileSystemService: FileSystemService) =
-            CommandLineFactoryImpl(_pathsService, _toolResolver, _nugetEnvironmentVariables, fileSystemService, _rspContentFactory, _virtualContext)
+        CommandLineFactoryImpl(
+            _pathsService,
+            _toolResolver,
+            listOf(_nugetEnvironmentVariables, _testEnvironmentVariables),
+            fileSystemService,
+            _rspContentFactory,
+            _virtualContext
+        )
 }

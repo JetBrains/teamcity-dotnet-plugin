@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter
 class CommandLineFactoryImpl(
         private val _pathsService: PathsService,
         private val _toolResolver: ToolResolver,
-        private val _nugetEnvironmentVariables: EnvironmentVariables,
+        private val _environmentVariables: List<EnvironmentVariables>,
         private val _fileSystemService: FileSystemService,
         private val _rspContentFactory: RspContentFactory,
         private val _virtualContext: VirtualContext)
@@ -44,15 +44,15 @@ class CommandLineFactoryImpl(
 
         val csiTool = _toolResolver.resolve()
         return CommandLine(
-                null,
-                TargetType.Tool,
-                Path(""),
-                Path(_pathsService.getPath(PathType.WorkingDirectory).path),
-                listOf(
-                        CommandLineArgument(_virtualContext.resolvePath(csiTool.path.path)),
-                        CommandLineArgument("@${_virtualContext.resolvePath(rspFile.path)}")
-                ),
-                _nugetEnvironmentVariables.getVariables(csiTool.runtimeVersion).toList()
+            null,
+            TargetType.Tool,
+            Path(""),
+            Path(_pathsService.getPath(PathType.WorkingDirectory).path),
+            listOf(
+                CommandLineArgument(_virtualContext.resolvePath(csiTool.path.path)),
+                CommandLineArgument("@${_virtualContext.resolvePath(rspFile.path)}")
+            ),
+            _environmentVariables.flatMap { it.getVariables(csiTool.runtimeVersion) }
         )
     }
 }

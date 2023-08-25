@@ -31,7 +31,7 @@ class DotnetEnvironmentVariables(
         private val _environment: Environment,
         private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
-        private val additionalEnvironmentVariables: List<EnvironmentVariables>,
+        private val _additionalEnvironmentVariables: List<EnvironmentVariables>,
         private val _loggerResolver: LoggerResolver
 ) : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
@@ -46,7 +46,7 @@ class DotnetEnvironmentVariables(
 
         val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
         yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
-        yieldAll(additionalEnvironmentVariables.flatMap { it.getVariables(sdkVersion) })
+        yieldAll(_additionalEnvironmentVariables.flatMap { it.getVariables(sdkVersion) })
 
         val home = if (_environment.os == OSType.WINDOWS) UserProfileEnvVar else HomeEnvVar
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {
