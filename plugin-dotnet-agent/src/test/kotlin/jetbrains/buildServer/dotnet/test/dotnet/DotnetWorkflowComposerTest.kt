@@ -105,7 +105,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns ToolPath(_msbuildExecutable.path)
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns sequenceOf(
+                every { environmentBuilders } returns listOf(
                     mockk<EnvironmentBuilder>() {
                         every { build(any())  } answers { createToken() }
                     })
@@ -192,7 +192,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
                 every { executable } returns _dotnetExecutable
                 every { platform } returns ToolPlatform.CrossPlatform
-                every { environmentBuilders } returns sequenceOf(
+                every { environmentBuilders } returns listOf(
                     mockk<EnvironmentBuilder>() {
                         every { build(any()) } answers { createToken() }
                     })
@@ -221,7 +221,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns sequenceOf(
+                every { environmentBuilders } returns listOf(
                     mockk<EnvironmentBuilder>() {
                         every { build(any())  } answers { createToken() }
                     })
@@ -313,7 +313,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns sequenceOf(
+                every { environmentBuilders } returns listOf(
                     mockk<EnvironmentBuilder>() {
                         every { build(any())  } answers { createToken() }
                     }

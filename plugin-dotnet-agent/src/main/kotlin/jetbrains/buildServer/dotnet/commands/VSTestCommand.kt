@@ -37,6 +37,7 @@ class VSTestCommand(
     private val _dotnetFilterFactory: DotnetFilterFactory,
     private val _loggerService: LoggerService,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
+    override val environmentBuilders: List<EnvironmentBuilder>
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.VSTest
 

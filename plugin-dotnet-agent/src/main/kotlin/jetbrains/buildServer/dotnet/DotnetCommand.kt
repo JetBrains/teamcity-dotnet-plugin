@@ -33,10 +33,9 @@ interface DotnetCommand : ArgumentsProvider {
 
     val targetArguments: Sequence<TargetArguments>
 
-    val environmentBuilders: Sequence<EnvironmentBuilder>
+    val environmentBuilders: List<EnvironmentBuilder>
 
     val resultsAnalyzer: ResultsAnalyzer
 
     val resultsObserver: Observer<CommandResultEvent>
 }
-

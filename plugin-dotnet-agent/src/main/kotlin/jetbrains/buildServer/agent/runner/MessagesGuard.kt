@@ -21,6 +21,7 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import java.text.ParseException
 
+// TODO the guard was only used for test report service messages, remove it in a few releases after releasing filestreaming-based test reporting
 class MessagesGuard(
         private val _messagesSource: Source<String>)
     : OutputReplacer {

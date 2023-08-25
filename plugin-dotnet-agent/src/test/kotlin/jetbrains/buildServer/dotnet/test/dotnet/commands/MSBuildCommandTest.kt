@@ -175,9 +175,9 @@ class MSBuildCommandTest {
                 ArgumentsProviderStub(respArguments),
                 ArgumentsProviderStub(customArguments),
                 ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("msbuild.exe")), true, _toolStateWorkflowComposer),
-                ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java),
                 _targetsParser,
                 _filterFactory,
-                _responseFileFactory)
+                _responseFileFactory,
+                listOf(ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java)))
     }
 }

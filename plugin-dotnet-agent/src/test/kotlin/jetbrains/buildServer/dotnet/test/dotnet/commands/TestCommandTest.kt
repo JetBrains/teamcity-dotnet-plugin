@@ -16,8 +16,11 @@
 
 package jetbrains.buildServer.dotnet.test.dotnet.commands
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.*
@@ -25,13 +28,12 @@ import jetbrains.buildServer.dotnet.commands.TestCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.test.TestsResultsAnalyzerStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -161,6 +163,7 @@ class TestCommandTest {
         arguments: Sequence<CommandLineArgument> = emptySequence(),
         testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()
     ): DotnetCommand {
+        val ctx = Mockery()
         return TestCommand(
             ParametersServiceStub(parameters),
             testsResultsAnalyzer,
@@ -171,6 +174,7 @@ class TestCommandTest {
             _dotnetFilterFactory,
             _targetTypeProvider,
             _targetArgumentsProvider,
+            listOf(ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
         )
     }
 }

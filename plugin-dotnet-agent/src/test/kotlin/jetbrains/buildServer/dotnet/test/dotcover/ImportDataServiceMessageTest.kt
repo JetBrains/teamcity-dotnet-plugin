@@ -17,7 +17,7 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import jetbrains.buildServer.agent.Path
-import jetbrains.buildServer.agent.runner.ImportDataServiceMessage
+import jetbrains.buildServer.agent.runner.serviceMessages.ImportDataServiceMessage
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test

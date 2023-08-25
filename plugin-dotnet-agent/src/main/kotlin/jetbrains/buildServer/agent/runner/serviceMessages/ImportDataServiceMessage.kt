@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.agent.runner
+package jetbrains.buildServer.agent.runner.serviceMessages
 
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage

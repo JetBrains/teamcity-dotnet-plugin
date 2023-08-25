@@ -38,9 +38,7 @@ class CommandExecutionAdapter(
     private var _blockToken: Disposable = emptyDisposable()
     private val _flowId = FlowGenerator.generateNewFlow()
     private val AllowMessagesGuard: Boolean get() =
-        _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD)
-                ?.let { it.equals("true", true) }
-                ?: true
+        _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD).toBoolean()
     private val _outputReplacer: OutputReplacer = if(AllowMessagesGuard) _messagesGuard else TransparentOutputReplacer.Shared
 
     override fun create(commandLine: CommandLine, eventObserver: Observer<CommandResultEvent>): CommandExecution {

@@ -33,6 +33,7 @@ import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.test.TestsResultsAnalyzerStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -246,19 +247,23 @@ class VSTestCommandTest {
     }
 
     fun createCommand(
-            parameters: Map<String, String> = emptyMap(),
-            targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence(),
-            testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()
-    ): DotnetCommand =
-            VSTestCommand(
-                    ParametersServiceStub(parameters),
-                    testsResultsAnalyzer,
-                    TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
-                    ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
-                    ArgumentsProviderStub(arguments),
-                    ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer),
-                    _dotnetFilterFactory,
-                    _loggerService,
-                    _targetArgumentsProvider)
+        parameters: Map<String, String> = emptyMap(),
+        targets: Sequence<String> = emptySequence(),
+        arguments: Sequence<CommandLineArgument> = emptySequence(),
+        testsResultsAnalyzer: ResultsAnalyzer = TestsResultsAnalyzerStub()
+    ): DotnetCommand {
+        val ctx = Mockery()
+        return VSTestCommand(
+            ParametersServiceStub(parameters),
+            testsResultsAnalyzer,
+            TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
+            ArgumentsProviderStub(sequenceOf(CommandLineArgument("vstestlog"))),
+            ArgumentsProviderStub(arguments),
+            ToolResolverStub(ToolPlatform.Windows, ToolPath(Path("vstest.console.exe")), true, _toolStateWorkflowComposer),
+            _dotnetFilterFactory,
+            _loggerService,
+            _targetArgumentsProvider,
+            listOf(ctx.mock<EnvironmentBuilder>(EnvironmentBuilder::class.java))
+        )
+    }
 }

@@ -33,10 +33,10 @@ class MSBuildCommand(
     private val _msBuildResponseFileArgumentsProvider: ArgumentsProvider,
     private val _customArgumentsProvider: ArgumentsProvider,
     override val toolResolver: ToolResolver,
-    private val _vstestLoggerEnvironment: EnvironmentBuilder,
     private val _targetsParser: TargetsParser,
     private val _dotnetFilterFactory: DotnetFilterFactory,
     private val _responseFileFactory: ResponseFileFactory,
+    override val environmentBuilders: List<EnvironmentBuilder>
 ) : DotnetCommandBase(_parametersService) {
 
     override val commandType = DotnetCommandType.MSBuild
@@ -99,7 +99,4 @@ class MSBuildCommand(
 
         yieldAll(_customArgumentsProvider.getArguments(context))
     }
-
-    override val environmentBuilders: Sequence<EnvironmentBuilder>
-        get() = sequence { yield(_vstestLoggerEnvironment) }
 }

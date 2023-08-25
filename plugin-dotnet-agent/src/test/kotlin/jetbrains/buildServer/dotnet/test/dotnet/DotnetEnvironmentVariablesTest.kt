@@ -221,13 +221,12 @@ class EnvironmentVariablesTest {
         _environment,
         _parametersService,
         _pathsService,
-        _nugetEnvironmentVariables,
+        listOf(_nugetEnvironmentVariables),
         _loggerResolver,
     )
 
     private val commonVars = sequenceOf(
         CommandLineEnvironmentVariable(DotnetEnvironmentVariables.MSBuildLoggerEnvVar, File("msbuild_logger").canonicalPath),
-        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath),
-        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.ServiceMessagesPathEnvVar, _tmpPath.canonicalPath)
+        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTestLoggerEnvVar, File("vstest_logger").canonicalPath)
     )
 }

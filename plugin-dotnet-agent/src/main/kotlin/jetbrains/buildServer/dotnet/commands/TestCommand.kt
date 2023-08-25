@@ -17,14 +17,12 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import java.io.File
 
@@ -38,6 +36,7 @@ class TestCommand(
     private val _dotnetFilterFactory: DotnetFilterFactory,
     private val _targetTypeProvider: TargetTypeProvider,
     private val _targetArgumentsProvider: TargetArgumentsProvider,
+    override val environmentBuilders: List<EnvironmentBuilder>
 ) : DotnetCommandBase(parametersService) {
     override val commandType = DotnetCommandType.Test
 

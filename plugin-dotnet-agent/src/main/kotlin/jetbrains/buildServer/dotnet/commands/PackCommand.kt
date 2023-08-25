@@ -30,6 +30,7 @@ class PackCommand(
     private val _targetService: TargetService,
     private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
     override val toolResolver: DotnetToolResolver,
+    override val environmentBuilders: List<EnvironmentBuilder>
 ) : DotnetCommandBase(_parametersService) {
 
     override val commandType = DotnetCommandType.Pack

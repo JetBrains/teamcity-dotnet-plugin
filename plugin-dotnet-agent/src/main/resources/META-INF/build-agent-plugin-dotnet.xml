@@ -232,14 +232,28 @@
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables" id="teamcityNugetEnvironmentVariables">
     <constructor-arg ref="teamCityNugetEnvironment"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.TestEnvironmentVariables" id="testEnvironmentVariables"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetEnvironmentVariables" primary="true">
-    <constructor-arg ref="nugetEnvironmentVariables"/>
+    <constructor-arg>
+      <list>
+        <ref bean="nugetEnvironmentVariables"/>
+        <ref bean="testEnvironmentVariables"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetEnvironmentVariables" id="stdEnvironmentVariables">
-    <constructor-arg ref="stdNugetEnvironmentVariables"/>
+    <constructor-arg>
+      <list>
+        <ref bean="stdNugetEnvironmentVariables"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetEnvironmentVariables" id="teamcityEnvironmentVariables">
-    <constructor-arg ref="teamcityNugetEnvironmentVariables"/>
+    <constructor-arg>
+      <list>
+        <ref bean="teamcityNugetEnvironmentVariables"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetCredentialProviderSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotnet.logging.LoggerResolverImpl"/>
@@ -344,7 +358,8 @@
   <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetsParserImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentCleaner"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.TestCommandEnvironmentBuilder" id="testCommandEnvironmentBuilder"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder" id="vsTestLoggerEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsResolver"/>
   <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestMethodNameFilterTestSplittingCommandsResolver"
         id="testNameTestsSplittingCommandsResolver">
@@ -432,6 +447,12 @@
   <bean class="jetbrains.buildServer.dotnet.commands.test.TestsResultsAnalyzerImpl" id="testsResultsAnalyzer"/>
   <bean class="jetbrains.buildServer.dotnet.commands.BuildCommand" id="dotnetBuildCommand">
     <constructor-arg ref="testsResultsAnalyzer"/>
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+        <ref bean="vsTestLoggerEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.NugetDeleteCommand" id="dotnetNugetDeleteCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
@@ -441,8 +462,20 @@
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="nugetResultsObserver"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.PackCommand" id="dotnetPackCommand"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.PublishCommand" id="dotnetPublishCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.PackCommand" id="dotnetPackCommand">
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.PublishCommand" id="dotnetPublishCommand">
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.RestoreCommand" id="dotnetRestoreCommand"/>
   <bean class="jetbrains.buildServer.dotnet.commands.RunCommand" id="dotnetRunCommand">
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
@@ -453,6 +486,11 @@
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
     <constructor-arg ref="dotnetAssembliesArgumentsProvider"/>
     <constructor-arg ref="testsResultsAnalyzer"/>
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.ListTestsCommand" id="dotnetListTestCommand">
     <constructor-arg ref="dotnetCommonArgumentsProvider"/>
@@ -504,6 +542,12 @@
     <constructor-arg ref="msbuildResponseFileArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="msbuildToolResolver"/>
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+        <ref bean="vsTestLoggerEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
   </bean>
 
   <bean class="jetbrains.buildServer.dotnet.commands.VSTestCommand" id="dotnetVSTestCommand">
@@ -511,6 +555,11 @@
     <constructor-arg ref="vstestLoggerArgumentsProvider"/>
     <constructor-arg ref="dotnetCustomArgumentsProvider"/>
     <constructor-arg ref="vstestToolResolver"/>
+    <constructor-arg>
+      <list>
+        <ref bean="testCommandEnvironmentBuilder"/>
+      </list>
+    </constructor-arg>
   </bean>
 
   <!-- dotNet coverage -->

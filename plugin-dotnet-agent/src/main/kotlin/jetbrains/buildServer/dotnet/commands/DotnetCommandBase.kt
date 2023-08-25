@@ -41,5 +41,5 @@ abstract class DotnetCommandBase(
             .tryGetParameter(ParameterType.Runner, parameterName)
             ?: defaultValue
 
-    override val environmentBuilders: Sequence<EnvironmentBuilder> get() =  emptySequence()
+    override val environmentBuilders: List<EnvironmentBuilder> get() = emptyList()
 }

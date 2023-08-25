@@ -28,6 +28,7 @@ import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.ArgumentsProviderStub
 import jetbrains.buildServer.dotnet.test.dotnet.commands.targeting.TargetServiceStub
 import jetbrains.buildServer.dotnet.test.dotnet.toolResolvers.ToolResolverStub
+import org.jmock.Mockery
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -127,14 +128,18 @@ class PublishCommandTest {
     }
 
     fun createCommand(
-            parameters: Map<String, String> = emptyMap(),
-            targets: Sequence<String> = emptySequence(),
-            arguments: Sequence<CommandLineArgument> = emptySequence()): DotnetCommand =
-            PublishCommand(
-                    ParametersServiceStub(parameters),
-                    _resultsAnalyzer,
-                    TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
-                    ArgumentsProviderStub(arguments),
-                    ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer)
-            )
+        parameters: Map<String, String> = emptyMap(),
+        targets: Sequence<String> = emptySequence(),
+        arguments: Sequence<CommandLineArgument> = emptySequence()
+    ): DotnetCommand {
+        val ctx = Mockery()
+        return PublishCommand(
+            ParametersServiceStub(parameters),
+            _resultsAnalyzer,
+            TargetServiceStub(targets.map { CommandTarget(Path(it)) }.asSequence()),
+            ArgumentsProviderStub(arguments),
+            ToolResolverStub(ToolPlatform.CrossPlatform, ToolPath(Path("dotnet")), true, _toolStateWorkflowComposer),
+            listOf(ctx.mock(EnvironmentBuilder::class.java))
+        )
+    }
 }

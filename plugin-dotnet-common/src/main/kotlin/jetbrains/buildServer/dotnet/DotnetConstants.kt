@@ -53,7 +53,8 @@ object DotnetConstants {
     const val PARAM_OVERRIDE_NUGET_VARS = "teamcity.internal.dotnet.override.nuget.vars"
     // Default bitness X86 or X64, X86 - if it is not specified
     const val PARAM_DEFAULT_BITNESS = "teamcity.internal.dotnet.default.bitness"
-    // True or False (True by default) - use messages guard
+    // True or False (False by default) - use messages guard
+    // TODO the guard was only used for test report service messages, remove it in a few releases after releasing filestreaming-based test reporting
     const val PARAM_MESSAGES_GUARD = "teamcity.internal.dotnet.messages.guard"
     const val PARAM_PARALLEL_TESTS_EXCLUDES_FILE = "teamcity.build.parallelTests.excludesFile"
     const val PARAM_PARALLEL_TESTS_INCLUDES_FILE = "teamcity.build.parallelTests.includesFile"
@@ -66,6 +67,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE = "teamcity.internal.dotnet.test.exact.match.filter.size"
     // True or False (False by default) - use test suppressing strategy to split tests
     const val PARAM_PARALLEL_TESTS_USE_SUPPRESSING = "teamcity.internal.dotnet.test.suppressing"
+    // True or False (False by default) - fallback to test reporting through stdout
+    const val FALLBACK_TO_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.fallbackToStdOutTestReporting"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
 

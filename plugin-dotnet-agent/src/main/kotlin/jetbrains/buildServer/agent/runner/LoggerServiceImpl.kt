@@ -19,6 +19,7 @@ package jetbrains.buildServer.agent.runner
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.agent.Path
+import jetbrains.buildServer.agent.runner.serviceMessages.ImportDataServiceMessage
 import jetbrains.buildServer.messages.DefaultMessagesInfo
 import jetbrains.buildServer.messages.serviceMessages.BlockClosed
 import jetbrains.buildServer.messages.serviceMessages.BlockOpened

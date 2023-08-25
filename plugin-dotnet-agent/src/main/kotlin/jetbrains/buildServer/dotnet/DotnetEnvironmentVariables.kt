@@ -31,7 +31,7 @@ class DotnetEnvironmentVariables(
         private val _environment: Environment,
         private val _parametersService: ParametersService,
         private val _pathsService: PathsService,
-        private val _nugetEnvironmentVariables: EnvironmentVariables,
+        private val additionalEnvironmentVariables: List<EnvironmentVariables>,
         private val _loggerResolver: LoggerResolver
 ) : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
@@ -39,16 +39,14 @@ class DotnetEnvironmentVariables(
 
         yield(CommandLineEnvironmentVariable(MSBuildLoggerEnvVar, _loggerResolver.resolve(ToolType.MSBuild).canonicalPath))
         yield(CommandLineEnvironmentVariable(VSTestLoggerEnvVar, _loggerResolver.resolve(ToolType.VSTest).canonicalPath))
-        val allowMessagesGuard = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD)
-                ?.let { it.equals("true", true) }
-                ?: true
+        val allowMessagesGuard = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD).toBoolean()
         if (allowMessagesGuard) {
             yield(CommandLineEnvironmentVariable(ServiceMessagesPathEnvVar, _pathsService.getPath(PathType.AgentTemp).canonicalPath))
         }
 
         val useSharedCompilation = if(_parametersService.tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)?.equals("true", true) ?: false) "true" else "false"
         yield(CommandLineEnvironmentVariable(UseSharedCompilationEnvVarName, useSharedCompilation))
-        yieldAll(_nugetEnvironmentVariables.getVariables(sdkVersion))
+        yieldAll(additionalEnvironmentVariables.flatMap { it.getVariables(sdkVersion) })
 
         val home = if (_environment.os == OSType.WINDOWS) UserProfileEnvVar else HomeEnvVar
         if (_environment.tryGetVariable(home).isNullOrEmpty()) {

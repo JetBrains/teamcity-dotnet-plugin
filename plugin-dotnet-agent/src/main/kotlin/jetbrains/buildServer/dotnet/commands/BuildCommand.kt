@@ -22,7 +22,6 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class BuildCommand(
@@ -31,7 +30,7 @@ class BuildCommand(
     private val _targetService: TargetService,
     private val _commonArgumentsProvider: DotnetCommonArgumentsProvider,
     override val toolResolver: DotnetToolResolver,
-    private val _vstestLoggerEnvironment: EnvironmentBuilder,
+    override val environmentBuilders: List<EnvironmentBuilder>
 ) : DotnetCommandBase(_parametersService) {
     override val commandType = DotnetCommandType.Build
 
@@ -78,7 +77,4 @@ class BuildCommand(
 
         yieldAll(_commonArgumentsProvider.getArguments(context))
     }
-
-    override val environmentBuilders: Sequence<EnvironmentBuilder>
-        get() = sequence { yield(_vstestLoggerEnvironment) }
 }
