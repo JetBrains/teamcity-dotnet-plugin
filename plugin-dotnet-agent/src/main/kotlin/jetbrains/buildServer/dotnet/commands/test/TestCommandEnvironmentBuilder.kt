@@ -8,6 +8,7 @@ import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.EnvironmentBuilder
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.emptyDisposable
+import java.io.File
 import java.nio.file.Paths
 
 class TestCommandEnvironmentBuilder(
@@ -22,7 +23,7 @@ class TestCommandEnvironmentBuilder(
 
         val testReportFilesPath = TestReportingViaFileStreamingHelper.getTestReportsFilesPath(_pathsService).toString()
 
-        val serviceMessageFilePattern = Paths.get(testReportFilesPath, "*.msg").toString()
+        val serviceMessageFilePattern = testReportFilesPath + File.separator + "*.msg"
         val fileStreamingServiceMessage = FileStreamingServiceMessage(
             filePath = null,
             filePattern = serviceMessageFilePattern,
