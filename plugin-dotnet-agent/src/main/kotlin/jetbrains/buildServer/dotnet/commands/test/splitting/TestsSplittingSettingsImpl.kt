@@ -30,7 +30,7 @@ class TestsSplittingSettingsImpl(
 ) : TestsSplittingSettings {
     override val mode: TestsSplittingMode get() = when {
         !isEnabled -> TestsSplittingMode.Disabled
-        isEnabled && useTestSuppressing -> TestsSplittingMode.Suppressing
+        isEnabled && useTestSuppression -> TestsSplittingMode.Suppression
         isEnabled && useTestNameFilter -> TestsSplittingMode.TestNameFilter
         else -> TestsSplittingMode.TestClassNameFilter
     }
@@ -85,8 +85,8 @@ class TestsSplittingSettingsImpl(
     private val isEnabled: Boolean get() = testsClassesFilePath != null
 
 
-    private val useTestSuppressing get() =
-        getBoolConfigurationParameter(DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSING)
+    private val useTestSuppression get() =
+        getBoolConfigurationParameter(DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION)
 
     private val useTestNameFilter get() =
         getBoolConfigurationParameter(DotnetConstants.PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER)

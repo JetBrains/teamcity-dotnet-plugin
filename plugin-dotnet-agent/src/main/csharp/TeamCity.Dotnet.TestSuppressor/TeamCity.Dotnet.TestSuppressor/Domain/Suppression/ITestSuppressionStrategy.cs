@@ -3,7 +3,7 @@ using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 
-internal interface ITestSuppressingStrategy
+internal interface ITestSuppressionStrategy
 {
     Type TestEngineType { get; }
     

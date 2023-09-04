@@ -25,7 +25,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSING
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
@@ -66,7 +66,7 @@ class TestsSplittingSettingsImplTests {
         // arrange
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "false" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { "false" }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { "false" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { "tmp" }
         val settings = create()
 
@@ -83,7 +83,7 @@ class TestsSplittingSettingsImplTests {
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  true " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { " faLse " }
         val settings = create()
 
         // act
@@ -99,7 +99,7 @@ class TestsSplittingSettingsImplTests {
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  INVALID " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { " faLse " }
         val settings = create()
 
         // act
@@ -116,7 +116,7 @@ class TestsSplittingSettingsImplTests {
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  true " }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE) } answers { "  42 " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { " faLse " }
         val settings = create()
 
         // act

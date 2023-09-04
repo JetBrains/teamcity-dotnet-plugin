@@ -65,8 +65,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER = "teamcity.internal.dotnet.test.exact.match.filter"
     // Integer amount of tests that should be included in exact match test filter
     const val PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE = "teamcity.internal.dotnet.test.exact.match.filter.size"
-    // True or False (False by default) - use test suppressing strategy to split tests
-    const val PARAM_PARALLEL_TESTS_USE_SUPPRESSING = "teamcity.internal.dotnet.test.suppressing"
+    // True or False (False by default) - use test suppression strategy to split tests
+    const val PARAM_PARALLEL_TESTS_USE_SUPPRESSION = "teamcity.internal.dotnet.test.suppression"
     // True or False (False by default) - fallback to test reporting through stdout
     const val FALLBACK_TO_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.fallbackToStdOutTestReporting"
     // true or false (true by default)

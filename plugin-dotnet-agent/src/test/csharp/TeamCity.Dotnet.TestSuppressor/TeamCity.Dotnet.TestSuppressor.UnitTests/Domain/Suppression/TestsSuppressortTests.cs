@@ -17,40 +17,40 @@ public class TestsSuppressorTests
     {
         // arrange
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
-        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy>();
-        suppressingStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
-        suppressingStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
+        var suppressionStrategyMock = new Mock<ITestSuppressionStrategy>();
+        suppressionStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
+        suppressionStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
-        var suppressingStrategies = new[] { suppressingStrategyMock.Object };
+        var suppressionStrategies = new[] { suppressionStrategyMock.Object };
         var loggerMock = new Mock<ILogger<TestsSuppressor>>();
 
         var testSuppressionResult = new TestSuppressionResult(0, 0);
-        suppressingStrategyMock
+        suppressionStrategyMock
             .Setup(s => s.SuppressTests(testClass, _testSelector))
             .Returns(testSuppressionResult);
         
-        var suppressor = new TestsSuppressor(suppressingStrategies, loggerMock.Object);
+        var suppressor = new TestsSuppressor(suppressionStrategies, loggerMock.Object);
 
         // act
         var result = suppressor.SuppressTests(testClass, suppressionParameters);
 
         // assert
         Assert.Equal(testSuppressionResult, result);
-        suppressingStrategyMock.Verify(s => s.SuppressTests(testClass, _testSelector), Times.Once);
+        suppressionStrategyMock.Verify(s => s.SuppressTests(testClass, _testSelector), Times.Once);
     }
     
     [Fact]
-    public void SuppressTests_ShouldThrowException_WhenSuppressingStrategyNotFound()
+    public void SuppressTests_ShouldThrowException_WhenSuppressionStrategyNotFound()
     {
         // arrange
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
         var testClass = new Mock<IDotnetType>().Object;
 
-        var suppressingStrategies = Enumerable.Empty<ITestSuppressingStrategy>();
+        var suppressionStrategies = Enumerable.Empty<ITestSuppressionStrategy>();
         var loggerMock = new Mock<ILogger<TestsSuppressor>>();
 
-        var suppressor = new TestsSuppressor(suppressingStrategies, loggerMock.Object);
+        var suppressor = new TestsSuppressor(suppressionStrategies, loggerMock.Object);
 
         // act
         Action act = () => suppressor.SuppressTests(testClass, suppressionParameters);
@@ -64,19 +64,19 @@ public class TestsSuppressorTests
     {
         // arrange
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
-        var suppressingStrategyMock = new Mock<ITestSuppressingStrategy>();
-        suppressingStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
-        suppressingStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
+        var suppressionStrategyMock = new Mock<ITestSuppressionStrategy>();
+        suppressionStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
+        suppressionStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
-        var suppressingStrategies = new[] { suppressingStrategyMock.Object };
+        var suppressionStrategies = new[] { suppressionStrategyMock.Object };
         var loggerMock = new Mock<ILogger<TestsSuppressor>>();
 
-        suppressingStrategyMock
+        suppressionStrategyMock
             .Setup(s => s.SuppressTests(testClass, _testSelector))
             .Throws<Exception>();
         
-        var suppressor = new TestsSuppressor(suppressingStrategies, loggerMock.Object);
+        var suppressor = new TestsSuppressor(suppressionStrategies, loggerMock.Object);
 
         // act
         Action act = () => suppressor.SuppressTests(testClass, suppressionParameters);

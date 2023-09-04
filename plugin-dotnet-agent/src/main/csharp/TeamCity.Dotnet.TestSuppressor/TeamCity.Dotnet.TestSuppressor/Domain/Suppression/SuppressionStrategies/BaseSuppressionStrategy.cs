@@ -2,13 +2,13 @@ using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 
-namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressingStrategies;
+namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressionStrategies;
 
-internal abstract class BaseSuppressingStrategy<TTestEngine, TTestSelector> : ITestSuppressingStrategy
+internal abstract class BaseSuppressionStrategy<TTestEngine, TTestSelector> : ITestSuppressionStrategy
     where TTestEngine : ITestEngine
     where TTestSelector : ITestSelector
 {
-    protected BaseSuppressingStrategy(TTestEngine testEngine)
+    protected BaseSuppressionStrategy(TTestEngine testEngine)
     {
         TestEngine = testEngine;
     }

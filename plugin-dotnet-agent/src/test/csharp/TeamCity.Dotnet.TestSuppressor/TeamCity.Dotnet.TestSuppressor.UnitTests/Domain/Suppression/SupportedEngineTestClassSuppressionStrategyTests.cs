@@ -1,6 +1,6 @@
 using Moq;
 using TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
-using TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressingStrategies;
+using TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressionStrategies;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
@@ -10,18 +10,13 @@ using XUnitEngine = TeamCity.Dotnet.TestSuppressor.Domain.TestEngines.Engines.XU
 
 namespace TeamCity.Dotnet.TestSuppressor.UnitTests.Domain.Suppression;
 
-public class SupportedEngineTestClassSuppressingStrategyTests
+public class SupportedEngineTestClassSuppressionStrategyTests
 {
-    private readonly Mock<IDotnetType> _typeMock;
-
-    public SupportedEngineTestClassSuppressingStrategyTests()
-    {
-        _typeMock = new Mock<IDotnetType>();
-    }
+    private readonly Mock<IDotnetType> _typeMock = new();
 
     [Theory]
     [InlineData(
-        typeof(XUnitTestClassSuppressingStrategy),
+        typeof(XUnitTestClassSuppressionStrategy),
         typeof(XUnitEngine),
         "ANY",
         "Xunit.FactAttribute",
@@ -29,7 +24,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(XUnitTestClassSuppressingStrategy),
+        typeof(XUnitTestClassSuppressionStrategy),
         typeof(XUnitEngine),
         "ANY",
         "Xunit.TheoryAttribute",
@@ -37,7 +32,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(XUnitTestClassSuppressingStrategy),
+        typeof(XUnitTestClassSuppressionStrategy),
         typeof(XUnitEngine),
         "ANY",
         "ANY",
@@ -45,7 +40,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(NUnitTestClassSuppressingStrategy),
+        typeof(NUnitTestClassSuppressionStrategy),
         typeof(NUnitEngine),
         "NUnit.Framework.TestFixtureAttribute",
         "NUnit.Framework.TestCaseAttribute",
@@ -53,7 +48,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         1
     )]
     [InlineData(
-        typeof(NUnitTestClassSuppressingStrategy),
+        typeof(NUnitTestClassSuppressionStrategy),
         typeof(NUnitEngine),
         "NUnit.Framework.TestFixtureSourceAttribute",
         "NUnit.Framework.TestAttribute",
@@ -61,7 +56,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         1
     )]
     [InlineData(
-        typeof(NUnitTestClassSuppressingStrategy),
+        typeof(NUnitTestClassSuppressionStrategy),
         typeof(NUnitEngine),
         "ANY",
         "NUnit.Framework.TestCaseSourceAttribute",
@@ -69,7 +64,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(NUnitTestClassSuppressingStrategy),
+        typeof(NUnitTestClassSuppressionStrategy),
         typeof(NUnitEngine),
         "ANY",
         "ANY",
@@ -77,7 +72,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(MsTestTestClassSuppressingStrategy),
+        typeof(MsTestTestClassSuppressionStrategy),
         typeof(MsTestEngine),
         "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute",
         "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute",
@@ -85,7 +80,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         1
     )]
     [InlineData(
-        typeof(MsTestTestClassSuppressingStrategy),
+        typeof(MsTestTestClassSuppressionStrategy),
         typeof(MsTestEngine),
         "ANY",
         "Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethodAttribute",
@@ -93,7 +88,7 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         0
     )]
     [InlineData(
-        typeof(MsTestTestClassSuppressingStrategy),
+        typeof(MsTestTestClassSuppressionStrategy),
         typeof(MsTestEngine),
         "ANY",
         "ANY",
@@ -131,41 +126,11 @@ public class SupportedEngineTestClassSuppressingStrategyTests
         Assert.Equal(expectedSuppressedTests, result.SuppressedTests);
         Assert.Equal(expectedSuppressedTestClasses, result.SuppressedClasses);
     }
-
-    // [Theory]
-    // [InlineData(typeof(XUnitTestClassSuppressingStrategy), typeof (XUnitEngine))]
-    // [InlineData(typeof(NUnitTestClassSuppressingStrategy), typeof (NUnitEngine))]
-    // [InlineData(typeof(MsTestTestClassSuppressingStrategy), typeof (MsTestEngine))]
-    // public void SuppressTestsBySelector_ShouldNotSuppressWhenNoMatchingAttributes(Type strategyType, Type engineType)
-    // {
-    //     // arrange
-    //     var strategy = CreateStrategy(strategyType, engineType);
-    //     
-    //     var classAttributeMock = new Mock<IDotnetCustomAttribute>();
-    //     classAttributeMock.Setup(a => a.FullName).Returns("NonMatchingClassAttribute");
-    //
-    //     var methodMock = new Mock<IDotnetMethod>();
-    //     var methodAttributeMock = new Mock<IDotnetCustomAttribute>();
-    //     methodAttributeMock.Setup(a => a.FullName).Returns("NonMatchingMethodAttribute");
-    //
-    //     methodMock.Setup(m => m.CustomAttributes).Returns(new List<IDotnetCustomAttribute> { methodAttributeMock.Object });
-    //     _typeMock.Setup(t => t.CustomAttributes).Returns(new List<IDotnetCustomAttribute> { classAttributeMock.Object });
-    //     _typeMock.Setup(t => t.Methods).Returns(new List<IDotnetMethod> { methodMock.Object });
-    //
-    //     var testClassSelector = new TestClassSelector(new List<string> { "Namespace" }, "ClassName");
-    //
-    //     // act
-    //     var result = strategy.SuppressTests(_typeMock.Object, testClassSelector);
-    //
-    //     // assert
-    //     Assert.Equal(0, result.SuppressedTests);
-    //     Assert.Equal(0, result.SuppressedClasses);
-    // }
-
-    private static ITestSuppressingStrategy CreateStrategy(Type strategyType, Type engineType)
+    
+    private static ITestSuppressionStrategy CreateStrategy(Type strategyType, Type engineType)
     {
         var engine = (ITestEngine)Activator.CreateInstance(engineType)!;
-        return (ITestSuppressingStrategy)Activator.CreateInstance(strategyType, engine)!;
+        return (ITestSuppressionStrategy)Activator.CreateInstance(strategyType, engine)!;
     }
 }
 

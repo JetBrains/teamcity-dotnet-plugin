@@ -42,7 +42,7 @@ class TestSuppressTestsSplittingCommandsResolver(
     override val stage = DotnetCommandsResolvingStage.Transformation
 
     override fun shouldBeApplied(commands: DotnetCommandsStream) =
-         _testsSplittingSettings.mode.isSuppressingMode
+         _testsSplittingSettings.mode.isSuppressionMode
             && commands.any { it.commandType == DotnetCommandType.Test }
 
     override fun transform(testCommand: DotnetCommand) = sequence {

@@ -27,7 +27,7 @@ import org.testng.annotations.Test
 
 class SharedCompilationArgumentsProviderTest {
     @Test
-    fun shouldProvideNodeReuseArgumentsWhenSharedCompilationRequiresSuppressing() {
+    fun `should provide node reuse arguments when shared compilation requires suppression`() {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(2, 1, 106), Verbosity.Detailed)
 
@@ -39,7 +39,7 @@ class SharedCompilationArgumentsProviderTest {
     }
 
     @Test
-    fun shouldProvideNodeReuseArgumentsWhenSharedCompilationDoesNotRequireSuppressing() {
+    fun `should provide node reuse arguments when shared compilation does not require suppression`() {
         // Given
         val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version.LastVersionWithoutSharedCompilation, Verbosity.Detailed)
 

@@ -69,7 +69,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     fun `should not transform and log if tests classes file not present`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns null
         }
         every { _testCommandMock.commandType } returns DotnetCommandType.Test
@@ -89,7 +89,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     fun `should transform to empty command sequence if targets of test command is empty`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns "exclude.txt"
         }
         _testCommandMock.let {
@@ -110,7 +110,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     fun `should transform to empty command sequence if target argument doesn't contains command line arguments`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns "exclude.txt"
         }
         val targetArguments = mockk<TargetArguments> {
@@ -131,11 +131,11 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     }
 
     @Test
-    fun `should transform to 4 commands with suppressing in inclusion mode when filter type is inclusion`() {
+    fun `should transform to 4 commands with suppression in inclusion mode when filter type is inclusion`() {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Includes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -216,7 +216,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -296,7 +296,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -377,7 +377,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Includes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -451,7 +451,7 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppressing
+            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }

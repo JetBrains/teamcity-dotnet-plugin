@@ -55,7 +55,7 @@ internal static class Program
                     .AddSingletonByInterface<ITestEngineRecognizer>()
                     .AddSingletonByInterface<ITestClassDetector>()
                     .AddSingletonByInterface<ITestSuppressionDecider>()
-                    .AddSingletonByInterface<ITestSuppressingStrategy>()
+                    .AddSingletonByInterface<ITestSuppressionStrategy>()
                     .AddSingletonByInterface<IAssemblyMutator>()
                     .AddSingletonByInterface<ITestsSuppressor>()
                     .AddSingletonByInterface<ITargetResolvingStrategy>()
