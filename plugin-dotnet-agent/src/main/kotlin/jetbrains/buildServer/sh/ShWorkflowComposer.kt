@@ -26,7 +26,7 @@ class ShWorkflowComposer(
         private val _cannotExecute: CannotExecute)
     : SimpleWorkflowComposer {
 
-    override val target: TargetType = TargetType.Host
+    override val target: TargetType = TargetType.ToolHost
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
@@ -39,7 +39,7 @@ class ShWorkflowComposer(
                             } else yield(
                                 CommandLine(
                                     baseCommandLine,
-                                    TargetType.Host,
+                                    TargetType.ToolHost,
                                     Path("sh"),
                                     baseCommandLine.workingDirectory,
                                     getArguments(baseCommandLine).toList(),

@@ -57,7 +57,7 @@ class CmdWorkflowComposerTest {
         // When
 
         // Then
-        Assert.assertEquals(composer.target, TargetType.Host)
+        Assert.assertEquals(composer.target, TargetType.ToolHost)
     }
 
 
@@ -75,7 +75,7 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 _baseCommandLineCmd,
-                                                TargetType.Host,
+                                                TargetType.ToolHost,
                                                 Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(
@@ -95,7 +95,7 @@ class CmdWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 _baseCommandLineBat,
-                                                TargetType.Host,
+                                                TargetType.ToolHost,
                                                 Path("cmd.exe"),
                                                 Path(_workflowBat.commandLines.single().workingDirectory.path),
                                                 listOf(

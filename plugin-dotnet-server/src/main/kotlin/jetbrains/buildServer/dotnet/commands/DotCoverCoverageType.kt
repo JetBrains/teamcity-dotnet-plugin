@@ -30,9 +30,7 @@ import jetbrains.buildServer.tools.ServerToolManager
 import jetbrains.buildServer.util.VersionComparatorUtil
 import org.springframework.beans.factory.BeanFactory
 
-class DotCoverCoverageType(
-        private val _requirementFactory: RequirementFactory)
-    : CommandType(_requirementFactory) {
+class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(requirementFactory) {
     override val name: String = CoverageConstants.PARAM_DOTCOVER
 
     override val description: String = "JetBrains dotCover"
@@ -59,13 +57,14 @@ class DotCoverCoverageType(
         val toolManager = factory.getBean(ServerToolManager::class.java)
         val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
         val projectManager = factory.getBean(ProjectManager::class.java)
-        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.getRootProject())
+        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.rootProject)
+
         if (toolVersion != null) {
-            val crossPaltform = toolVersion.version.endsWith("Cross-Platform", true)
-            if (crossPaltform) {
+            val crossPlatform = toolVersion.version.endsWith(CoverageConstants.DOTCOVER_CROSS_PLATFORM_POSTFIX, true)
+            if (crossPlatform) {
                 requirements.clear()
             } else {
-                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.getVersion()) <= 0
+                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.version) <= 0
                 if (dotnet461Based) {
                     requirements.clear()
                     requirements.add(OUR_NET_461_REQUIREMENT)

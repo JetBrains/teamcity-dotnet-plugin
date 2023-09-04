@@ -30,7 +30,7 @@ class DotnetCoverageProcessor(
 
     @Synchronized
     fun addCoverageReport(coverageType: String,
-                          coverageResult: File) {
+                          coverageResult: File) {           // TODO snapshot file !!!!
 
         if (coverageResult.exists() && coverageResult.isFile && coverageResult.length() > 0) {
             LOG.info(

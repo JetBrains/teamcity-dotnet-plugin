@@ -618,9 +618,13 @@
   <bean class="jetbrains.buildServer.visualStudio.VisualStudioToolResolver"/>
 
   <!-- Custom dotnet command -->
-  <bean class="jetbrains.buildServer.custom.ExecutableWorkflowComposer" id="executableWorkflowComposer">
+  <bean class="jetbrains.buildServer.ExecutableWorkflowComposer" id="executableWorkflowComposer">
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
     <constructor-arg ref="stdEnvironmentVariables"/>
+  </bean>
+
+  <bean class="jetbrains.buildServer.ProfilerHostWorkflowComposer" id="profilerHostWorkflowComposer">
+    <constructor-arg ref="executableWorkflowComposer"/>
   </bean>
 
   <bean class="jetbrains.buildServer.custom.CustomCommandWorkflowComposer" id="customCommandWorkflowComposer"/>

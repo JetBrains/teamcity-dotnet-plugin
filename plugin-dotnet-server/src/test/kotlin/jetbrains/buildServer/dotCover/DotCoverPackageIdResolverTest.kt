@@ -15,9 +15,9 @@ class DotCoverPackageIdResolverTest {
             arrayOf("JetBrains.dotCover.CommandLineTools.2023.1.0-eap10.nupkg", CoverageConstants.DOTCOVER_PACKAGE_ID),
             arrayOf("JetBrains.dotCover.CommandLineTools.2020.2.1.nupkg", CoverageConstants.DOTCOVER_PACKAGE_ID),
             arrayOf("JetBrains.dotCover.CommandLineTools.2020.2.1.zip", CoverageConstants.DOTCOVER_PACKAGE_ID),
-            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.3.0-eap01.nupkg", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
-            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.nupkg", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
-            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.zip", CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.3.0-eap01.nupkg", CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.nupkg", CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID),
+            arrayOf("JetBrains.dotCover.DotNetCliTool.2022.2.4.zip", CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID),
             arrayOf("unknown package", null)
         )
     }

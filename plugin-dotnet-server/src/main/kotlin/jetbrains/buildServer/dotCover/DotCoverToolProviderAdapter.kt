@@ -21,7 +21,7 @@ import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.ToolService
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_CROSS_PLATFORM_PACKAGE_ID
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.find
@@ -138,7 +138,7 @@ class DotCoverToolProviderAdapter(
 
     companion object {
         private val LOG: Logger = Logger.getInstance(DotCoverToolProviderAdapter::class.java.name)
-        private val DOT_COVER_PACKAGES = arrayOf(DOTCOVER_CROSS_PLATFORM_PACKAGE_ID, DOTCOVER_PACKAGE_ID)
+        private val DOT_COVER_PACKAGES = arrayOf(DOTCOVER_DEPRECATED_PACKAGE_ID, DOTCOVER_PACKAGE_ID)
 
         fun getContents(doc: Document, xpath: String): Sequence<String> =
             doc.find<Element>(xpath).map { it.textContent }.filter { !it.isNullOrBlank() }

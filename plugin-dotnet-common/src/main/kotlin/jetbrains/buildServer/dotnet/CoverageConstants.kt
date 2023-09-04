@@ -38,8 +38,9 @@ object CoverageConstants {
     const val COVERAGE_HTML_REPORT_INDEX_KEY = "dotNetCoverage.index"
 
     // dotCover
-    const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"
-    const val DOTCOVER_CROSS_PLATFORM_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"
+    const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"           // Windows-only and since 2023.3.0 – x-platform without .NET runtime
+    const val DOTCOVER_DEPRECATED_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"   // deprecated x-platform package with bundled .NET runtime
+    const val DOTCOVER_FIRST_CROSS_PLATFORM_PACKAGE_VERSION = "2023.3.0"
     const val DOT_COVER_TOOL_TYPE_NAME = "JetBrains dotCover Command Line Tools"
     const val DOT_COVER_SHORT_TOOL_TYPE_NAME = "dotCover CLT"
     const val DOT_COVER_TARGET_FILE_DISPLAY_NAME = "dotCover CLT home directory"
@@ -49,6 +50,7 @@ object CoverageConstants {
     // dotCover tool postfixes
     const val DOTCOVER_POSTFIX = ""
     const val DOTCOVER_CROSS_PLATFORM_POSTFIX = "Cross-Platform"
+    const val DOTCOVER_WINDOWS_ONLY_POSTFIX = "Windows-only"
 
     const val PARAM_DOTCOVER = "dotcover"
     const val PARAM_DOTCOVER_HOME = "dotNetCoverage.dotCover.home.path"
@@ -66,6 +68,7 @@ object CoverageConstants {
 
     const val DOTCOVER_EXECUTABLE = "dotCover.sh"
     const val DOTCOVER_WINDOWS_EXECUTABLE = "dotCover.exe"
+    const val DOTCOVER_DLL = "dotCover.dll"
     const val DOTCOVER_TOOL_NAME = "dotCover"
     const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.${BUNDLED_TOOL_VERSION_NAME}"
 

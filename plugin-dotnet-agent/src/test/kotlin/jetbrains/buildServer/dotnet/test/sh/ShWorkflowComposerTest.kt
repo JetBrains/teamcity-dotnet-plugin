@@ -55,7 +55,7 @@ class ShWorkflowComposerTest {
         // When
 
         // Then
-        Assert.assertEquals(composer.target, TargetType.Host)
+        Assert.assertEquals(composer.target, TargetType.ToolHost)
     }
 
 
@@ -73,7 +73,7 @@ class ShWorkflowComposerTest {
                                 sequenceOf(
                                         CommandLine(
                                                 _baseCommandLineSh,
-                                                TargetType.Host,
+                                                TargetType.ToolHost,
                                                 Path("sh"),
                                                 Path(_workflowSh.commandLines.single().workingDirectory.path),
                                                 listOf(

@@ -21,9 +21,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import jetbrains.buildServer.ExecutableWorkflowComposer
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
-import jetbrains.buildServer.custom.ExecutableWorkflowComposer
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.Observer
@@ -271,7 +271,6 @@ class ExecutableWorkflowComposerTest {
                 _dotnetToolResolver,
                 _dotnetStateWorkflowComposer,
                 _virtualContext,
-                _environmentVariables,
                 _cannotExecute)
     }
 }

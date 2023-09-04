@@ -26,16 +26,16 @@ import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class DotCoverWorkflowComposer(
-        private val _pathsService: PathsService,
-        private val _parametersService: ParametersService,
-        private val _fileSystemService: FileSystemService,
-        private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
-        private val _loggerService: LoggerService,
-        private val _argumentsService: ArgumentsService,
-        private val _coverageFilterProvider: CoverageFilterProvider,
-        private val _virtualContext: VirtualContext,
-        private val _environmentVariables: EnvironmentVariables)
-    : SimpleWorkflowComposer {
+    private val _pathsService: PathsService,
+    private val _parametersService: ParametersService,
+    private val _fileSystemService: FileSystemService,
+    private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
+    private val _loggerService: LoggerService,
+    private val _argumentsService: ArgumentsService,
+    private val _coverageFilterProvider: CoverageFilterProvider,
+    private val _virtualContext: VirtualContext,
+    private val _environmentVariables: EnvironmentVariables,
+) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
@@ -44,100 +44,94 @@ class DotCoverWorkflowComposer(
             return workflow
         }
 
-        val dotCoverPath: String?
-        val dotCoverExecutablePath: File
-        try {
-            dotCoverPath = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
-            if (dotCoverPath.isNullOrBlank()) {
-                return workflow
-            }
-
-            dotCoverExecutablePath = File(dotCoverPath, dotCoverExecutableFile)
-            if (_virtualContext.targetOSType != OSType.WINDOWS && !_fileSystemService.isExists(dotCoverExecutablePath)) {
-                throw RunBuildException("Cross-Platform dotCover is required.")
-            }
-        } catch (e: ToolCannotBeFoundException) {
-            val exception = RunBuildException(e)
-            exception.isLogStacktrace = false
-            throw exception
+        if (dotCoverPath.isBlank()) {
+            return workflow
         }
 
-        if (!_fileSystemService.isExists(dotCoverExecutablePath)) {
-            throw RunBuildException("dotCover was not found: $dotCoverExecutablePath")
-        }
-
-        return Workflow(sequence {
-            var dotCoverHome = false
-            for (baseCommandLine in workflow.commandLines) {
-                if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
-                    yield(baseCommandLine)
-                    continue
-                }
-
-                val configFile = _pathsService.getTempFileName(DotCoverConfigExtension)
-                val snapshotFile = _pathsService.getTempFileName(DotCoverSnapshotExtension)
-                val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
-                val virtualconfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
-                val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
-
-                val dotCoverProject = DotCoverProject(
-                        CommandLine(
-                                baseCommandLine,
-                                baseCommandLine.target,
-                                baseCommandLine.executableFile,
-                                virtualWorkingDirectory,
-                                baseCommandLine.arguments,
-                                baseCommandLine.environmentVariables,
-                                baseCommandLine.title,
-                                baseCommandLine.description
-                        ),
-                        virtualconfigFilePath,
-                        virtualSnapshotFilePath)
-
-                _fileSystemService.write(configFile) {
-                    _dotCoverProjectSerializer.serialize(dotCoverProject, it)
-                }
-
-                _loggerService.writeTraceBlock("dotCover settings").use {
-                    val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
-                    _loggerService.writeTrace("Command line:")
-                    _loggerService.writeTrace("  \"${baseCommandLine.executableFile.path}\" $args")
-
-                    _loggerService.writeTrace("Filters:")
-                    for (filter in _coverageFilterProvider.filters) {
-                        _loggerService.writeTrace("  $filter")
-                    }
-
-                    _loggerService.writeTrace("Attribute Filters:")
-                    for (filter in _coverageFilterProvider.attributeFilters) {
-                        _loggerService.writeTrace("  $filter")
-                    }
-                }
-
-                context.toExitCodes().subscribe {
-                    if (_fileSystemService.isExists(snapshotFile)) {
-                        // Overrides the dotCover home path once
-                        if (!dotCoverHome) {
-                            _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath)))
-                            dotCoverHome = true
-                        }
-
-                        // The snapshot path should be virtual because of the docker wrapper converts it back
-                        _loggerService.importData(DotCoverDataProcessorType, virtualSnapshotFilePath, DotCoverToolName)
-                    }
-                }.use {
-                    yield(CommandLine(
-                            baseCommandLine,
-                            target,
-                            Path(_virtualContext.resolvePath(dotCoverExecutablePath.path)),
-                            baseCommandLine.workingDirectory,
-                            createArguments(dotCoverProject).toList(),
-                            baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                            baseCommandLine.title))
-                }
-            }
-        })
+        val entryPoint = getEntryPoint().getOrElse { throw it }
+        return Workflow(createDotCoverCommandLine(workflow, context, entryPoint))
     }
+
+    private fun createDotCoverCommandLine(
+        workflow: Workflow,
+        context: WorkflowContext,
+        entryPoint: DotCoverEntryPoint
+    ) = sequence {
+        var dotCoverHome = false
+        for (baseCommandLine in workflow.commandLines) {
+            if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
+                yield(baseCommandLine)
+                continue
+            }
+
+            val configFile = _pathsService.getTempFileName(DotCoverConfigExtension)
+            val snapshotFile = _pathsService.getTempFileName(DotCoverSnapshotExtension)
+            val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
+            val virtualConfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
+            val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
+
+            val dotCoverProject = DotCoverProject(
+                CommandLine(
+                    baseCommandLine,
+                    baseCommandLine.target,
+                    baseCommandLine.executableFile,
+                    virtualWorkingDirectory,
+                    baseCommandLine.arguments,
+                    baseCommandLine.environmentVariables,
+                    baseCommandLine.title,
+                    baseCommandLine.description
+                ),
+                virtualConfigFilePath,
+                virtualSnapshotFilePath
+            )
+
+            _fileSystemService.write(configFile) {
+                _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+            }
+
+            _loggerService.writeTraceBlock("dotCover settings").use {
+                val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
+                _loggerService.writeTrace("Command line:")
+                _loggerService.writeTrace("  \"${baseCommandLine.executableFile.path}\" $args")
+
+                _loggerService.writeTrace("Filters:")
+                for (filter in _coverageFilterProvider.filters) {
+                    _loggerService.writeTrace("  $filter")
+                }
+
+                _loggerService.writeTrace("Attribute Filters:")
+                for (filter in _coverageFilterProvider.attributeFilters) {
+                    _loggerService.writeTrace("  $filter")
+                }
+            }
+
+            context.toExitCodes().subscribe {
+                if (_fileSystemService.isExists(snapshotFile)) {
+                    // Overrides the dotCover home path once
+                    if (!dotCoverHome) {
+                        _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath)))
+                        dotCoverHome = true
+                    }
+
+                    // The snapshot path should be virtual because of the docker wrapper converts it back
+                    _loggerService.importData(DotCoverDataProcessorType, virtualSnapshotFilePath, DotCoverToolName)
+                }
+            }.use {
+                yield(
+                    CommandLine(
+                        baseCommandLine = baseCommandLine,
+                        target = target,
+                        executableFile = Path(_virtualContext.resolvePath(entryPoint.file.path)),
+                        workingDirectory = baseCommandLine.workingDirectory,
+                        arguments = createArguments(dotCoverProject).toList(),
+                        environmentVariables = baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
+                        title = baseCommandLine.title
+                    )
+                )
+            }
+        }
+    }
+
 
     private val dotCoverEnabled
         get(): Boolean {
@@ -158,7 +152,7 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("${argumentPrefix}ReturnTargetExitCode"))
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            var argPrefix = when(_virtualContext.targetOSType) {
+            val argPrefix = when(_virtualContext.targetOSType) {
                 OSType.WINDOWS -> "/"
                 else -> "--"
             }
@@ -174,17 +168,62 @@ class DotCoverWorkflowComposer(
         }
     }
 
-    private val dotCoverExecutableFile get() =
-        when(_virtualContext.targetOSType) {
-            OSType.WINDOWS -> "dotCover.exe"
-            else -> "dotCover.sh"
+    private fun getEntryPoint(): Result<DotCoverEntryPoint> {
+        val entryPointFileExe = DotCoverEntryPointType.WindowsExecutable.getEntryPointFile(dotCoverPath)
+        val entryPointFileDll = DotCoverEntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(dotCoverPath)
+        val entryPointFileSh = DotCoverEntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverPath)
+
+        return when {
+            _virtualContext.targetOSType == OSType.WINDOWS -> when {
+                _fileSystemService.isExists(entryPointFileExe) ->
+                    Result.success(DotCoverEntryPointType.WindowsExecutable.getEntryPoint(entryPointFileExe))
+
+                else ->
+                    Result.failure(RunBuildException(
+                        "dotCover has been run on Windows, however " +
+                        "${DotCoverEntryPointType.WindowsExecutable.entryPointFileName} wasn't found"
+                    ))
+            }
+
+            _fileSystemService.isExists(entryPointFileSh) ->
+                Result.success(DotCoverEntryPointType.UsingBundledDotnetRuntime.getEntryPoint(entryPointFileSh))
+
+            _fileSystemService.isExists(entryPointFileDll) ->
+                Result.success(DotCoverEntryPointType.UsingAgentDotnetRuntime.getEntryPoint(entryPointFileDll))
+
+            else -> Result.failure(RunBuildException("Cross-platform dotCover is required"))
         }
+    }
 
     private val argumentPrefix get () =
         when(_virtualContext.targetOSType) {
             OSType.WINDOWS -> "/"
             else -> "--"
         }
+
+    private val dotCoverPath get() =
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
+            .let { when (it.isNullOrBlank()) {
+                true -> ""
+                false -> it
+            }}
+
+    private data class DotCoverEntryPoint(val file: File, val type: DotCoverEntryPointType)
+
+    private enum class DotCoverEntryPointType(val entryPointFileName: String) {
+        // dotCover.exe ... – simple run of Windows executable file
+        WindowsExecutable("dotCover.exe"),
+
+        // dotCover.sh ... – dotCover will select the proper bundled runtime in its own package
+        UsingBundledDotnetRuntime("dotCover.sh"),
+
+        // dotnet dotCover.dll ... – will use detected dotnet on agent
+        UsingAgentDotnetRuntime("dotCover.dll");
+
+        fun getEntryPointFile(basePath: String): File = File(basePath, this.entryPointFileName)
+
+        fun getEntryPoint(file: File): DotCoverEntryPoint = DotCoverEntryPoint(file, this)
+    }
 
     companion object {
         internal const val DotCoverDataProcessorType = CoverageConstants.COVERAGE_TYPE
