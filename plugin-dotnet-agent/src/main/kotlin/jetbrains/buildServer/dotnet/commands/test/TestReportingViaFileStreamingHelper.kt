@@ -11,7 +11,7 @@ import java.nio.file.Paths
 object TestReportingViaFileStreamingHelper {
     fun shouldFallbackToStdOutTestReporting(parametersService: ParametersService): Boolean {
         val fallbackToStdOutTestReportingValue = parametersService
-            .tryGetParameter(ParameterType.Configuration, DotnetConstants.FALLBACK_TO_STDOUT_TEST_REPORTING)
+            .tryGetParameter(ParameterType.Configuration, DotnetConstants.USE_STDOUT_TEST_REPORTING)
         return fallbackToStdOutTestReportingValue.toBoolean()
     }
 
