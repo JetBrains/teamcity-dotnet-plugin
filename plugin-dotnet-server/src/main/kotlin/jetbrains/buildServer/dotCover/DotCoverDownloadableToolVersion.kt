@@ -3,7 +3,7 @@ package jetbrains.buildServer.dotCover
 import jetbrains.buildServer.NuGetPackage
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.tools.ToolType
-import jetbrains.buildServer.tools.available.DownloadableToolVersion
+import jetbrains.buildServer.tools.DownloadableToolVersion
 
 class DotCoverDownloadableToolVersion(
     toolType: ToolType,
