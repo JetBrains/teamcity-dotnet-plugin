@@ -68,7 +68,7 @@ object DotnetConstants {
     // True or False (False by default) - use test suppression strategy to split tests
     const val PARAM_PARALLEL_TESTS_USE_SUPPRESSION = "teamcity.internal.dotnet.test.suppression"
     // True or False (False by default) - report tests via stdout rather than via files
-    const val USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.useStdOutTestReporting"
+    const val PARAM_USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.reporting.useStdOut"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
 

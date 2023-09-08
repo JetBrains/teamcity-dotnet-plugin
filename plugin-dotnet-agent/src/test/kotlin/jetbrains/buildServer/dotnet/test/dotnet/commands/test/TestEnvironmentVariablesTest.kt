@@ -17,7 +17,7 @@ class TestEnvironmentVariablesTest {
     fun `should only set test reporting fallback environment variable if fallback to stdout test reporting is enabled`() {
         // Given
         val parametersService = mockk<ParametersService>()
-        every { parametersService.tryGetParameter(any(), DotnetConstants.USE_STDOUT_TEST_REPORTING) } returns "true"
+        every { parametersService.tryGetParameter(any(), DotnetConstants.PARAM_USE_STDOUT_TEST_REPORTING) } returns "true"
         val pathsService = mockk<PathsService>()
         val version = mockk<Version>()
         val environmentVariables = TestEnvironmentVariables(parametersService, pathsService)
@@ -35,7 +35,7 @@ class TestEnvironmentVariablesTest {
     fun `should only set test reporting file path environment variable if fallback to stdout test reporting is not enabled`() {
         // Given
         val parametersService = mockk<ParametersService>()
-        every { parametersService.tryGetParameter(any(), DotnetConstants.USE_STDOUT_TEST_REPORTING) } returns null
+        every { parametersService.tryGetParameter(any(), DotnetConstants.PARAM_USE_STDOUT_TEST_REPORTING) } returns null
         val pathsService = mockk<PathsService>()
         every { pathsService.getPath(PathType.AgentTemp) } returns File("/agentTmp")
         val version = mockk<Version>()
