@@ -218,6 +218,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="rootDotnetCommandStreamResolver"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.BuildStepScopedTestEnvironmentBuilderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
