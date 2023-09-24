@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Xml.Linq;
 using DotNet.Testcontainers.Containers;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Extensions;
 using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
@@ -10,7 +11,7 @@ namespace TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures;
 
 public class DotnetTestContainerFixture : IDisposable
 {
-    private readonly ConcurrentDictionary<DotnetVersion, DotnetTestSetup> _testSetup;
+    private readonly ConcurrentDictionary<DotnetVersion, DotnetTestSetup> _testSetup = new();
     private DotnetVersion _dotnetVersion = DotnetVersion.v8_0_Preview;
     
     private IContainer Container => _testSetup[_dotnetVersion].Container;
@@ -18,11 +19,6 @@ public class DotnetTestContainerFixture : IDisposable
     private DotnetTestSetup TestSetup  => _testSetup[_dotnetVersion];
 
     public ITestOutputHelper Output { get; private set; } = null!;
-    
-    public DotnetTestContainerFixture()
-    {
-        _testSetup = new ConcurrentDictionary<DotnetVersion, DotnetTestSetup>();
-    }
 
     public void Init(ITestOutputHelper output)
     {
@@ -40,8 +36,29 @@ public class DotnetTestContainerFixture : IDisposable
         }
         await Prepare().ConfigureAwait(false);
     }
-    
-    public async Task<ExecResult> ExecAsync(string command, bool silent = false)
+
+    public async Task<ExecResult> ExecBashAsync(string command, bool silent = false)
+    {
+        var commandSegments = new [] { "/bin/bash", "-c", command };
+        
+        Output.WriteLine("> " + string.Join(' ', commandSegments));
+        
+        var result = await ExecCommandAsync(commandSegments, silent);
+        if (result.ExitCode != 0)
+        {
+            throw new Exception("Invalid bash command result");
+        }
+        
+        return result;
+    }
+
+    public Task<ExecResult> ExecAsync(string command, bool silent = false)
+    {
+        Output.WriteLine("> " + command);
+        return ExecCommandAsync(command.Split(' '), silent);
+    }
+
+    private async Task<ExecResult> ExecCommandAsync(IList<string> commandSegments, bool silent)
     {
         string Format(string value, string linePrefix = "  ")
         {
@@ -49,9 +66,8 @@ public class DotnetTestContainerFixture : IDisposable
             return string.Join('\n', lines);
         }
 
-        Output.WriteLine("> " + command);
         var watch = Stopwatch.StartNew();
-        var result = await Container.ExecAsync(command.Split(" "));
+        var result = await Container.ExecAsync(commandSegments);
         watch.Stop();
         if (silent)
         {

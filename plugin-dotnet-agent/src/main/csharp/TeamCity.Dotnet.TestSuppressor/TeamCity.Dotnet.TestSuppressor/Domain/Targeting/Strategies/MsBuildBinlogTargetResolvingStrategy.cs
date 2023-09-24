@@ -43,7 +43,12 @@ internal class MsBuildBinlogTargetResolvingStrategy : BaseTargetResolvingStrateg
         var outputAssemblyPathsResult = GetOutputAssemblyPaths(binlogFile!);
         if (outputAssemblyPathsResult.IsError)
         {
-            _logger.LogWarning(outputAssemblyPathsResult.ErrorValue,"Target MSBuild .binlog {TargetProject} is invalid", binlogFile!.FullName);
+            _logger.LogWarning(
+                outputAssemblyPathsResult.ErrorValue,
+                "Target MSBuild .binlog {TargetProject} is invalid: {Reason}",
+                binlogFile!.FullName,
+                outputAssemblyPathsResult.ErrorValue.Message
+            );
             yield break;
         }
 
