@@ -17,17 +17,17 @@
         <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
         
         <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildVersion>
-        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net7.0'">17.6.3</MicrosoftBuildVersion>
-        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net8.0'">17.6.3</MicrosoftBuildVersion>
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net7.0'">17.7.2</MicrosoftBuildVersion>
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net8.0'">17.7.2</MicrosoftBuildVersion>
         
         <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net6.0'">6.0.0</MicrosoftExtensionsVersion>
         <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net7.0'">7.0.0</MicrosoftExtensionsVersion>
-        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net8.0'">8.0.0-preview.4.23259.5</MicrosoftExtensionsVersion>
+        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net8.0'">8.0.0-rc.1.23419.4</MicrosoftExtensionsVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
-      <PackageReference Include="Microsoft.Build.Locator" Version="1.5.5" />
+      <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)"  />
+      <PackageReference Include="Microsoft.Build.Locator" Version="1.6.10" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
@@ -36,9 +36,8 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsVersion)" />
       <PackageReference Include="Mono.Cecil" Version="0.11.5" />
-      <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.820" />
-      <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
-      <PackageReference Include="YamlDotNet" Version="13.1.0" />
+      <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.858" />
+      <PackageReference Include="System.IO.Abstractions" Version="19.2.69" />
     </ItemGroup>
 
 </Project>

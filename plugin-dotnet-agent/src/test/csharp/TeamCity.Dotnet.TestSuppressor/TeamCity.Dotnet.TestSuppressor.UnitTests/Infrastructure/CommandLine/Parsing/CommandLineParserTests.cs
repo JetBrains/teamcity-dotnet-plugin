@@ -17,7 +17,7 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.Mappings.Count);
+        Assert.Single(result.Mappings);
         AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
         Assert.Empty(result.UnknownParameters);
     }
@@ -48,7 +48,7 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.Mappings.Count);
+        Assert.Single(result.Mappings);
         AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
         Assert.Empty(result.UnknownParameters);
     }
@@ -127,7 +127,7 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.Mappings.Count);
+        Assert.Single(result.Mappings);
         AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
         Assert.Empty(result.UnknownParameters);
     }
@@ -161,9 +161,9 @@ public class CommandLineParserTests
         var result = _parser.Parse(args); 
 
         // assert
-        Assert.Equal(1, result.Mappings.Count);
+        Assert.Single(result.Mappings);
         AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
-        Assert.Equal(1, result.UnknownParameters.Count);
+        Assert.Single(result.UnknownParameters);
         Assert.Contains(result.UnknownParameters, a => a == "UNKNOWN");
     }
     
@@ -245,7 +245,7 @@ public class CommandLineParserTests
         Assert.Equal(2, result.Mappings.Count);
         AssertContainsKv(result.Mappings, "TestCommand:IsActive", "true");
         AssertContainsKv(result.Mappings, "TestCommand:Aaa:IsActive", "true");
-        Assert.Equal(1, result.UnknownParameters.Count);
+        Assert.Single(result.UnknownParameters);
         Assert.Contains(result.UnknownParameters, a => a == "bbb");
     }
     

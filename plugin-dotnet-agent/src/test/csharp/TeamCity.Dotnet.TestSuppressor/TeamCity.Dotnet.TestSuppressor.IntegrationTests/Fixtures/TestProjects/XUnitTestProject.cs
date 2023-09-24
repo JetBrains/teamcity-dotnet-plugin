@@ -12,9 +12,9 @@ internal class XUnitTestProject : BaseTestProject
 
     protected override IReadOnlyDictionary<string, string> Dependencies { get; } = new Dictionary<string, string>
     {
-        { "xunit", "2.4.1"},
-        { "xunit.runner.visualstudio", "2.4.3"},
-        { "Microsoft.NET.Test.Sdk", "17.3.2"},
+        { "xunit", "2.5.1"},
+        { "xunit.runner.visualstudio", "2.5.1"},
+        { "Microsoft.NET.Test.Sdk", "17.7.2"},
     };
 
     protected override (string fileName, string content) GenerateSourceFile(string projectName, params TestClassDescription[] testClasses)

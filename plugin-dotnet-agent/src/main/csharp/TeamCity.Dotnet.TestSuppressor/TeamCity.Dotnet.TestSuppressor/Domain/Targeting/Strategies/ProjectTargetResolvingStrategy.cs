@@ -40,14 +40,24 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
         var outputAssemblyPathResult = GetOutputAssemblyPath(projectFile!);
         if (outputAssemblyPathResult.IsError)
         {
-            _logger.LogWarning(outputAssemblyPathResult.ErrorValue, "Target project {TargetProject} is invalid", projectFile!.FullName);
+            _logger.LogWarning(
+                outputAssemblyPathResult.ErrorValue,
+                "Target project {TargetProject} is invalid: {Reason}",
+                projectFile!.FullName,
+                outputAssemblyPathResult.ErrorValue.Message
+            );
             yield break;
         }
         
         var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPathResult.Value);
         if (assemblyFileInfoResult.IsError)
         {
-            _logger.LogWarning(assemblyFileInfoResult.ErrorValue, "Evaluated target project output file {TargetProjectOutputFile} not found", projectFile!.FullName);
+            _logger.LogWarning(
+                assemblyFileInfoResult.ErrorValue,
+                "Evaluated target project output file {TargetProjectOutputFile} not found: {Reason}",
+                projectFile!.FullName,
+                assemblyFileInfoResult.ErrorValue.Message
+            );
             yield break;
         }
 
