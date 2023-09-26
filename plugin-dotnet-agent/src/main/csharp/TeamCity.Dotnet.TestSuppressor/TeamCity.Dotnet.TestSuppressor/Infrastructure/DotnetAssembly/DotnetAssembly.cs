@@ -6,11 +6,14 @@ internal class DotnetAssembly : IDotnetAssembly
 {
     private readonly AssemblyDefinition _assemblyDefinition;
 
-    public DotnetAssembly(AssemblyDefinition assemblyDefinition)
+    public DotnetAssembly(AssemblyDefinition assemblyDefinition, string assemblyPath)
     {
         _assemblyDefinition = assemblyDefinition;
+        FullPath = assemblyPath;
     }
 
+    public string FullPath { get; }
+    
     public bool HasSymbols => _assemblyDefinition.MainModule.HasSymbols;
 
     public IEnumerable<IDotnetAssemblyReference> AssemblyReferences =>
@@ -26,8 +29,5 @@ internal class DotnetAssembly : IDotnetAssembly
         .SelectMany(module => module.Types)
         .Select(t => new DotnetType(t));
 
-    public void Dispose()
-    {
-        _assemblyDefinition.Dispose();
-    }
+    public void Dispose() => _assemblyDefinition.Dispose();
 }

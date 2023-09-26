@@ -1,3 +1,4 @@
+using System.Drawing.Imaging;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
@@ -33,36 +34,37 @@ internal class AssemblyPatcher : IAssemblyPatcher
     {
         _logger.LogInformation("Trying to patch assembly: {AssemblyFile}", assemblyFile.FullName);
 
-        using var assembly = LoadAssembly(assemblyFile.FullName);
-
-        var mutator = SelectMutator(criteria);
+        var mutationResult = AssemblyMutationResult.Empty;
         
-        var mutationResult = await mutator.MutateAsync(assembly, criteria);
-        if (mutationResult is { AffectedTypes: 0, AffectedMethods: 0 })
+        var modifiedAssemblyResult = await TryModifyAssembly(assemblyFile.FullName, async assembly =>
         {
-            _logger.LogInformation("No changes were made to the assembly: {AssemblyFile}", assemblyFile.FullName);
-            return AssemblyPatchingResult.NotPatched(assemblyFile.FullName);
+            var mutator = SelectMutator(criteria);
+            mutationResult = await mutator.MutateAsync(assembly, criteria);
+            return !mutationResult.IsEmpty;
+        });
+
+        if (modifiedAssemblyResult.IsModified && !mutationResult.IsEmpty)
+        {
+            _logger.LogInformation(
+                "Assembly patched successfully: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}, symbols: {HasSymbols}\n" +
+                "Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)",
+                modifiedAssemblyResult.OriginalAssemblyPath,
+                modifiedAssemblyResult.BackupAssemblyPath,
+                modifiedAssemblyResult.HasBackupSymbols,
+                mutationResult.AffectedTypes,
+                mutationResult.AffectedMethods
+            );
+            return AssemblyPatchingResult.Patched(
+                assemblyPath: modifiedAssemblyResult.OriginalAssemblyPath,
+                backupAssemblyPath: modifiedAssemblyResult.BackupAssemblyPath,
+                symbolsPath: modifiedAssemblyResult.OriginalSymbolsPath,
+                backupSymbolsPath: modifiedAssemblyResult.BackupSymbolsPath,
+                mutationResult: mutationResult
+            );
         }
 
-        var savingResult = await SaveAssemblyAsync(assembly, assemblyFile.FullName);
-        
-        _logger.LogInformation(
-            "Assembly patched successfully: {OriginalAssemblyPath}, backup: {BackupAssemblyPath}, symbols: {HasSymbols}\n" +
-            "Affected {AffectedTypes} type(s) and {AffectedMethods} method(s)",
-            savingResult.OriginalAssemblyPath,
-            savingResult.BackupAssemblyPath,
-            savingResult.BackupSymbolsPath == null,
-            mutationResult.AffectedTypes,
-            mutationResult.AffectedMethods
-        );
-        
-        return AssemblyPatchingResult.Patched(
-            assemblyPath: savingResult.OriginalAssemblyPath,
-            backupAssemblyPath: savingResult.BackupAssemblyPath,
-            symbolsPath: savingResult.OriginalSymbolsPath,
-            backupSymbolsPath: savingResult.BackupSymbolsPath,
-            mutationResult: mutationResult
-        );
+        _logger.LogInformation("No changes were made to the assembly: {AssemblyFile}", assemblyFile.FullName);
+        return AssemblyPatchingResult.NotPatched(assemblyFile.FullName);
     }
 
     private IDotnetAssembly LoadAssembly(string assemblyPath)
@@ -80,8 +82,27 @@ internal class AssemblyPatcher : IAssemblyPatcher
     private IAssemblyMutator SelectMutator(IAssemblyPatchingCriteria criteria) =>
         _mutators.First(m => m.PatchingCriteriaType == criteria.GetType());
 
-    private async Task<SavingResult> SaveAssemblyAsync(IDotnetAssembly assembly, string originalAssemblyPath)
+    private async Task<ModifiedAssemblyResult> TryModifyAssembly(string originalAssemblyPath, Func<IDotnetAssembly, Task<bool>> modifyAction)
     {
+        ModifiedAssemblyResult modifiedAssemblyResult;
+        
+        using (var assembly = LoadAssembly(originalAssemblyPath))
+        {
+            if (!await modifyAction(assembly))
+            {
+                return ModifiedAssemblyResult.Empty;
+            }
+            modifiedAssemblyResult = await SaveModifiedAssemblyAsync(assembly);
+        }
+        
+        EnableModifiedAssembly(modifiedAssemblyResult);
+
+        return modifiedAssemblyResult;
+    }
+
+    private async Task<ModifiedAssemblyResult> SaveModifiedAssemblyAsync(IDotnetAssembly assembly)
+    {
+        var originalAssemblyPath = assembly.FullPath;
         var backupAssemblyPath = GetBackupFilePath(originalAssemblyPath);
         var tmpAssemblyPath = GetTempFilePath(originalAssemblyPath);
         
@@ -102,29 +123,35 @@ internal class AssemblyPatcher : IAssemblyPatcher
 
         // save the modified assembly on disk in tmp location and preserve debug symbols if available
         assembly.SaveTo(tmpAssemblyPath, hasSymbols);
-
-        // replace the original assembly with the modified one
-        _fileSystem.File.Delete(originalAssemblyPath);
-        _fileSystem.File.Move(tmpAssemblyPath, originalAssemblyPath);
-
-        if (!hasSymbols)
-        {
-            originalSymbolsPath = null;
-            backupSymbolsPath = null;
-        }
-
-        return new SavingResult(originalAssemblyPath, backupAssemblyPath, originalSymbolsPath, backupSymbolsPath);
+        
+        return hasSymbols
+            ? new ModifiedAssemblyResult(true, tmpAssemblyPath, originalAssemblyPath, backupAssemblyPath, originalSymbolsPath, backupSymbolsPath)
+            : new ModifiedAssemblyResult(true, tmpAssemblyPath, originalAssemblyPath, backupAssemblyPath);
     }
     
     private static string GetBackupFilePath(string originalPath) => $"{originalPath}{BackupFilePostfix}";
     
     private static string GetTempFilePath(string originalPath) => $"{originalPath}{TempFilePostfix}";
 
-    private record struct SavingResult(
+    private void EnableModifiedAssembly(ModifiedAssemblyResult modifiedAssemblyResult)
+    {
+        // replace the original assembly with the modified one
+        _fileSystem.File.Delete(modifiedAssemblyResult.OriginalAssemblyPath);
+        _fileSystem.File.Move(modifiedAssemblyResult.ModifiedAssemblyPath, modifiedAssemblyResult.OriginalAssemblyPath);
+    }
+
+    private readonly record struct ModifiedAssemblyResult(
+        bool IsModified,
+        string ModifiedAssemblyPath,
         string OriginalAssemblyPath,
         string BackupAssemblyPath,
-        string? OriginalSymbolsPath,
-        string? BackupSymbolsPath
-    );
+        string? OriginalSymbolsPath = null,
+        string? BackupSymbolsPath = null
+    )
+    {
+        public static ModifiedAssemblyResult Empty => new();
+
+        public bool HasBackupSymbols => BackupSymbolsPath != null;
+    }
 }
 

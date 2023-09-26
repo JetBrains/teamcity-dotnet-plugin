@@ -21,7 +21,7 @@ internal class DotnetAssemblyLoader : IDotnetAssemblyLoader
                 ReadSymbols = withSymbols, // read debug symbols if available
             });
 
-            return new DotnetAssembly(assemblyDefinition);
+            return new DotnetAssembly(assemblyDefinition, assemblyPath);
         }
         catch (BadImageFormatException exception)
         {
