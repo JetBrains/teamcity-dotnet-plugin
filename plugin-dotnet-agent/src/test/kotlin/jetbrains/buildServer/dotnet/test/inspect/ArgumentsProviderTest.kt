@@ -358,7 +358,7 @@ class ArgumentsProviderTest {
             "Dedicated.Extension1/1.0.0;Dedicated.Extension2/2.0.0"
         ),
         arrayOf(
-            "--eXtensions=Custom.Extension1/1.0.0;Custom.Extension2/2.0.0",
+            "-x=Custom.Extension1/1.0.0;Custom.Extension2/2.0.0",
             null,
             "Custom.Extension1/1.0.0;Custom.Extension2/2.0.0"
         ),

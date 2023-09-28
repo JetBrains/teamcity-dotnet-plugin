@@ -20,7 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.PathMatcher
 import jetbrains.buildServer.agent.VirtualContext
@@ -80,30 +80,30 @@ class DupFinderConfigurationFileTest {
                                 SETTINGS_INCLUDE_FILES to "  \nincl1\nincl2\n  "
                         )),
                         OSType.WINDOWS,
-                        DocElement("DupFinderOptions",
-                                DocElement("ShowStats", "true"),
-                                DocElement("ShowText", "true"),
-                                DocElement("Debug", "true"),
-                                DocElement("DiscardFieldsName", "true"),
-                                DocElement("DiscardLiterals", "true"),
-                                DocElement("DiscardLocalVariablesName", "true"),
-                                DocElement("DiscardTypes", "true"),
-                                DocElement("NormalizeTypes", "true"),
-                                DocElement("DiscardCost", "13"),
-                                DocElement("OutputFile", "output.xml"),
-                                DocElement("CachesHomeDirectory", "cache"),
-                                DocElement("ExcludeFilesByStartingCommentSubstring",
-                                        DocElement("Substring", "exclCom1"),
-                                        DocElement("Substring", "exclCom2")),
-                                DocElement("ExcludeCodeRegionsByNameSubstring",
-                                        DocElement("Substring", "exclReg1"),
-                                        DocElement("Substring", "exclReg2")),
-                                DocElement("ExcludeFiles",
-                                        DocElement("Pattern", "excl1"),
-                                        DocElement("Pattern", "excl2")),
-                                DocElement("InputFiles",
-                                        DocElement("Pattern", "incl1"),
-                                        DocElement("Pattern", "incl2"))
+                        XmlElement("DupFinderOptions",
+                                XmlElement("ShowStats", "true"),
+                                XmlElement("ShowText", "true"),
+                                XmlElement("Debug", "true"),
+                                XmlElement("DiscardFieldsName", "true"),
+                                XmlElement("DiscardLiterals", "true"),
+                                XmlElement("DiscardLocalVariablesName", "true"),
+                                XmlElement("DiscardTypes", "true"),
+                                XmlElement("NormalizeTypes", "true"),
+                                XmlElement("DiscardCost", "13"),
+                                XmlElement("OutputFile", "output.xml"),
+                                XmlElement("CachesHomeDirectory", "cache"),
+                                XmlElement("ExcludeFilesByStartingCommentSubstring",
+                                        XmlElement("Substring", "exclCom1"),
+                                        XmlElement("Substring", "exclCom2")),
+                                XmlElement("ExcludeCodeRegionsByNameSubstring",
+                                        XmlElement("Substring", "exclReg1"),
+                                        XmlElement("Substring", "exclReg2")),
+                                XmlElement("ExcludeFiles",
+                                        XmlElement("Pattern", "excl1"),
+                                        XmlElement("Pattern", "excl2")),
+                                XmlElement("InputFiles",
+                                        XmlElement("Pattern", "incl1"),
+                                        XmlElement("Pattern", "incl2"))
                         )
                 ),
                 arrayOf(
@@ -123,30 +123,30 @@ class DupFinderConfigurationFileTest {
                                 SETTINGS_INCLUDE_FILES to "incl1\nincl2\n"
                         )),
                         OSType.UNIX,
-                        DocElement("DupFinderOptions",
-                                DocElement("ShowStats", "true"),
-                                DocElement("ShowText", "true"),
-                                DocElement("Debug", "true"),
-                                DocElement("DiscardFieldsName", "true"),
-                                DocElement("DiscardLiterals", "true"),
-                                DocElement("DiscardLocalVariablesName", "true"),
-                                DocElement("DiscardTypes", "true"),
-                                DocElement("NormalizeTypes", "true"),
-                                DocElement("DiscardCost", "13"),
-                                DocElement("OutputFile", "output.xml"),
-                                DocElement("CachesHomeDirectory", "cache"),
-                                DocElement("ExcludeFilesByStartingCommentSubstring",
-                                        DocElement("Substring", "exclCom1"),
-                                        DocElement("Substring", "exclCom2")),
-                                DocElement("ExcludeCodeRegionsByNameSubstring",
-                                        DocElement("Substring", "exclReg1"),
-                                        DocElement("Substring", "exclReg2")),
-                                DocElement("ExcludeFiles",
-                                        DocElement("Pattern", "v_excl3"),
-                                        DocElement("Pattern", "v_excl4")),
-                                DocElement("InputFiles",
-                                        DocElement("Pattern", "v_incl3"),
-                                        DocElement("Pattern", "v_incl4"))
+                        XmlElement("DupFinderOptions",
+                                XmlElement("ShowStats", "true"),
+                                XmlElement("ShowText", "true"),
+                                XmlElement("Debug", "true"),
+                                XmlElement("DiscardFieldsName", "true"),
+                                XmlElement("DiscardLiterals", "true"),
+                                XmlElement("DiscardLocalVariablesName", "true"),
+                                XmlElement("DiscardTypes", "true"),
+                                XmlElement("NormalizeTypes", "true"),
+                                XmlElement("DiscardCost", "13"),
+                                XmlElement("OutputFile", "output.xml"),
+                                XmlElement("CachesHomeDirectory", "cache"),
+                                XmlElement("ExcludeFilesByStartingCommentSubstring",
+                                        XmlElement("Substring", "exclCom1"),
+                                        XmlElement("Substring", "exclCom2")),
+                                XmlElement("ExcludeCodeRegionsByNameSubstring",
+                                        XmlElement("Substring", "exclReg1"),
+                                        XmlElement("Substring", "exclReg2")),
+                                XmlElement("ExcludeFiles",
+                                        XmlElement("Pattern", "v_excl3"),
+                                        XmlElement("Pattern", "v_excl4")),
+                                XmlElement("InputFiles",
+                                        XmlElement("Pattern", "v_incl3"),
+                                        XmlElement("Pattern", "v_incl4"))
                         )
                 ),
                 arrayOf(
@@ -155,12 +155,12 @@ class DupFinderConfigurationFileTest {
                         true,
                         ParametersServiceStub(mapOf()),
                         OSType.UNIX,
-                        DocElement("DupFinderOptions",
-                                DocElement("ShowStats", "true"),
-                                DocElement("ShowText", "true"),
-                                DocElement("Debug", "true"),
-                                DocElement("OutputFile", "output.xml"),
-                                DocElement("CachesHomeDirectory", "cache")
+                        XmlElement("DupFinderOptions",
+                                XmlElement("ShowStats", "true"),
+                                XmlElement("ShowText", "true"),
+                                XmlElement("Debug", "true"),
+                                XmlElement("OutputFile", "output.xml"),
+                                XmlElement("CachesHomeDirectory", "cache")
                         )
                 ),
                 arrayOf(
@@ -169,10 +169,10 @@ class DupFinderConfigurationFileTest {
                         false,
                         ParametersServiceStub(mapOf()),
                         OSType.UNIX,
-                        DocElement("DupFinderOptions",
-                                DocElement("ShowStats", "true"),
-                                DocElement("ShowText", "true"),
-                                DocElement("OutputFile", "Output.xml")
+                        XmlElement("DupFinderOptions",
+                                XmlElement("ShowStats", "true"),
+                                XmlElement("ShowText", "true"),
+                                XmlElement("OutputFile", "Output.xml")
                         )
                 )
         )
@@ -185,12 +185,12 @@ class DupFinderConfigurationFileTest {
             debug: Boolean,
             parametersService: ParametersService,
             os: OSType,
-            expctedXml: DocElement?) {
+            expctedXml: XmlElement?) {
         // Given
         val configFile = createInstance(parametersService)
         val stream = ByteArrayOutputStream()
-        var actualXml: DocElement? = null;
-        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<DocElement>(0) }
+        var actualXml: XmlElement? = null;
+        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<XmlElement>(0) }
         every { _virtualContext.targetOSType } returns os
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns File("wd")
         every { _pathMatcher.match(File("wd"), listOf("excl1", "excl2")) } returns listOf(File("excl3"), File("excl4"))

@@ -20,37 +20,42 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 
-class PluginParametersProviderImpl(
+class PluginDescriptorsProviderImpl(
     private val _parametersService: ParametersService,
     private val _loggerService: LoggerService
-) : PluginParametersProvider {
+) : PluginDescriptorsProvider {
 
-    override fun getPluginParameters(): List<PluginParameter> {
+    override fun getPluginDescriptors(): List<PluginDescriptor> {
+        return getPluginLines()
+            .mapNotNull { line ->
+                PluginDescriptorType.values().forEach {
+                    val pluginDescriptor = tryCreateDescriptorOfType(line, it)
+                    if (pluginDescriptor != null) return@mapNotNull pluginDescriptor
+                }
+
+                _loggerService.writeWarning("Invalid R# CLT plugin descriptor: \"$line\", it will be ignored.")
+                return@mapNotNull null
+            }
+    }
+
+    override fun hasPluginDescriptors(): Boolean {
+        return getPluginLines().isNotEmpty()
+    }
+
+    private fun getPluginLines(): List<String> {
         val plugins = _parametersService.tryGetParameter(ParameterType.Runner, InspectCodeConstants.RUNNER_SETTING_CLT_PLUGINS)
         if (!plugins.isNullOrBlank()) {
             return plugins.lines()
-                .map { it.trim() }
                 .filter { it.isNotBlank() }
-                .mapNotNull {
-                    val match = PLUGIN_LINE_REGEX.matchEntire(it)
-                    return@mapNotNull if (match != null) {
-                        PluginParameter(match.groupValues[1], match.groupValues[2])
-                    } else {
-                        _loggerService.writeWarning("Invalid R# plugin specification: $it")
-                        null
-                    }
-                }
+                .map { it.trim() }
+                .toList()
         }
 
         return emptyList()
     }
 
-    override fun hasPluginParameters(): Boolean {
-        val plugins = _parametersService.tryGetParameter(ParameterType.Runner, InspectCodeConstants.RUNNER_SETTING_CLT_PLUGINS)
-        return !plugins.isNullOrBlank()
-    }
-
-    companion object {
-        private val PLUGIN_LINE_REGEX = Regex("^(\\S+)\\s+(.*)$")
+    private fun tryCreateDescriptorOfType(value: String, type: PluginDescriptorType): PluginDescriptor? {
+        val typeMatch = type.regex.matchEntire(value)
+        return if (typeMatch != null) PluginDescriptor(type, value) else null
     }
 }

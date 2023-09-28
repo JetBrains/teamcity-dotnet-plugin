@@ -587,12 +587,12 @@
   <bean class="jetbrains.buildServer.inspect.InspectionVersionParser" id="inspectionVersionParser"/>
 
   <!--Resharper Inspections-->
-  <bean class="jetbrains.buildServer.inspect.PluginParametersProviderImpl"/>
-  <bean class="jetbrains.buildServer.inspect.FolderPluginSource"/>
-  <bean class="jetbrains.buildServer.inspect.FilePluginSource"/>
-  <bean class="jetbrains.buildServer.inspect.DownloadPluginSource"/>
+  <bean class="jetbrains.buildServer.inspect.PluginDescriptorsProviderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.FolderPluginXmlElementGenerator"/>
+  <bean class="jetbrains.buildServer.inspect.FilePluginXmlElementGenerator"/>
+  <bean class="jetbrains.buildServer.inspect.DownloadPluginXmlElementGenerator"/>
   <bean class="jetbrains.buildServer.inspect.XmlPluginsSpecificationProvider" name="xmlPluginsSpecificationProvider"/>
-  <bean class="jetbrains.buildServer.inspect.OptionPluginsSpecificationProvider" name="optionPluginsSpecificationProvider"/>
+  <bean class="jetbrains.buildServer.inspect.IdPluginsSpecificationProvider" name="optionPluginsSpecificationProvider"/>
   <bean class="jetbrains.buildServer.inspect.InspectionEnvironmentProvider" id="inspectionEnvironmentProvider">
     <constructor-arg ref="xmlPluginsSpecificationProvider"/>
   </bean>
