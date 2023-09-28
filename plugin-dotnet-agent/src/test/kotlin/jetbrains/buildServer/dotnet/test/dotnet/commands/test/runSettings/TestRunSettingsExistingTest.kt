@@ -23,7 +23,7 @@ import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsExisting
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
@@ -51,7 +51,7 @@ class TestRunSettingsExistingTest {
     @MockK private lateinit var _testRunSettingsFileProvider2: TestRunSettingsFileProvider
     @MockK private lateinit var _inputStream1: InputStream
     @MockK private lateinit var _inputStream2: InputStream
-    @MockK private lateinit var _commandContext: DotnetBuildContext
+    @MockK private lateinit var _commandContext: DotnetCommandContext
     private lateinit var _fileProviders: List<TestRunSettingsFileProvider>
 
     @BeforeMethod

@@ -17,5 +17,5 @@
 package jetbrains.buildServer.dotnet
 
 interface DotnetFilterFactory {
-    fun createFilter(context: DotnetBuildContext): DotnetFilter
+    fun createFilter(context: DotnetCommandContext): DotnetFilter
 }

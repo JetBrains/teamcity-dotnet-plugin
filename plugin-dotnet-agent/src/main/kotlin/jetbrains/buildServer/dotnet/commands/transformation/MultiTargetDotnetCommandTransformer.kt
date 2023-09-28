@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.commands.transformation
 
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 
@@ -28,10 +28,10 @@ import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 class MultiTargetDotnetCommandTransformer : DotnetCommandsTransformer {
     override val stage = DotnetCommandsTransformationStage.Targeting
 
-    override fun shouldBeApplied(context: DotnetBuildContext, commands: DotnetCommandsStream) =
+    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) =
         commands.any { it.targetArguments.count() > 1 }
 
-    override fun apply(context: DotnetBuildContext, commands: DotnetCommandsStream) =
+    override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream) =
         commands
             .flatMap { originalCommand ->
                 originalCommand

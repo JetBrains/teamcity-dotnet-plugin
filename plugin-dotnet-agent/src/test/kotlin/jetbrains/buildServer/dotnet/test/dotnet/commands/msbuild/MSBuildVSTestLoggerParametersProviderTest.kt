@@ -142,7 +142,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
     ) {
         // Given
         val checkoutDirectory = File("checkoutDir")
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = MSBuildVSTestLoggerParametersProvider(
             _pathsService,
             _parametersService,
@@ -245,7 +245,7 @@ class MSBuildVSTestLoggerParametersProviderTest {
         expectedParameter: MSBuildParameter
     ) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = MSBuildVSTestLoggerParametersProvider(
             _pathsService,
             _parametersService,

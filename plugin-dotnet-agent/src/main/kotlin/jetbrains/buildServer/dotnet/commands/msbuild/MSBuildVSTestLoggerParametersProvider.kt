@@ -46,7 +46,7 @@ class MSBuildVSTestLoggerParametersProvider(
                 ?.let { it.trim().equals("true", ignoreCase = true) }
                 ?: false
 
-    override fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter> = sequence {
+    override fun getParameters(context: DotnetCommandContext): Sequence<MSBuildParameter> = sequence {
         val testReportingMode = _testReportingParameters.getMode(context)
         if (testReportingMode.contains(TestReportingMode.Off)) {
             return@sequence
@@ -76,7 +76,7 @@ class MSBuildVSTestLoggerParametersProvider(
         )
     }
 
-    private fun getVSTestLoggerParameter(context: DotnetBuildContext): MSBuildParameter {
+    private fun getVSTestLoggerParameter(context: DotnetCommandContext): MSBuildParameter {
         val name = "VSTestLogger"
         var value = "logger://teamcity"
         var type = MSBuildParameterType.Predefined
@@ -93,7 +93,7 @@ class MSBuildVSTestLoggerParametersProvider(
         return MSBuildParameter(name, value, type)
     }
 
-    private fun getLoggerSequence(context: DotnetBuildContext) = sequence {
+    private fun getLoggerSequence(context: DotnetCommandContext) = sequence {
         yield("teamcity")
 
         // find loggers among custom arguments

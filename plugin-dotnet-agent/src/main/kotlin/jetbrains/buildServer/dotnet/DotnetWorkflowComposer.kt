@@ -96,7 +96,7 @@ class DotnetWorkflowComposer(
         _dotnetWorkflowAnalyzer.summarize(analyzerContext)
     }.let(::Workflow)
 
-    data class CommandContextResult(val commandContext: DotnetBuildContext, val virtualPath: Path)
+    data class CommandContextResult(val commandContext: DotnetCommandContext, val virtualPath: Path)
     private suspend fun SequenceScope<CommandLine>.getCommandContext(
         context: WorkflowContext,
         versions: MutableMap<String, Version?>,
@@ -126,7 +126,7 @@ class DotnetWorkflowComposer(
             yieldAll(dotnetCommand.toolResolver.toolStateWorkflowComposer.compose(context, toolState).commandLines)
         }
 
-        val commandContext = DotnetBuildContext(
+        val commandContext = DotnetCommandContext(
             workingDirectory = ToolPath(workingDirectory, virtualWorkingDirectory),
             command = dotnetCommand,
             toolVersion = version ?: Version.Empty,
@@ -151,15 +151,15 @@ class DotnetWorkflowComposer(
         yieldAll(args.filter { it.argumentType == CommandLineArgumentType.Mandatory }.map { it.value })
     }.joinToString(" ")
 
-    private fun getDescription(dotnetBuildContext: DotnetBuildContext): List<StdOutText> {
+    private fun getDescription(dotnetCommandContext: DotnetCommandContext): List<StdOutText> {
         val description = mutableListOf<StdOutText>()
-        when (dotnetBuildContext.command.toolResolver.platform) {
+        when (dotnetCommandContext.command.toolResolver.platform) {
             ToolPlatform.CrossPlatform -> description.add(StdOutText(".NET SDK ", Color.Header))
             else -> {}
         }
 
-        if (dotnetBuildContext.toolVersion != Version.Empty) {
-            description.add(StdOutText("${dotnetBuildContext.toolVersion} ", Color.Header))
+        if (dotnetCommandContext.toolVersion != Version.Empty) {
+            description.add(StdOutText("${dotnetCommandContext.toolVersion} ", Color.Header))
         }
 
         return description

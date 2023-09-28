@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsStream
 import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformationStage
 import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformer
@@ -75,7 +75,7 @@ class RootDotnetCommandTransformerTest {
 
         val transformer = create()
 
-        val commandContextMock = mockk<DotnetBuildContext>()
+        val commandContextMock = mockk<DotnetCommandContext>()
         val initialStream = mockk<DotnetCommandsStream>()
 
         // act
@@ -105,7 +105,7 @@ class RootDotnetCommandTransformerTest {
 
         val transformer = create()
 
-        val contextMock = mockk<DotnetBuildContext>()
+        val contextMock = mockk<DotnetCommandContext>()
         val initialStream = mockk<DotnetCommandsStream>()
 
         // act

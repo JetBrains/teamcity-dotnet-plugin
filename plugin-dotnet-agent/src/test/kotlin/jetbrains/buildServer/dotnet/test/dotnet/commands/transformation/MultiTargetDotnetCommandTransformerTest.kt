@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformationStage
@@ -57,7 +57,7 @@ class MultiTargetDotnetCommandTransformerTest {
         val transformer = create()
 
         // act
-        val result = transformer.shouldBeApplied(mockk<DotnetBuildContext>(), sequenceOf(commandMock))
+        val result = transformer.shouldBeApplied(mockk<DotnetCommandContext>(), sequenceOf(commandMock))
 
         // assert
         Assert.assertFalse(result)
@@ -77,8 +77,8 @@ class MultiTargetDotnetCommandTransformerTest {
         val commands = sequenceOf(commandMock1, commandMock2)
 
         // act
-        val shouldBeApplied = transformer.shouldBeApplied(mockk<DotnetBuildContext>(), commands)
-        val result = transformer.apply(mockk<DotnetBuildContext>(), commands).toList()
+        val shouldBeApplied = transformer.shouldBeApplied(mockk<DotnetCommandContext>(), commands)
+        val result = transformer.apply(mockk<DotnetCommandContext>(), commands).toList()
 
         // assert
         Assert.assertTrue(shouldBeApplied)
@@ -108,7 +108,7 @@ class MultiTargetDotnetCommandTransformerTest {
         val transformer = create()
 
         // act
-        val result = transformer.apply(mockk<DotnetBuildContext>(), sequenceOf(commandMock1, commandMock2)).toList()
+        val result = transformer.apply(mockk<DotnetCommandContext>(), sequenceOf(commandMock1, commandMock2)).toList()
 
         // assert
         Assert.assertEquals(result.size, 3)

@@ -39,7 +39,7 @@ class ListTestsCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         yield(CommandLineArgument("--list-tests", CommandLineArgumentType.Mandatory))
 
         yieldAll(

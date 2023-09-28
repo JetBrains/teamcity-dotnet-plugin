@@ -18,7 +18,7 @@ package jetbrains.buildServer.dotnet.commands.test.runSettings
 
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.asSequence
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProvider
@@ -32,7 +32,7 @@ class TestRunSettingsForFilter(
     private val _testsSplittingModeProvider: TestsSplittingModeProvider
 )
     : TestRunSettingsProvider {
-    override fun tryCreate(context: DotnetBuildContext) =
+    override fun tryCreate(context: DotnetCommandContext) =
             try {
                 val testsSplittingMode = _testsSplittingModeProvider.getMode(context.toolVersion)
                 _testsFilterProvider.getFilterExpression(testsSplittingMode)

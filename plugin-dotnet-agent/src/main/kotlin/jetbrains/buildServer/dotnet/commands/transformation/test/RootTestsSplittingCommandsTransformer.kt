@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.commands.transformation.test
 
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
@@ -16,11 +16,11 @@ class RootTestsSplittingCommandsTransformer(
     private val _testsSplittingCommandsTransformers: List<TestsSplittingCommandTransformer>
 ) : DotnetCommandsTransformer {
     override val stage = DotnetCommandsTransformationStage.Transformation
-    override fun shouldBeApplied(context: DotnetBuildContext, commands: DotnetCommandsStream) =
+    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) =
         commands.any { it.commandType == DotnetCommandType.Test }
                 && _testsSplittingSettings.testsClassesFilePath != null
 
-    override fun apply(context: DotnetBuildContext, commands: DotnetCommandsStream): DotnetCommandsStream {
+    override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream): DotnetCommandsStream {
         val mode = _testsSplittingModeProvider.getMode(context.toolVersion)
         val testCommandTransformer = _testsSplittingCommandsTransformers
             .firstOrNull { it.mode == mode } ?: return commands

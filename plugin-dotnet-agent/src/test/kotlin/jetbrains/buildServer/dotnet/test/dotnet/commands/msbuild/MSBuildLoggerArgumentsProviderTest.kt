@@ -77,7 +77,7 @@ class MSBuildLoggerArgumentsProviderTest {
             verbosity: Verbosity?,
             expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = MSBuildLoggerArgumentsProvider(LoggerResolverStub(loggerFile, File("vstestlogger")),_loggerParameters, _virtualContext)
         every { _loggerParameters.msBuildLoggerVerbosity } returns verbosity
         every { _loggerParameters.msBuildParameters } returns "params"

@@ -33,7 +33,7 @@ class MSBuildLoggerArgumentsProvider(
     private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         yield(CommandLineArgument("/noconsolelogger"))
         val parameters = sequence<String> {
             yield("/l:TeamCity.MSBuild.Logger.TeamCityMSBuildLogger,${_virtualContext.resolvePath(_loggerResolver.resolve(

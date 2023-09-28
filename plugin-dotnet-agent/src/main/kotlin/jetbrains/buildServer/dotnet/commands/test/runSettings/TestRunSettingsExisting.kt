@@ -22,7 +22,7 @@ import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import org.w3c.dom.Document
@@ -35,7 +35,7 @@ class TestRunSettingsExisting(
     private val _deserializer: Deserializer<Document>,
     private val _xmlDocumentService: XmlDocumentService)
     : TestRunSettingsProvider {
-    override fun tryCreate(context: DotnetBuildContext) =
+    override fun tryCreate(context: DotnetCommandContext) =
             _fileProviders
                     .map { callOrDefault { it.tryGet(context) } }
                     .filter { it != null }

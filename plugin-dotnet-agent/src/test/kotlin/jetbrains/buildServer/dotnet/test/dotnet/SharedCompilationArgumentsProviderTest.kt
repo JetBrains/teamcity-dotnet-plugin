@@ -29,7 +29,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun `should provide node reuse arguments when shared compilation requires suppression`() {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(2, 1, 106), Verbosity.Detailed)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(2, 1, 106), Verbosity.Detailed)
 
         // When
         val actualArguments = createInstance().getArguments(context).toList()
@@ -41,7 +41,7 @@ class SharedCompilationArgumentsProviderTest {
     @Test
     fun `should provide node reuse arguments when shared compilation does not require suppression`() {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version.LastVersionWithoutSharedCompilation, Verbosity.Detailed)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version.LastVersionWithoutSharedCompilation, Verbosity.Detailed)
 
         // When
         val actualArguments = createInstance().getArguments(context).toList()

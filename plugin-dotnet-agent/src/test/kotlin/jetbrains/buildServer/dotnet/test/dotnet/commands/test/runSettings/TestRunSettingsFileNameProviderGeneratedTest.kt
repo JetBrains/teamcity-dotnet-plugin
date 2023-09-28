@@ -21,8 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
-import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileNameProviderGenerated
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import org.testng.Assert
@@ -40,7 +39,7 @@ class TestRunSettingsFileNameProviderGeneratedTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystem: FileSystemService
     @MockK private lateinit var _serializer: Serializer<Document>
-    @MockK private lateinit var _commandContext: DotnetBuildContext
+    @MockK private lateinit var _commandContext: DotnetCommandContext
 
     @BeforeMethod
     fun setUp() {

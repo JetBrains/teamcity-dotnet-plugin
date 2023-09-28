@@ -87,7 +87,7 @@ class VSTestLoggerEnvironmentBuilderTest {
         fileSystemService: VirtualFileSystemService,
         expectedDirs: List<File>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), _dotnetCommand)
         val loggerFile = File("vstest15", "logger.dll")
         fileSystemService.addFile(loggerFile.absoluteFile)
 
@@ -153,7 +153,7 @@ class VSTestLoggerEnvironmentBuilderTest {
     @Test(dataProvider = "testDataNotBuildEnv")
     fun shouldNotBuildEnvWhenSpecificTestReportingMode(modes: EnumSet<TestReportingMode>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), _dotnetCommand)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), _dotnetCommand)
         val targetFiles = listOf(File("dir", "my.proj"))
         val loggerEnvironment = VSTestLoggerEnvironmentBuilder(
                 _pathService,

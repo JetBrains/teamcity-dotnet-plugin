@@ -19,7 +19,7 @@ package jetbrains.buildServer.dotnet.logging
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.ArgumentsProvider
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.Verbosity
 
@@ -54,7 +54,7 @@ class LoggerParametersImpl(
             DotnetConstants.PARAM_MSBUILD_LOGGER_PARAMS
         ) ?: defaultMsBuildLoggerParams
 
-    override fun getAdditionalLoggerParameters(context: DotnetBuildContext) =
+    override fun getAdditionalLoggerParameters(context: DotnetCommandContext) =
             _customArgumentsProvider
                     .getArguments(context)
                     .mapNotNull { LoggerParamRegex.find(it.value) }

@@ -40,7 +40,7 @@ class TestRunSettingsForFilterTest {
     @MockK private lateinit var _baseTestRunSettingsProvider: TestRunSettingsProvider
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
     @MockK private lateinit var _testsSplittingModeProvider: TestsSplittingModeProvider
-    @MockK private lateinit var _commandContext: DotnetBuildContext
+    @MockK private lateinit var _commandContext: DotnetCommandContext
 
     @BeforeMethod
     fun setUp() {

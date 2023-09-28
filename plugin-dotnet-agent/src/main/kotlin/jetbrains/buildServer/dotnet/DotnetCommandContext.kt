@@ -19,8 +19,7 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.Version
 
-// TODO rename to DotnetCommandContext?
-data class DotnetBuildContext(
+data class DotnetCommandContext(
     val workingDirectory: ToolPath,
     val command: DotnetCommand,
     val toolVersion: Version = Version.Empty,

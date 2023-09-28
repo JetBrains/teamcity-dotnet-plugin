@@ -101,7 +101,7 @@ class TestCommandTest {
         every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns filter
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -151,7 +151,7 @@ class TestCommandTest {
 
         // When
         every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
-        command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
+        command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then
         verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }

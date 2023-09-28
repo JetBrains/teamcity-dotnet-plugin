@@ -46,7 +46,7 @@ class ResponseFileArgumentsProviderTest {
         val argsProvider2 = ArgumentsProviderStub(emptySequence())
         val argsProvider3 = ArgumentsProviderStub(sequenceOf(CommandLineArgument("arg3")))
         val argumentsProvider = createInstance(listOf(argsProvider1, argsProvider2, argsProvider3))
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>(), Version(1, 2), Verbosity.Detailed)
 
         every {
             _responseFileFactory.createResponeFile(

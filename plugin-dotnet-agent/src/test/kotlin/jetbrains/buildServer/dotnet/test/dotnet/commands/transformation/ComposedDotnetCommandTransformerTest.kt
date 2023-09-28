@@ -22,7 +22,7 @@ import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.ToolResolver
@@ -81,7 +81,7 @@ class ComposedDotnetCommandTransformerTest {
         val transformer = create()
 
         // act
-        val result = transformer.apply(mockk<DotnetBuildContext>(), sequenceOf(commandMock1, commandMock2, commandMock3)).toList()
+        val result = transformer.apply(mockk<DotnetCommandContext>(), sequenceOf(commandMock1, commandMock2, commandMock3)).toList()
 
         // assert
         val (composedCommand1, composedCommand2, composedCommand3) = Triple(result[0], result[1], result[2])

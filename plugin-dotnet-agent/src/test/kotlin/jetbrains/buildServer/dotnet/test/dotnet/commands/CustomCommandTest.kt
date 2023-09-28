@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.ResultsAnalyzer
 import jetbrains.buildServer.dotnet.commands.CustomCommand
@@ -36,7 +36,7 @@ class CustomCommandTest {
         // arrange
         val expected = emptySequence<CommandLineArgument>()
         every { targetService.targets } returns emptySequence()
-        val context: DotnetBuildContext = mockk()
+        val context: DotnetCommandContext = mockk()
 
         // act
         val result = command.getArguments(context)

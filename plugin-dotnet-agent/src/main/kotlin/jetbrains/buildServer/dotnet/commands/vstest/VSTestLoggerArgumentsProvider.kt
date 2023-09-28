@@ -33,7 +33,7 @@ class VSTestLoggerArgumentsProvider(
     private val _virtualContext: VirtualContext)
     : ArgumentsProvider {
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         _loggerResolver.resolve(ToolType.VSTest).parentFile?.let {
             yield(CommandLineArgument("/logger:logger://teamcity", CommandLineArgumentType.Infrastructural))
             yield(CommandLineArgument("/TestAdapterPath:${_virtualContext.resolvePath(it.canonicalPath)}", CommandLineArgumentType.Infrastructural))

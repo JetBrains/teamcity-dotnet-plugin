@@ -21,7 +21,7 @@ class TeamCityDotnetTestSuppressorCommand(
 
     override val isAuxiliary: Boolean = true
 
-    override fun getArguments(context: DotnetBuildContext) = sequence {
+    override fun getArguments(context: DotnetCommandContext) = sequence {
         // run on higher available version of .NET SDK
         yield(CommandLineArgument("--roll-forward"))
         yield(CommandLineArgument(RollForwardOption.LatestMajor.toString()))

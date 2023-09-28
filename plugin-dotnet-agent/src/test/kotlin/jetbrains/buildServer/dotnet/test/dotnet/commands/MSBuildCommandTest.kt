@@ -80,7 +80,7 @@ class MSBuildCommandTest {
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, expectedArguments)
@@ -95,7 +95,7 @@ class MSBuildCommandTest {
         every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestTestCaseFilter", "myFilter").equals(it.singleOrNull()) }) } returns filterRspPath
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, listOf("respArgs", "@1.rsp", "customArg1"))
@@ -110,7 +110,7 @@ class MSBuildCommandTest {
         every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestSetting", "My.runsettings").equals(it.singleOrNull()) }) } returns filterRspPath
 
         // When
-        val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+        val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
 
         // Then
         Assert.assertEquals(actualArguments, listOf("respArgs", "@1.rsp", "customArg1"))

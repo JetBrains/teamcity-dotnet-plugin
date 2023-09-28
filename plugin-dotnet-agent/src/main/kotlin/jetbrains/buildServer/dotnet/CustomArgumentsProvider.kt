@@ -31,7 +31,7 @@ class CustomArgumentsProvider(
         private val _argumentsService: ArgumentsService)
     : ArgumentsProvider {
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_ARGUMENTS)?.trim()?.let {
             yieldAll(_argumentsService.split(it).map { CommandLineArgument(it, CommandLineArgumentType.Custom) })
         }

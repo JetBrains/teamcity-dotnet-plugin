@@ -37,7 +37,7 @@ class DotnetCommonArgumentsProviderTest {
     @Test(dataProvider = "testData")
     fun shouldGetArguments(useRspFile: Boolean, expectedArguments: List<String>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val argumentsProvider = DotnetCommonArgumentsProviderImpl(
             useRspFile,
             ArgumentsProviderStub(sequenceOf(CommandLineArgument("rspArg"))),

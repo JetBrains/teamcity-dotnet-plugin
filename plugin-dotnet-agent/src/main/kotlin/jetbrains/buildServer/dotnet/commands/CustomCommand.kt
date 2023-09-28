@@ -21,7 +21,6 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
@@ -40,5 +39,5 @@ class CustomCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = _targetService.targets.map { TargetArguments(sequenceOf(CommandLineArgument(it.target.path, CommandLineArgumentType.Target))) }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = emptySequence()
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = emptySequence()
 }

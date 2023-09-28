@@ -41,7 +41,7 @@ class VSTestLoggerEnvironmentBuilder(
     private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer
 )
     : EnvironmentBuilder {
-    override fun build(context: DotnetBuildContext): Disposable {
+    override fun build(context: DotnetCommandContext): Disposable {
         val testReportingMode = _testReportingParameters.getMode(context)
         LOG.debug("Test reporting mode: $testReportingMode")
 

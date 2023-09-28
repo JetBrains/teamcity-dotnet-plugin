@@ -4,7 +4,7 @@ import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
@@ -22,7 +22,7 @@ class RootTestsSplittingCommandsTransformerTest {
     @MockK private lateinit var _loggerServiceMock: LoggerService
     @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
     @MockK private lateinit var _testsSplittingModeProviderMock: TestsSplittingModeProvider
-    @MockK private lateinit var _commandContextMock: DotnetBuildContext
+    @MockK private lateinit var _commandContextMock: DotnetCommandContext
     @MockK private lateinit var _testCommandMock: DotnetCommand
 
     @MockK private lateinit var _testSplittingTransformerMock1: TestsSplittingCommandTransformer

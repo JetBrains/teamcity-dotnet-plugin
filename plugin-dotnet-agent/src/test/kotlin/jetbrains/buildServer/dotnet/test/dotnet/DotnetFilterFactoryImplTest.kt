@@ -33,7 +33,7 @@ class DotnetFilterFactoryImplTest {
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
     @MockK private lateinit var _testsSplittingModeProvider: TestsSplittingModeProvider
     @MockK private lateinit var _testRunSettingsFileProvider: TestRunSettingsFileProvider
-    @MockK private lateinit var _dotnetCommandContext: DotnetBuildContext
+    @MockK private lateinit var _dotnetCommandContext: DotnetCommandContext
 
     @BeforeMethod
     fun setUp() {

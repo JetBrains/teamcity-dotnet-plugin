@@ -25,7 +25,7 @@ class DotnetFilterFactoryImpl(
     private val _testsSplittingModeProvider: TestsSplittingModeProvider,
     private val _testRunSettingsFileProvider: TestRunSettingsFileProvider
 ) : DotnetFilterFactory {
-    override fun createFilter(context: DotnetBuildContext): DotnetFilter {
+    override fun createFilter(context: DotnetCommandContext): DotnetFilter {
         val testsSplittingMode = _testsSplittingModeProvider.getMode(context.toolVersion)
         val filterExpression = _testsFilterProvider.getFilterExpression(testsSplittingMode)
         val useFilter = testsSplittingMode.isFilterMode

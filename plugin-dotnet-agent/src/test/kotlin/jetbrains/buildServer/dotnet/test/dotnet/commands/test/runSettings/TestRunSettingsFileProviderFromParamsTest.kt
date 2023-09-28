@@ -22,7 +22,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromParams
@@ -34,7 +34,7 @@ import java.io.File
 
 class TestRunSettingsFileProviderFromParamsTest {
     @MockK private lateinit var _parametersService: ParametersService
-    @MockK private lateinit var _commandContext: DotnetBuildContext
+    @MockK private lateinit var _commandContext: DotnetCommandContext
 
     @BeforeMethod
     fun setUp() {

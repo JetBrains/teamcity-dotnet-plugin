@@ -107,14 +107,14 @@ class TestSuppressTestsSplittingCommandTransformer(
         override val targetArguments =
             sequenceOf(TargetArguments(sequenceOf(CommandLineArgument(targetPath, CommandLineArgumentType.Target))))
 
-        override fun getArguments(context: DotnetBuildContext) = sequence {
+        override fun getArguments(context: DotnetCommandContext) = sequence {
             // generates MSBuild binary log file (.binlog)
             yield(CommandLineArgument("-bl:LogFile=\"$_binlogPath\""))
 
             yieldAll(getBuildCommandArguments(context))
         }
 
-        private fun getBuildCommandArguments(context: DotnetBuildContext) =
+        private fun getBuildCommandArguments(context: DotnetCommandContext) =
             _originalBuildCommand.getArguments(context)
                 .filter { arg ->
                     // filter out custom arguments (expect -p) explicitly since it's custom arguments
@@ -141,7 +141,7 @@ class TestSuppressTestsSplittingCommandTransformer(
     ) : DotnetCommand by _teamCityDotnetToolCommand {
         override val title = "Suppress tests"
 
-        override fun getArguments(context: DotnetBuildContext) = sequence {
+        override fun getArguments(context: DotnetCommandContext) = sequence {
             yieldAll(_teamCityDotnetToolCommand.getArguments(context))
 
             yield(CommandLineArgument("suppress"))
@@ -166,7 +166,7 @@ class TestSuppressTestsSplittingCommandTransformer(
     private class SkipBuildTestCommand(
         private val _originalTestCommand: DotnetCommand,
     ) : DotnetCommand by _originalTestCommand {
-        override fun getArguments(context: DotnetBuildContext) = sequence {
+        override fun getArguments(context: DotnetCommandContext) = sequence {
             val noBuildArg = CommandLineArgument("--no-build")
             yield(noBuildArg)
             yieldAll(_originalTestCommand.getArguments(context).filter { it != noBuildArg })
@@ -179,7 +179,7 @@ class TestSuppressTestsSplittingCommandTransformer(
     ) : DotnetCommand by _teamCityDotnetToolCommand{
         override val title = "Restore suppressed tests"
 
-        override fun getArguments(context: DotnetBuildContext) = sequence {
+        override fun getArguments(context: DotnetCommandContext) = sequence {
             yieldAll(_teamCityDotnetToolCommand.getArguments(context))
 
             yield(CommandLineArgument("restore"))
