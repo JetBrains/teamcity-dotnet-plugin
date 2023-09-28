@@ -16,9 +16,9 @@
 
 package jetbrains.buildServer.dotnet.commands.test
 
-import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import java.io.File
 
 interface TestRunSettingsFileProvider {
-    fun tryGet(command: DotnetCommandType): File?
+    fun tryGet(context: DotnetBuildContext): File?
 }

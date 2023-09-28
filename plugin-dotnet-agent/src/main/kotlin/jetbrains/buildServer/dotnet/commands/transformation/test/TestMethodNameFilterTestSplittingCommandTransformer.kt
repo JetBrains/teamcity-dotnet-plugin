@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
+package jetbrains.buildServer.dotnet.commands.transformation.test
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSaver
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSessionManager
@@ -33,17 +29,12 @@ import jetbrains.buildServer.rx.use
 
 // Transforms a `dotnet test` command to exact match filtered command if needed
 // It looks like a sequence of dotnet commands: `dotnet test --list-test` – to get all tests list – and then `dotnet test ...` N times
-class TestMethodNameFilterTestSplittingCommandsResolver(
-    private val _testsSplittingSettings: TestsSplittingSettings,
+class TestMethodNameFilterTestSplittingCommandTransformer(
     private val _listTestsDotnetCommand: DotnetCommand,
     private val _testsNamesSessionManager: TestsSplittingByNamesSessionManager,
     private val _loggerService: LoggerService,
-) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService) {
-    override val stage = DotnetCommandsResolvingStage.Transformation
-
-    override fun shouldBeApplied(commands: DotnetCommandsStream) =
-        _testsSplittingSettings.mode == TestsSplittingMode.TestNameFilter
-            && commands.any { it.commandType == DotnetCommandType.Test }
+) : TestsSplittingCommandTransformer {
+    override val mode = TestsSplittingMode.TestNameFilter
 
     override fun transform(testCommand: DotnetCommand) = sequence {
         _loggerService.writeBlock("dotnet test with filter based on tests names").use {

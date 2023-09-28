@@ -67,6 +67,8 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE = "teamcity.internal.dotnet.test.exact.match.filter.size"
     // True or False (False by default) - use test suppression strategy to split tests
     const val PARAM_PARALLEL_TESTS_USE_SUPPRESSION = "teamcity.internal.dotnet.test.suppression"
+    // Integer minimum amount of test classes to activate test suppression strategy
+    const val PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD = "teamcity.internal.dotnet.test.suppression.test.classes.threshold"
     // True or False (False by default) - report tests via stdout rather than via files
     const val PARAM_USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.reporting.useStdOut"
     // true or false (true by default)

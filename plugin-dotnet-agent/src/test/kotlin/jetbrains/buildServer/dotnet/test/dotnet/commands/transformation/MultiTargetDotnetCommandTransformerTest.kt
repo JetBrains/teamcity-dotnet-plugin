@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandResolver
+import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformationStage
+import jetbrains.buildServer.dotnet.commands.transformation.MultiTargetDotnetCommandTransformer
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class MultiTargetDotnetCommandStreamResolverTest {
+class MultiTargetDotnetCommandTransformerTest {
     @BeforeMethod
     fun setup(){
         clearAllMocks()
@@ -39,13 +40,13 @@ class MultiTargetDotnetCommandStreamResolverTest {
     @Test
     fun `should be on Targeting stage`() {
         // arrange
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.stage
+        val result = transformer.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsResolvingStage.Targeting)
+        Assert.assertEquals(result, DotnetCommandsTransformationStage.Targeting)
     }
 
     @Test
@@ -53,14 +54,13 @@ class MultiTargetDotnetCommandStreamResolverTest {
         // arrange
         val commandMock = mockk<DotnetCommand>()
         every { commandMock.targetArguments } answers { sequenceOf(mockk()) }
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.resolve(sequenceOf(commandMock)).toList()
+        val result = transformer.shouldBeApplied(mockk<DotnetBuildContext>(), sequenceOf(commandMock))
 
         // assert
-        Assert.assertEquals(result.size, 1)
-        Assert.assertSame(result[0], commandMock)
+        Assert.assertFalse(result)
     }
 
     @Test
@@ -73,15 +73,18 @@ class MultiTargetDotnetCommandStreamResolverTest {
         every { commandMock1.getArguments(any()) } answers { commandLineArgsMock1 }
         every { commandMock2.targetArguments } answers { sequenceOf(targetArgumentsMock1, targetArgumentsMock2) }
         every { commandMock2.getArguments(any()) } answers { commandLineArgsMock2 }
-        val resolver = create()
+        val transformer = create()
+        val commands = sequenceOf(commandMock1, commandMock2)
 
         // act
-        val result = resolver.resolve(sequenceOf(commandMock1, commandMock2)).toList()
+        val shouldBeApplied = transformer.shouldBeApplied(mockk<DotnetBuildContext>(), commands)
+        val result = transformer.apply(mockk<DotnetBuildContext>(), commands).toList()
 
         // assert
+        Assert.assertTrue(shouldBeApplied)
         Assert.assertEquals(result.size, 3)
         result.forEach {
-            Assert.assertTrue(it is MultiTargetDotnetCommandResolver.SpecificTargetDotnetCommand)
+            Assert.assertTrue(it is MultiTargetDotnetCommandTransformer.SpecificTargetDotnetCommand)
             Assert.assertEquals(it.targetArguments.count(), 1)
         }
         Assert.assertEquals(result[0].targetArguments.first(), targetArgumentsMock1)
@@ -102,15 +105,15 @@ class MultiTargetDotnetCommandStreamResolverTest {
         every { commandMock1.getArguments(any()) } answers { commandLineArgsMock1 }
         every { commandMock2.targetArguments } answers { sequenceOf(targetArgumentsMock1, targetArgumentsMock2) }
         every { commandMock2.getArguments(any()) } answers { commandLineArgsMock2 }
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.resolve(sequenceOf(commandMock1, commandMock2)).toList()
+        val result = transformer.apply(mockk<DotnetBuildContext>(), sequenceOf(commandMock1, commandMock2)).toList()
 
         // assert
         Assert.assertEquals(result.size, 3)
         result.forEach {
-            Assert.assertTrue(it is MultiTargetDotnetCommandResolver.SpecificTargetDotnetCommand)
+            Assert.assertTrue(it is MultiTargetDotnetCommandTransformer.SpecificTargetDotnetCommand)
             Assert.assertEquals(it.targetArguments.count(), 1)
         }
         Assert.assertEquals(result[0].targetArguments.first().arguments.count(), 0)
@@ -121,5 +124,5 @@ class MultiTargetDotnetCommandStreamResolverTest {
         Assert.assertEquals(result[2].getArguments(mockk()), commandLineArgsMock2)
     }
 
-    private fun create() = MultiTargetDotnetCommandResolver()
+    private fun create() = MultiTargetDotnetCommandTransformer()
 }

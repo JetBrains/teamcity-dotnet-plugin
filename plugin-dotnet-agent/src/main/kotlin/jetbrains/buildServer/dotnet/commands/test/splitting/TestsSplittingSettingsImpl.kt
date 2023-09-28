@@ -22,19 +22,13 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.utils.getBufferedReader
+import java.io.BufferedReader
 import java.io.File
 
 class TestsSplittingSettingsImpl(
     private val _parametersService: ParametersService,
     private val _fileSystem: FileSystemService,
 ) : TestsSplittingSettings {
-    override val mode: TestsSplittingMode get() = when {
-        !isEnabled -> TestsSplittingMode.Disabled
-        isEnabled && useTestSuppression -> TestsSplittingMode.Suppression
-        isEnabled && useTestNameFilter -> TestsSplittingMode.TestNameFilter
-        else -> TestsSplittingMode.TestClassNameFilter
-    }
-
     override val filterType: TestsSplittingFilterType get() =
         when (_parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH)) {
             "1" -> TestsSplittingFilterType.Excludes
@@ -42,22 +36,30 @@ class TestsSplittingSettingsImpl(
         }
 
     override val testClasses: Sequence<String> get() = sequence {
-        testsClassesFile
-            .onFailure {
-                LOG.warn("Cannot read tests classes file")
-                LOG.warn(it)
+        testClassesFileReader
+                ?.use { reader ->
+                    while (reader.ready())
+                        yield(reader.readLine())
+                }
+        }
+            .map { it.trim() }
+            .filter { !it.startsWith("#") }
+            .map { it.trim() }
+            .filter { it.length > 2 }
+
+    override val hasEnoughTestClassesToActivateSuppression: Boolean get() =
+        testClassesFileReader?.use { reader ->
+            var lineCount = 0
+            var currentChar: Int
+            while (reader.read().also { currentChar = it } != -1) {
+                if (currentChar == '\n'.code) {
+                    if (++lineCount >= suppressionTestClassesThreshold) {
+                        return true
+                    }
+                }
             }
-            .getOrNull()
-            ?.getBufferedReader()
-            ?.use { reader ->
-                while (reader.ready())
-                    yield(reader.readLine())
-            }
-    }
-        .map { it.trim() }
-        .filter { !it.startsWith("#") }
-        .map { it.trim() }
-        .filter { it.length > 2 }
+            return false
+        } ?: false
 
     override val exactMatchFilterSize: Int get() =
         _parametersService
@@ -82,14 +84,12 @@ class TestsSplittingSettingsImpl(
             }
             .let { _parametersService.tryGetParameter(ParameterType.System, it) }
 
-    private val isEnabled: Boolean get() = testsClassesFilePath != null
-
-
-    private val useTestSuppression get() =
-        getBoolConfigurationParameter(DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION)
-
-    private val useTestNameFilter get() =
-        getBoolConfigurationParameter(DotnetConstants.PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER)
+    private val suppressionTestClassesThreshold get() =
+        _parametersService
+            .tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD)
+            ?.trim()
+            ?.toInt()
+            ?: DefaultSuppressionTestClassesThreshold
 
     private val testsClassesFile: Result<File> get() =
         testsClassesFilePath
@@ -99,14 +99,19 @@ class TestsSplittingSettingsImpl(
             }
             ?: Result.failure(Error("Cannot find split tests filter file path in parameter"))
 
-    private fun getBoolConfigurationParameter(paramName: String) = _parametersService
-        .tryGetParameter(ParameterType.Configuration, paramName)
-        ?.trim()
-        ?.let { it.equals("true", true) }
-        ?: false;
+    private val testClassesFileReader: BufferedReader? get() =
+        testsClassesFile
+            .onFailure {
+                LOG.warn("Cannot read tests classes file")
+                LOG.warn(it)
+            }
+            .getOrNull()
+            ?.getBufferedReader()
+
 
     companion object {
         private val LOG = Logger.getLogger(TestsSplittingSettingsImpl::class.java)
         private const val DefaultExactMatchTestsChunkSize = 10_000
+        private const val DefaultSuppressionTestClassesThreshold = 1_000
     }
 }

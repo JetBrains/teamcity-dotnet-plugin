@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandResolverImpl
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class ParameterBasedDotnetCommandsResolverTest {
+class DotnetCommandResolverImplTest {
     @MockK
     private lateinit var _dotnetCommandMock1: DotnetCommand
 
@@ -52,18 +51,6 @@ class ParameterBasedDotnetCommandsResolverTest {
     }
 
     @Test
-    fun `should be on CommandRetrieve stage`() {
-        // arrange
-        val resolver = create()
-
-        // act
-        val result = resolver.stage
-
-        // assert
-        Assert.assertEquals(result, DotnetCommandsResolvingStage.CommandRetrieve)
-    }
-
-    @Test
     fun `should resolve command by valid command id from parameter`() {
         // arrange
         val buildCommandId = DotnetCommandType.Build.id
@@ -71,12 +58,11 @@ class ParameterBasedDotnetCommandsResolverTest {
         val resolver = create()
 
         // act
-        val result = resolver.resolve().toList()
+        val result = resolver.command
 
         // assert
         Assert.assertNotNull(result)
-        Assert.assertEquals(result.size, 1)
-        result.forEach { Assert.assertEquals(it, _dotnetCommandMock1) }
+        Assert.assertEquals(result, _dotnetCommandMock1)
         verify (exactly = 1) { _parametersServiceMock.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND) }
     }
 
@@ -87,17 +73,16 @@ class ParameterBasedDotnetCommandsResolverTest {
         val resolver = create()
 
         // act
-        val result = resolver.resolve().toList()
+        val result = resolver.command
 
         // assert
-        Assert.assertNotNull(result)
-        Assert.assertEquals(result.size, 0)
+        Assert.assertNull(result)
         verify (exactly = 1) { _parametersServiceMock.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_COMMAND) }
     }
 
     private fun create() =
-        ParameterBasedDotnetCommandsResolver(
-            listOf(_dotnetCommandMock1, _dotnetCommandMock2, _dotnetCommandMock3),
+        DotnetCommandResolverImpl(
             _parametersServiceMock,
+            listOf(_dotnetCommandMock1, _dotnetCommandMock2, _dotnetCommandMock3),
         )
 }

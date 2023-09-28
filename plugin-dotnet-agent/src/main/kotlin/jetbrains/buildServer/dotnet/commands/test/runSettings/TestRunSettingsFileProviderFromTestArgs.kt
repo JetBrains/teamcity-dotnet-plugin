@@ -19,6 +19,7 @@ package jetbrains.buildServer.dotnet.commands.test.runSettings
 import jetbrains.buildServer.agent.ArgumentsService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
@@ -29,8 +30,8 @@ class TestRunSettingsFileProviderFromTestArgs(
         private val _argumentsService: ArgumentsService)
     : TestRunSettingsFileProvider {
 
-    override fun tryGet(command: DotnetCommandType) =
-        command.takeIf { it == DotnetCommandType.Test }
+    override fun tryGet(context: DotnetBuildContext) =
+        context.command.commandType.takeIf { it == DotnetCommandType.Test }
                 ?.let {
                     _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_ARGUMENTS)
                             ?.trim()

@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.commands.transformation
 
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandResolverBase
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 
 // Decomposes one `dotnet` command applied to multiple targets
 // For example `dotnet test` applied to `Abc.csproj`, `Bcd.csproj` and `Cde.csproj` will be decomposed to 3 commands:
 // `dotnet test Abc.csproj`
 // `dotnet test Bcd.csproj`
 // `dotnet test Cde.csproj`
-class MultiTargetDotnetCommandResolver : DotnetCommandResolverBase() {
-    override val stage = DotnetCommandsResolvingStage.Targeting
+class MultiTargetDotnetCommandTransformer : DotnetCommandsTransformer {
+    override val stage = DotnetCommandsTransformationStage.Targeting
 
-    override fun shouldBeApplied(commands: DotnetCommandsStream) =
+    override fun shouldBeApplied(context: DotnetBuildContext, commands: DotnetCommandsStream) =
         commands.any { it.targetArguments.count() > 1 }
 
-    override fun apply(commands: DotnetCommandsStream) =
+    override fun apply(context: DotnetBuildContext, commands: DotnetCommandsStream) =
         commands
             .flatMap { originalCommand ->
                 originalCommand

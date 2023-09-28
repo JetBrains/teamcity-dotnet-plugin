@@ -21,7 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolver
+import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformer
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.Observer
 import org.testng.Assert
@@ -38,7 +38,8 @@ class DotnetWorkflowComposerTest {
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _commandLinePresentationService: CommandLinePresentationService
     @MockK private lateinit var _virtualContext: VirtualContext
-    @MockK private lateinit var my_dotnetCommandsResolver: DotnetCommandsResolver
+    @MockK private lateinit var _dotnetCommandResolver: DotnetCommandResolver
+    @MockK private lateinit var _dotnetCommandsTransformer: DotnetCommandsTransformer
 
     @MockK private lateinit var _workflowContext: WorkflowContext
     @MockK private lateinit var _dotnetToolStateWorkflowComposer: ToolStateWorkflowComposer
@@ -122,7 +123,8 @@ class DotnetWorkflowComposerTest {
         val dotnetBuildCommand = createDotnetCommand()
         val dotnetBuildCommand2 = createDotnetCommand()
 
-        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
+        every { _dotnetCommandResolver.command } returns msbuildCommand
+        every { _dotnetCommandsTransformer.apply(any(), any()) } returns sequenceOf(msbuildCommand, dotnetBuildCommand, dotnetBuildCommand2)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
@@ -237,7 +239,8 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { _dotnetCommandResolver.command } returns msbuildCommand
+        every { _dotnetCommandsTransformer.apply(any(), any()) } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             arg<Observer<Unit>>(0).onNext(Unit)
@@ -330,7 +333,8 @@ class DotnetWorkflowComposerTest {
 
         val dotnetBuildCommand = createDotnetCommand()
 
-        every { my_dotnetCommandsResolver.resolve() } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
+        every { _dotnetCommandResolver.command } returns msbuildCommand
+        every { _dotnetCommandsTransformer.apply(any(), any()) } returns sequenceOf(msbuildCommand, dotnetBuildCommand)
 
         every { _failedTestSource.subscribe(any()) } /* msbuild */ answers {
             createToken()
@@ -403,7 +407,8 @@ class DotnetWorkflowComposerTest {
         _commandRegistry,
         _parametersService,
         _virtualContext,
-        my_dotnetCommandsResolver,
+        _dotnetCommandResolver,
+        _dotnetCommandsTransformer,
         )
 
     private fun createToken(): Disposable {

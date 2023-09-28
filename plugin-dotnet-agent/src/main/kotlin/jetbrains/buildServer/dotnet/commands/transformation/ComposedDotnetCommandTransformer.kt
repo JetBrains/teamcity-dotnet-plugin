@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.commands.transformation
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandResolverBase
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 
-class ComposedDotnetCommandResolver : DotnetCommandResolverBase() {
-    override val stage: DotnetCommandsResolvingStage = DotnetCommandsResolvingStage.FinalComposition
+class ComposedDotnetCommandTransformer : DotnetCommandsTransformer {
+    override val stage: DotnetCommandsTransformationStage = DotnetCommandsTransformationStage.FinalComposition
 
-    override fun shouldBeApplied(commands: DotnetCommandsStream) = true
+    override fun shouldBeApplied(context: DotnetBuildContext, commands: DotnetCommandsStream) = true
 
-    override fun apply(commands: DotnetCommandsStream) = commands.map { ComposedDotnetCommand(it) }
+    override fun apply(context: DotnetBuildContext, commands: DotnetCommandsStream) = commands.map { ComposedDotnetCommand(it) }
 
-    class ComposedDotnetCommand constructor(
+    class ComposedDotnetCommand(
         private val _originalCommand: DotnetCommand
     ) : DotnetCommand by _originalCommand {
         private val commandCommandLineArguments get() =

@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution
+package jetbrains.buildServer.dotnet
 
-enum class DotnetCommandsResolvingStage {
-    Initial,                // composing all resolvers together
-    CommandRetrieve,        // getting original requested command
-    Targeting,              // multiply command by every target
-    Transformation,         // transform every single command (maybe to sequence of commands)
-    FinalComposition,       // final composition of command line arguments
+interface DotnetCommandResolver {
+    val command: DotnetCommand?
 }

@@ -16,6 +16,8 @@
 
 package jetbrains.buildServer.dotnet.commands.test
 
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
+
 interface TestsFilterProvider {
-    val filterExpression: String
+    fun getFilterExpression(mode: TestsSplittingMode): String
 }

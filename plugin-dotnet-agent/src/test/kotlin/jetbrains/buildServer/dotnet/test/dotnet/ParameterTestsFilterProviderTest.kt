@@ -22,6 +22,7 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.ParameterTestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -37,7 +38,7 @@ class ParameterTestsFilterProviderTest {
     }
 
     @DataProvider(name = "testData")
-    fun testData(): Any? {
+    fun testData(): Any {
         return arrayOf(
                 arrayOf("Abc", "Abc"),
                 arrayOf("\"Abc\"", "Abc"),
@@ -49,16 +50,16 @@ class ParameterTestsFilterProviderTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldProvideFilter(filterParamValue: String?, expecedFilter: String) {
+    fun shouldProvideFilter(filterParamValue: String?, expectedFilter: String) {
         // Given
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_TEST_CASE_FILTER) } returns filterParamValue
         val provider = createInstance()
 
         // When
-        val actulFilter = provider.filterExpression;
+        val actualFilter = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // Then
-        Assert.assertEquals(actulFilter, expecedFilter)
+        Assert.assertEquals(actualFilter, expectedFilter)
     }
 
     private fun createInstance() = ParameterTestsFilterProvider(_parametersService)

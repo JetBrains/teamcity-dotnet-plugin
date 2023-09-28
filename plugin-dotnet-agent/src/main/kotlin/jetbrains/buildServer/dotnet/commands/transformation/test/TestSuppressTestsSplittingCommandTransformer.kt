@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation
+package jetbrains.buildServer.dotnet.commands.transformation.test
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsStream
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
 import jetbrains.buildServer.rx.use
 import java.io.File
 import java.nio.file.Paths
 
-class TestSuppressTestsSplittingCommandsResolver(
+class TestSuppressTestsSplittingCommandTransformer(
     private val _buildDotnetCommand: DotnetCommand,
     private val _teamCityDotnetToolCommand: DotnetCommand,
     private val _pathService: PathsService,
@@ -38,12 +37,8 @@ class TestSuppressTestsSplittingCommandsResolver(
     private val _testsSplittingSettings: TestsSplittingSettings,
     private val _loggerService: LoggerService,
     private val _targetTypeProvider: TargetTypeProvider,
-) : TestsSplittingCommandsResolverBase(_testsSplittingSettings, _loggerService){
-    override val stage = DotnetCommandsResolvingStage.Transformation
-
-    override fun shouldBeApplied(commands: DotnetCommandsStream) =
-         _testsSplittingSettings.mode.isSuppressionMode
-            && commands.any { it.commandType == DotnetCommandType.Test }
+) : TestsSplittingCommandTransformer {
+    override val mode = TestsSplittingMode.Suppression
 
     override fun transform(testCommand: DotnetCommand) = sequence {
         val testsClassesFilePath = _testsSplittingSettings.testsClassesFilePath ?: ""
@@ -195,7 +190,7 @@ class TestSuppressTestsSplittingCommandsResolver(
     }
 
     companion object {
-        private val LOG = Logger.getLogger(TestSuppressTestsSplittingCommandsResolver::class.java)
+        private val LOG = Logger.getLogger(TestSuppressTestsSplittingCommandTransformer::class.java)
 
         private const val BackupMetadataFileExtension = ".csv"
         private const val MSBuildBinaryLogFileExtensions = ".binlog"

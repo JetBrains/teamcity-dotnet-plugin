@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers.transformation
+package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation.test
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -24,19 +24,15 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestMethodNameFilterTestSplittingCommandsResolver
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSession
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesSessionManager
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
+import jetbrains.buildServer.dotnet.commands.transformation.test.TestMethodNameFilterTestSplittingCommandTransformer
 import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestMethodNameTestsSplittingCommandsResolverTest {
-    @MockK private lateinit var _testsSplittingSettingsMock: TestsSplittingSettings
+class TestMethodNameTestsSplittingCommandTransformerTest {
     @MockK private lateinit var _listTestsDotnetCommandMock: DotnetCommand
     @MockK private lateinit var _testsNamesSessionManagerMock: TestsSplittingByNamesSessionManager
     @MockK private lateinit var _loggerServiceMock: LoggerService
@@ -52,68 +48,8 @@ class TestMethodNameTestsSplittingCommandsResolverTest {
     }
 
     @Test
-    fun `should be on Transformation stage`() {
+    fun `should transform test command in stream`() {
         // arrange
-        val resolver = create()
-
-        // act
-        val result = resolver.stage
-
-        // assert
-        Assert.assertEquals(result, DotnetCommandsResolvingStage.Transformation)
-    }
-
-    @Test
-    fun `should not resolve if split tests disabled`() {
-        // arrange
-        every { _testsSplittingSettingsMock.mode } answers { TestsSplittingMode.Disabled }
-        val commandMock = mockk<DotnetCommand>()
-        val resolver = create()
-
-        // act
-        val result = resolver.resolve(sequenceOf(commandMock)).toList()
-
-        // assert
-        Assert.assertSame(result.first(), commandMock)
-    }
-
-    @Test
-    fun `should not resolve if exact match filter mode disabled`() {
-        // arrange
-        every { _testsSplittingSettingsMock.mode } answers { TestsSplittingMode.TestClassNameFilter }
-        val commandMock = mockk<DotnetCommand>()
-        val resolver = create()
-
-        // act
-        val result = resolver.resolve(sequenceOf(commandMock)).toList()
-
-        // assert
-        Assert.assertSame(result.first(), commandMock)
-    }
-
-    @Test
-    fun `should not resolve if there is no test command in stream`() {
-        // arrange
-        every { _testsSplittingSettingsMock.mode } answers { TestsSplittingMode.TestNameFilter }
-        val commandMock = mockk<DotnetCommand>()
-        every { commandMock.commandType } answers { DotnetCommandType.Build }
-        val resolver = create()
-
-        // act
-        val result = resolver.resolve(sequenceOf(commandMock)).toList()
-
-        // assert
-        Assert.assertSame(result.first(), commandMock)
-    }
-
-    @Test
-    fun `should resolve by transforming test commands in stream`() {
-        // arrange
-        every { _testsSplittingSettingsMock.mode } answers { TestsSplittingMode.TestNameFilter }
-
-        val buildCommandMock = mockk<DotnetCommand>()
-        every { buildCommandMock.commandType } answers { DotnetCommandType.Build }
-
         val testCommandMock = mockk<DotnetCommand>()
         every { testCommandMock.commandType } answers { DotnetCommandType.Test }
         every { testCommandMock.targetArguments } answers { mockk() }
@@ -128,17 +64,16 @@ class TestMethodNameTestsSplittingCommandsResolverTest {
 
         every { _listTestsDotnetCommandMock.commandType } answers { DotnetCommandType.ListTests}
 
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.resolve(sequenceOf(buildCommandMock, testCommandMock)).toList()
+        val result = transformer.transform(testCommandMock).toList()
 
         // assert
-        Assert.assertEquals(result.size, 4)
-        Assert.assertSame(result[0], buildCommandMock)
-        Assert.assertEquals(result[1].commandType, DotnetCommandType.ListTests)
+        Assert.assertEquals(result.size, 3)
+        Assert.assertEquals(result[0].commandType, DotnetCommandType.ListTests)
+        Assert.assertSame(result[1], testCommandMock)
         Assert.assertSame(result[2], testCommandMock)
-        Assert.assertSame(result[3], testCommandMock)
         verify(exactly = 1) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = 1) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
@@ -146,8 +81,6 @@ class TestMethodNameTestsSplittingCommandsResolverTest {
     @Test
     fun `should listen tests list output`() {
         // arrange
-        every { _testsSplittingSettingsMock.mode } answers { TestsSplittingMode.TestNameFilter }
-
         val testCommandMock = mockk<DotnetCommand>()
         every { testCommandMock.commandType } answers { DotnetCommandType.Test }
         every { testCommandMock.targetArguments } answers { mockk() }
@@ -161,7 +94,7 @@ class TestMethodNameTestsSplittingCommandsResolverTest {
 
         every { _testsNamesSessionManagerMock.startSession() } answers { sessionMock }
 
-        val result = create().resolve(sequenceOf(testCommandMock)).toList()
+        val result = create().transform(testCommandMock).toList()
         val resultObserver = result[0].resultsObserver
 
 
@@ -192,8 +125,7 @@ class TestMethodNameTestsSplittingCommandsResolverTest {
         verify(exactly = 1) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
-    private fun create() = TestMethodNameFilterTestSplittingCommandsResolver(
-        _testsSplittingSettingsMock,
+    private fun create() = TestMethodNameFilterTestSplittingCommandTransformer(
         _listTestsDotnetCommandMock,
         _testsNamesSessionManagerMock,
         _loggerServiceMock

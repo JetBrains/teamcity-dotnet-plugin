@@ -76,7 +76,7 @@ class MSBuildCommandTest {
             parameters: Map<String, String>,
             expectedArguments: List<String>) {
         // Given
-        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", null, true)
+        every { _filterFactory.createFilter(match { it.command.commandType == DotnetCommandType.MSBuild }) } returns DotnetFilter("", null, true)
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
@@ -89,7 +89,7 @@ class MSBuildCommandTest {
     @Test
     fun shouldSupportFilterArgWhenSplitting() {
         // Given
-        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("myFilter", null, true)
+        every { _filterFactory.createFilter(match { it.command.commandType == DotnetCommandType.MSBuild }) } returns DotnetFilter("myFilter", null, true)
         val command = createCommand(parameters = mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
         val filterRspPath = Path("1.rsp")
         every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestTestCaseFilter", "myFilter").equals(it.singleOrNull()) }) } returns filterRspPath
@@ -104,7 +104,7 @@ class MSBuildCommandTest {
     @Test
     fun shouldSupportSettingsFileWhenSplitting() {
         // Given
-        every { _filterFactory.createFilter(DotnetCommandType.MSBuild) } returns DotnetFilter("", File("My.runsettings"), true)
+        every { _filterFactory.createFilter(match { it.command.commandType == DotnetCommandType.MSBuild }) } returns DotnetFilter("", File("My.runsettings"), true)
         val command = createCommand(parameters = mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")), targets = sequenceOf("my.csproj"), respArguments = sequenceOf(CommandLineArgument("respArgs")), customArguments = sequenceOf(CommandLineArgument("customArg1")))
         val filterRspPath = Path("1.rsp")
         every { _responseFileFactory.createResponeFile("Filter", emptySequence(), match { MSBuildParameter("VSTestSetting", "My.runsettings").equals(it.singleOrNull()) }) } returns filterRspPath

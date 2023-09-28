@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers
+package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -22,18 +22,19 @@ import io.mockk.every
 import io.mockk.mockk
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.ToolResolver
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver
+import jetbrains.buildServer.dotnet.commands.transformation.ComposedDotnetCommandTransformer
+import jetbrains.buildServer.dotnet.commands.transformation.DotnetCommandsTransformationStage
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class ComposedDotnetCommandStreamResolverTest {
+class ComposedDotnetCommandTransformerTest {
     @BeforeMethod
-    fun setup(){
+    fun setup() {
         clearAllMocks()
         MockKAnnotations.init(this)
     }
@@ -41,13 +42,13 @@ class ComposedDotnetCommandStreamResolverTest {
     @Test
     fun `should be on FinalComposition stage`() {
         // arrange
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.stage
+        val result = transformer.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsResolvingStage.FinalComposition)
+        Assert.assertEquals(result, DotnetCommandsTransformationStage.FinalComposition)
     }
 
     @Test
@@ -77,10 +78,10 @@ class ComposedDotnetCommandStreamResolverTest {
         every { commandMock1.getArguments(any()) } answers { sequenceOf(commandSpecificArgMock1, commandSpecificArgMock2) }
         every { commandMock2.getArguments(any()) } answers { sequenceOf(commandSpecificArgMock2, commandSpecificArgMock3) }
         every { commandMock3.getArguments(any()) } answers { sequenceOf(commandSpecificArgMock1, commandSpecificArgMock3) }
-        val resolver = create()
+        val transformer = create()
 
         // act
-        val result = resolver.resolve(sequenceOf(commandMock1, commandMock2, commandMock3)).toList()
+        val result = transformer.apply(mockk<DotnetBuildContext>(), sequenceOf(commandMock1, commandMock2, commandMock3)).toList()
 
         // assert
         val (composedCommand1, composedCommand2, composedCommand3) = Triple(result[0], result[1], result[2])
@@ -109,5 +110,5 @@ class ComposedDotnetCommandStreamResolverTest {
         Assert.assertSame(composedCommand3Args[3], commandSpecificArgMock3)
     }
 
-    private fun create() = ComposedDotnetCommandResolver()
+    private fun create() = ComposedDotnetCommandTransformer()
 }

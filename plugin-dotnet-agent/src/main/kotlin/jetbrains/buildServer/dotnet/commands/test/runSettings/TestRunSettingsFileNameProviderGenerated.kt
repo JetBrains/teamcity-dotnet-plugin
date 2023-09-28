@@ -20,7 +20,7 @@ import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import org.w3c.dom.Document
@@ -31,9 +31,9 @@ class TestRunSettingsFileNameProviderGenerated(
     private val _fileSystem: FileSystemService,
     private val _serializer: Serializer<Document>,
 ) : TestRunSettingsFileProvider {
-    override fun tryGet(command: DotnetCommandType) =
+    override fun tryGet(context: DotnetBuildContext) =
         try {
-            _settingsProvider.tryCreate(command)
+            _settingsProvider.tryCreate(context)
                 ?.let { settings ->
                     _pathsService.getTempFileName(RunSettingsFileExtension)
                         .let { runSettingsFile ->

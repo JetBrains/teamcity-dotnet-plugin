@@ -1,4 +1,20 @@
-package jetbrains.buildServer.dotnet.test.dotnet.commands.resolution.resolvers.transformation
+/*
+ * Copyright 2000-2023 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation.test
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -7,23 +23,18 @@ import jetbrains.buildServer.agent.CommandLineArgumentType
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.CommandTargetType
-import jetbrains.buildServer.dotnet.DotnetCommand
-import jetbrains.buildServer.dotnet.DotnetCommandType
-import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.commands.resolution.DotnetCommandsResolvingStage
-import jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestSuppressTestsSplittingCommandsResolver
+import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetTypeProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterType
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettings
+import jetbrains.buildServer.dotnet.commands.transformation.test.TestSuppressTestsSplittingCommandTransformer
 import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
-class TestSuppressTestsSplittingCommandsResolverTest {
+class TestSuppressTestsSplittingCommandTransformerTest {
     @MockK private lateinit var _buildDotnetCommandMock: DotnetCommand
     @MockK private lateinit var _teamCityDotnetToolCommandMock: DotnetCommand
     @MockK private lateinit var _pathServiceMock: PathsService
@@ -33,14 +44,14 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     @MockK private lateinit var _targetTypeProviderMock: TargetTypeProvider
     @MockK private lateinit var _testCommandMock: DotnetCommand
 
-    private lateinit var resolver: TestSuppressTestsSplittingCommandsResolver
+    private lateinit var transformer: TestSuppressTestsSplittingCommandTransformer
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
 
-        resolver = TestSuppressTestsSplittingCommandsResolver(
+        transformer = TestSuppressTestsSplittingCommandTransformer(
             _buildDotnetCommandMock,
             _teamCityDotnetToolCommandMock,
             _pathServiceMock,
@@ -57,26 +68,16 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     }
 
     @Test
-    fun `should be on Transformation stage`() {
-        // arrange, act
-        val result = resolver.stage
-
-        // assert
-        Assert.assertEquals(result, DotnetCommandsResolvingStage.Transformation)
-    }
-
-    @Test
     fun `should not transform and log if tests classes file not present`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns null
         }
         every { _testCommandMock.commandType } returns DotnetCommandType.Test
         justRun { _loggerServiceMock.writeErrorOutput(any()) }
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(0, result.count())
@@ -89,7 +90,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     fun `should transform to empty command sequence if targets of test command is empty`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns "exclude.txt"
         }
         _testCommandMock.let {
@@ -98,10 +98,11 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         }
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(0, result.count())
+        verify(exactly = 0) { _loggerServiceMock.writeErrorOutput(any()) }
         verify(exactly = 0) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = 0) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE) }
     }
@@ -110,7 +111,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
     fun `should transform to empty command sequence if target argument doesn't contains command line arguments`() {
         // arrange
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.testsClassesFilePath } returns "exclude.txt"
         }
         val targetArguments = mockk<TargetArguments> {
@@ -122,10 +122,11 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         }
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(0, result.count())
+        verify(exactly = 0) { _loggerServiceMock.writeErrorOutput(any()) }
         verify(exactly = 0) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = 0) { _loggerServiceMock.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE) }
     }
@@ -135,7 +136,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Includes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -171,38 +171,38 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         every { _fileSystemService.isExists(any()) } returns true
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(result.count(), 4)
         result[0].let { buildCommand ->
             val args = buildCommand.getArguments(mockk())
-            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\""}, 1)
+            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\"" }, 1)
         }
         result[1].let { suppressCommand ->
             val args = suppressCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 10)
-            Assert.assertEquals(args[0].value,"suppress")
-            Assert.assertEquals(args[1].value,"--target")
+            Assert.assertEquals(args[0].value, "suppress")
+            Assert.assertEquals(args[1].value, "--target")
             Assert.assertEquals(args[2].value, targetPath)
-            Assert.assertEquals(args[3].value,"--target")
+            Assert.assertEquals(args[3].value, "--target")
             Assert.assertEquals(args[4].value, pathToBinlog)
-            Assert.assertEquals(args[5].value,"--test-list")
+            Assert.assertEquals(args[5].value, "--test-list")
             Assert.assertEquals(args[6].value, testsListPath)
-            Assert.assertEquals(args[7].value,"--backup")
+            Assert.assertEquals(args[7].value, "--backup")
             Assert.assertEquals(args[8].value, pathToBackupMetadataCsv)
-            Assert.assertEquals(args[9].value,"--inclusion-mode")
+            Assert.assertEquals(args[9].value, "--inclusion-mode")
         }
         result[2].let { testCommand ->
             val args = testCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 1)
-            Assert.assertEquals(args[0].value,"--no-build")
+            Assert.assertEquals(args[0].value, "--no-build")
         }
         result[3].let { restoreCommand ->
             val args = restoreCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 3)
-            Assert.assertEquals(args[0].value,"restore")
-            Assert.assertEquals(args[1].value,"--backup-metadata")
+            Assert.assertEquals(args[0].value, "restore")
+            Assert.assertEquals(args[1].value, "--backup-metadata")
             Assert.assertEquals(args[2].value, pathToBackupMetadataCsv)
         }
         verify(exactly = targetArguments.count()) { _loggerServiceMock.writeBlock(any()) }
@@ -216,7 +216,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -252,37 +251,37 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         every { _fileSystemService.isExists(any()) } returns true
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(result.count(), 4)
         result[0].let { buildCommand ->
             val args = buildCommand.getArguments(mockk())
-            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\""}, 1)
+            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\"" }, 1)
         }
         result[1].let { suppressCommand ->
             val args = suppressCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 9)
-            Assert.assertEquals(args[0].value,"suppress")
-            Assert.assertEquals(args[1].value,"--target")
+            Assert.assertEquals(args[0].value, "suppress")
+            Assert.assertEquals(args[1].value, "--target")
             Assert.assertEquals(args[2].value, targetPath)
-            Assert.assertEquals(args[3].value,"--target")
+            Assert.assertEquals(args[3].value, "--target")
             Assert.assertEquals(args[4].value, pathToBinlog)
-            Assert.assertEquals(args[5].value,"--test-list")
+            Assert.assertEquals(args[5].value, "--test-list")
             Assert.assertEquals(args[6].value, testsListPath)
-            Assert.assertEquals(args[7].value,"--backup")
+            Assert.assertEquals(args[7].value, "--backup")
             Assert.assertEquals(args[8].value, pathToBackupMetadataCsv)
         }
         result[2].let { testCommand ->
             val args = testCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 1)
-            Assert.assertEquals(args[0].value,"--no-build")
+            Assert.assertEquals(args[0].value, "--no-build")
         }
         result[3].let { restoreCommand ->
             val args = restoreCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 3)
-            Assert.assertEquals(args[0].value,"restore")
-            Assert.assertEquals(args[1].value,"--backup-metadata")
+            Assert.assertEquals(args[0].value, "restore")
+            Assert.assertEquals(args[1].value, "--backup-metadata")
             Assert.assertEquals(args[2].value, pathToBackupMetadataCsv)
         }
         verify(exactly = targetArguments.count()) { _loggerServiceMock.writeBlock(any()) }
@@ -296,7 +295,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -337,33 +335,33 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         every { _fileSystemService.isExists(any()) } returns true
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(result.count(), 3)
         result[0].let { suppressCommand ->
             val args = suppressCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 9)
-            Assert.assertEquals(args[0].value,"suppress")
-            Assert.assertEquals(args[1].value,"--target")
+            Assert.assertEquals(args[0].value, "suppress")
+            Assert.assertEquals(args[1].value, "--target")
             Assert.assertEquals(args[2].value, targetPath1)
-            Assert.assertEquals(args[3].value,"--target")
+            Assert.assertEquals(args[3].value, "--target")
             Assert.assertEquals(args[4].value, targetPath2)
-            Assert.assertEquals(args[5].value,"--test-list")
+            Assert.assertEquals(args[5].value, "--test-list")
             Assert.assertEquals(args[6].value, testsListPath)
-            Assert.assertEquals(args[7].value,"--backup")
+            Assert.assertEquals(args[7].value, "--backup")
             Assert.assertEquals(args[8].value, pathToBackupMetadataCsv)
         }
         result[1].let { testCommand ->
             val args = testCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 1)
-            Assert.assertEquals(args[0].value,"--no-build")
+            Assert.assertEquals(args[0].value, "--no-build")
         }
         result[2].let { restoreCommand ->
             val args = restoreCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 3)
-            Assert.assertEquals(args[0].value,"restore")
-            Assert.assertEquals(args[1].value,"--backup-metadata")
+            Assert.assertEquals(args[0].value, "restore")
+            Assert.assertEquals(args[1].value, "--backup-metadata")
             Assert.assertEquals(args[2].value, pathToBackupMetadataCsv)
         }
         verify(exactly = targetArguments.count()) { _loggerServiceMock.writeBlock(any()) }
@@ -377,7 +375,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Includes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -413,32 +410,32 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         every { _fileSystemService.isExists(any()) } returns false
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         Assert.assertEquals(result.count(), 3)
         result[0].let { buildCommand ->
             val args = buildCommand.getArguments(mockk())
-            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\""}, 1)
+            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\"" }, 1)
         }
         result[1].let { suppressCommand ->
             val args = suppressCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 10)
-            Assert.assertEquals(args[0].value,"suppress")
-            Assert.assertEquals(args[1].value,"--target")
+            Assert.assertEquals(args[0].value, "suppress")
+            Assert.assertEquals(args[1].value, "--target")
             Assert.assertEquals(args[2].value, targetPath)
-            Assert.assertEquals(args[3].value,"--target")
+            Assert.assertEquals(args[3].value, "--target")
             Assert.assertEquals(args[4].value, pathToBinlog)
-            Assert.assertEquals(args[5].value,"--test-list")
+            Assert.assertEquals(args[5].value, "--test-list")
             Assert.assertEquals(args[6].value, testsListPath)
-            Assert.assertEquals(args[7].value,"--backup")
+            Assert.assertEquals(args[7].value, "--backup")
             Assert.assertEquals(args[8].value, pathToBackupMetadataCsv)
-            Assert.assertEquals(args[9].value,"--inclusion-mode")
+            Assert.assertEquals(args[9].value, "--inclusion-mode")
         }
         result[2].let { testCommand ->
             val args = testCommand.getArguments(mockk()).toList()
             Assert.assertEquals(args.count(), 1)
-            Assert.assertEquals(args[0].value,"--no-build")
+            Assert.assertEquals(args[0].value, "--no-build")
         }
         verify(exactly = targetArguments.count()) { _loggerServiceMock.writeBlock(any()) }
         verify(exactly = targetArguments.count()) {
@@ -451,7 +448,6 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
-            every { it.mode } returns TestsSplittingMode.Suppression
             every { it.filterType } returns TestsSplittingFilterType.Excludes
             every { it.testsClassesFilePath } returns testsListPath
         }
@@ -496,20 +492,20 @@ class TestSuppressTestsSplittingCommandsResolverTest {
         }
 
         // act
-        val result = resolver.resolve(sequenceOf(_testCommandMock)).toList()
+        val result = transformer.transform(_testCommandMock).toList()
 
         // assert
         result[0].let { buildCommand ->
             val args = buildCommand.getArguments(mockk())
             Assert.assertEquals(args.count(), 7)
-            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\""}, 1)
-            Assert.assertEquals(args.count { it.value == "SHOULD_BE_KEPT"}, 1)
-            Assert.assertEquals(args.count { it.value == "-p:A0=V0"}, 1)
-            Assert.assertEquals(args.count { it.value == "/p:A1=V1"}, 1)
-            Assert.assertEquals(args.count { it.value == "\'-p:A2=V2\'"}, 1)
-            Assert.assertEquals(args.count { it.value == "\"-p:A3=V3\""}, 1)
-            Assert.assertEquals(args.count { it.value == "`-p:A4=V4`"}, 1)
-            Assert.assertEquals(args.count { it.value == "SHOULD_BE_FILTERED_OUT"}, 0)
+            Assert.assertEquals(args.count { it.value == "-bl:LogFile=\"$pathToBinlog\"" }, 1)
+            Assert.assertEquals(args.count { it.value == "SHOULD_BE_KEPT" }, 1)
+            Assert.assertEquals(args.count { it.value == "-p:A0=V0" }, 1)
+            Assert.assertEquals(args.count { it.value == "/p:A1=V1" }, 1)
+            Assert.assertEquals(args.count { it.value == "\'-p:A2=V2\'" }, 1)
+            Assert.assertEquals(args.count { it.value == "\"-p:A3=V3\"" }, 1)
+            Assert.assertEquals(args.count { it.value == "`-p:A4=V4`" }, 1)
+            Assert.assertEquals(args.count { it.value == "SHOULD_BE_FILTERED_OUT" }, 0)
         }
     }
 }

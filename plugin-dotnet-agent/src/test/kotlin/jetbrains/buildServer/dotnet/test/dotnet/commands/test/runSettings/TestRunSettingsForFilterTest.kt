@@ -20,11 +20,14 @@ import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.DocElement
 import jetbrains.buildServer.XmlDocumentServiceImpl
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.build
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsForFilter
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProvider
 import org.apache.commons.io.output.WriterOutputStream
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -36,6 +39,8 @@ import java.io.StringWriter
 class TestRunSettingsForFilterTest {
     @MockK private lateinit var _baseTestRunSettingsProvider: TestRunSettingsProvider
     @MockK private lateinit var _testsFilterProvider: TestsFilterProvider
+    @MockK private lateinit var _testsSplittingModeProvider: TestsSplittingModeProvider
+    @MockK private lateinit var _commandContext: DotnetBuildContext
 
     @BeforeMethod
     fun setUp() {
@@ -100,9 +105,12 @@ class TestRunSettingsForFilterTest {
         val provider = createInstance()
 
         // When
-        every { _testsFilterProvider.filterExpression } returns filterExpression
-        every { _baseTestRunSettingsProvider.tryCreate(DotnetCommandType.Test) } returns settings
-        val newActualSettings = provider.tryCreate(DotnetCommandType.Test)
+        every { _commandContext.command.commandType } returns DotnetCommandType.Test
+        every { _commandContext.toolVersion } returns Version.Empty
+        every { _testsSplittingModeProvider.getMode(any()) } returns TestsSplittingMode.TestClassNameFilter
+        every { _testsFilterProvider.getFilterExpression(any()) } returns filterExpression
+        every { _baseTestRunSettingsProvider.tryCreate(_commandContext) } returns settings
+        val newActualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(getString(newActualSettings), getString(newExpectedSettings))
@@ -119,5 +127,5 @@ class TestRunSettingsForFilterTest {
             }
         }
 
-    private fun createInstance() = TestRunSettingsForFilter(_baseTestRunSettingsProvider, _testsFilterProvider)
+    private fun createInstance() = TestRunSettingsForFilter(_baseTestRunSettingsProvider, _testsFilterProvider, _testsSplittingModeProvider)
 }

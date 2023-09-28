@@ -18,24 +18,27 @@ package jetbrains.buildServer.dotnet.commands.test.runSettings
 
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.asSequence
-import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 
 class TestRunSettingsForFilter(
     private val _baseTestRunSettingsProvider: TestRunSettingsProvider,
-    private val _testsFilterProvider: TestsFilterProvider
+    private val _testsFilterProvider: TestsFilterProvider,
+    private val _testsSplittingModeProvider: TestsSplittingModeProvider
 )
     : TestRunSettingsProvider {
-    override fun tryCreate(command: DotnetCommandType) =
+    override fun tryCreate(context: DotnetBuildContext) =
             try {
-                _testsFilterProvider.filterExpression
+                val testsSplittingMode = _testsSplittingModeProvider.getMode(context.toolVersion)
+                _testsFilterProvider.getFilterExpression(testsSplittingMode)
                         .let { it.ifBlank { null } }
                         ?.let { newFilter ->
-                            _baseTestRunSettingsProvider.tryCreate(command)?.let { settings ->
+                            _baseTestRunSettingsProvider.tryCreate(context)?.let { settings ->
                                 val testCaseFilter = ensureElementExists(settings, *_testCaseFilterPath)
                                 testCaseFilter.textContent = arrayOf(testCaseFilter.textContent, newFilter)
                                         .filter { it.isNotBlank() }

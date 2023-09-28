@@ -47,7 +47,7 @@ class VSTestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val filter = _dotnetFilterFactory.createFilter(commandType);
+        val filter = _dotnetFilterFactory.createFilter(context);
         if (filter.isSplittingByFilter) {
             _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE)
         }

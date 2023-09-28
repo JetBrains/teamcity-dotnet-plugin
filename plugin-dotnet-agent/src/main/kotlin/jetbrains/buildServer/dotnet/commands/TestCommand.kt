@@ -46,7 +46,7 @@ class TestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
-        val filter = _dotnetFilterFactory.createFilter(commandType);
+        val filter = _dotnetFilterFactory.createFilter(context);
 
         if (filter.filter.isNotBlank()) {
             yield(CommandLineArgument("--filter"))

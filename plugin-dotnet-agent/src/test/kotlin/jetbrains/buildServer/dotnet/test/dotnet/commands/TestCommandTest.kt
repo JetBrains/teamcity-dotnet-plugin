@@ -98,7 +98,7 @@ class TestCommandTest {
     ) {
         // Given
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
-        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns filter
+        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns filter
 
         // When
         val actualArguments = command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
@@ -123,7 +123,7 @@ class TestCommandTest {
     fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
         // Given
         val command = createCommand(targets = targets.asSequence())
-        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
+        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
 
         // When
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -150,7 +150,7 @@ class TestCommandTest {
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // When
-        every { _dotnetFilterFactory.createFilter(DotnetCommandType.Test) } returns DotnetFilter("", null, false)
+        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
         command.getArguments(DotnetBuildContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // Then

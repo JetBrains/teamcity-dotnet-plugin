@@ -22,6 +22,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetBuildContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileProviderFromSystemSettings
 import org.testng.Assert
@@ -32,6 +33,7 @@ import java.io.File
 
 class TestRunSettingsFileProviderFromSystemSettingsTest {
     @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _commandContext: DotnetBuildContext
 
     @BeforeMethod
     fun setUp() {
@@ -59,7 +61,8 @@ class TestRunSettingsFileProviderFromSystemSettingsTest {
 
         // When
         every { _parametersService.tryGetParameter(ParameterType.System, TestRunSettingsFileProviderFromSystemSettings.SettingSystemParamName) } returns systemParamValue
-        val actualFile = provider.tryGet(command)
+        every { _commandContext.command.commandType } returns command
+        val actualFile = provider.tryGet(_commandContext)
 
         // Then
         Assert.assertEquals(actualFile, expectedFile)
