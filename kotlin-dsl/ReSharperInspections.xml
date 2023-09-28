@@ -91,10 +91,9 @@
         <param name="jetbrains.resharper-clt.plugins" dslName="cltPlugins">
             <description>
                 Newline-delimited list of ReSharper plugins required for InspectCode in the following format:
-                - Download %pluginId%/%version%
-                - File %filePath% (not supported for R# CLT 2021.3.0 and newer)
-                - Folder %folderPath% (not supported for R# CLT 2021.3.0 and newer)
-                To download plugins add the https://resharper-plugins.jetbrains.com/api/v2/ NuGet package source.
+                - %pluginId%[/%version%]
+                If you want InspectCode to obtain plugin .nupkg files from a local storage directory rather than JetBrains Marketplace,
+                set the source option in the Additional InspectCode parameters field: --source=%pluginsDirectoryPath%.
             </description>
         </param>
 

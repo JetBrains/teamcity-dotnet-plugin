@@ -20,7 +20,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.test.agent.runner.ParametersServiceStub
@@ -38,7 +38,8 @@ import org.testng.annotations.Test
 import java.io.ByteArrayOutputStream
 
 class InspectionConfigurationFileTest {
-    @MockK private lateinit var _xmlWriter: XmlWriter
+    @MockK
+    private lateinit var _xmlWriter: XmlWriter
 
     @BeforeMethod
     fun setUp() {
@@ -59,9 +60,10 @@ class InspectionConfigurationFileTest {
                             RUNNER_SETTING_SOLUTION_PATH to it
                         )
                     ),
-                    DocElement("InspectCodeOptions",
-                        DocElement("OutputFile", "output.xml"),
-                        DocElement("SolutionFile", "My.sln")
+                    XmlElement(
+                        "InspectCodeOptions",
+                        XmlElement("OutputFile", "output.xml"),
+                        XmlElement("SolutionFile", "My.sln")
                     )
                 )
             }
@@ -80,18 +82,20 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_CUSTOM_SETTINGS_PROFILE_PATH to "sln.DotSettings"
                     )
                 ),
-                DocElement("InspectCodeOptions",
-                    DocElement("Debug", "true"),
-                    DocElement("IncludedProjects",
-                        DocElement("IncludedProjects", "Abc"),
-                        DocElement("IncludedProjects", "xyz")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement("Debug", "true"),
+                    XmlElement(
+                        "IncludedProjects",
+                        XmlElement("IncludedProjects", "Abc"),
+                        XmlElement("IncludedProjects", "xyz")
                     ),
-                    DocElement("OutputFile", "output.xml"),
-                    DocElement("SolutionFile", "My.sln"),
-                    DocElement("CachesHomeDirectory", "cache"),
-                    DocElement("CustomSettingsProfile", "sln.DotSettings"),
-                    DocElement("SupressBuildInSettings", "true"),
-                    DocElement("NoSolutionWideAnalysis", "true")
+                    XmlElement("OutputFile", "output.xml"),
+                    XmlElement("SolutionFile", "My.sln"),
+                    XmlElement("CachesHomeDirectory", "cache"),
+                    XmlElement("CustomSettingsProfile", "sln.DotSettings"),
+                    XmlElement("SupressBuildInSettings", "true"),
+                    XmlElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -107,16 +111,18 @@ class InspectionConfigurationFileTest {
                         CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "true"
                     )
                 ),
-                DocElement("InspectCodeOptions",
-                    DocElement("Debug", "true"),
-                    DocElement("IncludedProjects",
-                        DocElement("IncludedProjects", "Abc"),
-                        DocElement("IncludedProjects", "xyz")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement("Debug", "true"),
+                    XmlElement(
+                        "IncludedProjects",
+                        XmlElement("IncludedProjects", "Abc"),
+                        XmlElement("IncludedProjects", "xyz")
                     ),
-                    DocElement("OutputFile", "output.xml"),
-                    DocElement("SolutionFile", "My.sln"),
-                    DocElement("SupressBuildInSettings", "true"),
-                    DocElement("NoSolutionWideAnalysis", "true")
+                    XmlElement("OutputFile", "output.xml"),
+                    XmlElement("SolutionFile", "My.sln"),
+                    XmlElement("SupressBuildInSettings", "true"),
+                    XmlElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -132,17 +138,19 @@ class InspectionConfigurationFileTest {
                         CONFIG_PARAMETER_DISABLE_SOLUTION_WIDE_ANALYSIS to "True"
                     )
                 ),
-                DocElement("InspectCodeOptions",
-                    DocElement("Debug", "true"),
-                    DocElement("IncludedProjects",
-                        DocElement("IncludedProjects", "Abc"),
-                        DocElement("IncludedProjects", "xyz")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement("Debug", "true"),
+                    XmlElement(
+                        "IncludedProjects",
+                        XmlElement("IncludedProjects", "Abc"),
+                        XmlElement("IncludedProjects", "xyz")
                     ),
-                    DocElement("OutputFile", "output.xml"),
-                    DocElement("SolutionFile", "My.sln"),
-                    DocElement("CachesHomeDirectory", "cache"),
-                    DocElement("SupressBuildInSettings", "true"),
-                    DocElement("NoSolutionWideAnalysis", "true")
+                    XmlElement("OutputFile", "output.xml"),
+                    XmlElement("SolutionFile", "My.sln"),
+                    XmlElement("CachesHomeDirectory", "cache"),
+                    XmlElement("SupressBuildInSettings", "true"),
+                    XmlElement("NoSolutionWideAnalysis", "true")
                 )
             ),
 
@@ -156,15 +164,17 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_SOLUTION_PATH to "My.sln"
                     )
                 ),
-                DocElement("InspectCodeOptions",
-                    DocElement("Debug", true.toString()),
-                    DocElement("IncludedProjects",
-                        DocElement("IncludedProjects", "Abc"),
-                        DocElement("IncludedProjects", "xyz")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement("Debug", true.toString()),
+                    XmlElement(
+                        "IncludedProjects",
+                        XmlElement("IncludedProjects", "Abc"),
+                        XmlElement("IncludedProjects", "xyz")
                     ),
-                    DocElement("OutputFile", "output.xml"),
-                    DocElement("SolutionFile", "My.sln"),
-                    DocElement("CachesHomeDirectory", "cache")
+                    XmlElement("OutputFile", "output.xml"),
+                    XmlElement("SolutionFile", "My.sln"),
+                    XmlElement("CachesHomeDirectory", "cache")
                 )
             ),
 
@@ -178,13 +188,15 @@ class InspectionConfigurationFileTest {
                         RUNNER_SETTING_SOLUTION_PATH to "My.sln"
                     )
                 ),
-                DocElement("InspectCodeOptions",
-                    DocElement("IncludedProjects",
-                        DocElement("IncludedProjects", "Abc"),
-                        DocElement("IncludedProjects", "xyz")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement(
+                        "IncludedProjects",
+                        XmlElement("IncludedProjects", "Abc"),
+                        XmlElement("IncludedProjects", "xyz")
                     ),
-                    DocElement("OutputFile", "output.xml"),
-                    DocElement("SolutionFile", "My.sln")
+                    XmlElement("OutputFile", "output.xml"),
+                    XmlElement("SolutionFile", "My.sln")
                 )
             ),
 
@@ -193,8 +205,9 @@ class InspectionConfigurationFileTest {
                 null,
                 false,
                 ParametersServiceStub(emptyMap()),
-                DocElement("InspectCodeOptions",
-                    DocElement("OutputFile", "Output.xml")
+                XmlElement(
+                    "InspectCodeOptions",
+                    XmlElement("OutputFile", "Output.xml")
                 )
             ),
 
@@ -207,8 +220,8 @@ class InspectionConfigurationFileTest {
         // arrange
         val configFile = createInstance(case.parametersService)
         val stream = ByteArrayOutputStream()
-        var actualXml: DocElement? = null
-        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<DocElement>(0) }
+        var actualXml: XmlElement? = null
+        every { _xmlWriter.write(any(), stream) } answers { actualXml = arg<XmlElement>(0) }
 
         // act
         configFile.create(stream, case.outputFile, case.cachesHomeDirectory, case.debug)
@@ -228,6 +241,6 @@ class InspectionConfigurationFileTest {
         val cachesHomeDirectory: Path?,
         val debug: Boolean,
         val parametersService: ParametersService,
-        val expectedXml: DocElement?,
+        val expectedXml: XmlElement?,
     )
 }

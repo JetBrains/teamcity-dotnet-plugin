@@ -37,7 +37,7 @@ inline fun <reified T : Node> Node.find(xpath: String) =
         if (it is NodeList) it.asSequence<T>() else emptySequence<T>()
     }
 
-fun Node.build(element: DocElement): Element {
+fun Node.build(element: XmlElement): Element {
     val owner = if (this is Document) this else this.ownerDocument!!
     val newElement = owner.createElement(element.name)
     element.value?.let {
@@ -58,12 +58,12 @@ fun Node.build(element: DocElement): Element {
     return newElement
 }
 
-data class DocElement(val name: String, val elements: Sequence<DocElement?>, val value: String? = null) {
-    private val _attrs = mutableListOf<DocElementAttribute>()
+data class XmlElement(val name: String, val elements: Sequence<XmlElement?>, val value: String? = null) {
+    private val _attrs = mutableListOf<XmlElementAttribute>()
 
     public val attributes get() = _attrs.asSequence()
 
-    constructor(name: String, vararg nestedElements: DocElement?)
+    constructor(name: String, vararg nestedElements: XmlElement?)
             : this(name, nestedElements.asSequence())
 
     constructor(name: String, value: String?)
@@ -71,8 +71,8 @@ data class DocElement(val name: String, val elements: Sequence<DocElement?>, val
 
     val isEmpty: Boolean get() = value.isNullOrEmpty() && !attributes.any() && !elements.any()
 
-    fun a(name: String, value: String): DocElement {
-        _attrs.add(DocElementAttribute(name, value))
+    fun withAttribute(name: String, value: String): XmlElement {
+        _attrs.add(XmlElementAttribute(name, value))
         return this
     }
 
@@ -91,6 +91,6 @@ data class DocElement(val name: String, val elements: Sequence<DocElement?>, val
         }
 }
 
-data class DocElementAttribute(val name: String, val value: String?) {
+data class XmlElementAttribute(val name: String, val value: String?) {
     override fun toString() = if (value != null) "$name='$value'" else ""
 }

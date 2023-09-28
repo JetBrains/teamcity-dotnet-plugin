@@ -16,22 +16,27 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
+import jetbrains.buildServer.agent.runner.LoggerService
 
 /**
  * Provides download specification, for example:
  * <Download Id="Plugin.Id" Version="1.2.0.0"></Download>
  */
-class DownloadPluginSource : PluginSource {
-    override val id = "download"
+class DownloadPluginXmlElementGenerator(
+    private val _loggerService: LoggerService
+) : PluginXmlElementGenerator {
+    override val sourceId = "download"
 
-    override fun getPlugin(specification: String) =
-        specification.split("/").let { parts ->
-            val result = DocElement("Download")
+    override fun generateXmlElement(strValue: String) =
+        strValue.split("/").let { parts ->
+            val result = XmlElement("Download")
             if (parts.size == 2) {
                 result
-                    .a("Id", parts[0])
-                    .a("Version", parts[1])
+                    .withAttribute("Id", parts[0])
+                    .withAttribute("Version", parts[1])
+            } else {
+                _loggerService.writeWarning("Invalid R# CLT plugin descriptor for downloading: \"$strValue\", it will be ignored.")
             }
 
             result

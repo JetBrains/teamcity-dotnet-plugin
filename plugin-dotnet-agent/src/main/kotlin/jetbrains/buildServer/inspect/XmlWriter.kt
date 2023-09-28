@@ -16,9 +16,9 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import java.io.OutputStream
 
 interface XmlWriter {
-    fun write(rootElement: DocElement, xmlStream: OutputStream)
+    fun write(rootElement: XmlElement, xmlStream: OutputStream)
 }

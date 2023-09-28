@@ -16,4 +16,8 @@
 
 package jetbrains.buildServer.inspect
 
-data class PluginParameter(val source: String, val value: String)
+interface PluginDescriptorsProvider {
+    fun getPluginDescriptors(): List<PluginDescriptor>
+
+    fun hasPluginDescriptors(): Boolean
+}

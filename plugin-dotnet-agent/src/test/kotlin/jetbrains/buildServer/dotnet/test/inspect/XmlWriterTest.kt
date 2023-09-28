@@ -19,7 +19,7 @@ package jetbrains.buildServer.dotnet.test.inspect
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.build
 import jetbrains.buildServer.inspect.XmlWriterImpl
@@ -31,7 +31,7 @@ class XmlWriterTest {
     @Test
     fun shouldConvertToFlatSequency() {
         // Given
-        val element = DocElement("Abc", "Xyz")
+        val element = XmlElement("Abc", "Xyz")
         val docFactory = DocumentBuilderFactory.newInstance()
         val docBuilder = docFactory.newDocumentBuilder()
         val doc = docBuilder.newDocument()

@@ -16,8 +16,10 @@
 
 package jetbrains.buildServer.inspect
 
-interface PluginParametersProvider {
-    fun getPluginParameters(): List<PluginParameter>
+import jetbrains.buildServer.XmlElement
 
-    fun hasPluginParameters(): Boolean
+interface PluginXmlElementGenerator {
+    val sourceId: String
+
+    fun generateXmlElement(strValue: String): XmlElement
 }
