@@ -57,7 +57,8 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
                         it.attributes["type"] == "streamToBuildLog" &&
                         it.attributes["wrapFileContentInBlock"] == "false" &&
                         it.attributes["filePattern"] != null &&
-                        Pattern.matches("/agentTmp/TestReports/.{24}/\\*\\.msg", it.attributes["filePattern"])
+                        // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==/*.msg
+                        Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
             })
         }
     }
@@ -106,7 +107,8 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
                         it.attributes["type"] == "streamToBuildLog" &&
                         it.attributes["wrapFileContentInBlock"] == "false" &&
                         it.attributes["filePattern"] != null &&
-                        Pattern.matches("/agentTmp/TestReports/.{24}/\\*\\.msg", it.attributes["filePattern"])
+                        // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==/*.msg
+                        Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
             })
         }
     }
@@ -126,7 +128,8 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val testReportsFilePath = environmentBuilder.getTestReportsFilesPathForBuildStep()
 
         // Assert
-        Assert.assertTrue(Pattern.matches("/agentTmp/TestReports/.{24}", testReportsFilePath.toString()))
+        // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==
+        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", testReportsFilePath.toString()))
     }
 
     @Test
@@ -165,8 +168,9 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val pathForSecondStep = environmentBuilder.getTestReportsFilesPathForBuildStep()
 
         // Assert
-        Assert.assertTrue(Pattern.matches("/agentTmp/TestReports/.{24}", pathForFirstStep.toString()))
-        Assert.assertTrue(Pattern.matches("/agentTmp/TestReports/.{24}", pathForSecondStep.toString()))
+        // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==
+        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForFirstStep.toString()))
+        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForSecondStep.toString()))
         Assert.assertNotEquals(pathForFirstStep, pathForSecondStep)
     }
 
