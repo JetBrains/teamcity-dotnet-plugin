@@ -34,7 +34,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class MSBuildArgumentsProviderTest {
-    private lateinit var _context: DotnetBuildContext
+    private lateinit var _context: DotnetCommandContext
     @MockK private lateinit var _msBuildParameterConverter: MSBuildParameterConverter
     @MockK private lateinit var _msBuildParametersProvider: MSBuildParametersProvider
 
@@ -42,7 +42,7 @@ class MSBuildArgumentsProviderTest {
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
-        _context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        _context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
     }
 
     @DataProvider

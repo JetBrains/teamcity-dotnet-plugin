@@ -41,7 +41,7 @@ class RunCommand(
             TargetArguments(sequenceOf(CommandLineArgument("--project"), CommandLineArgument(it.target.path, CommandLineArgumentType.Target)))
         }
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_FRAMEWORK)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--framework"))

@@ -22,5 +22,5 @@ import jetbrains.buildServer.agent.CommandLineArgument
  * Provides arguments to the utility.
  */
 interface ArgumentsProvider {
-    fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument>
+    fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument>
 }

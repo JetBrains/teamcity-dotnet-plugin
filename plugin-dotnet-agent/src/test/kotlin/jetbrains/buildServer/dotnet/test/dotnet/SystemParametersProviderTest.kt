@@ -25,7 +25,7 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolPath
 import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameter
 import jetbrains.buildServer.dotnet.SystemParametersProvider
@@ -58,7 +58,7 @@ class SystemParametersProviderTest {
             parametersService: ParametersService,
             expectedParameters: List<MSBuildParameter>) {
         // Given
-        val context = DotnetBuildContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("wd")), mockk<DotnetCommand>())
         val provider = SystemParametersProvider(parametersService, _virtualContext)
 
         // When

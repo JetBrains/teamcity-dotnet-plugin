@@ -19,23 +19,24 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.*
 import jetbrains.buildServer.dotnet.ComposedTestsFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class ComposedTestsFilterProviderTest {
     @DataProvider(name = "testData")
-    fun testData(): Any? {
+    fun testData(): Any {
         val abc = mockk<TestsFilterProvider>();
-        every { abc.filterExpression } returns "Abc"
-        val qw = mockk<TestsFilterProvider>();
-        every { qw.filterExpression } returns "Qw"
-        val xyz = mockk<TestsFilterProvider>();
-        every { xyz.filterExpression } returns "Xyz"
-        val blank = mockk<TestsFilterProvider>();
-        every { blank.filterExpression } returns "  "
-        val empty = mockk<TestsFilterProvider>();
-        every { empty.filterExpression } returns ""
+        every { abc.getFilterExpression(any()) } returns "Abc"
+        val qw = mockk<TestsFilterProvider>()
+        every { qw.getFilterExpression(any()) } returns "Qw"
+        val xyz = mockk<TestsFilterProvider>()
+        every { xyz.getFilterExpression(any()) } returns "Xyz"
+        val blank = mockk<TestsFilterProvider>()
+        every { blank.getFilterExpression(any()) } returns "  "
+        val empty = mockk<TestsFilterProvider>()
+        every { empty.getFilterExpression(any()) } returns ""
 
         return arrayOf(
                 arrayOf(emptyList<String>(), ""),
@@ -57,7 +58,7 @@ class ComposedTestsFilterProviderTest {
         val provider = createInstance(testsFilterProviders)
 
         // When
-        val actualFilter = provider.filterExpression;
+        val actualFilter = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // Then
         Assert.assertEquals(actualFilter, expecedFilter)

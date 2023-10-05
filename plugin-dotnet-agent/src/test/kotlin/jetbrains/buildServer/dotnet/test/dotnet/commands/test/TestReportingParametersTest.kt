@@ -68,7 +68,7 @@ class TestReportingParametersTest {
 
         // When
         every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_TEST_REPORTING) } returns reportigParam
-        val actualMode = testReportingParameters.getMode(DotnetBuildContext(ToolPath(Path("wd"), Path("v_wd")), _dotnetCommand, toolVersion))
+        val actualMode = testReportingParameters.getMode(DotnetCommandContext(ToolPath(Path("wd"), Path("v_wd")), _dotnetCommand, toolVersion))
 
         // Then
         Assert.assertEquals(actualMode, EnumSet.copyOf<TestReportingMode>(expectedMode))

@@ -40,7 +40,7 @@ class NugetDeleteCommand(
     override val targetArguments: Sequence<TargetArguments>
         get() = emptySequence()
 
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         parameters(DotnetConstants.PARAM_NUGET_PACKAGE_ID)?.trim()?.let {
             if (it.isNotBlank()) {
                 yieldAll(StringUtil.split(it).map { CommandLineArgument(it) })

@@ -16,10 +16,10 @@
 
 package jetbrains.buildServer.dotnet.commands.test
 
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.TestReportingMode
 import java.util.*
 
 interface TestReportingParameters {
-    fun getMode(context: DotnetBuildContext): EnumSet<TestReportingMode>
+    fun getMode(context: DotnetCommandContext): EnumSet<TestReportingMode>
 }

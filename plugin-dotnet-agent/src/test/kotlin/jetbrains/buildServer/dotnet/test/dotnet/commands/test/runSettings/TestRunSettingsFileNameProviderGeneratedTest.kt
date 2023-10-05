@@ -21,7 +21,7 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.Serializer
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetCommandType
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsFileNameProviderGenerated
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsProvider
 import org.testng.Assert
@@ -39,6 +39,7 @@ class TestRunSettingsFileNameProviderGeneratedTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystem: FileSystemService
     @MockK private lateinit var _serializer: Serializer<Document>
+    @MockK private lateinit var _commandContext: DotnetCommandContext
 
     @BeforeMethod
     fun setUp() {
@@ -54,14 +55,14 @@ class TestRunSettingsFileNameProviderGeneratedTest {
         val outputStream = mockk<OutputStream>()
 
         // When
-        every { _settingsProvider.tryCreate(DotnetCommandType.Test) } returns _settings
+        every { _settingsProvider.tryCreate(any()) } returns _settings
         every { _pathsService.getTempFileName(TestRunSettingsFileNameProviderGenerated.RunSettingsFileExtension) } returns settingsFile
         every { _fileSystem.write<File>(settingsFile, any()) } answers {
             arg<(OutputStream) -> File>(1).invoke(outputStream)
             settingsFile
         }
         every { _serializer.serialize(_settings, outputStream) } returns Unit
-        val actualFile = provider.tryGet(DotnetCommandType.Test)
+        val actualFile = provider.tryGet(_commandContext)
 
         // Then
         Assert.assertEquals(actualFile, settingsFile)
@@ -74,8 +75,8 @@ class TestRunSettingsFileNameProviderGeneratedTest {
         val provider = createInstance()
 
         // When
-        every { _settingsProvider.tryCreate(DotnetCommandType.Test) } returns null
-        val actualFile = provider.tryGet(DotnetCommandType.Test)
+        every { _settingsProvider.tryCreate(_commandContext) } returns null
+        val actualFile = provider.tryGet(_commandContext)
 
         // Then
         Assert.assertEquals(actualFile, null)
@@ -88,8 +89,8 @@ class TestRunSettingsFileNameProviderGeneratedTest {
         val provider = createInstance()
 
         // When
-        every { _settingsProvider.tryCreate(DotnetCommandType.Test) } throws Throwable()
-        val actualFile = provider.tryGet(DotnetCommandType.Test)
+        every { _settingsProvider.tryCreate(_commandContext) } throws Throwable()
+        val actualFile = provider.tryGet(_commandContext)
 
         // Then
         Assert.assertEquals(actualFile, null)

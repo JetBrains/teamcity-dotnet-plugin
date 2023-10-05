@@ -17,9 +17,9 @@
 package jetbrains.buildServer.dotnet.commands.test.splitting
 
 interface TestsSplittingSettings {
-    val mode: TestsSplittingMode
     val filterType: TestsSplittingFilterType
     val testClasses: Sequence<String>
+    val hasEnoughTestClassesToActivateSuppression: Boolean
     val exactMatchFilterSize: Int
     val testsClassesFilePath: String?
     val trimTestClassParameters: Boolean

@@ -24,9 +24,9 @@ class TestsSplittingFilterProvider(
     private val _settings: TestsSplittingSettings,
     private val _testsNamesReader: TestsSplittingByNamesReader,
 ) : TestsFilterProvider {
-    override val filterExpression: String get() = when {
-        _settings.mode.isFilterMode -> {
-            val filter = buildFilter()
+    override fun getFilterExpression(mode: TestsSplittingMode): String = when {
+        mode.isFilterMode -> {
+            val filter = buildFilter(mode)
 
             LOG.debug("Tests group file filter: \"$filter\".")
             filter
@@ -35,8 +35,8 @@ class TestsSplittingFilterProvider(
     }
 
 
-    private fun buildFilter() = when {
-        _settings.mode == TestsSplittingMode.TestNameFilter -> buildExactMatchFilter()
+    private fun buildFilter(mode: TestsSplittingMode) = when {
+        mode == TestsSplittingMode.TestNameFilter -> buildExactMatchFilter()
         else -> buildDefaultFilter()
     }
 

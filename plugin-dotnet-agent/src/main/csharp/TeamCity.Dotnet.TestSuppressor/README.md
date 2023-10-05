@@ -4,7 +4,7 @@ This console application, developed using .NET and Mono.Cecil, is designed to su
 
 ## Features
 
-- **Suppress Tests**: The application allows you to suppress tests by specifying the target path and a file containing a list of test classes. After the suppressing this command generates metadata CSV-file that contains semicolon separeted list of patched assemblies
+- **Suppress Tests**: The application allows you to suppress tests by specifying the target path and a file containing a list of test classes. After the suppression this command generates metadata CSV-file that contains semicolon separated list of patched assemblies
 - **Restore Original Assemblies**: You can restore the original versions of the suppressed assemblies by providing the path to a CSV file containing the metadata after suppression
 
 ## Usage

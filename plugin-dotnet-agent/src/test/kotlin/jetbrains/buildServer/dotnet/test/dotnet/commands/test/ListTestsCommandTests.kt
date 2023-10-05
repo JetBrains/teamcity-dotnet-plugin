@@ -56,7 +56,7 @@ class ListTestsCommandTests {
     fun `should get arguments`() {
         // arrange
         val command = createCommand()
-        val context = mockk<DotnetBuildContext>()
+        val context = mockk<DotnetCommandContext>()
 
         // act
         val result = command.getArguments(context).toList()

@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
 
 class XmlReaderImpl : XmlReader {
-    override fun read(xmlStream: InputStream) = sequence<DocElement> {
+    override fun read(xmlStream: InputStream) = sequence<XmlElement> {
         InputStreamReader(xmlStream, "UTF8").use {
             BufferedReader(it).use {
                 val xmlInFact = XMLInputFactory.newInstance()
@@ -33,7 +33,7 @@ class XmlReaderImpl : XmlReader {
                 var reader: XMLStreamReader? = null
                 try {
                     reader = xmlInFact.createXMLStreamReader(it)
-                    var nextElement: DocElement? = null
+                    var nextElement: XmlElement? = null
                     while (reader.hasNext()) {
                         try {
                             when (reader.eventType) {
@@ -42,20 +42,20 @@ class XmlReaderImpl : XmlReader {
                                         yield(nextElement)
                                     }
 
-                                    nextElement = DocElement(if (reader.hasName()) reader.getLocalName() else "")
+                                    nextElement = XmlElement(if (reader.hasName()) reader.getLocalName() else "")
                                     for (index in 0 until reader.getAttributeCount()) {
-                                        nextElement.a(reader.getAttributeLocalName(index), reader.getAttributeValue(index))
+                                        nextElement.withAttribute(reader.getAttributeLocalName(index), reader.getAttributeValue(index))
                                     }
                                 }
 
                                 XMLStreamConstants.CHARACTERS -> {
                                     if(!reader.isWhiteSpace && nextElement != null) {
                                         var atrs = nextElement.attributes
-                                        nextElement = DocElement(nextElement.name, reader.text)
+                                        nextElement = XmlElement(nextElement.name, reader.text)
                                         for(atr in atrs) {
                                             val value = atr.value
                                             if(value != null) {
-                                                nextElement.a(atr.name, value)
+                                                nextElement.withAttribute(atr.name, value)
                                             }
                                         }
                                     }

@@ -21,7 +21,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
 import jetbrains.buildServer.agent.DataProcessorContext
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.inspections.*
@@ -35,9 +35,12 @@ import java.io.File
 import java.io.PipedInputStream
 
 class InspectCodeDataProcessorTest {
-    @MockK private lateinit var _xmlReader: XmlReader
-    @MockK private lateinit var _reporter: InspectionReporter
-    @MockK private lateinit var _context: DataProcessorContext
+    @MockK
+    private lateinit var _xmlReader: XmlReader
+    @MockK
+    private lateinit var _reporter: InspectionReporter
+    @MockK
+    private lateinit var _context: DataProcessorContext
 
     private var _csharpErrors: InspectionTypeInfo
     private var _redundantUsingDirective: InspectionTypeInfo
@@ -109,71 +112,72 @@ class InspectCodeDataProcessorTest {
     @DataProvider(name = "processDataCases")
     fun getProcessDataCases(): Array<Array<Sequence<Any>>> {
         return arrayOf(
-                arrayOf(
-                        sequenceOf(
-                                DocElement("Report").a("ToolsVersion", "203"),
-                                DocElement("Information"),
-                                DocElement("InspectionScope"),
-                                DocElement("Element"),
-                                DocElement("IssueTypes"),
-                                DocElement("IssueType")
-                                        .a("Id", "CSharpErrors")
-                                        .a("Category", "C# Compiler Errors")
-                                        .a("CategoryId", "CSharpErrors")
-                                        .a("Severity", "ERROR"),
-                                DocElement("IssueType")
-                                        .a("Id", "RedundantUsingDirective")
-                                        .a("Category", "Redundancies in Code")
-                                        .a("CategoryId", "CodeRedundancy")
-                                        .a("Description", "Redundant using directive")
-                                        .a("Severity", "WARNING")
-                                        .a("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=RedundantUsingDirective"),
-                                DocElement("IssueType")
-                                        .a("Id", "UnusedType.Global")
-                                        .a("Category", "Redundancies in Symbol Declarations")
-                                        .a("CategoryId", "DeclarationRedundancy")
-                                        .a("Description", "Type is never used: Non-private accessibility")
-                                        .a("Severity", "SUGGESTION")
-                                        .a("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=UnusedType.Global"),
-                                DocElement("Issues"),
-                                DocElement("Project").a("Name", "Clock.Console"),
-                                DocElement("Issue")
-                                        .a("TypeId", "RedundantUsingDirective")
-                                        .a("File", "Clock.Console\\Program.cs")
-                                        .a("Offset", "85-103")
-                                        .a("Line", "5")
-                                        .a("Message", "Using directive is not required by the code and can be safely removed"),
-                                DocElement("Issue")
-                                        .a("TypeId", "CSharpErrors")
-                                        .a("File", "Clock.Console\\Program.cs")
-                                        .a("Offset", "99-102")
-                                        .a("Line", "7")
-                                        .a("Message", "Cannot resolve symbol 'IoC'"),
-                                DocElement("Issue")
-                                        .a("TypeId", "UnusedType.Global")
-                                        .a("File", "Clock.Console\\Program.cs")
-                                        .a("Offset", "99-102")
-                                        .a("Line", "9")
-                                        .a("Message", "Abc"),
-                                DocElement("Project").a("Name", "Clock.Xamarin.Android"),
-                                DocElement("Issue")
-                                        .a("TypeId", "CSharpErrors")
-                                        .a("File", "Clock.Xamarin.Android\\MainActivity.cs")
-                                        .a("Offset", "1266-1292")
-                                        .a("Line", "28")
-                                        .a("Message", "Cannot resolve symbol 'OnRequestPermissionsResult'")
-                        ),
-                        sequenceOf(_csharpErrors, _redundantUsingDirective, _unusedTypeGlobal),
-                        sequenceOf(_redundantUsingDirectiveIssue, _csharpErrorsIssue, _unusedTypeGlobalIssue, _csharpErrorsIssue2)
-                )
+            arrayOf(
+                sequenceOf(
+                    XmlElement("Report").withAttribute("ToolsVersion", "203"),
+                    XmlElement("Information"),
+                    XmlElement("InspectionScope"),
+                    XmlElement("Element"),
+                    XmlElement("IssueTypes"),
+                    XmlElement("IssueType")
+                        .withAttribute("Id", "CSharpErrors")
+                        .withAttribute("Category", "C# Compiler Errors")
+                        .withAttribute("CategoryId", "CSharpErrors")
+                        .withAttribute("Severity", "ERROR"),
+                    XmlElement("IssueType")
+                        .withAttribute("Id", "RedundantUsingDirective")
+                        .withAttribute("Category", "Redundancies in Code")
+                        .withAttribute("CategoryId", "CodeRedundancy")
+                        .withAttribute("Description", "Redundant using directive")
+                        .withAttribute("Severity", "WARNING")
+                        .withAttribute("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=RedundantUsingDirective"),
+                    XmlElement("IssueType")
+                        .withAttribute("Id", "UnusedType.Global")
+                        .withAttribute("Category", "Redundancies in Symbol Declarations")
+                        .withAttribute("CategoryId", "DeclarationRedundancy")
+                        .withAttribute("Description", "Type is never used: Non-private accessibility")
+                        .withAttribute("Severity", "SUGGESTION")
+                        .withAttribute("WikiUrl", "https://www.jetbrains.com/resharperplatform/help?Keyword=UnusedType.Global"),
+                    XmlElement("Issues"),
+                    XmlElement("Project").withAttribute("Name", "Clock.Console"),
+                    XmlElement("Issue")
+                        .withAttribute("TypeId", "RedundantUsingDirective")
+                        .withAttribute("File", "Clock.Console\\Program.cs")
+                        .withAttribute("Offset", "85-103")
+                        .withAttribute("Line", "5")
+                        .withAttribute("Message", "Using directive is not required by the code and can be safely removed"),
+                    XmlElement("Issue")
+                        .withAttribute("TypeId", "CSharpErrors")
+                        .withAttribute("File", "Clock.Console\\Program.cs")
+                        .withAttribute("Offset", "99-102")
+                        .withAttribute("Line", "7")
+                        .withAttribute("Message", "Cannot resolve symbol 'IoC'"),
+                    XmlElement("Issue")
+                        .withAttribute("TypeId", "UnusedType.Global")
+                        .withAttribute("File", "Clock.Console\\Program.cs")
+                        .withAttribute("Offset", "99-102")
+                        .withAttribute("Line", "9")
+                        .withAttribute("Message", "Abc"),
+                    XmlElement("Project").withAttribute("Name", "Clock.Xamarin.Android"),
+                    XmlElement("Issue")
+                        .withAttribute("TypeId", "CSharpErrors")
+                        .withAttribute("File", "Clock.Xamarin.Android\\MainActivity.cs")
+                        .withAttribute("Offset", "1266-1292")
+                        .withAttribute("Line", "28")
+                        .withAttribute("Message", "Cannot resolve symbol 'OnRequestPermissionsResult'")
+                ),
+                sequenceOf(_csharpErrors, _redundantUsingDirective, _unusedTypeGlobal),
+                sequenceOf(_redundantUsingDirectiveIssue, _csharpErrorsIssue, _unusedTypeGlobalIssue, _csharpErrorsIssue2)
+            )
         )
     }
 
     @Test(dataProvider = "processDataCases")
     fun shouldProcessData(
-        elements: Sequence<DocElement>,
+        elements: Sequence<XmlElement>,
         expectedTypes: Sequence<InspectionTypeInfo>,
-        expectedInstances: Sequence<InspectionInstance>) {
+        expectedInstances: Sequence<InspectionInstance>
+    ) {
         // Given
         var dataFile = File("DataFile.xml")
         val inputStream = PipedInputStream()
@@ -198,8 +202,9 @@ class InspectCodeDataProcessorTest {
     }
 
     private fun createInstance(fileSystem: FileSystemService) =
-            InspectCodeDataProcessor(
-                    fileSystem,
-                    _xmlReader,
-                    _reporter)
+        InspectCodeDataProcessor(
+            fileSystem,
+            _xmlReader,
+            _reporter
+        )
 }

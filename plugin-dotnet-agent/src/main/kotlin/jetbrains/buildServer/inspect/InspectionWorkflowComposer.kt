@@ -35,7 +35,7 @@ open class InspectionWorkflowComposer(
     private val _artifacts: ArtifactService,
     private val _virtualContext: VirtualContext,
     private val _inspectionToolStateWorkflowComposer: InspectionToolStateWorkflowComposer,
-    private val _pluginParametersProvider: PluginParametersProvider
+    private val _pluginDescriptorsProvider: PluginDescriptorsProvider
 ) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
@@ -47,7 +47,7 @@ open class InspectionWorkflowComposer(
         val startCommand = _toolStartCommandResolver.resolve(_tool)
 
         var toolVersion: Version = Version.Empty
-        if (_tool == InspectionTool.Inspectcode && _pluginParametersProvider.hasPluginParameters()) {
+        if (_tool == InspectionTool.Inspectcode && _pluginDescriptorsProvider.hasPluginDescriptors()) {
             val toolState = InspectionToolState(
                 startCommand,
                 observer { toolVersion = it }

@@ -16,7 +16,7 @@
 
 package jetbrains.buildServer.dotnet.logging
 
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.Verbosity
 
 interface LoggerParameters {
@@ -28,5 +28,5 @@ interface LoggerParameters {
 
     val msBuildParameters: String
 
-    fun getAdditionalLoggerParameters(context: DotnetBuildContext): Sequence<String>
+    fun getAdditionalLoggerParameters(context: DotnetCommandContext): Sequence<String>
 }

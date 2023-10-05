@@ -48,13 +48,12 @@ class TestsFilterProviderTestsSplitting {
     }
 
     @Test
-    fun `should provide an empty filter expression if test spiltting disabled`() {
+    fun `should provide an empty filter expression if test splitting disabled`() {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.Disabled }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.Disabled)
 
         // assert
         Assert.assertEquals(result, "")
@@ -84,13 +83,12 @@ class TestsFilterProviderTestsSplitting {
         expectedFilterExpression: String
     ) {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestClassNameFilter }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.testClasses } answers { names }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // assert
         Assert.assertEquals(result, expectedFilterExpression)
@@ -108,13 +106,12 @@ class TestsFilterProviderTestsSplitting {
         regex: String
     ) {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestClassNameFilter }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.testClasses } answers { generateTestClassesList(2500) }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // assert
         Assert.assertTrue(Regex(regex).matches(result))
@@ -124,12 +121,11 @@ class TestsFilterProviderTestsSplitting {
     @Test
     fun `should provide test name filter expression`() {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestNameFilter }
         every { _testsNamesReaderMock.read() } answers { generateTestsNamesList(2, 2) }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestNameFilter)
 
         // assert
         Assert.assertEquals(
@@ -142,12 +138,11 @@ class TestsFilterProviderTestsSplitting {
     @Test
     fun `should provide test name filter expression for more than 1000 test names`() {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestNameFilter }
         every { _testsNamesReaderMock.read() } answers { generateTestsNamesList(25, 100) }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestNameFilter)
 
         // assert
         Assert.assertTrue(Regex("^\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\\s{1}\\|\\s{1}\\(.+\\)\$").matches(result))
@@ -168,14 +163,13 @@ class TestsFilterProviderTestsSplitting {
         expectedFilterExpression: String
     ) {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestClassNameFilter }
         every { _settingsMock.trimTestClassParameters } answers { shouldTrimTestClassParameters }
         every { _settingsMock.filterType } answers { filterType }
         every { _settingsMock.testClasses } answers { generateTestClassesWithParamsList(2) }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // assert
         Assert.assertEquals(result, expectedFilterExpression)
@@ -199,14 +193,13 @@ class TestsFilterProviderTestsSplitting {
         expectedFilterExpression: String
     ) {
         // arrange
-        every { _settingsMock.mode } answers { TestsSplittingMode.TestClassNameFilter }
         every { _settingsMock.trimTestClassParameters } answers { true }
         every { _settingsMock.filterType } answers { TestsSplittingFilterType.Includes }
         every { _settingsMock.testClasses } answers { sequenceOf(sourceName) }
         val provider = create()
 
         // act
-        val result = provider.filterExpression
+        val result = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
         // assert
         Assert.assertEquals(result, expectedFilterExpression)

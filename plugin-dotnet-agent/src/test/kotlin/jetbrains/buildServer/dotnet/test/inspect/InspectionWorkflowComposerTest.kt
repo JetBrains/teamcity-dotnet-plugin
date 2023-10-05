@@ -75,7 +75,7 @@ class InspectionWorkflowComposerTest {
     private lateinit var _stateWorkflowComposer: InspectionToolStateWorkflowComposer
 
     @MockK
-    private lateinit var _pluginParametersProvider: PluginParametersProvider
+    private lateinit var _pluginDescriptorsProvider: PluginDescriptorsProvider
 
     private val _process = ToolStartCommand(Path("inspection"), listOf(CommandLineArgument("exec"), CommandLineArgument("--")))
     private val _workingDirectory = Path("wd")
@@ -102,7 +102,7 @@ class InspectionWorkflowComposerTest {
         every { _loggerService.writeWarning(any()) } returns Unit
         every { _environmentProvider.getEnvironmentVariables(any()) } returns sequenceOf(_envVar)
         every { _stateWorkflowComposer.compose(any(), any()) } returns Workflow(sequenceOf(_toolStateCommandLine))
-        every { _pluginParametersProvider.hasPluginParameters() } returns true
+        every { _pluginDescriptorsProvider.hasPluginDescriptors() } returns true
 
         every { _context.subscribe(any()) } answers {
             val observer = arg<Observer<CommandResultEvent>>(0)
@@ -434,7 +434,7 @@ class InspectionWorkflowComposerTest {
         }
         every { _buildInfo.runType } returns inspectionTool.runnerType
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
-        every { _pluginParametersProvider.hasPluginParameters() } answers { hasPluginParameters }
+        every { _pluginDescriptorsProvider.hasPluginDescriptors() } answers { hasPluginParameters }
         every { _toolPathResolver.resolve(inspectionTool) } returns _process
         every { _argumentsProvider.getArguments(inspectionTool, any()) } returns args
 
@@ -461,7 +461,7 @@ class InspectionWorkflowComposerTest {
             _artifacts,
             _virtualContext,
             _stateWorkflowComposer,
-            _pluginParametersProvider
+            _pluginDescriptorsProvider
         ) {
             override fun createCommandLine(startCommand: ToolStartCommand, args: InspectionArguments, virtualOutputPath: Path, toolVersion: Version): CommandLine {
                 return onNewCommandLine(super.createCommandLine(startCommand, args, virtualOutputPath, toolVersion))

@@ -3,12 +3,11 @@ package jetbrains.buildServer.dotnet.commands.test
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.EnvironmentVariables
 
-class TestEnvironmentVariables(
+internal class TestEnvironmentVariables(
     private val _parametersService: ParametersService,
-    private val _pathsService: PathsService
+    private val _runnerScopedTestEnvironmentBuilder: BuildStepScopedTestEnvironmentBuilder
 ) : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         val fallbackToStdOutTestReporting = TestReportingViaFileStreamingHelper.shouldFallbackToStdOutTestReporting(_parametersService)
@@ -16,8 +15,8 @@ class TestEnvironmentVariables(
         if (fallbackToStdOutTestReporting) {
             yield(CommandLineEnvironmentVariable(FALLBACK_TO_STDOUT_TEST_REPORTING_ENV_VAR, "true"))
         } else {
-            val testReportFilesPath = TestReportingViaFileStreamingHelper.getTestReportsFilesPath(_pathsService).toString()
-            yield(CommandLineEnvironmentVariable(TEAMCITY_TEST_REPORT_FILES_PATH_ENV_VAR, testReportFilesPath))
+            val testReportsFilesPath = _runnerScopedTestEnvironmentBuilder.getTestReportsFilesPathForBuildStep().toString()
+            yield(CommandLineEnvironmentVariable(TEAMCITY_TEST_REPORT_FILES_PATH_ENV_VAR, testReportsFilesPath))
         }
     }
 

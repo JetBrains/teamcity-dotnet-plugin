@@ -16,8 +16,8 @@
 
 package jetbrains.buildServer.dotnet.commands.msbuild
 
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 
 interface MSBuildParametersProvider {
-    fun getParameters(context: DotnetBuildContext): Sequence<MSBuildParameter>
+    fun getParameters(context: DotnetCommandContext): Sequence<MSBuildParameter>
 }

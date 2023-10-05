@@ -151,7 +151,7 @@ class LoggerParametersTest {
             expectedParameters: List<String>) {
         // Given
         val loggerParametersImpl = createInstance(emptyMap())
-        val context = DotnetBuildContext(ToolPath(Path("a"), Path("b")), mockk<DotnetCommand>())
+        val context = DotnetCommandContext(ToolPath(Path("a"), Path("b")), mockk<DotnetCommand>())
 
         // When
         every { _customArgumentsProvider.getArguments(context) } returns args.map { CommandLineArgument(it, CommandLineArgumentType.Secondary) }.asSequence()

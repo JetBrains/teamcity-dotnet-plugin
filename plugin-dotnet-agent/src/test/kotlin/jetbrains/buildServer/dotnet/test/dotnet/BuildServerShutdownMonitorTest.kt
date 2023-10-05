@@ -81,7 +81,7 @@ class BuildServerShutdownMonitorTest {
         // Given
         val executableFile = Path("dotnet")
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, toolVersion)
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, toolVersion)
 
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
         _ctx.checking(object : Expectations() {
@@ -157,7 +157,7 @@ class BuildServerShutdownMonitorTest {
     fun shouldShouldRegisterCommandForShotdown() {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
@@ -190,7 +190,7 @@ class BuildServerShutdownMonitorTest {
     fun shouldShouldNotRegisterCommandForShotdownWhenVirtualContext() {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
@@ -223,7 +223,7 @@ class BuildServerShutdownMonitorTest {
     fun shouldShouldNotRegisterCommandForShotdownWhenUseSharedCompilationEnvVarIsFalse() {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
@@ -256,7 +256,7 @@ class BuildServerShutdownMonitorTest {
     fun shouldShouldNotRegisterCommandForShotdownWhenToolIsNotSupportingShutdown() {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 105))
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, Version(2, 1, 105))
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {
@@ -289,7 +289,7 @@ class BuildServerShutdownMonitorTest {
     fun shouldShouldNotRegisterCommandForShotdownWhenCommandDoesNotStartCompilationService() {
         // Given
         val command = _ctx.mock(DotnetCommand::class.java)
-        val context = DotnetBuildContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
+        val context = DotnetCommandContext(ToolPath(Path("wd")), command, Version(2, 1, 300))
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
         _ctx.checking(object : Expectations() {

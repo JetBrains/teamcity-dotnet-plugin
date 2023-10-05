@@ -32,6 +32,6 @@ public class NormalConsoleFormatterTests
         var actualOutput = stringWriter.ToString();
 
         // assert
-        Assert.Equal("Hello, World!\n", actualOutput);
+        Assert.Equal($"Hello, World!{Environment.NewLine}", actualOutput);
     }
 }

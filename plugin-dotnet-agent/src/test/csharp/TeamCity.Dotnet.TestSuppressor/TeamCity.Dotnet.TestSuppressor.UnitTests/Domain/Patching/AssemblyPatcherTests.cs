@@ -73,6 +73,7 @@ public class AssemblyPatcherTests
         assemblyFileMock.Setup(m => m.FullName).Returns(assemblyPath);
         
         var assemblyMock = new Mock<IDotnetAssembly>();
+        assemblyMock.Setup(m => m.FullPath).Returns(assemblyPath);
         _assemblyLoader.
             Setup(m => m.LoadAssembly(It.IsAny<string>(), false))
             .Returns(assemblyMock.Object);
@@ -111,6 +112,7 @@ public class AssemblyPatcherTests
         assemblyFileMock.Setup(m => m.FullName).Returns(assemblyPath);
         
         var assemblyMock = new Mock<IDotnetAssembly>();
+        assemblyMock.Setup(m => m.FullPath).Returns(assemblyPath);
         assemblyMock.Setup(m => m.HasSymbols).Returns(true);
         _assemblyLoader.
             Setup(m => m.LoadAssembly(It.IsAny<string>(), true))

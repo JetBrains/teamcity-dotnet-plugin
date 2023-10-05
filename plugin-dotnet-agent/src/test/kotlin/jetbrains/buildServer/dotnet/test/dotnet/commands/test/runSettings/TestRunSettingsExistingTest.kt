@@ -23,6 +23,7 @@ import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.commands.test.runSettings.TestRunSettingsExisting
 import jetbrains.buildServer.dotnet.commands.test.TestRunSettingsFileProvider
@@ -50,6 +51,7 @@ class TestRunSettingsExistingTest {
     @MockK private lateinit var _testRunSettingsFileProvider2: TestRunSettingsFileProvider
     @MockK private lateinit var _inputStream1: InputStream
     @MockK private lateinit var _inputStream2: InputStream
+    @MockK private lateinit var _commandContext: DotnetCommandContext
     private lateinit var _fileProviders: List<TestRunSettingsFileProvider>
 
     @BeforeMethod
@@ -57,7 +59,8 @@ class TestRunSettingsExistingTest {
         MockKAnnotations.init(this)
         clearAllMocks()
 
-        every { _testRunSettingsFileProvider1.tryGet(DotnetCommandType.Test) } returns _settingsFile11
+        every { _commandContext.command.commandType } returns DotnetCommandType.Test
+        every { _testRunSettingsFileProvider1.tryGet(match { it.command.commandType == DotnetCommandType.Test }) } returns _settingsFile11
         every { _fileSystem.isAbsolute(_settingsFile11) } returns false
         every { _fileSystem.isExists(_settingsFile1) } returns true
         every { _fileSystem.isFile(_settingsFile1) } returns true
@@ -68,7 +71,7 @@ class TestRunSettingsExistingTest {
         }
         every { _deserializer.deserialize(_inputStream1) } returns _settings1
 
-        every { _testRunSettingsFileProvider2.tryGet(DotnetCommandType.Test) } returns _settingsFile2
+        every { _testRunSettingsFileProvider2.tryGet(match { it.command.commandType == DotnetCommandType.Test }) } returns _settingsFile2
         every { _fileSystem.isAbsolute(_settingsFile2) } returns true
         every { _fileSystem.isExists(_settingsFile2) } returns true
         every { _fileSystem.isFile(_settingsFile2) } returns true
@@ -82,12 +85,12 @@ class TestRunSettingsExistingTest {
     }
 
     @Test
-    public fun shouldProvideFirstAvailableExistingSettingsAccoringToSpecificOrderInListOfFileProviders() {
+    public fun shouldProvideFirstAvailableExistingSettingsAccordingToSpecificOrderInListOfFileProviders() {
         // Given
         val provider = createInstance()
 
         // When
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings1)
@@ -100,8 +103,8 @@ class TestRunSettingsExistingTest {
         val provider = createInstance()
 
         // When
-        every { _testRunSettingsFileProvider1.tryGet(DotnetCommandType.Test) } returns null
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        every { _testRunSettingsFileProvider1.tryGet(any()) } returns null
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -115,7 +118,7 @@ class TestRunSettingsExistingTest {
 
         // When
         every { _fileSystem.isExists(_settingsFile1) } returns false
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -129,7 +132,7 @@ class TestRunSettingsExistingTest {
 
         // When
         every { _fileSystem.isFile(_settingsFile1) } returns false
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -142,8 +145,8 @@ class TestRunSettingsExistingTest {
         val provider = createInstance()
 
         // When
-        every { _testRunSettingsFileProvider1.tryGet(DotnetCommandType.Test) } throws Throwable()
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        every { _testRunSettingsFileProvider1.tryGet(any()) } throws Throwable()
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -157,7 +160,7 @@ class TestRunSettingsExistingTest {
 
         // When
         every { _fileSystem.read<Document>(_settingsFile1, any()) } throws Throwable()
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -171,7 +174,7 @@ class TestRunSettingsExistingTest {
 
         // When
         every { _deserializer.deserialize(_inputStream1) } throws Throwable()
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _settings2)
@@ -184,10 +187,10 @@ class TestRunSettingsExistingTest {
         val provider = createInstance()
 
         // When
-        every { _testRunSettingsFileProvider1.tryGet(DotnetCommandType.Test) } returns null
-        every { _testRunSettingsFileProvider2.tryGet(DotnetCommandType.Test) } returns null
+        every { _testRunSettingsFileProvider1.tryGet(any()) } returns null
+        every { _testRunSettingsFileProvider2.tryGet(any()) } returns null
         every { _xmlDocumentService.create() } returns _newSettings
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, _newSettings)
@@ -199,10 +202,10 @@ class TestRunSettingsExistingTest {
         val provider = createInstance()
 
         // When
-        every { _testRunSettingsFileProvider1.tryGet(DotnetCommandType.Test) } returns null
-        every { _testRunSettingsFileProvider2.tryGet(DotnetCommandType.Test) } returns null
+        every { _testRunSettingsFileProvider1.tryGet(any()) } returns null
+        every { _testRunSettingsFileProvider2.tryGet(any()) } returns null
         every { _xmlDocumentService.create() } throws Throwable()
-        val actualSettings = provider.tryCreate(DotnetCommandType.Test)
+        val actualSettings = provider.tryCreate(_commandContext)
 
         // Then
         Assert.assertEquals(actualSettings, null)

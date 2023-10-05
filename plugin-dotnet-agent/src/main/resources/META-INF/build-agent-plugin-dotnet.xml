@@ -216,8 +216,9 @@
     </constructor-arg>
   </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
-    <constructor-arg ref="rootDotnetCommandStreamResolver"/>
+    <constructor-arg ref="rootDotnetCommandStreamTransformer"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.BuildStepScopedTestEnvironmentBuilderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
@@ -360,29 +361,35 @@
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentAnalyzerImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.TestCommandEnvironmentBuilder" id="testCommandEnvironmentBuilder"/>
   <bean class="jetbrains.buildServer.dotnet.commands.vstest.VSTestLoggerEnvironmentBuilder" id="vsTestLoggerEnvironmentBuilder"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ParameterBasedDotnetCommandsResolver" id="parameterBasedDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestMethodNameFilterTestSplittingCommandsResolver"
-        id="testNameTestsSplittingCommandsResolver">
+  <bean class="jetbrains.buildServer.dotnet.DotnetCommandResolverImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.TestMethodNameFilterTestSplittingCommandTransformer"
+        id="testNameTestsSplittingCommandsTransformer">
     <constructor-arg ref="dotnetListTestCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestClassNameFilterTestSplittingCommandsResolver"
-        id="testClassTestsSplittingCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.transformation.TestSuppressTestsSplittingCommandsResolver"
-        id="testSuppressTestsSplittingCommandsResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.TestClassNameFilterTestSplittingCommandTransformer"
+        id="testClassTestsSplittingCommandsTransformer"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.TestSuppressTestsSplittingCommandTransformer"
+        id="testSuppressTestsSplittingCommandsTransformer">
     <constructor-arg ref="dotnetBuildCommand"/>
     <constructor-arg ref="teamCityDotnetToolCommand"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.MultiTargetDotnetCommandResolver" id="multiTargetDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.resolvers.ComposedDotnetCommandResolver" id="composedDotnetCommandsResolver"/>
-  <bean class="jetbrains.buildServer.dotnet.commands.resolution.RootDotnetCommandResolver" id="rootDotnetCommandStreamResolver">
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.MultiTargetDotnetCommandTransformer" id="multiTargetDotnetCommandsTransformer"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.ComposedDotnetCommandTransformer" id="composedDotnetCommandsTransformer"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.RootTestsSplittingCommandsTransformer" id="rootTestsSplittingCommandsTransformer">
     <constructor-arg>
       <list>
-        <ref bean="parameterBasedDotnetCommandsResolver"/>
-        <ref bean="testNameTestsSplittingCommandsResolver"/>
-        <ref bean="testClassTestsSplittingCommandsResolver"/>
-        <ref bean="testSuppressTestsSplittingCommandsResolver"/>
-        <ref bean="multiTargetDotnetCommandsResolver"/>
-        <ref bean="composedDotnetCommandsResolver"/>
+        <ref bean="testNameTestsSplittingCommandsTransformer"/>
+        <ref bean="testClassTestsSplittingCommandsTransformer"/>
+        <ref bean="testSuppressTestsSplittingCommandsTransformer"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.RootDotnetCommandTransformer" id="rootDotnetCommandStreamTransformer">
+    <constructor-arg>
+      <list>
+        <ref bean="multiTargetDotnetCommandsTransformer"/>
+        <ref bean="rootTestsSplittingCommandsTransformer"/>
+        <ref bean="composedDotnetCommandsTransformer"/>
       </list>
     </constructor-arg>
   </bean>
@@ -509,6 +516,7 @@
   <bean class="jetbrains.buildServer.dotnet.ParameterTestsFilterProvider" id="parameterTestsFilterProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterProvider" id="splitTestsFilterProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl" id="splitTestsFilterSettings"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProviderImpl" id="splitTestsModeProvider"/>
   <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
     <constructor-arg>
       <list>
@@ -640,12 +648,12 @@
   <bean class="jetbrains.buildServer.inspect.InspectionVersionParser" id="inspectionVersionParser"/>
 
   <!--Resharper Inspections-->
-  <bean class="jetbrains.buildServer.inspect.PluginParametersProviderImpl"/>
-  <bean class="jetbrains.buildServer.inspect.FolderPluginSource"/>
-  <bean class="jetbrains.buildServer.inspect.FilePluginSource"/>
-  <bean class="jetbrains.buildServer.inspect.DownloadPluginSource"/>
+  <bean class="jetbrains.buildServer.inspect.PluginDescriptorsProviderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.FolderPluginXmlElementGenerator"/>
+  <bean class="jetbrains.buildServer.inspect.FilePluginXmlElementGenerator"/>
+  <bean class="jetbrains.buildServer.inspect.DownloadPluginXmlElementGenerator"/>
   <bean class="jetbrains.buildServer.inspect.XmlPluginsSpecificationProvider" name="xmlPluginsSpecificationProvider"/>
-  <bean class="jetbrains.buildServer.inspect.OptionPluginsSpecificationProvider" name="optionPluginsSpecificationProvider"/>
+  <bean class="jetbrains.buildServer.inspect.IdPluginsSpecificationProvider" name="optionPluginsSpecificationProvider"/>
   <bean class="jetbrains.buildServer.inspect.InspectionEnvironmentProvider" id="inspectionEnvironmentProvider">
     <constructor-arg ref="xmlPluginsSpecificationProvider"/>
   </bean>

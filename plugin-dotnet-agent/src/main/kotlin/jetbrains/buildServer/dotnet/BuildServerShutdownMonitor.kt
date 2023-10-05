@@ -62,7 +62,7 @@ class BuildServerShutdownMonitor(
         }
     }
 
-    override fun register(context: DotnetBuildContext) {
+    override fun register(context: DotnetCommandContext) {
         if (
                 !_virtualContext.isVirtual
                 && buildCommands.contains(context.command.commandType)

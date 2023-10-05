@@ -25,13 +25,14 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT_BATCH
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSING
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl
-import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.utils.getBufferedReader
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.BufferedReader
 import java.io.File
@@ -48,75 +49,13 @@ class TestsSplittingSettingsImplTests {
     }
 
     @Test
-    fun `should provide disabled mode if test classes file parameter not found`() {
-        // arrange
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "1" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { null }
-        val settings = create()
-
-        // act
-        val result = settings.mode
-
-        // assert
-        Assert.assertEquals(TestsSplittingMode.Disabled, result)
-    }
-
-    @Test
-    fun `should provide default mode if test classes file parameter found`() {
-        // arrange
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "false" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { "false" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { "tmp" }
-        val settings = create()
-
-        // act
-        val result = settings.mode
-
-        // assert
-        Assert.assertEquals(TestsSplittingMode.TestClassNameFilter, result)
-    }
-
-    @Test
-    fun `should be in test name filter mode if exact match flag is 'true'`() {
-        // arrange
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  true " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
-        val settings = create()
-
-        // act
-        val result = settings.mode
-
-        // assert
-        Assert.assertEquals(TestsSplittingMode.TestNameFilter, result)
-    }
-
-    @Test
-    fun `should be in test class filter mode if exact match flag is not 'true'`() {
-        // arrange
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  INVALID " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
-        val settings = create()
-
-        // act
-        val result = settings.mode
-
-        // assert
-        Assert.assertEquals(TestsSplittingMode.TestClassNameFilter, result)
-    }
-
-    @Test
     fun `should provide use exact match filter size if parameter set`() {
         // arrange
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, PARAM_PARALLEL_TESTS_INCLUDES_FILE) } answers { "file" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "  true " }
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE) } answers { "  42 " }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSING) } answers { " faLse " }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { " faLse " }
         val settings = create()
 
         // act
@@ -146,17 +85,6 @@ class TestsSplittingSettingsImplTests {
         // arrange
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
         every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { "tmp" }
-        val fileLines = listOf(
-            "#version=1",
-            "  #SFSD ",
-            "#algorithm=test",
-            "#total_batches=2",
-            "#suite=suite1",
-            "  Namespace.TestClass0  ",
-            "   Namespace.TestClass1 ",
-            "#something",
-            "Namespace.TestClass2",
-        )
 
         val readerMock = mockk<BufferedReader>()
         every { readerMock.ready() } returnsMany(listOf(true, true, true, true, true, true, true, true, true, false))
@@ -186,6 +114,40 @@ class TestsSplittingSettingsImplTests {
         listOf("Namespace.TestClass0", "Namespace.TestClass1", "Namespace.TestClass2").forEach {
             Assert.assertTrue(result.contains(it))
         }
+    }
+
+    @DataProvider
+    fun testDataSuppressionActivation(): Array<Array<out Any?>> {
+        return arrayOf(
+            arrayOf(99,  100, false),
+            arrayOf(100, 100, true),
+            arrayOf(1000, 100, true)
+        )
+    }
+
+    @Test(dataProvider = "testDataSuppressionActivation")
+    fun `should not allow suppression activation when number of test classes is low`(linesCount: Int, threshold: Int, expectedResult: Boolean) {
+        // arrange
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_CURRENT_BATCH) } answers { "2" }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD) } answers { threshold.toString() }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.System, any()) } answers { "tmp" }
+
+        val chars = generateSequence { '\n'.code }.take(linesCount).plus(-1).toList()
+        val readerMock = mockk<BufferedReader>()
+        every { readerMock.read() } returnsMany (chars)
+        justRun { readerMock.close() }
+
+        val fileMock = mockk<File>()
+        every { fileMock.getBufferedReader() } answers { readerMock }
+        every { _fileSystemServiceMock.getExistingFile(any()) } answers { Result.success(fileMock) }
+        val settings = create()
+
+        // act
+        val result = settings.hasEnoughTestClassesToActivateSuppression
+
+        // assert
+        Assert.assertEquals(expectedResult, result)
+        verify(atMost = threshold) { readerMock.read() }
     }
 
     @Test

@@ -4,10 +4,9 @@ import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
-import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.dotnet.DotnetBuildContext
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.commands.custom.TeamCityDotnetTestSuppressorCommand
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
@@ -86,7 +85,7 @@ class TeamCityDotnetTestSuppressorCommandTest {
             CommandLineArgument("--verbosity"),
             CommandLineArgument("detailed")
         ).toList()
-        val context: DotnetBuildContext = mockk()
+        val context: DotnetCommandContext = mockk()
 
         // act
         val result = command.getArguments(context).toList()

@@ -24,7 +24,7 @@ class DotnetCommonArgumentsProviderImpl(
     private val _customArgumentsProvider: ArgumentsProvider,
     private val _argumentsProviders: List<ArgumentsProvider>
 ) : DotnetCommonArgumentsProvider {
-    override fun getArguments(context: DotnetBuildContext): Sequence<CommandLineArgument> = sequence {
+    override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         if (_useRspFile) {
             yieldAll(_responseFileArgumentsProvider.getArguments(context))
         } else {

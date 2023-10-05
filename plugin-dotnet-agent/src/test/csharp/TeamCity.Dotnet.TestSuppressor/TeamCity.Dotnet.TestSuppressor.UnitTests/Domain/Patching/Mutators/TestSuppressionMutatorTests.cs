@@ -58,7 +58,7 @@ public class TestSuppressionMutatorTests
     }
     
     [Fact]
-    public async Task MutateAsync_NoTestsForSuppressingInAssembly_NothingSuppressed()
+    public async Task MutateAsync_NoTestsForSuppressionInAssembly_NothingSuppressed()
     {
         // arrange 
         var testEngines = new List<ITestEngine> { Mock.Of<ITestEngine>() };

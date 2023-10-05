@@ -16,39 +16,53 @@
 
 package jetbrains.buildServer.inspect
 
-import jetbrains.buildServer.DocElement
+import jetbrains.buildServer.XmlElement
+import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.LoggerService
 import java.io.ByteArrayOutputStream
 
 class XmlPluginsSpecificationProvider(
-    private val _pluginParametersProvider: PluginParametersProvider,
+    private val _pluginDescriptorsProvider: PluginDescriptorsProvider,
     private val _xmlWriter: XmlWriter,
     private val _loggerService: LoggerService,
-    sources: List<PluginSource>
+    xmlElementGenerators: List<PluginXmlElementGenerator>
 ) : PluginsSpecificationProvider {
-    private val _sources: Map<String, PluginSource> = sources.associateBy { it.id.lowercase() }
+    private val _sourceIdToXmlElementGenerator = xmlElementGenerators.associateBy { it.sourceId.lowercase() }
 
     override fun getPluginsSpecification(): String? {
-        val pluginElements = _pluginParametersProvider.getPluginParameters()
+        val pluginXmlElements = _pluginDescriptorsProvider.getPluginDescriptors()
             .mapNotNull {
-                val sourceId = it.source
-                val source = _sources[sourceId.lowercase()]
-                return@mapNotNull if (source != null) {
-                    source.getPlugin(it.value)
-                } else {
-                    _loggerService.writeWarning("Unrecognized plugin source: $sourceId, current configuration supports only ${_sources.keys}")
-                    null
+                if (PluginDescriptorType.SOURCE == it.type) {
+                    val matchResult = PluginDescriptorType.SOURCE.regex.matchEntire(it.value)
+                    if (matchResult != null) {
+                        val sourceId = matchResult.groupValues[1]
+                        val value = matchResult.groupValues[2]
+
+                        val generator = _sourceIdToXmlElementGenerator[sourceId.lowercase()]
+                        if (generator != null) {
+                            return@mapNotNull generator.generateXmlElement(value)
+                        }
+                    }
                 }
+
+                logInvalidDescriptor(it)
+                return@mapNotNull null
             }
 
-        val pluginsDocElement = DocElement("Packages", pluginElements.asSequence())
-        if (!pluginsDocElement.isEmpty) {
+        val pluginsXmlElement = XmlElement("Packages", pluginXmlElements.asSequence())
+        if (!pluginsXmlElement.isEmpty) {
             ByteArrayOutputStream().use {
-                _xmlWriter.write(pluginsDocElement, it)
+                _xmlWriter.write(pluginsXmlElement, it)
                 return it.toString(Charsets.UTF_8.name())
             }
         }
 
         return null
     }
+
+    private fun logInvalidDescriptor(pluginDescriptor: PluginDescriptor) = _loggerService.writeWarning(
+        "Invalid R# CLT plugin descriptor: \"${pluginDescriptor.value}\", " +
+                "R# CLT versions below ${Version.FirstInspectcodeExtensionsOptionVersion} support only " +
+                "${_sourceIdToXmlElementGenerator.keys} descriptors, it will be ignored."
+    )
 }

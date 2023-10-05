@@ -79,7 +79,7 @@ class NugetPushCommandTest {
             targets = sequenceOf("my.csproj"),
             arguments = sequenceOf(CommandLineArgument("customArg1"))
         )
-        val context = DotnetBuildContext(
+        val context = DotnetCommandContext(
             workingDirectory = ToolPath(Path("wd")),
             command = command,
             toolVersion = toolVersion
