@@ -81,13 +81,11 @@
   <th><label for="${constants.cltPluginsKey}">R# CLT Plugins:</label></th>
   <td>
     <c:set var="note">
-      Newline-delimited list of <a href="https://resharper-plugins.jetbrains.com/" target="_blank">ReSharper plugins</a> required for InspectCode in the following format:
-      <ul style="margin: 0; padding-left: 1.5em;">
-        <li><b>%pluginId%[/%version%]</b></li>
-      </ul>
+      Newline-delimited list of <a href="https://resharper-plugins.jetbrains.com/" target="_blank">ReSharper plugins</a>
+      required for InspectCode in the following format: <span style="white-space: nowrap;"><b>%pluginId%[/%version%]</b></span>.
       If you want InspectCode to obtain plugin .nupkg files from a local storage directory rather than JetBrains Marketplace,
       set the <a href="https://www.jetbrains.com/help/resharper/InspectCode.html#auxiliary-parameters" target="_blank">source option</a> in the
-      <b>Additional InspectCode parameters</b> field: <b>--source=%pluginsDirectoryPath%</b>.
+      <b>Additional InspectCode parameters</b> field: <span style="white-space: nowrap;"><b>--source=%pluginsDirectoryPath%</b></span>.
     </c:set>
     <props:multilineProperty name="${constants.cltPluginsKey}" linkTitle="Plugins list" cols="60" rows="5" note="${note}"/>
   </td>

@@ -90,8 +90,7 @@
         </param>
         <param name="jetbrains.resharper-clt.plugins" dslName="cltPlugins">
             <description>
-                Newline-delimited list of ReSharper plugins required for InspectCode in the following format:
-                - %pluginId%[/%version%]
+                Newline-delimited list of ReSharper plugins required for InspectCode in the following format: %pluginId%[/%version%].
                 If you want InspectCode to obtain plugin .nupkg files from a local storage directory rather than JetBrains Marketplace,
                 set the source option in the Additional InspectCode parameters field: --source=%pluginsDirectoryPath%.
             </description>
