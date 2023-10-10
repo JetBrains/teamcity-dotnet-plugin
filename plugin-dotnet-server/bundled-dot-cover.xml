@@ -7,14 +7,45 @@
         <include name='runtime-dotnet.sh'/>
         <include name='runtime.sh'/>
         <include name='dotCover.sh'/>
+
         <include name='dotCover.exe'/>
+        <include name='windows-x86/JetBrains.Profiler.PdbServer.exe'/>
+        <include name='windows-x64/JetBrains.Profiler.PdbServer.exe'/>
+
+        <include name='linux-arm/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-arm/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
+        <include name='linux-arm64/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-arm64/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
+        <include name='linux-musl-arm64/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-musl-arm64/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
+        <include name='linux-musl-x64/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-musl-x64/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
         <include name='linux-x64/JetBrains.Profiler.PdbServer'/>
         <include name='linux-x64/dotnet/dotnet'/>
-        <include name='linux-x64/mono/bin/mono-sgen'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
+        <include name='macos-arm64/JetBrains.Profiler.PdbServer'/>
+        <include name='linux-arm64/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
+
         <include name='macos-x64/JetBrains.Profiler.PdbServer'/>
-        <include name='macos-x64/dotnet/dotnet'/>
-        <include name='macos-x64/mono/bin/mono-sgen'/>
-        <include name='macos-x64/mono/bin/env-wrapper'/>
+        <include name='linux-x64/dotnet/dotnet'/>
+        <include name='linux-arm/dotnet/crossgen2/crossgen2'/>
+        <include name='linux-arm/dotnet/dotnet/shared/Microsoft.NETCore.App/7.0.10/createdump'/>
       </executable-files>
     </layout>
   </tool-deployment>

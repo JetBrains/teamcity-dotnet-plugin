@@ -2,13 +2,11 @@ package jetbrains.buildServer.dotcover.report
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.impl.OSTypeDetector
-import jetbrains.buildServer.dotcover.DotCoverWorkflowComposer
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.util.OSType
-import java.io.File
 
 class DotCoverReportRunnerFactory(
     private val _factory: DotCoverParametersFactory,
@@ -28,30 +26,33 @@ class DotCoverReportRunnerFactory(
             return null
         }
 
-        parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_WINDOWS_EXECUTABLE)
-
-
         val entryPointFileExe = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_WINDOWS_EXECUTABLE)
         val entryPointFileSh = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_EXECUTABLE)
         val entryPointFileDll = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_DLL)
 
-        val dotCoverExecutable = when {
-            _osTypeDetector.detect() == OSType.WINDOWS && (entryPointFileExe?.isFile ?: false) -> entryPointFileExe
-            entryPointFileSh?.isFile ?: false -> entryPointFileSh
+        val entryPointFile = when {
+            _osTypeDetector.detect() == OSType.WINDOWS && entryPointFileExe?.isFile ?: false -> entryPointFileExe
+            _osTypeDetector.detect() != OSType.WINDOWS && entryPointFileSh?.isFile ?: false -> entryPointFileSh
             else -> entryPointFileDll
         }
 
-        if (dotCoverExecutable == null || !dotCoverExecutable.isFile) {
+        if (entryPointFile == null || !entryPointFile.isFile) {
             val msg = "Failed to find dotCover under: $path"
             LOG.warn(msg)
             parameters.getBuildLogger().warning(msg)
             return null
         }
 
-        return DotnetCoverageReportGeneratorRunner(parameters, CoverageConstants.DOTCOVER_TOOL_NAME, dotCoverExecutable!!)
+        var profilerHost = when {
+            entryPointFile.extension == FILE_EXTENSION_DLL -> _dotnetToolResolver.executable.virtualPath
+            else -> null
+        }
+
+        return DotnetCoverageReportGeneratorRunner(parameters, CoverageConstants.DOTCOVER_TOOL_NAME, entryPointFile, profilerHost)
     }
 
     companion object {
         private val LOG = Logger.getInstance(DotCoverReportRunnerFactory::class.java.name)
+        private val FILE_EXTENSION_DLL = "dll"
     }
 }

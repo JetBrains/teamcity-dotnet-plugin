@@ -4,22 +4,30 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.SimpleCommandLineProcessRunner
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import java.io.File
 
 class DotnetCoverageReportGeneratorRunner(
     private val _params: DotnetCoverageParameters,
     private val _toolName: String,
-    private val _coverToolExePath: File) {
+    private val _coverToolEntypointFile: File,
+    private val profileHostFile: Path? = null
+) {
 
     fun runReportGenerator(activity: String, arguments: List<String?>): Int {
         val cmdLine = GeneralCommandLine()
-        cmdLine.exePath = _coverToolExePath.path
+        when (profileHostFile) {
+            null -> cmdLine.exePath = _coverToolEntypointFile.path
+            else -> {
+                cmdLine.exePath = profileHostFile.path
+                cmdLine.addParameter(_coverToolEntypointFile.path)
+            }
+        }
         cmdLine.addParameters(arguments)
         cmdLine.setEnvParams(_params.getBuildEnvironmentVariables())
         val logger: BuildProgressLogger = _params.getBuildLogger()
 
-        //TODO: use jetbrains.buildServer.agent.BuildProcessFacade.createBuildRunnerContext instead
         logger.activityStarted(activity, ACTIVITY)
         return try {
             val result = SimpleCommandLineProcessRunner.runCommand(cmdLine, ByteArray(0))

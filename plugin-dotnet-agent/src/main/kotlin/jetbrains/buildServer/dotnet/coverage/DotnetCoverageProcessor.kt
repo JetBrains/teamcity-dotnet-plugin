@@ -29,8 +29,7 @@ class DotnetCoverageProcessor(
         get() = _holder.getCoverageParameters().getBuildLogger()
 
     @Synchronized
-    fun addCoverageReport(coverageType: String,
-                          coverageResult: File) {           // TODO snapshot file !!!!
+    fun addCoverageReport(coverageType: String, coverageResult: File) {
 
         if (coverageResult.exists() && coverageResult.isFile && coverageResult.length() > 0) {
             LOG.info(

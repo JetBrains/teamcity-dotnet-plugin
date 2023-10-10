@@ -74,11 +74,14 @@ class EventSourcesImpl(
     override val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
 
     override fun beforeBuildFinish(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
+        buildFinishedSource.onNext(EventSources.BuildFinished(buildStatus))
+        super.beforeBuildFinish(build, buildStatus)
+    }
+
+    override fun buildFinished(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
         try {
-            buildFinishedSource.onNext(EventSources.BuildFinished(buildStatus))
-            super.beforeBuildFinish(build, buildStatus)
-        }
-        finally {
+            super.buildFinished(build, buildStatus)
+        } finally {
             _runnerContext = null
         }
     }
