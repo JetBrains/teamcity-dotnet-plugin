@@ -17,8 +17,14 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_COMPATIBLE_AGENT_PROPERTY_NAME
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_4_6_1
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_6_1_PATTERN
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_7_2_PATTERN
+import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER
+import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER_HOME
+import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_TYPE
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.RequirementFactory
 import jetbrains.buildServer.requirements.Requirement
@@ -27,6 +33,7 @@ import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.ProjectManager
 import jetbrains.buildServer.tools.ServerToolManager
+import jetbrains.buildServer.tools.ToolVersion
 import jetbrains.buildServer.util.VersionComparatorUtil
 import org.springframework.beans.factory.BeanFactory
 
@@ -50,33 +57,57 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
         yieldAll(super.getRequirements(parameters, factory))
 
-        val requirements = mutableSetOf<Requirement>()
-        requirements += OUR_MINIMAL_REQUIREMENT
-        if ("dotcover" != parameters["dotNetCoverage.tool"]) return@sequence
-        val dotCoverHomeValue = parameters["dotNetCoverage.dotCover.home.path"] ?: return@sequence
-        val toolManager = factory.getBean(ServerToolManager::class.java)
-        val toolType = toolManager.findToolType("JetBrains.dotCover.CommandLineTools") ?: return@sequence
-        val projectManager = factory.getBean(ProjectManager::class.java)
-        val toolVersion = toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.rootProject)
+        val toolVersion = getToolVersion(parameters, factory) ?: return@sequence
 
-        if (toolVersion != null) {
-            val crossPlatform = toolVersion.version.endsWith(CoverageConstants.DOTCOVER_CROSS_PLATFORM_POSTFIX, true)
-            if (crossPlatform) {
-                requirements.clear()
-            } else {
-                val dotnet461Based = VersionComparatorUtil.compare("2018.2", toolVersion.version) <= 0
-                if (dotnet461Based) {
-                    requirements.clear()
-                    requirements.add(OUR_NET_461_REQUIREMENT)
-                }
+        // set agent requirement in accordance to dotCover version
+        when {
+            // Deprecated cross-platform version (with bundled runtime)
+            toolVersion.version.endsWith(CoverageConstants.DOTCOVER_CROSS_PLATFORM_DEPRECATED_POSTFIX, true) -> {
+                return@sequence     // no requirements since all necessary software bundled with the tool
             }
+
+            // Cross-platform version (without bundled runtime)
+            VersionComparatorUtil.compare(toolVersion.version, "2023.3") >= 0 ->
+                // no requirements since currently there is no a good way to make composite agent requirements
+                // that could express something like: `(Windows AND .NET Framework) OR ((Linux OR macOS) AND .NET SDK)`;
+                // in case of imcompatibility of agents a warning will be produced on the build time
+                return@sequence
+
+            // Windows-only .NET Framework 4.7.2+ compatible version
+            VersionComparatorUtil.compare(toolVersion.version, "2021.2") >= 0 ->
+                yield(DOTNET_FRAMEWORK_4_7_2_REQUIREMENT)
+
+            // Windows-only .NET Framework 4.6.1+ compatible version
+            VersionComparatorUtil.compare(toolVersion.version, "2018.2") >= 0 ->
+                yield(DOTNET_FRAMEWORK_4_6_1_REQUIREMENT)
+
+            // Windows-only .NET Framework 3.5+ compatible version
+            VersionComparatorUtil.compare("2018.2", toolVersion.version) > 0 ->
+                yield(DOTNET_FRAMEWORK_3_5_REQUIREMENT)
+        }
+    }
+
+    private fun getToolVersion(parameters: Map<String, String>, factory: BeanFactory): ToolVersion? {
+        if (parameters[PARAM_TYPE] != PARAM_DOTCOVER) {
+            return null
         }
 
-        yieldAll(requirements)
+        val dotCoverHomeValue = parameters[PARAM_DOTCOVER_HOME] ?: return null
+        val toolManager = factory.getBean(ServerToolManager::class.java)
+        val toolType = toolManager.findToolType(DOTCOVER_PACKAGE_ID) ?: return null
+        val projectManager = factory.getBean(ProjectManager::class.java)
+        return toolManager.resolveToolVersionReference(toolType, dotCoverHomeValue, projectManager.rootProject)
     }
 
     companion object {
-        private val OUR_MINIMAL_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_3_5 + ")", null, RequirementType.EXISTS)
-        private val OUR_NET_461_REQUIREMENT = Requirement(RequirementQualifier.EXISTS_QUALIFIER + "(" + DOTNET_FRAMEWORK_PATTERN_4_6_1 + ")", null, RequirementType.EXISTS)
+        private val DOTNET_FRAMEWORK_3_5_REQUIREMENT =
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_PATTERN_3_5)", null, RequirementType.EXISTS)
+
+        private val DOTNET_FRAMEWORK_4_6_1_REQUIREMENT =
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_4_6_1_PATTERN)", null, RequirementType.EXISTS)
+
+        private val DOTNET_FRAMEWORK_4_7_2_REQUIREMENT =
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_4_7_2_PATTERN)", null, RequirementType.EXISTS)
+
     }
 }

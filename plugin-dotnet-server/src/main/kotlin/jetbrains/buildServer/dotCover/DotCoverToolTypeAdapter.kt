@@ -35,14 +35,12 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
 
     override fun getToolSiteUrl() = "https://www.jetbrains.com/dotcover/download/#section=commandline"
 
-    override fun getToolLicenseUrl() = "https://www.jetbrains.com/dotcover/download/command_line_license.html"
+    override fun getToolLicenseUrl() = "https://www.jetbrains.com/legal/docs/dotcover/dotcover_clt_license"
 
     override fun getTeamCityHelpFile() = "JetBrains+dotCover"
 
     override fun getValidPackageDescription() = "Specify the path to a " + displayName +  " (.zip or .nupkg).\n" +
-            "<br/><br/>Supported tools for Windows:" +
+            "<br/><br/>Supported tools:" +
             "<br/><a href=\"https://www.jetbrains.com/dotcover/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.zip</a>" +
-            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.nupkg</a>" +
-            "<br/><br/>Supported cross-platform tool:" +
-            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.DotNetCliTool/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.DotNetCliTool.&lt;VERSION&gt;.nupkg</a>"
+            "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.nupkg</a>"
 }

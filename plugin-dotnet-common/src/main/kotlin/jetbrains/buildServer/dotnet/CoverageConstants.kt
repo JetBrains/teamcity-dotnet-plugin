@@ -39,17 +39,19 @@ object CoverageConstants {
 
     // dotCover
     const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"           // Windows-only and since 2023.3.0 – x-platform without .NET runtime
-    const val DOTCOVER_DEPRECATED_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"   // deprecated x-platform package with bundled .NET runtime
-    const val DOTCOVER_FIRST_CROSS_PLATFORM_PACKAGE_VERSION = "2023.3.0"
+    const val DOTCOVER_DEPRECATED_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"   // deprecated cross-platform package with bundled .NET runtime
+    const val DOTCOVER_CROSS_PLATFORM_NO_RUNTIME_FIRST_PACKAGE_VERSION = "2023.3"
     const val DOT_COVER_TOOL_TYPE_NAME = "JetBrains dotCover Command Line Tools"
     const val DOT_COVER_SHORT_TOOL_TYPE_NAME = "dotCover CLT"
     const val DOT_COVER_TARGET_FILE_DISPLAY_NAME = "dotCover CLT home directory"
     const val BUNDLED_TOOL_VERSION_NAME = "bundled"
     const val DOTCOVER_BUNDLED_NUSPEC_FILE_PATH = "server/bundled-tools/JetBrains.dotCover.CommandLineTool/$DOTCOVER_PACKAGE_ID.nuspec"
     const val DOTCOVER_BUNDLED_AGENT_TOOL_PACKAGE_PATH = "server/bundled-tools/JetBrains.dotCover.CommandLineTool/$DOTCOVER_PACKAGE_ID.bundled.zip"
+    
     // dotCover tool postfixes
     const val DOTCOVER_POSTFIX = ""
     const val DOTCOVER_CROSS_PLATFORM_POSTFIX = "Cross-Platform"
+    const val DOTCOVER_CROSS_PLATFORM_DEPRECATED_POSTFIX = "Cross-Platform (deprecated)" // deprecated cross-platform version with bundled .NET runtime
     const val DOTCOVER_WINDOWS_ONLY_POSTFIX = "Windows-only"
 
     const val PARAM_DOTCOVER = "dotcover"
@@ -72,8 +74,11 @@ object CoverageConstants {
     const val DOTCOVER_TOOL_NAME = "dotCover"
     const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.${BUNDLED_TOOL_VERSION_NAME}"
 
+    const val DOTCOVER_COMPATIBLE_AGENT_PROPERTY_NAME = "DotCover_CompatibleVersions"
+
     val DOTNET_FRAMEWORK_PATTERN_3_5 = DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
-    val DOTNET_FRAMEWORK_PATTERN_4_6_1 = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
+    const val DOTNET_FRAMEWORK_4_6_1_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
+    const val DOTNET_FRAMEWORK_4_7_2_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(7\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
 
 
     class ServiceMessageSetup(setup: CoverageServiceMessageSetup) {
@@ -84,5 +89,4 @@ object CoverageConstants {
             )
         }
     }
-
 }
