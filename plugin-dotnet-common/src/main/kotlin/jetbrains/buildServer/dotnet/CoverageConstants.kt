@@ -38,7 +38,7 @@ object CoverageConstants {
     const val COVERAGE_HTML_REPORT_INDEX_KEY = "dotNetCoverage.index"
 
     // dotCover
-    const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"           // Windows-only and since 2023.3.0 – x-platform without .NET runtime
+    const val DOTCOVER_PACKAGE_ID = "JetBrains.dotCover.CommandLineTools"           // originally Windows-only and since 2023.3.* – x-platform without .NET runtime
     const val DOTCOVER_DEPRECATED_PACKAGE_ID = "JetBrains.dotCover.DotNetCliTool"   // deprecated cross-platform package with bundled .NET runtime
     const val DOTCOVER_CROSS_PLATFORM_NO_RUNTIME_FIRST_PACKAGE_VERSION = "2023.3"
     const val DOT_COVER_TOOL_TYPE_NAME = "JetBrains dotCover Command Line Tools"
