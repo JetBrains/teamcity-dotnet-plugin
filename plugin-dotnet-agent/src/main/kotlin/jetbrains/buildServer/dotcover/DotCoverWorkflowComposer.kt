@@ -16,10 +16,15 @@
 
 package jetbrains.buildServer.dotcover
 
+import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI_PATH
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
@@ -48,14 +53,31 @@ class DotCoverWorkflowComposer(
             return workflow
         }
 
-        val entryPoint = getEntryPoint().getOrElse { throw it }
-        return Workflow(createDotCoverCommandLine(workflow, context, entryPoint))
+        val entryPoint = selectEntryPoint().getOrElse { throw it }
+
+        return when {
+            isEntryPointValid(entryPoint) -> Workflow(createDotCoverCommandLine(workflow, context, entryPoint))
+
+            else -> {
+                val errorMessage =
+                    "Code coverage cannot be collected: " +
+                    "dotCover cannot be run because the required " +
+                    "runtime is not detected on the agent: ${entryPoint.requirement!!.errorMessage}"
+                _loggerService.writeBuildProblem("dotCover_requirements_have_not_been_met", BuildProblemData.TC_ERROR_MESSAGE_TYPE, errorMessage)
+                workflow
+            }
+        }
     }
+
+    private fun isEntryPointValid(entryPoint: EntryPoint) =
+        entryPoint.requirement == null || entryPoint.requirement.let(::areRequirementsSatisfied)
+    private fun areRequirementsSatisfied(requirement: MinVersionConfigParameterRequirement) =
+        _parametersService.getParameterNames(ParameterType.Configuration).any { requirement.validateConfigParameter(it) }
 
     private fun createDotCoverCommandLine(
         workflow: Workflow,
         context: WorkflowContext,
-        entryPoint: DotCoverEntryPoint
+        entryPoint: EntryPoint
     ) = sequence {
         var dotCoverHome = false
         for (baseCommandLine in workflow.commandLines) {
@@ -151,6 +173,7 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
         yield(CommandLineArgument("${argumentPrefix}ReturnTargetExitCode"))
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
+
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
             val argPrefix = when(_virtualContext.targetOSType) {
                 OSType.WINDOWS -> "/"
@@ -168,30 +191,35 @@ class DotCoverWorkflowComposer(
         }
     }
 
-    private fun getEntryPoint(): Result<DotCoverEntryPoint> {
-        val entryPointFileExe = DotCoverEntryPointType.WindowsExecutable.getEntryPointFile(dotCoverPath)
-        val entryPointFileDll = DotCoverEntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(dotCoverPath)
-        val entryPointFileSh = DotCoverEntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverPath)
+    private fun selectEntryPoint(): Result<EntryPoint> {
+        val entryPointFileExe = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverPath)
+        val entryPointFileDll = EntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(dotCoverPath)
+        val entryPointFileSh = EntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverPath)
 
         return when {
+            // on Windows
             _virtualContext.targetOSType == OSType.WINDOWS -> when {
-                _fileSystemService.isExists(entryPointFileExe) ->
-                    Result.success(DotCoverEntryPointType.WindowsExecutable.getEntryPoint(entryPointFileExe))
+                _fileSystemService.isExists(entryPointFileExe) -> when {
+                    // cross-platform version on Windows requires .NET Framework 4.7.2+
+                    _fileSystemService.isExists(entryPointFileDll) -> Result.success(EntryPoint(entryPointFileExe, MinVersionConfigParameterRequirement.DotnetFramework472))
 
-                else ->
-                    Result.failure(RunBuildException(
-                        "dotCover has been run on Windows, however " +
-                        "${DotCoverEntryPointType.WindowsExecutable.entryPointFileName} wasn't found"
-                    ))
+                    // Windows-only version using agent requirements mechanism – no build-time requirements validation needed
+                    else -> Result.success(EntryPoint(entryPointFileExe))
+                }
+
+                else -> Result.failure(RunBuildException("dotCover has been run on Windows, however ${EntryPointType.WindowsExecutable.entryPointFileName} wasn't found"))
             }
 
-            _fileSystemService.isExists(entryPointFileSh) ->
-                Result.success(DotCoverEntryPointType.UsingBundledDotnetRuntime.getEntryPoint(entryPointFileSh))
+            // on *nix-like OS
+            else -> when {
+                // deprecated cross-platform version
+                _fileSystemService.isExists(entryPointFileSh) -> Result.success(EntryPoint(entryPointFileSh))
 
-            _fileSystemService.isExists(entryPointFileDll) ->
-                Result.success(DotCoverEntryPointType.UsingAgentDotnetRuntime.getEntryPoint(entryPointFileDll))
+                // cross-platform version on Linux/macOs requires .NET Core 3.1+
+                _fileSystemService.isExists(entryPointFileDll) -> Result.success(EntryPoint(entryPointFileDll, MinVersionConfigParameterRequirement.DotnetCore31))
 
-            else -> Result.failure(RunBuildException("Cross-platform dotCover is required"))
+                else -> Result.failure(RunBuildException("Cross-platform dotCover is required"))
+            }
         }
     }
 
@@ -208,9 +236,9 @@ class DotCoverWorkflowComposer(
                 false -> it
             }}
 
-    private data class DotCoverEntryPoint(val file: File, val type: DotCoverEntryPointType)
+    private data class EntryPoint(val file: File, val requirement: MinVersionConfigParameterRequirement? = null)
 
-    private enum class DotCoverEntryPointType(val entryPointFileName: String) {
+    private enum class EntryPointType(val entryPointFileName: String) {
         // dotCover.exe ... – simple run of Windows executable file
         WindowsExecutable("dotCover.exe"),
 
@@ -221,9 +249,44 @@ class DotCoverWorkflowComposer(
         UsingAgentDotnetRuntime("dotCover.dll");
 
         fun getEntryPointFile(basePath: String): File = File(basePath, this.entryPointFileName)
-
-        fun getEntryPoint(file: File): DotCoverEntryPoint = DotCoverEntryPoint(file, this)
     }
+
+    private enum class MinVersionConfigParameterRequirement(
+        val prefix: String,
+        val minVersion: String,
+        val suffix: String,
+        val errorMessage: String
+    ) {
+        DotnetFramework472(
+            CONFIG_PREFIX_DOTNET_FAMEWORK,
+            "4.7.2",
+            CONFIG_SUFFIX_PATH,
+            "cross-platform dotCover requires a minimum of .NET Framework 4.7.2+ on Windows agent"
+        ),
+
+        DotnetCore31(
+            CONFIG_PREFIX_CORE_RUNTIME,
+            "3.1",
+            CONFIG_SUFFIX_PATH,
+            "cross-platform dotCover requires a minimum of .NET Core 3.1+ on Linux or macOS agent"
+        );
+
+        private val configParameterRegex = """^${this.prefix}((\d+)\.(\d+)(\.\d{1,2})?)${suffix}$""".toRegex()
+
+        fun validateConfigParameter(parameterName: String) : Boolean {
+            val matchResult = configParameterRegex.find(parameterName) ?: return false
+
+            val mainVersion = matchResult.groupValues[2].toInt()
+            val subVersion = matchResult.groupValues[3].toInt()
+
+            val (minMainVersion, minSubVersion) = minVersion.split(".").map { it.toInt() }
+
+            return mainVersion > minMainVersion || (mainVersion == minMainVersion && subVersion > minSubVersion)
+        }
+    }
+
+    private val dotnetCliDetected get() =
+        _parametersService.tryGetParameter(ParameterType.Configuration, CONFIG_SUFFIX_DOTNET_CLI_PATH)?.trim()?.isNotBlank() ?: false
 
     companion object {
         internal const val DotCoverDataProcessorType = CoverageConstants.COVERAGE_TYPE

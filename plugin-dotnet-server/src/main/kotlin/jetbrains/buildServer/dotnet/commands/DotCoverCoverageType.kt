@@ -70,7 +70,7 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
             VersionComparatorUtil.compare(toolVersion.version, "2023.3") >= 0 ->
                 // no requirements since currently there is no a good way to make composite agent requirements
                 // that could express something like: `(Windows AND .NET Framework) OR ((Linux OR macOS) AND .NET SDK)`;
-                // in case of imcompatibility of agents a warning will be produced on the build time
+                // in case of incompatibility of agents a warning will be produced on the build time
                 return@sequence
 
             // Windows-only .NET Framework 4.7.2+ compatible version
