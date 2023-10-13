@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.dotcover
 
+import com.fasterxml.jackson.core.util.VersionUtil
 import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
@@ -28,6 +29,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.OSType
+import jetbrains.buildServer.util.VersionComparatorUtil
 import java.io.File
 
 class DotCoverWorkflowComposer(
@@ -45,11 +47,7 @@ class DotCoverWorkflowComposer(
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow {
-        if (!dotCoverEnabled) {
-            return workflow
-        }
-
-        if (dotCoverPath.isBlank()) {
+        if (!dotCoverEnabled || dotCoverPath.isBlank()) {
             return workflow
         }
 
@@ -271,18 +269,14 @@ class DotCoverWorkflowComposer(
             "cross-platform dotCover requires a minimum of .NET Core 3.1+ on Linux or macOS agent"
         );
 
-        private val configParameterRegex = """^${this.prefix}((\d+)\.(\d+)(\.\d{1,2})?)${suffix}$""".toRegex()
+        private val regexPattern = """^$prefix((\d+\.\d+\.\d+))$suffix$""".toRegex()
 
-        fun validateConfigParameter(parameterName: String) : Boolean {
-            val matchResult = configParameterRegex.find(parameterName) ?: return false
-
-            val mainVersion = matchResult.groupValues[2].toInt()
-            val subVersion = matchResult.groupValues[3].toInt()
-
-            val (minMainVersion, minSubVersion) = minVersion.split(".").map { it.toInt() }
-
-            return mainVersion > minMainVersion || (mainVersion == minMainVersion && subVersion > minSubVersion)
+        fun validateConfigParameter(input: String): Boolean {
+            val matchResult = regexPattern.find(input) ?: return false
+            val extractedVersion = matchResult.groupValues[1]
+            return VersionComparatorUtil.compare(extractedVersion, minVersion) >= 0
         }
+
     }
 
     private val dotnetCliDetected get() =
