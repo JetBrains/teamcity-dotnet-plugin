@@ -58,7 +58,7 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
                         it.attributes["wrapFileContentInBlock"] == "false" &&
                         it.attributes["filePattern"] != null &&
                         // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==/*.msg
-                        Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
+                        Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
             })
         }
     }
@@ -108,7 +108,7 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
                         it.attributes["wrapFileContentInBlock"] == "false" &&
                         it.attributes["filePattern"] != null &&
                         // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==/*.msg
-                        Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
+                        Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
             })
         }
     }
@@ -129,7 +129,7 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
 
         // Assert
         // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==
-        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", testReportsFilePath.toString()))
+        Assert.assertTrue(Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}""", testReportsFilePath.toString()))
     }
 
     @Test
@@ -169,8 +169,8 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
 
         // Assert
         // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==
-        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForFirstStep.toString()))
-        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForSecondStep.toString()))
+        Assert.assertTrue(Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForFirstStep.toString()))
+        Assert.assertTrue(Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}""", pathForSecondStep.toString()))
         Assert.assertNotEquals(pathForFirstStep, pathForSecondStep)
     }
 
