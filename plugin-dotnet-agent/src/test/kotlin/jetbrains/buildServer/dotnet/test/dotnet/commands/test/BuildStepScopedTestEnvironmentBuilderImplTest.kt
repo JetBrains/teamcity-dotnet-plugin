@@ -10,15 +10,17 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.commands.test.BuildStepScopedTestEnvironmentBuilderImpl
 import org.testng.Assert
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 import java.util.regex.Pattern
 
 class BuildStepScopedTestEnvironmentBuilderImplTest {
     @Test
-    fun `should not set up environment for test reporting if fall back to stdout test reporting is enabled`() {
+    fun `should not set up environment for test reporting if fallback to stdout test reporting is enabled`() {
         // Arrange
         val agentEventDispatcher = mockk<AgentEventDispatcher>(relaxed = true)
         val parametersService = mockk<ParametersService>()
@@ -28,7 +30,7 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val environmentBuilder = BuildStepScopedTestEnvironmentBuilderImpl(agentEventDispatcher, parametersService, pathsService, loggerService)
 
         // Act
-        environmentBuilder.setupEnvironmentForTestReporting()
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
 
         // Assert
         verify(exactly = 0) {
@@ -48,7 +50,7 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val environmentBuilder = BuildStepScopedTestEnvironmentBuilderImpl(agentEventDispatcher, parametersService, pathsService, loggerService)
 
         // Act
-        environmentBuilder.setupEnvironmentForTestReporting()
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
 
         // Assert
         verify {
@@ -75,8 +77,8 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val environmentBuilder = BuildStepScopedTestEnvironmentBuilderImpl(agentEventDispatcher, parametersService, pathsService, loggerService)
 
         // Act
-        environmentBuilder.setupEnvironmentForTestReporting()
-        environmentBuilder.setupEnvironmentForTestReporting()
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
 
         // Assert
         verify(exactly = 1) {
@@ -96,9 +98,9 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
         val environmentBuilder = BuildStepScopedTestEnvironmentBuilderImpl(agentEventDispatcher, parametersService, pathsService, loggerService)
 
         // Act
-        environmentBuilder.setupEnvironmentForTestReporting()
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
         environmentBuilder.beforeRunnerStart(mockk<BuildRunnerContext>())
-        environmentBuilder.setupEnvironmentForTestReporting()
+        environmentBuilder.setupEnvironmentForTestReporting(Verbosity.Normal)
 
         // Assert
         verify(exactly = 2) {
@@ -109,6 +111,36 @@ class BuildStepScopedTestEnvironmentBuilderImplTest {
                         it.attributes["filePattern"] != null &&
                         // e.g. /agentTmp/TestReports/QQGkU6voRLudOukHGLgfgg==/*.msg
                         Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{24}[/\\]\*\.msg""", it.attributes["filePattern"])
+            })
+        }
+    }
+
+    @DataProvider(name = "streaming pluigin debug output suppression arguments")
+    fun loggingVerbosityTestsProvider() = arrayOf(
+        arrayOf(null, true),
+        arrayOf(Verbosity.Quiet, true),
+        arrayOf(Verbosity.Minimal, true),
+        arrayOf(Verbosity.Normal, true),
+        arrayOf(Verbosity.Detailed, false),
+        arrayOf(Verbosity.Diagnostic, false)
+    )
+
+    @Test(dataProvider = "streaming pluigin debug output suppression arguments")
+    fun `should suppress streaming plugin debug output if logging verbosity is lower than detailed`(verbosity: Verbosity?, shouldSuppressDebugOutput: Boolean) {
+        // Arrange
+        val agentEventDispatcher = mockk<AgentEventDispatcher>(relaxed = true)
+        val parametersService = mockk<ParametersService>(relaxed = true)
+        val pathsService = mockk<PathsService>(relaxed = true)
+        val loggerService = mockk<LoggerService>(relaxed = true)
+        val environmentBuilder = BuildStepScopedTestEnvironmentBuilderImpl(agentEventDispatcher, parametersService, pathsService, loggerService)
+
+        // Act
+        environmentBuilder.setupEnvironmentForTestReporting(verbosity)
+
+        // Assert
+        verify {
+            loggerService.writeMessage(match {
+                it.attributes["quiet"] == shouldSuppressDebugOutput.toString()
             })
         }
     }
