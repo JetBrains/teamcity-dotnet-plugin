@@ -54,7 +54,7 @@ class DotCoverWorkflowComposer(
         val entryPoint = selectEntryPoint().getOrElse { throw it }
 
         return when {
-            isEntryPointValid(entryPoint) -> Workflow(createDotCoverCommandLine(workflow, context, entryPoint))
+            _virtualContext.isVirtual || isEntryPointValid(entryPoint) -> Workflow(createDotCoverCommandLine(workflow, context, entryPoint))
 
             else -> {
                 val errorMessage =
@@ -69,6 +69,7 @@ class DotCoverWorkflowComposer(
 
     private fun isEntryPointValid(entryPoint: EntryPoint) =
         entryPoint.requirement == null || entryPoint.requirement.let(::areRequirementsSatisfied)
+
     private fun areRequirementsSatisfied(requirement: MinVersionConfigParameterRequirement) =
         _parametersService.getParameterNames(ParameterType.Configuration).any { requirement.validateConfigParameter(it) }
 
@@ -269,7 +270,7 @@ class DotCoverWorkflowComposer(
             "cross-platform dotCover requires a minimum of .NET Core 3.1+ on Linux or macOS agent"
         );
 
-        private val regexPattern = """^$prefix((\d+\.\d+\.\d+))$suffix$""".toRegex()
+        private val regexPattern = """^$prefix(\d+\.\d+\.\d+)$suffix$""".toRegex()
 
         fun validateConfigParameter(input: String): Boolean {
             val matchResult = regexPattern.find(input) ?: return false
