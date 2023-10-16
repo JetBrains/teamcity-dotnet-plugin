@@ -255,14 +255,14 @@ class DotCoverWorkflowComposer(
     ) {
         DotnetFramework472(
             CONFIG_PREFIX_DOTNET_FAMEWORK,
-            Version(4, 7, 2),
+            Version.MinDotNetFrameworkVersionForDotCover,
             CONFIG_SUFFIX_PATH,
             "cross-platform dotCover requires a minimum of .NET Framework 4.7.2+ on Windows agent"
         ),
 
         DotnetCore31(
             CONFIG_PREFIX_CORE_RUNTIME,
-            Version(3, 1),
+            Version.MinDotNetSdkVersionForDotCover,
             CONFIG_SUFFIX_PATH,
             "cross-platform dotCover requires a minimum of .NET Core 3.1+ on Linux or macOS agent"
         );

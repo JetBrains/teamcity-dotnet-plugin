@@ -186,5 +186,7 @@ class Version private constructor(
         val NoArgsForNuGetPushNoSymbolsParameterVersion: Version = Version(6, 0, 200)
         val FirstInspectcodeExtensionsOptionVersion: Version = Version(2021, 3, 0)
         val MinDotnetVersionForTestSuppressor: Version = Version(6)
+        val MinDotNetFrameworkVersionForDotCover = Version(4, 7, 2)
+        val MinDotNetSdkVersionForDotCover = Version(3, 1)
     }
 }
