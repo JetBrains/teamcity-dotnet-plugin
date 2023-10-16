@@ -598,6 +598,7 @@
   <bean class="jetbrains.buildServer.dotcover.report.DotCoverVersionChecker"/>
 
   <!-- dotCover workflow composer -->
+  <bean class="jetbrains.buildServer.dotcover.DotCoverEntryPointSelectorImpl" />
   <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>

@@ -1,20 +1,3 @@
-
-/*
- * Copyright 2000-2023 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import io.mockk.*
@@ -45,6 +28,7 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
+    @MockK private lateinit var _entryPointSelector: DotCoverEntryPointSelector
     @MockK private lateinit var _blockToken: Disposable
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
@@ -148,6 +132,7 @@ class DotCoverWorkflowComposerTest {
         every { _coverageFilterProvider.filters } returns emptySequence()
         every { _loggerService.writeTraceBlock(any()) } returns _blockToken
         every { _loggerService.writeTrace(any()) } returns Unit
+        every { _entryPointSelector.select() } answers { Result.success(File(dotCoverExecutableFile.path)) }
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -225,6 +210,7 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled") } returns null
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _entryPointSelector.select() } answers { Result.success(File("")) }
 
         val actualWorkflow = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, baseWorkflow).commandLines.toList()
 
@@ -298,6 +284,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _entryPointSelector.select() } answers { Result.success(File(dotCoverExecutableFile.path)) }
 
         every { _loggerService.writeTraceBlock("dotCover settings") } returns _blockToken
         every { _loggerService.writeTrace("Command line:") } returns Unit
@@ -379,6 +366,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _entryPointSelector.select() } answers { Result.success(File(dotCoverExecutableFile.path)) }
         every { _environmentVariables.getVariables() } returns _defaultVariables
         every { _coverageFilterProvider.attributeFilters } returns emptySequence()
         every { _coverageFilterProvider.filters } returns emptySequence()
@@ -456,6 +444,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _entryPointSelector.select() } answers { Result.success(File(dotCoverExecutableFile.path)) }
         every { _environmentVariables.getVariables() } returns _defaultVariables
         every { _coverageFilterProvider.attributeFilters } returns emptySequence()
         every { _coverageFilterProvider.filters } returns emptySequence()
@@ -530,6 +519,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
         every { _virtualContext.resolvePath(File("logPath", "dotCover99.log").canonicalPath) } returns "v_log"
         every { _virtualContext.resolvePath("wd") } returns "v_wd"
+        every { _entryPointSelector.select() } answers { Result.success(File(dotCoverExecutableFile.path)) }
         every { _environmentVariables.getVariables() } returns _defaultVariables
         every { _coverageFilterProvider.attributeFilters } returns emptySequence()
         every { _coverageFilterProvider.filters } returns emptySequence()
@@ -559,14 +549,15 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.UNIX
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
+        every { _entryPointSelector.select() } throws(ToolCannotBeFoundException("TOOL CAN NOT BE FOUND"))
 
         // Then
         try {
             composer.compose(WorkflowContextStub(WorkflowStatus.Failed, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
-            Assert.fail("Eception is required.")
+            Assert.fail("Exception is required")
         }
         catch (ex: RunBuildException) {
-            Assert.assertEquals(ex.message, "Cross-Platform dotCover is required.")
+            Assert.assertEquals(ex.message, "dotCover run failed: TOOL CAN NOT BE FOUND")
         }
     }
 
@@ -580,6 +571,11 @@ class DotCoverWorkflowComposerTest {
             _argumentsService,
             _coverageFilterProvider,
             _virtualContext,
-            _environmentVariables)
+            _environmentVariables,
+            _entryPointSelector)
+    }
+
+    companion object {
+        private const val ENTRY_POINT_PATH = "dotCover.exe"
     }
 }
