@@ -21,7 +21,7 @@ class DotCoverEntryPointSelectorImpl(
 ) : DotCoverEntryPointSelector {
     override fun select(): Result<File> =
         selectEntryPoint()
-            .getOrThrow()   // tool can not be found
+            .getOrThrow()   // tool is invalid
             .let { entryPoint -> when {
                 _virtualContext.isVirtual || isEntryPointValid(entryPoint) ->
                     Result.success(entryPoint.file)
@@ -32,7 +32,7 @@ class DotCoverEntryPointSelectorImpl(
                         "dotCover cannot be run because the required " +
                         "runtime is not detected on the agent: ${entryPoint.requirement!!.errorMessage}"
                     _loggerService.writeBuildProblem(
-                        "dotCover_requirements_have_not_been_met",
+                        DOTCOVER_REQUIREMENTS_BUILD_PROBLEM,
                         BuildProblemData.TC_ERROR_MESSAGE_TYPE,
                         errorMessage
                     )
@@ -41,6 +41,10 @@ class DotCoverEntryPointSelectorImpl(
             } }
 
     private fun selectEntryPoint(): Result<EntryPoint> {
+        if (dotCoverPath.isBlank()) {
+            return Result.failure(ToolCannotBeFoundException("dotCover tool installation path is empty"))
+        }
+
         val entryPointFileExe = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverPath)
         val entryPointFileDll = EntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(dotCoverPath)
         val entryPointFileSh = EntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverPath)
@@ -76,7 +80,7 @@ class DotCoverEntryPointSelectorImpl(
 
                 else -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Linux or MacOS, however " +
-                    "${EntryPointType.UsingAgentDotnetRuntime.entryPointFileName} and ${EntryPointType.UsingBundledDotnetRuntime.entryPointFileName} " +
+                    "${EntryPointType.UsingAgentDotnetRuntime.entryPointFileName} or ${EntryPointType.UsingBundledDotnetRuntime.entryPointFileName} " +
                     "weren't found in the tool installation path:" + dotCoverPath
                 ))
             }
@@ -87,14 +91,14 @@ class DotCoverEntryPointSelectorImpl(
 
     private enum class EntryPointType(val entryPointFileName: String) {
         // dotCover.exe ... – simple run of Windows executable file
-
         WindowsExecutable("dotCover.exe"),
+
         // dotCover.sh ... – dotCover will select the proper bundled runtime in its own package
-
         UsingBundledDotnetRuntime("dotCover.sh"),
-        // dotnet dotCover.dll ... – will use detected dotnet on agent
 
+        // dotnet dotCover.dll ... – will use detected dotnet on agent
         UsingAgentDotnetRuntime("dotCover.dll");
+
         fun getEntryPointFile(basePath: String): File = File(basePath, this.entryPointFileName)
     }
 
@@ -104,7 +108,6 @@ class DotCoverEntryPointSelectorImpl(
         suffix: String,
         val errorMessage: String
     ) {
-
         DotnetFramework472(
             DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK,
             Version.MinDotNetFrameworkVersionForDotCover,
@@ -120,6 +123,7 @@ class DotCoverEntryPointSelectorImpl(
         );
 
         private val regexPattern = "^$prefix(.+)$suffix$".toRegex()
+
         fun validateConfigParameter(input: String) =
             when (val extractedVersion = regexPattern.find(input)?.groupValues?.get(1)) {
                 null -> false
@@ -131,10 +135,7 @@ class DotCoverEntryPointSelectorImpl(
     }
 
     private fun isEntryPointValid(entryPoint: EntryPoint) =
-        entryPoint.requirement == null || entryPoint.requirement.let(::areRequirementsSatisfied)
-
-    private fun areRequirementsSatisfied(requirement: MinVersionConfigParameterRequirement) =
-        _parametersService.getParameterNames(ParameterType.Configuration).any { requirement.validateConfigParameter(it) }
+        entryPoint.requirement == null || buildConfigParamsNames.any { entryPoint.requirement.validateConfigParameter(it) }
 
     private val dotCoverPath get() =
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
@@ -142,4 +143,10 @@ class DotCoverEntryPointSelectorImpl(
                 true -> ""
                 false -> it
             }}
+
+    private val buildConfigParamsNames get() = _parametersService.getParameterNames(ParameterType.Configuration)
+
+    companion object {
+        internal const val DOTCOVER_REQUIREMENTS_BUILD_PROBLEM = "dotCover_requirements_have_not_been_met"
+    }
 }
