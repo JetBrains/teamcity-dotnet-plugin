@@ -17,7 +17,6 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_COMPATIBLE_AGENT_PROPERTY_NAME
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_6_1_PATTERN
@@ -49,8 +48,8 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
     override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
 
-        if (properties[CoverageConstants.PARAM_DOTCOVER_HOME].isNullOrBlank()) {
-            yield(InvalidProperty(CoverageConstants.PARAM_DOTCOVER_HOME, DotnetConstants.VALIDATION_EMPTY))
+        if (properties[PARAM_DOTCOVER_HOME].isNullOrBlank()) {
+            yield(InvalidProperty(PARAM_DOTCOVER_HOME, DotnetConstants.VALIDATION_EMPTY))
         }
     }
 

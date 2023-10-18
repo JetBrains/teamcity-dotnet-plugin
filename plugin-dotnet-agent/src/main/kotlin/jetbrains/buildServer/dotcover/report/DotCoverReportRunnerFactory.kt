@@ -43,8 +43,10 @@ class DotCoverReportRunnerFactory(
             return null
         }
 
-        var profilerHost = when {
-            entryPointFile.extension == FILE_EXTENSION_DLL -> _dotnetToolResolver.executable.virtualPath
+        val profilerHost = when {
+            entryPointFile.extension == FILE_EXTENSION_DLL -> {
+                _dotnetToolResolver.executable.virtualPath
+            }
             else -> null
         }
 
