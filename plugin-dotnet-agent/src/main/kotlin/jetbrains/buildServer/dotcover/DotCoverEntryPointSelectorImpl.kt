@@ -53,13 +53,15 @@ class DotCoverEntryPointSelectorImpl(
         return when {
             // on Windows
             _virtualContext.targetOSType == OSType.WINDOWS -> when {
-                _fileSystemService.isExists(entryPointFileExe) -> when {
-                    // cross-platform version on Windows requires .NET Framework 4.7.2+
-                    _fileSystemService.isExists(entryPointFileDll) ->
-                        Result.success(EntryPoint(entryPointFileExe, MinVersionConfigParameterRequirement.DotnetFramework472))
+                _fileSystemService.isExists(entryPointFileExe) -> {
+                    val requirement = when {
+                        // cross-platform version on Windows requires .NET Framework 4.7.2
+                        _fileSystemService.isExists(entryPointFileDll) -> MinVersionConfigParameterRequirement.DotnetFramework472
 
-                    // Windows-only version using agent requirements mechanism – no build-time requirements validation needed
-                    else -> Result.success(EntryPoint(entryPointFileExe))
+                        // Windows-only version using agent requirements mechanism – no build-time requirements validation needed
+                        else -> null
+                    }
+                    Result.success(EntryPoint(entryPointFileExe, requirement))
                 }
 
                 else -> Result.failure(ToolCannotBeFoundException(

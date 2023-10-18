@@ -11,17 +11,17 @@ import java.io.File
 class DotnetCoverageReportGeneratorRunner(
     private val _params: DotnetCoverageParameters,
     private val _toolName: String,
-    private val _coverToolEntypointFile: File,
-    private val profileHostFile: Path? = null
+    private val _coverToolEntryPointFile: File,
+    private val _profileHostFile: Path? = null
 ) {
 
     fun runReportGenerator(activity: String, arguments: List<String?>): Int {
         val cmdLine = GeneralCommandLine()
-        when (profileHostFile) {
-            null -> cmdLine.exePath = _coverToolEntypointFile.path
+        when (_profileHostFile) {
+            null -> cmdLine.exePath = _coverToolEntryPointFile.path
             else -> {
-                cmdLine.exePath = profileHostFile.path
-                cmdLine.addParameter(_coverToolEntypointFile.path)
+                cmdLine.exePath = _profileHostFile.path
+                cmdLine.addParameter(_coverToolEntryPointFile.path)
             }
         }
         cmdLine.addParameters(arguments)
