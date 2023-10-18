@@ -140,13 +140,8 @@ class DotCoverWorkflowComposer(
         yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
 
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            val argPrefix = when(_virtualContext.targetOSType) {
-                OSType.WINDOWS -> "/"
-                else -> "--"
-            }
-
             val logFileName = _virtualContext.resolvePath(_fileSystemService.generateTempFile(File(it), "dotCover", ".log").canonicalPath)
-            yield(CommandLineArgument("${argPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
+            yield(CommandLineArgument("${argumentPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
         }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
@@ -156,11 +151,10 @@ class DotCoverWorkflowComposer(
         }
     }
 
-    private val argumentPrefix get () =
-        when(_virtualContext.targetOSType) {
-            OSType.WINDOWS -> "/"
-            else -> "--"
-        }
+    private val argumentPrefix get () = when(_virtualContext.targetOSType) {
+        OSType.WINDOWS -> "/"
+        else -> "--"
+    }
 
     private val dotCoverPath get() =
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
