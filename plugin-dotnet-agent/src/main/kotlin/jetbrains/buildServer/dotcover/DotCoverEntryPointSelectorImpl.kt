@@ -41,13 +41,14 @@ class DotCoverEntryPointSelectorImpl(
             } }
 
     private fun selectEntryPoint(): Result<EntryPoint> {
-        if (dotCoverPath.isBlank()) {
+        val homePath = dotCoverHomePath;
+        if (homePath.isBlank()) {
             return Result.failure(ToolCannotBeFoundException("dotCover tool installation path is empty"))
         }
 
-        val entryPointFileExe = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverPath)
-        val entryPointFileDll = EntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(dotCoverPath)
-        val entryPointFileSh = EntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverPath)
+        val entryPointFileExe = EntryPointType.WindowsExecutable.getEntryPointFile(homePath)
+        val entryPointFileDll = EntryPointType.UsingAgentDotnetRuntime.getEntryPointFile(homePath)
+        val entryPointFileSh = EntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(homePath)
 
         return when {
             // on Windows
@@ -64,7 +65,7 @@ class DotCoverEntryPointSelectorImpl(
                 else -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Windows, however " +
                     "${EntryPointType.WindowsExecutable.entryPointFileName} " +
-                    "wasn't found in the tool installation path:" + dotCoverPath
+                    "wasn't found in the tool installation path:" + homePath
                 ))
             }
 
@@ -81,7 +82,7 @@ class DotCoverEntryPointSelectorImpl(
                 else -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Linux or MacOS, however " +
                     "${EntryPointType.UsingAgentDotnetRuntime.entryPointFileName} or ${EntryPointType.UsingBundledDotnetRuntime.entryPointFileName} " +
-                    "weren't found in the tool installation path:" + dotCoverPath
+                    "weren't found in the tool installation path:" + homePath
                 ))
             }
         }
@@ -124,8 +125,8 @@ class DotCoverEntryPointSelectorImpl(
 
         private val regexPattern = "^$prefix(.+)$suffix$".toRegex()
 
-        fun validateConfigParameter(input: String) =
-            when (val extractedVersion = regexPattern.find(input)?.groupValues?.get(1)) {
+        fun isSatisfiedBy(parameter: String) =
+            when (val extractedVersion = regexPattern.find(parameter)?.groupValues?.get(1)) {
                 null -> false
                 else -> when {
                     Version.isValid(extractedVersion) -> Version.parse(extractedVersion) >= minVersion
@@ -135,9 +136,9 @@ class DotCoverEntryPointSelectorImpl(
     }
 
     private fun isEntryPointValid(entryPoint: EntryPoint) =
-        entryPoint.requirement == null || buildConfigParamsNames.any { entryPoint.requirement.validateConfigParameter(it) }
+        entryPoint.requirement == null || buildConfigParamsNames.any { entryPoint.requirement.isSatisfiedBy(it) }
 
-    private val dotCoverPath get() =
+    private val dotCoverHomePath get() =
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             .let { when (it.isNullOrBlank()) {
                 true -> ""
