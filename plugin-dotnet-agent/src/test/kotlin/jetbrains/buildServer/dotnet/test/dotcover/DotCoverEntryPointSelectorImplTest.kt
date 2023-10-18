@@ -47,7 +47,7 @@ class DotCoverEntryPointSelectorImplTest {
     }
 
     @Test(dataProvider = "OS and entry point file name")
-    fun `should return entry point and do not validate agent parameters when build run in a container`(os: OSType, entryPointFileName: String) {
+    fun `should return entry point and skip validation of agent parameters when build run in a container`(os: OSType, entryPointFileName: String) {
         // arrange
         val dotCoverHomePath = "/path/to/dotCover/home"
         val dotCoverEntryPointPath = "$dotCoverHomePath/$entryPointFileName"
@@ -58,6 +58,25 @@ class DotCoverEntryPointSelectorImplTest {
 
         // act
         val result = _selector.select()
+
+        // assert
+        Assert.assertTrue(result.isSuccess)
+        Assert.assertEquals(result.getOrNull()?.path, dotCoverEntryPointPath)
+        verify (exactly = 0) { _parametersService.getParameterNames(ParameterType.Configuration) }
+    }
+
+    @Test(dataProvider = "OS and entry point file name")
+    fun `should return entry point and skip validation of agent parameters when skip validation flag has been explicitly set`(os: OSType, entryPointFileName: String) {
+        // arrange
+        val dotCoverHomePath = "/path/to/dotCover/home"
+        val dotCoverEntryPointPath = "$dotCoverHomePath/$entryPointFileName"
+        every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns dotCoverHomePath
+        every { _virtualContext.isVirtual } returns true
+        every { _virtualContext.targetOSType } returns os
+        every { _fileSystemService.isExists(match { it.path == dotCoverEntryPointPath }) } returns true
+
+        // act
+        val result = _selector.select(skipRequirementsValidation = true)
 
         // assert
         Assert.assertTrue(result.isSuccess)
@@ -264,4 +283,6 @@ class DotCoverEntryPointSelectorImplTest {
         // act, assert
         assertThrows(ToolCannotBeFoundException::class.java) { _selector.select() }
     }
+
+
 }

@@ -68,9 +68,6 @@ object CoverageConstants {
     const val DOTCOVER_SNAPSHOT_DCVR = "dotCover$DOTCOVER_SNAPSHOT_FILE_EXTENSION"
     const val DOTCOVER_LOGS = "dotCoverLogs.zip"
 
-    const val DOTCOVER_EXECUTABLE = "dotCover.sh"
-    const val DOTCOVER_WINDOWS_EXECUTABLE = "dotCover.exe"
-    const val DOTCOVER_DLL = "dotCover.dll"
     const val DOTCOVER_TOOL_NAME = "dotCover"
     const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.${BUNDLED_TOOL_VERSION_NAME}"
 

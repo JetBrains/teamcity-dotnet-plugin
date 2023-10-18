@@ -1,60 +1,45 @@
 package jetbrains.buildServer.dotcover.report
 
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.agent.impl.OSTypeDetector
+import jetbrains.buildServer.RunBuildException
+import jetbrains.buildServer.agent.ToolCannotBeFoundException
+import jetbrains.buildServer.dotcover.DotCoverEntryPointSelector
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
-import jetbrains.buildServer.util.OSType
+import java.io.File
 
 class DotCoverReportRunnerFactory(
-    private val _factory: DotCoverParametersFactory,
-    private val _osTypeDetector: OSTypeDetector,
     private val _dotnetToolResolver: DotnetToolResolver,
+    private val _entryPointSelector: DotCoverEntryPointSelector
 ) {
-
     fun getDotCoverReporter(parameters: DotnetCoverageParameters): DotnetCoverageReportGeneratorRunner? {
-        val dcp = _factory.createDotCoverParameters(parameters)
-        val path: String? = dcp.dotCoverHomePath
-        LOG.debug("Path to dotCover home is: $path")
-
-        if (path == null) {
-            val msg = "Failed to find path to dotCover"
-            LOG.info(msg)
-            parameters.getBuildLogger().warning(msg)
-            return null
-        }
-
-        val entryPointFileExe = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_WINDOWS_EXECUTABLE)
-        val entryPointFileSh = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_EXECUTABLE)
-        val entryPointFileDll = parameters.resolvePathToTool(path, CoverageConstants.DOTCOVER_DLL)
-
-        val entryPointFile = when {
-            _osTypeDetector.detect() == OSType.WINDOWS && entryPointFileExe?.isFile ?: false -> entryPointFileExe
-            _osTypeDetector.detect() != OSType.WINDOWS && entryPointFileSh?.isFile ?: false -> entryPointFileSh
-            else -> entryPointFileDll
-        }
-
-        if (entryPointFile == null || !entryPointFile.isFile) {
-            val msg = "Failed to find dotCover under: $path"
-            LOG.warn(msg)
-            parameters.getBuildLogger().warning(msg)
-            return null
-        }
+        val entryPointFile = getEntryPoint()
 
         val profilerHost = when {
-            entryPointFile.extension == FILE_EXTENSION_DLL -> {
-                _dotnetToolResolver.executable.virtualPath
-            }
+            entryPointFile.extension == FILE_EXTENSION_DLL -> _dotnetToolResolver.executable.virtualPath
             else -> null
         }
 
         return DotnetCoverageReportGeneratorRunner(parameters, CoverageConstants.DOTCOVER_TOOL_NAME, entryPointFile, profilerHost)
     }
 
+    private fun getEntryPoint() : File {
+        try {
+            // if report generation has started, then dotCover tool has already been executed during the build
+            // and validation of the tool requirements to the agent has already been performed - we can skip it here
+            return _entryPointSelector.select(skipRequirementsValidation = true).getOrThrow()
+        } catch (e: ToolCannotBeFoundException) {
+            val exception = RunBuildException("dotCover report generation failed: " + e.message)
+            LOG.error(exception)
+            exception.isLogStacktrace = false
+            throw exception
+        }
+    }
+
     companion object {
         private val LOG = Logger.getInstance(DotCoverReportRunnerFactory::class.java.name)
-        private val FILE_EXTENSION_DLL = "dll"
+        private const val FILE_EXTENSION_DLL = "dll"
     }
 }

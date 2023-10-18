@@ -18,9 +18,7 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.serverSide.TeamCityProperties
 
-class ParametersServiceImpl(
-        private val _buildStepContext: BuildStepContext) : ParametersService {
-
+class ParametersServiceImpl(private val _buildStepContext: BuildStepContext) : ParametersService {
     override fun tryGetParameter(parameterType: ParameterType, parameterName: String) = when (parameterType) {
         ParameterType.Runner -> _buildStepContext.runnerContext.runnerParameters[parameterName]
         ParameterType.Configuration -> _buildStepContext.runnerContext.configParameters[parameterName]

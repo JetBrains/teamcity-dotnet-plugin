@@ -574,8 +574,4 @@ class DotCoverWorkflowComposerTest {
             _environmentVariables,
             _entryPointSelector)
     }
-
-    companion object {
-        private const val ENTRY_POINT_PATH = "dotCover.exe"
-    }
 }

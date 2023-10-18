@@ -19,11 +19,11 @@ class DotCoverEntryPointSelectorImpl(
     private val _fileSystemService: FileSystemService,
     private val _loggerService: LoggerService,
 ) : DotCoverEntryPointSelector {
-    override fun select(): Result<File> =
+    override fun select(skipRequirementsValidation: Boolean): Result<File> =
         selectEntryPoint()
             .getOrThrow()   // tool is invalid
             .let { entryPoint -> when {
-                _virtualContext.isVirtual || isEntryPointValid(entryPoint) ->
+                skipRequirementsValidation || _virtualContext.isVirtual || isEntryPointValid(entryPoint) ->
                     Result.success(entryPoint.file)
 
                 else -> {
