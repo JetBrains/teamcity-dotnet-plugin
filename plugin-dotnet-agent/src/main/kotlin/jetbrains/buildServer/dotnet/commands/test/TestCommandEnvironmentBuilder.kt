@@ -9,7 +9,7 @@ internal class TestCommandEnvironmentBuilder(
     private val _runnerScopedTestEnvironmentBuilder: BuildStepScopedTestEnvironmentBuilder,
 ) : EnvironmentBuilder {
     override fun build(context: DotnetCommandContext): Disposable {
-        _runnerScopedTestEnvironmentBuilder.setupEnvironmentForTestReporting()
+        _runnerScopedTestEnvironmentBuilder.setupEnvironmentForTestReporting(context.verbosityLevel)
         return emptyDisposable()
     }
 }

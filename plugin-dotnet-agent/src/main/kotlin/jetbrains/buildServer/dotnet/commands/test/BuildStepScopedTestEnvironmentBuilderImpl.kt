@@ -8,6 +8,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.runner.serviceMessages.FileStreamingServiceMessage
+import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.util.EventDispatcher
 import java.io.File
 import java.nio.ByteBuffer
@@ -30,7 +31,7 @@ internal class BuildStepScopedTestEnvironmentBuilderImpl(
         agentEventDispatcher.addListener(this)
     }
 
-    override fun setupEnvironmentForTestReporting() {
+    override fun setupEnvironmentForTestReporting(verbosityLevel: Verbosity?) {
         val fallbackToStdOutTestReporting = TestReportingViaFileStreamingHelper.shouldFallbackToStdOutTestReporting(_parametersService)
 
         if (fallbackToStdOutTestReporting || wasEnvironmentSetupForCurrentBuildStep) return
@@ -38,10 +39,17 @@ internal class BuildStepScopedTestEnvironmentBuilderImpl(
         val testReportFilesPath = getTestReportsFilesPathForBuildStep().toString()
 
         val serviceMessageFilePattern = testReportFilesPath + File.separator + "*.msg"
+
+        val enableQuietModeForFileStreaming = when (verbosityLevel) {
+            Verbosity.Detailed, Verbosity.Diagnostic -> false
+            else -> true
+        }
+
         val fileStreamingServiceMessage = FileStreamingServiceMessage(
             filePath = null,
             filePattern = serviceMessageFilePattern,
-            wrapFileContentInBlock = false
+            wrapFileContentInBlock = false,
+            quietMode = enableQuietModeForFileStreaming
         )
         _loggerService.writeMessage(fileStreamingServiceMessage)
 
