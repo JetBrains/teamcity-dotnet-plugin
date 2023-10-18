@@ -56,6 +56,10 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
     override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory) = sequence {
         yieldAll(super.getRequirements(parameters, factory))
 
+        if (parameters[PARAM_TYPE] != PARAM_DOTCOVER) {
+            return@sequence
+        }
+
         val toolVersion = getToolVersion(parameters, factory) ?: return@sequence
 
         // set agent requirement in accordance to dotCover version
@@ -87,10 +91,6 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
     }
 
     private fun getToolVersion(parameters: Map<String, String>, factory: BeanFactory): ToolVersion? {
-        if (parameters[PARAM_TYPE] != PARAM_DOTCOVER) {
-            return null
-        }
-
         val dotCoverHomeValue = parameters[PARAM_DOTCOVER_HOME] ?: return null
         val toolManager = factory.getBean(ServerToolManager::class.java)
         val toolType = toolManager.findToolType(DOTCOVER_PACKAGE_ID) ?: return null
