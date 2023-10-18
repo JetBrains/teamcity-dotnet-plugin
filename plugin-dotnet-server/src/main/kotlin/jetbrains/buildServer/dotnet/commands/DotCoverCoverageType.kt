@@ -85,7 +85,7 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
                 yield(DOTNET_FRAMEWORK_4_6_1_REQUIREMENT)
 
             // Windows-only .NET Framework 3.5+ compatible version
-            VersionComparatorUtil.compare(toolVersion.version, "2018.2") <= 0 ->
+            VersionComparatorUtil.compare(toolVersion.version, "2018.2") < 0 ->
                 yield(DOTNET_FRAMEWORK_3_5_REQUIREMENT)
         }
     }
