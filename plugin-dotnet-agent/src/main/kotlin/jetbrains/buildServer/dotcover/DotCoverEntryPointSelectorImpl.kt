@@ -64,7 +64,7 @@ class DotCoverEntryPointSelectorImpl(
                 else -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Windows, however " +
                     "${EntryPointType.WindowsExecutable.entryPointFileName} " +
-                    "wasn't found in the tool installation path:" + homePath
+                    "wasn't found in the tool installation path: " + homePath
                 ))
             }
 
@@ -81,7 +81,7 @@ class DotCoverEntryPointSelectorImpl(
                 else -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Linux or MacOS agent, however " +
                     "${EntryPointType.UsingAgentDotnetRuntime.entryPointFileName} or ${EntryPointType.UsingBundledDotnetRuntime.entryPointFileName} " +
-                    "weren't found in the tool installation path:" + homePath
+                    "weren't found in the tool installation path: " + homePath
                 ))
             }
         }

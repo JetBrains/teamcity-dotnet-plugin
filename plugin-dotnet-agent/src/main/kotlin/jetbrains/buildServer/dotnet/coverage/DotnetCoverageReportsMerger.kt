@@ -6,8 +6,7 @@ import java.io.File
 
 class DotnetCoverageReportsMerger(private val _generators: DotnetCoverageReportGeneratorsHolder) {
 
-    fun prepareReports(type: String,
-                       files: List<DotnetCoverageReportRequest>): DotnetCoverageGeneratorInput? {
+    fun prepareReports(type: String, files: List<DotnetCoverageReportRequest>): DotnetCoverageGeneratorInput? {
 
         if (files.isEmpty()) return null
         val log: BuildProgressLogger = files.iterator().next().snapshot.getBuildLogger()

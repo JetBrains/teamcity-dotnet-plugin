@@ -14,7 +14,6 @@ class DotnetCoverageReportGeneratorRunner(
     private val _coverToolEntryPointFile: File,
     private val _profileHostFile: Path? = null
 ) {
-
     fun runReportGenerator(activity: String, arguments: List<String?>): Int {
         val cmdLine = GeneralCommandLine()
         when (_profileHostFile) {

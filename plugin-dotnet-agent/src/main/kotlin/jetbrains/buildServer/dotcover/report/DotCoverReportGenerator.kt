@@ -30,9 +30,8 @@ class DotCoverReportGenerator(
 
     override fun getGeneratorName(): String = "dotCover report generator (recommended)"
 
-    override fun supportCoverage(params: DotnetCoverageParameters): Boolean {
-        return _factory.createDotCoverParameters(params).dotCoverHomePath != null
-    }
+    override fun supportCoverage(params: DotnetCoverageParameters) =
+        _factory.createDotCoverParameters(params).dotCoverHomePath != null
 
     override fun parametersEquals(p1: DotnetCoverageParameters, p2: DotnetCoverageParameters): Boolean {
         val f1 = _factory.createDotCoverParameters(p1)
