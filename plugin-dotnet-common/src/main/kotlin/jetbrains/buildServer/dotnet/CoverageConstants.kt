@@ -51,7 +51,7 @@ object CoverageConstants {
     const val DOTCOVER_POSTFIX = ""
     const val DOTCOVER_CROSS_PLATFORM_POSTFIX = "Cross-Platform"
     const val DOTCOVER_CROSS_PLATFORM_DEPRECATED_POSTFIX = "Cross-Platform (deprecated)" // deprecated cross-platform version with bundled .NET runtime
-    const val DOTCOVER_WINDOWS_ONLY_POSTFIX = "Windows"
+    const val DOTCOVER_WINDOWS_POSTFIX = "Windows"
 
     const val PARAM_DOTCOVER = "dotcover"
     const val PARAM_DOTCOVER_HOME = "dotNetCoverage.dotCover.home.path"
