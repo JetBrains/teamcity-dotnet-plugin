@@ -27,10 +27,7 @@ class DotCoverEntryPointSelectorImpl(
                     Result.success(entryPoint.file)
 
                 else -> {
-                    val errorMessage =
-                        "Code coverage cannot be collected: " +
-                        "dotCover cannot be run because the required " +
-                        "runtime is not detected on the agent: ${entryPoint.requirement!!.errorMessage}"
+                    val errorMessage = "Unable to collect code coverage: ${entryPoint.requirement!!.errorMessage}"
                     _loggerService.writeBuildProblem(
                         DOTCOVER_REQUIREMENTS_BUILD_PROBLEM,
                         BuildProblemData.TC_ERROR_MESSAGE_TYPE,
@@ -82,7 +79,7 @@ class DotCoverEntryPointSelectorImpl(
                     Result.success(EntryPoint(entryPointFileDll, MinVersionConfigParameterRequirement.DotnetCore31))
 
                 else -> Result.failure(ToolCannotBeFoundException(
-                    "dotCover has been run on Linux or MacOS, however " +
+                    "dotCover has been run on Linux or MacOS agent, however " +
                     "${EntryPointType.UsingAgentDotnetRuntime.entryPointFileName} or ${EntryPointType.UsingBundledDotnetRuntime.entryPointFileName} " +
                     "weren't found in the tool installation path:" + homePath
                 ))
@@ -115,14 +112,14 @@ class DotCoverEntryPointSelectorImpl(
             DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK,
             Version.MinDotNetFrameworkVersionForDotCover,
             DotnetConstants.CONFIG_SUFFIX_PATH,
-            "cross-platform dotCover requires a minimum of .NET Framework 4.7.2+ on Windows agent"
+            "Windows agents must have .NET Framework 4.7.2.+ installed to run the \"dotCover Cross-Platform\" tool"
         ),
 
         DotnetCore31(
             DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME,
             Version.MinDotNetSdkVersionForDotCover,
             DotnetConstants.CONFIG_SUFFIX_PATH,
-            "cross-platform dotCover requires a minimum of .NET Core 3.1+ on Linux or macOS agent"
+            "Linux and macOS agents must have .NET Core 3.1+ to run the \"dotCover Cross-Platform\" tool"
         );
 
         private val regexPattern = "^$prefix(.+)$suffix$".toRegex()
