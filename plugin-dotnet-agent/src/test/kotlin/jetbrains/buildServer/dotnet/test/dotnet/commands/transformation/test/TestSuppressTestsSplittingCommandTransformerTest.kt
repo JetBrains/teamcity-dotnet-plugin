@@ -291,7 +291,7 @@ class TestSuppressTestsSplittingCommandTransformerTest {
     }
 
     @Test
-    fun `should transform to 3 commands (without build) if target is a number of assemblies`() {
+    fun `should transform to 3 commands (without no-build argument) if target is a number of assemblies`() {
         // arrange
         val testsListPath = "/path/to/tests-list.txt"
         _testsSplittingSettingsMock.let {
@@ -354,8 +354,7 @@ class TestSuppressTestsSplittingCommandTransformerTest {
         }
         result[1].let { testCommand ->
             val args = testCommand.getArguments(mockk()).toList()
-            Assert.assertEquals(args.count(), 1)
-            Assert.assertEquals(args[0].value, "--no-build")
+            Assert.assertEquals(args.count(), 0)
         }
         result[2].let { restoreCommand ->
             val args = restoreCommand.getArguments(mockk()).toList()
