@@ -2,16 +2,17 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>JetBrains.dotCover.CommandLineTools</id>
-    <version>2021.2.2</version>
-    <title>JetBrains dotCover Command Line Tools 2021.2.2</title>
+    <version>2023.2.2</version>
+    <title>JetBrains dotCover Command Line Tools 2023.2.2</title>
     <authors>JetBrains</authors>
     <owners>JetBrains</owners>
     <developmentDependency>true</developmentDependency>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <licenseUrl>https://resources.jetbrains.com/sales-config/config/agreements/TB/eua.html</licenseUrl>
-    <projectUrl>http://www.jetbrains.com/dotcover/</projectUrl>
-    <iconUrl>https://cdn.rawgit.com/JetBrains/Chocolatey/948ada6a54e2e7143ab3e9efa56e975dc7b5d31a/dotCover/logo.png</iconUrl>
-    <description>.NET code coverage tool for Windows.</description>
+    <license type="file">tools\License\jetbrains_license.md</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://www.jetbrains.com/dotcover/</projectUrl>
+    <iconUrl>https://resources.jetbrains.com/storage/products/dotcover/img/dotcover.png</iconUrl>
+    <description>A code coverage tool for Windows. Supports .NET Framework, .NET Core, .NET, Mono, Mono for Unity.</description>
     <copyright>JetBrains</copyright>
   </metadata>
 </package>

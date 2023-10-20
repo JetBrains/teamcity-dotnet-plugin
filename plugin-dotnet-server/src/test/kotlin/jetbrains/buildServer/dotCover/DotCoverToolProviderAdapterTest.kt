@@ -29,6 +29,6 @@ class DotCoverToolProviderAdapterTest {
         Assert.assertNotNull(bundledPackageId)
         Assert.assertNotNull(bundledPackageVersion)
         Assert.assertEquals(bundledPackageId, "JetBrains.dotCover.CommandLineTools")
-        Assert.assertEquals(bundledPackageVersion, "2021.2.2")
+        Assert.assertEquals(bundledPackageVersion, "2023.2.2")
     }
 }
