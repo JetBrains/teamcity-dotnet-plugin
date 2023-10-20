@@ -41,10 +41,10 @@ public class SuppressNothingByExcludingNotExistingClassTests
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             testProjectGeneratorType,
-            dotnetVersion,
+            new [] { dotnetVersion },
             projectName,
             withoutDebugSymbols: false,
-            DotnetTestContainerFixture.TargetType.Assembly,
+            CommandTargetType.Assembly,
             testClassesToInclude,
             buildTestProject: true,
             withMsBuildBinaryLogs: false,

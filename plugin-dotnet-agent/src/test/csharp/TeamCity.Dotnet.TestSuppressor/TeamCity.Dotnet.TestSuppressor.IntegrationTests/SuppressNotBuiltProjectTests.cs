@@ -26,10 +26,10 @@ public class SuppressNotBuiltProjectTests : IClassFixture<DotnetTestContainerFix
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),
-            dotnetVersion,
+            new [] { dotnetVersion },
             projectName: "MyTestProject",
             withoutDebugSymbols:false,
-            DotnetTestContainerFixture.TargetType.Project,
+            CommandTargetType.Project,
             projectTestClasses: new[] { testClass },
             buildTestProject: false,  // in this test we a not going to build the project and see if the filter fails
             withMsBuildBinaryLogs: false,

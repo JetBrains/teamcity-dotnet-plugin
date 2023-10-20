@@ -37,10 +37,10 @@ public class RestoreTests : IClassFixture<DotnetTestContainerFixture>
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),
-            dotnetVersion,
+            new [] { dotnetVersion },
             projectName,
             withoutDebugSymbols,
-            DotnetTestContainerFixture.TargetType.Project,
+            CommandTargetType.Project,
             allTestClasses,
             buildTestProject: true,
             withMsBuildBinaryLogs: false,
