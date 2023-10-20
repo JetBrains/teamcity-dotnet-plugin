@@ -72,7 +72,7 @@ class PreparePackagesTask extends DefaultTask {
     preparePackages(reSharperToolsPackageId, reSharperToolDescriptor, reSharperDir, reSharperZipFilename,
             reSharperNuSpecFilename, reSharperMainPackageDir, reSharperMainPackagePattern)
 
-    def dotCoverToolsPackageVersion = '2021.2.2'
+    def dotCoverToolsPackageVersion = '2023.2.2'
     def dotCoverToolsPackageId = 'JetBrains.dotCover.CommandLineTools/' + dotCoverToolsPackageVersion
     def dotCoverToolDescriptor = 'bundled-dot-cover.xml'
     def dotCoverDir = 'JetBrains.dotCover.CommandLineTool'
