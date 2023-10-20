@@ -76,7 +76,7 @@ class ArgumentsProviderImpl(
 
     private fun getExtensions(args: MutableList<CommandLineArgument>, tool: InspectionTool, toolVersion: Version): String? {
         return when {
-            tool == InspectionTool.Inspectcode && toolVersion >= Version.FirstInspectcodeExtensionsOptionVersion -> {
+            tool == InspectionTool.Inspectcode && toolVersion >= Version.FirstInspectCodeWithExtensionsOptionVersion -> {
                 return processSimpleArgument(args, ExtensionsRegex, _pluginSpecificationsProvider.getPluginsSpecification())
             }
 

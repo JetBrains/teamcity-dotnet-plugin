@@ -20,5 +20,5 @@ import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Version
 
 class DupFinderEnvironmentProvider : EnvironmentProvider {
-    override fun getEnvironmentVariables(toolVersion: Version) = emptySequence<CommandLineEnvironmentVariable>()
+    override fun getEnvironmentVariables(toolVersion: Version, toolPlatform: InspectionToolPlatform) = emptySequence<CommandLineEnvironmentVariable>()
 }

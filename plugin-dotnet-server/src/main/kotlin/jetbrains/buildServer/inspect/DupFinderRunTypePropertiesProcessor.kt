@@ -52,10 +52,10 @@ class DupFinderRunTypePropertiesProcessor(
         }
 
         val platform = properties[CltConstants.RUNNER_SETTING_CLT_PLATFORM]?.let {
-            IspectionToolPlatform.tryParse(it)
+            InspectionToolPlatform.tryParse(it)
         }
 
-        if (platform == IspectionToolPlatform.CrossPlatform && cltVersion < RequirementsResolverImpl.CrossPlatformVersion) {
+        if (platform == InspectionToolPlatform.CrossPlatform && cltVersion < RequirementsResolverImpl.CrossPlatformVersion) {
             result.add(InvalidProperty(CltConstants.RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform duplicates finder, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 

@@ -184,7 +184,7 @@ class Version private constructor(
         val MultiAdapterPath_5_0_103_Version: Version = Version(5, 0, 103)
         val CredentialProviderVersion: Version = Version(2, 1, 400)
         val NoArgsForNuGetPushNoSymbolsParameterVersion: Version = Version(6, 0, 200)
-        val FirstInspectcodeExtensionsOptionVersion: Version = Version(2021, 3, 0)
+        val FirstInspectCodeWithExtensionsOptionVersion: Version = Version(2021, 3, 0)
         val MinDotnetVersionForTestSuppressor: Version = Version(6)
     }
 }
