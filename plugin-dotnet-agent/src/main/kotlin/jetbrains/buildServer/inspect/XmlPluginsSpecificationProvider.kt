@@ -62,7 +62,7 @@ class XmlPluginsSpecificationProvider(
 
     private fun logInvalidDescriptor(pluginDescriptor: PluginDescriptor) = _loggerService.writeWarning(
         "Invalid R# CLT plugin descriptor: \"${pluginDescriptor.value}\", " +
-                "R# CLT versions below ${Version.FirstInspectcodeExtensionsOptionVersion} support only " +
+                "R# CLT versions below ${Version.FirstInspectCodeWithExtensionsOptionVersion} support only " +
                 "${_sourceIdToXmlElementGenerator.keys} descriptors, it will be ignored."
     )
 }

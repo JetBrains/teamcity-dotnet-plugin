@@ -44,7 +44,7 @@ class IdPluginsSpecificationProvider(
 
     private fun logInvalidDescriptor(pluginDescriptor: PluginDescriptor) = _loggerService.writeWarning(
         "Invalid R# CLT plugin descriptor: \"${pluginDescriptor.value}\", " +
-                "R# CLT ${Version.FirstInspectcodeExtensionsOptionVersion} and above does not support " +
+                "R# CLT ${Version.FirstInspectCodeWithExtensionsOptionVersion} and above does not support " +
                 "$_supportedSourceIds descriptors, it will be ignored. Only plugin ID descriptor is supported."
     )
 }

@@ -23,7 +23,7 @@ import jetbrains.buildServer.util.OSType
 
 open class InspectionWorkflowComposer(
     private val _tool: InspectionTool,
-    private val _toolStartCommandResolver: ToolStartCommandResolver,
+    private val _toolStartInfoResolver: ToolStartInfoResolver,
     private val _argumentsProvider: ArgumentsProvider,
     private val _environmentProvider: EnvironmentProvider,
     private val _outputObserver: OutputObserver,
@@ -44,12 +44,12 @@ open class InspectionWorkflowComposer(
         if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
 
     private fun createCommandLines(context: WorkflowContext) = sequence {
-        val startCommand = _toolStartCommandResolver.resolve(_tool)
+        val toolStartInfo = _toolStartInfoResolver.resolve(_tool)
 
         var toolVersion: Version = Version.Empty
         if (_tool == InspectionTool.Inspectcode && _pluginDescriptorsProvider.hasPluginDescriptors()) {
             val toolState = InspectionToolState(
-                startCommand,
+                toolStartInfo,
                 observer { toolVersion = it }
             )
             yieldAll(_inspectionToolStateWorkflowComposer.compose(context, toolState).commandLines)
@@ -63,7 +63,7 @@ open class InspectionWorkflowComposer(
         val virtualOutputPath = Path(_virtualContext.resolvePath((args.outputFile.absolutePath)))
         var hasErrors = false
 
-        val commandLine = createCommandLine(startCommand, args, virtualOutputPath, toolVersion)
+        val commandLine = createCommandLine(toolStartInfo, args, virtualOutputPath, toolVersion)
         disposableOf(
             context.filter { it.SourceId == commandLine.Id }.toOutput().subscribe(_outputObserver),
             context.filter { it.SourceId == commandLine.Id }.toErrors().subscribe { hasErrors = true },
@@ -78,13 +78,13 @@ open class InspectionWorkflowComposer(
     }
 
     protected open fun createCommandLine(
-        startCommand: ToolStartCommand,
+        toolStartInfo: ToolStartInfo,
         args: InspectionArguments,
         virtualOutputPath: Path,
         toolVersion: Version
     ): CommandLine {
         val cmdArgs = sequence {
-            yieldAll(startCommand.startArguments)
+            yieldAll(toolStartInfo.arguments)
             yield(CommandLineArgument("--config=${_virtualContext.resolvePath(args.configFile.absolutePath)}"))
             if (args.debug) {
                 yield(CommandLineArgument("--logFile=${_virtualContext.resolvePath(args.logFile.absolutePath)}"))
@@ -108,10 +108,10 @@ open class InspectionWorkflowComposer(
         return CommandLine(
             baseCommandLine = null,
             target = target,
-            executableFile = startCommand.executable,
+            executableFile = toolStartInfo.executable,
             workingDirectory = Path(_pathsService.getPath(PathType.Checkout).path),
             arguments = cmdArgs.toList(),
-            environmentVariables = _environmentProvider.getEnvironmentVariables(toolVersion).toList()
+            environmentVariables = _environmentProvider.getEnvironmentVariables(toolVersion, toolStartInfo.platform).toList()
         )
     }
 

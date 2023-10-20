@@ -22,6 +22,7 @@ import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.common.MSBuildEnvironmentVariables.USE_SHARED_COMPILATION_ENV_VAR
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 
 class BuildServerShutdownMonitor(
@@ -67,7 +68,7 @@ class BuildServerShutdownMonitor(
                 !_virtualContext.isVirtual
                 && buildCommands.contains(context.command.commandType)
                 && context.toolVersion > Version.LastVersionWithoutSharedCompilation
-                && _parametersService.tryGetParameter(ParameterType.Environment, DotnetEnvironmentVariables.UseSharedCompilationEnvVarName)?.equals("true", true) ?: true) {
+                && _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)?.equals("true", true) ?: true) {
             _workingDirectories.getOrPut(context.toolVersion) { context.workingDirectory.path }
         }
     }

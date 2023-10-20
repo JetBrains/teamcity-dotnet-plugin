@@ -36,7 +36,7 @@ import java.io.OutputStream
 
 class InspectionWorkflowComposerTest {
     @MockK
-    private lateinit var _toolPathResolver: ToolStartCommandResolver
+    private lateinit var _toolPathResolver: ToolStartInfoResolver
 
     @MockK
     private lateinit var _argumentsProvider: ArgumentsProvider
@@ -77,7 +77,7 @@ class InspectionWorkflowComposerTest {
     @MockK
     private lateinit var _pluginDescriptorsProvider: PluginDescriptorsProvider
 
-    private val _process = ToolStartCommand(Path("inspection"), listOf(CommandLineArgument("exec"), CommandLineArgument("--")))
+    private val _process = ToolStartInfo(Path("inspection"), InspectionToolPlatform.CrossPlatform, listOf(CommandLineArgument("exec"), CommandLineArgument("--")))
     private val _workingDirectory = Path("wd")
     private val _events = mutableListOf<CommandResultEvent>()
     private val _envVar = CommandLineEnvironmentVariable("var1", "val1")
@@ -100,7 +100,7 @@ class InspectionWorkflowComposerTest {
         every { _loggerService.importData(any(), any(), any()) } returns Unit
         every { _loggerService.buildFailureDescription(any()) } returns Unit
         every { _loggerService.writeWarning(any()) } returns Unit
-        every { _environmentProvider.getEnvironmentVariables(any()) } returns sequenceOf(_envVar)
+        every { _environmentProvider.getEnvironmentVariables(any(), any()) } returns sequenceOf(_envVar)
         every { _stateWorkflowComposer.compose(any(), any()) } returns Workflow(sequenceOf(_toolStateCommandLine))
         every { _pluginDescriptorsProvider.hasPluginDescriptors() } returns true
 
@@ -463,8 +463,8 @@ class InspectionWorkflowComposerTest {
             _stateWorkflowComposer,
             _pluginDescriptorsProvider
         ) {
-            override fun createCommandLine(startCommand: ToolStartCommand, args: InspectionArguments, virtualOutputPath: Path, toolVersion: Version): CommandLine {
-                return onNewCommandLine(super.createCommandLine(startCommand, args, virtualOutputPath, toolVersion))
+            override fun createCommandLine(toolStartInfo: ToolStartInfo, args: InspectionArguments, virtualOutputPath: Path, toolVersion: Version): CommandLine {
+                return onNewCommandLine(super.createCommandLine(toolStartInfo, args, virtualOutputPath, toolVersion))
             }
         }
 }

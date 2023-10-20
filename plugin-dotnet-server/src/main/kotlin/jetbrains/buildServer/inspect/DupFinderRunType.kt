@@ -46,7 +46,7 @@ class DupFinderRunType(
             DupFinderConstants.SETTINGS_INCLUDE_FILES to DEFAULT_INCLUDE_FILES,
             DupFinderConstants.SETTINGS_DISCARD_COST to DEFAULT_DISCARD_COST,
             DupFinderConstants.SETTINGS_DISCARD_LITERALS to true.toString(),
-            CltConstants.RUNNER_SETTING_CLT_PLATFORM to IspectionToolPlatform.WindowsX64.id)
+            CltConstants.RUNNER_SETTING_CLT_PLATFORM to InspectionToolPlatform.WindowsX64.id)
 
     override fun getType() = DupFinderConstants.RUNNER_TYPE
 

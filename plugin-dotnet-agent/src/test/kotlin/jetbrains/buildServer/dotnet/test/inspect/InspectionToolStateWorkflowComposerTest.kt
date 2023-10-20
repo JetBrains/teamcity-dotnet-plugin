@@ -83,7 +83,7 @@ class InspectionToolStateWorkflowComposerTest {
         val workingDirectoryPath = File("/working/directory")
         val executablePath = Path("/path/to/tool.sh")
         val startArguments = listOf(CommandLineArgument("exec"), CommandLineArgument("/some/executable.exe"))
-        val toolStartCommand = ToolStartCommand(executablePath, startArguments)
+        val toolStartInfo = ToolStartInfo(executablePath, InspectionToolPlatform.CrossPlatform, startArguments)
         every { _context.subscribe(any()) } answers {
             val observer = arg<Observer<CommandResultEvent>>(0)
             outputParsedVersions.forEach {
@@ -94,7 +94,7 @@ class InspectionToolStateWorkflowComposerTest {
         }
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns workingDirectoryPath
         every { _versionParser.parse(any()) } answers { Version.parseSimplified(arg<List<String>>(0)[0]) }
-        val toolState = InspectionToolState(toolStartCommand, _versionSubject)
+        val toolState = InspectionToolState(toolStartInfo, _versionSubject)
 
         // act
         val commandLines = composer.compose(_context, toolState).commandLines.toList()

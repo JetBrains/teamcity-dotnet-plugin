@@ -41,9 +41,9 @@ class InspectionToolStateWorkflowComposerImpl(
                     CommandLine(
                         baseCommandLine = null,
                         target = target,
-                        executableFile = state.startCommand.executable,
+                        executableFile = state.toolStartInfo.executable,
                         workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
-                        arguments = state.startCommand.startArguments.plus(CommandLineArgument("--version")),
+                        arguments = state.toolStartInfo.arguments.plus(CommandLineArgument("--version")),
                         environmentVariables = emptyList(),
                         title = "Getting ${_tool.displayName} version"
                     )

@@ -19,8 +19,8 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.common.MSBuildEnvironmentVariables.USE_SHARED_COMPILATION_ENV_VAR
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.DotnetEnvironmentVariables.Companion.UseSharedCompilationEnvVarName
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import jetbrains.buildServer.rx.subjectOf
 import org.jmock.Expectations
@@ -89,7 +89,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue(useSharedCompilationParam))
 
                 oneOf<EventSources>(eventSources).buildFinishedSource
@@ -137,7 +137,7 @@ class BuildServerShutdownMonitorTest {
         val buildFinishedSource = subjectOf<EventSources.BuildFinished>()
         _ctx.checking(object : Expectations() {
             init {
-                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                never<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
 
                 oneOf<EventSources>(eventSources).buildFinishedSource
                 will(returnValue(buildFinishedSource))
@@ -165,7 +165,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -198,7 +198,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(true))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -231,7 +231,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue("false"))
 
                 allowing<DotnetCommand>(command).commandType
@@ -264,7 +264,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
@@ -297,7 +297,7 @@ class BuildServerShutdownMonitorTest {
                 oneOf<VirtualContext>(_virtualContext).isVirtual
                 will(returnValue(false))
 
-                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, UseSharedCompilationEnvVarName)
+                allowing<ParametersService>(_parametersService).tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
                 will(returnValue(null))
 
                 allowing<DotnetCommand>(command).commandType
