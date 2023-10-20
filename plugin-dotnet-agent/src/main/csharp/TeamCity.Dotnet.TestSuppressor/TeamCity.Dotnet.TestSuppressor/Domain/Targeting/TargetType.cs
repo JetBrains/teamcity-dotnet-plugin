@@ -40,4 +40,6 @@ internal static class TargetTypeExtensions
                 throw new ArgumentOutOfRangeException(nameof(targetType), targetType, "Unknown target type value to get file extension");
         };
     }
+
+    public static bool HasTargetFileExtension(this string path, TargetType targetType) => targetType.GetPossibleFileExtension().Any(path.EndsWith);
 }

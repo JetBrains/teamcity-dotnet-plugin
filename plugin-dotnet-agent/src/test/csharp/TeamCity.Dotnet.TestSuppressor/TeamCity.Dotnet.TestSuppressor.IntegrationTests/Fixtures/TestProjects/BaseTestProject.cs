@@ -16,11 +16,10 @@ internal abstract class BaseTestProject : ITestProject
         TestEngine = testEngine;
     }
 
-    public virtual async Task GenerateAsync(DotnetVersion dotnetVersion, string directoryPath, string projectName, bool withSolution,
-        params TestClassDescription[] testClasses)
+    public virtual async Task GenerateAsync(TestProjectSettings settings, params TestClassDescription[] testClasses)
     {
-        var (csprojFileName, csprojFileContent) = GenerateCsproj(dotnetVersion, projectName);
-        var (csFileName, csFileContent) = GenerateSourceFile(projectName, testClasses);
+        var (csprojFileName, csprojFileContent) = GenerateCsproj(settings.TargetFrameworks, settings.ProjectName);
+        var (csFileName, csFileContent) = GenerateSourceFile(settings.ProjectName, testClasses);
         var filesMap = new Dictionary<string, string>
         {
             { csprojFileName, csprojFileContent },
@@ -29,34 +28,39 @@ internal abstract class BaseTestProject : ITestProject
 
         foreach (var (fileName, content) in filesMap)
         {
-            await File.WriteAllTextAsync(directoryPath + "/" + fileName, content);
+            await File.WriteAllTextAsync(settings.DirectoryPath + "/" + fileName, content);
         }
         
-        if (withSolution)
+        if (settings.WithSolution)
         {
-            var csprojPath = directoryPath + "/" + csprojFileName;
-            CreateSolutionWithProject(projectName, directoryPath, csprojPath);
+            var csprojPath = settings.DirectoryPath + "/" + csprojFileName;
+            CreateSolutionWithProject(settings.ProjectName, settings.DirectoryPath, csprojPath);
         }
     }
     
-    private (string fileName, string content) GenerateCsproj(DotnetVersion dotnetVersion, string projectName)
+    private (string fileName, string content) GenerateCsproj(IReadOnlySet<DotnetVersion> targetFrameworks, string projectName)
     {
         // package references
         var dependencies = Dependencies.Select(d =>
             new XElement("PackageReference", new XAttribute("Include", d.Key), new XAttribute("Version", d.Value))
         ).ToList();
 
+        var targetFrameworksElement = targetFrameworks.Count == 1
+            ? new XElement("TargetFramework", targetFrameworks.Single().GetMoniker())
+            : new XElement("TargetFrameworks", string.Join(';', targetFrameworks.Select(tf => tf.GetMoniker())));
+
         var project = new XDocument(
             new XElement("Project",
                 new XAttribute("Sdk", "Microsoft.NET.Sdk"),
-
                 new XElement("PropertyGroup",
-                    new XElement("TargetFramework", dotnetVersion.GetMoniker()),
-                    new XElement("IsPackable", "false")),
+                    targetFrameworksElement,
+                    new XElement("RollForward", "LatestMajor")  //  if target framework os less than installed in the container
+                ),
 
                 // also add every package to ../dotnet-sdk.dockerfile to cache them in docker image
                 new XElement("ItemGroup", dependencies)
-            ));
+            )
+        );
 
         return ($"{projectName}.csproj", project.ToString());
     }

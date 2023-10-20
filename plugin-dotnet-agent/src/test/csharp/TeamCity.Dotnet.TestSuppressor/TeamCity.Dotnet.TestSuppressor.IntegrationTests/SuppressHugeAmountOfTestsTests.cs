@@ -33,10 +33,10 @@ public class SuppressHugeAmountOfTestsTests : IClassFixture<DotnetTestContainerF
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here
-            dotnetVersion,
+            new [] { dotnetVersion },
             projectName,
             withoutDebugSymbols: false,
-            DotnetTestContainerFixture.TargetType.Assembly, // it doesn't matter which target type we use here
+            CommandTargetType.Assembly, // it doesn't matter which target type we use here
             allTestClasses,
             buildTestProject: true,
             withMsBuildBinaryLogs: false,

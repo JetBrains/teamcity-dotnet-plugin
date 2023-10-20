@@ -61,3 +61,8 @@ dotnet --roll-forward LatestMajor ./TeamCity.Dotnet.TestSuppressor.dll \
 * Currently supported only .NET 6.0.xxx, 7.0.xxx, 8.0.xxx 
 * Assembled for `net6.0`; to make it compatible with installed framework with higher version use `--roll-forward LatestMajor`
 * Target resolution for projects works only for Debug tests mode
+
+## Troubleshooting
+
+* 
+* When having trouble parsing the MSBuild binary log file (.binlog), it is convenient to use [MSBuildStructuredLog](https://github.com/KirillOsenkov/MSBuildStructuredLog) to parse and analyze the log manually

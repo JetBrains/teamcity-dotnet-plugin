@@ -16,22 +16,35 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
     }
 
     [Theory]
-    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v8_0_Preview)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v7_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Assembly, DotnetVersion.v6_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v8_0_Preview)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v7_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Project, DotnetVersion.v6_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v8_0_Preview)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v7_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Solution, DotnetVersion.v6_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v8_0_Preview)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v7_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.Directory, DotnetVersion.v6_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v8_0_Preview)]
-    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v7_0)]
-    [InlineData(DotnetTestContainerFixture.TargetType.MsBuildBinLog, DotnetVersion.v6_0)]
-    public async Task Run(DotnetTestContainerFixture.TargetType targetType, DotnetVersion dotnetVersion)
+    [InlineData(CommandTargetType.Assembly, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Assembly, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Assembly, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Project, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Project, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Project, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Solution, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Solution, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Solution, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Directory, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Directory, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Directory, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v6_0)]
+    
+    // The following test cases check heuristics of parsing binary log,
+    // which is generated when multiple target frameworks are used in one project
+    [InlineData(
+        CommandTargetType.MsBuildBinLog,
+        DotnetVersion.v8_0_Preview, 
+        new [] { DotnetVersion.v8_0_Preview, DotnetVersion.v7_0 }
+    )]
+    [InlineData(
+        CommandTargetType.MsBuildBinLog,
+        DotnetVersion.v7_0, 
+        new [] { DotnetVersion.v7_0, DotnetVersion.v6_0 }
+    )]
+    public async Task Run(CommandTargetType commandTargetType, DotnetVersion dotnetVersion, DotnetVersion[]? targetFrameworks = null)
     {
         // arrange
         await _fixture.ReinitContainerWith(dotnetVersion);
@@ -45,15 +58,20 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
         var testNamesToInclude = testClassesToInclude.GetFullTestMethodsNames(projectName);
         var testNamesToExclude = testClass1.GetFullTestMethodsNames(projectName);
 
+        // take container's dotnet runtime version as a target framework, if it's not provided
+        targetFrameworks = targetFrameworks == null
+            ? new [] { dotnetVersion }
+            : targetFrameworks.DefaultIfEmpty(dotnetVersion).ToArray();
+
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here, because we are testing the target overriding
-            dotnetVersion,
+            targetFrameworks,
             projectName,
             withoutDebugSymbols: false,
-            targetType,
+            commandTargetType,
             allTestClasses,
             buildTestProject: true,
-            targetType == DotnetTestContainerFixture.TargetType.MsBuildBinLog,
+            commandTargetType == CommandTargetType.MsBuildBinLog,
             testClassesToInclude
         );
 

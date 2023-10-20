@@ -6,11 +6,5 @@ internal interface ITestProject
 {
     ITestEngine TestEngine { get; }
     
-    Task GenerateAsync(
-        DotnetVersion dotnetVersion,
-        string directoryPath,
-        string projectName,
-        bool withSolution,
-        params TestClassDescription[] testClasses
-    );
+    Task GenerateAsync(TestProjectSettings settings, params TestClassDescription[] testClasses);
 }

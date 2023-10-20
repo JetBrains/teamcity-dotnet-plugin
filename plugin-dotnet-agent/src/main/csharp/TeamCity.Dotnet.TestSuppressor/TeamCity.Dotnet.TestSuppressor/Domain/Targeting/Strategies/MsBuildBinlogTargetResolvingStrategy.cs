@@ -75,19 +75,36 @@ internal class MsBuildBinlogTargetResolvingStrategy : BaseTargetResolvingStrateg
             var result = new HashSet<string>();
             var reader = new BinLogReader();
 
-            // analyze only Build target outputs to find output assemblies
-            foreach (var record in reader.ReadRecords(binlogFile.FullName))
+            foreach (var record in reader.ReadRecords(binlogFile.FullName).Where(r => r.Args != null))
             {
-                if (record.Args is not TargetFinishedEventArgs { TargetName: "Build", TargetOutputs: not null } targetArgs)
+                // heuristic #1: analyze Build target outputs to find output assemblies
+                if (record.Args is TargetFinishedEventArgs { TargetName: "Build", TargetOutputs: not null } targetArgs)
                 {
-                    continue;
-                }
-
-                foreach (ITaskItem output in targetArgs.TargetOutputs)
-                {
-                    if (TargetType.Assembly.GetPossibleFileExtension().Any(extension => output.ItemSpec.EndsWith(extension)))
+                    foreach (ITaskItem output in targetArgs.TargetOutputs)
                     {
-                        result.Add(output.ItemSpec);
+                        var outputPath = output.ItemSpec.Trim();
+                        if (outputPath.HasTargetFileExtension(TargetType.Assembly))
+                        {
+                            result.Add(outputPath);
+                        }
+                    }
+                }
+                
+                // heuristic #2: looking for log entries of adding item with moniker-specific target path
+                // useful for .sln/.csproj files with <TargetFrameworks> tag instead of <TargetFramework>;
+                // we expect to find a message like
+                // ```
+                // AddItem: TargetPathWithTargetPlatformMoniker
+                //      /absolute/path/to/the/target/assembly.dll
+                //          ...something else...
+                // ```
+                else if (record.Args.Message != null && record.Args.Message.StartsWith("AddItem: TargetPathWithTargetPlatformMoniker"))
+                {
+                    var outputPath = record.Args.Message
+                        .Split(Environment.NewLine).Take(1..2).DefaultIfEmpty(string.Empty).First().Trim();
+                    if (outputPath.HasTargetFileExtension(TargetType.Assembly))
+                    {
+                        result.Add(outputPath);
                     }
                 }
             }

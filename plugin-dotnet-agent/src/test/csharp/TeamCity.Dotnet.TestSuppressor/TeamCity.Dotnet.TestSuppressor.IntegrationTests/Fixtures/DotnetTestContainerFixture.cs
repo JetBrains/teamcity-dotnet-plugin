@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures;
 
-public class DotnetTestContainerFixture : IDisposable
+public partial class DotnetTestContainerFixture : IDisposable
 {
     private readonly ConcurrentDictionary<DotnetVersion, DotnetTestSetup> _testSetup = new();
     private DotnetVersion _dotnetVersion = DotnetVersion.v8_0_Preview;
@@ -85,10 +85,10 @@ public class DotnetTestContainerFixture : IDisposable
 
     public async Task<(string queriesFilePath, string targetPath)> CreateTestProject(
         Type testProjectType,
-        DotnetVersion dotnetVersion,
+        DotnetVersion[] targetFrameworks,
         string projectName,
         bool withoutDebugSymbols,
-        TargetType targetType,
+        CommandTargetType targetType,
         TestClassDescription[] projectTestClasses,
         bool buildTestProject = true,
         bool withMsBuildBinaryLogs = false,
@@ -96,8 +96,13 @@ public class DotnetTestContainerFixture : IDisposable
     ) {
         // generate test project
         var testProject = (ITestProject) Activator.CreateInstance(testProjectType)!;
-        var withSolution = targetType == TargetType.Solution;
-        await testProject.GenerateAsync(_dotnetVersion, TestSetup.HostTestProjectPath, projectName, withSolution, projectTestClasses);
+        var withSolution = targetType == CommandTargetType.Solution;
+        await testProject.GenerateAsync(
+            settings: new TestProjectSettings(targetFrameworks.ToHashSet(), TestSetup.HostTestProjectPath, projectName, withSolution),
+            testClasses: projectTestClasses
+        );
+
+        await ExecAsync($"cat {DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.csproj");
         
         // generate tests queries file
         var content = string.Join('\n', testQueriesFileTestClasses.Select(tc => $"{projectName}.{tc.ClassName}"));
@@ -119,18 +124,20 @@ public class DotnetTestContainerFixture : IDisposable
             }
         }
 
-        var moniker = dotnetVersion.GetMoniker();
-        var targetDllPath = targetType switch
+        // we don't need all of the .dlls by target frameworks, only single one
+        var targetFrameworkMoniker = targetFrameworks.First().GetMoniker();
+        
+        var targetPath = targetType switch
         {
-            TargetType.MsBuildBinLog => DotnetTestSetup.TestProjectSourcesDirPath,
-            TargetType.Directory => DotnetTestSetup.TestProjectSourcesDirPath,
-            TargetType.Project => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.csproj",
-            TargetType.Solution => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.sln",
-            TargetType.Assembly => $"{DotnetTestSetup.TestProjectSourcesDirPath}/bin/Debug/{moniker}/{projectName}.dll",
+            CommandTargetType.MsBuildBinLog => DotnetTestSetup.TestProjectSourcesDirPath,
+            CommandTargetType.Directory => DotnetTestSetup.TestProjectSourcesDirPath,
+            CommandTargetType.Project => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.csproj",
+            CommandTargetType.Solution => $"{DotnetTestSetup.TestProjectSourcesDirPath}/{projectName}.sln",
+            CommandTargetType.Assembly => $"{DotnetTestSetup.TestProjectSourcesDirPath}/bin/Debug/{targetFrameworkMoniker}/{projectName}.dll",
             _ => throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null)
         };
         
-        return (DotnetTestSetup.TestsQueriesFilePath, targetDllPath);
+        return (DotnetTestSetup.TestsQueriesFilePath, targetPath);
     }
 
     public async Task<(ExecResult, IReadOnlyList<string>)> RunTests(string targetAssemblyPath)
@@ -193,14 +200,5 @@ public class DotnetTestContainerFixture : IDisposable
             testSetup.Value.Dispose();
         }
         _testSetup.Clear();
-    }
-
-    public enum TargetType
-    {
-        Directory,
-        Project,
-        Solution,
-        Assembly,
-        MsBuildBinLog
     }
 }

@@ -42,10 +42,10 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
 
         var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
             testProjectGeneratorType,
-            dotnetVersion,
+            new [] { dotnetVersion },
             projectName,
             withoutDebugSymbols: false,
-            DotnetTestContainerFixture.TargetType.Assembly,
+            CommandTargetType.Assembly,
             allTestClasses,
             buildTestProject: true,
             withMsBuildBinaryLogs: false,
