@@ -20,6 +20,6 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.rx.Observer
 
 class InspectionToolState(
-    val startCommand: ToolStartCommand,
+    val toolStartInfo: ToolStartInfo,
     val versionObserver: Observer<Version>
 )

@@ -25,13 +25,13 @@ import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 
 class RequirementsResolverImpl : RequirementsResolver {
-    override fun resolve(version: Version, platform: IspectionToolPlatform) = sequence {
+    override fun resolve(version: Version, platform: InspectionToolPlatform) = sequence {
         when {
-            version >= CrossPlatformVersion && platform == IspectionToolPlatform.CrossPlatform -> yield(DotnetCore3)
-            version >= RequiresNet461Version && platform == IspectionToolPlatform.WindowsX86 -> yield(FullDotnet461X86)
-            version >= RequiresNet461Version && platform == IspectionToolPlatform.WindowsX64 -> yield(FullDotnet461X64)
-            platform == IspectionToolPlatform.WindowsX86 -> yield(MinimalRequirementX86)
-            platform == IspectionToolPlatform.WindowsX64 -> yield(MinimalRequirementX64)
+            version >= CrossPlatformVersion && platform == InspectionToolPlatform.CrossPlatform -> yield(DotnetCore3)
+            version >= RequiresNet461Version && platform == InspectionToolPlatform.WindowsX86 -> yield(FullDotnet461X86)
+            version >= RequiresNet461Version && platform == InspectionToolPlatform.WindowsX64 -> yield(FullDotnet461X64)
+            platform == InspectionToolPlatform.WindowsX86 -> yield(MinimalRequirementX86)
+            platform == InspectionToolPlatform.WindowsX64 -> yield(MinimalRequirementX64)
             else -> emptySequence<Requirement>()
         }
     }

@@ -59,6 +59,7 @@ class TestSuppressTestsSplittingCommandTransformer(
                 _loggerService.writeTrace(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE)
                 val backupMetadataPath = newBackupMetadataFilePath()
                 var binlogPaths = emptySequence<String>()
+                var hasBuildableTargets = false
 
                 // 1. build only those targets, that could be built
                 targetArguments.arguments.map { it.value }
@@ -66,6 +67,7 @@ class TestSuppressTestsSplittingCommandTransformer(
                     .forEach { targetPath ->
                         val binlogPath = newBinlogFilePath()
                         binlogPaths += binlogPath
+                        hasBuildableTargets = true
 
                         yield(BuildWithBinaryLogCommand(_buildDotnetCommand, binlogPath, targetPath))
                     }
@@ -82,7 +84,7 @@ class TestSuppressTestsSplittingCommandTransformer(
                 )
 
                 // 3. test the mutated assemblies by the target path with the test command that skips the build
-                yield(SkipBuildTestCommand(testCommand))
+                yield(if (hasBuildableTargets) SkipBuildTestCommand(testCommand) else testCommand)
 
                 // 4. backup to the original assemblies if backup file exists
                 if (_fileSystemService.isExists(File(backupMetadataPath))) {

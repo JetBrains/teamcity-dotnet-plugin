@@ -642,7 +642,7 @@
   <bean class="jetbrains.buildServer.inspect.ArtifactServiceImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlReaderImpl"/>
   <bean class="jetbrains.buildServer.inspect.XmlWriterImpl"/>
-  <bean class="jetbrains.buildServer.inspect.ToolStartCommandResolverImpl"/>
+  <bean class="jetbrains.buildServer.inspect.ToolStartInfoResolverImpl"/>
   <bean class="jetbrains.buildServer.inspect.ArgumentsProviderImpl">
     <constructor-arg ref="optionPluginsSpecificationProvider"/>
   </bean>
@@ -655,7 +655,7 @@
   <bean class="jetbrains.buildServer.inspect.DownloadPluginXmlElementGenerator"/>
   <bean class="jetbrains.buildServer.inspect.XmlPluginsSpecificationProvider" name="xmlPluginsSpecificationProvider"/>
   <bean class="jetbrains.buildServer.inspect.IdPluginsSpecificationProvider" name="optionPluginsSpecificationProvider"/>
-  <bean class="jetbrains.buildServer.inspect.InspectionEnvironmentProvider" id="inspectionEnvironmentProvider">
+  <bean class="jetbrains.buildServer.inspect.InspectCodeEnvironmentProvider" id="inspectCodeEnvironmentProvider">
     <constructor-arg ref="xmlPluginsSpecificationProvider"/>
   </bean>
   <bean class="jetbrains.buildServer.inspect.InspectionConfigurationFile" id="inspectionConfigurationFile"/>
@@ -667,7 +667,7 @@
   </bean>
   <bean class="jetbrains.buildServer.inspect.InspectionWorkflowComposer" id="inspectionWorkflowComposer">
     <constructor-arg type="jetbrains.buildServer.inspect.InspectionTool" value="Inspectcode"/>
-    <constructor-arg ref="inspectionEnvironmentProvider"/>
+    <constructor-arg ref="inspectCodeEnvironmentProvider"/>
     <constructor-arg ref="inspectionOutputObserver"/>
     <constructor-arg ref="inspectionConfigurationFile"/>
     <constructor-arg ref="inspectionsInspectionToolStateWorkflowComposer"/>

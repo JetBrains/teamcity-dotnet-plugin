@@ -16,6 +16,7 @@
 
 package jetbrains.buildServer.inspect
 
-interface ToolStartCommandResolver {
-    fun resolve(tool: InspectionTool): ToolStartCommand
-}
+import jetbrains.buildServer.agent.CommandLineArgument
+import jetbrains.buildServer.agent.Path
+
+data class ToolStartInfo(val executable: Path, val platform: InspectionToolPlatform, val arguments: Collection<CommandLineArgument> = emptyList())

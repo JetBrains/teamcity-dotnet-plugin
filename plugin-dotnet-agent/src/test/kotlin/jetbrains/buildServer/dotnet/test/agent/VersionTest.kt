@@ -138,7 +138,7 @@ class VersionTest {
 
         // Then
         Assert.assertTrue(Version.Empty.isEmpty())
-        Assert.assertFalse(Version.FirstInspectcodeExtensionsOptionVersion.isEmpty())
+        Assert.assertFalse(Version.FirstInspectCodeWithExtensionsOptionVersion.isEmpty())
         Assert.assertFalse(Version.parse("1.1.1").isEmpty())
     }
 

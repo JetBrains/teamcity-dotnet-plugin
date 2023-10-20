@@ -64,7 +64,7 @@ class ArgumentsProviderTest {
         val cachesHomePath = "/caches-home/path"
         val customArgumentExtension = "CustomArgumentExtension/1.0.0"
         val dedicatedExtension = "DedicatedExtension/2.0.0"
-        val toolVersion = Version.FirstInspectcodeExtensionsOptionVersion
+        val toolVersion = Version.FirstInspectCodeWithExtensionsOptionVersion
         val commandLine = """
             --config=$configFilePath
             --output=$outputPath
@@ -201,7 +201,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         Assert.assertNotNull(result)
@@ -268,7 +268,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         Assert.assertNotNull(result)
@@ -297,7 +297,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        val result = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         Assert.assertNotNull(result)
@@ -320,7 +320,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         verify(exactly = 1) { _fileSystemServiceMock.createFile("/absolute/path") }
@@ -339,7 +339,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         verify(exactly = 1) { _fileSystemServiceMock.createFile("./relative/path") }
@@ -401,7 +401,7 @@ class ArgumentsProviderTest {
         val provider = createInstance()
 
         // act
-        val arguments = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectcodeExtensionsOptionVersion)
+        val arguments = provider.getArguments(InspectionTool.Inspectcode, Version.FirstInspectCodeWithExtensionsOptionVersion)
 
         // assert
         Assert.assertEquals(arguments.extensions, expectedExtensions)
@@ -420,7 +420,7 @@ class ArgumentsProviderTest {
             InspectionTool.Inspectcode
         ),
         arrayOf(
-            Version.FirstInspectcodeExtensionsOptionVersion,
+            Version.FirstInspectCodeWithExtensionsOptionVersion,
             InspectionTool.Dupfinder
         ),
         arrayOf(

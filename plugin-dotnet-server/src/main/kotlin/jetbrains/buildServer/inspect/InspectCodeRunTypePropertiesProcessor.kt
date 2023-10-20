@@ -35,10 +35,10 @@ class InspectCodeRunTypePropertiesProcessor(
         }
 
         val platform = properties[RUNNER_SETTING_CLT_PLATFORM]?.let {
-            IspectionToolPlatform.tryParse(it)
+            InspectionToolPlatform.tryParse(it)
         }
 
-        if(platform == IspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID) < RequirementsResolverImpl.CrossPlatformVersion) {
+        if(platform == InspectionToolPlatform.CrossPlatform && _toolVersionProvider.getVersion(properties[CltConstants.CLT_PATH_PARAMETER], CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID) < RequirementsResolverImpl.CrossPlatformVersion) {
             result.add(InvalidProperty(RUNNER_SETTING_CLT_PLATFORM,"To support cross-platform inspections, use ReSharper version ${RequirementsResolverImpl.CrossPlatformVersion} or later."))
         }
 

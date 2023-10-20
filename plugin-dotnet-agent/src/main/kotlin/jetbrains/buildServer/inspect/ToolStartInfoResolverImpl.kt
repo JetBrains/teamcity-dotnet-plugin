@@ -26,26 +26,27 @@ import jetbrains.buildServer.inspect.CltConstants.RUNNER_SETTING_CLT_PLATFORM
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
-class ToolStartCommandResolverImpl(
+class ToolStartInfoResolverImpl(
     private val _parametersService: ParametersService,
     private val _virtualContext: VirtualContext
-) : ToolStartCommandResolver {
-    override fun resolve(tool: InspectionTool): ToolStartCommand {
+) : ToolStartInfoResolver {
+    override fun resolve(tool: InspectionTool): ToolStartInfo {
         val toolPath = _parametersService.tryGetParameter(ParameterType.Runner, CltConstants.CLT_PATH_PARAMETER)
             ?: throw RunBuildException("Cannot find ${tool.displayName}.")
 
         val executableBase = File(File(toolPath, "tools"), tool.toolName).path
-        val platform = _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CLT_PLATFORM)
-            ?.let { IspectionToolPlatform.tryParse(it) }
-            ?: IspectionToolPlatform.WindowsX64
+        val toolPlatform = _parametersService.tryGetParameter(ParameterType.Runner, RUNNER_SETTING_CLT_PLATFORM)
+            ?.let { InspectionToolPlatform.tryParse(it) }
+            ?: InspectionToolPlatform.WindowsX64
 
         return when (_virtualContext.targetOSType) {
             OSType.WINDOWS -> {
-                when (platform) {
-                    IspectionToolPlatform.WindowsX64 -> ToolStartCommand(Path(_virtualContext.resolvePath(("$executableBase.exe"))))
-                    IspectionToolPlatform.WindowsX86 -> ToolStartCommand(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))))
-                    else -> ToolStartCommand(
+                when (toolPlatform) {
+                    InspectionToolPlatform.WindowsX64 -> ToolStartInfo(Path(_virtualContext.resolvePath(("$executableBase.exe"))), toolPlatform)
+                    InspectionToolPlatform.WindowsX86 -> ToolStartInfo(Path(_virtualContext.resolvePath(("$executableBase.x86.exe"))), toolPlatform)
+                    else -> ToolStartInfo(
                         Path(""),
+                        toolPlatform,
                         listOf(
                             CommandLineArgument("exec"),
                             CommandLineArgument("--runtimeconfig"),
@@ -56,7 +57,7 @@ class ToolStartCommandResolverImpl(
                 }
             }
 
-            else -> ToolStartCommand(Path(_virtualContext.resolvePath(("$executableBase.sh"))))
+            else -> ToolStartInfo(Path(_virtualContext.resolvePath(("$executableBase.sh"))), toolPlatform)
         }
     }
 }

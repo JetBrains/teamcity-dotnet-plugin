@@ -46,7 +46,7 @@ class TestCommand(
         get() = _targetArgumentsProvider.getTargetArguments(_targetService.targets)
 
     override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
-        val filter = _dotnetFilterFactory.createFilter(context);
+        val filter = _dotnetFilterFactory.createFilter(context)
 
         if (filter.filter.isNotBlank()) {
             yield(CommandLineArgument("--filter"))
@@ -87,11 +87,13 @@ class TestCommand(
             }
         }
 
-        if (parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
+        val hasAssemblyTarget = context.command.targetArguments.flatMap { it.arguments }.any { isAssembly(it.value)}
+        // no need to specify --no-build argument for .dll only targets
+        if (!hasAssemblyTarget && parameters(DotnetConstants.PARAM_SKIP_BUILD, "").trim().toBoolean()) {
             yield(CommandLineArgument("--no-build"))
         }
 
-        if (context.command.targetArguments.flatMap { it.arguments }.any { isAssembly(it.value)}) {
+        if (hasAssemblyTarget) {
             yieldAll(_assemblyArgumentsProvider.getArguments(context))
         }
         else {

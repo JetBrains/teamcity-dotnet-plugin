@@ -96,14 +96,53 @@ class TestCommandTest {
         filter: DotnetFilter,
         expectedArguments: List<String>
     ) {
-        // Given
+        // arrange
         val command = createCommand(parameters = parameters, targets = sequenceOf("my.csproj"), arguments = sequenceOf(CommandLineArgument("customArg1")))
         every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns filter
 
-        // When
+        // act
         val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command, Version(1), Verbosity.Detailed)).map { it.value }.toList()
 
-        // Then
+        // assert
+        Assert.assertEquals(actualArguments, expectedArguments)
+    }
+
+    @DataProvider
+    fun noBuildArgumentsData(): Array<Array<Any>> {
+        return arrayOf(
+            arrayOf(
+                emptyMap<String, String>(),
+                sequenceOf("my.csproj"),
+                emptyList<String>()
+            ),
+            arrayOf(
+                mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
+                emptySequence<String>(),
+                listOf("--no-build")
+            ),
+            arrayOf(
+                mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
+                sequenceOf("my.csproj"),
+                listOf("--no-build")
+            ),
+            arrayOf(
+                mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
+                sequenceOf("my1.dll", "my2.dll", "my3.dll"),
+                emptyList<String>()
+            )
+        )
+    }
+
+    @Test(dataProvider = "noBuildArgumentsData")
+    fun `should provide no-build argument`(parameters: Map<String, String>, targets: Sequence<String>, expectedArguments: List<String>) {
+        // arrange
+        val command = createCommand(parameters, targets)
+        every { _dotnetFilterFactory.createFilter(any()) } returns DotnetFilter("", null, false)
+
+        // act
+        val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
+
+        // assert
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 
@@ -121,39 +160,39 @@ class TestCommandTest {
 
     @Test(dataProvider = "projectsArgumentsData")
     fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
-        // Given
+        // arrange
         val command = createCommand(targets = targets.asSequence())
         every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
 
-        // When
+        // act
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
 
-        // Then
+        // assert
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 
     @Test
     fun `should provide command type`() {
-        // Given
+        // arrange
         val command = createCommand()
 
-        // When
+        // act
         val actualCommand = command.commandType
 
-        // Then
+        // assert
         Assert.assertEquals(actualCommand, DotnetCommandType.Test)
     }
 
     @Test
     fun `should not show message when no test spitting`() {
-        // Given
+        // arrange
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
-        // When
+        // act
         every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
         command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
-        // Then
+        // assert
         verify(inverse = true) { _loggerService.writeStandardOutput(DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE) }
     }
 
