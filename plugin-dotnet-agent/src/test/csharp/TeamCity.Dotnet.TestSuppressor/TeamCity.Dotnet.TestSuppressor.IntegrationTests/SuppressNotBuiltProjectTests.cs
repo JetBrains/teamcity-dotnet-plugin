@@ -24,7 +24,7 @@ public class SuppressNotBuiltProjectTests : IClassFixture<DotnetTestContainerFix
 
         var testClass = new TestClassDescription("TestClass0", "Test0", "Test1", "Test2");
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),
             new [] { dotnetVersion },
             projectName: "MyTestProject",
@@ -32,12 +32,12 @@ public class SuppressNotBuiltProjectTests : IClassFixture<DotnetTestContainerFix
             CommandTargetType.Project,
             projectTestClasses: new[] { testClass },
             buildTestProject: false,  // in this test we a not going to build the project and see if the filter fails
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             testClass
         );
 
         // act
-        var execResult = await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -v detailed");
+        var execResult = await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -v detailed");
 
         // assert
         Assert.Contains(

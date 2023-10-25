@@ -2,7 +2,6 @@ using System.IO.Abstractions.TestingHelpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TeamCity.Dotnet.TestSuppressor.Domain.Targeting.Strategies;
-using TeamCity.Dotnet.TestSuppressor.Infrastructure.MsBuild;
 
 namespace TeamCity.Dotnet.TestSuppressor.UnitTests.Domain.Targeting.Strategies;
 
@@ -15,7 +14,7 @@ public class ProjectTargetResolvingStrategyTests
     {
         var logger = Mock.Of<ILogger<ProjectTargetResolvingStrategy>>();
         _fileSystemMock = new MockFileSystem();
-        _strategy = new ProjectTargetResolvingStrategy(_fileSystemMock, Mock.Of<IMsBuildLocator>(), logger);
+        _strategy = new ProjectTargetResolvingStrategy(_fileSystemMock, logger);
     }
 
     [Fact]

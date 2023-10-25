@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using Microsoft.Build.Evaluation;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.FileSystemExtensions;
@@ -15,11 +14,9 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
     
     public ProjectTargetResolvingStrategy(
         IFileSystem fileSystem,
-        IMsBuildLocator msBuildLocator,
         ILogger<ProjectTargetResolvingStrategy> logger) : base(fileSystem, logger)
     {
         _logger = logger;
-        _ = msBuildLocator.RegisterDefaults();
     }
 
     protected override IEnumerable<string> AllowedTargetExtensions => new[] { FileExtension.CSharpProject };
@@ -37,34 +34,37 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
         
         var projectFile = (IFileInfo) targetPathSystemInfo;
         
-        var outputAssemblyPathResult = GetOutputAssemblyPath(projectFile!);
-        if (outputAssemblyPathResult.IsError)
+        var outputAssemblyPathsResult = GetOutputAssemblyPaths(projectFile!);
+        if (outputAssemblyPathsResult.IsError)
         {
             _logger.LogWarning(
-                outputAssemblyPathResult.ErrorValue,
+                outputAssemblyPathsResult.ErrorValue,
                 "Target project {TargetProject} is invalid: {Reason}",
                 projectFile!.FullName,
-                outputAssemblyPathResult.ErrorValue.Message
-            );
-            yield break;
-        }
-        
-        var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPathResult.Value);
-        if (assemblyFileInfoResult.IsError)
-        {
-            _logger.LogWarning(
-                assemblyFileInfoResult.ErrorValue,
-                "Evaluated target project output file {TargetProjectOutputFile} not found: {Reason}",
-                projectFile!.FullName,
-                assemblyFileInfoResult.ErrorValue.Message
+                outputAssemblyPathsResult.ErrorValue.Message
             );
             yield break;
         }
 
-        var assemblyFileInfo = assemblyFileInfoResult.Value;
+        foreach (var outputAssemblyPath in outputAssemblyPathsResult.Value)
+        {
+            var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPath);
+            if (assemblyFileInfoResult.IsError)
+            {
+                _logger.LogWarning(
+                    assemblyFileInfoResult.ErrorValue,
+                    "Evaluated target project output file {TargetProjectOutputFile} not found: {Reason}",
+                    projectFile!.FullName,
+                    assemblyFileInfoResult.ErrorValue.Message
+                );
+                yield break;
+            }
         
-        _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
-        yield return (assemblyFileInfo, TargetType.Assembly);
+            var assemblyFileInfo = assemblyFileInfoResult.Value;
+        
+            _logger.LogInformation("Resolved assembly by target project: {Assembly}", assemblyFileInfo.FullName);
+            yield return (assemblyFileInfo, TargetType.Assembly);
+        }
         
         foreach (var msBuildBinlogFile in TryFindMsBuildBinlogFiles(projectFile))
         {
@@ -73,27 +73,37 @@ internal class ProjectTargetResolvingStrategy : BaseTargetResolvingStrategy
         }
     }
 
-    private static Result<string, Exception> GetOutputAssemblyPath(IFileInfo projectFile)
+    private static Result<IEnumerable<string>, Exception> GetOutputAssemblyPaths(IFileInfo projectFile)
     {
         try
         {
-            var project = new Project(projectFile.FullName);
+            using var project = new MsBuildProject(projectFile.FullName);
 
-            // TODO: currently we support only default output path and default target file name
-            var outputPath = project.GetPropertyValue("OutputPath");
-            var targetFileName =
-                project.GetPropertyValue("TargetFileName")
-                ?? projectFile.Name.Replace(FileExtension.CSharpProject, string.Empty);
+            var outputPath = project.OutputPath;
+            var projectDefinedTargetFileName = project.TargetFileName;
+            var targetFrameworks = project.TargetFrameworks;
+            
+            if (!targetFrameworks.Any())
+            {
+                // no target frameworks?..
+                return Result<IEnumerable<string>, Exception>.Success(Array.Empty<string>());
+            }
 
-            var result = Path
-                .Combine(projectFile.Directory!.FullName, outputPath, targetFileName)
+            var targetFileName = string.IsNullOrWhiteSpace(projectDefinedTargetFileName)
+                ? projectFile.Name.Replace(FileExtension.CSharpProject, FileExtension.Dll)
+                : projectDefinedTargetFileName;
+
+            var result = targetFrameworks.Select(tf => Path
+                .Combine(projectFile.Directory!.FullName, outputPath, tf, targetFileName)
                 .Replace('\\', Path.DirectorySeparatorChar)
-                .Replace('/', Path.DirectorySeparatorChar);
-
-            return Result<string, Exception>.Success(result);
-        } catch (Exception exception)
+                .Replace('/', Path.DirectorySeparatorChar)
+            ).ToList();
+                
+            return Result<IEnumerable<string>, Exception>.Success(result);
+        }
+        catch (Exception exception)
         {
-            return Result<string, Exception>.Error(exception);
+            return Result<IEnumerable<string>, Exception>.Error(exception);
         }
     }
 }

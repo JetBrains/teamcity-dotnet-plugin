@@ -40,7 +40,7 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
         var testNamesToInclude = testClassesToInclude.GetFullTestMethodsNames(projectName);
         var testNamesToExclude = testClass1.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             testProjectGeneratorType,
             new [] { dotnetVersion },
             projectName,
@@ -48,14 +48,14 @@ public class SuppressPartOfTestsByIncludeFileTests : IClassFixture<DotnetTestCon
             CommandTargetType.Assembly,
             allTestClasses,
             buildTestProject: true,
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             testClassesToInclude
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         Assert.Equal(9, beforeTestNamesExecuted.Count);

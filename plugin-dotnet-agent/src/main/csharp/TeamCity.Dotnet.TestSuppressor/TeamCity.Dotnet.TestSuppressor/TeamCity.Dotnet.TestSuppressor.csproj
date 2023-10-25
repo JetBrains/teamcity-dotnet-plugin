@@ -17,19 +17,19 @@
         <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
         
         <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildVersion>
-        <MicrosoftExtensionsVersion Condition="'$(TargetFramework)' == 'net6.0'">6.0.0</MicrosoftExtensionsVersion>
+        <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'net7.0'">17.7.2</MicrosoftBuildVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)"  />
       <PackageReference Include="Microsoft.Build.Locator" Version="1.6.10" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsVersion)" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
       <PackageReference Include="Mono.Cecil" Version="0.11.5" />
       <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.858" />
       <PackageReference Include="System.IO.Abstractions" Version="19.2.69" />

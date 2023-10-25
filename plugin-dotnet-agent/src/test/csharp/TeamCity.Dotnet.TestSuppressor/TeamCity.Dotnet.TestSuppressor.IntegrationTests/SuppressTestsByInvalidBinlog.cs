@@ -1,6 +1,4 @@
-using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Extensions;
 using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures;
-using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
 
 namespace TeamCity.Dotnet.TestSuppressor.IntegrationTests;

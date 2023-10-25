@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Xml.Linq;
 using DotNet.Testcontainers.Containers;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Extensions;
 using TeamCity.Dotnet.TestSuppressor.IntegrationTests.Fixtures.TestProjects;
 using Xunit.Abstractions;
@@ -83,7 +82,7 @@ public partial class DotnetTestContainerFixture : IDisposable
         return result;
     }
 
-    public async Task<(string queriesFilePath, string targetPath)> CreateTestProject(
+    public async Task<ParallelTestRunTarget> CreateTestProject(
         Type testProjectType,
         DotnetVersion[] targetFrameworks,
         string projectName,
@@ -91,7 +90,7 @@ public partial class DotnetTestContainerFixture : IDisposable
         CommandTargetType targetType,
         TestClassDescription[] projectTestClasses,
         bool buildTestProject = true,
-        bool withMsBuildBinaryLogs = false,
+        bool withMsBuildBinaryLog = false,
         params TestClassDescription[] testQueriesFileTestClasses
     ) {
         // generate test project
@@ -110,14 +109,16 @@ public partial class DotnetTestContainerFixture : IDisposable
         
         // copy test project and tests queries file to container
         await ExecAsync($"cp -a {DotnetTestSetup.MountedTestProjectSourcesDirPath}/. {DotnetTestSetup.TestProjectSourcesDirPath}");
-
+        
+        var binlogPath = $"{DotnetTestSetup.TestProjectSourcesDirPath}/msbuild.binlog";
+        
         if (buildTestProject)
         {
             // build test project
             var debugSymbolsArg = withoutDebugSymbols ? "-p:DebugType=None -p:DebugSymbols=false" : "";
-            var binlog = withMsBuildBinaryLogs ? $"/bl:{DotnetTestSetup.TestProjectSourcesDirPath}/msbuild.binlog" : "";
+            var binlogArg = withMsBuildBinaryLog ? $"/bl:{binlogPath}" : "";
             var testProjectBuildResult =
-                await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg} {binlog}");
+                await ExecAsync($"dotnet build {DotnetTestSetup.TestProjectSourcesDirPath} {debugSymbolsArg} {binlogArg}");
             if (testProjectBuildResult.ExitCode != 0)
             {
                 throw new Exception("Failed to build test project:\n" + testProjectBuildResult.Stderr);
@@ -126,7 +127,7 @@ public partial class DotnetTestContainerFixture : IDisposable
 
         // we don't need all of the .dlls by target frameworks, only single one
         var targetFrameworkMoniker = targetFrameworks.First().GetMoniker();
-        
+
         var targetPath = targetType switch
         {
             CommandTargetType.MsBuildBinLog => DotnetTestSetup.TestProjectSourcesDirPath,
@@ -136,14 +137,18 @@ public partial class DotnetTestContainerFixture : IDisposable
             CommandTargetType.Assembly => $"{DotnetTestSetup.TestProjectSourcesDirPath}/bin/Debug/{targetFrameworkMoniker}/{projectName}.dll",
             _ => throw new ArgumentOutOfRangeException(nameof(targetType), targetType, null)
         };
-        
-        return (DotnetTestSetup.TestsQueriesFilePath, targetPath);
+
+        return new ParallelTestRunTarget(
+            QueriesFilePath: DotnetTestSetup.TestsQueriesFilePath,
+            TargetPath: targetPath,
+            MsBuildBinLogPath: withMsBuildBinaryLog ? binlogPath : null
+        );
     }
 
-    public async Task<(ExecResult, IReadOnlyList<string>)> RunTests(string targetAssemblyPath)
+    public async Task<(ExecResult, IReadOnlyList<string>)> RunTests(string targetPath)
     {
         var trxReportFilePath = $"{DotnetTestSetup.TestProjectSourcesDirPath}/report__{Guid.NewGuid()}.trx";
-        var testOutput = await ExecAsync($"dotnet test {targetAssemblyPath} --no-build -l:trx;LogFileName={trxReportFilePath}");
+        var testOutput = await ExecAsync($"dotnet test {targetPath} --no-build -l:trx;LogFileName={trxReportFilePath}");
         var testNamesExecuted = await GetTestNames(trxReportFilePath);
         return (testOutput, testNamesExecuted);
     }
@@ -202,3 +207,9 @@ public partial class DotnetTestContainerFixture : IDisposable
         _testSetup.Clear();
     }
 }
+
+public record class ParallelTestRunTarget(
+    string QueriesFilePath,
+    string TargetPath,
+    string? MsBuildBinLogPath
+);

@@ -28,7 +28,7 @@ internal class TargetResolver : ITargetResolver
         return targets.SelectMany(t => Resolve(t, resolvedTargets));
     }
 
-    private IEnumerable<IFileInfo> Resolve(string target, ISet<string> resolvedTargets)
+    private IEnumerable<IFileInfo> Resolve(string target, ICollection<string> resolvedTargets)
     {
         _logger.LogInformation("Resolving target: {Target}", target);
         

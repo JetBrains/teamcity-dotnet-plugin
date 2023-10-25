@@ -31,7 +31,7 @@ public class SuppressHugeAmountOfTestsTests : IClassFixture<DotnetTestContainerF
         var testNamesToInclude = testClassesToInclude.GetFullTestMethodsNames(projectName);
         var testNamesToExclude = testClassesToExclude.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here
             new [] { dotnetVersion },
             projectName,
@@ -39,14 +39,14 @@ public class SuppressHugeAmountOfTestsTests : IClassFixture<DotnetTestContainerF
             CommandTargetType.Assembly, // it doesn't matter which target type we use here
             allTestClasses,
             buildTestProject: true,
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             testClassesToInclude
         );
 
         // act
-        var (_, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
-        var (_, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (_, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
+        var (_, afterTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         Assert.Equal(20000, beforeTestNamesExecuted.Count);

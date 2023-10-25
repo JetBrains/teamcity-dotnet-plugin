@@ -82,8 +82,11 @@ internal static class Program
             .StartAsync();
 
         var commandRouter = host.Services.GetRequiredService<CommandRouter<MainCommand>>();
+
+        // register MSBuild
+        host.Services.GetRequiredService<IMsBuildLocator>().RegisterDefaultMsBuild();
         
-        // entry point
+        // run entry point
         await commandRouter.Route();
     }
     
