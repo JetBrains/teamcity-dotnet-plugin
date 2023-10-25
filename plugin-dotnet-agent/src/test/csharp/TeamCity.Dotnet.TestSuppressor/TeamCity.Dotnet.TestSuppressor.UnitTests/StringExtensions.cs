@@ -1,5 +1,3 @@
-using System.IO.Abstractions;
-
 namespace TeamCity.Dotnet.TestSuppressor.UnitTests;
 
 internal static class StringExtensions

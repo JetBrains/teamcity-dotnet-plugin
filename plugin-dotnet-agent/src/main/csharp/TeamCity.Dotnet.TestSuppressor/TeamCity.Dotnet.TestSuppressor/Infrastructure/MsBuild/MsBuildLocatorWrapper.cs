@@ -12,7 +12,7 @@ public class MsBuildLocatorWrapper : IMsBuildLocator
         _logger = logger;
     }
     
-    public VisualStudioInstance RegisterDefaults()
+    public void RegisterDefaultMsBuild()
     {
         var instance = MSBuildLocator.RegisterDefaults();
         _logger.LogDebug(
@@ -21,6 +21,5 @@ public class MsBuildLocatorWrapper : IMsBuildLocator
             instance.Version,
             instance.MSBuildPath
         );
-        return instance;
     }
 }

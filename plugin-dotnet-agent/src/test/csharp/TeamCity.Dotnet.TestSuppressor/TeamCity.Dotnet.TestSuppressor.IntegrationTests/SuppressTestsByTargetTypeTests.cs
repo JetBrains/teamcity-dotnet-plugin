@@ -16,35 +16,53 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
     }
 
     [Theory]
-    [InlineData(CommandTargetType.Assembly, DotnetVersion.v8_0_Preview)]
-    [InlineData(CommandTargetType.Assembly, DotnetVersion.v7_0)]
-    [InlineData(CommandTargetType.Assembly, DotnetVersion.v6_0)]
-    [InlineData(CommandTargetType.Project, DotnetVersion.v8_0_Preview)]
-    [InlineData(CommandTargetType.Project, DotnetVersion.v7_0)]
-    [InlineData(CommandTargetType.Project, DotnetVersion.v6_0)]
-    [InlineData(CommandTargetType.Solution, DotnetVersion.v8_0_Preview)]
-    [InlineData(CommandTargetType.Solution, DotnetVersion.v7_0)]
-    [InlineData(CommandTargetType.Solution, DotnetVersion.v6_0)]
-    [InlineData(CommandTargetType.Directory, DotnetVersion.v8_0_Preview)]
-    [InlineData(CommandTargetType.Directory, DotnetVersion.v7_0)]
-    [InlineData(CommandTargetType.Directory, DotnetVersion.v6_0)]
-    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v8_0_Preview)]
-    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v7_0)]
-    [InlineData(CommandTargetType.MsBuildBinLog, DotnetVersion.v6_0)]
-    
-    // The following test cases check heuristics of parsing binary log,
+    [InlineData(CommandTargetType.Assembly, false, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Assembly, false, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Assembly, false, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Project, false, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Project, false, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Project, false, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Solution, false, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Solution, false, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Solution, false, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.Directory, false, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.Directory, false, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.Directory, false, DotnetVersion.v6_0)]
+    [InlineData(CommandTargetType.MsBuildBinLog, false, DotnetVersion.v8_0_Preview)]
+    [InlineData(CommandTargetType.MsBuildBinLog, false, DotnetVersion.v7_0)]
+    [InlineData(CommandTargetType.MsBuildBinLog, false, DotnetVersion.v6_0)]
+    // the following test cases check heuristics of parsing binary log,
     // which is generated when multiple target frameworks are used in one project
     [InlineData(
         CommandTargetType.MsBuildBinLog,
+        true,
         DotnetVersion.v8_0_Preview, 
         new [] { DotnetVersion.v8_0_Preview, DotnetVersion.v7_0 }
     )]
     [InlineData(
         CommandTargetType.MsBuildBinLog,
+        true,
         DotnetVersion.v7_0, 
         new [] { DotnetVersion.v7_0, DotnetVersion.v6_0 }
     )]
-    public async Task Run(CommandTargetType commandTargetType, DotnetVersion dotnetVersion, DotnetVersion[]? targetFrameworks = null)
+    // it's necessary to check if two of the evaluable by MSBuild target types (e.g. project and .binlog) could be parsed together  
+    [InlineData(
+        CommandTargetType.Project,
+        true,
+        DotnetVersion.v8_0_Preview, 
+        new [] { DotnetVersion.v8_0_Preview, DotnetVersion.v7_0 }
+    )]
+    [InlineData(
+        CommandTargetType.Project,
+        true,
+        DotnetVersion.v7_0, 
+        new [] { DotnetVersion.v7_0, DotnetVersion.v6_0 }
+    )]
+    public async Task Run(
+        CommandTargetType commandTargetType, 
+        bool withMsBuildBinaryLog,
+        DotnetVersion dotnetVersion,
+        DotnetVersion[]? targetFrameworks = null)
     {
         // arrange
         await _fixture.ReinitContainerWith(dotnetVersion);
@@ -63,7 +81,7 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
             ? new [] { dotnetVersion }
             : targetFrameworks.DefaultIfEmpty(dotnetVersion).ToArray();
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),   // it doesn't matter which project type we use here, because we are testing the target overriding
             targetFrameworks,
             projectName,
@@ -71,15 +89,19 @@ public class SuppressTestsByTargetTypeTests : IClassFixture<DotnetTestContainerF
             commandTargetType,
             allTestClasses,
             buildTestProject: true,
-            commandTargetType == CommandTargetType.MsBuildBinLog,
+            withMsBuildBinaryLog,
             testClassesToInclude
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
         await _fixture.ExecAsync("ls -la ./test-project");
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var suppressTargets = new[] { testProjectData.TargetPath, testProjectData.MsBuildBinLogPath }
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .Distinct()
+            .Select(p => $"-t {p}");
+        await _fixture.RunFilterApp($"suppress {string.Join(' ', suppressTargets)} -l {testProjectData.QueriesFilePath} -i -v detailed"); // `-i` stands for "inclusion mode"
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         Assert.Equal(7, beforeTestNamesExecuted.Count);

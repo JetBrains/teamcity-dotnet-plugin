@@ -35,7 +35,7 @@ public class RestoreTests : IClassFixture<DotnetTestContainerFixture>
         var testNamesToInclude = testClass1.GetFullTestMethodsNames(projectName);
         const string backupFileName = "backup-metadata.csv";
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             typeof(XUnitTestProject),
             new [] { dotnetVersion },
             projectName,
@@ -43,20 +43,20 @@ public class RestoreTests : IClassFixture<DotnetTestContainerFixture>
             CommandTargetType.Project,
             allTestClasses,
             buildTestProject: true,
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             testClassesToExclude
         );
 
         // act
-        var (_, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -b {backupFileName} -v detailed");
-        var (_, afterFirstSuppressTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (_, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -b {backupFileName} -v detailed");
+        var (_, afterFirstSuppressTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
         await _fixture.RunFilterApp($"restore -b {backupFileName} -v detailed");
-        var (_, afterFirstRestoreTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -b {backupFileName} -v detailed");
-        var (_, afterSecondSuppressTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (_, afterFirstRestoreTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -b {backupFileName} -v detailed");
+        var (_, afterSecondSuppressTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
         await _fixture.RunFilterApp($"restore -b {backupFileName} -v detailed");
-        var (_, afterSecondRestoreTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (_, afterSecondRestoreTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         // 0. before first suppression

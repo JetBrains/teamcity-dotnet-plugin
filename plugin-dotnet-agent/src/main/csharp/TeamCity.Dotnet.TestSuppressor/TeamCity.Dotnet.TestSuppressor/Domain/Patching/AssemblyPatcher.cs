@@ -1,4 +1,3 @@
-using System.Drawing.Imaging;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;

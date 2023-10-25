@@ -38,7 +38,7 @@ public class SuppressAllTheTestsByExcludeFileTests
         var allTestClasses = new[] { testClass0, testClass1, testClass2 };
         var allTestsNames = allTestClasses.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             testProjectGeneratorType,
             new [] { dotnetVersion },
             projectName,
@@ -46,14 +46,14 @@ public class SuppressAllTheTestsByExcludeFileTests
             CommandTargetType.Assembly,
             allTestClasses,
             buildTestProject: true,
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             allTestClasses
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -v detailed");
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -v detailed");
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         Assert.Equal(9, beforeTestNamesExecuted.Count);

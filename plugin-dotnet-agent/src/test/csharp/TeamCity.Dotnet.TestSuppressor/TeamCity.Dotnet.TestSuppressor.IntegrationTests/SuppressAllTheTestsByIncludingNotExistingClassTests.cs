@@ -38,7 +38,7 @@ public class SuppressAllTheTestsByIncludingNotExistingClassTests
         var testClassesInProject = new[] { testClass0, testClass1 };
         var testNamesToInclude = testClassesInProject.GetFullTestMethodsNames(projectName);
 
-        var (testQueriesFilePath, targetPath) = await _fixture.CreateTestProject(
+        var testProjectData = await _fixture.CreateTestProject(
             testProjectGeneratorType, 
             new [] { dotnetVersion },
             projectName,
@@ -46,14 +46,14 @@ public class SuppressAllTheTestsByIncludingNotExistingClassTests
             CommandTargetType.Assembly,
             testClassesInProject,
             buildTestProject: true,
-            withMsBuildBinaryLogs: false,
+            withMsBuildBinaryLog: false,
             testClass2
         );
 
         // act
-        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(targetPath);
-        await _fixture.RunFilterApp($"suppress -t {targetPath} -l {testQueriesFilePath} -i -v detailed");
-        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(targetPath);
+        var (beforeTestOutput, beforeTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
+        await _fixture.RunFilterApp($"suppress -t {testProjectData.TargetPath} -l {testProjectData.QueriesFilePath} -i -v detailed");
+        var (afterTestOutput, afterTestNamesExecuted) = await _fixture.RunTests(testProjectData.TargetPath);
 
         // assert
         Assert.Equal(7, beforeTestNamesExecuted.Count);

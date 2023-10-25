@@ -4,6 +4,7 @@ using Microsoft.Build.Logging.StructuredLogger;
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.FileSystemExtensions;
+using TeamCity.Dotnet.TestSuppressor.Infrastructure.MsBuild;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Targeting.Strategies;
 
@@ -51,13 +52,23 @@ internal class MsBuildBinlogTargetResolvingStrategy : BaseTargetResolvingStrateg
             );
             yield break;
         }
-
+        
+        _logger.LogDebug(
+            "Resolved {AssembliesCount} assemblies by target MSBuild .binlog file: {Target}",
+            outputAssemblyPathsResult.Value.Count(),
+            target
+        );
+        
         foreach (var outputAssemblyPath in outputAssemblyPathsResult.Value)
         {
             var assemblyFileInfoResult = FileSystem.TryGetFileInfo(outputAssemblyPath!);
             if (assemblyFileInfoResult.IsError)
             {
-                _logger.LogWarning(assemblyFileInfoResult.ErrorValue, "Target MSBuild .binlog output file {TargetProjectOutputFile} does not exist", binlogFile!.FullName);
+                _logger.LogWarning(
+                    assemblyFileInfoResult.ErrorValue,
+                    "Target MSBuild .binlog output file {OutputAssemblyPath} does not exist",
+                    outputAssemblyPath
+                );
                 yield break;
             }
 
@@ -68,14 +79,13 @@ internal class MsBuildBinlogTargetResolvingStrategy : BaseTargetResolvingStrateg
         }
     }
 
-    private static Result<IEnumerable<string>, Exception> GetOutputAssemblyPaths(IFileSystemInfo binlogFile)
+    private Result<IEnumerable<string>, Exception> GetOutputAssemblyPaths(IFileSystemInfo binlogFile)
     {
         try
         {
             var result = new HashSet<string>();
-            var reader = new BinLogReader();
-
-            foreach (var record in reader.ReadRecords(binlogFile.FullName).Where(r => r.Args != null))
+            
+            foreach (var record in BinaryLog.ReadRecords(binlogFile.FullName).Where(r => r.Args != null))
             {
                 // heuristic #1: analyze Build target outputs to find output assemblies
                 if (record.Args is TargetFinishedEventArgs { TargetName: "Build", TargetOutputs: not null } targetArgs)
@@ -83,28 +93,30 @@ internal class MsBuildBinlogTargetResolvingStrategy : BaseTargetResolvingStrateg
                     foreach (ITaskItem output in targetArgs.TargetOutputs)
                     {
                         var outputPath = output.ItemSpec.Trim();
-                        if (outputPath.HasTargetFileExtension(TargetType.Assembly))
+                        if (!outputPath.HasTargetFileExtension(TargetType.Assembly))
                         {
-                            result.Add(outputPath);
+                            continue;
                         }
+
+                        _logger.LogDebug("MSBuild .binlog reading: target finished event for target \"Build\" has target output: {OutputPath}", outputPath);
+                        result.Add(outputPath);
                     }
                 }
                 
                 // heuristic #2: looking for log entries of adding item with moniker-specific target path
                 // useful for .sln/.csproj files with <TargetFrameworks> tag instead of <TargetFramework>;
-                // we expect to find a message like
-                // ```
-                // AddItem: TargetPathWithTargetPlatformMoniker
-                //      /absolute/path/to/the/target/assembly.dll
-                //          ...something else...
-                // ```
-                else if (record.Args.Message != null && record.Args.Message.StartsWith("AddItem: TargetPathWithTargetPlatformMoniker"))
+                // we expect to find items of type `TargetPathWithTargetPlatformMoniker` – their item specs are output assemblies paths
+                else if (record.Args.Message != null && record.HasItemOfType("TargetPathWithTargetPlatformMoniker"))
                 {
-                    var outputPath = record.Args.Message
-                        .Split(Environment.NewLine).Take(1..2).DefaultIfEmpty(string.Empty).First().Trim();
-                    if (outputPath.HasTargetFileExtension(TargetType.Assembly))
+                    foreach (var itemSpec in record.GetItemsSpecs().Select(s => s.Trim()))
                     {
-                        result.Add(outputPath);
+                        if (!itemSpec.HasTargetFileExtension(TargetType.Assembly))
+                        {
+                            continue;
+                        }
+                    
+                        _logger.LogDebug("MSBuild .binlog reading: found item \"TargetPathWithTargetPlatformMoniker\" with item spec: {OutputPath}", itemSpec);
+                        result.Add(itemSpec);
                     }
                 }
             }
