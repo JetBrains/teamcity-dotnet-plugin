@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotcover.report
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
+import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.dotcover.DotCoverEntryPointSelector
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
@@ -25,18 +26,18 @@ class DotCoverReportRunnerFactory(
         return DotnetCoverageReportGeneratorRunner(parameters, CoverageConstants.DOTCOVER_TOOL_NAME, entryPointFile, profilerHost)
     }
 
-    private fun getEntryPoint() : File {
-        try {
-            // if report generation has started, then dotCover tool has already been executed during the build
-            // and validation of the tool requirements to the agent has already been performed - we can skip it here
-            return _entryPointSelector.select(skipRequirementsValidation = true).getOrThrow()
-        } catch (e: ToolCannotBeFoundException) {
-            val exception = RunBuildException("dotCover report generation failed: " + e.message)
-            LOG.error(exception)
-            exception.isLogStacktrace = false
-            throw exception
-        }
-    }
+    private fun getEntryPoint()=
+        _entryPointSelector.select()
+            .fold(
+                onSuccess = { it },
+                onFailure = { when {
+                    it is ToolCannotBeFoundException -> {
+                        throw RunBuildException("dotCover report generation failed: " + it.message)
+                            .let { e -> e.isLogStacktrace = false; e }
+                    }
+                    else -> throw it
+                }}
+            )
 
     companion object {
         private val LOG = Logger.getInstance(DotCoverReportRunnerFactory::class.java.name)

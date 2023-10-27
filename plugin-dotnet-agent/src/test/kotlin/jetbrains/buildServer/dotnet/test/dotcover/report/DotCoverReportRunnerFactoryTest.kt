@@ -34,7 +34,7 @@ class DotCoverReportRunnerFactoryTest {
     @Test
     fun `should throw RunBuildException when entry point returns failure`() {
         // arrange
-        every { _entryPointSelector.select(true) } returns Result.failure(Exception())
+        every { _entryPointSelector.select() } returns Result.failure(Exception())
 
         // act, assert
         Assert.assertThrows(Exception::class.java) {
@@ -46,7 +46,7 @@ class DotCoverReportRunnerFactoryTest {
     fun `should return valid runner when file extension is dll`() {
         // arrange
         val entryPointFile = File("abc.dll")
-        every { _entryPointSelector.select(true) } returns Result.success(entryPointFile)
+        every { _entryPointSelector.select() } returns Result.success(entryPointFile)
         every { _dotnetToolResolver.executable.virtualPath } returns Path("/")
 
         // act
@@ -61,7 +61,7 @@ class DotCoverReportRunnerFactoryTest {
     fun `should return null runner when file extension is not dll`() {
         // arrange
         val entryPointFile = File("abc.txt")
-        every { _entryPointSelector.select(true) } returns Result.success(entryPointFile)
+        every { _entryPointSelector.select() } returns Result.success(entryPointFile)
         every { _dotnetToolResolver.executable.virtualPath } returns Path("/")
 
         // act
@@ -75,8 +75,7 @@ class DotCoverReportRunnerFactoryTest {
     @Test
     fun `should throw RunBuildException when entry point selector throws ToolCannotBeFoundException`() {
         // arrange
-        val toolException = ToolCannotBeFoundException("Tool not found")
-        every { _entryPointSelector.select(true) } throws toolException
+        every { _entryPointSelector.select() } returns Result.failure(ToolCannotBeFoundException("Tool not found"))
 
         // act, assert
         Assert.assertThrows(RunBuildException::class.java) {

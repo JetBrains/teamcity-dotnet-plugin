@@ -549,7 +549,7 @@ class DotCoverWorkflowComposerTest {
         every { _virtualContext.targetOSType } returns OSType.UNIX
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE) } returns CoverageConstants.PARAM_DOTCOVER
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
-        every { _entryPointSelector.select() } throws(ToolCannotBeFoundException("TOOL CAN NOT BE FOUND"))
+        every { _entryPointSelector.select() } returns Result.failure(ToolCannotBeFoundException("TOOL CAN NOT BE FOUND"))
 
         // Then
         try {

@@ -24,21 +24,22 @@ class DotCoverWorkflowComposer(
 
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
-    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow {
-        if (!dotCoverEnabled || dotCoverPath.isBlank()) {
-            return workflow
-        }
+    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow = when {
+        !dotCoverEnabled || dotCoverPath.isBlank() -> workflow
 
-        try {
-            return _entryPointSelector.select()
-                .map { Workflow(createDotCoverCommandLine(workflow, context, it.path)) }
-                .getOrDefault(workflow)
-        } catch (e: ToolCannotBeFoundException) {
-            val exception = RunBuildException("dotCover run failed: " + e.message)
-            exception.isLogStacktrace = false
-            throw exception
-        }
+        else -> _entryPointSelector.select()
+            .fold(
+                onSuccess = { Workflow(createDotCoverCommandLine(workflow, context, it.path)) },
+                onFailure = { when {
+                    it is ToolCannotBeFoundException -> {
+                        throw RunBuildException("dotCover run failed: " + it.message)
+                            .let { e -> e.isLogStacktrace = false; e }
+                    }
+                    else -> workflow
+                }}
+            )
     }
+
 
     private fun createDotCoverCommandLine(
         workflow: Workflow,
