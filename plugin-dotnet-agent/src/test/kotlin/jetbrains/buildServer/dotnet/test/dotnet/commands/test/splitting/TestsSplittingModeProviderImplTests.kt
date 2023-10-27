@@ -13,6 +13,7 @@ import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettin
 import jetbrains.buildServer.utils.getBufferedReader
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
@@ -99,7 +100,7 @@ class TestsSplittingModeProviderImplTests {
 
         // assert
         Assert.assertEquals(TestsSplittingMode.TestClassNameFilter, result)
-    }
+}
 
     @Test
     fun `should provide default mode if there are too few test classes`() {
@@ -118,13 +119,27 @@ class TestsSplittingModeProviderImplTests {
         Assert.assertEquals(TestsSplittingMode.TestClassNameFilter, result)
     }
 
-    @Test
-    fun `should be in suppress mode if test suppressor requirements are met`() {
+    @DataProvider(name = "suppression parameter value and result test splitting mode")
+    fun `versions of true string`() = arrayOf(
+        arrayOf("true", TestsSplittingMode.Suppression),
+        arrayOf("TRUE", TestsSplittingMode.Suppression),
+        arrayOf("  TrUe     ", TestsSplittingMode.Suppression),
+        arrayOf("false", TestsSplittingMode.TestClassNameFilter),
+        arrayOf("FALSE", TestsSplittingMode.TestClassNameFilter),
+        arrayOf("   fAlSe  ", TestsSplittingMode.TestClassNameFilter),
+        arrayOf("  ", TestsSplittingMode.Suppression),
+        arrayOf(" INVALID ", TestsSplittingMode.Suppression),
+        arrayOf("1", TestsSplittingMode.Suppression),
+        arrayOf("0", TestsSplittingMode.Suppression),
+    )
+
+    @Test(dataProvider = "suppression parameter value and result test splitting mode")
+    fun `should be in suppress mode if test suppressor requirements are met`(suppressionParamValue: String, expectedMode: TestsSplittingMode) {
         // arrange
         every { _testsSplittingSettingsMock.testsClassesFilePath } returns "included.txt"
         every { _testsSplittingSettingsMock.hasEnoughTestClassesToActivateSuppression } returns true
         every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER) } answers { "false" }
-        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } answers { "true" }
+        every { _parametersServiceMock.tryGetParameter(ParameterType.Configuration, PARAM_PARALLEL_TESTS_USE_SUPPRESSION) } returns suppressionParamValue
         val settings = create()
 
         // act
@@ -132,7 +147,7 @@ class TestsSplittingModeProviderImplTests {
         val result = settings.getMode(supportedDotnetVersion)
 
         // assert
-        Assert.assertEquals(TestsSplittingMode.Suppression, result)
+        Assert.assertEquals(result, expectedMode)
     }
 
     private fun create() = TestsSplittingModeProviderImpl(_parametersServiceMock, _testsSplittingSettingsMock)
