@@ -77,9 +77,10 @@ class DotCoverAgentToolTest {
     }
 
     @Test
-    fun `should return deprecated cross-platform tool type when dll exists and sh does not exist`() {
+    fun `should return deprecated cross-platform tool type when sh exists`() {
         // assert
-        every { _fileSystemService.isExists(any()) } answers { arg<File>(0).name == "dotCover.sh" }
+        every { _fileSystemService.isExists(any()) }answers
+            { sequenceOf("dotCover.sh", "dotCover.exe", "dotCover.dll").contains(arg<File>(0).name) }
 
         // act
         val result = _tool.type

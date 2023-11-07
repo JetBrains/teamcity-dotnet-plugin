@@ -27,6 +27,10 @@ class DotCoverAgentTool(
             }}
 
     val type get() = when {
+        // cross-platform version using bundled runtime
+        _fileSystemService.isExists(dotCoverShFile) ->
+            DotCoverToolType.DeprecatedCrossPlatform
+
         // Windows-only version using agent requirements mechanism – no build-time requirements checking needed
         _fileSystemService.isExists(dotCoverExeFile) && !_fileSystemService.isExists(dotCoverDllFile) ->
             DotCoverToolType.WindowsOnly
@@ -34,10 +38,6 @@ class DotCoverAgentTool(
         // cross-platform version using agent runtime
         _fileSystemService.isExists(dotCoverDllFile) && !_fileSystemService.isExists(dotCoverShFile) ->
             DotCoverToolType.CrossPlatform
-
-        // cross-platform version using bundled runtime
-        _fileSystemService.isExists(dotCoverShFile) ->
-            DotCoverToolType.DeprecatedCrossPlatform
 
         else -> DotCoverToolType.Unknown
     }
