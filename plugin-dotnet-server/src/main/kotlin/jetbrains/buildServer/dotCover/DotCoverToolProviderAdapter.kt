@@ -72,7 +72,7 @@ class DotCoverToolProviderAdapter(
     }
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
-        val pathPrefix = if (toolPackage.name.lowercase().endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION)) "tools/" else ""
+        val pathPrefix = pathPrefix(toolPackage)
         _toolService.unpackToolPackage(toolPackage, pathPrefix, targetDirectory, *DOT_COVER_PACKAGES)
 
         val pluginRoot = _pluginDescriptor.pluginRoot
@@ -80,6 +80,19 @@ class DotCoverToolProviderAdapter(
         val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
         _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
     }
+
+    override fun getUnpackedPath(toolPackage: File, sourcePath: String): String? {
+        val pathPrefix = pathPrefix(toolPackage)
+        if (pathPrefix.isEmpty()) {
+            return sourcePath;
+        } else if (sourcePath.startsWith(pathPrefix)) {
+            return sourcePath.removePrefix(pathPrefix)
+        }
+        return null;
+    }
+
+    private fun pathPrefix(toolPackage: File) =
+        if (toolPackage.name.lowercase().endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION)) "tools/" else ""
 
     override fun getDefaultBundledVersionId(): String? = null
 
