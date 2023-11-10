@@ -18,7 +18,7 @@ ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
     def versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet']
-    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2022.12-SNAPSHOT'
+    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2023.11-SNAPSHOT'
 
     isDotnetTasksDisabled = project.hasProperty('dotnetTasks') && project.property('dotnetTasks').toString().toLowerCase() == 'disabled'
 }
