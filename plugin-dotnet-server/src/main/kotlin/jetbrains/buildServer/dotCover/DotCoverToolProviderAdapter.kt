@@ -75,10 +75,12 @@ class DotCoverToolProviderAdapter(
         val pathPrefix = pathPrefix(toolPackage)
         _toolService.unpackToolPackage(toolPackage, pathPrefix, targetDirectory, *DOT_COVER_PACKAGES)
 
-        val pluginRoot = _pluginDescriptor.pluginRoot
-        val toolXmlFileFrom = File(pluginRoot, "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml")
-        val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
-        _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
+        if (TeamCityProperties.getBooleanOrTrue("teamcity.dotCover.addToolDescriptor")) {
+            val pluginRoot = _pluginDescriptor.pluginRoot
+            val toolXmlFileFrom = File(pluginRoot, "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml")
+            val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
+            _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
+        }
     }
 
     override fun getUnpackedPath(toolPackage: File, sourcePath: String): String? {
