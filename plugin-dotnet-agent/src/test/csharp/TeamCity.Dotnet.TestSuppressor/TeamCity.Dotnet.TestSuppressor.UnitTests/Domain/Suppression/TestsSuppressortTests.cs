@@ -10,7 +10,7 @@ namespace TeamCity.Dotnet.TestSuppressor.UnitTests.Domain.Suppression;
 public class TestsSuppressorTests
 {
     private readonly TestTestEngine _testEngine = new();
-    private readonly TestTestSelector _testSelector = new();
+    private readonly TestSelector _testSelector = new(new List<string>(), "");
     
     [Fact]
     public void SuppressTests_ShouldSuppressTestClass()
@@ -19,7 +19,6 @@ public class TestsSuppressorTests
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
         var suppressionStrategyMock = new Mock<ITestSuppressionStrategy>();
         suppressionStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
-        suppressionStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
         var suppressionStrategies = new[] { suppressionStrategyMock.Object };
@@ -27,7 +26,7 @@ public class TestsSuppressorTests
 
         var testSuppressionResult = new TestSuppressionResult(0, 0);
         suppressionStrategyMock
-            .Setup(s => s.SuppressTests(testClass, _testSelector))
+            .Setup(s => s.SuppressTests(testClass))
             .Returns(testSuppressionResult);
         
         var suppressor = new TestsSuppressor(suppressionStrategies, loggerMock.Object);
@@ -37,7 +36,7 @@ public class TestsSuppressorTests
 
         // assert
         Assert.Equal(testSuppressionResult, result);
-        suppressionStrategyMock.Verify(s => s.SuppressTests(testClass, _testSelector), Times.Once);
+        suppressionStrategyMock.Verify(s => s.SuppressTests(testClass), Times.Once);
     }
     
     [Fact]
@@ -66,14 +65,13 @@ public class TestsSuppressorTests
         var suppressionParameters = new TestSuppressionParameters(_testEngine, _testSelector);
         var suppressionStrategyMock = new Mock<ITestSuppressionStrategy>();
         suppressionStrategyMock.Setup(m => m.TestEngineType).Returns(_testEngine.GetType());
-        suppressionStrategyMock.Setup(m => m.TestSelectorType).Returns(_testSelector.GetType());
         var testClass = new Mock<IDotnetType>().Object;
 
         var suppressionStrategies = new[] { suppressionStrategyMock.Object };
         var loggerMock = new Mock<ILogger<TestsSuppressor>>();
 
         suppressionStrategyMock
-            .Setup(s => s.SuppressTests(testClass, _testSelector))
+            .Setup(s => s.SuppressTests(testClass))
             .Throws<Exception>();
         
         var suppressor = new TestsSuppressor(suppressionStrategies, loggerMock.Object);
@@ -91,10 +89,5 @@ public class TestsSuppressorTests
         public IEnumerable<string> AssemblyNames => Array.Empty<string>();
         public IReadOnlyList<string> TestClassAttributes => Array.Empty<string>();
         public IReadOnlyList<string> TestMethodAttributes => Array.Empty<string>();
-    }
-    
-    internal class TestTestSelector : ITestSelector
-    {
-        public string Query => "";
     }
 }

@@ -1,19 +1,18 @@
 using Microsoft.Extensions.Logging;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines;
-using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 
 internal class TestsSuppressor : ITestsSuppressor
 {
-    private readonly IReadOnlyDictionary<(Type, Type), ITestSuppressionStrategy> _suppressionStrategies;
+    private readonly IReadOnlyDictionary<Type, ITestSuppressionStrategy> _suppressionStrategies;
     private readonly ILogger<TestsSuppressor> _logger;
 
     public TestsSuppressor(IEnumerable<ITestSuppressionStrategy> suppressionStrategies, ILogger<TestsSuppressor> logger)
     {
         _suppressionStrategies = suppressionStrategies.ToDictionary(
-            strategy => (strategy.TestEngineType, strategy.TestSelectorType),
+            strategy => strategy.TestEngineType,
             strategy => strategy
         );
         _logger = logger;
@@ -29,8 +28,8 @@ internal class TestsSuppressor : ITestsSuppressor
         
         try
         {
-            var suppressionStrategy = ResolveSuppressionStrategy(parameters.TestEngine, parameters.TestSelector);
-            var suppressionResult = suppressionStrategy.SuppressTests(testClass, parameters.TestSelector);
+            var suppressionStrategy = ResolveSuppressionStrategy(parameters.TestEngine);
+            var suppressionResult = suppressionStrategy.SuppressTests(testClass);
             _logger.LogDebug("Tests suppressed successfully for {TestClass}", testClass.FullName);
             return suppressionResult;
         }
@@ -41,16 +40,15 @@ internal class TestsSuppressor : ITestsSuppressor
         }
     }
     
-    private ITestSuppressionStrategy ResolveSuppressionStrategy(ITestEngine testEngine, ITestSelector testsQuery)
+    private ITestSuppressionStrategy ResolveSuppressionStrategy(ITestEngine testEngine)
     {
-        var key = (testEngine.GetType(), testsQuery.GetType());
-        if (_suppressionStrategies.TryGetValue(key, out var suppressionStrategy))
+        if (_suppressionStrategies.TryGetValue(testEngine.GetType(), out var suppressionStrategy))
         {
-            _logger.LogDebug("Suppression strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);
+            _logger.LogDebug("Suppression strategy found for {TestEngineType}", testEngine.GetType());
             return suppressionStrategy;
         }
         
-        _logger.LogError("No suppression strategy found for {TestEngineType} and {TestsQueryType}", key.Item1, key.Item2);
-        throw new InvalidOperationException($"No suppression strategy found for the given test engine and tests query combination: {key}");
+        _logger.LogError("No suppression strategy found for {TestEngineType}", testEngine.GetType());
+        throw new InvalidOperationException($"No suppression strategy found for the given test engine and tests query combination: {testEngine.GetType()}");
     }
 }

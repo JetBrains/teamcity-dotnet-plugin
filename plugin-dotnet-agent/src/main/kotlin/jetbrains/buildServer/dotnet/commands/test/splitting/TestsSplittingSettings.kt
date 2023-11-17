@@ -22,5 +22,5 @@ interface TestsSplittingSettings {
     val hasEnoughTestClassesToActivateSuppression: Boolean
     val exactMatchFilterSize: Int
     val testsClassesFilePath: String?
-    val trimTestClassParameters: Boolean
+    val testClassParametersProcessingMode: TestClassParametersProcessingMode
 }

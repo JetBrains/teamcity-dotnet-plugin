@@ -20,6 +20,7 @@ import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.splitting.*
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesReader
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -42,7 +43,7 @@ class TestsFilterProviderTestsSplitting {
         MockKAnnotations.init(this)
         mockkObject(Logger)
         every { Logger.getLogger(any()) } returns _loggerMock
-        every { _settingsMock.trimTestClassParameters } returns false
+        every { _settingsMock.testClassParametersProcessingMode } returns EscapeSpecialCharacters
         justRun { _loggerMock.debug(any<String>()) }
         justRun { _loggerMock.warn(any<String>()) }
     }
@@ -150,22 +151,83 @@ class TestsFilterProviderTestsSplitting {
 
     @DataProvider
     fun testDataForParametrisedTestClasses() = arrayOf(
-        arrayOf(true, TestsSplittingFilterType.Includes, "FullyQualifiedName~Namespace.TestClass0. | FullyQualifiedName~Namespace.TestClass1."),
-        arrayOf(false, TestsSplittingFilterType.Includes, """FullyQualifiedName~Namespace.TestClass0("param"). | FullyQualifiedName~Namespace.TestClass1("param")."""),
-        arrayOf(true, TestsSplittingFilterType.Excludes, "FullyQualifiedName!~Namespace.TestClass0. & FullyQualifiedName!~Namespace.TestClass1."),
-        arrayOf(false, TestsSplittingFilterType.Excludes, """FullyQualifiedName!~Namespace.TestClass0("param"). & FullyQualifiedName!~Namespace.TestClass1("param")."""),
+        // no parameters
+        arrayOf(
+            TestsSplittingFilterType.Includes,
+            sequenceOf("TestClass0", "TestClass1"),
+            "FullyQualifiedName~TestClass0. | FullyQualifiedName~TestClass1.",
+        ),
+        arrayOf(
+            TestsSplittingFilterType.Excludes,
+            sequenceOf("TestClass0", "TestClass1"),
+            "FullyQualifiedName!~TestClass0. & FullyQualifiedName!~TestClass1.",
+        ),
+        // one string parameter
+        arrayOf(
+            TestsSplittingFilterType.Includes,
+            sequenceOf("""TestClass0("param")""", """TestClass1("param")"""),
+            """FullyQualifiedName~TestClass0\(\"param\"\) | FullyQualifiedName~TestClass1\(\"param\"\)""",
+        ),
+        arrayOf(
+            TestsSplittingFilterType.Excludes,
+            sequenceOf("""TestClass0("param")""", """TestClass1("param")"""),
+            """FullyQualifiedName!~TestClass0\(\"param\"\) & FullyQualifiedName!~TestClass1\(\"param\"\)""",
+        ),
+        // multiple different parameters with all possible special characters
+        arrayOf(
+            TestsSplittingFilterType.Includes,
+            sequenceOf("""TestClass0("param",42,"\\()&|=!~")""", """TestClass1"""),
+            """FullyQualifiedName~TestClass0\(\"param\"%2C42%2C\"\\\\\(\)\&\|\=\!\~\"\) | FullyQualifiedName~TestClass1.""",
+        ),
+        arrayOf(
+            TestsSplittingFilterType.Excludes,
+            sequenceOf("""TestClass0("param",42,"\\()&|=!~")""", """TestClass1"""),
+            """FullyQualifiedName!~TestClass0\(\"param\"%2C42%2C\"\\\\\(\)\&\|\=\!\~\"\) & FullyQualifiedName!~TestClass1.""",
+        ),
     )
 
     @Test(dataProvider = "testDataForParametrisedTestClasses")
     fun `should provide test class filter expression processing test class parameters`(
-        shouldTrimTestClassParameters: Boolean,
         filterType: TestsSplittingFilterType,
+        classNames: Sequence<String>,
         expectedFilterExpression: String
     ) {
         // arrange
-        every { _settingsMock.trimTestClassParameters } answers { shouldTrimTestClassParameters }
         every { _settingsMock.filterType } answers { filterType }
-        every { _settingsMock.testClasses } answers { generateTestClassesWithParamsList(2) }
+        every { _settingsMock.testClasses } answers { classNames }
+        val provider = create()
+
+        // act
+        val result = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
+
+        // assert
+        Assert.assertEquals(result, expectedFilterExpression)
+    }
+
+    @DataProvider
+    fun testDataParametersProcessingModes() = arrayOf(
+        arrayOf(
+            Trim,
+            sequenceOf("""TestClass("param")"""),
+            "FullyQualifiedName~TestClass.",
+        ),
+        arrayOf(
+            NoProcessing,
+            sequenceOf("""TestClass("param")"""),
+            """FullyQualifiedName~TestClass("param")""",
+        ),
+    )
+
+    @Test(dataProvider = "testDataParametersProcessingModes")
+    fun `should provide test class filter expression processing test class parameters`(
+        mode: TestClassParametersProcessingMode,
+        classNames: Sequence<String>,
+        expectedFilterExpression: String,
+    ) {
+        // arrange
+        every { _settingsMock.testClassParametersProcessingMode } returns mode
+        every { _settingsMock.filterType } answers { TestsSplittingFilterType.Includes }
+        every { _settingsMock.testClasses } answers { classNames }
         val provider = create()
 
         // act
@@ -181,10 +243,10 @@ class TestsFilterProviderTestsSplitting {
         arrayOf("TestClass(param", "FullyQualifiedName~TestClass(param."),
         arrayOf("Namespace.TestClass", "FullyQualifiedName~Namespace.TestClass."),
         arrayOf("Namespace.TestClass(param", "FullyQualifiedName~Namespace.TestClass(param."),
-        arrayOf("Namespace.TestClass(param1,param2)", "FullyQualifiedName~Namespace.TestClass."),
-        arrayOf("Namespace1.Namespace2.TestClass(param1,param2)", "FullyQualifiedName~Namespace1.Namespace2.TestClass."),
-        arrayOf("Namespace.TestClass((param))", "FullyQualifiedName~Namespace.TestClass."),
-        arrayOf("Namespace.TestCla(ss(param)", "FullyQualifiedName~Namespace.TestCla."),
+        arrayOf("Namespace.TestClass(param1,param2)", "FullyQualifiedName~Namespace.TestClass\\(param1%2Cparam2\\)"),
+        arrayOf("Namespace1.Namespace2.TestClass(param1,param2)", "FullyQualifiedName~Namespace1.Namespace2.TestClass\\(param1%2Cparam2\\)"),
+        arrayOf("Namespace.TestClass((param))", "FullyQualifiedName~Namespace.TestClass\\(\\(param\\)\\)"),
+        arrayOf("Namespace.TestCla(ss(param)", "FullyQualifiedName~Namespace.TestCla\\(ss\\(param\\)"),
     )
 
     @Test(dataProvider = "testDataForTrimmingTestClassParameters")
@@ -193,7 +255,6 @@ class TestsFilterProviderTestsSplitting {
         expectedFilterExpression: String
     ) {
         // arrange
-        every { _settingsMock.trimTestClassParameters } answers { true }
         every { _settingsMock.filterType } answers { TestsSplittingFilterType.Includes }
         every { _settingsMock.testClasses } answers { sequenceOf(sourceName) }
         val provider = create()
@@ -206,17 +267,11 @@ class TestsFilterProviderTestsSplitting {
     }
 
     private fun create() =
-            TestsSplittingFilterProvider(_settingsMock, _testsNamesReaderMock)
+        TestsSplittingFilterProvider(_settingsMock, _testsNamesReaderMock)
 
     private fun generateTestClassesList(n: Int) = sequence {
         for (index in 0 until n) {
             yield("Namespace.TestClass$index")
-        }
-    }
-
-    private fun generateTestClassesWithParamsList(n: Int) = sequence {
-        for (index in 0 until n) {
-            yield("""Namespace.TestClass$index("param")""")
         }
     }
 

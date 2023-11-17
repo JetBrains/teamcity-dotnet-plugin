@@ -31,7 +31,7 @@ public class TestSelectorParserTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
 
         // act
-        result = _parser.TryParseTestQuery(string.Empty, out var _);
+        result = _parser.TryParseTestQuery(string.Empty, out _);
 
         // assert
         Assert.False(result);
@@ -48,7 +48,7 @@ public class TestSelectorParserTests
     public void TryParseTestQuery_Should_Log_Warning_When_Query_Is_Invalid()
     {
         // act
-        var result = _parser.TryParseTestQuery("InvalidTestQuery", out var _);
+        var result = _parser.TryParseTestQuery("(InvalidTestQuery)", out _);
 
         // assert
         Assert.False(result);
@@ -61,29 +61,33 @@ public class TestSelectorParserTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
     }
 
-    [Fact]
-    public void TryParseTestQuery_Should_Return_TestClassSelector_When_No_Parameters_Are_Provided()
+    [Theory]
+    [InlineData("classname", "classname")]
+    [InlineData("ClassName", "ClassName")]
+    [InlineData("class_name", "class_name")]
+    [InlineData("CLASS_NAME", "CLASS_NAME")]
+    [InlineData("Namespace.ClassName", "Namespace.ClassName")]
+    [InlineData("NamespaceA.NamespaceB.ClassName", "NamespaceA.NamespaceB.ClassName")]
+    [InlineData("A.B.C.D.E.F.G.ClassName", "A.B.C.D.E.F.G.ClassName")]
+    [InlineData("A.B.C.D.E.F.G.ClassName()", "A.B.C.D.E.F.G.ClassName")]
+    [InlineData("A.B.C.D.E.F.G.ClassName((()))", "A.B.C.D.E.F.G.ClassName")]
+    [InlineData("ClassName(param1,param2)", "ClassName")]
+    [InlineData("ClassName(\"param1\",\"param2\")", "ClassName")]
+    [InlineData("ClassName(\"\\()&|=!~\",\"\\()&|=!~\")", "ClassName")]
+    [InlineData("NamespaceA.NamespaceB.ClassName(param1,param2)", "NamespaceA.NamespaceB.ClassName")]
+    [InlineData("NamespaceA.NamespaceB.ClassName(\"param1\",\"param2\")", "NamespaceA.NamespaceB.ClassName")]
+    [InlineData("NamespaceA.NamespaceB.ClassName(\"\\()&|=!~\",\"\\()&|=!~\")", "NamespaceA.NamespaceB.ClassName")]
+    public void TryParseTestQuery_Should_Return_TestClassSelector_When_No_Parameters_Are_Provided(
+        string className,
+        string expectedQuery
+    )
     {
         // act
-        var result = _parser.TryParseTestQuery("NamespaceA.NamespaceB.ClassName", out var selector);
+        var result = _parser.TryParseTestQuery(className, out var selector);
 
         // assert
         Assert.True(result);
-        Assert.IsType<TestClassSelector>(selector);
-        Assert.Equal("NamespaceA.NamespaceB.ClassName", selector.Query);
-    }
-
-    [Fact]
-    public void TryParseTestQuery_Should_Return_ParamTestClassSelector_When_Parameters_Are_Provided()
-    {
-        // act
-        var result = _parser.TryParseTestQuery("NamespaceA.NamespaceB.ClassName(param1,param2)", out var selector);
-
-        // assert
-        Assert.True(result);
-        Assert.IsType<ParamTestClassSelector>(selector);
-        Assert.Equal("NamespaceA.NamespaceB.ClassName(param1,param2)", selector.Query);
+        Assert.NotNull(selector);
+        Assert.Equal(expectedQuery, selector.Query);
     }
 }
-
-

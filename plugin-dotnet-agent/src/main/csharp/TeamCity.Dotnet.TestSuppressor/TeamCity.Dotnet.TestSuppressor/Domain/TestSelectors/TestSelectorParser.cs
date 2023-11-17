@@ -4,8 +4,10 @@ using Microsoft.Extensions.Logging;
 namespace TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 
 /// <summary>
-/// Parses test query string into <see cref="ITestSelector"/> instance
+/// Parses test query string into <see cref="TestSelector"/> instance
 /// Possible test query formats:
+/// ClassName
+/// ClassName(param)
 /// NamespaceA.NamespaceB.ClassName
 /// NamespaceA.NamespaceB.NamespaceC.ClassName(param1,param2)
 /// NamespaceA.ClassName(param1)
@@ -13,7 +15,7 @@ namespace TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 /// </summary>
 internal class TestSelectorParser : ITestSelectorParser
 {
-    private static readonly Regex Regex = new (@"^(?<namespaces>([^.]+\.)*)(?<class>[^(]+)(\((?<params>[^)]+)\))?$");
+    private static readonly Regex Regex = new (@"^(?<namespaces>([^.]+\.)*)(?<class>[^(]+)(?<params>.*)?$");
     private readonly ILogger<TestSelectorParser> _logger;
 
     public TestSelectorParser(ILogger<TestSelectorParser> logger)
@@ -21,7 +23,7 @@ internal class TestSelectorParser : ITestSelectorParser
         _logger = logger;
     }
     
-    public bool TryParseTestQuery(string testQuery, out ITestSelector? testSelector)
+    public bool TryParseTestQuery(string testQuery, out TestSelector? testSelector)
     {
         testSelector = null;
         
@@ -33,7 +35,7 @@ internal class TestSelectorParser : ITestSelectorParser
         }
 
         var match = Regex.Match(testQuery);
-        if (!HasNamespace(testQuery) || !match.Success)
+        if (!match.Success)
         {
             _logger.LogWarning("Invalid test query format: {TestQuery}", testQuery);
             return false;
@@ -42,18 +44,11 @@ internal class TestSelectorParser : ITestSelectorParser
         var namespaces = match.Groups["namespaces"].Value.Split('.').Where(s => !string.IsNullOrEmpty(s)).ToList();
         var className = match.Groups["class"].Value;
         
-        testSelector = match.Groups["params"].Success
-            ? new ParamTestClassSelector(namespaces, className, ParseParameters(match.Groups["params"].Value))
-            : new TestClassSelector(namespaces, className);
+        testSelector = new TestSelector(namespaces, className);
         
         _logger.LogDebug("Test query successfully parsed: {TestQuery}", testQuery);
         
         return true;
     }
-
-    private static List<string> ParseParameters(string paramString) =>
-        paramString.Split(',').Select(p => p.Trim()).ToList();
-    
-    private static bool HasNamespace(string value) => value.Contains('.');
 }
 

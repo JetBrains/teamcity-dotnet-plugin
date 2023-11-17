@@ -1,9 +1,8 @@
 using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines.Engines;
-using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressionStrategies;
 
-internal class XUnitTestClassSuppressionStrategy : BaseSuppressionStrategy<XUnit, TestClassSelector>
+internal class XUnitTestClassSuppressionStrategy : BaseSuppressionStrategy<XUnit>
 {
     public XUnitTestClassSuppressionStrategy(XUnit testEngine) : base(testEngine) {}
 }
