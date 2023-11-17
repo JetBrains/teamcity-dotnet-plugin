@@ -2,7 +2,6 @@ using Moq;
 using TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 using TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressionStrategies;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines;
-using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 using MsTestEngine = TeamCity.Dotnet.TestSuppressor.Domain.TestEngines.Engines.MsTest;
 using NUnitEngine = TeamCity.Dotnet.TestSuppressor.Domain.TestEngines.Engines.NUnit;
@@ -117,10 +116,8 @@ public class SupportedEngineTestClassSuppressionStrategyTests
         _typeMock.Setup(t => t.CustomAttributes).Returns(new List<IDotnetCustomAttribute> { classAttributeMock.Object });
         _typeMock.Setup(t => t.Methods).Returns(new List<IDotnetMethod> { methodMock.Object });
 
-        var testClassSelector = new TestClassSelector(new List<string> { "Namespace" }, "ClassName");
-
         // act
-        var result = strategy.SuppressTests(_typeMock.Object, testClassSelector);
+        var result = strategy.SuppressTests(_typeMock.Object);
 
         // assert
         Assert.Equal(expectedSuppressedTests, result.SuppressedTests);
@@ -133,4 +130,3 @@ public class SupportedEngineTestClassSuppressionStrategyTests
         return (ITestSuppressionStrategy)Activator.CreateInstance(strategyType, engine)!;
     }
 }
-

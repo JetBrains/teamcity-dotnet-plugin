@@ -1,4 +1,3 @@
-using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
@@ -6,8 +5,6 @@ namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 internal interface ITestSuppressionStrategy
 {
     Type TestEngineType { get; }
-    
-    Type TestSelectorType { get; }
-    
-    TestSuppressionResult SuppressTests(IDotnetType type, ITestSelector testSelector);
+
+    TestSuppressionResult SuppressTests(IDotnetType type);
 }

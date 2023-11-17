@@ -42,7 +42,7 @@ public class SuppressCommandHandlerTests
         var targetAssembly2Mock = new Mock<IFileInfo>();
         targetAssembly2Mock.Setup(m => m.FullName).Returns(targetAssembly2);
         
-        var testSelectors = new Dictionary<string, ITestSelector>();
+        var testSelectors = new Dictionary<string, TestSelector>();
         var assemblyMutationResult = new AssemblyMutationResult(0, 0);
         const string backupAssemblyPath1 = "BackupAssemblyPath1";
         const string backupAssemblyPath2 = "BackupAssemblyPath1";
@@ -110,7 +110,7 @@ public class SuppressCommandHandlerTests
         var targetAssemblyMock = new Mock<IFileInfo>();
         targetAssemblyMock.Setup(m => m.FullName).Returns(targetAssembly);
         
-        var testSelectors = new Dictionary<string, ITestSelector>();
+        var testSelectors = new Dictionary<string, TestSelector>();
         var patchingResult =
             AssemblyPatchingResult.NotPatched(targetAssembly);
         _mockTestSelectorsFactory

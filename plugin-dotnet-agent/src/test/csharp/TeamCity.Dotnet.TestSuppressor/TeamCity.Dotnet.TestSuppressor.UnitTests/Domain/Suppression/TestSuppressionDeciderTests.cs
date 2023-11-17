@@ -1,4 +1,3 @@
-using Moq;
 using TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 
@@ -7,12 +6,12 @@ namespace TeamCity.Dotnet.TestSuppressor.UnitTests.Domain.Suppression;
 public class TestSuppressionDeciderTests
 {
     private readonly ITestSuppressionDecider _decider;
-    private readonly Dictionary<string, ITestSelector> _testSelectors;
+    private readonly Dictionary<string, TestSelector> _testSelectors;
 
     public TestSuppressionDeciderTests()
     {
         _decider = new TestSuppressionDecider();
-        _testSelectors = new Dictionary<string, ITestSelector>();
+        _testSelectors = new Dictionary<string, TestSelector>();
     }
 
     [Fact]
@@ -37,11 +36,10 @@ public class TestSuppressionDeciderTests
     public void Decide_ShouldReturnSuppressedAndNewSelector_WhenTestSelectorDoesNotExistAndInclusionModeIsTrue(string query, bool inclusionMode)
     {
         // arrange, act
-        var (shouldBeSuppressed, returnedTestSelector) = _decider.Decide(query, inclusionMode, _testSelectors);
+        var (shouldBeSuppressed, _) = _decider.Decide(query, inclusionMode, _testSelectors);
 
         // assert
         Assert.True(shouldBeSuppressed);
-        Assert.IsType<TestClassSelector>(returnedTestSelector);
     }
     
     [Theory]
@@ -54,11 +52,10 @@ public class TestSuppressionDeciderTests
     public void Decide_ShouldReturnNotSuppressedAndNewSelector_WhenTestSelectorDoesNotExistAndInclusionModeIsTrue(string query, bool inclusionMode)
     {
         // arrange, act
-        var (shouldBeSuppressed, returnedTestSelector) = _decider.Decide(query, inclusionMode, _testSelectors);
+        var (shouldBeSuppressed, _) = _decider.Decide(query, inclusionMode, _testSelectors);
 
         // assert
         Assert.False(shouldBeSuppressed);
-        Assert.IsType<TestClassSelector>(returnedTestSelector);
     }
 
     [Theory]
@@ -71,7 +68,7 @@ public class TestSuppressionDeciderTests
     public void Decide_ShouldReturnNotSuppressedAndExistingSelector_WhenTestSelectorExists(string query)
     {
         // arrange
-        var testSelector = Mock.Of<ITestSelector>();
+        var testSelector = new TestSelector(new List<string>(), "");
         _testSelectors.Add(query, testSelector);
 
         // act
@@ -92,7 +89,7 @@ public class TestSuppressionDeciderTests
     public void Decide_ShouldReturnSuppressedAndExistingSelector_WhenTestSelectorExists(string query)
     {
         // arrange
-        var testSelector = Mock.Of<ITestSelector>();
+        var testSelector = new TestSelector(new List<string>(), "");
         _testSelectors.Add(query, testSelector);
 
         // act

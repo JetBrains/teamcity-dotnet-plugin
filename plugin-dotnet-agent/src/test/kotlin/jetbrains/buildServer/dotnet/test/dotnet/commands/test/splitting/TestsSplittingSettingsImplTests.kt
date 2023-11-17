@@ -26,8 +26,10 @@ import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_CURRENT
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_EXACT_MATCH_FILTER_SIZE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_INCLUDES_FILE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD
-import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_EXACT_MATCH_FILTER
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_PARALLEL_TESTS_USE_SUPPRESSION
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl
 import jetbrains.buildServer.utils.getBufferedReader
 import org.testng.Assert
@@ -150,49 +152,40 @@ class TestsSplittingSettingsImplTests {
         verify(atMost = threshold) { readerMock.read() }
     }
 
-    @Test
-    fun `should provide trim test class parameters flag if set to 'true'`() {
+    @DataProvider
+    fun testDataClassParametersProcessingModes() = arrayOf(
+        arrayOf("Trim", Trim),
+        arrayOf(" Trim ", Trim),
+        arrayOf("trim", Trim),
+        arrayOf("TRIM", Trim),
+        arrayOf("NoProcessing", NoProcessing),
+        arrayOf(" NoProcessing ", NoProcessing),
+        arrayOf("noprocessing", NoProcessing),
+        arrayOf("NOPROCESSING", NoProcessing),
+        arrayOf(null, EscapeSpecialCharacters),
+        arrayOf("EscapeSpecialCharacters", EscapeSpecialCharacters),
+        arrayOf(" EscapeSpecialCharacters ", EscapeSpecialCharacters),
+    )
+
+    @Test(dataProvider = "testDataClassParametersProcessingModes")
+    fun `should provide 'classParametersProcessingMode' feature toggle`(
+        toggleValue: String?,
+        expectedMode: TestClassParametersProcessingMode,
+    ) {
         // arrange
         every {
-            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
-        } answers { "  true " }
+            _parametersServiceMock.tryGetParameter(
+                ParameterType.Configuration,
+                DotnetConstants.PARAM_PARALLEL_TESTS_CLASS_PARAMETERS_PROCESSING_MODE
+            )
+        } answers { toggleValue }
         val settings = create()
 
         // act
-        val result = settings.trimTestClassParameters
+        val result = settings.testClassParametersProcessingMode
 
         // assert
-        Assert.assertTrue(result)
-    }
-
-    @Test
-    fun `should provide trim test class parameters flag if set to 'false'`() {
-        // arrange
-        every {
-            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
-        } answers { "  false " }
-        val settings = create()
-
-        // act
-        val result = settings.trimTestClassParameters
-
-        // assert
-        Assert.assertFalse(result)
-    }
-
-    @Test
-    fun `should provide trim test class parameters flag if property is unset`() {
-        // arrange
-        every {
-            _parametersServiceMock.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_PARALLEL_TESTS_GROUP_PARAMETRISED_TEST_CLASSES)
-        } answers { null }
-        val settings = create()
-
-        // act
-        val result = settings.trimTestClassParameters
-
-        // assert
-        Assert.assertTrue(result)
+        Assert.assertEquals(result, expectedMode)
     }
 
     private fun create() = TestsSplittingSettingsImpl(_parametersServiceMock, _fileSystemServiceMock)

@@ -18,6 +18,7 @@ package jetbrains.buildServer.dotnet.commands.test.splitting
 
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesReader
 
 class TestsSplittingFilterProvider(
@@ -49,23 +50,29 @@ class TestsSplittingFilterProvider(
         }
 
         return _settings.testClasses.toList()
-            .map { testClassWithTrimmedParams(it) }
+            .map { processTestClassParameters(it) }
             .distinct()
-            .map { "$it." }       // to avoid collisions with overlapping test class names prefixes
+            .map { if (testClassContainsParameters(it)) it else "$it." } // to avoid collisions with overlapping test class names prefixes
             .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
-    private fun testClassWithTrimmedParams(testClass: String): String {
-        if (!_settings.trimTestClassParameters)
-            return testClass
-
-        val paramsStartIndex = testClass.indexOf("(")
-        val paramsEndIndex = testClass.lastIndexOf(")")
-        if (paramsStartIndex == -1 || paramsEndIndex != testClass.length - 1) {
+    private fun processTestClassParameters(testClass: String): String {
+        if (!testClassContainsParameters(testClass)) {
             return testClass
         }
-        return testClass.substring(0, paramsStartIndex);
+        return when (_settings.testClassParametersProcessingMode) {
+            Trim -> testClass.substring(0, testClass.indexOf("("))
+            NoProcessing -> testClass
+            EscapeSpecialCharacters -> escapeSpecialCharacters(testClass)
+        }
     }
+
+    private fun escapeSpecialCharacters(testClassName: String) =
+        charactersToEscape.fold(testClassName) { resultName, charToEscape ->
+            resultName.replace(charToEscape, "\\$charToEscape")
+        }.replace(",", "%2C")
+
+    private fun testClassContainsParameters(testClass: String) = testClass.contains("(") && testClass.endsWith(")")
 
     // FullyQualifiedName=Namespace.TestClass0.Test000 | FullyQualifiedName=Namespace.TestClass0.Test001 | ...
     private fun buildExactMatchFilter(): String {
@@ -95,5 +102,6 @@ class TestsSplittingFilterProvider(
     companion object {
         private val LOG = Logger.getLogger(TestsSplittingFilterProvider::class.java)
         private const val FilterExpressionChunkSize = 1000;
+        private val charactersToEscape = listOf("\\", "\"", "(", ")", "&", "|", "=", "!", "~")
     }
 }

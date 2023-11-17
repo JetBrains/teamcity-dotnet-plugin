@@ -4,7 +4,7 @@ namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression;
 
 internal class TestSuppressionDecider : ITestSuppressionDecider
 {
-    public (bool shouldBeSuppressed, ITestSelector testSelector) Decide(string testSelectorQuery, bool inclusionMode, IReadOnlyDictionary<string, ITestSelector> testSelectors)
+    public (bool shouldBeSuppressed, TestSelector testSelector) Decide(string testSelectorQuery, bool inclusionMode, IReadOnlyDictionary<string, TestSelector> testSelectors)
     {
         if (string.IsNullOrWhiteSpace(testSelectorQuery))
         {
@@ -16,7 +16,7 @@ internal class TestSuppressionDecider : ITestSuppressionDecider
 
         return testSelectors.TryGetValue(testSelectorQuery, out var existingSelector)
             ? (shouldBeSuppressed: !inclusionMode, testSelector: existingSelector)
-            : (shouldBeSuppressed: inclusionMode, testSelector: new TestClassSelector(namespaces, className));
+            : (shouldBeSuppressed: inclusionMode, testSelector: new TestSelector(namespaces, className));
     }
 
     private static (IList<string>, string) Parse(string testSelectorQuery)

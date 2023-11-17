@@ -73,8 +73,7 @@ public class TestSelectorsLoaderTests
     public async Task LoadTestSelectorsFromAsync_Should_Return_Correct_Selector_When_Parser_Returns_True()
     {
         // arrange
-        var testSelector = new Mock<ITestSelector>();
-        testSelector.Setup(ts => ts.Query).Returns("valid_selector");
+        var testSelector = new TestSelector(new List<string>(), "valid_selector");
 
         var fileInfoMock = new Mock<IFileInfo>();
         _fileSystemMock.Setup(fs => fs.File.Exists(It.IsAny<string>())).Returns(true);
@@ -83,9 +82,9 @@ public class TestSelectorsLoaderTests
         _fileReaderMock.Setup(fs => fs.ReadLinesAsync(It.IsAny<string>()))
             .Returns(ToAsyncEnumerable(new List<(string, int)> { ("valid_selector", 1) }));
     
-        _selectorParserMock.Setup(sp => sp.TryParseTestQuery(It.IsAny<string>(), out It.Ref<ITestSelector>.IsAny!))
+        _selectorParserMock.Setup(sp => sp.TryParseTestQuery(It.IsAny<string>(), out It.Ref<TestSelector>.IsAny!))
             .Returns(true)
-            .Callback(new TryParseTestQueryCallback((string s, out ITestSelector ts) => ts = testSelector.Object));
+            .Callback(new TryParseTestQueryCallback((string s, out TestSelector ts) => ts = testSelector));
     
         // act
         var result = await _loader.LoadTestSelectorsFromAsync("path/to/file");
@@ -93,10 +92,10 @@ public class TestSelectorsLoaderTests
         // assert
         Assert.Single(result);
         Assert.True(result.ContainsKey("valid_selector"));
-        Assert.Equal(testSelector.Object, result["valid_selector"]);
+        Assert.Equal(testSelector, result["valid_selector"]);
     }
 
-    private delegate void TryParseTestQueryCallback(string s, out ITestSelector ts);
+    private delegate void TryParseTestQueryCallback(string s, out TestSelector ts);
 
     private static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(IEnumerable<T> enumerable)
     {

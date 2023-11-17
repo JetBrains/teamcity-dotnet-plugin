@@ -23,7 +23,7 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
         _logger = logger;
     }
 
-    public async Task<IReadOnlyDictionary<string, ITestSelector>> LoadTestSelectorsFromAsync(string filePath)
+    public async Task<IReadOnlyDictionary<string, TestSelector>> LoadTestSelectorsFromAsync(string filePath)
     {
         _logger.LogInformation("Loading test selectors from file: {TestClassesFilePath}", filePath);
         
@@ -31,15 +31,15 @@ internal class TestSelectorsLoader : ITestSelectorsLoader
         if (testSelectorsFile == null)
         {
             _logger.LogWarning("Test selectors file is not available: {Target}", filePath);
-            return new Dictionary<string, ITestSelector>();
+            return new Dictionary<string, TestSelector>();
         }
 
         return await LoadSelectors(testSelectorsFile);
     }
 
-    private async Task<IReadOnlyDictionary<string, ITestSelector>> LoadSelectors(IFileSystemInfo testSelectorsFile)
+    private async Task<IReadOnlyDictionary<string, TestSelector>> LoadSelectors(IFileSystemInfo testSelectorsFile)
     {
-        var registry = new Dictionary<string, ITestSelector>();
+        var registry = new Dictionary<string, TestSelector>();
 
         await foreach (var (line, lineNumber) in _fileReader.ReadLinesAsync(testSelectorsFile.FullName))
         {

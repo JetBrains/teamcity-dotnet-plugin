@@ -1,12 +1,10 @@
 using TeamCity.Dotnet.TestSuppressor.Domain.TestEngines;
-using TeamCity.Dotnet.TestSuppressor.Domain.TestSelectors;
 using TeamCity.Dotnet.TestSuppressor.Infrastructure.DotnetAssembly;
 
 namespace TeamCity.Dotnet.TestSuppressor.Domain.Suppression.SuppressionStrategies;
 
-internal abstract class BaseSuppressionStrategy<TTestEngine, TTestSelector> : ITestSuppressionStrategy
+internal abstract class BaseSuppressionStrategy<TTestEngine> : ITestSuppressionStrategy
     where TTestEngine : ITestEngine
-    where TTestSelector : ITestSelector
 {
     protected BaseSuppressionStrategy(TTestEngine testEngine)
     {
@@ -30,14 +28,10 @@ internal abstract class BaseSuppressionStrategy<TTestEngine, TTestSelector> : IT
     }
 
     public Type TestEngineType => typeof(TTestEngine);
-    
-    public Type TestSelectorType => typeof(TTestSelector);
 
-    public TestSuppressionResult SuppressTests(IDotnetType type, ITestSelector testSelector) =>
-        SuppressTestsBySelector(type, (TTestSelector) testSelector);
+    public TestSuppressionResult SuppressTests(IDotnetType type) => SuppressTestsBySelector(type);
 
-    private TestSuppressionResult SuppressTestsBySelector(IDotnetType type, TTestSelector testSelector) =>
-        RemoveAllTestAttributes(type);
+    private TestSuppressionResult SuppressTestsBySelector(IDotnetType type) => RemoveAllTestAttributes(type);
 
     private int RemoveTestAttributesFromMethods(IDotnetType testClass)
     {

@@ -35,7 +35,7 @@ public class TestSuppressionMutatorTests
             .Setup(m => m.Detect(It.IsAny<IDotnetAssembly>()))
             .Returns(new List<TestClass>());
         var assembly = Mock.Of<IDotnetAssembly>();
-        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, ITestSelector>(), false);
+        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, TestSelector>(), false);
         
         // act
         var result = await _mutator.MutateAsync(assembly, criteria);
@@ -47,7 +47,7 @@ public class TestSuppressionMutatorTests
             .Verify(m => 
                 m.Decide(It.IsAny<string>(),
                     It.IsAny<bool>(),
-                    It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()),
+                    It.IsAny<IReadOnlyDictionary<string, TestSelector>>()),
                 Times.Never
             );
         _testsSuppressorMock
@@ -70,14 +70,14 @@ public class TestSuppressionMutatorTests
                 new (Mock.Of<IDotnetType>(), testEngines)
             });
         var assembly = Mock.Of<IDotnetAssembly>();
-        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, ITestSelector>(), false);
+        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, TestSelector>(), false);
         _testSuppressionDeciderMock
             .Setup(m =>
                 m.Decide(
                     It.IsAny<string>(),
                     It.IsAny<bool>(),
-                    It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()))
-            .Returns((false, Mock.Of<ITestSelector>()));
+                    It.IsAny<IReadOnlyDictionary<string, TestSelector>>()))
+            .Returns((false, new TestSelector(new List<string>(), "")));
         
         // act
         var result = await _mutator.MutateAsync(assembly, criteria);
@@ -89,7 +89,7 @@ public class TestSuppressionMutatorTests
             .Verify(m => 
                     m.Decide(It.IsAny<string>(),
                         It.IsAny<bool>(),
-                        It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()),
+                        It.IsAny<IReadOnlyDictionary<string, TestSelector>>()),
                 Times.Exactly(2)
             );
         _testsSuppressorMock
@@ -112,7 +112,7 @@ public class TestSuppressionMutatorTests
         var suppressingTestTypeMock = new Mock<IDotnetType>();
         suppressingTestTypeMock.Setup(m => m.FullName).Returns("SuppressingTestClass");
         var suppressingTestType = suppressingTestTypeMock.Object;
-        var suppressingTestSelector = Mock.Of<ITestSelector>();
+        var suppressingTestSelector = new TestSelector(new List<string>(), "");
         
         _testClassDetectorMock
             .Setup(m => m.Detect(It.IsAny<IDotnetAssembly>()))
@@ -124,20 +124,20 @@ public class TestSuppressionMutatorTests
                 new (suppressingTestType, testEngines),
             });
         var assembly = Mock.Of<IDotnetAssembly>();
-        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, ITestSelector>(), false);
+        var criteria = new TestSuppressionPatchingCriteria(new Dictionary<string, TestSelector>(), false);
         _testSuppressionDeciderMock
             .Setup(m =>
                 m.Decide(
                     "NotSuppressingTestClass",
                     It.IsAny<bool>(),
-                    It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()))
-            .Returns((false, Mock.Of<ITestSelector>()));
+                    It.IsAny<IReadOnlyDictionary<string, TestSelector>>()))
+            .Returns((false, new TestSelector(new List<string>(), "")));
         _testSuppressionDeciderMock
             .Setup(m =>
                 m.Decide(
                     "SuppressingTestClass",
                     It.IsAny<bool>(),
-                    It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()))
+                    It.IsAny<IReadOnlyDictionary<string, TestSelector>>()))
             .Returns((true, suppressingTestSelector));
         _testsSuppressorMock
             .Setup(m => m.SuppressTests(suppressingTestType, It.IsAny<TestSuppressionParameters>()))
@@ -153,7 +153,7 @@ public class TestSuppressionMutatorTests
             .Verify(m => 
                     m.Decide(It.IsAny<string>(),
                         It.IsAny<bool>(),
-                        It.IsAny<IReadOnlyDictionary<string, ITestSelector>>()),
+                        It.IsAny<IReadOnlyDictionary<string, TestSelector>>()),
                 Times.Exactly(4)
             );
         _testsSuppressorMock
