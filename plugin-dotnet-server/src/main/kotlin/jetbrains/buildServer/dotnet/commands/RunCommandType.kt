@@ -14,7 +14,7 @@ import org.springframework.beans.factory.BeanFactory
  */
 class RunCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetType(_requirementFactory) {
+    : DotnetCommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Run.id
 
     override val editPage: String = "editRunParameters.jsp"

@@ -10,7 +10,7 @@ import jetbrains.buildServer.dotnet.RequirementFactory
  */
 class TestCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetType(_requirementFactory) {
+    : DotnetCommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Test.id
 
     override val editPage: String = "editTestParameters.jsp"

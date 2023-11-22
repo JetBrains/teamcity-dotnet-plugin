@@ -10,7 +10,7 @@ import jetbrains.buildServer.dotnet.RequirementFactory
  */
 class BuildCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetType(_requirementFactory) {
+    : DotnetCommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Build.id
 
     override val editPage: String = "editBuildParameters.jsp"

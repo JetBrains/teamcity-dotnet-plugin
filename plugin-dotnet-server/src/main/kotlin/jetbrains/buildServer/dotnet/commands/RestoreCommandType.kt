@@ -10,7 +10,7 @@ import jetbrains.buildServer.dotnet.RequirementFactory
  */
 class RestoreCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetType(_requirementFactory) {
+    : DotnetCommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Restore.id
 
     override val editPage: String = "editRestoreParameters.jsp"

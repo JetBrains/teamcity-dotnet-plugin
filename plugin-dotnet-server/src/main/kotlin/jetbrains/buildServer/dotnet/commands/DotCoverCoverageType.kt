@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.CommandType
 import jetbrains.buildServer.dotCover.DotCoverToolVersionType
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
@@ -28,7 +29,7 @@ class DotCoverCoverageType(requirementFactory: RequirementFactory): CommandType(
 
     override val editPage: String = "editDotCoverParameters.jsp"
 
-    override val viewPage: String = "viewDotCoverParameters.jsp"
+    override val viewPage: String = "viewDotCoverRunnerParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))

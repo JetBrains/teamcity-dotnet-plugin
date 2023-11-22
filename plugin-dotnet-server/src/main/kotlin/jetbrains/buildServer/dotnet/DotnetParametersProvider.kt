@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.dotnet
 
+import jetbrains.buildServer.CommandType
 import jetbrains.buildServer.dotnet.commands.*
 import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl
 import jetbrains.buildServer.web.functions.InternalProperties

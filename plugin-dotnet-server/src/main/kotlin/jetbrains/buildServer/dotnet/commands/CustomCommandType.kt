@@ -4,8 +4,6 @@ package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.requirements.RequirementQualifier
-import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.InvalidProperty
 import org.springframework.beans.factory.BeanFactory
 
@@ -14,7 +12,7 @@ import org.springframework.beans.factory.BeanFactory
  */
 class CustomCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetType(_requirementFactory) {
+    : DotnetCommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Custom.id
 
     override val description: String = "<custom>"

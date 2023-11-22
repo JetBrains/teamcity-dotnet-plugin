@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.dotnet.commands
 
+import jetbrains.buildServer.CommandType
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementType
