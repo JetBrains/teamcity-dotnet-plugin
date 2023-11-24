@@ -5,15 +5,12 @@ import jetbrains.buildServer.tools.utils.SemanticVersion
 
 class DotCoverToolComparator : Comparator<ToolVersion> {
 
-    override fun compare(tool1: ToolVersion, tool2: ToolVersion): Int {
-        if (tool1 !is DotCoverToolVersion || tool2 !is DotCoverToolVersion) {
+    override fun compare(toolVersion1: ToolVersion, toolVersion2: ToolVersion): Int {
+        if (toolVersion1 !is DotCoverToolVersion || toolVersion2 !is DotCoverToolVersion) {
             return 0
         }
 
-        val toolVersion1: DotCoverToolVersion = tool1
-        val toolVersion2: DotCoverToolVersion = tool2
-
-        val result = SemanticVersion.compareAsVersions(toolVersion2.packageVersion, toolVersion1.packageVersion)
+        val result = SemanticVersion.compareAsVersions(toolVersion1.packageVersion, toolVersion2.packageVersion)
 
         return if (result != 0) {
             result

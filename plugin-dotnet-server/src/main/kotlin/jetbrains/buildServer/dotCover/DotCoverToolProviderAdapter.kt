@@ -75,11 +75,21 @@ class DotCoverToolProviderAdapter(
         val pathPrefix = if (toolPackage.name.lowercase().endsWith(DotnetConstants.PACKAGE_NUGET_EXTENSION)) "tools/" else ""
         _toolService.unpackToolPackage(toolPackage, pathPrefix, targetDirectory, *DOT_COVER_PACKAGES)
 
-        val pluginRoot = _pluginDescriptor.pluginRoot
-        val toolXmlFileFrom = File(pluginRoot, "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml")
-        val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
-        _fileSystem.copy(toolXmlFileFrom, toolXmlFileTo)
+        val toolVersion = tryGetPackageVersion(toolPackage).toolVersion
+        val descriptorPath = File(targetDirectory, "teamcity-plugin.xml")
+        if (shouldUseOriginalToolDescriptor(toolVersion, descriptorPath)) {
+            return
+        }
+        val newDescriptorPath = File(_pluginDescriptor.pluginRoot, "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml")
+        _fileSystem.copy(newDescriptorPath, descriptorPath)
     }
+
+    private fun shouldUseOriginalToolDescriptor(toolVersion: ToolVersion?, originalDescriptor: File) =
+        TeamCityProperties.getBooleanOrTrue("teamcity.dotCover.useOriginalToolDescriptor") &&
+        toolVersion != null &&
+        toolVersion is DotCoverToolVersion &&
+        _fileSystem.isExists(originalDescriptor) &&
+        _toolComparator.compare(toolVersion, firstDotCoverVersionWithCorrectToolDescriptor()) >= 0
 
     override fun getDefaultBundledVersionId(): String? = null
 
@@ -133,8 +143,12 @@ class DotCoverToolProviderAdapter(
     private fun getPackages() = _toolService.getPackages(*DOT_COVER_PACKAGES)
         .filter { _toolFilter.accept(it) }
         .map { DotCoverDownloadableToolVersion(_toolType, it) }
-        .sortedWith(_toolComparator)
+        .sortedWith(_toolComparator.reversed())
         .toMutableList()
+
+    private fun firstDotCoverVersionWithCorrectToolDescriptor() = DotCoverToolVersion(
+        _toolType, "2023.3", DOTCOVER_PACKAGE_ID, false
+    )
 
     companion object {
         private val LOG: Logger = Logger.getInstance(DotCoverToolProviderAdapter::class.java.name)
