@@ -12,7 +12,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty
  */
 class NugetDeleteCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetCommandType(_requirementFactory) {
+    : DotnetCLICommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.NuGetDelete.id
 
     override val description: String = name.replace('-', ' ')

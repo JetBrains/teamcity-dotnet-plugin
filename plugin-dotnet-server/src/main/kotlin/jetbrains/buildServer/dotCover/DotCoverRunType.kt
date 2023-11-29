@@ -25,7 +25,7 @@ class DotCoverRunType(
     }
 
     override fun getEditRunnerParamsJspFilePath() =
-        _pluginDescriptor.getPluginResourcesPath("editDotCoverParameters.jsp")
+        _pluginDescriptor.getPluginResourcesPath("editDotCoverRunnerParameters.jsp")
 
     override fun getViewRunnerParamsJspFilePath() =
         _pluginDescriptor.getPluginResourcesPath("viewDotCoverRunnerParameters.jsp")

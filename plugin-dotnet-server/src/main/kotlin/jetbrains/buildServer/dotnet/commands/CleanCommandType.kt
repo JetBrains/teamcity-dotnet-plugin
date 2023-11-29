@@ -10,7 +10,7 @@ import jetbrains.buildServer.dotnet.RequirementFactory
  */
 class CleanCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetCommandType(_requirementFactory) {
+    : DotnetCLICommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Clean.id
 
     override val editPage: String = "editCleanParameters.jsp"

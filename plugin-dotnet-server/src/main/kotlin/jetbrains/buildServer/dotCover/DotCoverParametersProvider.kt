@@ -48,7 +48,7 @@ class DotCoverParametersProvider {
 
 //    companion object {
 //        private val requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
-//        val commandTypes get() = sequenceOf(
+//        val commandTypes get() = sequenceOf
 //            RestoreCommandType(requirementFactory),
 //            BuildCommandType(requirementFactory),
 //            TestCommandType(requirementFactory),

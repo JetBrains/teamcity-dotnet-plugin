@@ -14,7 +14,7 @@ import org.springframework.beans.factory.BeanFactory
  */
 class PackCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetCommandType(_requirementFactory) {
+    : DotnetCLICommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Pack.id
 
     override val editPage: String = "editPackParameters.jsp"

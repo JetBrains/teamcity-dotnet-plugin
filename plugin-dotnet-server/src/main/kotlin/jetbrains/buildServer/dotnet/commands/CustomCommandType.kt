@@ -12,7 +12,7 @@ import org.springframework.beans.factory.BeanFactory
  */
 class CustomCommandType(
         private val _requirementFactory: RequirementFactory)
-    : DotnetCommandType(_requirementFactory) {
+    : DotnetCLICommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Custom.id
 
     override val description: String = "<custom>"

@@ -1,15 +1,12 @@
-
-
-package jetbrains.buildServer.dotnet.commands
+package jetbrains.buildServer.dotCover.commands
 
 import jetbrains.buildServer.dotnet.DotnetCommandType
 import jetbrains.buildServer.dotnet.RequirementFactory
+import jetbrains.buildServer.dotnet.commands.DotnetCLICommandType
 
-/**
- * Provides parameters for dotnet build command.
- */
-class BuildCommandType(
-        private val _requirementFactory: RequirementFactory)
+class CoverCommandType(
+    private val _requirementFactory: RequirementFactory
+)
     : DotnetCLICommandType(_requirementFactory) {
     override val name: String = DotnetCommandType.Build.id
 
