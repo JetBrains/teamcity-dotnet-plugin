@@ -1,232 +1,237 @@
-/*
- * Copyright 2000-2023 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.*
-import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.common.MSBuildEnvironmentVariables.USE_SHARED_COMPILATION_ENV_VAR
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.logging.LoggerResolver
 import jetbrains.buildServer.util.OSType
-import org.testng.Assert
+import org.testng.Assert.*
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
-class EnvironmentVariablesTest {
+class DotnetEnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _pathsService: PathsService
-    @MockK private lateinit var _nugetEnvironmentVariables: EnvironmentVariables
-    @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _loggerResolver: LoggerResolver
-
-    private val _tmpPath = File("Tmp")
+    private lateinit var _additionalEnvVars: MutableList<EnvironmentVariables>
+    private lateinit var _environmentVariables: EnvironmentVariables
 
     @BeforeMethod
     fun setUp() {
-        MockKAnnotations.init(this)
+        MockKAnnotations.init(this, )
         clearAllMocks()
-        every { _nugetEnvironmentVariables.getVariables(any()) } returns emptySequence()
-        every { _virtualContext.resolvePath(any()) } answers { "v_" + arg<String>(0) }
-        every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR) } returns null
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD) } returns null
-        every { _loggerResolver.resolve(ToolType.MSBuild) } returns File("msbuild_logger");
-        every { _loggerResolver.resolve(ToolType.VSTest) } returns File("vstest_logger");
-        every { _pathsService.getPath(PathType.AgentTemp) } returns _tmpPath
+        _environment = mockk(relaxed = true)
+        _parametersService = mockk(relaxed = true)
+        _pathsService = mockk(relaxed = true)
+        _loggerResolver = mockk(relaxed = true)
+        _additionalEnvVars = mutableListOf()
+        _environmentVariables = DotnetEnvironmentVariables(
+            _environment, _parametersService, _pathsService, _additionalEnvVars, _loggerResolver)
     }
 
-    @Test
-    fun shouldProvideDefaultVars() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _nugetEnvironmentVariables.getVariables(any()) } returns sequenceOf(CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"), CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))).toList())
-    }
-
-    @Test
-    fun shouldNotPublishedMessageGuardPathWhenItIsNotAllowed() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-        val nugetPath = File(File(systemPath, "dotnet"), ".nuget").absolutePath
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _nugetEnvironmentVariables.getVariables(any()) } returns sequenceOf(CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD) } returns "false"
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(
-            actualVariables,
-            (
-                    DotnetEnvironmentVariables.defaultVariables
-                            + sequenceOf(
-                        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.MSBUILD_LOGGER_ENV_VAR, File("msbuild_logger").canonicalPath),
-                        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTEST_LOGGER_ENV_VAR, File("vstest_logger").canonicalPath))
-                            + sequenceOf(
-                        CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"),
-                        CommandLineEnvironmentVariable("NUGET_VAR", nugetPath))
-                    ).toList()
-        )
-    }
-
-    @Test
-    fun shouldNotUseSharedCompilationByDefault() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"))).toList())
-    }
-
-    @Test
-    fun shouldUseSharedCompilationWhenThisParameterWasOverridedInEnvVars() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-        every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR) } returns "true"
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "true"))).toList())
-    }
-
-    @DataProvider(name = "osTypesData")
-    fun osTypesData(): Array<Array<OSType>> {
-        return arrayOf(
-            arrayOf(OSType.UNIX),
-            arrayOf(OSType.MAC))
-    }
-
-    @Test(dataProvider = "osTypesData")
-    fun shouldProvideDefaultVarsWhenVirtualContextFromWindows(os: OSType) {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns true
-        every { _virtualContext.targetOSType } returns os
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"))).toList())
-    }
-
-    @Test
-    fun shouldProvideDefaultVarsWhenVirtualContextForWindowsContainer() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-
-        // When
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns true
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"))).toList())
-    }
-
-    @Test
-    fun shouldOverrideDefaultNugetPackagesPathWhenSpecifiedAsEnvVar() {
-        // Given
-        val environmentVariables = createInstance()
-        val systemPath = File("system")
-
-        // When
-        every { _nugetEnvironmentVariables.getVariables(any()) } returns sequenceOf(CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))
-        every { _environment.os } returns OSType.WINDOWS
-        every { _environment.tryGetVariable("USERPROFILE") } returns "path"
-        every { _pathsService.getPath(PathType.System) } returns systemPath
-        every { _virtualContext.isVirtual } returns false
-        every { _virtualContext.targetOSType } returns OSType.WINDOWS
-
-        val actualVariables = environmentVariables.getVariables(Version(1, 2, 3)).toList()
-
-        // Then
-        Assert.assertEquals(actualVariables, (DotnetEnvironmentVariables.defaultVariables + commonVars + sequenceOf(CommandLineEnvironmentVariable(USE_SHARED_COMPILATION_ENV_VAR, "false"), CommandLineEnvironmentVariable("NUGET_VAR", "custom_nuget_packages_path"))).toList())
-    }
-
-    private fun createInstance() = DotnetEnvironmentVariables(
-        _environment,
-        _parametersService,
-        _pathsService,
-        listOf(_nugetEnvironmentVariables),
-        _loggerResolver,
+    @DataProvider(name = "common env vars")
+    fun `common env vars`(): Array<Array<Any>> = arrayOf(
+        arrayOf(CommonEnvVarTestCase("DOTNET_CLI_TELEMETRY_OPTOUT", "true")),
+        arrayOf(CommonEnvVarTestCase("DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "true")),
+        arrayOf(CommonEnvVarTestCase("NUGET_XMLDOC_MODE", "skip")),
+        arrayOf(CommonEnvVarTestCase("TEAMCITY_MSBUILD_LOGGER", "/path/to/msbuild/logger") {
+            every { _loggerResolver.resolve(ToolType.MSBuild) } returns mockk<File>().also { f ->
+                every { f.canonicalPath } returns "/path/to/msbuild/logger"
+            }
+        }),
+        arrayOf(CommonEnvVarTestCase("TEAMCITY_VSTEST_LOGGER", "/path/to/vstest/logger") {
+            every { _loggerResolver.resolve(ToolType.VSTest) } returns mockk<File>().also { f ->
+                every { f.canonicalPath } returns "/path/to/vstest/logger"
+            }
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","true") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "true"
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","true") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "  TrUe   "
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","false") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "false"
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","false") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "1"
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","false") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "0"
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","false") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns "     "
+        }),
+        arrayOf(CommonEnvVarTestCase("UseSharedCompilation","false") {
+            every { _parametersService.tryGetParameter(ParameterType.Environment, USE_SHARED_COMPILATION_ENV_VAR)
+            } returns null
+        }),
     )
 
-    private val commonVars = sequenceOf(
-        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.MSBUILD_LOGGER_ENV_VAR, File("msbuild_logger").canonicalPath),
-        CommandLineEnvironmentVariable(DotnetEnvironmentVariables.VSTEST_LOGGER_ENV_VAR, File("vstest_logger").canonicalPath)
+    data class CommonEnvVarTestCase(
+        val name: String,
+        val value: String,
+        val arrange: () -> Unit = {},
     )
+
+    @Test(dataProvider = "common env vars")
+    fun `should always provide common environment variable`(testCase: CommonEnvVarTestCase) {
+        // arrange
+        testCase.arrange()
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertNotNull(result.singleOrNull { it.name == testCase.name && it.value == testCase.value })
+    }
+
+    @Test
+    fun `should always provide exact number of always present environment variable`() {
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertEquals(result.count(), 7)
+    }
+
+    @DataProvider(name = "OS and home env var name")
+    fun `OS and home env var name`(): Array<Array<Any>> = arrayOf(
+        arrayOf(OSType.WINDOWS, "USERPROFILE"),
+        arrayOf(OSType.UNIX, "HOME"),
+        arrayOf(OSType.MAC, "HOME"),
+    )
+
+    @Test(dataProvider = "OS and home env var name")
+    fun `should not provide user home env var if already defined by a user`(os: OSType, userHomeEnvVarName: String) {
+        // arrange
+        _environment.also { e ->
+            every { e.os } returns os
+            every { e.tryGetVariable(userHomeEnvVarName) } returns "/user/defined/path/to/user/home"
+        }
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertFalse(result.any { it.name == userHomeEnvVarName })
+    }
+
+    @Test(dataProvider = "OS and home env var name")
+    fun `should provide user home env var from Java system property if not defined by a user`(os: OSType, userHomeEnvVarName: String) {
+        // arrange
+        _environment.also { e ->
+            every { e.os } returns os
+            every { e.tryGetVariable(userHomeEnvVarName) } returns null
+        }
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertNotNull(result.singleOrNull { it.name == userHomeEnvVarName && it.value == System.getProperty("user.home") })
+    }
+
+    @DataProvider(name = ".NET SDK version and result")
+    fun `dotnet SDK version and result`(): Array<Array<Any>> = arrayOf(
+        arrayOf(Version(2, 2), true),
+        arrayOf(Version(3, 1, 0, "rc"), true),
+        arrayOf(Version(7, 0 ,400), true),
+        arrayOf(Version(8, 0 ,100, "rc"), false),
+        arrayOf(Version(8, 0 ,100, "preview2"), false),
+        arrayOf(Version(8, 0 ,0), false),
+        arrayOf(Version(8, 0 ,100), false),
+    )
+
+    @Test(dataProvider = ".NET SDK version and result")
+    fun `should provide COMPlus_EnableDiagnostics == 0 env var when dotnet SDK version less than dotnet 8`(sdkVersion: Version, expectedResult: Boolean) {
+        // act
+        val result = _environmentVariables.getVariables(sdkVersion)
+
+        // assert
+        assertEquals(result.any { it.name == "COMPlus_EnableDiagnostics" && it.value == "0" }, expectedResult)
+    }
+
+    @DataProvider(name = "messages guard parameter and result")
+    fun `messages guard parameter and result`(): Array<Array<Any?>> = arrayOf(
+        arrayOf("", false),
+        arrayOf("  ", false),
+        arrayOf("1", false),
+        arrayOf("0", false),
+        arrayOf("  tRuE ", true),
+        arrayOf(" FalSE  ", false),
+        arrayOf("true", true),
+        arrayOf("false", false),
+        arrayOf(null, false),
+    )
+
+    @Test(dataProvider = "messages guard parameter and result")
+    fun `should provide TEAMCITY_SERVICE_MESSAGES_PATH env var with agent temp directory when parameter is set`(parameterValue: String?, expectedResult: Boolean) {
+        // arrange
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_MESSAGES_GUARD) } returns parameterValue
+        val agentTempPath = "/path/to/agent/temp"
+        every { _pathsService.getPath(PathType.AgentTemp) } returns mockk<File>().also { f ->
+            every { f.canonicalPath } returns agentTempPath
+        }
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertEquals(result.any { it.name == "TEAMCITY_SERVICE_MESSAGES_PATH" && it.value == agentTempPath }, expectedResult)
+    }
+
+    @Test
+    fun `should provide additional env vars`() {
+        // arrange
+        _additionalEnvVars.addAll(listOf(
+            mockk {
+                every { getVariables(any()) } returns sequenceOf(
+                    mockk {
+                        every { name } returns "VAR1"
+                        every { value } returns "VAL1"
+                    },
+                    mockk {
+                        every { name } returns "VAR2"
+                        every { value } returns "VAL2"
+                    }
+                )
+            },
+            mockk {
+                every { getVariables(any()) } returns sequenceOf(
+                    mockk {
+                        every { name } returns "VAR3"
+                        every { value } returns "VAL3"
+                    },
+                )
+            },
+        ))
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertTrue(result.any { it.name == "VAR1" && it.value == "VAL1" })
+        assertTrue(result.any { it.name == "VAR2" && it.value == "VAL2" })
+        assertTrue(result.any { it.name == "VAR3" && it.value == "VAL3" })
+        assertEquals(result.count(), 10)
+    }
 }
