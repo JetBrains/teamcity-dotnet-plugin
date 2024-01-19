@@ -204,7 +204,6 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetWorkflowComposer" id="dotnetWorkflowComposer">
     <constructor-arg ref="rootDotnetCommandStreamTransformer"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.BuildStepScopedTestEnvironmentBuilderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentImpl" primary="true"/>
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentPredefined" id="stdPathsNugetEnvironment">
     <constructor-arg name="allowInternalCaches" type="boolean" value="false"/>
@@ -219,12 +218,10 @@
   <bean class="jetbrains.buildServer.dotnet.commands.nuget.NugetEnvironmentVariables" id="teamcityNugetEnvironmentVariables">
     <constructor-arg ref="teamCityNugetEnvironment"/>
   </bean>
-  <bean class="jetbrains.buildServer.dotnet.commands.test.TestEnvironmentVariables" id="testEnvironmentVariables"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetEnvironmentVariables" primary="true">
     <constructor-arg>
       <list>
         <ref bean="nugetEnvironmentVariables"/>
-        <ref bean="testEnvironmentVariables"/>
       </list>
     </constructor-arg>
   </bean>
@@ -716,7 +713,6 @@
     <constructor-arg>
       <list>
         <ref bean="nugetEnvironmentVariables"/>
-        <ref bean="testEnvironmentVariables"/>
       </list>
     </constructor-arg>
   </bean>

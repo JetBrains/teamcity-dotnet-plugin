@@ -55,7 +55,7 @@ class DotnetWorkflowComposerTest {
     @BeforeMethod
     fun setUp() {
         _tokens.clear()
-        MockKAnnotations.init(this)
+        MockKAnnotations.init(this, relaxed = true)
         clearAllMocks()
         every { _parametersService.tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY) } returns Verbosity.Detailed.toString()
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
@@ -92,10 +92,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns ToolPath(_msbuildExecutable.path)
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns listOf(
-                    mockk<EnvironmentBuilder>() {
-                        every { build(any())  } answers { createToken() }
-                    })
+                every { environmentBuilders } returns listOf(createEnvironmentBuilderMock(), createEnvironmentBuilderMock())
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -180,10 +177,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _dotnetToolStateWorkflowComposer
                 every { executable } returns _dotnetExecutable
                 every { platform } returns ToolPlatform.CrossPlatform
-                every { environmentBuilders } returns listOf(
-                    mockk<EnvironmentBuilder>() {
-                        every { build(any()) } answers { createToken() }
-                    })
+                every { environmentBuilders } returns listOf(createEnvironmentBuilderMock(), createEnvironmentBuilderMock())
                 every { getArguments(any()) } returns _dotnetArgs.asSequence()
                 every { commandType } returns DotnetCommandType.Build
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -209,10 +203,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns listOf(
-                    mockk<EnvironmentBuilder>() {
-                        every { build(any())  } answers { createToken() }
-                    })
+                every { environmentBuilders } returns listOf(createEnvironmentBuilderMock(), createEnvironmentBuilderMock())
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -302,11 +293,7 @@ class DotnetWorkflowComposerTest {
                 every { toolStateWorkflowComposer } returns _msbuildToolStateWorkflowComposer
                 every { executable } returns _msbuildExecutable
                 every { platform } returns ToolPlatform.Windows
-                every { environmentBuilders } returns listOf(
-                    mockk<EnvironmentBuilder>() {
-                        every { build(any())  } answers { createToken() }
-                    }
-                )
+                every { environmentBuilders } returns listOf(createEnvironmentBuilderMock(), createEnvironmentBuilderMock())
                 every { getArguments(any()) } returns _msbuildArgs.asSequence()
                 every { commandType } returns DotnetCommandType.MSBuild
                 every { resultsAnalyzer } returns mockk<ResultsAnalyzer>() {
@@ -385,6 +372,76 @@ class DotnetWorkflowComposerTest {
                 ))
     }
 
+    @Test
+    fun `should provide default variables and variables from environment builders in command line`() {
+        // Arrange
+        val defaultVariable = mockk<CommandLineEnvironmentVariable>()
+        val builder1Variable = mockk<CommandLineEnvironmentVariable>()
+        val builder2Variable = mockk<CommandLineEnvironmentVariable>()
+
+        _environmentVariables = mockk<EnvironmentVariables> { every { getVariables(any()) } returns sequenceOf(defaultVariable) }
+        val environmentBuildResult1 = mockk<EnvironmentBuildResult>(relaxed = true) { every { variables } returns sequenceOf(builder1Variable) }
+        val environmentBuildResult2 = mockk<EnvironmentBuildResult>(relaxed = true) { every { variables } returns sequenceOf(builder2Variable) }
+        val builder1: EnvironmentBuilder = mockk<EnvironmentBuilder> { every { build(any()) } returns environmentBuildResult1 }
+        val builder2: EnvironmentBuilder = mockk<EnvironmentBuilder> { every { build(any()) } returns environmentBuildResult2 }
+
+        val command = mockk<DotnetCommand>(relaxed = true) { every { environmentBuilders } returns listOf(builder1, builder2) }
+        every { _dotnetCommandResolver.command } returns command
+        every { _dotnetCommandsTransformer.apply(any(), any()) } returns sequenceOf(command)
+
+        val composer = createInstance()
+
+        // Act
+        val workflow = composer.compose(_workflowContext, Unit)
+
+        // Assert
+        val commandLineVariables = workflow.commandLines.first().environmentVariables
+        Assert.assertEquals(commandLineVariables.size, 3)
+        Assert.assertEquals(commandLineVariables[0], defaultVariable)
+        Assert.assertEquals(commandLineVariables[1], builder1Variable)
+        Assert.assertEquals(commandLineVariables[2], builder2Variable)
+    }
+
+    @Test
+    fun `should process command exit codes after disposing environment build results`() {
+        // Arrange
+        val exitCodes = listOf(100, 101)
+
+        val environmentBuildResult1 = mockk<EnvironmentBuildResult>(relaxed = true)
+        val environmentBuildResult2 = mockk<EnvironmentBuildResult>(relaxed = true)
+        val builder1: EnvironmentBuilder = mockk<EnvironmentBuilder> { every { build(any()) } returns environmentBuildResult1 }
+        val builder2: EnvironmentBuilder = mockk<EnvironmentBuilder> { every { build(any()) } returns environmentBuildResult2 }
+
+        val resultsAnalyzer = mockk<ResultsAnalyzer>(relaxed = true)
+
+        val command = mockk<DotnetCommand>(relaxed = true) {
+            every { environmentBuilders } returns listOf(builder1, builder2)
+            every { this@mockk.resultsAnalyzer } returns resultsAnalyzer
+        }
+        every { _dotnetCommandResolver.command } returns command
+        every { _dotnetCommandsTransformer.apply(any(), any()) } returns sequenceOf(command)
+        every { _workflowContext.subscribe(any()) } answers {
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(exitCodes[0]))
+            arg<Observer<CommandResultEvent>>(0).onNext(CommandResultExitCode(exitCodes[1]))
+            mockk<Disposable>(relaxed = true)
+        }
+
+        val composer = createInstance()
+
+        // Act
+        composer.compose(_workflowContext, Unit).commandLines.toList()
+
+        // Assert
+        verifyOrder {
+            environmentBuildResult1.dispose()
+            environmentBuildResult2.dispose()
+            resultsAnalyzer.analyze(exitCodes[0], any())
+            _dotnetWorkflowAnalyzer.registerResult(any(), any(), exitCodes[0])
+            resultsAnalyzer.analyze(exitCodes[1], any())
+            _dotnetWorkflowAnalyzer.registerResult(any(), any(), exitCodes[1])
+        }
+    }
+
     private fun createInstance() = DotnetWorkflowComposer(
         _pathsService,
         _environmentVariables,
@@ -406,6 +463,15 @@ class DotnetWorkflowComposerTest {
         return token
     }
 
+    private fun createEnvironmentBuilderMock(): EnvironmentBuilder {
+        val environmentBuildResult = mockk<EnvironmentBuildResult>(relaxed = true)
+        _tokens.add(environmentBuildResult)
+
+        return mockk<EnvironmentBuilder>(relaxed = true) {
+            every { build(any()) } returns environmentBuildResult
+        }
+    }
+
     private fun verifyAllTokensWereDisposed() {
         for (token in _tokens) {
             verify { token.dispose() }
@@ -413,5 +479,4 @@ class DotnetWorkflowComposerTest {
 
         _tokens.clear()
     }
-
 }

@@ -45,25 +45,32 @@ class DotnetWorkflowComposer(
             val (commandContext, virtualPath) = getCommandContext(context, versions, virtualPaths, dotnetCommand)
             val args = dotnetCommand.getArguments(commandContext).toList()
             val result = mutableSetOf<CommandResult>()
-            val environmentBuildingDisposable = dotnetCommand.environmentBuilders.map { it.build(commandContext) }.toList().toDisposable()
+            val environmentBuildResults = dotnetCommand.environmentBuilders.map { it.build(commandContext) }.toList()
+            val exitCodes = mutableListOf<Int>()
 
             disposableOf(
                 // Subscribe command results observer
                 context.subscribe(dotnetCommand.resultsObserver),
+                context.toExitCodes().subscribe {
+                    exitCodes.add(it)
+                },
                 // Build an environment
-                environmentBuildingDisposable,
+                environmentBuildResults.toDisposable(),
                 // Subscribe for failed tests
                 _failedTestSource.subscribe { result += CommandResult.FailedTests },
-                // Subscribe for an exit code
-                context.toExitCodes().subscribe {
-                    val commandResult = dotnetCommand.resultsAnalyzer.analyze(it, result)
-                    _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
-                    if (commandResult.contains(CommandResult.Fail)) {
-                        context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                disposableOf {
+                    exitCodes.forEach {
+                        val commandResult = dotnetCommand.resultsAnalyzer.analyze(it, result)
+                        _dotnetWorkflowAnalyzer.registerResult(analyzerContext, commandResult, it)
+                        if (commandResult.contains(CommandResult.Fail)) {
+                            context.abort(BuildFinishedStatus.FINISHED_FAILED)
+                        }
                     }
                 }
             ).use {
                 _commandRegistry.register(commandContext)
+                val environmentVariables = getEnvironmentVariables(environmentBuildResults, commandContext)
+
                 yield(
                     CommandLine(
                         baseCommandLine = null,
@@ -71,7 +78,7 @@ class DotnetWorkflowComposer(
                         executableFile = virtualPath,
                         workingDirectory = commandContext.workingDirectory.path,
                         arguments = args,
-                        environmentVariables = _defaultEnvironmentVariables.getVariables(commandContext.toolVersion).toList(),
+                        environmentVariables = environmentVariables,
                         title = getTitle(virtualPath, args, dotnetCommand.title),
                         description = getDescription(commandContext),
                     )
@@ -149,5 +156,13 @@ class DotnetWorkflowComposer(
         }
 
         return description
+    }
+
+    private fun getEnvironmentVariables(
+        environmentBuildResults: List<EnvironmentBuildResult>,
+        commandContext: DotnetCommandContext
+    ): List<CommandLineEnvironmentVariable> {
+        val environmentVariablesFromEnvBuilders = environmentBuildResults.flatMap { it.variables }
+        return (_defaultEnvironmentVariables.getVariables(commandContext.toolVersion) + environmentVariablesFromEnvBuilders).toList()
     }
 }

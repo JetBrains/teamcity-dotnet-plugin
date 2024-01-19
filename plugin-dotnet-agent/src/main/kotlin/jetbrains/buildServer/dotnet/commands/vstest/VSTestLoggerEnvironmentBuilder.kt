@@ -3,17 +3,15 @@
 package jetbrains.buildServer.dotnet.commands.vstest
 
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
-import jetbrains.buildServer.rx.Disposable
-import jetbrains.buildServer.rx.disposableOf
-import jetbrains.buildServer.rx.emptyDisposable
-import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.commands.test.TestReportingParameters
 import jetbrains.buildServer.dotnet.logging.LoggerResolver
-import java.io.Closeable
+import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.rx.emptyDisposable
 import java.io.File
 import java.io.OutputStreamWriter
 
@@ -25,22 +23,21 @@ class VSTestLoggerEnvironmentBuilder(
     private val _testReportingParameters: TestReportingParameters,
     private val _environmentCleaner: EnvironmentCleaner,
     private val _environmentAnalyzer: VSTestLoggerEnvironmentAnalyzer
-)
-    : EnvironmentBuilder {
-    override fun build(context: DotnetCommandContext): Disposable {
+) : EnvironmentBuilder {
+    override fun build(context: DotnetCommandContext): EnvironmentBuildResult {
         val testReportingMode = _testReportingParameters.getMode(context)
         LOG.debug("Test reporting mode: $testReportingMode")
 
         if (testReportingMode.contains(TestReportingMode.Off)) {
-            return emptyDisposable()
+            return EnvironmentBuildResult()
         }
 
         if (testReportingMode.contains(TestReportingMode.MultiAdapterPath)) {
-            return emptyDisposable()
+            return EnvironmentBuildResult()
         }
 
         val targets = context.command.targetArguments.flatMap { it.arguments }.map { File(it.value) }.toList()
-        LOG.debug("Targets: ${targets.joinToString (", "){ it.name }}")
+        LOG.debug("Targets: ${targets.joinToString(", ") { it.name }}")
         val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
         LOG.debug("Checkout directory: $checkoutDirectory")
         val loggerDirectory = File(checkoutDirectory, "$directoryPrefix${_pathsService.uniqueName}")
@@ -51,7 +48,7 @@ class VSTestLoggerEnvironmentBuilder(
         LOG.debug("Analyze ...")
         _environmentAnalyzer.analyze(targets)
 
-        return _loggerResolver.resolve(ToolType.VSTest).parentFile?.absoluteFile?.let {
+        val disposable = _loggerResolver.resolve(ToolType.VSTest).parentFile?.absoluteFile?.let {
             try {
                 LOG.debug("Copy logger to \"$loggerDirectory\" from \"$it\"")
                 _fileSystemService.copy(it, loggerDirectory)
@@ -66,15 +63,17 @@ class VSTestLoggerEnvironmentBuilder(
                 _loggerService.writeErrorOutput("Failed to create logger directory \"$loggerDirectory\"")
             }
 
-            return disposableOf { _fileSystemService.remove(loggerDirectory) }
+            disposableOf { _fileSystemService.remove(loggerDirectory) }
         } ?: emptyDisposable()
+        return EnvironmentBuildResult(disposable = disposable)
     }
 
     companion object {
         private val LOG = Logger.getLogger(VSTestLoggerEnvironmentBuilder::class.java)
         internal const val directoryPrefix = "teamcity.logger."
         internal const val readmeFileName = "readme.txt"
-        internal const val readmeFileContent = "This directory is created by TeamCity agent.\nIt contains files necessary for real-time tests reporting.\nThe directory will be removed automatically."
-        private val EmptyClosable = Closeable { }
+        internal const val readmeFileContent = "This directory is created by TeamCity agent.\n" +
+                "It contains files necessary for real-time tests reporting.\n" +
+                "The directory will be removed automatically."
     }
 }
