@@ -45,6 +45,7 @@ class TestRetryCommandsTransformerTest {
         justRun { _loggerServiceMock.writeMessage(any()) }
         justRun { _retryReportReaderMock.cleanup() }
         every { _retryFilterMock.setTestNames(any()) } returns emptyDisposable()
+        every { _retrySettingsMock.reportPath } returns "report-path"
 
         _testCommandMock.let {
             every { it.commandType } returns DotnetCommandType.Test
