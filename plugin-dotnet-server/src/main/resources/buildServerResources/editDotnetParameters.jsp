@@ -405,6 +405,19 @@
   </td>
 </tr>
 
+<c:if test="${params.testRetryEnabled == 'true'}">
+  <tr class="advancedSetting dotnet test vstest">
+    <th>
+      <label for="${params.testMaxRetriesKey}">Test retries count:</label>
+    </th>
+    <td>
+      <props:textProperty name="${params.testMaxRetriesKey}" className="longField"/>
+      <span class="error" id="error_${params.testMaxRetriesKey}"></span>
+      <span class="smallNote">Rerun failed tests until they pass or until the maximum number of attempts is reached.</span>
+    </td>
+  </tr>
+</c:if>
+
 <tr class="advancedSetting dotnet build clean publish run test vstest">
   <th class="noBorder"><label for="${params.frameworkKey}">Framework:</label></th>
   <td>

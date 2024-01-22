@@ -15,7 +15,7 @@ class RootTestsSplittingCommandsTransformer(
     private val _testsSplittingModeProvider: TestsSplittingModeProvider,
     private val _testsSplittingCommandsTransformers: List<TestsSplittingCommandTransformer>
 ) : DotnetCommandsTransformer {
-    override val stage = DotnetCommandsTransformationStage.Transformation
+    override val stage = DotnetCommandsTransformationStage.Splitting
     override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) =
         commands.any { it.commandType == DotnetCommandType.Test }
                 && _testsSplittingSettings.testsClassesFilePath != null

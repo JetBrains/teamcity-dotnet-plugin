@@ -15,6 +15,7 @@ class DotnetParametersProvider {
     val coverages: Collection<CommandType> = coverageTypes.values
 
     val experimentalMode get() = DotnetParametersProvider.experimentalMode
+    val testRetryEnabled get() = DotnetParametersProvider.testRetryEnabled
 
     // Command parameters
 
@@ -100,6 +101,9 @@ class DotnetParametersProvider {
     val testSettingsFileKey: String
         get() = DotnetConstants.PARAM_TEST_SETTINGS_FILE
 
+    val testMaxRetriesKey: String
+        get() = DotnetConstants.PARAM_TEST_RETRY_MAX_RETRIES
+
     val visualStudioActionKey: String
         get() = DotnetConstants.PARAM_VISUAL_STUDIO_ACTION
 
@@ -156,6 +160,7 @@ class DotnetParametersProvider {
     companion object {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
+        private val testRetryEnabled get() = InternalProperties.getBoolean(DotnetConstants.PARAM_TEST_RETRY_ENABLED) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
         private val requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
         val commandTypes

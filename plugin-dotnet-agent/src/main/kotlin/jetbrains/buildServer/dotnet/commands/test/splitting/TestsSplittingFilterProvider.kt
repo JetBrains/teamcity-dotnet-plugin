@@ -3,6 +3,7 @@
 package jetbrains.buildServer.dotnet.commands.test.splitting
 
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterBuilder
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesReader
@@ -39,7 +40,7 @@ class TestsSplittingFilterProvider(
             .map { processTestClassParameters(it) }
             .distinct()
             .map { if (testClassContainsParameters(it)) it else "$it." } // to avoid collisions with overlapping test class names prefixes
-            .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
+            .let { TestsFilterBuilder.buildFilter(listOf("FullyQualifiedName"), filterOperation, it, filterCombineOperator) }
     }
 
     private fun processTestClassParameters(testClass: String): String {
@@ -49,14 +50,9 @@ class TestsSplittingFilterProvider(
         return when (_settings.testClassParametersProcessingMode) {
             Trim -> testClass.substring(0, testClass.indexOf("("))
             NoProcessing -> testClass
-            EscapeSpecialCharacters -> escapeSpecialCharacters(testClass)
+            EscapeSpecialCharacters -> TestsFilterBuilder.escapeSpecialCharacters(testClass)
         }
     }
-
-    private fun escapeSpecialCharacters(testClassName: String) =
-        charactersToEscape.fold(testClassName) { resultName, charToEscape ->
-            resultName.replace(charToEscape, "\\$charToEscape")
-        }.replace(",", "%2C")
 
     private fun testClassContainsParameters(testClass: String) = testClass.contains("(") && testClass.endsWith(")")
 
@@ -65,29 +61,10 @@ class TestsSplittingFilterProvider(
         val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 
         return _testsNamesReader.read().toList()
-            .let { buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
+            .let { TestsFilterBuilder.buildFilter(listOf("FullyQualifiedName"), filterOperation, it, filterCombineOperator) }
     }
-
-    @Suppress("SameParameterValue")
-    private fun buildFilter(filterProperty: String, filterOperation: String, filterValues: List<String>, filterCombineOperator: String) =
-        // https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
-        filterValues
-            .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}" }
-            .let { filterElements ->
-                when {
-                    filterElements.size > FilterExpressionChunkSize -> {
-                        // chunks in parentheses '(', ')' are necessary to avoid stack overflow in VSTest filter validator
-                        // https://youtrack.jetbrains.com/issue/TW-76381
-                        filterElements.chunked(FilterExpressionChunkSize) { chunk -> "(${chunk.joinToString(filterCombineOperator)})" }
-                    }
-                    else -> filterElements
-                }
-            }
-            .joinToString(filterCombineOperator)
 
     companion object {
         private val LOG = Logger.getLogger(TestsSplittingFilterProvider::class.java)
-        private const val FilterExpressionChunkSize = 1000;
-        private val charactersToEscape = listOf("\\", "\"", "(", ")", "&", "|", "=", "!", "~")
     }
 }

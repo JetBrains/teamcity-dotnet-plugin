@@ -58,6 +58,9 @@
         <param name="test.settingsFile" dslName="settingsFile">
             <description>The path to the run settings configuration file.</description>
         </param>
+        <param name="test.retry.maxRetries" dslName="maxRetries" type="int">
+            <description>Rerun failed tests until they pass or until the maximum number of attempts is reached.</description>
+        </param>
         <param name="args">
             <description>Enter additional command line parameters for dotnet vstest.</description>
         </param>

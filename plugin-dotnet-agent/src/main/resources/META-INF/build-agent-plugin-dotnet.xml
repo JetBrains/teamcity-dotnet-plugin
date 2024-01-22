@@ -358,6 +358,7 @@
   </bean>
   <bean class="jetbrains.buildServer.dotnet.commands.transformation.MultiTargetDotnetCommandTransformer" id="multiTargetDotnetCommandsTransformer"/>
   <bean class="jetbrains.buildServer.dotnet.commands.transformation.ComposedDotnetCommandTransformer" id="composedDotnetCommandsTransformer"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.TestRetryCommandsTransformer" id="testRetryCommandsTransformer"/>
   <bean class="jetbrains.buildServer.dotnet.commands.transformation.test.RootTestsSplittingCommandsTransformer" id="rootTestsSplittingCommandsTransformer">
     <constructor-arg>
       <list>
@@ -372,6 +373,7 @@
       <list>
         <ref bean="multiTargetDotnetCommandsTransformer"/>
         <ref bean="rootTestsSplittingCommandsTransformer"/>
+        <ref bean="testRetryCommandsTransformer"/>
         <ref bean="composedDotnetCommandsTransformer"/>
       </list>
     </constructor-arg>
@@ -500,6 +502,9 @@
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingFilterProvider" id="splitTestsFilterProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingSettingsImpl" id="splitTestsFilterSettings"/>
   <bean class="jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingModeProviderImpl" id="splitTestsModeProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.retry.TestRetrySettingsImpl" id="testRetrySettings"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.retry.TestRetryFilterProviderImpl" id="testRetryFilterProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.test.retry.TestRetryReportReader" id="testRetryReportReader"/>
   <bean class="jetbrains.buildServer.dotnet.ComposedTestsFilterProvider" primary="true" id="composedTestsFilterProvider">
     <constructor-arg>
       <list>

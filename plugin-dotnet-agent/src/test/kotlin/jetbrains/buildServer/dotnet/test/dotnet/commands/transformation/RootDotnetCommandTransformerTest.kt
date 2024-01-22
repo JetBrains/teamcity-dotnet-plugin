@@ -45,7 +45,7 @@ class RootDotnetCommandTransformerTest {
     fun `should apply all child transformers`() {
         // arrange
         every { _transformerMock1.stage } answers { DotnetCommandsTransformationStage.Targeting }
-        every { _transformerMock2.stage } answers { DotnetCommandsTransformationStage.Transformation }
+        every { _transformerMock2.stage } answers { DotnetCommandsTransformationStage.Splitting }
         every { _transformerMock3.stage } answers { DotnetCommandsTransformationStage.FinalComposition }
 
 
@@ -84,7 +84,7 @@ class RootDotnetCommandTransformerTest {
         val transformer2ResultStream = mockk<DotnetCommandsStream>()
         every { _transformerMock2.shouldBeApplied(any(), any()) } answers { true }
         every { _transformerMock2.apply(any(), any()) } answers { transformer2ResultStream }
-        every { _transformerMock2.stage } answers { DotnetCommandsTransformationStage.Transformation }
+        every { _transformerMock2.stage } answers { DotnetCommandsTransformationStage.Splitting }
 
         every { _transformerMock3.shouldBeApplied(any(), any()) } answers { false }
         every { _transformerMock3.stage } answers { DotnetCommandsTransformationStage.FinalComposition }

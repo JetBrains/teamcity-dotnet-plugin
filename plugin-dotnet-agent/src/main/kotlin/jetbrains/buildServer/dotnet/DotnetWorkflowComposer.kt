@@ -43,9 +43,9 @@ class DotnetWorkflowComposer(
                 break
             }
             val (commandContext, virtualPath) = getCommandContext(context, versions, virtualPaths, dotnetCommand)
+            val environmentBuildResults = dotnetCommand.environmentBuilders.map { it.build(commandContext) }.toList()
             val args = dotnetCommand.getArguments(commandContext).toList()
             val result = mutableSetOf<CommandResult>()
-            val environmentBuildResults = dotnetCommand.environmentBuilders.map { it.build(commandContext) }.toList()
             val exitCodes = mutableListOf<Int>()
 
             disposableOf(

@@ -44,7 +44,7 @@ class RootTestsSplittingCommandsTransformerTest {
         val result = transformer.stage
 
         // assert
-        Assert.assertEquals(result, DotnetCommandsTransformationStage.Transformation)
+        Assert.assertEquals(result, DotnetCommandsTransformationStage.Splitting)
     }
 
     @Test

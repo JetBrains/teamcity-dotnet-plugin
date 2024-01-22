@@ -5,6 +5,7 @@ package jetbrains.buildServer.dotnet.test.dotnet
 import io.mockk.*
 import jetbrains.buildServer.dotnet.ComposedTestsFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.retry.TestRetryFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import org.testng.Assert
 import org.testng.annotations.DataProvider
@@ -39,16 +40,37 @@ class ComposedTestsFilterProviderTest {
     }
 
     @Test(dataProvider = "testData")
-    fun shouldProvideFilter(testsFilterProviders: List<TestsFilterProvider>, expecedFilter: String) {
-        // Given
-        val provider = createInstance(testsFilterProviders)
+    fun `should provide filter`(testsFilterProviders: List<TestsFilterProvider>, expectedFilter: String) {
+        // arrange
+        val retryFilterProvider = mockk<TestRetryFilterProvider>(relaxed = true)
+        val provider = createInstance(retryFilterProvider, testsFilterProviders)
 
-        // When
+        // act
         val actualFilter = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
 
-        // Then
-        Assert.assertEquals(actualFilter, expecedFilter)
+        // assert
+        Assert.assertEquals(actualFilter, expectedFilter)
     }
 
-    private fun createInstance(testsFilterProviders: List<TestsFilterProvider>) = ComposedTestsFilterProvider(testsFilterProviders)
+    @Test
+    fun `retry filter provider has priority`() {
+        // arrange
+        val retryFilterExpression = "TestRetryFilterExpression"
+        val retryFilterProvider = mockk<TestRetryFilterProvider>()
+        every { retryFilterProvider.getFilterExpression(any()) } returns retryFilterExpression
+
+        val otherFilterProvider = mockk<TestsFilterProvider>();
+        every { otherFilterProvider.getFilterExpression(any()) } returns "Other Filter"
+
+        val provider = createInstance(retryFilterProvider, listOf(otherFilterProvider))
+
+        // act
+        val actualFilter = provider.getFilterExpression(TestsSplittingMode.TestClassNameFilter)
+
+        // assert
+        Assert.assertEquals(actualFilter, retryFilterExpression)
+    }
+
+    private fun createInstance(testRetryFilterProvider: TestRetryFilterProvider, testsFilterProviders: List<TestsFilterProvider>) =
+        ComposedTestsFilterProvider(testRetryFilterProvider, testsFilterProviders)
 }

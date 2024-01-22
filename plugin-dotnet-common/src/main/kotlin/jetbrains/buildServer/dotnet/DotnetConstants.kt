@@ -60,6 +60,10 @@ object DotnetConstants {
     const val PARAM_USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.reporting.useStdOut"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
+    // true or false (false by default)
+    const val PARAM_TEST_RETRY_ENABLED = "teamcity.internal.dotnet.test.retry.enabled"
+    // Integer maximum count of failed tests to retry
+    const val PARAM_TEST_RETRY_MAX_FAILURES = "teamcity.internal.dotnet.test.retry.maxFailures"
 
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"
@@ -85,6 +89,7 @@ object DotnetConstants {
     const val PARAM_TEST_NAMES = "test.names"
     const val PARAM_TEST_CASE_FILTER = "test.testCaseFilter"
     const val PARAM_TEST_SETTINGS_FILE = "test.settingsFile"
+    const val PARAM_TEST_RETRY_MAX_RETRIES = "test.retry.maxRetries"
     const val PARAM_VISUAL_STUDIO_ACTION = "vs.action"
     const val PARAM_VISUAL_STUDIO_VERSION = "vs.version"
     const val PARAM_VERBOSITY = "verbosity"
