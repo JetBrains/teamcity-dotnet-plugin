@@ -47,6 +47,7 @@
 
   <!--DotCover-->
   <bean class="jetbrains.buildServer.dotCover.DotCoverRunType"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverParametersProvider"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverPackageIdResolver"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverToolComparator"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverPackageFilter" id="dotCoverPackageFilter"/>
