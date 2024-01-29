@@ -23,8 +23,8 @@ class TestRetryFilterProviderImplTest {
     fun testData(): Any {
         return arrayOf(
             arrayOf(emptyList<String>(), ""),
-            arrayOf(listOf("testName1", "testName2"), "DisplayName=testName1 | DisplayName=testName2 | FullyQualifiedName=testName1 | FullyQualifiedName=testName2"),
-            arrayOf(listOf("special&!chars"), """DisplayName=special\&\!chars | FullyQualifiedName=special\&\!chars"""),
+            arrayOf(listOf("testName1", "testName2"), "FullyQualifiedName=testName1 | FullyQualifiedName=testName2"),
+            arrayOf(listOf("special&!chars"), """FullyQualifiedName=special\&\!chars"""),
         )
     }
 

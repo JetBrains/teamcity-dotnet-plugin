@@ -40,7 +40,7 @@ class TestsSplittingFilterProvider(
             .map { processTestClassParameters(it) }
             .distinct()
             .map { if (testClassContainsParameters(it)) it else "$it." } // to avoid collisions with overlapping test class names prefixes
-            .let { TestsFilterBuilder.buildFilter(listOf("FullyQualifiedName"), filterOperation, it, filterCombineOperator) }
+            .let { TestsFilterBuilder.buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
     private fun processTestClassParameters(testClass: String): String {
@@ -61,7 +61,7 @@ class TestsSplittingFilterProvider(
         val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 
         return _testsNamesReader.read().toList()
-            .let { TestsFilterBuilder.buildFilter(listOf("FullyQualifiedName"), filterOperation, it, filterCombineOperator) }
+            .let { TestsFilterBuilder.buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
     }
 
     companion object {
