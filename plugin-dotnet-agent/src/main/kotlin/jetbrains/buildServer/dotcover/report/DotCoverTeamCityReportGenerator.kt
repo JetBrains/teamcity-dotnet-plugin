@@ -45,14 +45,15 @@ class DotCoverTeamCityReportGenerator {
     }
 
     fun generateReportHTMLandStats(paramz: DotnetCoverageParameters,
+                                   checkoutDir: File?,
                                    dotCoverReport: File,
                                    destFile: File): CoverageStatistics? {
+        checkoutDir ?: return null
 
         val log: BuildProgressLogger = paramz.getBuildLogger()
 
         log.activityStarted("Generate dotCover HTML report", "dotCoverReport")
         try {
-            val checkoutDir = paramz.resolvePath(".") ?: return null
             val data: DotCoverData = loadCoverageModel(checkoutDir, dotCoverReport, log) ?: return null
 
             data.preprocessFoundFiles(paramz)

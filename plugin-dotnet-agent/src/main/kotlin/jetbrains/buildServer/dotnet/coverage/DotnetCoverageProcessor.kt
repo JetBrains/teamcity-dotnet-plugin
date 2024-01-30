@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.coverage
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.util.EventDispatcher

@@ -1,18 +1,20 @@
 package jetbrains.buildServer.dotnet.coverage
 
 import com.intellij.openapi.diagnostic.Logger
+import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_ARTIFACTS_DIR
 import jetbrains.buildServer.dotnet.coverage.utils.FileService
 import jetbrains.buildServer.dotnet.coverage.utils.TempFactory
+import jetbrains.buildServer.util.FileUtil
 import java.io.File
 import java.io.IOException
 
 class DotnetCoverageArtifactsPublisherImpl(
     private val _watcher: ArtifactsWatcher,
-    private val _fileService: FileService,
-    private val _tempFactory: TempFactory
+    private val _fileSystemService: FileSystemService
 ) : DotnetCoverageArtifactsPublisher {
 
     /**
@@ -21,9 +23,7 @@ class DotnetCoverageArtifactsPublisherImpl(
      * @param file    file
      * @param relPath server relative path to publish artifact, i.e. relPath/file.getName()
      */
-    override fun publishFile(build: DotnetCoverageParameters,
-                             file: File,
-                             relPath: String) {
+    override fun publishFile(file: File, relPath: String) {
         if (!file.exists() || !file.isFile) {
             throw RuntimeException("Failed to publish file that does not exists")
         }
@@ -32,49 +32,39 @@ class DotnetCoverageArtifactsPublisherImpl(
         _watcher.addNewArtifactsPath(teamcitySpec)
     }
 
-    override fun publishNamedFile(build: DotnetCoverageParameters,
-                                  fileToPublish: File,
-                                  relativePath: String,
-                                  publishedName: String) {
+    override fun publishNamedFile(
+        tempDirectory: File,
+        fileToPublish: File,
+        relativePath: String,
+        publishedName: String
+    ) {
 
         if (fileToPublish.name == publishedName) {
-            publishFile(build, fileToPublish, relativePath)
+            publishFile(fileToPublish, relativePath)
             return
         }
 
-        val artifactDirectory: File
-        val tempDirectory = File(build.getTempDirectory(), DOTCOVER_ARTIFACTS_DIR)
-        artifactDirectory = try {
-            _tempFactory.createTempDirectory(tempDirectory, 100)
-        } catch (e: IOException) {
-            logWarning(build, "Failed to create artifact directory '" + tempDirectory + "'. " + e.message)
+        val artifactDirectory = File(tempDirectory, CoverageConstants.DOTCOVER_ARTIFACTS_DIR)
+        try {
+            _fileSystemService.createDirectory(artifactDirectory)
+        } catch (e: Exception) {
+            LOG.warn("Failed to create artifact directory '" + tempDirectory + "'. " + e.message)
             return
         }
 
         val artifactFile = File(artifactDirectory, publishedName)
         try {
-            _fileService.copyFile(fileToPublish, artifactFile)
-            publishFile(build, artifactFile, relativePath)
+            FileUtil.copy(fileToPublish, artifactFile)
+            publishFile(artifactFile, relativePath)
         } catch (e: IOException) {
-            logWarning(
-                build,
-                "Failed to publish coverage artifact. Failed to copy file " + fileToPublish + " to " + artifactFile + ". " + e.message
-            )
+            LOG.warn("Failed to publish coverage artifact. Failed to copy file " + fileToPublish + " to " + artifactFile + ". " + e.message)
         }
     }
 
-    override fun publishDirectoryZipped(build: DotnetCoverageParameters,
-                                        toZip: File,
-                                        relPath: String,
-                                        fileName: String) {
+    override fun publishDirectoryZipped(toZip: File, relPath: String, fileName: String) {
         require(fileName.endsWith(".zip")) { "fileName must have .zip extension" }
 
         _watcher.addNewArtifactsPath(toZip.absolutePath + " => " + relPath + "/" + fileName)
-    }
-
-    private fun logWarning(build: DotnetCoverageParameters, warn: String) {
-        LOG.warn(warn)
-        build.getBuildLogger().warning(warn)
     }
 
     companion object {

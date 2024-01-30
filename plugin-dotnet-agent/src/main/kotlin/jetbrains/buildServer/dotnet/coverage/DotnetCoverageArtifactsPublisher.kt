@@ -5,17 +5,14 @@ import java.io.File
 
 interface DotnetCoverageArtifactsPublisher {
 
-    fun publishFile(build: DotnetCoverageParameters,
-                    file: File,
-                    relPath: String)
+    fun publishFile(file: File, relPath: String)
 
-    fun publishNamedFile(build: DotnetCoverageParameters,
-                         fileToPublish: File,
-                         relativePath: String,
-                         publishedName: String)
+    fun publishNamedFile(
+        tempDirectory: File,
+        fileToPublish: File,
+        relativePath: String,
+        publishedName: String
+    )
 
-    fun publishDirectoryZipped(build: DotnetCoverageParameters,
-                               toZip: File,
-                               relPath: String,
-                               fileName: String)
+    fun publishDirectoryZipped(toZip: File, relPath: String, fileName: String)
 }

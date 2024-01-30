@@ -46,7 +46,7 @@ class DotCoverHtmlReportGeneratorTest {
         })
 
         val gne = DotCoverTeamCityReportGenerator()
-        gne.generateReportHTMLandStats(ps, getTestPath(report), home)
+        gne.generateReportHTMLandStats(ps, ps.resolvePath("."), getTestPath(report), home)
 
         println("home = $home")
 

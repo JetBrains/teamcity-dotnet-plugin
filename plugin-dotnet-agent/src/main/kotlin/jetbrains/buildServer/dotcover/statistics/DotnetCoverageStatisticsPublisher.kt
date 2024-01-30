@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.coverage
+package jetbrains.buildServer.dotcover.statistics
 
 import jetbrains.coverage.report.CoverageStatistics
 

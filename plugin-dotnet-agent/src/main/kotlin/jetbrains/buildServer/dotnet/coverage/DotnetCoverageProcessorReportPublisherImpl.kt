@@ -1,7 +1,9 @@
 package jetbrains.buildServer.dotnet.coverage
 
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.util.MultiMap
+import java.io.File
 
 class DotnetCoverageProcessorReportPublisherImpl(
     private val _uploader: ArtifactsUploader,
@@ -20,7 +22,7 @@ class DotnetCoverageProcessorReportPublisherImpl(
             processor.processFiles(build, result)
         }
 
-        _uploader.processFiles(build, result)
+        _uploader.processFiles(build.getTempDirectory(), build.getConfigurationParameter(CoverageConstants.COVERAGE_PUBLISH_PATH_PARAM), result)
     }
 
     @Synchronized

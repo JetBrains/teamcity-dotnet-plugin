@@ -3,10 +3,15 @@ package jetbrains.buildServer.dotcover
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotcover.command.*
+import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
+import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
+import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
-import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class DotCoverWorkflowComposer(
@@ -20,8 +25,16 @@ class DotCoverWorkflowComposer(
     private val _virtualContext: VirtualContext,
     private val _environmentVariables: EnvironmentVariables,
     private val _entryPointSelector: DotCoverEntryPointSelector,
+    private val _dotCoverSettingsHolder: DotCoverSettingsHolder,
+    dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
+    private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
+    private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
+    private val _uploader: ArtifactsUploader,
+    private val _dotnetCoverageParametersHolder: DotnetCoverageParametersHolder
 ) : SimpleWorkflowComposer {
 
+    private val _dotCoverCommandLineBuilders: Map<DotCoverCommandType, DotCoverCommandLineBuilder> =
+        dotCoverCommandLineBuildersList.associateBy { it.type }
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow = when {
@@ -40,13 +53,15 @@ class DotCoverWorkflowComposer(
             )
     }
 
-
     private fun createDotCoverCommandLine(
         workflow: Workflow,
         context: WorkflowContext,
         entryPointPath: String
     ) = sequence {
         var dotCoverHome = false
+        val executableFile = Path(_virtualContext.resolvePath(entryPointPath))
+        val virtualTempDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.AgentTemp).canonicalPath))
+
         for (baseCommandLine in workflow.commandLines) {
             if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
                 yield(baseCommandLine)
@@ -102,23 +117,110 @@ class DotCoverWorkflowComposer(
                         dotCoverHome = true
                     }
 
-                    // The snapshot path should be virtual because of the docker wrapper converts it back
-                    _loggerService.importData(DOTCOVER_DATA_PROCESSOR_TYPE, virtualSnapshotFilePath, DOTCOVER_TOOL_NAME)
+                    if (_dotCoverSettingsHolder.coveragePostProcessingEnabled) {
+                        // The snapshot path should be virtual because of the docker wrapper converts it back
+                        _loggerService.importData(DOTCOVER_DATA_PROCESSOR_TYPE, virtualSnapshotFilePath, DOTCOVER_TOOL_NAME)
+                    }
                 }
             }.use {
                 yield(
-                    CommandLine(
-                        baseCommandLine = baseCommandLine,
-                        target = target,
-                        executableFile = Path(_virtualContext.resolvePath(entryPointPath)),
-                        workingDirectory = baseCommandLine.workingDirectory,
-                        arguments = createArguments(dotCoverProject).toList(),
+                    _dotCoverCommandLineBuilders.get(DotCoverCommandType.Cover)!!.buildCommand(
+                        executableFile = executableFile,
                         environmentVariables = baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                        title = baseCommandLine.title
+                        coverCommandData = CoverCommandData(baseCommandLine, dotCoverProject.configFile.path)
                     )
                 )
             }
         }
+
+        if (_dotCoverSettingsHolder.coveragePostProcessingEnabled) {
+            return@sequence
+        }
+
+        merge(executableFile, virtualTempDirectory)
+        report(executableFile, virtualTempDirectory)
+    }
+
+    private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
+        val outputSnapshotFile = File(_virtualContext.resolvePath(File(virtualTempDirectory, outputSnapshotFilename).canonicalPath))
+
+        if (!_dotCoverSettingsHolder.applyMergeCommand) {
+            return
+        }
+        if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
+            return
+        }
+
+        val snapshots = collectSnapshots(virtualTempDirectory)
+        if (snapshots.isEmpty()) {
+            return
+        }
+
+        yield(
+            _dotCoverCommandLineBuilders.get(DotCoverCommandType.Merge)!!.buildCommand(
+                executableFile = executableFile,
+                environmentVariables = _environmentVariables.getVariables().toList(),
+                mergeCommandData = MergeCommandData(snapshots, outputSnapshotFile)
+            )
+        )
+        snapshots.forEach { _fileSystemService.remove(it) }
+    }
+
+    private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, virtualTempDirectory: File) {
+        val virtualReportResultsDirectory = File(_virtualContext.resolvePath(File(virtualTempDirectory, "dotCoverResults").canonicalPath))
+        val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
+        val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory) ?: return
+
+        if (!_dotCoverSettingsHolder.applyReportCommand) {
+            return
+        }
+        if (outputReportFile.isFile && outputReportFile.exists()) {
+            return
+        }
+
+        yield(
+            _dotCoverCommandLineBuilders.get(DotCoverCommandType.Report)!!.buildCommand(
+                executableFile = executableFile,
+                environmentVariables = _environmentVariables.getVariables().toList(),
+                reportCommandData = ReportCommandData(outputSnapshotFile, outputReportFile)
+            )
+        )
+
+        if (outputReportFile.isFile && outputReportFile.exists()) {
+            publishReport(outputReportFile, virtualReportResultsDirectory)
+        }
+    }
+
+    private fun publishReport(outputReportFile: File, virtualReportResultsDirectory: File) {
+        val virtualCheckoutDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath))
+        val reportZipFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputHtmlReportFilename).canonicalPath))
+
+        _dotCoverTeamCityReportGenerator.parseStatementCoverage(outputReportFile)?.let {
+            _loggerService.writeStandardOutput("DotCover statement coverage was: ${it.covered} of ${it.total} (${it.percent}%)")
+        }
+        val coverageStatistics = _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(
+            _dotnetCoverageParametersHolder.getCoverageParameters(), virtualCheckoutDirectory, outputReportFile, reportZipFile)
+        coverageStatistics?.let {
+            _dotnetCoverageStatisticsPublisher.publishCoverageStatistics(it)
+        }
+
+        _uploader.processFiles(virtualReportResultsDirectory, null, DotnetCoverageGenerationResult(outputReportFile, emptyList(), reportZipFile))
+    }
+
+    private fun collectSnapshots(vararg snapshotPaths: File): List<File> {
+        val result = ArrayList<File>()
+        for (snapshotPath in snapshotPaths) {
+            _fileSystemService.list(snapshotPath)
+                .filter { it.extension == "dcvr" }
+                .forEach { result.add(it) }
+        }
+        return result
+    }
+
+    private fun findOutputSnapshot(snapshotPath: File): File? {
+        return _fileSystemService.list(snapshotPath)
+            .filter { it.extension == "dcvr" && it.name.startsWith("outputSnapshot") }
+            .firstOrNull()
     }
 
     private val dotCoverEnabled
@@ -134,35 +236,18 @@ class DotCoverWorkflowComposer(
             return false
         }
 
-    private fun createArguments(dotCoverProject: DotCoverProject) = sequence {
-        yield(CommandLineArgument("cover", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(dotCoverProject.configFile.path, CommandLineArgumentType.Target))
-        yield(CommandLineArgument("${argumentPrefix}ReturnTargetExitCode"))
-        yield(CommandLineArgument("${argumentPrefix}AnalyzeTargetArguments=false"))
-
-        _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            val logFileName = _virtualContext.resolvePath(_fileSystemService.generateTempFile(File(it), "dotCover", ".log").canonicalPath)
-            yield(CommandLineArgument("${argumentPrefix}LogFile=${logFileName}", CommandLineArgumentType.Infrastructural))
-        }
-
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
-            _argumentsService.split(it).forEach {
-                yield(CommandLineArgument(it, CommandLineArgumentType.Custom))
-            }
-        }
-    }
-
-    private val argumentPrefix get () = when(_virtualContext.targetOSType) {
-        OSType.WINDOWS -> "/"
-        else -> "--"
-    }
-
     private val dotCoverPath get() =
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             .let { when (it.isNullOrBlank()) {
                 true -> ""
                 false -> it
             }}
+
+    private val outputSnapshotFilename get() = "outputSnapshot_${_dotCoverSettingsHolder.buildStepId}.dcvr"
+
+    private val outputReportFilename get() = "CoverageReport_${_dotCoverSettingsHolder.buildStepId}.xml"
+
+    private val outputHtmlReportFilename get() = "coverage_${_dotCoverSettingsHolder.buildStepId}.zip"
 
     companion object {
         internal const val DOTCOVER_DATA_PROCESSOR_TYPE = CoverageConstants.COVERAGE_TYPE

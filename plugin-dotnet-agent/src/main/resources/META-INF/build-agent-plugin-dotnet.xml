@@ -562,7 +562,7 @@
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessorEventsSubscription"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorsHolderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessorReportPublisherImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageStatisticsPublisherImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisherImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.ArtifactsUploaderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.utils.FileServiceImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.utils.TempFactoryImpl"/>
@@ -593,6 +593,10 @@
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
   <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverEnvironmentVariables"/>
+  <bean class="jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder"/>
+  <bean class="jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder"/>
+  <bean class="jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverSettingsHolder"/>
 
   <!-- Mono -->
   <bean class="jetbrains.buildServer.mono.MonoToolEnvironment" id="monoToolEnvironment"/>
