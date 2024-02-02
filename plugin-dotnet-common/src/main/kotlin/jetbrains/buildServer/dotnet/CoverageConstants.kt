@@ -44,6 +44,8 @@ object CoverageConstants {
     const val PARAM_DOTCOVER_FILTERS = "dotNetCoverage.dotCover.filters"
     const val PARAM_DOTCOVER_ATTRIBUTE_FILTERS = "dotNetCoverage.dotCover.attributeFilters"
     const val PARAM_DOTCOVER_ARGUMENTS = "dotNetCoverage.dotCover.customCmd"
+    const val PARAM_DOTCOVER_DO_NOT_MERGE = "dotNetCoverage.dotCover.doNotMergeSnaphots"
+    const val PARAM_DOTCOVER_DO_NOT_REPORT = "dotNetCoverage.dotCover.doNotMakeReport"
     const val PARAM_DOTCOVER_LOG_PATH = "teamcity.agent.dotCover.log"
 
     const val TEAMCITY_DOTCOVER_HOME = "teamcity.dotCover.home"

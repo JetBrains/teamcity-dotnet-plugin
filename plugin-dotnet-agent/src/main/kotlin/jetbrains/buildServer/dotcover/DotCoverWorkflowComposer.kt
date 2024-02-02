@@ -144,7 +144,7 @@ class DotCoverWorkflowComposer(
     private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
         val outputSnapshotFile = File(_virtualContext.resolvePath(File(virtualTempDirectory, outputSnapshotFilename).canonicalPath))
 
-        if (!_dotCoverSettingsHolder.applyMergeCommand) {
+        if (_dotCoverSettingsHolder.doNotMergeSnapshots) {
             return
         }
         if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
@@ -171,7 +171,7 @@ class DotCoverWorkflowComposer(
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory) ?: return
 
-        if (!_dotCoverSettingsHolder.applyReportCommand) {
+        if (_dotCoverSettingsHolder.doNotMakeReport) {
             return
         }
         if (outputReportFile.isFile && outputReportFile.exists()) {

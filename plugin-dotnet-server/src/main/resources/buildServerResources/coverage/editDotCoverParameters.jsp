@@ -46,3 +46,18 @@
     <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
   </td>
 </tr>
+
+<c:if test="${params.coveragePostProcessingEnabled == false}">
+  <tr class="advancedSetting">
+    <th>Report:</th>
+    <td>
+      <props:checkboxProperty name="${params.dotCoverDoNotReportKey}"/>
+      <label for="${params.dotCoverDoNotReportKey}">Do not generate coverage report</label>
+      <span class="smallNote">Do not generate a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
+      <br/>
+      <props:checkboxProperty name="${params.dotCoverDoNotMergeKey}"/>
+      <label for="${params.dotCoverDoNotMergeKey}">Do not join reports from previous build steps</label>
+      <span class="smallNote">Do not combine all available reports from previous build steps into one report</span>
+    </td>
+  </tr>
+</c:if>

@@ -58,7 +58,7 @@ object DotnetConstants {
     const val PARAM_PARALLEL_TESTS_SUPPRESSION_TEST_CLASSES_THRESHOLD = "teamcity.internal.dotnet.test.suppression.test.classes.threshold"
     // True or False (False by default) - report tests via stdout rather than via files
     const val PARAM_USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.reporting.useStdOut"
-    // true or false (true by default) - dotCover coverage data post processing is enabled
+    // true or false (false by default) - dotCover coverage data post processing is enabled
     const val PARAM_DOTCOVER_COVERAGE_DATA_POST_PROCESSING_ENABLED = "teamcity.internal.dotnet.dotCover.coverageDataPostProcessingEnabled"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
