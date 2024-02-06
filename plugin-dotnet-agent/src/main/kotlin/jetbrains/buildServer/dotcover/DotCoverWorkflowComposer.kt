@@ -8,10 +8,12 @@ import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
+import jetbrains.buildServer.util.FileUtil.resolvePath
 import java.io.File
 
 class DotCoverWorkflowComposer(
@@ -187,11 +189,11 @@ class DotCoverWorkflowComposer(
         )
 
         if (outputReportFile.isFile && outputReportFile.exists()) {
-            publishReport(outputReportFile, virtualReportResultsDirectory)
+            publishDotCoverArtifacts(outputReportFile, outputSnapshotFile, virtualReportResultsDirectory)
         }
     }
 
-    private fun publishReport(outputReportFile: File, virtualReportResultsDirectory: File) {
+    private fun publishDotCoverArtifacts(outputReportFile: File, outputSnapshotFile: File, virtualReportResultsDirectory: File) {
         val virtualCheckoutDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath))
         val reportZipFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputHtmlReportFilename).canonicalPath))
 
@@ -204,7 +206,15 @@ class DotCoverWorkflowComposer(
             _dotnetCoverageStatisticsPublisher.publishCoverageStatistics(it)
         }
 
-        _uploader.processFiles(virtualReportResultsDirectory, null, DotnetCoverageGenerationResult(outputReportFile, emptyList(), reportZipFile))
+        val result = DotnetCoverageGenerationResult(outputReportFile, emptyList(), reportZipFile)
+        _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
+            val logsFolder = resolvePath(virtualCheckoutDirectory, it)
+            result.addFileToPublish(CoverageConstants.DOTCOVER_LOGS, logsFolder)
+        }
+        result.addFileToPublish(DOTCOVER_SNAPSHOT_DCVR, outputSnapshotFile)
+        val publishPath = _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.COVERAGE_PUBLISH_PATH_PARAM)
+
+        _uploader.processFiles(virtualReportResultsDirectory, publishPath, result)
     }
 
     private fun collectSnapshots(vararg snapshotPaths: File): List<File> {
