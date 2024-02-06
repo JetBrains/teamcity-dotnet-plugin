@@ -2,7 +2,7 @@
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
-<jsp:useBean id="params" class="jetbrains.buildServer.dotCover.DotCoverParametersProvider"/>
+<jsp:useBean id="params" class="jetbrains.buildServer.dotCover.DotCoverRunnerParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
 <tr>
@@ -15,8 +15,8 @@
 <tr>
   <th>Cover:</th>
   <td>
-    <props:multilineProperty name="${params.dotCoverArgumentsKey}22222" linkTitle="Command line" className="longField" cols="60" rows="1"/>
-    <span class="smallNote">Run a process from the command line under dotCover coverage profile (optional)</span>
+    <props:multilineProperty name="${params.dotCoverCommandLineKey}" linkTitle="Command line (optional)" className="longField" cols="60" rows="1"/>
+    <span class="smallNote">Run a process from the command line under dotCover coverage profile and produce produces a dotCover snapshot file</span>
   </td>
 </tr>
 
@@ -49,28 +49,23 @@
 <tr>
   <th>Report:</th>
   <td>
-    <props:checkboxProperty name="should-generate-report" checked="${true}"/>
-    <label for="should-generate-report">Generate coverage report</label>
+    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${true}"/>
+    <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
     <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
     <br/>
-    <props:checkboxProperty name="include-previous-snapshots" checked="${true}"/>
-    <label for="include-previous-snapshots">Join reports from previous build steps</label>
-    <span class="smallNote">Combines all available reports from previous build steps into one report</span>
-  </td>
-</tr>
-
-<tr class="advancedSetting">
-  <th>Report settings:</th>
-  <td>
-    <props:checkboxProperty name="should-publish-report" checked="${false}"/>
-    <label for="should-publish-report">Publish report as a build artifact</label>
-    <span class="smallNote">Publishes coverage report files (.dcvr and .xml) as build artifacts</span>
+    <props:checkboxProperty name="${params.dotCoverMergeSnapshotsKey}" checked="${true}"/>
+    <label for="${params.dotCoverMergeSnapshotsKey}">Join reports from previous build steps</label>
+    <span class="smallNote">Combines all available dotCover snapshots from previous build steps into one report</span>
     <br/>
     <c:set var="additionalSnapshotsNote">
       <span>Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines.</span>
       <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool
     </c:set>
-    <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}33333" className="longField" expanded="false" cols="60" rows="4" linkTitle="Include additional dotCover snapshots (.dcvr) to the report" note="${additionalSnapshotsNote}"/>
-    <br/>
+    <props:multilineProperty
+        name="${params.dotCoverAdditionalShapshotPathsKey}"
+        className="longField" expanded="false" cols="60" rows="4"
+        linkTitle="Include additional dotCover snapshots to the report"
+        note="${additionalSnapshotsNote}"
+    />
   </td>
 </tr>

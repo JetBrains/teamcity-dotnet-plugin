@@ -46,6 +46,10 @@ object CoverageConstants {
     const val PARAM_DOTCOVER_ARGUMENTS = "dotNetCoverage.dotCover.customCmd"
     const val PARAM_DOTCOVER_DO_NOT_MERGE = "dotNetCoverage.dotCover.doNotMergeSnaphots"
     const val PARAM_DOTCOVER_DO_NOT_REPORT = "dotNetCoverage.dotCover.doNotMakeReport"
+    const val PARAM_DOTCOVER_COMMAND_LINE = "dotNetCoverage.dotCover.commandLine"
+    const val PARAM_DOTCOVER_GENERATE_REPORT = "dotNetCoverage.dotCover.generateReport"
+    const val PARAM_DOTCOVER_MERGE_SNAPSHOTS = "dotNetCoverage.dotCover.mergeShapshots"
+    const val PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS = "dotNetCoverage.dotCover.additionalShapshotPaths"
     const val PARAM_DOTCOVER_LOG_PATH = "teamcity.agent.dotCover.log"
 
     const val TEAMCITY_DOTCOVER_HOME = "teamcity.dotCover.home"

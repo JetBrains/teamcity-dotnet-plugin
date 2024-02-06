@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
