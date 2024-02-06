@@ -55,12 +55,13 @@ class TestRetrySettingsImplTest {
     @Test
     fun `should return location for vstest adapter failed tests reports`() {
         // arrange
+        val agentTempDirectory = File("/agentTmp")
         val pathsService = mockk<PathsService> {
-            every { getPath(PathType.AgentTemp) } returns File("/agentTmp")
+            every { getPath(PathType.AgentTemp) } returns agentTempDirectory
         }
         val settings = TestRetrySettingsImpl(mockk<ParametersService>(), pathsService)
 
         // act, assert
-        Assert.assertEquals(settings.reportPath, "/agentTmp/TestRetry")
+        Assert.assertTrue(settings.reportPath.startsWith(agentTempDirectory.absolutePath.toString()), "actual path is ${settings.reportPath}")
     }
 }

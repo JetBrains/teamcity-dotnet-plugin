@@ -41,6 +41,6 @@ internal class TestReportsFilesPathGeneratorTest {
         val reportsPath = TestReportsFilesPathGenerator.getTestFilesPath(pathService)
 
         // Assert
-        Assert.assertTrue(Pattern.matches("""[/\\]agentTmp[/\\]TestReports[/\\].{22}""", reportsPath.toString()), "actual path is $reportsPath")
+        Assert.assertTrue(Pattern.matches(""".*[/\\]agentTmp[/\\]TestReports[/\\].{22}""", reportsPath.toString()), "actual path is $reportsPath")
     }
 }

@@ -69,8 +69,9 @@ internal class TestCommandEnvironmentBuilderTest {
     @Test
     fun `should return test reports path variable if fallback is not enabled in settings`() {
         // Arrange
+        val agentTempDirectory = File("/agentTmp")
         every { _parametersService.tryGetParameter(any(), DotnetConstants.PARAM_USE_STDOUT_TEST_REPORTING) } returns "false"
-        every { _pathsService.getPath(PathType.AgentTemp) } returns File("/agentTmp")
+        every { _pathsService.getPath(PathType.AgentTemp) } returns agentTempDirectory
         val environmentBuilder = TestCommandEnvironmentBuilder(_extensionsProvider, _buildStepContext, _serviceProcessManager, _parametersService, _pathsService)
 
         // Act
@@ -80,7 +81,7 @@ internal class TestCommandEnvironmentBuilderTest {
         val variables = environmentBuildResult.variables.toList()
         Assert.assertEquals(variables.size, 1)
         Assert.assertEquals(variables.first().name, "TEAMCITY_TEST_REPORT_FILES_PATH")
-        Assert.assertTrue(variables.first().value.startsWith("/agentTmp"), "actual path is ${variables.first().value}")
+        Assert.assertTrue(variables.first().value.startsWith(agentTempDirectory.absolutePath.toString()), "actual path is ${variables.first().value}")
     }
 
     @Test
