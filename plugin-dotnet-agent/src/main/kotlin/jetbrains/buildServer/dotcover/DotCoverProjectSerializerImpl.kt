@@ -1,9 +1,9 @@
-
-
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.agent.ArgumentsService
+import jetbrains.buildServer.dotcover.DotCoverProject.*
+import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -16,17 +16,26 @@ class DotCoverProjectSerializerImpl(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun serialize(project: DotCoverProject, outputStream: OutputStream) {
+        val doc = when (project.dotCoverCommandType) {
+            DotCoverCommandType.Cover -> createCoverCommandElemets(project.coverCommandData!!)
+            DotCoverCommandType.Merge -> createMergeCommandElemets(project.mergeCommandData!!)
+            DotCoverCommandType.Report -> createReportCommandElemets(project.reportCommandData!!)
+        }
+        _xmlDocumentService.serialize(doc, outputStream)
+    }
+
+    private fun createCoverCommandElemets(coverCommandData: CoverCommandData): Document {
         val doc = _xmlDocumentService.create()
         val coverageParamsElement = doc.createElement(COVERAGE_PARAMS_ELEMENT)
         coverageParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSD_NS, XMLNS_XSD_NS_URI)
         coverageParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
         doc.appendChild(coverageParamsElement)
 
-        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, project.commandLineToCover.executableFile.path))
-        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(project.commandLineToCover.arguments.map { it.value }.asSequence())))
-        val workingDirectory = project.commandLineToCover.workingDirectory
+        coverageParamsElement.appendChild(createSimpleElement(doc, EXECUTABLE_ELEMENT, coverCommandData.commandLineToCover.executableFile.path))
+        coverageParamsElement.appendChild(createSimpleElement(doc, ARGUMENTS_ELEMENT, _argumentsService.combine(coverCommandData.commandLineToCover.arguments.map { it.value }.asSequence())))
+        val workingDirectory = coverCommandData.commandLineToCover.workingDirectory
         coverageParamsElement.appendChild(createSimpleElement(doc, WORKING_DIR_ELEMENT, workingDirectory.path))
-        coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, project.snapshotFile.path))
+        coverageParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, coverCommandData.snapshotFile.path))
 
         val filtersElement = doc.createElement(FILTERS_ELEMENT)
         val includeFiltersElement = doc.createElement(INCLUDE_FILTERS_ELEMENT)
@@ -66,7 +75,37 @@ class DotCoverProjectSerializerImpl(
             coverageParamsElement.appendChild(attributeFiltersElement)
         }
 
-        _xmlDocumentService.serialize(doc, outputStream)
+        return doc
+    }
+
+    private fun createMergeCommandElemets(mergeCommandData: MergeCommandData): Document {
+        val doc = _xmlDocumentService.create()
+        val mergeParamsElement = doc.createElement(MERGE_PARAMS_ELEMENT)
+        mergeParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSD_NS, XMLNS_XSD_NS_URI)
+        mergeParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
+        doc.appendChild(mergeParamsElement)
+
+        for (source in mergeCommandData.sourceFiles) {
+            mergeParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, source.absolutePath))
+        }
+
+        mergeParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, mergeCommandData.outputFile.absolutePath))
+
+        return doc
+    }
+
+    private fun createReportCommandElemets(reportCommandData: ReportCommandData): Document {
+        val doc = _xmlDocumentService.create()
+        val reportParamsElement = doc.createElement(REPORT_PARAMS_ELEMENT)
+        reportParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSD_NS, XMLNS_XSD_NS_URI)
+        reportParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
+        doc.appendChild(reportParamsElement)
+
+        reportParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, reportCommandData.sourceFile.absolutePath))
+        reportParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, reportCommandData.outputFile.absolutePath))
+        reportParamsElement.appendChild(createSimpleElement(doc, REPORT_TYPE_ELEMENT, "TeamCityXML"))
+
+        return doc
     }
 
     private fun createSimpleElement(doc: Document, name: String, value: String): Element {
@@ -91,6 +130,8 @@ class DotCoverProjectSerializerImpl(
 
     companion object {
         private const val COVERAGE_PARAMS_ELEMENT = "CoverageParams"
+        private const val MERGE_PARAMS_ELEMENT = "MergeParams"
+        private const val REPORT_PARAMS_ELEMENT = "ReportParams"
         private const val HTTP_WWW_W3_NS_URI = "http://www.w3.org/2000/xmlns/"
         private const val XMLNS_XSD_NS = "xmlns:xsd"
         private const val XMLNS_XSD_NS_URI = "http://www.w3.org/2001/XMLSchema"
@@ -109,5 +150,7 @@ class DotCoverProjectSerializerImpl(
         private const val FUNCTION_MASK_ELEMENT = "FunctionMask"
         private const val CLASS_MASK_ELEMENT = "ClassMask"
         private const val ATTRIBUTE_FILTERS_ELEMENT = "AttributeFilters"
+        private const val SOURCE_ELEMENT = "Source"
+        private const val REPORT_TYPE_ELEMENT = "ReportType"
     }
 }

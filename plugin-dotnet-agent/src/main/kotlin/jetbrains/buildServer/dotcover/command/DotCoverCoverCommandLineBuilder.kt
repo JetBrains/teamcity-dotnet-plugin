@@ -26,17 +26,15 @@ class DotCoverCoverCommandLineBuilder(
 
     override fun buildCommand(executableFile: Path,
                               environmentVariables: List<CommandLineEnvironmentVariable>,
-                              coverCommandData: CoverCommandData?,
-                              mergeCommandData: MergeCommandData?,
-                              reportCommandData: ReportCommandData?
+                              configFilePath: String,
+                              baseCommandLine: CommandLine?
     ): CommandLine {
-        val baseCommandLine = coverCommandData!!.baseCommandLine
         return CommandLine(
-            baseCommandLine = baseCommandLine,
+            baseCommandLine = baseCommandLine!!,
             target = TargetType.CodeCoverageProfiler,
             executableFile = executableFile,
             workingDirectory = baseCommandLine.workingDirectory,
-            arguments = createArguments(coverCommandData.configFilePath).toList(),
+            arguments = createArguments(configFilePath).toList(),
             environmentVariables = environmentVariables,
             title = baseCommandLine.title
         )

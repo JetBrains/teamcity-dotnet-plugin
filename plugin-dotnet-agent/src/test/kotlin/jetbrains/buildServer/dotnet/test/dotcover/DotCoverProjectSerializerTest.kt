@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import jetbrains.buildServer.Serializer
@@ -10,7 +8,9 @@ import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
 import jetbrains.buildServer.dotcover.DotCoverProject
+import jetbrains.buildServer.dotcover.DotCoverProject.*
 import jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl
+import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import org.jmock.Expectations
 import org.jmock.Mockery
@@ -41,8 +41,8 @@ class DotCoverProjectSerializerTest {
     }
 
     @Test
-    fun shouldGenerateContent() {
-        // Given
+    fun shouldGenerateCoverCommandContent() {
+        // Arrange
         val outputStream = ByteArrayOutputStream()
         val document = _realXmlDocumentService.create()
         val tempDir = File("temp")
@@ -111,23 +111,128 @@ class DotCoverProjectSerializerTest {
 
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
+            DotCoverCommandType.Cover,
+            CoverCommandData(
                 CommandLine(null, TargetType.Tool, tool, workingDirectory, listOf(CommandLineArgument("arg1")), emptyList()),
                 Path(File(tempDir, "config.dotCover").path),
-                Path(File(tempDir, "snapshot.dcvr").path))
+                Path(File(tempDir, "snapshot.dcvr").path)
+            )
+        )
 
-        // When
+        // Act
         instance.serialize(dotCoverProject, outputStream)
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val actual = String(outputStream.toByteArray()).trimXml()
+        val expected = expectedContent.trimXml()
 
-        // Then
+        // Assert
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actual, expected)
+    }
+
+    @Test
+    fun shouldGenerateMergeCommandContent() {
+        // Arrange
+        val outputStream = ByteArrayOutputStream()
+        val document = _realXmlDocumentService.create()
+        val tempDir = File("temp")
+        val expectedContent = """
+                <MergeParams xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/1.dcvr</Source>
+                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/2.dcvr</Source>
+                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/3.dcvr</Source>
+                <Output>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/outputSnapshot_BuildStep1.dcvr</Output>
+                </MergeParams>
+                """
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<XmlDocumentService>(_xmlDocumentService).create()
+                will(returnValue(document))
+                oneOf<XmlDocumentService>(_xmlDocumentService).serialize(document, outputStream)
+                will(object : CustomAction("doc") {
+                    @Throws(Throwable::class)
+                    override fun invoke(invocation: Invocation): Any? {
+                        _realXmlDocumentService.serialize(invocation.getParameter(0) as Document, invocation.getParameter(1) as OutputStream)
+                        return null
+                    }
+                })
+            }
+        })
+
+        val instance = createInstance()
+        val dotCoverProject = DotCoverProject(
+            DotCoverCommandType.Merge,
+            mergeCommandData = MergeCommandData(
+                listOf(
+                    File(tempDir, "1.dcvr"),
+                    File(tempDir, "2.dcvr"),
+                    File(tempDir, "3.dcvr")
+                ),
+                File(tempDir, "outputSnapshot_BuildStep1.dcvr")
+            )
+        )
+
+        // Act
+        instance.serialize(dotCoverProject, outputStream)
+        val actual = String(outputStream.toByteArray()).trimXml()
+        val expected = expectedContent.trimXml()
+
+        // Assert
+        _ctx.assertIsSatisfied()
+        Assert.assertEquals(actual, expected)
+    }
+
+    @Test
+    fun shouldGenerateReportCommandContent() {
+        // Arrange
+        val outputStream = ByteArrayOutputStream()
+        val document = _realXmlDocumentService.create()
+        val tempDir = File("temp")
+        val expectedContent = """
+                <ReportParams xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/outputSnapshot_BuildStep1.dcvr</Source>
+                <Output>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/CoverageReport_BuildStep1.xml</Output>
+                <ReportType>TeamCityXML</ReportType>
+                </ReportParams>
+                """
+
+        _ctx.checking(object : Expectations() {
+            init {
+                oneOf<XmlDocumentService>(_xmlDocumentService).create()
+                will(returnValue(document))
+                oneOf<XmlDocumentService>(_xmlDocumentService).serialize(document, outputStream)
+                will(object : CustomAction("doc") {
+                    @Throws(Throwable::class)
+                    override fun invoke(invocation: Invocation): Any? {
+                        _realXmlDocumentService.serialize(invocation.getParameter(0) as Document, invocation.getParameter(1) as OutputStream)
+                        return null
+                    }
+                })
+            }
+        })
+
+        val instance = createInstance()
+        val dotCoverProject = DotCoverProject(
+            DotCoverCommandType.Report,
+            reportCommandData = ReportCommandData(
+                File(tempDir, "outputSnapshot_BuildStep1.dcvr"),
+                File(tempDir, "CoverageReport_BuildStep1.xml")
+            )
+        )
+
+        // Act
+        instance.serialize(dotCoverProject, outputStream)
+        val actual = String(outputStream.toByteArray()).trimXml()
+        val expected = expectedContent.trimXml()
+
+        // Assert
         _ctx.assertIsSatisfied()
         Assert.assertEquals(actual, expected)
     }
 
     @Test
     fun shouldGenerateContentWhenNoFilters() {
-        // Given
+        // Arrange
         val outputStream = ByteArrayOutputStream()
         val document = _realXmlDocumentService.create()
         val tempDir = File("temp")
@@ -164,17 +269,19 @@ class DotCoverProjectSerializerTest {
 
         val instance = createInstance()
         val dotCoverProject = DotCoverProject(
+            DotCoverCommandType.Cover,
+            CoverCommandData(
                 CommandLine(null, TargetType.Tool, tool, workingDirectory, emptyList(), emptyList()),
                 Path(File(tempDir, "config.dotCover").path),
-                Path(File(tempDir, "snapshot.dcvr").path))
+                Path(File(tempDir, "snapshot.dcvr").path)))
 
-        // When
+        // Act
         instance.serialize(dotCoverProject, outputStream)
 
-        val actual = String(outputStream.toByteArray()).trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
-        val expected = expectedContent.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
+        val actual = String(outputStream.toByteArray()).trimXml()
+        val expected = expectedContent.trimXml()
 
-        // Then
+        // Assert
         _ctx.assertIsSatisfied()
         Assert.assertEquals(actual, expected)
     }
@@ -184,5 +291,9 @@ class DotCoverProjectSerializerTest {
                 _xmlDocumentService,
                 _argumentsService,
                 _coverageFilterProvider)
+    }
+
+    private fun String.trimXml(): String {
+        return this.trim { it <= ' ' }.replace("\n", "").replace("\r", "").replace(" ", "")
     }
 }

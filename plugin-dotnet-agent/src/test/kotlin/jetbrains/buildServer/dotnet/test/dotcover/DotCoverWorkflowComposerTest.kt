@@ -7,6 +7,8 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.agent.runner.serviceMessages.ImportDataServiceMessage
 import jetbrains.buildServer.dotcover.*
+import jetbrains.buildServer.dotcover.DotCoverProject.CoverCommandData
+import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder
 import jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder
 import jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder
@@ -100,15 +102,20 @@ class DotCoverWorkflowComposerTest {
             envVars)
         val dotCoverExecutableFile = File(dotCoverPath, "dotCover.exe")
         val dotCoverProject = DotCoverProject(
-            CommandLine(
-                commandLine,
-                TargetType.Tool,
-                executableFile,
-                Path("v_wd"),
-                args,
-                envVars),
-            Path("v_proj"),
-            Path ("v_snap"))
+            DotCoverCommandType.Cover,
+            CoverCommandData(
+                CommandLine(
+                    commandLine,
+                    TargetType.Tool,
+                    executableFile,
+                    Path("v_wd"),
+                    args,
+                    envVars
+                ),
+                Path("v_proj"),
+                Path("v_snap")
+            )
+        )
 
         val expectedWorkflow = Workflow(
             sequenceOf(
@@ -260,7 +267,8 @@ class DotCoverWorkflowComposerTest {
             envVars)
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
-            CommandLine(
+            DotCoverCommandType.Cover,
+            CoverCommandData(CommandLine(
                 commandLine,
                 TargetType.Tool,
                 executableFile,
@@ -268,7 +276,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars),
             Path("v_proj"),
-            Path ("v_snap"))
+            Path ("v_snap")))
         val expectedWorkflow = Workflow(
             sequenceOf(
                 CommandLine(
@@ -344,7 +352,8 @@ class DotCoverWorkflowComposerTest {
             envVars)
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
-            CommandLine(
+            DotCoverCommandType.Cover,
+            CoverCommandData(CommandLine(
                 commandLine,
                 TargetType.Tool,
                 executableFile,
@@ -352,7 +361,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars),
             Path("v_proj"),
-            Path ("v_snap"))
+            Path ("v_snap")))
         val expectedWorkflow = Workflow(
             sequenceOf(
                 CommandLine(
@@ -417,7 +426,8 @@ class DotCoverWorkflowComposerTest {
             envVars)
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
-            CommandLine(
+            DotCoverCommandType.Cover,
+            CoverCommandData(CommandLine(
                 commandLine,
                 TargetType.Tool,
                 executableFile,
@@ -425,7 +435,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars),
             Path("v_proj"),
-            Path ("v_snap"))
+            Path ("v_snap")))
         val expectedWorkflow = Workflow(
             sequenceOf(
                 CommandLine(
@@ -492,7 +502,8 @@ class DotCoverWorkflowComposerTest {
             envVars)
         val dotCoverExecutableFile = File("dotCover", "dotCover.exe")
         val dotCoverProject = DotCoverProject(
-            CommandLine(
+            DotCoverCommandType.Cover,
+            CoverCommandData(CommandLine(
                 commandLine,
                 TargetType.Tool,
                 executableFile,
@@ -500,7 +511,7 @@ class DotCoverWorkflowComposerTest {
                 args,
                 envVars),
             Path("v_proj"),
-            Path ("v_snap"))
+            Path ("v_snap")))
         val expectedWorkflow = Workflow(
             sequenceOf(
                 CommandLine(

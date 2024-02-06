@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotcover
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotcover.DotCoverProject.*
 import jetbrains.buildServer.dotcover.command.*
 import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
 import jetbrains.buildServer.dotnet.CoverageConstants
@@ -77,18 +78,21 @@ class DotCoverWorkflowComposer(
             val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
 
             val dotCoverProject = DotCoverProject(
-                CommandLine(
-                    baseCommandLine,
-                    baseCommandLine.target,
-                    baseCommandLine.executableFile,
-                    virtualWorkingDirectory,
-                    baseCommandLine.arguments,
-                    baseCommandLine.environmentVariables,
-                    baseCommandLine.title,
-                    baseCommandLine.description
-                ),
-                virtualConfigFilePath,
-                virtualSnapshotFilePath
+                DotCoverCommandType.Cover,
+                CoverCommandData(
+                    CommandLine(
+                        baseCommandLine,
+                        baseCommandLine.target,
+                        baseCommandLine.executableFile,
+                        virtualWorkingDirectory,
+                        baseCommandLine.arguments,
+                        baseCommandLine.environmentVariables,
+                        baseCommandLine.title,
+                        baseCommandLine.description
+                    ),
+                    virtualConfigFilePath,
+                    virtualSnapshotFilePath
+                )
             )
 
             _fileSystemService.write(configFile) {
@@ -129,7 +133,8 @@ class DotCoverWorkflowComposer(
                     _dotCoverCommandLineBuilders.get(DotCoverCommandType.Cover)!!.buildCommand(
                         executableFile = executableFile,
                         environmentVariables = baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                        coverCommandData = CoverCommandData(baseCommandLine, dotCoverProject.configFile.path)
+                        virtualConfigFilePath.path,
+                        baseCommandLine
                     )
                 )
             }
@@ -158,11 +163,17 @@ class DotCoverWorkflowComposer(
             return
         }
 
+        val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(mergeConfigFilename).path))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge, mergeCommandData = MergeCommandData(snapshots, outputSnapshotFile))
+        _fileSystemService.write(File(virtualConfigFilePath.path)) {
+            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+        }
+
         yield(
             _dotCoverCommandLineBuilders.get(DotCoverCommandType.Merge)!!.buildCommand(
                 executableFile = executableFile,
                 environmentVariables = _environmentVariables.getVariables().toList(),
-                mergeCommandData = MergeCommandData(snapshots, outputSnapshotFile)
+                virtualConfigFilePath.path
             )
         )
         snapshots.forEach { _fileSystemService.remove(it) }
@@ -180,11 +191,17 @@ class DotCoverWorkflowComposer(
             return
         }
 
+        val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(reportConfigFilename).path))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Report, reportCommandData = ReportCommandData(outputSnapshotFile, outputReportFile))
+        _fileSystemService.write(File(virtualConfigFilePath.path)) {
+            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+        }
+
         yield(
             _dotCoverCommandLineBuilders.get(DotCoverCommandType.Report)!!.buildCommand(
                 executableFile = executableFile,
                 environmentVariables = _environmentVariables.getVariables().toList(),
-                reportCommandData = ReportCommandData(outputSnapshotFile, outputReportFile)
+                virtualConfigFilePath.path
             )
         )
 
@@ -252,6 +269,10 @@ class DotCoverWorkflowComposer(
                 true -> ""
                 false -> it
             }}
+
+    private val mergeConfigFilename get() = "merge_$DOTCOVER_CONFIG_EXTENSION"
+
+    private val reportConfigFilename get() = "report_$DOTCOVER_CONFIG_EXTENSION"
 
     private val outputSnapshotFilename get() = "outputSnapshot_${_dotCoverSettingsHolder.buildStepId}.dcvr"
 

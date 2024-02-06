@@ -23,27 +23,23 @@ class DotCoverMergeCommandLineBuilder(
     override fun buildCommand(
         executableFile: Path,
         environmentVariables: List<CommandLineEnvironmentVariable>,
-        coverCommandData: CoverCommandData?,
-        mergeCommandData: MergeCommandData?,
-        reportCommandData: ReportCommandData?
+        configFilePath: String,
+        baseCommandLine: CommandLine?
     ): CommandLine {
         return CommandLine(
             baseCommandLine = null,
             target = TargetType.CodeCoverageProfiler,
             executableFile = executableFile,
             workingDirectory = workingDirectory,
-            arguments = createArguments(mergeCommandData!!).toList(),
+            arguments = createArguments(configFilePath).toList(),
             environmentVariables = environmentVariables,
             title = "dotCover merge"
         )
     }
 
-    private fun createArguments(mergeCommandData: MergeCommandData): Sequence<CommandLineArgument> = sequence {
-        val sources = mergeCommandData.sourceFiles.joinToString(";") { it.absolutePath }
-
+    private fun createArguments(configFilePath: String): Sequence<CommandLineArgument> = sequence {
         yield(CommandLineArgument("merge", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument("${argumentPrefix}Source=${sources}"))
-        yield(CommandLineArgument("${argumentPrefix}Output=${mergeCommandData.outputFile.absolutePath}"))
+        yield(CommandLineArgument(configFilePath, CommandLineArgumentType.Target))
 
         logFileName?.let { yield(CommandLineArgument("${argumentPrefix}LogFile=${it}", CommandLineArgumentType.Infrastructural)) }
     }

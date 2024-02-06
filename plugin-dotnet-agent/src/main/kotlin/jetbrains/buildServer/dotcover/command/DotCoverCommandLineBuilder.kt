@@ -11,8 +11,7 @@ interface DotCoverCommandLineBuilder {
     fun buildCommand(
         executableFile: Path,
         environmentVariables: List<CommandLineEnvironmentVariable>,
-        coverCommandData: CoverCommandData? = null,
-        mergeCommandData: MergeCommandData? = null,
-        reportCommandData: ReportCommandData? = null
+        configFilePath: String,
+        baseCommandLine: CommandLine? = null
     ): CommandLine
 }
