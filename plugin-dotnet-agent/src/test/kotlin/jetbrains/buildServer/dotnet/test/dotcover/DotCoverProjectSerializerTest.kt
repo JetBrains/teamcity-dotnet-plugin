@@ -137,10 +137,10 @@ class DotCoverProjectSerializerTest {
         val tempDir = File("temp")
         val expectedContent = """
                 <MergeParams xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/1.dcvr</Source>
-                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/2.dcvr</Source>
-                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/3.dcvr</Source>
-                <Output>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/outputSnapshot_BuildStep1.dcvr</Output>
+                <Source>${File(tempDir, "1.dcvr").absolutePath}</Source>
+                <Source>${File(tempDir, "2.dcvr").absolutePath}</Source>
+                <Source>${File(tempDir, "3.dcvr").absolutePath}</Source>
+                <Output>${File(tempDir, "outputSnapshot_BuildStep1.dcvr").absolutePath}</Output>
                 </MergeParams>
                 """
 
@@ -190,8 +190,8 @@ class DotCoverProjectSerializerTest {
         val tempDir = File("temp")
         val expectedContent = """
                 <ReportParams xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <Source>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/outputSnapshot_BuildStep1.dcvr</Source>
-                <Output>/Users/Vitaliy.Kim/IdeaProjects/TeamCity/external-repos/teamcity-dotnet-plugin/plugin-dotnet-agent/temp/CoverageReport_BuildStep1.xml</Output>
+                <Source>${File(tempDir,"outputSnapshot_BuildStep1.dcvr").absolutePath}</Source>
+                <Output>${File(tempDir, "CoverageReport_BuildStep1.xml").absolutePath}</Output>
                 <ReportType>TeamCityXML</ReportType>
                 </ReportParams>
                 """
