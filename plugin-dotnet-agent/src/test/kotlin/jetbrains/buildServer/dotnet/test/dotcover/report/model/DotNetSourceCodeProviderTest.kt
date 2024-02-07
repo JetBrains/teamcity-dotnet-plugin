@@ -41,13 +41,6 @@ class DotNetSourceCodeProviderTest {
                 will(returnValue(_checkoutDir))
                 allowing(_ps).getBuildLogger()
                 will(returnValue(_logger))
-                allowing(_ps).getConfigurationParameter(TestUtils.uninitialized(with(any(String::class.java))))
-                will(object : CustomAction("myConfigurationParameters") {
-                    @Throws(Throwable::class)
-                    override fun invoke(invocation: Invocation): Any? {
-                        return _configurationParameters[invocation.getParameter(0)]
-                    }
-                })
                 allowing(_logger).warning(TestUtils.uninitialized(with(any(String::class.java))))
                 will(object : CustomAction("Log warning") {
                     @Throws(Throwable::class)
@@ -71,7 +64,6 @@ class DotNetSourceCodeProviderTest {
     @Test
     @Throws(IOException::class)
     fun testSourcesMapping_local() {
-
         addExistingFile(1, "foo.txt")
         _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))

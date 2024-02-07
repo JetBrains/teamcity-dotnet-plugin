@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.agent.runner.BuildInfo
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -16,7 +15,7 @@ class DotCoverSettingsHolder(
 
     val buildLogger get() = _buildStepContext.runnerContext.build.buildLogger
 
-    val configParameters get() = _buildStepContext.runnerContext.build.sharedConfigParameters
+    val configParameters: Map<String, String> get() = _buildStepContext.runnerContext.build.sharedConfigParameters
 
     val buildStepId get() = _buildInfo.id
 

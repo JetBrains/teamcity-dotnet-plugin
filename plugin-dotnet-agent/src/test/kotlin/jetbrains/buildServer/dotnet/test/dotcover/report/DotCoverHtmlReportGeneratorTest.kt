@@ -29,14 +29,10 @@ class DotCoverHtmlReportGeneratorTest {
 
         m.checking(object : Expectations() {
             init {
-                allowing(ps).getBuildLogger()
-                will(returnValue(logger))
                 allowing(ps).resolvePath(".")
                 will(returnValue(home))
                 allowing(ps).resolvePath("")
                 will(returnValue(home))
-                allowing(ps).getConfigurationParameter(TestUtils.uninitialized(with(any(String::class.java))))
-                will(returnValue(null))
                 allowing(ps).getCheckoutDirectory()
                 will(returnValue(home))
                 allowing(logger).activityStarted(with(any(String::class.java)), with(any(String::class.java)))

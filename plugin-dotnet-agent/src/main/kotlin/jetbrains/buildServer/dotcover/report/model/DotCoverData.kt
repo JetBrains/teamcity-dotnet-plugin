@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotcover.report.model
 
 import jetbrains.buildServer.agent.BuildProgressLogger
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.coverage.report.ClassInfo
 import jetbrains.coverage.report.CoverageCodeRenderer
 import jetbrains.coverage.report.CoverageData
@@ -11,13 +10,8 @@ import java.util.Collections
 
 class DotCoverData(checkoutDir: File) : CoverageData, ClassHolder, CoverageSourceData {
 
-    private val _filesMap: DotNetSourceCodeProvider
-    private val _info: MutableList<ClassInfo>
-
-    init {
-        _filesMap = DotNetSourceCodeProvider(checkoutDir)
-        _info = ArrayList()
-    }
+    private val _filesMap: DotNetSourceCodeProvider = DotNetSourceCodeProvider(checkoutDir)
+    private val _info: MutableList<ClassInfo> = ArrayList()
 
     val filesMap: DotNetSourceCodeProvider get() = _filesMap
 

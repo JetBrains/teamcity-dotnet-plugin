@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.text.CharArrayCharSequence
 import jetbrains.buildServer.agent.BuildProgressLogger
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.coverage.utils.Distances
 import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.util.StringUtil

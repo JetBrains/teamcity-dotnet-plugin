@@ -43,7 +43,6 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator
     @MockK private lateinit var _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher
     @MockK private lateinit var _uploader: ArtifactsUploader
-    @MockK private lateinit var _dotnetCoverageParametersHolder: DotnetCoverageParametersHolder
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
     @BeforeMethod
@@ -609,7 +608,6 @@ class DotCoverWorkflowComposerTest {
             ),
             _dotCoverTeamCityReportGenerator,
             _dotnetCoverageStatisticsPublisher,
-            _uploader,
-            _dotnetCoverageParametersHolder)
+            _uploader)
     }
 }
