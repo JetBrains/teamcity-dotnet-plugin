@@ -93,7 +93,7 @@ class DotCoverReportGenerator(
         val xmlReport = reporter.runReportTask(merged)
         val html = File(params.getTempDirectory(), CoverageConstants.COVERAGE_HTML_REPORT_ZIP)
 
-        val stat = _htmlReporter.generateReportHTMLandStats(params, params.resolvePath("."), xmlReport, html)
+        val stat = _htmlReporter.generateReportHTMLandStats(params.getBuildLogger(), params.getConfigurationParameters(), params.resolvePath("."), xmlReport, html)
         val result = DotCoverCoverageGenerationResult(xmlReport, html, stat, reporter)
         val zipTool = result.zipTool
 

@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotcover.report.model
 
+import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.coverage.report.ClassInfo
 import jetbrains.coverage.report.CoverageCodeRenderer
@@ -48,7 +49,8 @@ class DotCoverData(checkoutDir: File) : CoverageData, ClassHolder, CoverageSourc
         return result
     }
 
-    fun preprocessFoundFiles(paramz: DotnetCoverageParameters) {
-        _filesMap.preprocessFoundFiles(paramz, collectUsedFiles())
+    fun preprocessFoundFiles(buildLogger: BuildProgressLogger,
+                             configParameters: Map<String, String>) {
+        _filesMap.preprocessFoundFiles(buildLogger, configParameters, collectUsedFiles())
     }
 }

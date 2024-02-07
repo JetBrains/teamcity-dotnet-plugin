@@ -31,6 +31,8 @@ interface DotnetCoverageParameters {
 
     fun getConfigurationParameter(key: String): String?
 
+    fun getConfigurationParameters(): Map<String, String>
+
     /**
      * @return environment variables of a build
      */

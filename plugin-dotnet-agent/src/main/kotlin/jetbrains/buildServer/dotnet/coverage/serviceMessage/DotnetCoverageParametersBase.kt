@@ -14,6 +14,10 @@ abstract class DotnetCoverageParametersBase(protected val runningBuild: AgentRun
         return runningBuild.sharedConfigParameters[key]
     }
 
+    override fun getConfigurationParameters(): Map<String, String> {
+        return runningBuild.sharedConfigParameters
+    }
+
     override fun getBuildEnvironmentVariables(): Map<String, String> {
         return runningBuild.sharedBuildParameters.environmentVariables
     }

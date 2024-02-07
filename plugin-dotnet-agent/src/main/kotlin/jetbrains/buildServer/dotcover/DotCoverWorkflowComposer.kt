@@ -32,8 +32,7 @@ class DotCoverWorkflowComposer(
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
     private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
     private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
-    private val _uploader: ArtifactsUploader,
-    private val _dotnetCoverageParametersHolder: DotnetCoverageParametersHolder
+    private val _uploader: ArtifactsUploader
 ) : SimpleWorkflowComposer {
 
     private val _dotCoverCommandLineBuilders: Map<DotCoverCommandType, DotCoverCommandLineBuilder> =
@@ -217,8 +216,8 @@ class DotCoverWorkflowComposer(
         _dotCoverTeamCityReportGenerator.parseStatementCoverage(outputReportFile)?.let {
             _loggerService.writeStandardOutput("DotCover statement coverage was: ${it.covered} of ${it.total} (${it.percent}%)")
         }
-        val coverageStatistics = _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(
-            _dotnetCoverageParametersHolder.getCoverageParameters(), virtualCheckoutDirectory, outputReportFile, reportZipFile)
+        val coverageStatistics = _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(_dotCoverSettingsHolder.buildLogger, _dotCoverSettingsHolder.configParameters,
+            virtualCheckoutDirectory, outputReportFile, reportZipFile)
         coverageStatistics?.let {
             _dotnetCoverageStatisticsPublisher.publishCoverageStatistics(it)
         }

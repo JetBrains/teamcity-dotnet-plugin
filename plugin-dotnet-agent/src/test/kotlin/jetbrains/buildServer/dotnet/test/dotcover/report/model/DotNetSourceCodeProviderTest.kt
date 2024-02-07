@@ -71,8 +71,9 @@ class DotNetSourceCodeProviderTest {
     @Test
     @Throws(IOException::class)
     fun testSourcesMapping_local() {
+
         addExistingFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))
     }
 
@@ -80,7 +81,7 @@ class DotNetSourceCodeProviderTest {
     @Throws(IOException::class)
     fun testSourcesMapping_notMapped() {
         addForeignFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNull(_provider.getFileContentLines(1))
     }
 
@@ -90,7 +91,7 @@ class DotNetSourceCodeProviderTest {
         _configurationParameters["dotNetCoverage.dotCover.source.mapping"] =
             _foreignDir.toString() + "=>" + _checkoutDir
         addForeignFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))
     }
 
@@ -100,7 +101,7 @@ class DotNetSourceCodeProviderTest {
         _configurationParameters["dotNetCoverage.dotCover.source.mapping"] =
             _foreignDir.toString() + "/=>" + _checkoutDir + "/"
         addForeignFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))
     }
 
@@ -110,7 +111,7 @@ class DotNetSourceCodeProviderTest {
         _configurationParameters["dotNetCoverage.dotCover.source.mapping"] =
             "  $_foreignDir  =>   $_checkoutDir   "
         addForeignFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))
     }
 
@@ -120,7 +121,7 @@ class DotNetSourceCodeProviderTest {
         _configurationParameters["dotNetCoverage.dotCover.source.mapping"] =
             _foreignDir.toString() + "/../aaa/../" + _foreignDir!!.name + "=>" + _checkoutDir + "/"
         addForeignFile(1, "foo.txt")
-        _provider.preprocessFoundFiles(_ps, setOf(1))
+        _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))
     }
 

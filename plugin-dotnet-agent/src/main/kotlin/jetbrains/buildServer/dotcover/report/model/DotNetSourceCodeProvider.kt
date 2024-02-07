@@ -3,6 +3,7 @@ package jetbrains.buildServer.dotcover.report.model
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.text.CharArrayCharSequence
+import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.coverage.utils.Distances
 import jetbrains.buildServer.util.FileUtil
@@ -27,10 +28,11 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
     val files: Set<File>
         get() = HashSet(_files.values)
 
-    private fun mapFiles(params: DotnetCoverageParameters) {
-        _encoding = params.getConfigurationParameter(FILES_ENCODING_KEY)
+    private fun mapFiles(buildLogger: BuildProgressLogger,
+                         configParameters: Map<String, String>) {
+        _encoding = configParameters[FILES_ENCODING_KEY]
 
-        val mapping: String? = params.getConfigurationParameter(SOURCE_MAPPING_KEY)
+        val mapping: String? = configParameters[SOURCE_MAPPING_KEY]
         if (mapping == null || StringUtil.isEmptyOrSpaces(mapping)) {
             LOG.debug("No mapping specified.")
             return
@@ -41,7 +43,7 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
         if (parse.size != 2) {
             val message = "Failed to parse source mapping: \r\n$mapping"
             LOG.warn(message)
-            params.getBuildLogger().warning(message)
+            buildLogger.warning(message)
             return
         }
 
@@ -50,8 +52,7 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
         val to = parse[1].trim { it <= ' ' }
 
         LOG.debug("Parsed mapping rule: $from=>$to")
-        params.getBuildLogger()
-            .message("Use sources mapping to map reported by dotCover paths to the build sources:\r\n$mapping")
+        buildLogger.message("Use sources mapping to map reported by dotCover paths to the build sources:\r\n$mapping")
 
         var count = 0
         for (e: MutableMap.MutableEntry<Int, File> in _files.entries) {
@@ -67,7 +68,7 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
             e.setValue(FileUtil.resolvePath(_checkoutDir, result))
             count++
         }
-        params.getBuildLogger().message("Mapped $count source file(s).")
+        buildLogger.message("Mapped $count source file(s).")
     }
 
     private fun makeComparable(file: File): String {
@@ -77,7 +78,7 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
         return if (SystemInfo.isFileSystemCaseSensitive) path else path.lowercase(Locale.getDefault())
     }
 
-    private fun validateFoundFiles(params: DotnetCoverageParameters) {
+    private fun validateFoundFiles(buildLogger: BuildProgressLogger) {
         val checkoutDir = makeComparable(_checkoutDir)
         var fails = 0
         val totalFiles = _files.size
@@ -99,13 +100,13 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
                         "directory {0}. No source files will be included in dotCover " +
                         "report as source code of classes.", _checkoutDir.path)
             LOG.warn(message)
-            params.getBuildLogger().warning(message)
+            buildLogger.warning(message)
 
             if (fails > 0) {
-                dumpNotFoundFiles(params, errors)
+                dumpNotFoundFiles(buildLogger, errors)
             }
         } else if (fails > 0) {
-            params.getBuildLogger().warning(
+            buildLogger.warning(
                 MessageFormat.format(
                     ("{0} of {1} source file{2} were not found under the build checkout " +
                             "directory {3}. Those files will not be included in dotCover " +
@@ -114,13 +115,13 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
                     totalFiles,
                     if (fails > 1) "s" else "",
                     _checkoutDir.path))
-            dumpNotFoundFiles(params, errors)
+            dumpNotFoundFiles(buildLogger, errors)
         }
     }
 
-    private fun dumpNotFoundFiles(params: DotnetCoverageParameters,
+    private fun dumpNotFoundFiles(buildLogger: BuildProgressLogger,
                                   errors: FilteringList) {
-        params.getBuildLogger().warning(
+        buildLogger.warning(
             MessageFormat.format("For example: \r\n    {0}",
                 StringUtil.join(errors.entries, "\r\n    ")))
     }
@@ -151,31 +152,31 @@ class DotNetSourceCodeProvider(private val _checkoutDir: File) {
         }
     }
 
-    fun preprocessFoundFiles(params: DotnetCoverageParameters,
+    fun preprocessFoundFiles(buildLogger: BuildProgressLogger,
+                             configParameters: Map<String, String>,
                              referredFiles: Set<Int>) {
         if (LOG.isDebugEnabled) {
             LOG.debug("dotCover reported the following source files to include into report: " + TreeSet(_files.values))
         }
 
-        val cleanFiles = "true".equals(params.getConfigurationParameter(NO_SOURCE_FILES_KEY), ignoreCase = true)
+        val cleanFiles = "true".equals(configParameters[NO_SOURCE_FILES_KEY], ignoreCase = true)
         if (cleanFiles) {
             _files.clear()
             LOG.warn("Report will not contain sources. $NO_SOURCE_FILES_KEY configuration parameter was specified.")
-            params.getBuildLogger()
-                .warning("Report will not contain sources. $NO_SOURCE_FILES_KEY configuration parameter was specified.")
+            buildLogger.warning("Report will not contain sources. $NO_SOURCE_FILES_KEY configuration parameter was specified.")
             return
         }
 
         //Remove all files that were not referenced from sources
         _files.keys.retainAll(referredFiles)
         try {
-            mapFiles(params)
-            validateFoundFiles(params)
+            mapFiles(buildLogger, configParameters)
+            validateFoundFiles(buildLogger)
         } catch (t: Throwable) {
             val msg = ("Error processing dotCover reported source files path. " +
                     "No source code will be included into report. " + t.message)
             LOG.warn(msg, t)
-            params.getBuildLogger().warning(msg)
+            buildLogger.warning(msg)
             _files.clear()
         }
 

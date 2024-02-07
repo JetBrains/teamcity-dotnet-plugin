@@ -44,23 +44,23 @@ class DotCoverTeamCityReportGenerator {
         return entry.get()
     }
 
-    fun generateReportHTMLandStats(paramz: DotnetCoverageParameters,
+    fun generateReportHTMLandStats(buildLogger: BuildProgressLogger,
+                                   configParameters: Map<String, String>,
                                    checkoutDir: File?,
                                    dotCoverReport: File,
                                    destFile: File): CoverageStatistics? {
         checkoutDir ?: return null
 
-        val log: BuildProgressLogger = paramz.getBuildLogger()
+        buildLogger.activityStarted("Generate dotCover HTML report", "dotCoverReport")
 
-        log.activityStarted("Generate dotCover HTML report", "dotCoverReport")
         try {
-            val data: DotCoverData = loadCoverageModel(checkoutDir, dotCoverReport, log) ?: return null
+            val data: DotCoverData = loadCoverageModel(checkoutDir, dotCoverReport, buildLogger) ?: return null
 
-            data.preprocessFoundFiles(paramz)
+            data.preprocessFoundFiles(buildLogger, configParameters)
 
-            return callReportGenerator(dotCoverReport, destFile, log, data)
+            return callReportGenerator(dotCoverReport, destFile, buildLogger, data)
         } finally {
-            log.activityFinished("Generate dotCover HTML report", "dotCoverReport")
+            buildLogger.activityFinished("Generate dotCover HTML report", "dotCoverReport")
         }
     }
 
