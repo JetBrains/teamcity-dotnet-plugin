@@ -49,11 +49,11 @@
 <tr>
   <th>Report:</th>
   <td>
-    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${true}"/>
+    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${params.dotCoverGenerateReportKey}"/>
     <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
     <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
     <br/>
-    <props:checkboxProperty name="${params.dotCoverMergeSnapshotsKey}" checked="${true}"/>
+    <props:checkboxProperty name="${params.dotCoverMergeSnapshotsKey}" checked="${params.dotCoverMergeSnapshotsKey}"/>
     <label for="${params.dotCoverMergeSnapshotsKey}">Join reports from previous build steps</label>
     <span class="smallNote">Combines all available dotCover snapshots from previous build steps into one report</span>
     <br/>

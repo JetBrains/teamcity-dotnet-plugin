@@ -2,22 +2,22 @@
 
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.requirements.Requirement
+import jetbrains.buildServer.RequirementsProvider
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
 import jetbrains.buildServer.serverSide.RunTypeRegistry
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
-import org.springframework.beans.factory.BeanFactory
 
 /**
  * Dotnet runner definition.
  */
 class DotnetRunnerRunType(
-        private val _factory: BeanFactory,
-        private val _pluginDescriptor: PluginDescriptor,
-        runTypeRegistry: RunTypeRegistry) : RunType() {
+    runTypeRegistry: RunTypeRegistry,
+    private val _pluginDescriptor: PluginDescriptor,
+    private val _dotnetRunnerRequirementsProvider: RequirementsProvider,
+) : RunType() {
 
     init {
         _pluginDescriptor.pluginResourcesPath
@@ -82,30 +82,12 @@ class DotnetRunnerRunType(
         }
     }
 
-    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> {
-        val requirements = arrayListOf<Requirement>()
-        if (!isDocker(runParameters)) {
-            runParameters[DotnetConstants.PARAM_COMMAND]?.let {
-                DotnetParametersProvider.commandTypes[it]?.let {
-                    requirements.addAll(it.getRequirements(runParameters, _factory))
-                }
-            }
-
-            runParameters[CoverageConstants.PARAM_TYPE]?.let {
-                DotnetParametersProvider.coverageTypes[it]?.let {
-                    requirements.addAll(it.getRequirements(runParameters, _factory))
-                }
-            }
-        }
-
-        return requirements
-    }
+    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>) =
+        _dotnetRunnerRequirementsProvider.getRequirements(runParameters).toList()
 
     override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET", "MSBuild", "VS test", "Visual Studio", "NuGet", "devenv")
+        return mutableSetOf(".NET", "MSBuild", "VSTest", "VS", "Visual Studio", "NuGet", "devenv")
     }
-
-    private fun isDocker(parameters: Map<String, String>) = !parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()
 
     override fun getIconUrl(): String {
         return _pluginDescriptor.getPluginResourcesPath("dotnet-runner.svg");

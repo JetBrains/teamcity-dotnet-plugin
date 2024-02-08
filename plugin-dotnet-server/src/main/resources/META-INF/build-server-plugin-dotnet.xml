@@ -18,7 +18,28 @@
   <bean class="jetbrains.buildServer.DotnetUsageStatisticsProvider"/>
 
   <!--Dotnet-->
-  <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.BuildRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.CleanRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.CustomRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.NugetDeleteRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.NugetPushRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.PackRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.PublishRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.RestoreRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.RunRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.TestRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.MSBuildRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.VisualStudioRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.commands.VSTestRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.RequiredDotnetSDKRequirementsProvider" id="requiredDotnetSDKRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.DotnetRunnerRequirementsProvider" id="dotnetRunnerRequirementsProvider">
+    <constructor-arg ref="requiredDotnetSDKRequirementsProvider"/>
+    <constructor-arg ref="dotCoverRequirementsProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.dotnet.DotnetRunnerRunType">
+    <constructor-arg ref="dotnetRunnerRequirementsProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SdkTypeResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.SdkWizardImpl"/>
@@ -46,8 +67,11 @@
   <bean class="jetbrains.buildServer.dotnet.fetchers.DotnetSdkFetcher"/>
 
   <!--DotCover-->
-  <bean class="jetbrains.buildServer.dotCover.DotCoverRunnerRunType"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverRunnerParametersProvider"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverRequirementsProvider" id="dotCoverRequirementsProvider"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverRunnerRunType">
+    <constructor-arg ref="dotCoverRequirementsProvider"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotCover.DotCoverPackageIdResolver"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverToolComparator"/>
   <bean class="jetbrains.buildServer.dotCover.DotCoverPackageFilter" id="dotCoverPackageFilter"/>
@@ -70,14 +94,16 @@
   </bean>
 
   <bean class="jetbrains.buildServer.ToolVersionProviderImpl"/>
-  <bean class="jetbrains.buildServer.inspect.RequirementsProviderImpl"/>
+  <bean class="jetbrains.buildServer.inspect.ReSharperRequirementsProvider" id="reSharperRequirementsProvider"/>
   <bean class="jetbrains.buildServer.inspect.InspectCodeRunTypePropertiesProcessor" id="inspectCodeRunTypePropertiesProcessor"/>
   <bean class="jetbrains.buildServer.inspect.DupFinderRunTypePropertiesProcessor" id="dupFinderRunTypePropertiesProcessor"/>
   <bean class="jetbrains.buildServer.inspect.InspectCodeRunType">
+    <constructor-arg ref="reSharperRequirementsProvider"/>
     <constructor-arg ref="inspectCodeRunTypePropertiesProcessor"/>
   </bean>
 
   <bean class="jetbrains.buildServer.inspect.DupFinderRunType">
+    <constructor-arg ref="reSharperRequirementsProvider"/>
     <constructor-arg ref="dupFinderRunTypePropertiesProcessor"/>
   </bean>
 

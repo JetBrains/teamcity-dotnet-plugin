@@ -1,9 +1,7 @@
-
-
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.requirements
 
 import jetbrains.buildServer.requirements.Requirement
 
-interface RequirementFactory {
+interface SdkBasedRequirementFactory {
     fun tryCreate(sdkVersion: String): Requirement?
 }

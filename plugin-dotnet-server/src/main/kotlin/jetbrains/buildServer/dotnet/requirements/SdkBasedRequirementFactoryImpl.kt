@@ -1,24 +1,22 @@
-
-
-package jetbrains.buildServer.dotnet
+package jetbrains.buildServer.dotnet.requirements
 
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
-import jetbrains.buildServer.dotnet.discovery.Framework
+import jetbrains.buildServer.dotnet.SdkType
+import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.dotnet.discovery.SdkResolver
 import jetbrains.buildServer.dotnet.discovery.SdkVersionType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier.EXISTS_QUALIFIER
 import jetbrains.buildServer.requirements.RequirementType
 
-class RequirementFactoryImpl(
-        private val _sdkResolver: SdkResolver)
-    : RequirementFactory {
+class SdkBasedRequirementFactoryImpl(
+    private val _sdkResolver: SdkResolver
+) : SdkBasedRequirementFactory {
     override fun tryCreate(sdkVersion: String) =
-        Version.tryParse(sdkVersion)?.let {
-            version ->
+        Version.tryParse(sdkVersion)?.let { version ->
             val versions = _sdkResolver.getCompatibleVersions(version).toList()
             val dotNetVersions = versions.filter { it.sdkType == SdkType.DotnetCore || it.sdkType == SdkType.Dotnet }.toList()
             if (dotNetVersions.any()) {
@@ -34,15 +32,12 @@ class RequirementFactoryImpl(
             }
             else {
                 versions
-                        .firstOrNull { it.versionType == SdkVersionType.Default && (it.sdkType == SdkType.FullDotnetTargetingPack || it.sdkType == SdkType.DotnetFramework) }
-                        ?.let {
-                            createRequirement(
-                                when (it.sdkType) {
-                                    SdkType.FullDotnetTargetingPack -> "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${it.version}$CONFIG_SUFFIX_PATH"
-                                    else ->  "$CONFIG_PREFIX_DOTNET_FAMEWORK${it.version}[\\.\\d]*_x[\\d]{2}"
-                                }
-                            )
-                        }
+                    .firstOrNull { it.versionType == SdkVersionType.Default && (it.sdkType == SdkType.FullDotnetTargetingPack || it.sdkType == SdkType.DotnetFramework) }
+                    ?.let { when (it.sdkType) {
+                        SdkType.FullDotnetTargetingPack -> "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${it.version}$CONFIG_SUFFIX_PATH"
+                        else ->  "$CONFIG_PREFIX_DOTNET_FAMEWORK${it.version}[\\.\\d]*_x[\\d]{2}"
+                    }}
+                    ?.let { createRequirement(it) }
             }
         }
 
@@ -59,6 +54,6 @@ class RequirementFactoryImpl(
         }
 
         private fun createRequirement(regex: String) =
-                Requirement("$EXISTS_QUALIFIER($regex)", null, RequirementType.EXISTS)
+            Requirement("$EXISTS_QUALIFIER($regex)", null, RequirementType.EXISTS)
     }
 }

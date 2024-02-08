@@ -2,6 +2,8 @@ package jetbrains.buildServer.dotCover
 
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.dotnet.DotnetParametersProvider
+import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
@@ -10,8 +12,9 @@ import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 class DotCoverRunnerRunType(
-    private val _pluginDescriptor: PluginDescriptor,
     runTypeRegistry: RunTypeRegistry,
+    private val _pluginDescriptor: PluginDescriptor,
+    private val _dotCoverRequirementsProvider: DotCoverRequirementsProvider,
 ) : RunType() {
     init {
         _pluginDescriptor.pluginResourcesPath
@@ -93,6 +96,8 @@ class DotCoverRunnerRunType(
             if (hasAdditionalSnapshotPaths) appendLine("Include additional dotCover snapshots to the report")
         }
     }
+    override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> =
+        _dotCoverRequirementsProvider.getRequirements(runParameters).toList()
 
     companion object {
         const val NOTHING_TO_REPORT_ERROR =

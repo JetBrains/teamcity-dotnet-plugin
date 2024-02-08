@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.inspect
 
+import jetbrains.buildServer.RequirementsProvider
 import jetbrains.buildServer.dotnet.TargetDotNetFramework
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.PropertiesProcessor
@@ -11,10 +12,10 @@ import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 class InspectCodeRunType(
-        runTypeRegistry: RunTypeRegistry,
-        private val _pluginDescriptor: PluginDescriptor,
-        private val _requirementsProvider: RequirementsProvider,
-        private val _propertiesProcessor: PropertiesProcessor)
+    runTypeRegistry: RunTypeRegistry,
+    private val _pluginDescriptor: PluginDescriptor,
+    private val _requirementsProvider: RequirementsProvider,
+    private val _propertiesProcessor: PropertiesProcessor)
     : RunType() {
 
     init {

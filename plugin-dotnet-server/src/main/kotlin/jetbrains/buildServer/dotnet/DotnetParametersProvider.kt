@@ -1,10 +1,9 @@
-
-
 package jetbrains.buildServer.dotnet
 
-import jetbrains.buildServer.CommandType
 import jetbrains.buildServer.dotnet.commands.*
 import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl
+import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactoryImpl
 import jetbrains.buildServer.web.functions.InternalProperties
 
 /**
@@ -172,29 +171,29 @@ class DotnetParametersProvider {
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
         private val testRetryEnabled get() = InternalProperties.getBoolean(DotnetConstants.PARAM_TEST_RETRY_ENABLED) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
-        private val requirementFactory: RequirementFactory = RequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
-        val commandTypes
-            get() = sequenceOf(
-                    RestoreCommandType(requirementFactory),
-                    BuildCommandType(requirementFactory),
-                    TestCommandType(requirementFactory),
-                    PublishCommandType(requirementFactory),
-                    PackCommandType(requirementFactory),
-                    NugetPushCommandType(requirementFactory),
-                    NugetDeleteCommandType(requirementFactory),
-                    CleanCommandType(requirementFactory),
-                    RunCommandType(requirementFactory),
-                    MSBuildCommandType(requirementFactory),
-                    VSTestCommandType(requirementFactory),
-                    VisualStudioCommandType(requirementFactory))
-                    .plus(if(experimentalMode) experimentalCommandTypes else emptySequence())
-                    .sortedBy { it.description }
-                    .plus(CustomCommandType(requirementFactory))
-                    .associateBy { it.name }
+        private val sdkBasedRequirementFactory: SdkBasedRequirementFactory =
+            SdkBasedRequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
+        val commandTypes get() = sequenceOf(
+            RestoreCommandType(sdkBasedRequirementFactory),
+            BuildCommandType(sdkBasedRequirementFactory),
+            TestCommandType(sdkBasedRequirementFactory),
+            PublishCommandType(sdkBasedRequirementFactory),
+            PackCommandType(sdkBasedRequirementFactory),
+            NugetPushCommandType(sdkBasedRequirementFactory),
+            NugetDeleteCommandType(sdkBasedRequirementFactory),
+            CleanCommandType(sdkBasedRequirementFactory),
+            RunCommandType(sdkBasedRequirementFactory),
+            MSBuildCommandType(sdkBasedRequirementFactory),
+            VSTestCommandType(sdkBasedRequirementFactory),
+            VisualStudioCommandType(sdkBasedRequirementFactory)
+        )
+            .plus(if(experimentalMode) experimentalCommandTypes else emptySequence())
+            .sortedBy { it.description }
+            .plus(CustomCommandType(sdkBasedRequirementFactory))
+            .associateBy { it.name }
 
-        val coverageTypes
-            get() = sequenceOf<CommandType>(DotCoverCoverageType(requirementFactory))
-                    .sortedBy { it.name }
-                    .associateBy { it.name }
+        val coverageTypes get() = sequenceOf<CommandType>(DotCoverCoverageType(sdkBasedRequirementFactory))
+            .sortedBy { it.name }
+            .associateBy { it.name }
     }
 }

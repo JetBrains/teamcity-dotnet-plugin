@@ -1,16 +1,15 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.requirements.Requirement
+import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
 import jetbrains.buildServer.serverSide.InvalidProperty
-import org.springframework.beans.factory.BeanFactory
 
 /**
  * Provides parameters for dotnet %custom% command.
  */
 class CustomCommandType(
-        private val _requirementFactory: RequirementFactory)
-    : DotnetCLICommandType(_requirementFactory) {
+    sdkBasedRequirementFactory: SdkBasedRequirementFactory
+) : DotnetCLICommandType(sdkBasedRequirementFactory) {
     override val name: String = DotnetCommandType.Custom.id
 
     override val description: String = "<custom>"
@@ -25,14 +24,6 @@ class CustomCommandType(
         if (properties[DotnetConstants.PARAM_PATHS].isNullOrBlank() && properties[DotnetConstants.PARAM_ARGUMENTS].isNullOrBlank()) {
             yield(InvalidProperty(DotnetConstants.PARAM_PATHS, VALIDATION_EMPTY))
             yield(InvalidProperty(DotnetConstants.PARAM_ARGUMENTS, VALIDATION_EMPTY))
-        }
-    }
-
-    override fun getRequirements(parameters: Map<String, String>, factory: BeanFactory): Sequence<Requirement> = sequence {
-        yieldAll(super.getRequirements(parameters, factory))
-        
-        if (parameters[DotnetConstants.PARAM_PATHS].isNullOrBlank()) {
-            yieldAll(super.getRequirements(parameters, factory))
         }
     }
 

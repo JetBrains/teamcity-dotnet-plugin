@@ -8,6 +8,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.dotnet.discovery.SdkResolver
 import jetbrains.buildServer.dotnet.discovery.SdkVersion
 import jetbrains.buildServer.dotnet.discovery.SdkVersionType
+import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactoryImpl
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
@@ -15,7 +16,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class RequirementFactoryTest {
+class SdkBasedRequirementFactoryTest {
     @DataProvider
     fun testData(): Array<Array<out Any?>> {
         return arrayOf(
@@ -74,7 +75,7 @@ class RequirementFactoryTest {
         val sdkResolver = mockk<SdkResolver>()
         every { sdkResolver.getCompatibleVersions(Version.tryParse(targetFrameworkMoniker)!!) } returns compatibleVersions
 
-        val requirementFactory = RequirementFactoryImpl(sdkResolver)
+        val requirementFactory = SdkBasedRequirementFactoryImpl(sdkResolver)
 
         // When
         val actualRequirement = requirementFactory.tryCreate(targetFrameworkMoniker)

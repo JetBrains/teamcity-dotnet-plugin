@@ -2,6 +2,7 @@
 
 package jetbrains.buildServer.inspect
 
+import jetbrains.buildServer.RequirementsProvider
 import jetbrains.buildServer.inspect.DupFinderConstants.DEFAULT_DISCARD_COST
 import jetbrains.buildServer.inspect.DupFinderConstants.DEFAULT_INCLUDE_FILES
 import jetbrains.buildServer.serverSide.*
@@ -9,10 +10,10 @@ import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 class DupFinderRunType(
-        runTypeRegistry: RunTypeRegistry,
-        private val _pluginDescriptor: PluginDescriptor,
-        private val _requirementsProvider: RequirementsProvider,
-        private val _propertiesProcessor: PropertiesProcessor)
+    runTypeRegistry: RunTypeRegistry,
+    private val _pluginDescriptor: PluginDescriptor,
+    private val _requirementsProvider: RequirementsProvider,
+    private val _propertiesProcessor: PropertiesProcessor)
     : RunType(), Deprecation {
     init {
         runTypeRegistry.registerRunType(this)
