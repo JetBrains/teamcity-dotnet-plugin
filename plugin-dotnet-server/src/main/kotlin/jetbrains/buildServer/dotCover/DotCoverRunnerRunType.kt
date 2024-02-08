@@ -33,13 +33,16 @@ class DotCoverRunnerRunType(
     override fun getViewRunnerParamsJspFilePath() =
         _pluginDescriptor.getPluginResourcesPath("viewDotCoverRunnerParameters.jsp")
 
-    override fun getDefaultRunnerProperties() = emptyMap<String, String>()
-
     override fun getTags() =
         mutableSetOf("dotCover", "coverage", "tests", "code", "unit", ".NET")
 
     override fun getIconUrl() =
         _pluginDescriptor.getPluginResourcesPath("dotcover.svg");
+
+    override fun getDefaultRunnerProperties() = mapOf(
+        CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT to "true",
+        CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS to "true",
+    )
 
     // properties validation
     override fun getRunnerPropertiesProcessor(): PropertiesProcessor {
