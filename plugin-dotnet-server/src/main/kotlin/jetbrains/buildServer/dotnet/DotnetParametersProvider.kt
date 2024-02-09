@@ -160,11 +160,11 @@ class DotnetParametersProvider {
     val coveragePostProcessingEnabled: Boolean
         get() = InternalProperties.getBoolean(DotnetConstants.PARAM_DOTCOVER_COVERAGE_DATA_POST_PROCESSING_ENABLED) ?: false
 
-    val dotCoverDoNotMergeKey: String
-        get() = CoverageConstants.PARAM_DOTCOVER_DO_NOT_MERGE
+    val dotCoverMergeKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_MERGE
 
-    val dotCoverDoNotReportKey: String
-        get() = CoverageConstants.PARAM_DOTCOVER_DO_NOT_REPORT
+    val dotCoverReportKey: String
+        get() = CoverageConstants.PARAM_DOTCOVER_REPORT
 
     companion object {
         private val experimentalMode get() = InternalProperties.getBoolean(DotnetConstants.PARAM_EXPERIMENTAL) ?: false

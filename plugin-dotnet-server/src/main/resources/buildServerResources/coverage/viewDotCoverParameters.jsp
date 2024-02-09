@@ -22,3 +22,15 @@
     Additional arguments: <props:displayValue name="${params.dotCoverArgumentsKey}"/>
   </div>
 </c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.dotCoverReportKey]}">
+  <div class="parameter">
+    Generate coverage report: <props:displayValue name="${params.dotCoverReportKey}"/>
+  </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.dotCoverMergeKey]}">
+  <div class="parameter">
+    Join reports from previous build steps: <props:displayValue name="${params.dotCoverMergeKey}"/>
+  </div>
+</c:if>

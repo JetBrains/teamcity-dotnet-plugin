@@ -25,13 +25,13 @@ class DotCoverSettingsHolder(
             ?.toBooleanStrictOrNull()
             ?: false
 
-    val doNotMergeSnapshots
-        get(): Boolean = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_DO_NOT_MERGE)
+    val mergeSnapshots
+        get(): Boolean = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_MERGE)
             ?.toBooleanStrictOrNull()
-            ?: false
+            ?: true
 
-    val doNotMakeReport
-        get(): Boolean = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_DO_NOT_REPORT)
+    val makeReport
+        get(): Boolean = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_REPORT)
             ?.toBooleanStrictOrNull()
-            ?: false
+            ?: true
 }

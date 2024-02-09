@@ -32,6 +32,12 @@
             Enter additional new-line separated command line parameters for dotCover.
           </description>
         </param>
+        <param name="dotNetCoverage.dotCover.makeReport" type="boolean" trueValue="true" falseValue="false" dslName="dotCoverMakeReport">
+          <description>Generate coverage report</description>
+        </param>
+        <param name="dotNetCoverage.dotCover.mergeSnaphots" type="boolean" trueValue="true" falseValue="false" dslName="dotCoverMergeSnapshots">
+          <description>Join reports from previous build steps</description>
+        </param>
       </option>
     </param>
   </params>

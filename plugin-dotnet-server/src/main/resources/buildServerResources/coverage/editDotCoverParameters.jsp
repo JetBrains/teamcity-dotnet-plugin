@@ -51,13 +51,13 @@
   <tr class="advancedSetting">
     <th>Report:</th>
     <td>
-      <props:checkboxProperty name="${params.dotCoverDoNotReportKey}"/>
-      <label for="${params.dotCoverDoNotReportKey}">Do not generate coverage report</label>
-      <span class="smallNote">Do not generate a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
+      <props:checkboxProperty name="${params.dotCoverReportKey}" uncheckedValue="false"/>
+      <label for="${params.dotCoverReportKey}">Generate coverage report</label>
+      <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
       <br/>
-      <props:checkboxProperty name="${params.dotCoverDoNotMergeKey}"/>
-      <label for="${params.dotCoverDoNotMergeKey}">Do not join reports from previous build steps</label>
-      <span class="smallNote">Do not combine all available reports from previous build steps into one report</span>
+      <props:checkboxProperty name="${params.dotCoverMergeKey}" uncheckedValue="false"/>
+      <label for="${params.dotCoverMergeKey}">Join reports from previous build steps</label>
+      <span class="smallNote">Combines all available dotCover snapshots from previous build steps into one report</span>
     </td>
   </tr>
 </c:if>

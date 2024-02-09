@@ -11,7 +11,6 @@ import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 import jetbrains.buildServer.util.FileUtil.resolvePath
@@ -150,7 +149,7 @@ class DotCoverWorkflowComposer(
     private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
         val outputSnapshotFile = File(_virtualContext.resolvePath(File(virtualTempDirectory, outputSnapshotFilename).canonicalPath))
 
-        if (_dotCoverSettingsHolder.doNotMergeSnapshots) {
+        if (!_dotCoverSettingsHolder.mergeSnapshots) {
             return
         }
         if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
@@ -183,7 +182,7 @@ class DotCoverWorkflowComposer(
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory) ?: return
 
-        if (_dotCoverSettingsHolder.doNotMakeReport) {
+        if (!_dotCoverSettingsHolder.makeReport) {
             return
         }
         if (outputReportFile.isFile && outputReportFile.exists()) {
