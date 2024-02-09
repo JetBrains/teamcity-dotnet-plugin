@@ -4,11 +4,9 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetParametersProvider
 import jetbrains.buildServer.requirements.Requirement
-import jetbrains.buildServer.serverSide.InvalidProperty
-import jetbrains.buildServer.serverSide.PropertiesProcessor
-import jetbrains.buildServer.serverSide.RunType
-import jetbrains.buildServer.serverSide.RunTypeRegistry
+import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.util.StringUtil
+import jetbrains.buildServer.util.positioning.PositionAware
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 
 class DotCoverRunnerRunType(
@@ -43,6 +41,11 @@ class DotCoverRunnerRunType(
         CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT to "true",
         CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS to "true",
     )
+
+    override fun supports(runTypeExtension: RunTypeExtension) = when {
+        runTypeExtension.isContainerWrapper()-> true
+        else -> super.supports(runTypeExtension)
+    }
 
     // properties validation
     override fun getRunnerPropertiesProcessor(): PropertiesProcessor {
@@ -91,12 +94,14 @@ class DotCoverRunnerRunType(
         val shouldGenerateReport = parameters[CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT].toBoolean()
         val shouldMergeSnapshots = parameters[CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS].toBoolean()
         val hasAdditionalSnapshotPaths = parameters[CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS].toBoolean()
+        val containerImage = parameters[DotnetConstants.PARAM_DOCKER_IMAGE]?.trim() ?: ""
 
         return buildString {
             if (commandLine.isNotBlank()) appendLine("Cover command line: $commandLine")
             if (shouldGenerateReport) appendLine("Generate report")
             if (shouldMergeSnapshots) appendLine("Join reports from previous build steps")
             if (hasAdditionalSnapshotPaths) appendLine("Include additional dotCover snapshots to the report")
+            if (containerImage.isNotBlank()) appendLine("Container image: $containerImage")
         }
     }
     override fun getRunnerSpecificRequirements(runParameters: Map<String, String>): List<Requirement> =
@@ -111,5 +116,8 @@ class DotCoverRunnerRunType(
             "At least one of the fields \"Command Line\", \"Generate report\", " +
             "\"Join reports from previous build steps\", " +
             "or \"Include additional dotCover snapshots to the report\" must be set"
+
+        fun RunTypeExtension.isContainerWrapper() =
+            this is PositionAware && this.orderId == "dockerWrapper"
     }
 }
