@@ -66,10 +66,7 @@ class DotnetRunnerRunType(
         return _pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
     }
 
-    override fun getDefaultRunnerProperties() = mapOf(
-        CoverageConstants.PARAM_DOTCOVER_MERGE to "true",
-        CoverageConstants.PARAM_DOTCOVER_REPORT to "true"
-    )
+    override fun getDefaultRunnerProperties() = emptyMap<String, String>()
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val paths = (parameters[DotnetConstants.PARAM_PATHS] ?: "").trim()

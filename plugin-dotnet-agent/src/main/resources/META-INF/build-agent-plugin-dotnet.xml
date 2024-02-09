@@ -596,7 +596,7 @@
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder"/>
-  <bean class="jetbrains.buildServer.dotcover.DotCoverSettingsHolder"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposerSettingsProvider"/>
 
   <!-- Mono -->
   <bean class="jetbrains.buildServer.mono.MonoToolEnvironment" id="monoToolEnvironment"/>

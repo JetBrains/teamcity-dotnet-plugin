@@ -59,7 +59,11 @@ object DotnetConstants {
     // True or False (False by default) - report tests via stdout rather than via files
     const val PARAM_USE_STDOUT_TEST_REPORTING = "teamcity.internal.dotnet.test.reporting.useStdOut"
     // true or false (false by default) - dotCover coverage data post processing is enabled
-    const val PARAM_DOTCOVER_COVERAGE_DATA_POST_PROCESSING_ENABLED = "teamcity.internal.dotnet.dotCover.coverageDataPostProcessingEnabled"
+    const val PARAM_DOTCOVER_COVERAGE_DATA_POST_PROCESSING_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.coverageDataPostProcessingEnabled"
+    // true or false (true by default) - automatically merge all the snapshots produced by dotCover wrapper option is enabled
+    const val PARAM_DOTCOVER_WRAPPER_MERGE_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.mergeEnabled"
+    // true or false (true by default) - automatically generate report in the dotCover wrapper option is enabled
+    const val PARAM_DOTCOVER_WRAPPER_REPORT_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.reportEnabled"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
     // true or false (false by default)

@@ -17,7 +17,6 @@ import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublish
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.rx.Disposable
@@ -39,7 +38,7 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
     @MockK private lateinit var _entryPointSelector: DotCoverEntryPointSelector
     @MockK private lateinit var _blockToken: Disposable
-    @MockK private lateinit var _dotCoverSettingsHolder: DotCoverSettingsHolder
+    @MockK private lateinit var _dotCoverWorkflowComposerSettingsProvider: DotCoverWorkflowComposerSettingsProvider
     @MockK private lateinit var _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator
     @MockK private lateinit var _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher
     @MockK private lateinit var _uploader: ArtifactsUploader
@@ -55,7 +54,8 @@ class DotCoverWorkflowComposerTest {
         every { _pathService.getPath(PathType.Checkout) } returns File("checkoutDir")
         every { _pathService.getPath(PathType.AgentTemp) } returns File("agentTmp")
         every { _virtualContext.resolvePath(File("agentTmp").canonicalPath) } returns "v_agentTmp"
-        every { _dotCoverSettingsHolder.coveragePostProcessingEnabled } returns true
+        every { _dotCoverWorkflowComposerSettingsProvider.coveragePostProcessingEnabled } returns true
+        every { _loggerService.writeDebug(any()) } returns Unit
     }
 
     @Test
@@ -600,7 +600,7 @@ class DotCoverWorkflowComposerTest {
             _virtualContext,
             _environmentVariables,
             _entryPointSelector,
-            _dotCoverSettingsHolder,
+            _dotCoverWorkflowComposerSettingsProvider,
             listOf(
                 DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),

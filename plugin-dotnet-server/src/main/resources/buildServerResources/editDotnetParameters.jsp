@@ -56,9 +56,6 @@
         if (!name || name.indexOf("prop:") !== 0 || clearPropertiesSkipList.indexOf(name) >= 0) {
           return;
         }
-        if (name.includes('${params.dotCoverReportKey}') || name.includes('${params.dotCoverMergeKey}')) {
-          return;
-        }
         var changed = false;
         if (element.name === "select") {
           changed = element.selectedIndex !== -1;

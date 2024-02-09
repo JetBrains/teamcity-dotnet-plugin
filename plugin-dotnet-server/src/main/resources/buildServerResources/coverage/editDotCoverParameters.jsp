@@ -46,18 +46,3 @@
     <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
   </td>
 </tr>
-
-<c:if test="${params.coveragePostProcessingEnabled == false}">
-  <tr class="advancedSetting">
-    <th>Report:</th>
-    <td>
-      <props:checkboxProperty name="${params.dotCoverReportKey}" uncheckedValue="false"/>
-      <label for="${params.dotCoverReportKey}">Generate coverage report</label>
-      <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
-      <br/>
-      <props:checkboxProperty name="${params.dotCoverMergeKey}" uncheckedValue="false"/>
-      <label for="${params.dotCoverMergeKey}">Join reports from previous build steps</label>
-      <span class="smallNote">Combines all available dotCover snapshots from previous build steps into one report</span>
-    </td>
-  </tr>
-</c:if>
