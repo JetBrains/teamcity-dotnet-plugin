@@ -19,6 +19,8 @@ interface LoggerService {
 
     fun writeWarning(text: String)
 
+    fun writeDebug(text: String)
+
     fun writeBlock(blockName: String, description: String = ""): Disposable
 
     fun writeTrace(text: String)

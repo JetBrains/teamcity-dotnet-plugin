@@ -43,6 +43,8 @@ class LoggerServiceImpl(
 
     override fun writeWarning(text: String) = _buildLogger.warning(text)
 
+    override fun writeDebug(text: String) = _buildLogger.debug(text)
+
     override fun writeBlock(blockName: String, description: String) = writeBlock(blockName, description, false)
 
     override fun writeTrace(text: String) =
