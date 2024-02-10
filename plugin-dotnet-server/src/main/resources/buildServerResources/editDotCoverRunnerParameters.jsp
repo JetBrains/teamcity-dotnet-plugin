@@ -53,10 +53,6 @@
     <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
     <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
     <br/>
-    <props:checkboxProperty name="${params.dotCoverMergeSnapshotsKey}" checked="${params.dotCoverMergeSnapshotsKey}"/>
-    <label for="${params.dotCoverMergeSnapshotsKey}">Join reports from previous build steps</label>
-    <span class="smallNote">Combines all available dotCover snapshots from previous build steps into one report</span>
-    <br/>
     <c:set var="additionalSnapshotsNote">
       <span>Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines.</span>
       <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool

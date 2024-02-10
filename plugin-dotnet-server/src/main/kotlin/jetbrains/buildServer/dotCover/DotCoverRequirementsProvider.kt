@@ -14,6 +14,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_6_1_PATTERN
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_7_2_PATTERN
+import jetbrains.buildServer.dotnet.DotnetConstants
 import org.springframework.beans.factory.BeanFactory
 
 class DotCoverRequirementsProvider(
@@ -22,6 +23,11 @@ class DotCoverRequirementsProvider(
     private val _toolManager: ServerToolManager
 ) : RequirementsProvider {
     override fun getRequirements(parameters: Map<String, String>) = sequence {
+        // no requirements in a container
+        if (!parameters[DotnetConstants.PARAM_DOCKER_IMAGE].isNullOrEmpty()) {
+            return@sequence
+        }
+
         val toolVersion = getToolVersion(parameters) ?: return@sequence
 
         // set agent requirement in accordance to dotCover version

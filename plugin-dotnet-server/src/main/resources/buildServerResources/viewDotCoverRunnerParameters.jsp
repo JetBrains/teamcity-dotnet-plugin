@@ -35,12 +35,6 @@
   </div>
 </c:if>
 
-<c:if test="${not empty propertiesBean.properties[params.dotCoverMergeSnapshotsKey]}">
-  <div class="parameter">
-    Join reports from previous build steps: <props:displayValue name="${params.dotCoverMergeSnapshotsKey}"/>
-  </div>
-</c:if>
-
 <c:if test="${not empty propertiesBean.properties[params.dotCoverAdditionalShapshotPathsKey]}">
   <div class="parameter">
     Additional dotCover snapshot paths: <props:displayValue name="${params.dotCoverAdditionalShapshotPathsKey}"/>

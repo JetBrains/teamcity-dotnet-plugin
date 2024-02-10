@@ -12,6 +12,5 @@ class DotCoverRunnerParametersProvider {
     val dotCoverAttributeFiltersKey = CoverageConstants.PARAM_DOTCOVER_ATTRIBUTE_FILTERS
     val dotCoverArgumentsKey = CoverageConstants.PARAM_DOTCOVER_ARGUMENTS
     val dotCoverGenerateReportKey = CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT
-    val dotCoverMergeSnapshotsKey = CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS
     val dotCoverAdditionalShapshotPathsKey = CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS
 }

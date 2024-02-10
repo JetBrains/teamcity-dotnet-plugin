@@ -19,7 +19,7 @@ class DotCoverRunnerRunType(
         runTypeRegistry.registerRunType(this)
     }
 
-    override fun getType() = "dotcover"
+    override fun getType() = CoverageConstants.PARAM_DOTCOVER_RUNNER_TYPE
 
     override fun getDisplayName() = "dotCover"
 
@@ -32,14 +32,13 @@ class DotCoverRunnerRunType(
         _pluginDescriptor.getPluginResourcesPath("viewDotCoverRunnerParameters.jsp")
 
     override fun getTags() =
-        mutableSetOf("dotCover", "coverage", "tests", "code", "unit", ".NET")
+        mutableSetOf("dotCover", "coverage", "tests", "code", "unit", ".NET", "profiler", "JetBrains")
 
     override fun getIconUrl() =
         _pluginDescriptor.getPluginResourcesPath("dotcover.svg");
 
     override fun getDefaultRunnerProperties() = mapOf(
         CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT to "true",
-        CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS to "true",
     )
 
     override fun supports(runTypeExtension: RunTypeExtension) = when {
@@ -59,25 +58,21 @@ class DotCoverRunnerRunType(
 
             val hasCoveringCommandLine = properties.get(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE).isNullOrBlank().not()
             val shouldGenerateReport = properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT).toBoolean()
-            val shouldMergeSnapshots = properties.get(CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS).toBoolean()
             val hasAdditionalSnapshotPaths = properties.get(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)?.trim().isNullOrBlank().not()
 
-            val hasSnapshots = shouldMergeSnapshots || hasAdditionalSnapshotPaths
-            val nothingToReport = shouldGenerateReport && !hasCoveringCommandLine && !hasSnapshots
-            val noOptionsSelected = !shouldGenerateReport && !hasCoveringCommandLine && !hasSnapshots
+            val nothingToReport = shouldGenerateReport && !hasCoveringCommandLine && !hasAdditionalSnapshotPaths
+            val noOptionsSelected = !shouldGenerateReport && !hasCoveringCommandLine && !hasAdditionalSnapshotPaths
 
             when {
                 nothingToReport -> arrayListOf(
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE, NOTHING_TO_REPORT_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NOTHING_TO_REPORT_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS, NOTHING_TO_REPORT_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NOTHING_TO_REPORT_ERROR),
                 )
 
                 noOptionsSelected -> arrayListOf(
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE, NO_OPTION_SELECTED_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NO_OPTION_SELECTED_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS, NO_OPTION_SELECTED_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NO_OPTION_SELECTED_ERROR),
                 )
 
@@ -88,18 +83,14 @@ class DotCoverRunnerRunType(
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val commandLine = parameters[CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE]
-            ?.trim()?.let {
-                StringUtil.splitCommandArgumentsAndUnquote(it).take(5).joinToString(" ")
-            } ?: ""
+            ?.trim()?.let { StringUtil.splitCommandArgumentsAndUnquote(it).take(5).joinToString(" ") } ?: ""
         val shouldGenerateReport = parameters[CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT].toBoolean()
-        val shouldMergeSnapshots = parameters[CoverageConstants.PARAM_DOTCOVER_MERGE_SNAPSHOTS].toBoolean()
         val hasAdditionalSnapshotPaths = parameters[CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS].toBoolean()
         val containerImage = parameters[DotnetConstants.PARAM_DOCKER_IMAGE]?.trim() ?: ""
 
         return buildString {
             if (commandLine.isNotBlank()) appendLine("Cover command line: $commandLine")
             if (shouldGenerateReport) appendLine("Generate report")
-            if (shouldMergeSnapshots) appendLine("Join reports from previous build steps")
             if (hasAdditionalSnapshotPaths) appendLine("Include additional dotCover snapshots to the report")
             if (containerImage.isNotBlank()) appendLine("Container image: $containerImage")
         }

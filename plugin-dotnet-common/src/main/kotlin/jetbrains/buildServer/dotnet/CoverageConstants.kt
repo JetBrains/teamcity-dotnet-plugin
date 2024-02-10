@@ -40,13 +40,14 @@ object CoverageConstants {
     const val DOTCOVER_WINDOWS_POSTFIX = "Windows"
 
     const val PARAM_DOTCOVER = "dotcover"
+    const val PARAM_DOTCOVER_RUNNER_TYPE = "dotcover"
     const val PARAM_DOTCOVER_HOME = "dotNetCoverage.dotCover.home.path"
     const val PARAM_DOTCOVER_FILTERS = "dotNetCoverage.dotCover.filters"
     const val PARAM_DOTCOVER_ATTRIBUTE_FILTERS = "dotNetCoverage.dotCover.attributeFilters"
     const val PARAM_DOTCOVER_ARGUMENTS = "dotNetCoverage.dotCover.customCmd"
+    const val PARAM_DOTCOVER_MODE = "dotNetCoverage.dotCover.mode"
     const val PARAM_DOTCOVER_COMMAND_LINE = "dotNetCoverage.dotCover.commandLine"
     const val PARAM_DOTCOVER_GENERATE_REPORT = "dotNetCoverage.dotCover.generateReport"
-    const val PARAM_DOTCOVER_MERGE_SNAPSHOTS = "dotNetCoverage.dotCover.mergeShapshots"
     const val PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS = "dotNetCoverage.dotCover.additionalShapshotPaths"
     const val PARAM_DOTCOVER_LOG_PATH = "teamcity.agent.dotCover.log"
 
