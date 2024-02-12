@@ -1,6 +1,5 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.agent.AgentBuildSettings
 import jetbrains.buildServer.agent.AgentLifeCycleAdapter
 import jetbrains.buildServer.agent.AgentLifeCycleListener
 import jetbrains.buildServer.agent.AgentRunningBuild
@@ -13,7 +12,7 @@ import jetbrains.buildServer.util.EventDispatcher
 
 // this class is not thread-safe since it
 // supposed to be used in single build-step related thread
-class DotCoverWorkflowComposerSettingsProvider(
+class DotCoverSettings(
     private val _parametersService: ParametersService,
     private val _buildInfo: BuildInfo,
     private val _buildStepContext: BuildStepContext,

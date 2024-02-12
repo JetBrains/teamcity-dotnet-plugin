@@ -27,7 +27,7 @@ class DotCoverWorkflowComposer(
     private val _virtualContext: VirtualContext,
     private val _environmentVariables: EnvironmentVariables,
     private val _entryPointSelector: DotCoverEntryPointSelector,
-    private val _dotCoverSettingsProvider: DotCoverWorkflowComposerSettingsProvider,
+    private val _dotCoverSettingsProvider: DotCoverSettings,
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
     private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
     private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
