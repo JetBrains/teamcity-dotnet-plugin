@@ -179,6 +179,9 @@
   <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="dotnet">
     <constructor-arg value="dotnet"/>
   </bean>
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="dotcover">
+    <constructor-arg value="dotcover"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolEnvironment" id="dotnetToolEnvironment"/>
   <bean class="jetbrains.buildServer.dotnet.DotnetToolProvider" id="dotnetToolProvider">
     <constructor-arg ref="dotnetToolEnvironment"/>
