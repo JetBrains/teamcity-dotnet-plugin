@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.*
 import jetbrains.buildServer.inspect.CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID
 import jetbrains.buildServer.tools.*
+import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import org.jdom.JDOMException
 import org.w3c.dom.Document
@@ -38,6 +39,7 @@ class ReSharperCmdToolProvider(
 
     override fun unpackToolPackage(toolPackage: File, targetDirectory: File) {
         _toolService.unpackToolPackage(toolPackage, "", targetDirectory, _packageId, JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID)
+        fixUnpackedToolPaths(targetDirectory)
         val pluginRoot = _pluginDescriptor.getPluginRoot();
         val toolXmlFileFrom = File(pluginRoot, "server/bundled-tools/JetBrains.ReSharper.CommandLineTool/bundled-tool.xml")
         val toolXmlFileTo = File(targetDirectory, "teamcity-plugin.xml")
@@ -61,7 +63,7 @@ class ReSharperCmdToolProvider(
         val result = mutableListOf<InstalledToolVersion>()
         try {
             _fileSystem.read(bundledCltNuspecFile) {
-                var doc = _xmlDocumentService.deserialize(it)
+                val doc = _xmlDocumentService.deserialize(it)
                 getContents(doc, "/package/metadata/version")
                         .firstOrNull()
                         ?.let { bundledCltVersion ->
@@ -80,6 +82,19 @@ class ReSharperCmdToolProvider(
         }
 
         return result
+    }
+
+    // Unpacked R# CLT files should reside in the /tools subdirectory of the tool directory.
+    // This is already true for R# CLT .nupkg packages and must be fixed manually for R# CLT .zip packages.
+    private fun fixUnpackedToolPaths(unpackedToolDirectory: File) {
+        val targetDirectory = File(unpackedToolDirectory, "tools")
+        if (targetDirectory.exists()) return
+
+        // Rename the unpacked directory to a directory with a temp name and then rename it to the target name.
+        // This is the simplest way to move all directory contents into a subdirectory.
+        val tempToolDirectory = File(unpackedToolDirectory.absolutePath + "_temp")
+        FileUtil.rename(unpackedToolDirectory, tempToolDirectory)
+        FileUtil.rename(tempToolDirectory, targetDirectory)
     }
 
     private fun getContents(doc: Document, xpath: String): Sequence<String> =
