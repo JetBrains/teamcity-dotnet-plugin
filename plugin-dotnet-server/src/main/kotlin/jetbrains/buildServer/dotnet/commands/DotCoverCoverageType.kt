@@ -15,7 +15,7 @@ class DotCoverCoverageType(
 
     override val editPage: String = "editDotCoverParameters.jsp"
 
-    override val viewPage: String = "viewDotCoverRunnerParameters.jsp"
+    override val viewPage: String = "viewDotCoverParameters.jsp"
 
     override fun validateProperties(properties: Map<String, String>) = sequence {
         yieldAll(super.validateProperties(properties))
