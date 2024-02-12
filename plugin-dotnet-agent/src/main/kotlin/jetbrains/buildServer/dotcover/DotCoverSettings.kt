@@ -16,8 +16,7 @@ class DotCoverSettings(
     private val _parametersService: ParametersService,
     private val _buildInfo: BuildInfo,
     private val _buildStepContext: BuildStepContext,
-    private val _events: EventDispatcher<AgentLifeCycleListener?>,
-    private val _loggerService: LoggerService
+    private val _events: EventDispatcher<AgentLifeCycleListener?>
 ) {
 
     init {
@@ -54,7 +53,7 @@ class DotCoverSettings(
             ?.toBooleanStrictOrNull()
             ?: false
 
-    fun shouldMergeSnapshots() =
+    fun shouldMergeSnapshots(): Pair<Boolean, String> =
         when (dotCoverMode) {
             DotCoverMode.Wrapper ->
                 _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_WRAPPER_MERGE_ENABLED)
@@ -66,17 +65,13 @@ class DotCoverSettings(
                     ?: true
         }.let { mergeParameterEnabled -> when {
             !mergeParameterEnabled -> {
-                _loggerService.writeDebug("Merging dotCover snapshots is disabled; skipping this stage")
-                false
+                false to "Merging dotCover snapshots is disabled; skipping this stage"
             }
-            skipProcessingForCurrentBuildStep -> {
-                _loggerService.writeDebug("Merging dotCover snapshots is not supposed for this build step; skipping this stage")
-                false
-            }
-            else -> true
+            skipProcessingForCurrentBuildStep -> false to "Merging dotCover snapshots is not supposed for this build step; skipping this stage"
+            else -> true to ""
         }}
 
-    fun shouldGenerateReport() =
+    fun shouldGenerateReport(): Pair<Boolean, String> =
         when (dotCoverMode) {
             DotCoverMode.Wrapper ->
                 _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_WRAPPER_REPORT_ENABLED)
@@ -87,15 +82,9 @@ class DotCoverSettings(
                     ?.toBooleanStrictOrNull()
                     ?: true
         }.let { reportParameterEnabled -> when {
-            !reportParameterEnabled -> {
-                _loggerService.writeDebug("Building a coverage report is disabled; skipping this stage")
-                false
-            }
-            skipProcessingForCurrentBuildStep -> {
-                _loggerService.writeDebug("Building a coverage report is is not supposed for this build step; skipping this stage")
-                false
-            }
-            else -> true
+            !reportParameterEnabled -> false to "Building a coverage report is disabled; skipping this stage"
+            skipProcessingForCurrentBuildStep -> false to "Building a coverage report is is not supposed for this build step; skipping this stage"
+            else -> true to ""
         }}
 
     private fun findLastBuildStepIdWithDotCoverEnabled(runningBuild: AgentRunningBuild) =

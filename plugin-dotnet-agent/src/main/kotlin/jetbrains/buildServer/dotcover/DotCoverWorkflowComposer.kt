@@ -59,10 +59,31 @@ class DotCoverWorkflowComposer(
         context: WorkflowContext,
         entryPointPath: String
     ) = sequence {
-        var dotCoverHome = false
         val executableFile = Path(_virtualContext.resolvePath(entryPointPath))
         val virtualTempDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.AgentTemp).canonicalPath))
 
+        cover(workflow, context, executableFile)
+
+        if (_dotCoverSettingsProvider.coveragePostProcessingEnabled) {
+            _loggerService.writeDebug("Coverage post-processing is enabled; the results will be processed before the build finishes")
+            return@sequence
+        }
+
+        val shouldMergeSnapshots = _dotCoverSettingsProvider.shouldMergeSnapshots()
+        when (shouldMergeSnapshots.first) {
+            true -> merge(executableFile, virtualTempDirectory)
+            false -> _loggerService.writeDebug(shouldMergeSnapshots.second)
+        }
+
+        val shouldGenerateReport = _dotCoverSettingsProvider.shouldGenerateReport()
+        when (shouldGenerateReport.first) {
+            true -> report(executableFile, virtualTempDirectory)
+            false -> _loggerService.writeDebug(shouldGenerateReport.second)
+        }
+    }
+
+    private suspend fun SequenceScope<CommandLine>.cover(workflow: Workflow, context: WorkflowContext, executableFile: Path) {
+        var dotCoverHome = false
         for (baseCommandLine in workflow.commandLines) {
             if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
                 yield(baseCommandLine)
@@ -137,22 +158,10 @@ class DotCoverWorkflowComposer(
                 )
             }
         }
-
-        if (_dotCoverSettingsProvider.coveragePostProcessingEnabled) {
-            _loggerService.writeDebug("Coverage post-processing is enabled; the results will be processed before the build finishes")
-            return@sequence
-        }
-
-        merge(executableFile, virtualTempDirectory)
-        report(executableFile, virtualTempDirectory)
     }
 
     private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
         val outputSnapshotFile = File(_virtualContext.resolvePath(File(virtualTempDirectory, outputSnapshotFilename).canonicalPath))
-
-        if (!_dotCoverSettingsProvider.shouldMergeSnapshots()) {
-            return
-        }
         if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
             _loggerService.writeDebug("The merge command has already been performed for this build step; outputSnapshotFile=${outputSnapshotFile.absolutePath}")
             return
@@ -185,9 +194,6 @@ class DotCoverWorkflowComposer(
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
 
-        if (!_dotCoverSettingsProvider.shouldGenerateReport()) {
-            return
-        }
         if (outputSnapshotFile == null) {
             _loggerService.writeDebug("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
             return
