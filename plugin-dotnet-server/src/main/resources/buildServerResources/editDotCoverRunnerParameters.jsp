@@ -16,15 +16,30 @@
 </tr>
 
 <tr>
-  <th>Cover:</th>
+  <th>Coverage settings:</th>
   <td>
     <props:multilineProperty name="${params.dotCoverCommandLineKey}" linkTitle="Command line (optional)" className="longField" cols="60" rows="1"/>
-    <span class="smallNote">Run a process from the command line under dotCover coverage profile and produce produces a dotCover snapshot file</span>
+    <span class="smallNote">Run a process from the command line under dotCover coverage profile and produce produces a dotCover snapshot file. If set, the runner will execute the custom <tt>dotCover cover YOUR_INPUT</tt> command</span>
+    <br/>
+    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${params.dotCoverGenerateReportKey}"/>
+    <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
+    <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
+    <br/>
+    <c:set var="additionalSnapshotsNote">
+      <span>Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines.</span>
+      <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool
+    </c:set>
+    <props:multilineProperty
+        name="${params.dotCoverAdditionalShapshotPathsKey}"
+        className="longField" expanded="false" cols="60" rows="4"
+        linkTitle="Include additional dotCover snapshots to the report"
+        note="${additionalSnapshotsNote}"
+    />
   </td>
 </tr>
 
 <tr class="advancedSetting">
-  <th>Coverage settings:</th>
+  <th> </th>
   <td>
     <c:set var="assemblyFiltersNote">
       Type "<i>+:assemblyName</i>" to include or "<i>-:assemblyName</i>" to exclude assemblies to/from the code coverage.
@@ -46,25 +61,5 @@
       New-line separated command line parameters for dotCover cover command
     </span>
     <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
-  </td>
-</tr>
-
-<tr>
-  <th>Report:</th>
-  <td>
-    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${params.dotCoverGenerateReportKey}"/>
-    <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
-    <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
-    <br/>
-    <c:set var="additionalSnapshotsNote">
-      <span>Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines.</span>
-      <bs:helpLink file="Wildcards">Wildcards</bs:helpLink> are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool
-    </c:set>
-    <props:multilineProperty
-        name="${params.dotCoverAdditionalShapshotPathsKey}"
-        className="longField" expanded="false" cols="60" rows="4"
-        linkTitle="Include additional dotCover snapshots to the report"
-        note="${additionalSnapshotsNote}"
-    />
   </td>
 </tr>
