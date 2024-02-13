@@ -5,6 +5,9 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotCover.DotCoverRunnerParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
+<!-- It's necessary to make sure that dotCover home param won't be erased. See DotCoverParametersProcessor and TW-60495 -->
+<props:hiddenProperty name="${params.coverageToolTypeKey}" value="${params.coverageToolTypeValue}" />
+
 <tr>
   <th>dotCover tool:</th>
   <td>

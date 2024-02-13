@@ -6,6 +6,8 @@ import jetbrains.buildServer.dotnet.CoverageConstants
  * Provides parameters for dotCover runner
  */
 class DotCoverRunnerParametersProvider {
+    val coverageToolTypeKey = CoverageConstants.PARAM_TYPE
+    val coverageToolTypeValue = CoverageConstants.PARAM_DOTCOVER
     val dotCoverHomeKey = CoverageConstants.PARAM_DOTCOVER_HOME
     val dotCoverCommandLineKey = CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE
     val dotCoverFiltersKey = CoverageConstants.PARAM_DOTCOVER_FILTERS

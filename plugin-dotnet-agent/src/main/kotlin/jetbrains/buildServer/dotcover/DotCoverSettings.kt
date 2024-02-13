@@ -14,6 +14,7 @@ import jetbrains.buildServer.util.EventDispatcher
 // supposed to be used in single build-step related thread
 class DotCoverSettings(
     private val _parametersService: ParametersService,
+    private val _dotCoverModeDetector: DotCoverModeDetector,
     private val _buildInfo: BuildInfo,
     private val _buildStepContext: BuildStepContext,
     private val _events: EventDispatcher<AgentLifeCycleListener?>
@@ -34,12 +35,10 @@ class DotCoverSettings(
 
     private val skipProcessingForCurrentBuildStep get() = buildStepId != lastBuildStepIdWithDotCoverEnabled
 
-    private val dotCoverMode get() =
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_MODE)
-            ?.trim()
-            ?.lowercase()
-            ?.let { DotCoverMode.fromString(it) }
-            ?: DotCoverMode.Wrapper // TODO not sure that's right... Should we throw an exception?
+    val dotCoverMode get() = _dotCoverModeDetector.detectMode(
+        _buildStepContext.runnerContext.runType,
+        _buildStepContext.runnerContext.runnerParameters
+    )
 
     val buildLogger get() = _buildStepContext.runnerContext.build.buildLogger
 
@@ -63,6 +62,7 @@ class DotCoverSettings(
                 _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT)
                     ?.toBooleanStrictOrNull()
                     ?: true
+            DotCoverMode.Disabled -> false
         }.let { mergeParameterEnabled -> when {
             !mergeParameterEnabled -> {
                 false to "Merging dotCover snapshots is disabled; skipping this stage"
@@ -81,6 +81,7 @@ class DotCoverSettings(
                 _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT)
                     ?.toBooleanStrictOrNull()
                     ?: true
+            DotCoverMode.Disabled -> false
         }.let { reportParameterEnabled -> when {
             !reportParameterEnabled -> false to "Building a coverage report is disabled; skipping this stage"
             skipProcessingForCurrentBuildStep -> false to "Building a coverage report is is not supposed for this build step; skipping this stage"
@@ -93,15 +94,8 @@ class DotCoverSettings(
             .map { it.id }
             .lastOrNull()
 
-    companion object {
-        private fun BuildRunnerSettings.hasDotCoverEnabled() = when {
-            this.isEnabled -> when (this.runType) {
-                DotnetConstants.RUNNER_TYPE ->
-                    this.runnerParameters[CoverageConstants.PARAM_TYPE] == CoverageConstants.PARAM_DOTCOVER
-                CoverageConstants.PARAM_DOTCOVER_RUNNER_TYPE -> true
-                else -> false
-            }
-            else -> false
-        }
+    private fun BuildRunnerSettings.hasDotCoverEnabled() = when {
+        this.isEnabled -> _dotCoverModeDetector.detectMode(this.runType, this.runnerParameters).isEnabled
+        else -> false
     }
 }

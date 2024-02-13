@@ -27,7 +27,7 @@ class DotCoverWorkflowComposer(
     private val _virtualContext: VirtualContext,
     private val _environmentVariables: EnvironmentVariables,
     private val _entryPointSelector: DotCoverEntryPointSelector,
-    private val _dotCoverSettingsProvider: DotCoverSettings,
+    private val _dotCoverSettings: DotCoverSettings,
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
     private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
     private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
@@ -39,7 +39,7 @@ class DotCoverWorkflowComposer(
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow = when {
-        !dotCoverEnabled || dotCoverPath.isBlank() -> workflow
+        _dotCoverSettings.dotCoverMode.isDisabled || dotCoverPath.isBlank() -> workflow
 
         else -> _entryPointSelector.select()
             .fold(
@@ -64,18 +64,18 @@ class DotCoverWorkflowComposer(
 
         cover(workflow, context, executableFile)
 
-        if (_dotCoverSettingsProvider.coveragePostProcessingEnabled) {
+        if (_dotCoverSettings.coveragePostProcessingEnabled) {
             _loggerService.writeDebug("Coverage post-processing is enabled; the results will be processed before the build finishes")
             return@sequence
         }
 
-        val shouldMergeSnapshots = _dotCoverSettingsProvider.shouldMergeSnapshots()
+        val shouldMergeSnapshots = _dotCoverSettings.shouldMergeSnapshots()
         when (shouldMergeSnapshots.first) {
             true -> merge(executableFile, virtualTempDirectory)
             false -> _loggerService.writeDebug(shouldMergeSnapshots.second)
         }
 
-        val shouldGenerateReport = _dotCoverSettingsProvider.shouldGenerateReport()
+        val shouldGenerateReport = _dotCoverSettings.shouldGenerateReport()
         when (shouldGenerateReport.first) {
             true -> report(executableFile, virtualTempDirectory)
             false -> _loggerService.writeDebug(shouldGenerateReport.second)
@@ -142,7 +142,7 @@ class DotCoverWorkflowComposer(
                         dotCoverHome = true
                     }
 
-                    if (_dotCoverSettingsProvider.coveragePostProcessingEnabled) {
+                    if (_dotCoverSettings.coveragePostProcessingEnabled) {
                         // The snapshot path should be virtual because of the docker wrapper converts it back
                         _loggerService.importData(DOTCOVER_DATA_PROCESSOR_TYPE, virtualSnapshotFilePath, DOTCOVER_TOOL_NAME)
                     }
@@ -232,7 +232,7 @@ class DotCoverWorkflowComposer(
         _dotCoverTeamCityReportGenerator.parseStatementCoverage(outputReportFile)?.let {
             _loggerService.writeStandardOutput("DotCover statement coverage was: ${it.covered} of ${it.total} (${it.percent}%)")
         }
-        _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(_dotCoverSettingsProvider.buildLogger, _dotCoverSettingsProvider.configParameters,
+        _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(_dotCoverSettings.buildLogger, _dotCoverSettings.configParameters,
             virtualCheckoutDirectory, outputReportFile, reportZipFile)?.let {
             _dotnetCoverageStatisticsPublisher.publishCoverageStatistics(it)
         }
@@ -268,19 +268,6 @@ class DotCoverWorkflowComposer(
                 .firstOrNull()
     }
 
-    private val dotCoverEnabled
-        get(): Boolean {
-            _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_TYPE)?.let {
-                if (it == CoverageConstants.PARAM_DOTCOVER) return true
-            }
-
-            _parametersService.tryGetParameter(ParameterType.Runner, "dotNetCoverage.dotCover.enabled")?.let {
-                if (it.trim().toBoolean()) return true
-            }
-
-            return false
-        }
-
     private val dotCoverPath get() =
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             .let { when (it.isNullOrBlank()) {
@@ -292,11 +279,11 @@ class DotCoverWorkflowComposer(
 
     private val reportConfigFilename get() = "report_$DOTCOVER_CONFIG_EXTENSION"
 
-    private val outputSnapshotFilename get() = "outputSnapshot_${_dotCoverSettingsProvider.buildStepId}.dcvr"
+    private val outputSnapshotFilename get() = "outputSnapshot_${_dotCoverSettings.buildStepId}.dcvr"
 
-    private val outputReportFilename get() = "CoverageReport_${_dotCoverSettingsProvider.buildStepId}.xml"
+    private val outputReportFilename get() = "CoverageReport_${_dotCoverSettings.buildStepId}.xml"
 
-    private val outputHtmlReportFilename get() = "coverage_${_dotCoverSettingsProvider.buildStepId}.zip"
+    private val outputHtmlReportFilename get() = "coverage_${_dotCoverSettings.buildStepId}.zip"
 
     companion object {
         internal const val DOTCOVER_DATA_PROCESSOR_TYPE = CoverageConstants.COVERAGE_TYPE

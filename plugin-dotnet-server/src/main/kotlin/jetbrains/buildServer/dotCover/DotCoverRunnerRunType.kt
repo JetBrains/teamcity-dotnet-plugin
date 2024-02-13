@@ -19,7 +19,7 @@ class DotCoverRunnerRunType(
         runTypeRegistry.registerRunType(this)
     }
 
-    override fun getType() = CoverageConstants.PARAM_DOTCOVER_RUNNER_TYPE
+    override fun getType() = CoverageConstants.DOTCOVER_RUNNER_TYPE
 
     override fun getDisplayName() = "dotCover"
 

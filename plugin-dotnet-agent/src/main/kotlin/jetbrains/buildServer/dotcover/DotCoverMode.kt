@@ -1,12 +1,10 @@
 package jetbrains.buildServer.dotcover
 
-enum class DotCoverMode(val id: String) {
-    Wrapper("wrapper"),
-    Runner("runner");
+enum class DotCoverMode {
+    Disabled,
+    Wrapper,
+    Runner;
 
-    companion object {
-        fun fromString(value: String) =
-            values().firstOrNull { it.id.equals(value, ignoreCase = true) }
-                ?: throw IllegalArgumentException("No DotCoverMode enum constant for value '$value'")
-    }
+    val isDisabled get() = this == Disabled
+    val isEnabled get() = !isDisabled
 }

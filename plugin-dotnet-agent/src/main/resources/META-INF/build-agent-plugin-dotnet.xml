@@ -599,6 +599,7 @@
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverModeDetector"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverSettings"/>
 
   <!-- Mono -->
