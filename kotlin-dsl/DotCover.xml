@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsl-extension kind="buildStep" type="dotcover" generateDslJar="true">
+    <class name="DotCoverBuildStep">
+        <description>
+            A [dotCover build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run dotCover – .NET code coverage tool
+        </description>
+    </class>
+    <function name="dotCover">
+        <description>
+            Adds a [dotCover build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run dotCover coverage tool
+            @see DotnetBuildStep
+        </description>
+    </function>
+    <init>
+        <param name="dotNetCoverage.tool" value="dotcover"/>
+    </init>
+    <params>
+        <param name="dotNetCoverage.dotCover.home.path" dslName="toolPath">
+            <description>Specify the path to dotCover CLT</description>
+        </param>
+        <param name="dotNetCoverage.dotCover.commandLine" dslName="commandLine">
+            <description>
+                Run a process from the command line under dotCover coverage profile and produces a dotCover snapshot file
+            </description>
+        </param>
+        <param name="dotNetCoverage.dotCover.generateReport" dslName="generateReport" type="boolean" trueValue="true" falseValue="false">
+            <description>
+                Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete. Default value is `true`
+            </description>
+        </param>
+        <param name="dotNetCoverage.dotCover.additionalShapshotPaths" dslName="snapshotPaths">
+            <description>
+                Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines.
+                Wildcards are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool
+            </description>
+        </param>
+        <param name="dotNetCoverage.dotCover.filters" dslName="assemblyFilters">
+            <description>Specify a new-line separated list of filters for code coverage</description>
+        </param>
+        <param name="dotNetCoverage.dotCover.attributeFilters" dslName="attributeFilters">
+            <description>
+                Specify a new-line separated list of attribute filters for code coverage.
+                Supported only with dotCover 2.0 or later
+            </description>
+        </param>
+        <param name="dotNetCoverage.dotCover.customCmd" dslName="args">
+            <description>
+                Enter additional new-line separated command line parameters for
+                [`dotCover cover`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#cover) command
+            </description>
+        </param>
+    </params>
+    <examples>
+        <example>
+            <description>
+                Runs [`dotCover cover`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#cover) command for
+                a provided command line and generate report by running
+                [`dotCover report`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#report) command
+            </description>
+            <code>
+                dotCover {
+                    commandLine = "dotnet test MyProjectTests.dll"
+                }
+            </code>
+        </example>
+        <example>
+            <description>
+                Runs [`dotCover cover`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#cover) command for
+                a provided command line and passes additinal command-line arguments
+            </description>
+            <code>
+                dotCover {
+                    commandLine = "dotnet test MyProjectTests.dll"
+                    args = "--Output=/path/to/MyProjectTests.dcvr"
+                    generateReport = "false"
+                }
+            </code>
+        </example>
+        <example>
+            <description>
+                Runs [`dotCover merge`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#merge) command for
+                provided additional snapshots paths and then generate report by running
+                [`dotCover report`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#report) command
+            </description>
+            <code>
+                dotCover {
+                    snapshotPaths = """
+                        /path/to/MyProject1Tests.dcvr
+                        /path/to/MyProject2Tests.dcvr
+                        /path/to/MyProject3Tests.dcvr
+                    """.trimIndent()
+                }
+            </code>
+        </example>
+    </examples>
+</dsl-extension>
