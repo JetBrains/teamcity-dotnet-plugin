@@ -287,11 +287,11 @@ class DotCoverWorkflowComposer(
         return result
     }
 
-    private fun findOutputSnapshot(snapshotPath: File): File? {
-        val allSnapshots = _fileSystemService.list(snapshotPath).toList()
+    private fun findOutputSnapshot(snapshotDirectory: File): File? {
+        val allSnapshots = _fileSystemService.list(snapshotDirectory).filter { it.extension == "dcvr" }.toList()
         return if (allSnapshots.size == 1) allSnapshots[0]
         else allSnapshots
-            .filter { it.extension == "dcvr" && it.name.startsWith("outputSnapshot") }
+            .filter { it.name.startsWith("outputSnapshot") }
             .firstOrNull()
     }
 
