@@ -1,10 +1,6 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.agent.AgentLifeCycleAdapter
-import jetbrains.buildServer.agent.AgentLifeCycleListener
-import jetbrains.buildServer.agent.AgentRunningBuild
-import jetbrains.buildServer.agent.BuildFinishedStatus
-import jetbrains.buildServer.agent.BuildRunnerSettings
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
@@ -40,6 +36,13 @@ class DotCoverSettings(
         _buildStepContext.runnerContext.runnerParameters
     )
 
+    val dotCoverHomePath get() =
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
+            .let { when (it.isNullOrBlank()) {
+                true -> ""
+                false -> it
+            }}
+
     val buildLogger get() = _buildStepContext.runnerContext.build.buildLogger
 
     val configParameters get() = _buildStepContext.runnerContext.build.sharedConfigParameters
@@ -64,9 +67,7 @@ class DotCoverSettings(
                     ?: true
             DotCoverMode.Disabled -> false
         }.let { mergeParameterEnabled -> when {
-            !mergeParameterEnabled -> {
-                false to "Merging dotCover snapshots is disabled; skipping this stage"
-            }
+            !mergeParameterEnabled -> false to "Merging dotCover snapshots is disabled; skipping this stage"
             skipProcessingForCurrentBuildStep -> false to "Merging dotCover snapshots is not supposed for this build step; skipping this stage"
             else -> true to ""
         }}

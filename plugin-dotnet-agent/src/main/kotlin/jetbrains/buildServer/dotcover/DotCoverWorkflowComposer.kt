@@ -6,15 +6,15 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverProject.*
 import jetbrains.buildServer.dotcover.command.*
 import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
-import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
+import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
+import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
-import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.util.FileUtil.resolvePath
+import jetbrains.buildServer.util.FileUtil
 import java.io.File
 
 class DotCoverWorkflowComposer(
@@ -39,57 +39,80 @@ class DotCoverWorkflowComposer(
         dotCoverCommandLineBuildersList.associateBy { it.type }
     override val target: TargetType = TargetType.CodeCoverageProfiler
 
-    override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow): Workflow = when {
-        _dotCoverSettings.dotCoverMode.isDisabled || dotCoverPath.isBlank() || workflow.commandLines.none() -> workflow
+    override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow {
+        if (_dotCoverSettings.dotCoverMode.isDisabled) {
+            return workflow
+        }
+        if (_dotCoverSettings.dotCoverHomePath.isNullOrBlank()) {
+            _loggerService.writeWarning("Skip code coverage: dotCover is enabled however tool home path has not been set")
+            return workflow
+        }
 
-        else -> _entryPointSelector.select()
-            .fold(
-                onSuccess = { Workflow(createDotCoverCommandLine(workflow, context, it.path)) },
-                onFailure = { when {
-                    it is ToolCannotBeFoundException -> {
-                        throw RunBuildException("dotCover run failed: " + it.message)
-                            .let { e -> e.isLogStacktrace = false; e }
+        // TODO should not be applied in case absence of the base command line expect case of having snaphosts
+        val baseCommandLines = workflow.commandLines.toList()
+//        if (baseCommandLines.isEmpty()) {
+//            return workflow
+//        }
+
+        return sequence {
+            val executablePath = getDotCoverExecutablePath()
+
+            // cover applicable base command line
+            var dotCoverHomeOverriden = false
+            for (baseCommandLine in baseCommandLines) {
+                if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
+                    yield(baseCommandLine)
+                    continue
+                }
+                cover(baseCommandLine, context, executablePath, onSuccess = {
+                    if (!dotCoverHomeOverriden) {
+                        overrideDotCoverHome()
+                        dotCoverHomeOverriden = true
                     }
-                    else -> workflow
-                }}
-            )
-    }
-
-    private fun createDotCoverCommandLine(
-        workflow: Workflow,
-        context: WorkflowContext,
-        entryPointPath: String
-    ) = sequence {
-        val executableFile = Path(_virtualContext.resolvePath(entryPointPath))
-        val virtualTempDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.AgentTemp).canonicalPath))
-        for (baseCommandLine in workflow.commandLines) {
-            if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
-                yield(baseCommandLine)
-                continue
+                })
             }
-            cover(baseCommandLine, context, executableFile)
-        }
 
-        if (_dotCoverSettings.coveragePostProcessingEnabled) {
-            _loggerService.writeDebug("Coverage post-processing is enabled; the results will be processed before the build finishes")
-            return@sequence
-        }
+            // fallback for backward compatibility
+            if (_dotCoverSettings.coveragePostProcessingEnabled) {
+                _loggerService.writeDebug(
+                    "Coverage post-processing is enabled; " +
+                            "the results will be processed before the build finishes"
+                )
+                return@sequence
+            }
 
-        val shouldMergeSnapshots = _dotCoverSettings.shouldMergeSnapshots()
-        when (shouldMergeSnapshots.first) {
-            true -> merge(executableFile, virtualTempDirectory)
-            false -> _loggerService.writeDebug(shouldMergeSnapshots.second)
-        }
+            val virtualTempDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.AgentTemp).canonicalPath))
 
-        val shouldGenerateReport = _dotCoverSettings.shouldGenerateReport()
-        when (shouldGenerateReport.first) {
-            true -> report(executableFile, virtualTempDirectory)
-            false -> _loggerService.writeDebug(shouldGenerateReport.second)
-        }
+            // merge
+            _dotCoverSettings.shouldMergeSnapshots().let { (shouldMergeSnapshots, logMessage) -> when {
+                shouldMergeSnapshots -> merge(executablePath, virtualTempDirectory)
+                else -> _loggerService.writeDebug(logMessage)
+            }}
+
+            // report
+            _dotCoverSettings.shouldGenerateReport().let { (shouldGenerateReport, logMessage) -> when {
+                shouldGenerateReport -> report(executablePath, virtualTempDirectory)
+                else -> _loggerService.writeDebug(logMessage)
+            }}
+        }.let(::Workflow)
     }
 
-    private suspend fun SequenceScope<CommandLine>.cover(baseCommandLine: CommandLine, context: WorkflowContext, executableFile: Path) {
-        var dotCoverHome = false
+    private fun getDotCoverExecutablePath(): Path = _entryPointSelector.select().fold(
+        onSuccess = { return Path(_virtualContext.resolvePath(it.path)) },
+        onFailure = { throw RunBuildException("dotCover run failed: " + it.message).let { e -> e.isLogStacktrace = false; e } }
+    )
+
+    private suspend fun SequenceScope<CommandLine>.cover(
+        baseCommandLine: CommandLine,
+        context: WorkflowContext,
+        executableFile: Path,
+        onSuccess: () -> Unit,
+    ) {
+        if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
+            yield(baseCommandLine)
+            return
+        }
+
         val configFile = _pathsService.getTempFileName(DOTCOVER_CONFIG_EXTENSION)
         val snapshotFile = _pathsService.getTempFileName(DOTCOVER_SNAPSHOT_EXTENSION)
         val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
@@ -97,8 +120,8 @@ class DotCoverWorkflowComposer(
         val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
 
         val dotCoverProject = DotCoverProject(
-            DotCoverCommandType.Cover,
-            CoverCommandData(
+            dotCoverCommandType = DotCoverCommandType.Cover,
+            coverCommandData = CoverCommandData(
                 CommandLine(
                     baseCommandLine,
                     baseCommandLine.target,
@@ -136,11 +159,7 @@ class DotCoverWorkflowComposer(
 
         context.toExitCodes().subscribe {
             if (_fileSystemService.isExists(snapshotFile)) {
-                // Overrides the dotCover home path once
-                if (!dotCoverHome) {
-                    _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath)))
-                    dotCoverHome = true
-                }
+                onSuccess()
 
                 if (_dotCoverSettings.coveragePostProcessingEnabled) {
                     // The snapshot path should be virtual because of the docker wrapper converts it back
@@ -168,7 +187,7 @@ class DotCoverWorkflowComposer(
 
         val snapshots = collectSnapshots(virtualTempDirectory)
         if (snapshots.isEmpty()) {
-            _loggerService.writeDebug("Snapshot files not found; skipping this stage")
+            _loggerService.writeDebug("Snapshot files not found; skipping merge stage")
             return
         }
         if (snapshots.hasSingleSnapshot()) {
@@ -201,6 +220,7 @@ class DotCoverWorkflowComposer(
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
 
+        // TODO must be activated only in case of having snapshots
         if (outputSnapshotFile == null) {
             _loggerService.writeDebug("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
             return
@@ -267,22 +287,18 @@ class DotCoverWorkflowComposer(
         return result
     }
 
-    private fun List<File>.hasSingleSnapshot(): Boolean = this.size == 1
-
     private fun findOutputSnapshot(snapshotPath: File): File? {
         val allSnapshots = _fileSystemService.list(snapshotPath).toList()
         return if (allSnapshots.size == 1) allSnapshots[0]
-            else allSnapshots
-                .filter { it.extension == "dcvr" && it.name.startsWith("outputSnapshot") }
-                .firstOrNull()
+        else allSnapshots
+            .filter { it.extension == "dcvr" && it.name.startsWith("outputSnapshot") }
+            .firstOrNull()
     }
 
-    private val dotCoverPath get() =
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
-            .let { when (it.isNullOrBlank()) {
-                true -> ""
-                false -> it
-            }}
+    private fun List<File>.hasSingleSnapshot(): Boolean = this.size == 1
+
+    private fun overrideDotCoverHome() =
+        _loggerService.writeMessage(DotCoverServiceMessage(Path(_dotCoverSettings.dotCoverHomePath)))
 
     private val mergeConfigFilename get() = "merge_$DOTCOVER_CONFIG_EXTENSION"
 
