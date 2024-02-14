@@ -7,7 +7,9 @@ import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.positioning.PositionAware
+import jetbrains.buildServer.web.functions.InternalProperties
 import jetbrains.buildServer.web.openapi.PluginDescriptor
+import javax.swing.plaf.basic.BasicInternalFrameUI.InternalFramePropertyChangeListener
 
 class DotCoverRunnerRunType(
     runTypeRegistry: RunTypeRegistry,
@@ -15,8 +17,9 @@ class DotCoverRunnerRunType(
     private val _dotCoverRequirementsProvider: DotCoverRequirementsProvider,
 ) : RunType() {
     init {
-        _pluginDescriptor.pluginResourcesPath
-        runTypeRegistry.registerRunType(this)
+        if (InternalProperties.getBoolean(DotnetConstants.PARAM_DOTCOVER_RUNNER_ENABLED) ?: false) {
+            runTypeRegistry.registerRunType(this)
+        }
     }
 
     override fun getType() = CoverageConstants.DOTCOVER_RUNNER_TYPE

@@ -71,6 +71,10 @@ object DotnetConstants {
     // Integer maximum count of failed tests to retry
     const val PARAM_TEST_RETRY_MAX_FAILURES = "teamcity.internal.dotnet.test.retry.maxFailures"
 
+    // Internal properties
+    // true or false (false by default)
+    const val PARAM_DOTCOVER_RUNNER_ENABLED = "teamcity.internal.dotnet.dotCover.runner.enabled"
+
     const val PARAM_ARGUMENTS = "args"
     const val PARAM_COMMAND = "command"
     const val PARAM_CONFIG = "configuration"
