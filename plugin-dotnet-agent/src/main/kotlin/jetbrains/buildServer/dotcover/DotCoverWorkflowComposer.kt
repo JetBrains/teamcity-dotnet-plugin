@@ -48,18 +48,20 @@ class DotCoverWorkflowComposer(
             return workflow
         }
 
-        // TODO should not be applied in case absence of the base command line expect case of having snaphosts
-        val baseCommandLines = workflow.commandLines.toList()
-//        if (baseCommandLines.isEmpty()) {
+        val baseCommandLineIterator = workflow.commandLines.iterator()
+//        if (!baseCommandLineIterator.hasNext()) {
 //            return workflow
 //        }
+
+        // TODO should not be applied in case absence of the base command line expect case of having snaphosts
 
         return sequence {
             val executablePath = getDotCoverExecutablePath()
 
             // cover applicable base command line
             var dotCoverHomeOverriden = false
-            for (baseCommandLine in baseCommandLines) {
+            while (baseCommandLineIterator.hasNext()) {
+                val baseCommandLine = baseCommandLineIterator.next()
                 if (!baseCommandLine.chain.any { it.target == TargetType.Tool }) {
                     yield(baseCommandLine)
                     continue
@@ -165,6 +167,7 @@ class DotCoverWorkflowComposer(
                     // The snapshot path should be virtual because of the docker wrapper converts it back
                     _loggerService.importData(DOTCOVER_DATA_PROCESSOR_TYPE, virtualSnapshotFilePath, DOTCOVER_TOOL_NAME)
                 }
+                _loggerService.writeStandardOutput("dotCover snapshot file has been produced: ${snapshotFile.absolutePath}")
             }
         }.use {
             yield(
@@ -185,7 +188,8 @@ class DotCoverWorkflowComposer(
             return
         }
 
-        val snapshots = collectSnapshots(virtualTempDirectory)
+        val snapshotPaths = _dotCoverSettings.additionalSnapshotPaths.map { File(it) }.asSequence() + virtualTempDirectory
+        val snapshots = collectSnapshots(snapshotPaths)
         if (snapshots.isEmpty()) {
             _loggerService.writeDebug("Snapshot files not found; skipping merge stage")
             return
@@ -275,16 +279,14 @@ class DotCoverWorkflowComposer(
         _uploader.processFiles(virtualReportResultsDirectory, publishPath, result)
     }
 
-    private fun collectSnapshots(vararg snapshotPaths: File): List<File> {
-        _loggerService.writeDebug("Searching for snapshots in the following paths: ${snapshotPaths.joinToString(",") { it.absolutePath }}")
-        val result = ArrayList<File>()
-        for (snapshotPath in snapshotPaths) {
-            _fileSystemService.list(snapshotPath)
-                .filter { it.extension == "dcvr" }
-                .forEach { result.add(it) }
-        }
-        _loggerService.writeDebug("Found ${result.size} snapshots")
-        return result
+    private fun collectSnapshots(snapshotPaths: Sequence<File>) : List<File> {
+        _loggerService.writeDebug("Searching for snapshots in the following paths: ${snapshotPaths.joinToString(", ") { it.absolutePath }}")
+        return snapshotPaths
+            .partition { it.isDirectory }
+            .let { (directories, files) ->
+                files + directories.flatMap { _fileSystemService.list(it).filter { it.extension == "dcvr" } }
+            }
+            .also { _loggerService.writeDebug("Found ${it.size} snapshots") }
     }
 
     private fun findOutputSnapshot(snapshotDirectory: File): File? {

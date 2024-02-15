@@ -5,6 +5,7 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.EventDispatcher
+import java.io.File
 
 // this class is not thread-safe since it
 // supposed to be used in single build-step related thread
@@ -55,6 +56,11 @@ class DotCoverSettings(
             ?.toBooleanStrictOrNull()
             ?: false
 
+    // TODO resolve wildcards
+    val additionalSnapshotPaths: List<String> get() =
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)
+            ?.trim()?.split('\n')?.filterNot { it.isNullOrBlank() } ?: emptyList()
+
     fun shouldMergeSnapshots(): Pair<Boolean, String> =
         when (dotCoverMode) {
             DotCoverMode.Wrapper ->
@@ -64,7 +70,7 @@ class DotCoverSettings(
             DotCoverMode.Runner ->
                 _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT)
                     ?.toBooleanStrictOrNull()
-                    ?: true
+                    ?: false
             DotCoverMode.Disabled -> false
         }.let { mergeParameterEnabled -> when {
             !mergeParameterEnabled -> false to "Merging dotCover snapshots is disabled; skipping this stage"
@@ -81,7 +87,7 @@ class DotCoverSettings(
             DotCoverMode.Runner ->
                 _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT)
                     ?.toBooleanStrictOrNull()
-                    ?: true
+                    ?: false
             DotCoverMode.Disabled -> false
         }.let { reportParameterEnabled -> when {
             !reportParameterEnabled -> false to "Building a coverage report is disabled; skipping this stage"

@@ -63,16 +63,9 @@ class DotCoverRunnerRunType(
             val shouldGenerateReport = properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT).toBoolean()
             val hasAdditionalSnapshotPaths = properties.get(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)?.trim().isNullOrBlank().not()
 
-            val nothingToReport = shouldGenerateReport && !hasCoveringCommandLine && !hasAdditionalSnapshotPaths
             val noOptionsSelected = !shouldGenerateReport && !hasCoveringCommandLine && !hasAdditionalSnapshotPaths
 
             when {
-                nothingToReport -> arrayListOf(
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE, NOTHING_TO_REPORT_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NOTHING_TO_REPORT_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NOTHING_TO_REPORT_ERROR),
-                )
-
                 noOptionsSelected -> arrayListOf(
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE, NO_OPTION_SELECTED_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NO_OPTION_SELECTED_ERROR),
@@ -102,10 +95,6 @@ class DotCoverRunnerRunType(
         _dotCoverRequirementsProvider.getRequirements(runParameters).toList()
 
     companion object {
-        const val NOTHING_TO_REPORT_ERROR =
-            "The \"Generate report\" option is set, but neither a covered command line " +
-            "nor a single report is included in the report"
-
         const val NO_OPTION_SELECTED_ERROR =
             "At least one of the fields \"Command Line\", \"Generate report\", " +
             "\"Join reports from previous build steps\", " +
