@@ -2,14 +2,12 @@ package jetbrains.buildServer.dotCover
 
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.DotnetParametersProvider
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.positioning.PositionAware
 import jetbrains.buildServer.web.functions.InternalProperties
 import jetbrains.buildServer.web.openapi.PluginDescriptor
-import javax.swing.plaf.basic.BasicInternalFrameUI.InternalFramePropertyChangeListener
 
 class DotCoverRunnerRunType(
     runTypeRegistry: RunTypeRegistry,
@@ -59,15 +57,15 @@ class DotCoverRunnerRunType(
                 )
             }
 
-            val hasCoveringCommandLine = properties.get(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE).isNullOrBlank().not()
+            val hasCoveringProcess = properties.get(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE).isNullOrBlank().not()
             val shouldGenerateReport = properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT).toBoolean()
             val hasAdditionalSnapshotPaths = properties.get(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)?.trim().isNullOrBlank().not()
 
-            val noOptionsSelected = !shouldGenerateReport && !hasCoveringCommandLine && !hasAdditionalSnapshotPaths
+            val noOptionsSelected = !shouldGenerateReport && !hasCoveringProcess && !hasAdditionalSnapshotPaths
 
             when {
                 noOptionsSelected -> arrayListOf(
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE, NO_OPTION_SELECTED_ERROR),
+                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE, NO_OPTION_SELECTED_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NO_OPTION_SELECTED_ERROR),
                     InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NO_OPTION_SELECTED_ERROR),
                 )
@@ -78,14 +76,16 @@ class DotCoverRunnerRunType(
     }
 
     override fun describeParameters(parameters: Map<String, String>): String {
-        val commandLine = parameters[CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE]
+        val coveringProcessExecutable = parameters[CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE]?.trim() ?: ""
+        val coveredProcessArguments = parameters[CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_ARGUMENTS]
             ?.trim()?.let { StringUtil.splitCommandArgumentsAndUnquote(it).take(5).joinToString(" ") } ?: ""
+        val coveredProcess = sequenceOf(coveredProcessArguments, coveringProcessExecutable).joinToString(" ")
         val shouldGenerateReport = parameters[CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT].toBoolean()
         val hasAdditionalSnapshotPaths = parameters[CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS].toBoolean()
         val containerImage = parameters[DotnetConstants.PARAM_DOCKER_IMAGE]?.trim() ?: ""
 
         return buildString {
-            if (commandLine.isNotBlank()) appendLine("Cover command line: $commandLine")
+            if (coveredProcess.isNotBlank()) appendLine("Cover process: $coveredProcess")
             if (shouldGenerateReport) appendLine("Generate report")
             if (hasAdditionalSnapshotPaths) appendLine("Include additional dotCover snapshots to the report")
             if (containerImage.isNotBlank()) appendLine("Container image: $containerImage")
@@ -96,8 +96,7 @@ class DotCoverRunnerRunType(
 
     companion object {
         const val NO_OPTION_SELECTED_ERROR =
-            "At least one of the fields \"Command Line\", \"Generate report\", " +
-            "\"Join reports from previous build steps\", " +
+            "At least one of the fields \"Executable\", \"Generate report\", " +
             "or \"Include additional dotCover snapshots to the report\" must be set"
 
         fun RunTypeExtension.isContainerWrapper() =

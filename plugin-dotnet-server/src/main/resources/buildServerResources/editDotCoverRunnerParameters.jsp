@@ -18,8 +18,13 @@
 <tr>
   <th>Coverage settings:</th>
   <td>
-    <props:multilineProperty name="${params.dotCoverCommandLineKey}" linkTitle="Command line (optional)" className="longField" cols="60" rows="1"/>
-    <span class="smallNote">Run a process from the command line under dotCover coverage profile and produce produces a dotCover snapshot file. If set, the runner will execute the custom <tt>dotCover cover YOUR_INPUT</tt> command</span>
+    <props:multilineProperty name="${params.dotCoverCoveredProcessExecutableKey}" linkTitle="Executable (optional)" expanded="true" className="longField" cols="60" rows="1"/>
+    <span class="smallNote">
+      Specify path to an executable file to run the process under dotCover coverage profile and produce a dotCover snapshot file
+    </span>
+    <br/>
+    <props:multilineProperty name="${params.dotCoverCoveredProcessArgumentsKey}" linkTitle="Command line arguments" className="longField" cols="60" rows="1"/>
+    <span class="smallNote">Space or new-line separated command line parameters for covering process</span>
     <br/>
     <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${params.dotCoverGenerateReportKey}"/>
     <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>

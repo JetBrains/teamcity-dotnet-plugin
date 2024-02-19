@@ -16,6 +16,9 @@ class DotCoverProfiledProcessWorkflowComposer(
     private val _targetService: TargetService,
     private val _buildOptions: BuildOptions,
     private val _loggerService: LoggerService,
+    private val _pathMatcher: PathMatcher,
+    private val _virtualContext: VirtualContext,
+    private val _fileSystemService: FileSystemService,
 ) : SimpleWorkflowComposer {
     override val target = TargetType.Tool
 
@@ -23,16 +26,16 @@ class DotCoverProfiledProcessWorkflowComposer(
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) = when {
         supportedRunnerTypes.contains(_buildInfo.runType) -> sequence {
-            commandLineParameter
-                ?.let { createCommandLines(it, context) }
-                ?.let { yield(it) }
+            coveredProcessExecutablePath
+                ?.let { yield(createCommandLine(it, coveredProcessArguments, context)) }
         }.let(::Workflow)
 
         else -> Workflow()
     }
 
-    private fun createCommandLines(commandLineString: String, context: WorkflowContext) : CommandLine {
-        val (executable, arguments) = commandLineString.trim().split("\\s+".toRegex(), limit = 2)
+    private fun createCommandLine(executablePath: String, arguments: String, context: WorkflowContext) : CommandLine {
+        val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
+
         val args = arguments.trim().let { argString ->
             _argumentsService.split(argString).map {
                 CommandLineArgument(it, CommandLineArgumentType.Custom)
@@ -54,13 +57,16 @@ class DotCoverProfiledProcessWorkflowComposer(
                 return CommandLine(
                     baseCommandLine = null,
                     target = target,
-                    executableFile = Path(executable),
-                    workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).path),
+                    executableFile = Path(_virtualContext.resolvePath(executablePath)),
+                    workingDirectory = Path(workingDirectory.path),
                     arguments = args
                 )
             }
     }
 
-    private val commandLineParameter get() =
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_COMMAND_LINE)?.trim()
+    private val coveredProcessExecutablePath get() =
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE)?.trim()
+
+    private val coveredProcessArguments get() =
+        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_ARGUMENTS)?.trim() ?: ""
 }
