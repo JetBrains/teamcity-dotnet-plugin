@@ -1,14 +1,14 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactory
 import jetbrains.buildServer.serverSide.InvalidProperty
 
 /**
  * Provides parameters for dotnet %custom% command.
  */
 class CustomCommandType(
-    sdkBasedRequirementFactory: SdkBasedRequirementFactory
+    sdkBasedRequirementFactory: SDKBasedRequirementFactory
 ) : DotnetCLICommandType(sdkBasedRequirementFactory) {
     override val name: String = DotnetCommandType.Custom.id
 

@@ -1,4 +1,4 @@
-package jetbrains.buildServer.inspect.test
+package jetbrains.buildServer.inspect
 
 import io.mockk.every
 import io.mockk.mockk

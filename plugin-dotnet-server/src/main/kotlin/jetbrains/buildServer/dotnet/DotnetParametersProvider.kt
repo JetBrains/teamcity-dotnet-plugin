@@ -2,8 +2,8 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.dotnet.commands.*
 import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactoryImpl
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactoryImpl
 import jetbrains.buildServer.web.functions.InternalProperties
 
 /**
@@ -162,8 +162,8 @@ class DotnetParametersProvider {
         private val supportMSBuildBitness get() = InternalProperties.getBoolean(DotnetConstants.PARAM_SUPPORT_MSBUILD_BITNESS) ?: false
         private val testRetryEnabled get() = InternalProperties.getBoolean(DotnetConstants.PARAM_TEST_RETRY_ENABLED) ?: false
         private val experimentalCommandTypes: Sequence<CommandType> = sequenceOf()
-        private val sdkBasedRequirementFactory: SdkBasedRequirementFactory =
-            SdkBasedRequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
+        private val sdkBasedRequirementFactory: SDKBasedRequirementFactory =
+            SDKBasedRequirementFactoryImpl(SdkResolverImpl(SdkTypeResolverImpl()))
         val commandTypes get() = sequenceOf(
             RestoreCommandType(sdkBasedRequirementFactory),
             BuildCommandType(sdkBasedRequirementFactory),

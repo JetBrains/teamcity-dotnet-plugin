@@ -36,6 +36,8 @@ class PackRequirementsProvider : DotnetCLIRequirementsProvider(), DotnetCommandR
     override val commandType = DotnetCommandType.Pack
 
     override fun getRequirements(parameters: Map<String, String>) = sequence {
+        yieldAll(super.getRequirements(parameters))
+
         if (!parameters[DotnetConstants.PARAM_RUNTIME].isNullOrBlank()) {
             yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, "2.0.0", RequirementType.VER_NO_LESS_THAN))
         }
@@ -50,10 +52,12 @@ class RestoreRequirementsProvider : DotnetCLIRequirementsProvider(), DotnetComma
     override val commandType = DotnetCommandType.Restore
 }
 
-class RunRequirementsProvider : DotnetCommandRequirementsProvider {
+class RunRequirementsProvider : DotnetCLIRequirementsProvider(), DotnetCommandRequirementsProvider {
     override val commandType = DotnetCommandType.Run
 
     override fun getRequirements(parameters: Map<String, String>) = sequence {
+        yieldAll(super.getRequirements(parameters))
+
         if (!parameters[DotnetConstants.PARAM_RUNTIME].isNullOrBlank()) {
             yield(Requirement(DotnetConstants.CONFIG_SUFFIX_DOTNET_CLI, "2.0.0", RequirementType.VER_NO_LESS_THAN))
         }

@@ -18,7 +18,7 @@
   <bean class="jetbrains.buildServer.DotnetUsageStatisticsProvider"/>
 
   <!--Dotnet-->
-  <bean class="jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactoryImpl"/>
+  <bean class="jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactoryImpl"/>
   <bean class="jetbrains.buildServer.dotnet.requirements.commands.BuildRequirementsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.requirements.commands.CleanRequirementsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.requirements.commands.CustomRequirementsProvider"/>

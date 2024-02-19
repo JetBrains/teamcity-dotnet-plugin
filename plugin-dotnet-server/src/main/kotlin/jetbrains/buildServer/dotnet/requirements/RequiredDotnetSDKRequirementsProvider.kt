@@ -5,7 +5,7 @@ import jetbrains.buildServer.dotnet.*
 import jetbrains.buildServer.requirements.Requirement
 
 class RequiredDotnetSDKRequirementsProvider(
-    private val _sdkBasedRequirementFactory: SdkBasedRequirementFactory,
+    private val _sdkBasedRequirementFactory: SDKBasedRequirementFactory,
 ) : RequirementsProvider {
     override fun getRequirements(parameters: Map<String, String>): Sequence<Requirement> =
         parameters[DotnetConstants.PARAM_REQUIRED_SDK]

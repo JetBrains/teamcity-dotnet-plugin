@@ -3,11 +3,11 @@ package jetbrains.buildServer.dotnet.commands
 import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER
 import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER_HOME
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactory
 import jetbrains.buildServer.serverSide.InvalidProperty
 
 class DotCoverCoverageType(
-    sdkBasedRequirementFactory: SdkBasedRequirementFactory
+    sdkBasedRequirementFactory: SDKBasedRequirementFactory
 ) : CommandType(sdkBasedRequirementFactory) {
     override val name: String = PARAM_DOTCOVER
 

@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.commands
 
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactory
 
 abstract class DotnetCLICommandType(
-    sdkBasedRequirementFactory: SdkBasedRequirementFactory,
+    sdkBasedRequirementFactory: SDKBasedRequirementFactory,
 ) : CommandType(sdkBasedRequirementFactory)

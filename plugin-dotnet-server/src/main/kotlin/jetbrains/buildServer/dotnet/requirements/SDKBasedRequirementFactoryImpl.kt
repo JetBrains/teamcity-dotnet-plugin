@@ -12,9 +12,9 @@ import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier.EXISTS_QUALIFIER
 import jetbrains.buildServer.requirements.RequirementType
 
-class SdkBasedRequirementFactoryImpl(
+class SDKBasedRequirementFactoryImpl(
     private val _sdkResolver: SdkResolver
-) : SdkBasedRequirementFactory {
+) : SDKBasedRequirementFactory {
     override fun tryCreate(sdkVersion: String) =
         Version.tryParse(sdkVersion)?.let { version ->
             val versions = _sdkResolver.getCompatibleVersions(version).toList()

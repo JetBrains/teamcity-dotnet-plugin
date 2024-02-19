@@ -2,11 +2,8 @@
 
 package jetbrains.buildServer.dotnet.test
 
-import io.mockk.every
 import io.mockk.mockk
-import jetbrains.buildServer.dotnet.SdkType
 import jetbrains.buildServer.dotnet.SdkTypeResolver
-import jetbrains.buildServer.dotnet.Version
 import jetbrains.buildServer.dotnet.discovery.Framework
 import jetbrains.buildServer.dotnet.discovery.Property
 import jetbrains.buildServer.dotnet.discovery.SdkResolverImpl

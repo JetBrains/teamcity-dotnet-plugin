@@ -1,6 +1,4 @@
-
-
-package jetbrains.buildServer.inspect.test
+package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH

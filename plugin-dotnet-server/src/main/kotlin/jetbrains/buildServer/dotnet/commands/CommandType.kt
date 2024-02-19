@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.commands
 
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.requirements.SdkBasedRequirementFactory
+import jetbrains.buildServer.dotnet.requirements.SDKBasedRequirementFactory
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.serverSide.InvalidProperty
 
@@ -9,7 +9,7 @@ import jetbrains.buildServer.serverSide.InvalidProperty
  * Provides command-specific resources
  */
 abstract class CommandType(
-    private val _sdkBasedRequirementFactory: SdkBasedRequirementFactory,
+    private val _sdkBasedRequirementFactory: SDKBasedRequirementFactory,
 ) {
     abstract val name: String
 
