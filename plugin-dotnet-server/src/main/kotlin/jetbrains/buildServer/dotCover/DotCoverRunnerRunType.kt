@@ -48,30 +48,28 @@ class DotCoverRunnerRunType(
     }
 
     // properties validation
-    override fun getRunnerPropertiesProcessor(): PropertiesProcessor {
-        return PropertiesProcessor { properties ->
-            val dotCoverHome = properties?.get(CoverageConstants.PARAM_DOTCOVER_HOME)
-            if (dotCoverHome.isNullOrEmpty()) {
-                return@PropertiesProcessor arrayListOf(
-                    InvalidProperty(DotnetConstants.PARAM_COMMAND, "dotCover home path must be set")
-                )
-            }
+    override fun getRunnerPropertiesProcessor() = PropertiesProcessor { properties ->
+        val dotCoverHome = properties?.get(CoverageConstants.PARAM_DOTCOVER_HOME)
+        if (dotCoverHome.isNullOrBlank()) {
+            return@PropertiesProcessor arrayListOf(
+                InvalidProperty(DotnetConstants.PARAM_COMMAND, "dotCover home path must be set")
+            )
+        }
 
-            val hasCoveringProcess = properties.get(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE).isNullOrBlank().not()
-            val shouldGenerateReport = properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT).toBoolean()
-            val hasAdditionalSnapshotPaths = properties.get(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)?.trim().isNullOrBlank().not()
+        val hasCoveringProcess = properties.get(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE).isNullOrBlank().not()
+        val shouldGenerateReport = properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT).toBoolean()
+        val hasAdditionalSnapshotPaths = properties.get(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS).isNullOrBlank().not()
 
-            val noOptionsSelected = !shouldGenerateReport && !hasCoveringProcess && !hasAdditionalSnapshotPaths
+        val noOptionsSelected = !shouldGenerateReport && !hasCoveringProcess && !hasAdditionalSnapshotPaths
 
-            when {
-                noOptionsSelected -> arrayListOf(
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE, NO_OPTION_SELECTED_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NO_OPTION_SELECTED_ERROR),
-                    InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NO_OPTION_SELECTED_ERROR),
-                )
+        when {
+            noOptionsSelected -> arrayListOf(
+                InvalidProperty(CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE, NO_OPTION_SELECTED_ERROR),
+                InvalidProperty(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT, NO_OPTION_SELECTED_ERROR),
+                InvalidProperty(CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS, NO_OPTION_SELECTED_ERROR),
+            )
 
-                else -> emptyList<InvalidProperty>()
-            }
+            else -> emptyList<InvalidProperty>()
         }
     }
 
@@ -79,7 +77,7 @@ class DotCoverRunnerRunType(
         val coveringProcessExecutable = parameters[CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_EXECUTABLE]?.trim() ?: ""
         val coveredProcessArguments = parameters[CoverageConstants.PARAM_DOTCOVER_COVERED_PROCESS_ARGUMENTS]
             ?.trim()?.let { StringUtil.splitCommandArgumentsAndUnquote(it).take(5).joinToString(" ") } ?: ""
-        val coveredProcess = sequenceOf(coveredProcessArguments, coveringProcessExecutable).joinToString(" ")
+        val coveredProcess = sequenceOf(coveringProcessExecutable, coveredProcessArguments).joinToString(" ")
         val shouldGenerateReport = parameters[CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT].toBoolean()
         val hasAdditionalSnapshotPaths = parameters[CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS].toBoolean()
         val containerImage = parameters[DotnetConstants.PARAM_DOCKER_IMAGE]?.trim() ?: ""
