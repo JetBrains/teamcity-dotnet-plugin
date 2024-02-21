@@ -49,11 +49,6 @@ class DotCoverWorkflowComposer(
         }
 
         val baseCommandLineIterator = workflow.commandLines.iterator()
-//        if (!baseCommandLineIterator.hasNext()) {
-//            return workflow
-//        }
-
-        // TODO should not be applied in case absence of the base command line expect case of having snaphosts
 
         return sequence {
             val executablePath = getDotCoverExecutablePath()
@@ -224,7 +219,6 @@ class DotCoverWorkflowComposer(
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
 
-        // TODO must be activated only in case of having snapshots
         if (outputSnapshotFile == null) {
             _loggerService.writeDebug("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
             return

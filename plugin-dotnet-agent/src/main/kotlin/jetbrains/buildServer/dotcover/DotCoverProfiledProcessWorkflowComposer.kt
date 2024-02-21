@@ -13,22 +13,22 @@ class DotCoverProfiledProcessWorkflowComposer(
     private val _parametersService: ParametersService,
     private val _pathsService: PathsService,
     private val _argumentsService: ArgumentsService,
-    private val _targetService: TargetService,
     private val _buildOptions: BuildOptions,
     private val _loggerService: LoggerService,
-    private val _pathMatcher: PathMatcher,
     private val _virtualContext: VirtualContext,
-    private val _fileSystemService: FileSystemService,
 ) : SimpleWorkflowComposer {
     override val target = TargetType.Tool
 
     private val supportedRunnerTypes = listOf(CoverageConstants.DOTCOVER_RUNNER_TYPE)
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) = when {
-        supportedRunnerTypes.contains(_buildInfo.runType) -> sequence {
+        supportedRunnerTypes.contains(_buildInfo.runType) ->
             coveredProcessExecutablePath
-                ?.let { yield(createCommandLine(it, coveredProcessArguments, context)) }
-        }.let(::Workflow)
+                ?.let { when {
+                    it.isBlank() -> null
+                    else -> Workflow(sequenceOf(createCommandLine(it, coveredProcessArguments, context)))
+                }}
+                ?: Workflow()
 
         else -> Workflow()
     }
