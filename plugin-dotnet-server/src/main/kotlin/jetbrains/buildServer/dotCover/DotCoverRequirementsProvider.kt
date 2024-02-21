@@ -18,7 +18,6 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import org.springframework.beans.factory.BeanFactory
 
 class DotCoverRequirementsProvider(
-    private val _factoryBean: BeanFactory,
     private val _projectManager: ProjectManager,
     private val _toolManager: ServerToolManager
 ) : RequirementsProvider {
