@@ -12,6 +12,7 @@ import jetbrains.buildServer.util.positioning.PositionAware
 import jetbrains.buildServer.web.functions.InternalProperties
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import org.testng.Assert.*
+import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -27,12 +28,17 @@ class DotCoverRunnerRunTypeTest {
         clearAllMocks()
         MockKAnnotations.init(this, relaxed = true)
         mockkStatic(InternalProperties::class)
-        every { InternalProperties.getBoolean(DotnetConstants.PARAM_DOTCOVER_RUNNER_ENABLED) } returns true
+        every { InternalProperties.getBoolean(any()) } returns false
         _instance = DotCoverRunnerRunType(
             _runTypeRegistryMock,
             _pluginDescriptorMock,
             _dotCoverRequirementsProviderMock,
         )
+    }
+
+    @AfterMethod
+    fun tearDown() {
+        unmockkStatic(InternalProperties::class)
     }
 
     @DataProvider
@@ -43,7 +49,7 @@ class DotCoverRunnerRunTypeTest {
     @Test(dataProvider = "register run type data provider")
     fun `should register run type in registy when feature toggle is enabled`(isFeatureFlagEnabled: Boolean, registrationCount: Int) {
         // assert
-        every { InternalProperties.getBoolean(DotnetConstants.PARAM_DOTCOVER_RUNNER_ENABLED) } returns isFeatureFlagEnabled
+        every { InternalProperties.getBoolean(any()) } returns isFeatureFlagEnabled
 
         // act
         _instance = DotCoverRunnerRunType(
