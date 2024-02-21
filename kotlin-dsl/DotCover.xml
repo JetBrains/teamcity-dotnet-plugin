@@ -18,9 +18,14 @@
         <param name="dotNetCoverage.dotCover.home.path" dslName="toolPath">
             <description>Specify the path to dotCover CLT</description>
         </param>
-        <param name="dotNetCoverage.dotCover.commandLine" dslName="commandLine">
+        <param name="dotNetCoverage.dotCover.coveredProcessExecutable" dslName="executable">
             <description>
-                Run a process from the command line under dotCover coverage profile and produces a dotCover snapshot file
+                Specify path to an executable file to run the process under dotCover coverage profile and produce a dotCover snapshot file. This parameter is optional
+            </description>
+        </param>
+        <param name="dotNetCoverage.dotCover.coveredProcessArguments" dslName="commandLineArguments">
+            <description>
+                Space or new-line separated command line parameters for covering process
             </description>
         </param>
         <param name="dotNetCoverage.dotCover.generateReport" dslName="generateReport" type="boolean" trueValue="true" falseValue="false">
@@ -43,7 +48,7 @@
                 Supported only with dotCover 2.0 or later
             </description>
         </param>
-        <param name="dotNetCoverage.dotCover.customCmd" dslName="args">
+        <param name="dotNetCoverage.dotCover.customCmd" dslName="coverArguments">
             <description>
                 Enter additional new-line separated command line parameters for
                 [`dotCover cover`](https://www.jetbrains.com/help/dotcover/dotCover__Console_Runner_Commands.html#cover) command
@@ -59,7 +64,8 @@
             </description>
             <code>
                 dotCover {
-                    commandLine = "dotnet test MyProjectTests.dll"
+                    executable = "/path/to/dotnet"
+                    commandLineArguments = "test MyProjectTests.dll"
                 }
             </code>
         </example>
@@ -70,8 +76,9 @@
             </description>
             <code>
                 dotCover {
-                    commandLine = "dotnet test MyProjectTests.dll"
-                    args = "--Output=/path/to/MyProjectTests.dcvr"
+                    executable = "/path/to/dotnet"
+                    commandLineArguments = "test MyProjectTests.dll"
+                    coverArguments = "--Output=/path/to/MyProjectTests.dcvr"
                     generateReport = "false"
                 }
             </code>
