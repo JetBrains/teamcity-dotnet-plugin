@@ -1,21 +1,15 @@
 package jetbrains.buildServer.dotCover
 
 import jetbrains.buildServer.RequirementsProvider
-import jetbrains.buildServer.ToolVersionProvider
+import jetbrains.buildServer.dotNet.DotNetConstants
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.commands.DotCoverCoverageType
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
 import jetbrains.buildServer.requirements.RequirementType
 import jetbrains.buildServer.serverSide.ProjectManager
 import jetbrains.buildServer.tools.ServerToolManager
 import jetbrains.buildServer.tools.ToolVersion
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_PATTERN_3_5
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_6_1_PATTERN
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTNET_FRAMEWORK_4_7_2_PATTERN
 import jetbrains.buildServer.dotnet.DotnetConstants
-import org.springframework.beans.factory.BeanFactory
 
 class DotCoverRequirementsProvider(
     private val _projectManager: ProjectManager,
@@ -61,13 +55,17 @@ class DotCoverRequirementsProvider(
     }
 
     companion object {
-        private val DOTNET_FRAMEWORK_35_OR_40_REQUIREMENT =
-            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_PATTERN_3_5)", null, RequirementType.EXISTS)
-
-        private val DOTNET_FRAMEWORK_461_REQUIREMENT =
-            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_4_6_1_PATTERN)", null, RequirementType.EXISTS)
+        internal const val DOTNET_FRAMEWORK_472_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(7\\.([2-9]|[\\d]{2,})|[8-9]|[\\d]{2,})[\\d\\.]*_.+"
+        internal const val DOTNET_FRAMEWORK_461_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
+        internal val DOTNET_FRAMEWORK_35_OR_40_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
 
         private val DOTNET_FRAMEWORK_472_REQUIREMENT =
-            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_4_7_2_PATTERN)", null, RequirementType.EXISTS)
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_472_PATTERN)", null, RequirementType.EXISTS)
+
+        private val DOTNET_FRAMEWORK_461_REQUIREMENT =
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_461_PATTERN)", null, RequirementType.EXISTS)
+
+        private val DOTNET_FRAMEWORK_35_OR_40_REQUIREMENT =
+            Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_35_OR_40_PATTERN)", null, RequirementType.EXISTS)
     }
 }

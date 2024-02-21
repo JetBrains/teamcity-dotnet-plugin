@@ -62,10 +62,6 @@ object CoverageConstants {
     const val DOTCOVER_TOOL_NAME = "dotCover"
     const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.${BUNDLED_TOOL_VERSION_NAME}"
 
-    val DOTNET_FRAMEWORK_PATTERN_3_5 = DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
-    const val DOTNET_FRAMEWORK_4_6_1_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
-    const val DOTNET_FRAMEWORK_4_7_2_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(7\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
-
 
     class ServiceMessageSetup(setup: CoverageServiceMessageSetup) {
         init {
