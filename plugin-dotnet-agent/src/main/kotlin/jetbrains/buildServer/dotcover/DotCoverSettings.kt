@@ -20,7 +20,20 @@ class DotCoverSettings(
     init {
         _events.addListener(object : AgentLifeCycleAdapter() {
             override fun buildStarted(runningBuild: AgentRunningBuild) {
+                if (coveragePostProcessingEnabled) {
+                    return
+                }
+
                 lastBuildStepIdWithDotCoverEnabled = findLastBuildStepIdWithDotCoverEnabled(runningBuild)
+                lastBuildStepIdWithDotCoverEnabled?.let {
+                    // The changes from this commit are a temporary solution.
+                    // They can be removed after moving the NUnit and MSpec runners to the teamcity-dotnet-plugin.
+                    // This is necessary in order to make dotCover reports from the NUnit runner compatible with dotCover reports from .NET / dotCover runners.
+                    // This parameter allows the NUnit runner to recognize that report generation will be performed as part of a .NET / dotCover step,
+                    // and not to initiate coverage reports post-processing, which would lead to errors in the build log
+                    // see jetbrains.buildServer.dotNet.testRunner.agent.DotCoverSetupBuilder
+                    runningBuild.addSharedConfigParameter("dotCover.reportProcessingBuildStepId", it)
+                }
             }
             override fun beforeBuildFinish(build: AgentRunningBuild, buildStatus: BuildFinishedStatus) {
                 lastBuildStepIdWithDotCoverEnabled = null
