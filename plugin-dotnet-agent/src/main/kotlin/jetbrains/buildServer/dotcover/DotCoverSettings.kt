@@ -24,7 +24,7 @@ class DotCoverSettings(
                     return
                 }
 
-                lastBuildStepIdWithDotCoverEnabled = findLastBuildStepIdWithDotCoverEnabled(runningBuild)
+                lastBuildStepIdWithDotCoverEnabled = findLastBuildStepIdWithDotCoverEnabled(runningBuild.buildRunners)
                 lastBuildStepIdWithDotCoverEnabled?.let {
                     // The changes from this commit are a temporary solution.
                     // They can be removed after moving the NUnit and MSpec runners to the teamcity-dotnet-plugin.
@@ -41,7 +41,7 @@ class DotCoverSettings(
         })
     }
 
-    private var lastBuildStepIdWithDotCoverEnabled: String? = null
+    var lastBuildStepIdWithDotCoverEnabled: String? = null
 
     private val skipProcessingForCurrentBuildStep get() = buildStepId != lastBuildStepIdWithDotCoverEnabled
 
@@ -108,9 +108,8 @@ class DotCoverSettings(
             else -> true to ""
         }}
 
-    private fun findLastBuildStepIdWithDotCoverEnabled(runningBuild: AgentRunningBuild) =
-        runningBuild.buildRunners
-            .filter { it.hasDotCoverEnabled() }
+    fun findLastBuildStepIdWithDotCoverEnabled(buildRunners: List<BuildRunnerSettings>) =
+        buildRunners.filter { it.hasDotCoverEnabled() }
             .map { it.id }
             .lastOrNull()
 
