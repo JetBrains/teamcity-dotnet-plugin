@@ -49,6 +49,10 @@ class DotCoverWorkflowComposer(
         }
 
         val baseCommandLineIterator = workflow.commandLines.iterator()
+        // TODO only in case of DotnetWorkflowComposer
+        if (!baseCommandLineIterator.hasNext()) {
+            return workflow
+        }
 
         return sequence {
             val executablePath = getDotCoverExecutablePath()
@@ -73,7 +77,7 @@ class DotCoverWorkflowComposer(
             if (_dotCoverSettings.coveragePostProcessingEnabled) {
                 _loggerService.writeDebug(
                     "Coverage post-processing is enabled; " +
-                            "the results will be processed before the build finishes"
+                    "the results will be processed before the build finishes"
                 )
                 return@sequence
             }
@@ -111,7 +115,7 @@ class DotCoverWorkflowComposer(
         }
 
         val configFile = _pathsService.getTempFileName(DOTCOVER_CONFIG_EXTENSION)
-        val snapshotFile = _pathsService.getTempFileName(DOTCOVER_SNAPSHOT_EXTENSION)
+        val snapshotFile = _pathsService.getTempFileName(".${DOTCOVER_SNAPSHOT_EXTENSION}")
         val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
         val virtualConfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
         val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
@@ -217,10 +221,10 @@ class DotCoverWorkflowComposer(
     private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, virtualTempDirectory: File) {
         val virtualReportResultsDirectory = File(_virtualContext.resolvePath(File(virtualTempDirectory, "dotCoverResults").canonicalPath))
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
-        val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
 
+        val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
         if (outputSnapshotFile == null) {
-            _loggerService.writeDebug("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
+            _loggerService.writeWarning("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
             return
         }
         if (outputReportFile.isFile && outputReportFile.exists()) {
@@ -278,18 +282,15 @@ class DotCoverWorkflowComposer(
         return snapshotPaths
             .partition { it.isDirectory }
             .let { (directories, files) ->
-                files + directories.flatMap { _fileSystemService.list(it).filter { it.extension == "dcvr" } }
+                files + directories.flatMap { _fileSystemService.list(it).filter { it.extension == DOTCOVER_SNAPSHOT_EXTENSION } }
             }
             .also { _loggerService.writeDebug("Found ${it.size} snapshots") }
     }
 
-    private fun findOutputSnapshot(snapshotDirectory: File): File? {
-        val allSnapshots = _fileSystemService.list(snapshotDirectory).filter { it.extension == "dcvr" }.toList()
-        return if (allSnapshots.size == 1) allSnapshots[0]
-        else allSnapshots
-            .filter { it.name.startsWith("outputSnapshot") }
-            .firstOrNull()
-    }
+
+    private fun findOutputSnapshot(snapshotDirectory: File) =
+        _fileSystemService.list(snapshotDirectory)
+            .firstOrNull { it.name.startsWith(MERGED_SNAPSHOT_PREFIX) && it.extension == DOTCOVER_SNAPSHOT_EXTENSION }
 
     private fun List<File>.hasSingleSnapshot(): Boolean = this.size == 1
 
@@ -300,7 +301,7 @@ class DotCoverWorkflowComposer(
 
     private val reportConfigFilename get() = "report_$DOTCOVER_CONFIG_EXTENSION"
 
-    private val outputSnapshotFilename get() = "outputSnapshot_${_dotCoverSettings.buildStepId}.dcvr"
+    private val outputSnapshotFilename get() = "${MERGED_SNAPSHOT_PREFIX}_${_dotCoverSettings.buildStepId}.dcvr"
 
     private val outputReportFilename get() = "CoverageReport_${_dotCoverSettings.buildStepId}.xml"
 
@@ -310,6 +311,7 @@ class DotCoverWorkflowComposer(
         internal const val DOTCOVER_DATA_PROCESSOR_TYPE = CoverageConstants.COVERAGE_TYPE
         internal const val DOTCOVER_TOOL_NAME = "dotcover"
         internal const val DOTCOVER_CONFIG_EXTENSION = "dotCover.xml"
-        internal const val DOTCOVER_SNAPSHOT_EXTENSION = ".dcvr"
+        internal const val DOTCOVER_SNAPSHOT_EXTENSION = "dcvr"
+        private const val MERGED_SNAPSHOT_PREFIX = "outputSnapshot"
     }
 }
