@@ -21,14 +21,17 @@ class DotCoverWorkflowComposer(
     private val _entryPointSelector: DotCoverEntryPointSelector,
     private val _dotCoverSettings: DotCoverSettings,
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>
-) : SimpleWorkflowComposer {
-
+) : LayeredWorkflowComposer {
     private val _dotCoverCommandLineBuilders: Map<DotCoverCommandType, DotCoverCommandLineBuilder> =
         dotCoverCommandLineBuildersList.associateBy { it.type }
-    override val target: TargetType = TargetType.CodeCoverageProfiler
+    
+    override val layer = CommandLineLayer.Profiler
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow {
         if (_dotCoverSettings.dotCoverMode.isDisabled) {
+            return workflow
+        }
+        if (context.status != WorkflowStatus.Running){
             return workflow
         }
         if (_dotCoverSettings.dotCoverHomePath.isNullOrBlank()) {
@@ -37,6 +40,9 @@ class DotCoverWorkflowComposer(
         }
 
         val baseCommandLineIterator = workflow.commandLines.iterator()
+        if (!baseCommandLineIterator.hasNext()) {
+            return workflow
+        }
 
         return sequence {
             val executablePath = getDotCoverExecutablePath()

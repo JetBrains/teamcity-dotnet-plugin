@@ -15,9 +15,7 @@ class DotCoverProfiledProcessWorkflowComposer(
     private val _buildOptions: BuildOptions,
     private val _loggerService: LoggerService,
     private val _virtualContext: VirtualContext,
-) : SimpleWorkflowComposer {
-    override val target = TargetType.Tool
-
+) : BuildToolWorkflowComposer {
     private val supportedRunnerTypes = listOf(CoverageConstants.DOTCOVER_RUNNER_TYPE)
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) = when {
@@ -55,7 +53,7 @@ class DotCoverProfiledProcessWorkflowComposer(
             .use {
                 yield(CommandLine(
                     baseCommandLine = null,
-                    target = target,
+                    target = TargetType.Tool,
                     executableFile = Path(_virtualContext.resolvePath(executablePath)),
                     workingDirectory = Path(workingDirectory.path),
                     arguments = args

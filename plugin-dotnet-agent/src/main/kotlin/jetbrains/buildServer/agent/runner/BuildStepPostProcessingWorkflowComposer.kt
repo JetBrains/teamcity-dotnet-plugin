@@ -1,3 +1,0 @@
-package jetbrains.buildServer.agent.runner
-
-interface BuildStepPostProcessingWorkflowComposer: WorkflowComposer<Unit>

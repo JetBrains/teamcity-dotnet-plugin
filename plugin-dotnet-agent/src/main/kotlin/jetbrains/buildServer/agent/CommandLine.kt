@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.agent.runner.StdOutText
@@ -7,8 +5,8 @@ import java.io.File
 import java.util.concurrent.atomic.AtomicLong
 
 data class CommandLine(
-    val baseCommandLine: CommandLine?,
-    val target: TargetType,
+    val baseCommandLine: CommandLine?,  // TODO rename to innerCommandLine?
+    val target: TargetType,             // TODO renamt to desig?
     val executableFile: Path,
     val workingDirectory: Path,
     val arguments: List<CommandLineArgument> = emptyList(),

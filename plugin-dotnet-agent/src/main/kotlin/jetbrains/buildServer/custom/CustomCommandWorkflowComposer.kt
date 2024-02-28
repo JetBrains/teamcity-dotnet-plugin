@@ -17,10 +17,7 @@ class CustomCommandWorkflowComposer(
     private val _targetService: TargetService,
     private val _buildOptions: BuildOptions,
     private val _loggerService: LoggerService,
-) : SimpleWorkflowComposer {
-
-    override val target: TargetType = TargetType.Tool
-
+) : BuildToolWorkflowComposer {
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow {
         parameters(DotnetConstants.PARAM_COMMAND)?.let {
             if (!DotnetCommandType.Custom.id.equals(it, true)) {
@@ -62,7 +59,7 @@ class CustomCommandWorkflowComposer(
             }
             .use {
                 yieldAll(targets.asSequence().map {
-                    CommandLine(null, target, it, workingDirectory, args)
+                    CommandLine(null, TargetType.Tool, it, workingDirectory, args)
                 })
             }
     }

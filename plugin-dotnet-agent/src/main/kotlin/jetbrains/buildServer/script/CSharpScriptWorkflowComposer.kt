@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.script
 
 import jetbrains.buildServer.BuildProblemData
@@ -11,14 +9,11 @@ import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 
 class CSharpScriptWorkflowComposer(
-        private val _buildInfo: BuildInfo,
-        private val _commandLineFactory: CommandLineFactory,
-        private val _buildOptions: BuildOptions,
-        private val _loggerService: LoggerService)
-    : SimpleWorkflowComposer {
-
-    override val target: TargetType = TargetType.Tool
-
+    private val _buildInfo: BuildInfo,
+    private val _commandLineFactory: CommandLineFactory,
+    private val _buildOptions: BuildOptions,
+    private val _loggerService: LoggerService,
+) : BuildToolWorkflowComposer {
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) =
             when (_buildInfo.runType) {
                 ScriptConstants.RUNNER_TYPE -> Workflow(createCommandLines(context))

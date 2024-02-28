@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
@@ -9,13 +7,9 @@ import jetbrains.buildServer.rx.map
 import jetbrains.buildServer.rx.use
 
 class BasePathResolverWorkflowComposer(
-        private val _pathsService: PathsService,
-        private val _virtualContext: VirtualContext)
-    : PathResolverWorkflowComposer {
-
-    override val target: TargetType
-        get() = TargetType.SystemDiagnostics
-
+    private val _pathsService: PathsService,
+    private val _virtualContext: VirtualContext
+) : PathResolverWorkflowComposer {
     override fun compose(context: WorkflowContext, state: PathResolverState, workflow: Workflow) = Workflow (
             sequence {
                 context

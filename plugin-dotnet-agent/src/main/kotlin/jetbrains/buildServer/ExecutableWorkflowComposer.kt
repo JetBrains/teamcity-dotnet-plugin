@@ -1,9 +1,8 @@
-
-
 package jetbrains.buildServer
 
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.agent.runner.WorkflowStatus.Companion.isStopped
 import jetbrains.buildServer.dotnet.ToolState
 import jetbrains.buildServer.dotnet.ToolStateWorkflowComposer
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
@@ -16,15 +15,14 @@ class ExecutableWorkflowComposer(
     private val _dotnetStateWorkflowComposer: ToolStateWorkflowComposer,
     private val _virtualContext: VirtualContext,
     private val _cannotExecute: CannotExecute
-) : SimpleWorkflowComposer {
-
-    override val target = TargetType.ToolHost
+) : LayeredWorkflowComposer {
+    override val layer = CommandLineLayer.ToolHost
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
         Workflow(sequence {
             var dotnetExecutableFile: String? = null
             for (commandLine in workflow.commandLines) {
-                if (context.status != WorkflowStatus.Running) {
+                if (context.status.isStopped) {
                     break
                 }
 

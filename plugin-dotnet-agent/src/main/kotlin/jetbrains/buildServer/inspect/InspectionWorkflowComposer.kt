@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.agent.*
@@ -22,10 +20,7 @@ open class InspectionWorkflowComposer(
     private val _virtualContext: VirtualContext,
     private val _inspectionToolStateWorkflowComposer: InspectionToolStateWorkflowComposer,
     private val _pluginDescriptorsProvider: PluginDescriptorsProvider
-) : SimpleWorkflowComposer {
-
-    override val target: TargetType = TargetType.Tool
-
+) : BuildToolWorkflowComposer {
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow) =
         if (_buildInfo.runType == _tool.runnerType) Workflow(createCommandLines(context)) else Workflow()
 
@@ -93,7 +88,7 @@ open class InspectionWorkflowComposer(
 
         return CommandLine(
             baseCommandLine = null,
-            target = target,
+            target = TargetType.Tool,
             executableFile = toolStartInfo.executable,
             workingDirectory = Path(_pathsService.getPath(PathType.Checkout).path),
             arguments = cmdArgs.toList(),

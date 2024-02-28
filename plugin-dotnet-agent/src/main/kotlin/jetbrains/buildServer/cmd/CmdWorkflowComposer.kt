@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.cmd
 
 import jetbrains.buildServer.agent.*
@@ -7,12 +5,11 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.util.OSType
 
 class CmdWorkflowComposer(
-        private val _argumentsService: ArgumentsService,
-        private val _virtualContext: VirtualContext,
-        private val _cannotExecute: CannotExecute)
-    : SimpleWorkflowComposer {
-
-    override val target: TargetType = TargetType.ToolHost
+    private val _argumentsService: ArgumentsService,
+    private val _virtualContext: VirtualContext,
+    private val _cannotExecute: CannotExecute,
+) : LayeredWorkflowComposer {
+    override val layer = CommandLineLayer.ToolHost
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {
@@ -25,7 +22,7 @@ class CmdWorkflowComposer(
                             } else yield(
                                 CommandLine(
                                     baseCommandLine,
-                                    TargetType.ToolHost,
+                                    baseCommandLine.target,
                                     Path("cmd.exe"),
                                     baseCommandLine.workingDirectory,
                                     getArguments(baseCommandLine).toList(),

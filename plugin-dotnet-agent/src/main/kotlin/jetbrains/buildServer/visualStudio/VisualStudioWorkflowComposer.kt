@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.BuildProblemData
@@ -20,10 +18,8 @@ class VisualStudioWorkflowComposer(
     private val _loggerService: LoggerService,
     private val _targetService: TargetService,
     private val _toolResolver: ToolResolver,
-    private val _virtualContext: VirtualContext)
-    : SimpleWorkflowComposer {
-
-    override val target: TargetType = TargetType.Tool
+    private val _virtualContext: VirtualContext,
+) : BuildToolWorkflowComposer {
 
     override fun compose(context: WorkflowContext, state:Unit, workflow: Workflow) =
             Workflow(sequence {

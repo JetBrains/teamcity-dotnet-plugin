@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.custom
 
 import io.mockk.*
@@ -210,7 +208,7 @@ class CustomCommandWorkflowComposerTest {
         }
     }
 
-    private fun createInstance(): SimpleWorkflowComposer {
+    private fun createInstance(): BuildToolWorkflowComposer {
         return CustomCommandWorkflowComposer(
             _parametersService,
             _argumentsService,

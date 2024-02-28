@@ -211,7 +211,7 @@ class VisualStudioWorkflowComposerTest {
         Assert.assertEquals(context.status, WorkflowStatus.Failed)
     }
 
-    private fun createInstance(parameters: Map<String, String>): SimpleWorkflowComposer {
+    private fun createInstance(parameters: Map<String, String>): BuildToolWorkflowComposer {
         return VisualStudioWorkflowComposer(
                 ParametersServiceStub(parameters),
                 ArgumentsServiceStub(),

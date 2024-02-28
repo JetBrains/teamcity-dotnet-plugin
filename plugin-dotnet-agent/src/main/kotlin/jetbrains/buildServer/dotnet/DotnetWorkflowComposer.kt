@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
@@ -18,13 +16,11 @@ class DotnetWorkflowComposer(
     private val _virtualContext: VirtualContext,
     private val _dotnetCommandResolver: DotnetCommandResolver,
     private val _dotnetCommandsTransformer: DotnetCommandsTransformer,
-) : SimpleWorkflowComposer {
+) : BuildToolWorkflowComposer {
     private val verbosityLevel get() = _parametersService
         .tryGetParameter(ParameterType.Runner, DotnetConstants.PARAM_VERBOSITY)
         ?.trim()
         ?.let { Verbosity.tryParse(it) }
-
-    override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow = sequence {
         val initialCommand = _dotnetCommandResolver.command

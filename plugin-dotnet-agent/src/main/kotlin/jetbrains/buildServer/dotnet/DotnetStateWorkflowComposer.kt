@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
@@ -16,9 +14,6 @@ class DotnetStateWorkflowComposer(
     private val _versionParser: ToolVersionOutputParser,
     private val _defaultEnvironmentVariables: EnvironmentVariables
 ) : ToolStateWorkflowComposer {
-    override val target: TargetType
-        get() = TargetType.SystemDiagnostics
-
     override fun compose(context: WorkflowContext, state: ToolState, workflow: Workflow): Workflow = sequence {
         val executable = state.executable
         var virtualPath: Path? = null

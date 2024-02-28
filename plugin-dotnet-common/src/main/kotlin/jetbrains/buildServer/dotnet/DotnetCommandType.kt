@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 enum class DotnetCommandType(val id: String) {

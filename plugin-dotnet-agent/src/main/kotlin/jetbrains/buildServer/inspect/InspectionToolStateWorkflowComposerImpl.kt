@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.agent.*
@@ -13,9 +11,6 @@ class InspectionToolStateWorkflowComposerImpl(
     private val _pathsService: PathsService,
     private val _versionParser: ToolVersionOutputParser
 ) : InspectionToolStateWorkflowComposer {
-    override val target: TargetType
-        get() = TargetType.SystemDiagnostics
-
     override fun compose(context: WorkflowContext, state: InspectionToolState, workflow: Workflow): Workflow = sequence {
         context
             .toOutput()
@@ -26,7 +21,7 @@ class InspectionToolStateWorkflowComposerImpl(
                 yield(
                     CommandLine(
                         baseCommandLine = null,
-                        target = target,
+                        target = TargetType.SystemDiagnostics,
                         executableFile = state.toolStartInfo.executable,
                         workingDirectory = Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath),
                         arguments = state.toolStartInfo.arguments.plus(CommandLineArgument("--version")),

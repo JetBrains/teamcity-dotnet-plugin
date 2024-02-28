@@ -29,7 +29,7 @@ class DotCoverReportCommandLineBuilder(
     ): CommandLine {
         return CommandLine(
             baseCommandLine = null,
-            target = TargetType.CodeCoverageProfiler,
+            target = TargetType.PostProcessing,
             executableFile = executableFile,
             workingDirectory = workingDirectory,
             arguments = createArguments(configFilePath).toList(),

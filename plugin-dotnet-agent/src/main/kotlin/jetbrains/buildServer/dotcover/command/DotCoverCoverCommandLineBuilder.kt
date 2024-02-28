@@ -21,8 +21,7 @@ class DotCoverCoverCommandLineBuilder(
     fileSystemService: FileSystemService,
     private val _argumentsService: ArgumentsService
 ) : DotCoverCommandLineBuilderBase(pathsService, virtualContext, _parametersService, fileSystemService) {
-
-    override val type: DotCoverCommandType get() = DotCoverCommandType.Cover
+    override val type get() = DotCoverCommandType.Cover
 
     override fun buildCommand(executableFile: Path,
                               environmentVariables: List<CommandLineEnvironmentVariable>,
@@ -31,7 +30,7 @@ class DotCoverCoverCommandLineBuilder(
     ): CommandLine {
         return CommandLine(
             baseCommandLine = baseCommandLine!!,
-            target = TargetType.CodeCoverageProfiler,
+            target = TargetType.Tool,
             executableFile = executableFile,
             workingDirectory = baseCommandLine.workingDirectory,
             arguments = createArguments(configFilePath).toList(),

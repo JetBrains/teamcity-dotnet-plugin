@@ -28,12 +28,10 @@ class DotCoverReportingWorkflowComposer(
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
     private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
     private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
-    private val _uploader: ArtifactsUploader
-) : BuildStepPostProcessingWorkflowComposer {
-
+    private val _uploader: ArtifactsUploader,
+) : PostProcessingWorkflowComposer {
     private val _dotCoverCommandLineBuilders: Map<DotCoverCommandType, DotCoverCommandLineBuilder> =
         dotCoverCommandLineBuildersList.associateBy { it.type }
-    override val target: TargetType = TargetType.Tool
 
     override fun compose(context: WorkflowContext, state: Unit, workflow: Workflow): Workflow {
         if (_dotCoverSettings.dotCoverMode.isDisabled) {

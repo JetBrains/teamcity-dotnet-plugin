@@ -1,10 +1,10 @@
 package jetbrains.buildServer
 
-import jetbrains.buildServer.agent.TargetType
-import jetbrains.buildServer.agent.runner.SimpleWorkflowComposer
+import jetbrains.buildServer.agent.CommandLineLayer
+import jetbrains.buildServer.agent.runner.LayeredWorkflowComposer
 
 class ProfilerHostWorkflowComposer(
-    private val _executableWorkflowComposer: SimpleWorkflowComposer
-) : SimpleWorkflowComposer by _executableWorkflowComposer {
-    override val target = TargetType.ProfilerHost
+    private val _executableWorkflowComposer: LayeredWorkflowComposer
+) : LayeredWorkflowComposer by _executableWorkflowComposer {
+    override val layer = CommandLineLayer.ProfilerHost
 }

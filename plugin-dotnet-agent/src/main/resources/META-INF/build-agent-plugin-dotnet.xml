@@ -54,7 +54,7 @@
   </bean>
   <bean class="jetbrains.buildServer.agent.runner.CommandExecutionAdapter" scope="prototype"/>
   <bean class="jetbrains.buildServer.agent.runner.ProgramCommandLineAdapter" scope="prototype"/>
-  <bean class="jetbrains.buildServer.agent.runner.LayeredWorkflowComposer" id="layeredWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.agent.runner.RootWorkflowComposer" id="layeredWorkflowComposer"/>
   <bean class="jetbrains.buildServer.agent.runner.WorkflowSessionImpl" scope="prototype">
     <constructor-arg ref="layeredWorkflowComposer"/>
   </bean>

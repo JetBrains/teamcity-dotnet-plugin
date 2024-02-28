@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.*
@@ -7,13 +5,9 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.rx.observer
 
 class SimpleStateWorkflowComposer(
-        private val _virtualContext: VirtualContext,
-        private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>)
-    : ToolStateWorkflowComposer {
-
-    override val target: TargetType
-        get() = TargetType.SystemDiagnostics
-
+    private val _virtualContext: VirtualContext,
+    private val _pathResolverWorkflowComposers: List<PathResolverWorkflowComposer>
+) : ToolStateWorkflowComposer {
     override fun compose(context: WorkflowContext, state: ToolState, workflow: Workflow): Workflow = Workflow(
             sequence {
                 val executable = state.executable
