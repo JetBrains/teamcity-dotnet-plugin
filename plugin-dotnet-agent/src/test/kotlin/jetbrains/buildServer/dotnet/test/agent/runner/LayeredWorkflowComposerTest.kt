@@ -62,6 +62,6 @@ class LayeredWorkflowComposerTest {
     }
 
     private fun createInstance(composers: List<SimpleWorkflowComposer>): SimpleWorkflowComposer {
-        return LayeredWorkflowComposer(composers)
+        return LayeredWorkflowComposer(composers, listOf())
     }
 }
