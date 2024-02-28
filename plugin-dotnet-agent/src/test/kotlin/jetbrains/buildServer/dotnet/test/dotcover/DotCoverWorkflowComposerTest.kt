@@ -2,7 +2,6 @@ package jetbrains.buildServer.dotnet.test.dotcover
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.agent.runner.serviceMessages.ImportDataServiceMessage
@@ -609,7 +608,6 @@ class DotCoverWorkflowComposerTest {
     private fun createInstance(fileSystemService: FileSystemService): SimpleWorkflowComposer {
         return DotCoverWorkflowComposer(
             _pathService,
-            _parametersService,
             fileSystemService,
             _dotCoverProjectSerializer,
             _loggerService,
@@ -623,9 +621,6 @@ class DotCoverWorkflowComposerTest {
                 DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
                 DotCoverReportCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService)
-            ),
-            _dotCoverTeamCityReportGenerator,
-            _dotnetCoverageStatisticsPublisher,
-            _uploader)
+            ))
     }
 }
