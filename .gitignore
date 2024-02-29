@@ -51,3 +51,4 @@ plugin-dotnet-agent/dotnet-tools/
 plugin-dotnet-server/packages/
 plugin-dotnet-agent/packages/
 plugin-dotnet-server/bundled-tools/
+plugin-dotnet-server/tool-descriptors/

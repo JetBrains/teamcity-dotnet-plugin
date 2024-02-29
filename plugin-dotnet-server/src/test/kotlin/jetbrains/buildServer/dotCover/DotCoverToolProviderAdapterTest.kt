@@ -161,7 +161,7 @@ class DotCoverToolProviderAdapterTest {
 
     companion object {
         private const val DOT_COVER_DEPRECATED_PLUGIN_XML_PATH =
-            "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml"
+            "server/tool-descriptors/dotcover-teamcity-plugin.xml"
         private val DOT_COVER_PACKAGES = arrayOf(DOTCOVER_DEPRECATED_PACKAGE_ID, DOTCOVER_PACKAGE_ID)
     }
 }

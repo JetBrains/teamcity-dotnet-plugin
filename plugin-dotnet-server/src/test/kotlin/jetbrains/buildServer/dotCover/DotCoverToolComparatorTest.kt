@@ -91,6 +91,5 @@ class DotCoverToolComparatorTest {
         mockk<ToolType>(relaxed = true),
         version,
         "JetBrains.dotCover.CommandLineTools",
-        false
     )
 }

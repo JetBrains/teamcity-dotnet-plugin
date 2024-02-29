@@ -117,12 +117,11 @@ class DotCoverToolVersionTest {
         Assert.assertEquals(actualMetadata, expectedMetadata)
     }
 
-    private fun createDotCoverToolVersion(version: String, packageId: String, isBundled: Boolean = false): DotCoverToolVersion {
+    private fun createDotCoverToolVersion(version: String, packageId: String): DotCoverToolVersion {
         return DotCoverToolVersion(
             toolType = toolType,
             version = version,
-            _packageId = if (version == "deprecated_version") "deprecated" else packageId,
-            isBundled = isBundled
+            _packageId = if (version == "deprecated_version") "deprecated" else packageId
         )
     }
 

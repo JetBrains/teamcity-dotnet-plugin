@@ -7,6 +7,7 @@ import jetbrains.buildServer.FileSystemService
 import jetbrains.buildServer.ToolService
 import jetbrains.buildServer.XmlDocumentService
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.CoverageConstants.BUNDLED_TOOL_VERSION
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.DotnetConstants
@@ -66,7 +67,7 @@ class DotCoverToolProviderAdapter(
         if (shouldUseOriginalToolDescriptor(toolVersion, descriptorPath)) {
             return
         }
-        val newDescriptorPath = File(_pluginDescriptor.pluginRoot, "server/bundled-tools/JetBrains.dotCover.CommandLineTool/bundled-dot-cover.xml")
+        val newDescriptorPath = File(_pluginDescriptor.pluginRoot, "server/tool-descriptors/dotcover-teamcity-plugin.xml")
         _fileSystem.copy(newDescriptorPath, descriptorPath)
     }
 
@@ -79,7 +80,10 @@ class DotCoverToolProviderAdapter(
 
     override fun getDefaultBundledVersionId(): String? = null
 
-    override fun getBundledToolVersions(): Collection<InstalledToolVersion> {
+    private val bundledDotCoverTool by lazy(::fetchBundledDotCoverToolFromPlugin)
+
+    private fun fetchBundledDotCoverToolFromPlugin(): Collection<InstalledToolVersion> {
+        // All this logic is still needed for TeamCity Cloud
         val pluginRoot: File = _pluginDescriptor.pluginRoot
         val dotcoverBundledNuspecFilePath = TeamCityProperties.getProperty(
             "teamcity.dotCover.bundled.nuspec", CoverageConstants.DOTCOVER_BUNDLED_NUSPEC_FILE_PATH)
@@ -89,11 +93,11 @@ class DotCoverToolProviderAdapter(
         val bundledToolPackage = File(pluginRoot, dotcoverBundledAgentToolPackagePath)
 
         if (!bundledNuspecFile.isFile) {
-            LOG.warn("Bundled dotCover nuspec file doesn't exist on path " + bundledNuspecFile.absolutePath)
+            LOG.debug("Bundled dotCover nuspec file doesn't exist on path " + bundledNuspecFile.absolutePath)
             return super.getBundledToolVersions()
         }
         if (!bundledToolPackage.isFile) {
-            LOG.warn("Bundled dotCover tool package doesn't exist on path " + bundledToolPackage.absolutePath)
+            LOG.debug("Bundled dotCover tool package doesn't exist on path " + bundledToolPackage.absolutePath)
             return super.getBundledToolVersions()
         }
 
@@ -106,7 +110,7 @@ class DotCoverToolProviderAdapter(
 
                 if (bundledPackageVersion != null && bundledPackageId != null) {
                     result.add(SimpleInstalledToolVersion(
-                        DotCoverToolVersion(_toolType, bundledPackageVersion, bundledPackageId, true),
+                        DotCoverToolVersion(_toolType, bundledPackageVersion, bundledPackageId),
                         null,
                         null,
                         bundledToolPackage))
@@ -126,6 +130,15 @@ class DotCoverToolProviderAdapter(
         return result
     }
 
+    override fun getBundledToolVersions(): Collection<InstalledToolVersion> = bundledDotCoverTool
+
+    override fun getDownloadableBundledToolVersions(): MutableCollection<out ToolVersion> {
+        return if (bundledDotCoverTool.isEmpty())
+            mutableListOf(DotCoverToolVersion(_toolType, BUNDLED_TOOL_VERSION, DOTCOVER_PACKAGE_ID))
+        else
+            mutableListOf()
+    }
+
     private fun getPackages() = _toolService.getPackages(*DOT_COVER_PACKAGES)
         .filter { _toolFilter.accept(it) }
         .map { DotCoverDownloadableToolVersion(_toolType, it) }
@@ -133,7 +146,7 @@ class DotCoverToolProviderAdapter(
         .toMutableList()
 
     private fun firstDotCoverVersionWithCorrectToolDescriptor() = DotCoverToolVersion(
-        _toolType, "2023.3", DOTCOVER_PACKAGE_ID, false
+        _toolType, "2023.3", DOTCOVER_PACKAGE_ID
     )
 
     companion object {

@@ -4,7 +4,6 @@ package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.ArtifactsConstants
 import jetbrains.buildServer.coverage.agent.serviceMessage.CoverageServiceMessageSetup
-import jetbrains.buildServer.dotNet.DotNetConstants
 
 /**
  * Coverage constants.
@@ -29,7 +28,7 @@ object CoverageConstants {
     const val DOT_COVER_TOOL_TYPE_NAME = "JetBrains dotCover Command Line Tools"
     const val DOT_COVER_SHORT_TOOL_TYPE_NAME = "dotCover CLT"
     const val DOT_COVER_TARGET_FILE_DISPLAY_NAME = "dotCover CLT home directory"
-    const val BUNDLED_TOOL_VERSION_NAME = "bundled"
+    const val BUNDLED_TOOL_VERSION = "2023.3.3" // TODO change to 2023.3.4
     const val DOTCOVER_BUNDLED_NUSPEC_FILE_PATH = "server/bundled-tools/JetBrains.dotCover.CommandLineTool/$DOTCOVER_PACKAGE_ID.nuspec"
     const val DOTCOVER_BUNDLED_AGENT_TOOL_PACKAGE_PATH = "server/bundled-tools/JetBrains.dotCover.CommandLineTool/$DOTCOVER_PACKAGE_ID.bundled.zip"
     
@@ -60,7 +59,7 @@ object CoverageConstants {
     const val DOTCOVER_LOGS = "dotCoverLogs.zip"
 
     const val DOTCOVER_TOOL_NAME = "dotCover"
-    const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.${BUNDLED_TOOL_VERSION_NAME}"
+    const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.bundled"
 
 
     class ServiceMessageSetup(setup: CoverageServiceMessageSetup) {

@@ -18,8 +18,8 @@ teamcity {
       into('server/bundled-tools/JetBrains.ReSharper.CommandLineTool') {
         from('bundled-tools/JetBrains.ReSharper.CommandLineTool')
       }
-      into('server/bundled-tools/JetBrains.dotCover.CommandLineTool') {
-        from('bundled-tools/JetBrains.dotCover.CommandLineTool')
+      into('server/tool-descriptors') {
+        from('tool-descriptors')
       }
     }
   }
@@ -64,17 +64,12 @@ class PreparePackagesTask extends DefaultTask {
     preparePackages(reSharperToolsPackageId, reSharperToolDescriptor, reSharperDir, reSharperZipFilename,
             reSharperNuSpecFilename, reSharperMainPackageDir, reSharperMainPackagePattern)
 
-    def dotCoverToolsPackageVersion = '2023.3.3'
-    def dotCoverToolsPackageId = 'JetBrains.dotCover.CommandLineTools/' + dotCoverToolsPackageVersion
-    def dotCoverToolDescriptor = 'bundled-dot-cover.xml'
-    def dotCoverDir = 'JetBrains.dotCover.CommandLineTool'
-    def dotCoverZipFilename = 'JetBrains.dotCover.CommandLineTools.bundled.zip'
-    def dotCoverNuSpecFilename = 'JetBrains.dotCover.CommandLineTools.nuspec'
-    def dotCoverMainPackageDir = './packages/tools'
-    def dotCoverMainPackagePattern = '**/*.*'
-    ant.mkdir(dir: "./bundled-tools/$dotCoverDir")
-    preparePackages(dotCoverToolsPackageId, dotCoverToolDescriptor, dotCoverDir, dotCoverZipFilename,
-            dotCoverNuSpecFilename, dotCoverMainPackageDir, dotCoverMainPackagePattern)
+    def toolDescriptorsDir = './tool-descriptors'
+    ant.delete(dir: toolDescriptorsDir)
+    ant.mkdir(dir: toolDescriptorsDir)
+    ant.copy(todir: toolDescriptorsDir, overwrite: 'true', force: 'true'){
+      fileset(file: "./dotcover-teamcity-plugin.xml")
+    }
   }
 
   def preparePackages(toolPackageId, toolDescriptor, toolDirectory, zipFilename, nuspecFilename,

@@ -1,20 +1,21 @@
 package jetbrains.buildServer.dotCover
 
 import jetbrains.buildServer.dotnet.CoverageConstants
+import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_BUNDLED_TOOL_ID
 import jetbrains.buildServer.tools.*
 
 open class DotCoverToolVersion(
     toolType: ToolType,
     version: String,
-    private val _packageId: String,
-    isBundled: Boolean = false
+    private val _packageId: String
 ): SimpleToolVersion(
     toolType,
     version,
-    ToolVersionIdHelper.getToolId(
-        _packageId,
-        if (isBundled) CoverageConstants.BUNDLED_TOOL_VERSION_NAME else version
-    )
+    if (isBundled(version)) DOTCOVER_BUNDLED_TOOL_ID else ToolVersionIdHelper.getToolId(_packageId, version),
+    ToolVersionIdHelper.getToolId(_packageId, version),
+    toolType.displayName + " " + version,
+    isBundled(version),
+    MIN_REQUIRED_FREE_DISK_SPACE_FOR_DOT_COVER_HINT
 ), ToolMetadata {
 
     override fun getVersion() =
@@ -58,6 +59,11 @@ open class DotCoverToolVersion(
         }
 
         else -> CoverageConstants.DOTCOVER_POSTFIX
+    }
+
+    companion object {
+        private const val MIN_REQUIRED_FREE_DISK_SPACE_FOR_DOT_COVER_HINT = 200L * 1024L * 1024L // 200 MB
+        private fun isBundled(version: String) = version == CoverageConstants.BUNDLED_TOOL_VERSION
     }
 }
 
