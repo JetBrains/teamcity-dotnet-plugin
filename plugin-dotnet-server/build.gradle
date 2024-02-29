@@ -1,5 +1,3 @@
-
-
 plugins {
   id 'com.github.rodm.teamcity-server' version '1.4.1'
   id 'plugin.conventions'
@@ -14,9 +12,6 @@ teamcity {
     files {
       into('kotlin-dsl') {
         from("${rootProject.projectDir}/kotlin-dsl")
-      }
-      into('server/bundled-tools/JetBrains.ReSharper.CommandLineTool') {
-        from('bundled-tools/JetBrains.ReSharper.CommandLineTool')
       }
       into('server/tool-descriptors') {
         from('tool-descriptors')
@@ -46,68 +41,22 @@ dependencies {
   }
 }
 
-class PreparePackagesTask extends DefaultTask {
+class PrepareToolDescriptorsTask extends DefaultTask {
   @TaskAction
   def run() {
-    ant.delete(dir: './bundled-tools')
-    ant.mkdir(dir: './bundled-tools')
-
-    def reSharperToolsPackageVersion = '2023.1.1'
-    def reSharperToolsPackageId = 'JetBrains.ReSharper.CommandLineTools/' + reSharperToolsPackageVersion
-    def reSharperToolDescriptor = 'bundled-tool.xml'
-    def reSharperDir = 'JetBrains.ReSharper.CommandLineTool'
-    def reSharperZipFilename = 'jetbrains.resharper-clt.bundled.zip'
-    def reSharperNuSpecFilename = 'JetBrains.ReSharper.CommandLineTools.nuspec'
-    def reSharperMainPackageDir = './packages'
-    def reSharperMainPackagePattern = 'tools/**/*.*'
-    ant.mkdir(dir: "./bundled-tools/$reSharperDir")
-    preparePackages(reSharperToolsPackageId, reSharperToolDescriptor, reSharperDir, reSharperZipFilename,
-            reSharperNuSpecFilename, reSharperMainPackageDir, reSharperMainPackagePattern)
-
     def toolDescriptorsDir = './tool-descriptors'
     ant.delete(dir: toolDescriptorsDir)
     ant.mkdir(dir: toolDescriptorsDir)
     ant.copy(todir: toolDescriptorsDir, overwrite: 'true', force: 'true'){
       fileset(file: "./dotcover-teamcity-plugin.xml")
+      fileset(file: "./resharper-teamcity-plugin.xml")
     }
-  }
-
-  def preparePackages(toolPackageId, toolDescriptor, toolDirectory, zipFilename, nuspecFilename,
-                      mainPackageDir, mainPackagePattern) {
-    println "Processing $toolPackageId"
-    ant.delete(dir: './packages')
-    ant.mkdir(dir: './packages')
-    ant.mkdir(dir: './packages/pack')
-    ant.get(src: "https://www.nuget.org/api/v2/package/$toolPackageId", dest: './packages/package.zip', skipexisting: 'true')
-    ant.unzip(src: './packages/package.zip', dest: './packages')
-    ant.move(todir: './packages/pack', overwrite: 'true', force: 'true') {
-      fileset(dir: mainPackageDir) {
-        include(name: mainPackagePattern)
-      }
-    }
-
-    ant.copy(todir: './packages', overwrite: 'true', force: 'true'){
-      fileset(file: "./$toolDescriptor")
-    }
-    ant.move(file: "./packages/$toolDescriptor", tofile: './packages/pack/teamcity-plugin.xml', overwrite: 'true', force: 'true')
-
-    ant.zip(destfile: "./bundled-tools/$toolDirectory/$zipFilename") {
-      fileset(dir: './packages/pack') {
-        include(name: '**/*.*')
-      }
-    }
-    ant.move(file: "./packages/$nuspecFilename", todir: "./bundled-tools/$toolDirectory", overwrite: 'true', force: 'true')
-    ant.copy(todir: "./bundled-tools/$toolDirectory", overwrite: 'true', force: 'true'){
-      fileset(file: "./$toolDescriptor")
-    }
-
-    ant.delete(dir: './packages')
   }
 }
 
-task preparePackagesTask(type: PreparePackagesTask)
+tasks.register('prepareToolDescriptorsTask', PrepareToolDescriptorsTask)
 
-serverPlugin.dependsOn(preparePackagesTask)
+serverPlugin.dependsOn(prepareToolDescriptorsTask)
 
 serverPlugin.version = null
 serverPlugin.baseName = projectIds.artifact

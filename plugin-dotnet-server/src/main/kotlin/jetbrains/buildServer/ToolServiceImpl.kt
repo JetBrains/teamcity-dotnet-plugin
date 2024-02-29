@@ -29,7 +29,10 @@ class ToolServiceImpl(
                 .toList()
                 .reversed()
         } catch (e: Throwable) {
-            throw ToolException("Failed to download list of packages for ${toolType.type}: " + e.message, e)
+            val errorMessage =
+                "Failed to download the list of tool packages for ${toolType.displayName}. " +
+                        "This may occur due to limited access to api.nuget.org."
+            throw ToolException(errorMessage, e)
         }
     }
 
@@ -41,7 +44,9 @@ class ToolServiceImpl(
                 .toList()
                 .reversed()
         } catch (e: Throwable) {
-            throw ToolException("Failed to download list of packages: " + e.message, e)
+            val errorMessage =
+                "Failed to download the list of tool packages. This may occur due to limited access to api.nuget.org."
+            throw ToolException(errorMessage, e)
         }
     }
 

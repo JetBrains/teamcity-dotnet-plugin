@@ -65,7 +65,7 @@ class ToolServiceImplTests {
         // arrange
         val packageId = "package"
         val toolTypeMock = mockk<ToolType>().also {
-            every { it.type } answers { "packageType" }
+            every { it.displayName } answers { "Tool Display Name" }
         }
         val nugetException = Exception("nuget error")
         every { _nuGetServiceMock.getPackagesById(any()) } throws (Exception(nugetException))
