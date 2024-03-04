@@ -74,7 +74,7 @@ class DotCoverReportingWorkflowComposer(
             return
         }
 
-        val snapshotPaths = _dotCoverSettings.additionalSnapshotPaths.map { File(it) }.asSequence() + virtualTempDirectory
+        val snapshotPaths = _dotCoverSettings.additionalSnapshotPaths.map { File(it.path) } + virtualTempDirectory
         val snapshots = collectSnapshots(snapshotPaths)
         if (snapshots.isEmpty()) {
             _loggerService.writeDebug("Snapshot files not found; skipping merge stage")
