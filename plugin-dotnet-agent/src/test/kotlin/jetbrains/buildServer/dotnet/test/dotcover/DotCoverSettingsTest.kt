@@ -4,8 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.AgentLifeCycleListener
-import jetbrains.buildServer.agent.BuildRunnerSettings
+import io.mockk.verify
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.BuildInfo
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
@@ -22,15 +22,12 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class DotCoverSettingsTest {
-
-    @MockK
-    private lateinit var _parametersService: ParametersService
-    @MockK
-    private lateinit var _dotCoverModeDetector: DotCoverModeDetector
-    @MockK
-    private lateinit var _buildInfo: BuildInfo
-    @MockK
-    private lateinit var _buildStepContext: BuildStepContext
+    @MockK private lateinit var _parametersService: ParametersService
+    @MockK private lateinit var _argumentsService: ArgumentsService
+    @MockK private lateinit var _pathResolver: PathResolver
+    @MockK private lateinit var _dotCoverModeDetector: DotCoverModeDetector
+    @MockK private lateinit var _buildInfo: BuildInfo
+    @MockK private lateinit var _buildStepContext: BuildStepContext
 
     @BeforeMethod
     fun setUp() {
@@ -297,21 +294,59 @@ class DotCoverSettingsTest {
         assertEquals(result, expectedResult)
     }
 
+    @Test
+    fun `should provide additional snapshot paths when parameter is not empty`() {
+        // arrange
+        val parameter = "  NOT EMPTY "
+        val paths = sequenceOf("abc", "bca")
+        val resolvedPaths = sequenceOf(Path("/resolved/path/1.dcvr"), Path("/resolved/path/2.dcvr"))
+        val settings = createInstance()
+        every { _parametersService.tryGetParameter(any(), any()) } returns parameter
+        every { _argumentsService.split(any()) } returns paths
+        every { _pathResolver.resolve(any()) } returns resolvedPaths
+
+        // act
+        val result = settings.additionalSnapshotPaths
+
+        // assert
+        assertEquals(result, resolvedPaths)
+        verify(exactly = 1) { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS) }
+        verify(exactly = 1) { _argumentsService.split(parameter.trim()) }
+        verify(exactly = 1)  { _pathResolver.resolve(paths) }
+    }
+
+    @Test
+    fun `should not provide additional snapshot paths when parameter is empty`() {
+        // arrange
+        val settings = createInstance()
+        every { _parametersService.tryGetParameter(any(), any()) } returns "  "
+
+        // act
+        val result = settings.additionalSnapshotPaths
+
+        // assert
+        assertEquals(result.count(), 0)
+        verify(exactly = 1) { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS) }
+        verify(exactly = 0) { _argumentsService.split(any()) }
+        verify(exactly = 0)  { _pathResolver.resolve(any()) }
+    }
+
     private fun getRunTypeByMode(dotCoverMode: DotCoverMode) = when (dotCoverMode) {
         DotCoverMode.Runner -> CoverageConstants.DOTCOVER_RUNNER_TYPE
         DotCoverMode.Wrapper -> DotnetConstants.RUNNER_TYPE
         DotCoverMode.Disabled -> ""
     }
 
-    private fun createInstance(): DotCoverSettings {
-        return DotCoverSettings(
+    private fun createInstance() =
+        DotCoverSettings(
             _parametersService,
+            _argumentsService,
+            _pathResolver,
             _dotCoverModeDetector,
             _buildInfo,
             _buildStepContext,
             EventDispatcher.create(AgentLifeCycleListener::class.java)
         )
-    }
 
     enum class ParameterState {
         Enabled,

@@ -5,12 +5,13 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.EventDispatcher
-import java.io.File
 
 // this class is not thread-safe since it
 // supposed to be used in single build-step related thread
 class DotCoverSettings(
     private val _parametersService: ParametersService,
+    private val _argumentsService: ArgumentsService,
+    private val _pathResolver: PathResolver,
     private val _dotCoverModeDetector: DotCoverModeDetector,
     private val _buildInfo: BuildInfo,
     private val _buildStepContext: BuildStepContext,
@@ -69,10 +70,17 @@ class DotCoverSettings(
             ?.toBooleanStrictOrNull()
             ?: false
 
-    // TODO resolve wildcards
-    val additionalSnapshotPaths: List<String> get() =
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)
-            ?.trim()?.split('\n')?.filterNot { it.isNullOrBlank() } ?: emptyList()
+    val additionalSnapshotPaths: Sequence<Path> get() {
+        val pathParameter = _parametersService
+            .tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ADDITIONAL_SNAPSHOT_PATHS)
+            ?.trim()
+        if (pathParameter.isNullOrEmpty()) {
+            return emptySequence()
+        }
+
+        val paths = _argumentsService.split(pathParameter)
+        return _pathResolver.resolve(paths)
+    }
 
     fun shouldMergeSnapshots(): Pair<Boolean, String> =
         when (dotCoverMode) {

@@ -19,6 +19,7 @@
   <bean class="jetbrains.buildServer.agent.AntPathMatcher"/>
   <bean class="jetbrains.buildServer.agent.ToolSearchServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.ArgumentsServiceImpl"/>
+  <bean class="jetbrains.buildServer.agent.WildcardPathResolver"/>
   <bean class="jetbrains.buildServer.agent.CommandLineExecutorImpl"/>
   <bean class="jetbrains.buildServer.agent.CommandLinePresentationServiceImpl"/>
   <bean class="jetbrains.buildServer.agent.WindowsRegistryParserImpl"/>
