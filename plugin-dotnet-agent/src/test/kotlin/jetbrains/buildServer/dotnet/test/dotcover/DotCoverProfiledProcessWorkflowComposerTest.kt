@@ -134,7 +134,7 @@ class DotCoverProfiledProcessWorkflowComposerTest {
             .let(::spyk)
 
         // act
-        _instance.compose(workflowContext, mockk(), mockk())
+        _instance.compose(workflowContext, mockk(), mockk()).commandLines.toList()
 
         // assert
         verify(exactly = callbackInvocations) { _buildOptionsMock.failBuildOnExitCode }

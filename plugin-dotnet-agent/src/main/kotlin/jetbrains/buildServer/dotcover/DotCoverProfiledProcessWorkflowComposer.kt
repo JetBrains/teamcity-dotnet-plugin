@@ -4,7 +4,6 @@ import jetbrains.buildServer.BuildProblemData
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.commands.targeting.TargetService
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
 
@@ -26,14 +25,14 @@ class DotCoverProfiledProcessWorkflowComposer(
             coveredProcessExecutablePath
                 ?.let { when {
                     it.isBlank() -> null
-                    else -> Workflow(sequenceOf(createCommandLine(it, coveredProcessArguments, context)))
+                    else -> Workflow(createCommandLines(it, coveredProcessArguments, context))
                 }}
                 ?: Workflow()
 
         else -> Workflow()
     }
 
-    private fun createCommandLine(executablePath: String, arguments: String, context: WorkflowContext) : CommandLine {
+    private fun createCommandLines(executablePath: String, arguments: String, context: WorkflowContext) = sequence<CommandLine> {
         val workingDirectory = _pathsService.getPath(PathType.WorkingDirectory)
 
         val args = arguments.trim().let { argString ->
@@ -54,13 +53,13 @@ class DotCoverProfiledProcessWorkflowComposer(
                 }
             }
             .use {
-                return CommandLine(
+                yield(CommandLine(
                     baseCommandLine = null,
                     target = target,
                     executableFile = Path(_virtualContext.resolvePath(executablePath)),
                     workingDirectory = Path(workingDirectory.path),
                     arguments = args
-                )
+                ))
             }
     }
 
