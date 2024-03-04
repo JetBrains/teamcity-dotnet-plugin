@@ -111,7 +111,7 @@ class DotCoverReportingWorkflowComposer(
 
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
         if (outputSnapshotFile == null) {
-            _loggerService.writeWarning("The report could not be built: a snapshot file is not found. A merge command has to be executed first")
+            _loggerService.writeWarning("The dotCover report was not generated. Snapshot file not found")
             return
         }
         if (outputReportFile.isFile && outputReportFile.exists()) {
