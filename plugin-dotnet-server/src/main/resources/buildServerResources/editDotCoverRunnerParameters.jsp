@@ -36,8 +36,9 @@
     </c:set>
     <props:multilineProperty
         name="${params.dotCoverAdditionalShapshotPathsKey}"
-        className="longField" expanded="false" cols="60" rows="4"
+        className="longField" cols="60" rows="4"
         linkTitle="Include additional dotCover snapshots to the report"
+        expanded="${not empty propertiesBean.properties[params.dotCoverAdditionalShapshotPathsKey]}"
         note="${additionalSnapshotsNote}"
     />
   </td>
@@ -56,12 +57,25 @@
       Type "<i>-:attributeName</i>" to exclude any code marked with this attribute from the code coverage.
       Each rule should start from a new line. Use asterisk (*) as a wildcard for any string
     </c:set>
-    <props:multilineProperty name="${params.dotCoverAttributeFiltersKey}" className="longField" expanded="false" cols="60" rows="4" linkTitle="Attribute filters" note="${attributeFilterNote}"/>
+    <props:multilineProperty
+        name="${params.dotCoverAttributeFiltersKey}"
+        className="longField"
+        expanded="${not empty propertiesBean.properties[params.dotCoverAttributeFiltersKey]}"
+        cols="60" rows="4"
+        linkTitle="Attribute filters"
+        note="${attributeFilterNote}"
+    />
     <span class="smallNote">
       Applicable to dotCover 2.0 or higher <bs:help file="JetBrains+dotCover"/>
     </span>
     <br/>
-    <props:multilineProperty name="${params.dotCoverArgumentsKey}" linkTitle="Additional arguments" className="longField" expanded="false" cols="60" rows="4"/>
+    <props:multilineProperty
+        name="${params.dotCoverArgumentsKey}"
+        linkTitle="Additional arguments"
+        className="longField"
+        expanded="${not empty propertiesBean.properties[params.dotCoverArgumentsKey]}"
+        cols="60" rows="4"
+    />
     <span class="smallNote">
       New-line separated command line parameters for dotCover cover command
     </span>
