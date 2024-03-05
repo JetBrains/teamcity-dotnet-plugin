@@ -107,6 +107,7 @@ class DotCoverReportingWorkflowComposer(
 
     private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, virtualTempDirectory: File) {
         val virtualReportResultsDirectory = File(_virtualContext.resolvePath(File(virtualTempDirectory, "dotCoverResults").canonicalPath))
+        _fileSystemService.createDirectory(virtualReportResultsDirectory)
         val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
 
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
