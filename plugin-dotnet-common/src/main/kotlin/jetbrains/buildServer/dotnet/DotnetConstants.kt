@@ -110,6 +110,7 @@ object DotnetConstants {
     const val PARAM_SINGLE_SESSION = "singleSession"
 
     const val VALIDATION_EMPTY: String = "Should not be empty"
+    const val VALIDATION_INVALID_TEST_RETRY: String = "Invalid test retry count"
 
     // Tool providers
     const val PACKAGE_NUGET_EXTENSION = "nupkg"

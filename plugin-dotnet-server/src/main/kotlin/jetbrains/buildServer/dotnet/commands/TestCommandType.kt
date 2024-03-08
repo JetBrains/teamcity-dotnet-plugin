@@ -14,4 +14,9 @@ class TestCommandType(
     override val editPage: String = "editTestParameters.jsp"
 
     override val viewPage: String = "viewTestParameters.jsp"
+
+    override fun validateProperties(properties: Map<String, String>) = sequence {
+        yieldAll(super.validateProperties(properties))
+        yieldAll(TestRetryCountValidator.validate(properties))
+    }
 }
