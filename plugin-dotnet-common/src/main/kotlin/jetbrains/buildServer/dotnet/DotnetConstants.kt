@@ -64,6 +64,10 @@ object DotnetConstants {
     const val PARAM_DOTCOVER_WRAPPER_MERGE_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.mergeEnabled"
     // true or false (true by default) - automatically generate report in the dotCover wrapper option is enabled
     const val PARAM_DOTCOVER_WRAPPER_REPORT_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.reportEnabled"
+    // true or false (true by default) - automatically generate report in the dotCover wrapper option is enabled
+    const val PARAM_DOTCOVER_WRAPPER_COVER_DEFAULT_ASSEMBLY_FILTERS_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.defaultExcludeAssemblyFiltersEnabled"
+    // true or false (true by default) - automatically generate report in the dotCover wrapper option is enabled
+    const val PARAM_DOTCOVER_WRAPPER_COVER_DEFAULT_ATTRIBUTE_FILTERS_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.defaultExcludeAttributeFiltersEnabled"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
     // true or false (false by default)
