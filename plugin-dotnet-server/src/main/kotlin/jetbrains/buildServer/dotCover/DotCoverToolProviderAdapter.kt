@@ -132,10 +132,10 @@ class DotCoverToolProviderAdapter(
 
     override fun getBundledToolVersions(): Collection<InstalledToolVersion> = bundledDotCoverTool
 
-    override fun getDownloadableBundledToolVersions(): MutableCollection<out ToolVersion> {
-        return if (bundledDotCoverTool.isEmpty())
-            mutableListOf(DotCoverToolVersion(_toolType, BUNDLED_TOOL_VERSION, DOTCOVER_PACKAGE_ID))
-        else
+    override fun getDownloadableBundledToolVersions(): MutableCollection<out DownloadableBundledToolVersion> {
+        return if (bundledDotCoverTool.isEmpty()) {
+            mutableListOf(DotCoverDownloadableBundledToolVersion(_toolType, BUNDLED_TOOL_VERSION, DOTCOVER_PACKAGE_ID))
+        } else
             mutableListOf()
     }
 

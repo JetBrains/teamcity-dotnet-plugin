@@ -5,7 +5,7 @@ import jetbrains.buildServer.tools.SimpleToolVersion
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersionIdHelper.getToolId
 
-class ReSharperToolVersion(
+open class ReSharperToolVersion(
     toolType: ToolType,
     version: String
 ) : SimpleToolVersion(

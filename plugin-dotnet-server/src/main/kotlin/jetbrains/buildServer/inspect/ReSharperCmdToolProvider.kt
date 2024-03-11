@@ -104,9 +104,9 @@ class ReSharperCmdToolProvider(
 
     override fun getBundledToolVersions(): Collection<InstalledToolVersion> = bundledReSharperTool
 
-    override fun getDownloadableBundledToolVersions(): MutableCollection<out ToolVersion> {
+    override fun getDownloadableBundledToolVersions(): MutableCollection<out DownloadableBundledToolVersion> {
         return if (bundledReSharperTool.isEmpty())
-            mutableListOf(ReSharperToolVersion(_toolType, ReSharperToolVersion.BUNDLED_VERSION))
+            mutableListOf(ReSharperDownloadableBundledToolVersion(_toolType, ReSharperToolVersion.BUNDLED_VERSION))
         else
             mutableListOf()
     }
