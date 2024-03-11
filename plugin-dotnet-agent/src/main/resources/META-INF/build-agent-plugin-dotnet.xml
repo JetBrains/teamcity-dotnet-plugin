@@ -597,7 +597,7 @@
   <bean class="jetbrains.buildServer.dotcover.DotCoverProfiledProcessWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
-  <bean class="jetbrains.buildServer.dotcover.CoverageFilterProviderImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverFilterProvider"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverEnvironmentVariables"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder"/>
   <bean class="jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder"/>

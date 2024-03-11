@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotcover
 
 interface CoverageFilterProvider {
