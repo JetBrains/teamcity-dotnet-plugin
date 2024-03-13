@@ -51,27 +51,27 @@ class TestCommandTest {
     fun testTestArgumentsData(): Array<Array<Any>> {
         return arrayOf(
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_PATHS, "path/")),
-                DotnetFilter("", null, false),
+                DotnetFilter("", null),
                 listOf("customArg1")),
             arrayOf(mapOf(
                 Pair(DotnetConstants.PARAM_FRAMEWORK, "dotcore"),
                 Pair(DotnetConstants.PARAM_CONFIG, "Release")),
-                DotnetFilter("", null, false),
+                DotnetFilter("", null),
                 listOf("--framework", "dotcore", "--configuration", "Release", "customArg1")),
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_SKIP_BUILD, "true")),
-                DotnetFilter("", null, false),
+                DotnetFilter("", null),
                 listOf("--no-build", "customArg1")),
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_OUTPUT_DIR, "out")),
-                DotnetFilter("", null, false),
+                DotnetFilter("", null),
                 listOf("--output", "out", "customArg1")),
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter")),
-                DotnetFilter("myFilter", null, false),
+                DotnetFilter("myFilter", null),
                 listOf("--filter", "myFilter", "customArg1")),
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
-                DotnetFilter("myFilter", null, false),
+                DotnetFilter("myFilter", null),
                 listOf("--filter", "myFilter", "--settings", "User.settings", "customArg1")),
             arrayOf(mapOf(Pair(DotnetConstants.PARAM_TEST_CASE_FILTER, "filter"), Pair(DotnetConstants.PARAM_TEST_SETTINGS_FILE, "User.settings")),
-                DotnetFilter("myFilter", File("Abc.settings"), false),
+                DotnetFilter("myFilter", File("Abc.settings")),
                 listOf("--filter", "myFilter", "--settings", "Abc.settings", "customArg1"))
         )
     }
@@ -123,7 +123,7 @@ class TestCommandTest {
     fun `should provide no-build argument`(parameters: Map<String, String>, targets: Sequence<String>, expectedArguments: List<String>) {
         // arrange
         val command = createCommand(parameters, targets)
-        every { _dotnetFilterFactory.createFilter(any()) } returns DotnetFilter("", null, false)
+        every { _dotnetFilterFactory.createFilter(any()) } returns DotnetFilter("", null)
 
         // act
         val actualArguments = command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command)).map { it.value }.toList()
@@ -148,7 +148,7 @@ class TestCommandTest {
     fun `should provide projects arguments`(targets: List<String>, expectedArguments: List<List<String>>) {
         // arrange
         val command = createCommand(targets = targets.asSequence())
-        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
+        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null)
 
         // act
         val actualArguments = command.targetArguments.map { it.arguments.map { it.value }.toList() }.toList()
@@ -175,7 +175,7 @@ class TestCommandTest {
         val command = createCommand(targets = sequenceOf("my.dll"), arguments = sequenceOf(CommandLineArgument("customArg1")))
 
         // act
-        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null, false)
+        every { _dotnetFilterFactory.createFilter(match { it.command.commandType == DotnetCommandType.Test }) } returns DotnetFilter("", null)
         command.getArguments(DotnetCommandContext(ToolPath(Path("wd")), command, Version(1, 1), Verbosity.Detailed)).map { it.value }.toList()
 
         // assert

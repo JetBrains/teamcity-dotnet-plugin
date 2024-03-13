@@ -6,8 +6,9 @@ import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.*
-import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE
 import jetbrains.buildServer.dotnet.DotnetConstants.PARALLEL_TESTS_FEATURE_NAME
+import jetbrains.buildServer.dotnet.DotnetConstants.TEST_CASE_FILTER_REQUIREMENTS_MESSAGE
+import jetbrains.buildServer.dotnet.DotnetConstants.TEST_RETRY_FEATURE_NAME
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArguments
 import jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProvider
 import jetbrains.buildServer.dotnet.commands.targeting.TargetService
@@ -34,8 +35,8 @@ class VSTestCommand(
 
     override fun getArguments(context: DotnetCommandContext): Sequence<CommandLineArgument> = sequence {
         val filter = _dotnetFilterFactory.createFilter(context);
-        if (filter.isSplittingByFilter) {
-            _loggerService.writeStandardOutput(PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE)
+        if (filter.isNotEmpty()) {
+            _loggerService.writeStandardOutput(TEST_CASE_FILTER_REQUIREMENTS_MESSAGE)
         }
 
         if (filter.settingsFile != null) {
@@ -50,8 +51,8 @@ class VSTestCommand(
         }
 
         if (parameters(DotnetConstants.PARAM_TEST_FILTER) == "name") {
-            if (filter.isSplittingByFilter) {
-                _loggerService.writeWarning("The \"$PARALLEL_TESTS_FEATURE_NAME\" feature is not supported together with a test names filter. Please consider using a test case filter.")
+            if (filter.isNotEmpty()) {
+                _loggerService.writeWarning("\"$PARALLEL_TESTS_FEATURE_NAME\" and \"$TEST_RETRY_FEATURE_NAME\" features are not supported together with a test names filter. Please consider using a test case filter.")
             }
 
             parameters(DotnetConstants.PARAM_TEST_NAMES)?.trim()?.let {

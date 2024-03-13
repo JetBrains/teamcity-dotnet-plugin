@@ -66,10 +66,30 @@ class TestRetryCommandsTransformer(
         }
     }
 
-    private fun shouldRetry(retryNum: Int, failedTests: List<String>) =
-        retryNum <= _testRetrySettings.maxRetries
-                && failedTests.isNotEmpty()
-                && failedTests.size < _testRetrySettings.maxFailures
+    private fun shouldRetry(retryNum: Int, failedTests: List<String>): Boolean {
+        if (failedTests.isEmpty()) {
+            _loggerService.writeDebug("No tests to retry were found")
+            return false
+        }
+
+        if (!_testRetrySettings.isEnabled) {
+            _loggerService.writeDebug("Test retries are disabled")
+            return false
+        }
+
+        if (retryNum > _testRetrySettings.maxRetries) {
+            _loggerService.writeDebug("Test retry count is exceeded")
+            return false
+        }
+
+        if (failedTests.size >= _testRetrySettings.maxFailures) {
+            _loggerService.writeStandardOutput("Test retry was not performed as the number of failed test cases exceeded the specified limit of ${_testRetrySettings.maxFailures}")
+            return false
+        }
+
+        _loggerService.writeDebug("Going to retry ${failedTests.size} tests")
+        return true
+    }
 
     private class InitialTestCommand(
         testCommand: DotnetCommand,

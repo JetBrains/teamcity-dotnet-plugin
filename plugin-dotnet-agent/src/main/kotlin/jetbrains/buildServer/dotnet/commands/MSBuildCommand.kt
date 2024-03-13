@@ -66,20 +66,20 @@ class MSBuildCommand(
 
         yieldAll(_msBuildResponseFileArgumentsProvider.getArguments(context))
 
-        if (filter.isSplittingByFilter)
+        if (filter.isNotEmpty())
         {
-            val msBuldParams = mutableListOf<MSBuildParameter>()
+            val msBuildParams = mutableListOf<MSBuildParameter>()
             if (filter.filter.isNotBlank()) {
-                msBuldParams.add(MSBuildParameter("VSTestTestCaseFilter", filter.filter))
+                msBuildParams.add(MSBuildParameter("VSTestTestCaseFilter", filter.filter))
             }
 
             if (filter.settingsFile != null) {
-                msBuldParams.add(MSBuildParameter("VSTestSetting", filter.settingsFile.path))
+                msBuildParams.add(MSBuildParameter("VSTestSetting", filter.settingsFile.path))
             }
 
-            if (msBuldParams.any()) {
-                val filterRespponseFile = _responseFileFactory.createResponeFile("Filter", emptySequence(), msBuldParams.asSequence(), context.verbosityLevel)
-                yield(CommandLineArgument("@${filterRespponseFile.path}"))
+            if (msBuildParams.any()) {
+                val filterResponseFile = _responseFileFactory.createResponeFile("Filter", emptySequence(), msBuildParams.asSequence(), context.verbosityLevel)
+                yield(CommandLineArgument("@${filterResponseFile.path}"))
             }
         }
 
