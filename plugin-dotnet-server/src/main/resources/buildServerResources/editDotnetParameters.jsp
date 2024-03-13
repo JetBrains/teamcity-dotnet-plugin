@@ -408,7 +408,7 @@
 <c:if test="${params.testRetryEnabled == 'true'}">
   <tr class="advancedSetting dotnet test vstest">
     <th>
-      <label for="${params.testMaxRetriesKey}">Test retries count:</label>
+      <label for="${params.testMaxRetriesKey}">Test retry count:</label>
     </th>
     <td>
       <props:textProperty name="${params.testMaxRetriesKey}" className="longField"/>

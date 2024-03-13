@@ -6,6 +6,7 @@ import java.io.File
 
 data class DotnetFilter(
     val filter: String,
-    val settingsFile: File?,
-    val isSplittingByFilter: Boolean,
-)
+    val settingsFile: File?
+) {
+    fun isNotEmpty(): Boolean = filter.isNotEmpty() || settingsFile != null
+}

@@ -14,15 +14,14 @@ class DotnetFilterFactoryImpl(
     override fun createFilter(context: DotnetCommandContext): DotnetFilter {
         val testsSplittingMode = _testsSplittingModeProvider.getMode(context.toolVersion)
         val filterExpression = _testsFilterProvider.getFilterExpression(testsSplittingMode)
-        val useFilter = testsSplittingMode.isFilterMode
-        if (useFilter && filterExpression.length > MaxArgSize) {
+        if (filterExpression.length > MaxArgSize) {
             val settingsFile = _testRunSettingsFileProvider.tryGet(context)
             if (settingsFile != null) {
-                return DotnetFilter("", settingsFile, true)
+                return DotnetFilter("", settingsFile)
             }
         }
 
-        return DotnetFilter(filterExpression, null, useFilter)
+        return DotnetFilter(filterExpression, null)
     }
 
     companion object {

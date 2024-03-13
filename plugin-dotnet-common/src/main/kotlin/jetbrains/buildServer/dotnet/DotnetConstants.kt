@@ -15,7 +15,9 @@ object DotnetConstants {
     const val RUNNER_DISPLAY_NAME = ".NET"
     const val RUNNER_DESCRIPTION = "Provides .NET toolchain support for .NET projects"
     const val CLEANER_NAME = "$RUNNER_DISPLAY_NAME Cleaner"
+    const val TEST_RETRY_FEATURE_NAME = "Test retry"
     const val PARALLEL_TESTS_FEATURE_NAME = "Parallel tests"
+    const val TEST_CASE_FILTER_REQUIREMENTS_MESSAGE = "Test case filter, used by \"$TEST_RETRY_FEATURE_NAME\" and \"$PARALLEL_TESTS_FEATURE_NAME\" features, requires Microsoft.NET.Test.Sdk version 16.0.0 or newer"
     const val PARALLEL_TESTS_FEATURE_WITH_FILTER_REQUIREMENTS_MESSAGE = "The \"$PARALLEL_TESTS_FEATURE_NAME\" feature with a filter requires Microsoft.NET.Test.Sdk version 16.0.0 or newer"
     const val PARALLEL_TESTS_FEATURE_WITH_SUPPRESSION_REQUIREMENTS_MESSAGE = "The \"$PARALLEL_TESTS_FEATURE_NAME\" feature with test a pre-suppression requires Microsoft .NET SDK 6 or newer"
 

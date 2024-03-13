@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation.test
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import jetbrains.buildServer.agent.runner.Color
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotnet.DotnetCommand
 import jetbrains.buildServer.dotnet.DotnetCommandContext
@@ -42,7 +43,12 @@ class TestRetryCommandsTransformerTest {
         MockKAnnotations.init(this)
         clearAllMocks()
 
-        justRun { _loggerServiceMock.writeMessage(any()) }
+        _loggerServiceMock.let {
+            justRun { it.writeMessage(any()) }
+            justRun { it.writeDebug(any()) }
+            justRun { it.writeStandardOutput(any(), Color.Default) }
+        }
+
         justRun { _retryReportReaderMock.cleanup() }
         every { _retryFilterMock.setTestNames(any()) } returns emptyDisposable()
         every { _retrySettingsMock.reportPath } returns "report-path"
@@ -65,6 +71,7 @@ class TestRetryCommandsTransformerTest {
     fun `should transform to 3 test retry commands when tests pass after second retry`() {
         // arrange
         _retrySettingsMock.let {
+            every { it.isEnabled } returns true
             every { it.maxRetries } returns 5
             every { it.maxFailures } returns 10
         }
@@ -99,6 +106,7 @@ class TestRetryCommandsTransformerTest {
         // arrange
         val retries = 10
         _retrySettingsMock.let {
+            every { it.isEnabled } returns true
             every { it.maxRetries } returns retries
             every { it.maxFailures } returns 10
         }
@@ -125,6 +133,7 @@ class TestRetryCommandsTransformerTest {
         // arrange
         val failedTestsCount = 1000
         _retrySettingsMock.let {
+            every { it.isEnabled } returns true
             every { it.maxRetries } returns 10
             every { it.maxFailures } returns failedTestsCount
         }

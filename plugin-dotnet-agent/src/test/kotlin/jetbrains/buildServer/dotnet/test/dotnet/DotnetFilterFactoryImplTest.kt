@@ -28,13 +28,13 @@ class DotnetFilterFactoryImplTest {
     }
 
     @Test
-    public fun `should create filter using settings file when filter size bigger than limit`() {
-        // Given
+    fun `should create filter using settings file when filter size bigger than limit`() {
+        // arrange
         val factory = createInstance()
         val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
         val settingsFile = File("My.settings")
 
-        // When
+        // act
         every { _testsFilterProvider.getFilterExpression(any()) } returns filter
         every { _testsSplittingModeProvider.getMode(any()) } returns TestsSplittingMode.TestClassNameFilter
         every { _testRunSettingsFileProvider.tryGet(_dotnetCommandContext) } returns settingsFile
@@ -42,17 +42,17 @@ class DotnetFilterFactoryImplTest {
         every { _dotnetCommandContext.toolVersion } returns Version.Empty
         val actualFilter = factory.createFilter(_dotnetCommandContext)
 
-        // Then
-        Assert.assertEquals(actualFilter, DotnetFilter("", settingsFile, true))
+        // assert
+        Assert.assertEquals(actualFilter, DotnetFilter("", settingsFile))
     }
 
     @Test
-    public fun `should use filter as argument when cannot generate settings file`() {
-        // Given
+    fun `should use filter as argument when cannot generate settings file`() {
+        // arrange
         val factory = createInstance()
         val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
 
-        // When
+        // act
         every { _testsFilterProvider.getFilterExpression(any()) } returns filter
         every { _testsSplittingModeProvider.getMode(any()) } returns TestsSplittingMode.TestClassNameFilter
         every { _testRunSettingsFileProvider.tryGet(_dotnetCommandContext) } returns null
@@ -60,44 +60,45 @@ class DotnetFilterFactoryImplTest {
         every { _dotnetCommandContext.toolVersion } returns Version.Empty
         val actualFilter = factory.createFilter(_dotnetCommandContext)
 
-        // Then
-        Assert.assertEquals(actualFilter, DotnetFilter(filter, null, true))
+        // assert
+        Assert.assertEquals(actualFilter, DotnetFilter(filter, null))
     }
 
     @Test
-    public fun `should use filter as argument when filter is less or eq the limit`() {
-        // Given
+    fun `should use filter as argument when filter is less or eq the limit`() {
+        // arrange
         val factory = createInstance()
         val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize)
 
-        // When
+        // act
         every { _testsFilterProvider.getFilterExpression(any()) } returns filter
         every { _testsSplittingModeProvider.getMode(any()) } returns TestsSplittingMode.TestClassNameFilter
         every { _dotnetCommandContext.command.commandType } returns DotnetCommandType.Test
         every { _dotnetCommandContext.toolVersion } returns Version.Empty
         val actualFilter = factory.createFilter(_dotnetCommandContext)
 
-        // Then
-        Assert.assertEquals(actualFilter, DotnetFilter(filter, null, true))
+        // assert
+        Assert.assertEquals(actualFilter, DotnetFilter(filter, null))
         verify(exactly = 0) { _testRunSettingsFileProvider.tryGet(any()) }
     }
 
     @Test
-    public fun `should use filter as argument when no test splitting`() {
-        // Given
+    fun `should use filter using settings when no test splitting, for example test retry`() {
+        // arrange
         val factory = createInstance()
         val filter = "a".repeat(DotnetFilterFactoryImpl.MaxArgSize + 1)
+        val settingsFile = File("My.settings")
 
-        // When
+        // act
         every { _testsFilterProvider.getFilterExpression(any()) } returns filter
+        every { _testRunSettingsFileProvider.tryGet(_dotnetCommandContext) } returns settingsFile
         every { _testsSplittingModeProvider.getMode(any()) } returns TestsSplittingMode.Disabled
         every { _dotnetCommandContext.command.commandType } returns DotnetCommandType.Test
         every { _dotnetCommandContext.toolVersion } returns Version.Empty
         val actualFilter = factory.createFilter(_dotnetCommandContext)
 
-        // Then
-        Assert.assertEquals(actualFilter, DotnetFilter(filter, null, false))
-        verify(exactly = 0) { _testRunSettingsFileProvider.tryGet(any()) }
+        // assert
+        Assert.assertEquals(actualFilter, DotnetFilter("", settingsFile))
     }
 
     private fun createInstance() = DotnetFilterFactoryImpl(_testsFilterProvider, _testsSplittingModeProvider, _testRunSettingsFileProvider)
