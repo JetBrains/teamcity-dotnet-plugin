@@ -28,7 +28,7 @@ class DotCoverRunnerRunTypeTest {
         clearAllMocks()
         MockKAnnotations.init(this, relaxed = true)
         mockkStatic(InternalProperties::class)
-        every { InternalProperties.getBoolean(any()) } returns false
+        every { InternalProperties.getBooleanOrTrue(any()) } returns false
         _instance = DotCoverRunnerRunType(
             _runTypeRegistryMock,
             _pluginDescriptorMock,
@@ -45,11 +45,12 @@ class DotCoverRunnerRunTypeTest {
     fun `register run type data provider`() = arrayOf(
         arrayOf(true, 1),
         arrayOf(false, 0),
+        arrayOf(null, 1),
     )
     @Test(dataProvider = "register run type data provider")
-    fun `should register run type in registy when feature toggle is enabled`(isFeatureFlagEnabled: Boolean, registrationCount: Int) {
+    fun `should register run type in registy when feature toggle is enabled`(isFeatureFlagEnabled: Boolean?, registrationCount: Int) {
         // assert
-        every { InternalProperties.getBoolean(any()) } returns isFeatureFlagEnabled
+        every { InternalProperties.getBooleanOrTrue(any()) } returns isFeatureFlagEnabled
 
         // act
         _instance = DotCoverRunnerRunType(

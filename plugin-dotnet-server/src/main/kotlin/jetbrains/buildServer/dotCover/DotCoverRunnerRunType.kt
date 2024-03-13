@@ -15,7 +15,7 @@ class DotCoverRunnerRunType(
     private val _dotCoverRequirementsProvider: DotCoverRequirementsProvider,
 ) : RunType() {
     init {
-        if (InternalProperties.getBoolean(DotnetConstants.PARAM_DOTCOVER_RUNNER_ENABLED) ?: false) {
+        if (InternalProperties.getBooleanOrTrue(DotnetConstants.PARAM_DOTCOVER_RUNNER_ENABLED) ?: true) {
             runTypeRegistry.registerRunType(this)
         }
     }
