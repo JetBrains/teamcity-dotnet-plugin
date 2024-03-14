@@ -57,7 +57,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.filters.toList()
 
         // assert
-        assertEquals(result.size, 2)
         assertEquals(result, paramFiltersMock.toList())
     }
 
@@ -89,7 +88,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.filters.toList()
 
         // assert
-        assertEquals(result.size, 6)
         assertEquals(result, paramFiltersMock.plus(DotCoverFilterProvider.DefaultExcludeFilters).toList())
     }
 
@@ -105,7 +103,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.filters.toList()
 
         // assert
-        assertEquals(result.size, 5)
         assertEquals(result, DotCoverFilterProvider.DefaultIncludeFilters.plus(DotCoverFilterProvider.DefaultExcludeFilters).toList())
     }
 
@@ -135,7 +132,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.filters.toList()
 
         // assert
-        assertEquals(result.size, 6)
         assertEquals(
             result,
             sequenceOf(
@@ -203,7 +199,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.attributeFilters.toList()
 
         // assert
-        assertEquals(result.size, 3)
         assertEquals(
             result,
             sequenceOf<CoverageFilter>(
@@ -237,7 +232,6 @@ class DotCoverFilterProviderTest {
         val result = _instance.attributeFilters.toList()
 
         // assert
-        assertEquals(result.size, 1)
         assertEquals(result, DotCoverFilterProvider.DefaultExcludeAttributeFilters.toList())
     }
 
