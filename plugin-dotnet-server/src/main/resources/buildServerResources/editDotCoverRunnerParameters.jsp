@@ -26,8 +26,14 @@
     <props:multilineProperty name="${params.dotCoverCoveredProcessArgumentsKey}" linkTitle="Command line arguments" className="longField" cols="60" rows="1"/>
     <span class="smallNote">Space or new-line separated command line parameters for covering process</span>
     <br/>
-    <props:checkboxProperty name="${params.dotCoverGenerateReportKey}" checked="${params.dotCoverGenerateReportKey}"/>
-    <label for="${params.dotCoverGenerateReportKey}">Generate coverage report</label>
+    <c:set var="generateReportActualValue" value='${propertiesBean.properties[params.dotCoverGenerateReportKey]}'/>
+    <c:set var="generateReportDefaultValue" value="${propertiesBean.defaultProperties[params.dotCoverGenerateReportKey]}"/>
+    <c:if test="${generateReportActualValue == generateReportDefaultValue}">
+      <c:set var="generateReportChecked" value="${generateReportDefaultValue}"/>
+    </c:if>
+    <input type="checkbox" id="dotCoverGenerateReportCheckbox" ${generateReportChecked ? "checked=checked" : ""} />
+    <props:hiddenProperty id="dotCoverGenerateReportHiddenInput" name="${params.dotCoverGenerateReportKey}" />
+    <label for="dotCoverGenerateReportCheckbox">Generate coverage report</label>
     <span class="smallNote">Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete</span>
     <br/>
     <c:set var="additionalSnapshotsNote">
@@ -82,3 +88,14 @@
     <span id="error_${params.dotCoverArgumentsKey}" class="error"></span>
   </td>
 </tr>
+
+<script type="text/javascript">
+  $j(document).ready(function() {
+    const generateReportCheckbox = $j('#dotCoverGenerateReportCheckbox');
+    const generateReportHiddenInput = $j('#dotCoverGenerateReportHiddenInput');
+    generateReportCheckbox.change(function() {
+      const isChecked = $j(this).is(':checked');
+      generateReportHiddenInput.val(isChecked);
+    });
+  });
+</script>
