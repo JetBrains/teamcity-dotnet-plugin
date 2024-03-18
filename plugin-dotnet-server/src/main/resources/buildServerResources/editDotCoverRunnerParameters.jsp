@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
+<%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
 <jsp:useBean id="params" class="jetbrains.buildServer.dotCover.DotCoverRunnerParametersProvider"/>
@@ -16,7 +17,10 @@
 </tr>
 
 <tr>
-  <th>Coverage settings:</th>
+  <th>
+    Coverage settings:
+    <bs:help file="dotCover"/>
+  </th>
   <td>
     <props:multilineProperty name="${params.dotCoverCoveredProcessExecutableKey}" linkTitle="Executable (optional)" expanded="true" className="longField" cols="60" rows="1"/>
     <span class="smallNote">
