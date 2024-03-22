@@ -2,55 +2,50 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.*
 
-internal fun workflow(init: WorkflowBuilder.() -> WorkflowBuilder): Workflow {
-    val builder = WorkflowBuilder.new.init()
-    return builder.build()
-}
+internal fun workflow(init: WorkflowBuilder.() -> WorkflowBuilder)= init(WorkflowBuilder()).build()
 
-internal class WorkflowBuilder private constructor(private val buildAction: () -> Workflow) {
-    private val workflow by lazy { buildAction() }
-    private val sequence: Sequence<CommandLine> = sequenceOf() // todo
+internal class WorkflowBuilder {
+    private var commandLines: Sequence<CommandLine> = emptySequence()
     private var finished = false;
 
-    fun build(): Workflow = workflow
+    fun build(): Workflow = Workflow(commandLines)
 
-    fun guard(workflowToReturn: Workflow = Workflow.empty, predicate: () -> Boolean) {
+    fun guard(finalWorkflow: Workflow = Workflow.empty, predicate: () -> Boolean): WorkflowBuilder {
         if (!predicate()) {
+            commandLines = finalWorkflow.commandLines
             finished = true;
         }
+        return this
     }
 
-    fun environment(init: () -> Unit) {
-
-    }
-
-    fun commandLine(init: CommandLineBuilder.() -> CommandLineBuilder) = CommandLineBuilder {
-//        sequence.plus(sequence { init().build() })
-    }
-
-    companion object {
-        val new get() = WorkflowBuilder { Workflow() }
+    fun commandLine(init: CommandLineBuilder.() -> CommandLineBuilder): WorkflowBuilder {
+        val commandLineBuilder = CommandLineBuilder()
+        commandLines.plus(sequence { init(commandLineBuilder).build() })
+        return this
     }
 }
 
 internal class CommandLineBuilder {
-    var title = ""
-    var description = ArrayList<StdOutText>()
+    var baseCommandLine: CommandLine? = null
+    lateinit var title: String
+    lateinit var description: ArrayList<StdOutText>
+    lateinit var executableFile: Path
+    lateinit var workingDirectory: Path
     lateinit var arguments: List<CommandLineArgument>
-    var environmentVariables = ArrayList<CommandLineEnvironmentVariable>()
+    lateinit var environmentVariables: List<CommandLineEnvironmentVariable>
 
     fun build() = CommandLine(  // todo
-        baseCommandLine = null,
+        baseCommandLine = baseCommandLine,
         target = TargetType.Tool,
-        executableFile = Path(""),
-        workingDirectory = Path(""),
+        executableFile = executableFile,
+        workingDirectory = workingDirectory,
         arguments = arguments,
         environmentVariables = environmentVariables,
         title = title,
-        description = emptyList<StdOutText>(),
+        description = description,
     )
 
-    fun prepare(init: () -> Unit): CommandLineBuilder {
+    fun before(init: () -> Unit): CommandLineBuilder {
 
     }
 
@@ -60,10 +55,6 @@ internal class CommandLineBuilder {
 
     fun after(init: () -> Unit): CommandLineBuilder {
 
-    }
-
-    companion object {
-        val new get() = CommandLineBuilder { CommandLine() } // TODO
     }
 }
 
@@ -75,13 +66,23 @@ class ExampleWorkflowComposer : WorkflowComposer<Unit> {
 
         commandLine {
             title = "df"
+            executableFile
             arguments = emptyList()
-        }.prepare {
+            environmentVariables = emptyList()
 
-        }.onExitCode {
+            before {
 
-        }.after {
+            }
 
+            after {
+
+            }
+        }
+
+        commandLine {
+            title = ""
+
+            this
         }
     }
 }
