@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.discovery
 
 import com.intellij.openapi.diagnostic.Logger

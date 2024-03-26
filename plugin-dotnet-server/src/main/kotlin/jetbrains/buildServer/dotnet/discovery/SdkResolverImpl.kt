@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.discovery
 
 import jetbrains.buildServer.dotnet.*
@@ -9,17 +7,21 @@ import java.util.*
 // https://github.com/dotnet/docs/blob/main/docs/standard/frameworks.md
 // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
 class SdkResolverImpl(
-        private val _sdkTypeResolver: SdkTypeResolver)
-    : SdkResolver {
+    private val _sdkTypeResolver: SdkTypeResolver,
+) : SdkResolver {
     override fun resolveSdkVersions(framework: Framework, propeties: Collection<Property>) =
-        resolveSdkVersions(framework).map { if(it.version.getPart(0) != 4) SdkVersion(it.version.trim(), it.sdkType, it.versionType) else it }
+        resolveSdkVersions(framework)
+            .map { when {
+                it.version.getPart(0) != 4 -> SdkVersion(it.version.trim(), it.sdkType, it.versionType)
+                else -> it
+            }}
 
-    override fun getCompatibleVersions(version: Version): Sequence<SdkVersion> =
-            when(val sdkType = _sdkTypeResolver.tryResolve(version)) {
-                SdkType.Dotnet, SdkType.DotnetCore -> getDotnetVersions(SdkVersion(version, sdkType, SdkVersionType.Default))
-                SdkType.DotnetFramework, SdkType.FullDotnetTargetingPack -> getDotnetFrameworkVersion(SdkVersion(version, sdkType, SdkVersionType.Default))
-                else -> emptySequence()
-            }
+    override fun getCompatibleVersions(version: Version) =
+        when(val sdkType = _sdkTypeResolver.tryResolve(version)) {
+            SdkType.Dotnet, SdkType.DotnetCore -> getDotnetVersions(SdkVersion(version, sdkType, SdkVersionType.Default))
+            SdkType.DotnetFramework, SdkType.FullDotnetTargetingPack -> getDotnetFrameworkVersion(SdkVersion(version, sdkType, SdkVersionType.Default))
+            else -> emptySequence()
+        }
 
     private fun resolveSdkVersions(framework: Framework) = sequence<SdkVersion> {
         FrameworkRegex.matchEntire(framework.name)?.let {
@@ -138,6 +140,7 @@ class SdkResolverImpl(
         }
 
         private val WellKnownDotnetVersions = listOf(
+            SdkVersion(Version(9, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(8, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(7, 0), SdkType.Dotnet, SdkVersionType.Compatible),
             SdkVersion(Version(6, 0), SdkType.Dotnet, SdkVersionType.Compatible),
