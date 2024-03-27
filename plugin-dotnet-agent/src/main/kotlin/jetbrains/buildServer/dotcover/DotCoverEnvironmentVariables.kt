@@ -1,11 +1,12 @@
-
-
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.util.OSType
 import jetbrains.buildServer.agent.runner.PathType
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotnet.DotnetConstants
 import java.io.File
 
 class DotCoverEnvironmentVariables(
@@ -13,6 +14,7 @@ class DotCoverEnvironmentVariables(
     private val _virtualContext: VirtualContext,
     private val _fileSystemService: FileSystemService,
     private val _pathsService: PathsService,
+    private val _parametersService: ParametersService
 ) : EnvironmentVariables {
     override fun getVariables(): Sequence<CommandLineEnvironmentVariable> = sequence {
         if (_virtualContext.targetOSType == OSType.UNIX) {
@@ -23,8 +25,15 @@ class DotCoverEnvironmentVariables(
         // because tries to create named pipes with short struct. 60 symbols only
         if (_virtualContext.targetOSType != OSType.WINDOWS) {
             if (_virtualContext.isVirtual && _environment.os == OSType.WINDOWS) {
-                LOG.debug("Override temp environment variables by empty values")
-                yieldAll(getTempDirVariables())
+                // Overriding temp environment variables by empty values leads to a PDB server error
+                // Therefore, we disable this behaviour and hide behind the feature toggle
+                // see https://youtrack.jetbrains.com/issue/TW-86663
+                if (overrideTempDirWithEmptyValue) {
+                    LOG.debug("Override temp environment variables by empty values")
+                    yieldAll(getTempDirVariables())
+                } else {
+                    return@sequence
+                }
             } else {
                 val tempPath = _pathsService.getPath(PathType.BuildTemp).path
                 if (tempPath.length <= 60) {
@@ -48,6 +57,13 @@ class DotCoverEnvironmentVariables(
             }
         }
     }
+
+    val overrideTempDirWithEmptyValue get() =
+        _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_OVERRIDING_TEMP_DIR_WITH_EMPTY_VALUE_ENABLED)
+            ?.lowercase()
+            ?.trim()
+            ?.toBooleanStrictOrNull()
+            ?: false
 
     companion object {
         private val LOG = Logger.getLogger(DotCoverEnvironmentVariables::class.java)

@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotcover
 
 import io.mockk.MockKAnnotations
@@ -8,8 +6,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.dotcover.DotCoverEnvironmentVariables
+import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -23,11 +24,13 @@ class DotCoverEnvironmentVariablesTest {
     @MockK private lateinit var _environment: Environment
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _fileSystemService: FileSystemService
+    @MockK private lateinit var _parametersService: ParametersService
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, DotnetConstants.PARAM_DOTCOVER_OVERRIDING_TEMP_DIR_WITH_EMPTY_VALUE_ENABLED) } returns "true"
     }
 
     @DataProvider(name = "defaultVars")
@@ -177,6 +180,7 @@ class DotCoverEnvironmentVariablesTest {
         _virtualContext,
         _fileSystemService,
         _pathsService,
+        _parametersService
     )
 
     private fun genRandomString(length: Int = 10): String {

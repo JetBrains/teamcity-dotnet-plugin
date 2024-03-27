@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.Constants
@@ -70,6 +68,8 @@ object DotnetConstants {
     const val PARAM_DOTCOVER_WRAPPER_COVER_DEFAULT_ASSEMBLY_FILTERS_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.defaultExcludeAssemblyFiltersEnabled"
     // true or false (true by default) - add default exclude attribute filters for dotCover
     const val PARAM_DOTCOVER_WRAPPER_COVER_DEFAULT_ATTRIBUTE_FILTERS_ENABLED = "teamcity.internal.dotnet.dotCover.wrapper.defaultExcludeAttributeFiltersEnabled"
+    // true or false (false by default) - is the overriding of TMP, TEMP, TMPDIR env vars with an empty string enabled for dotCover
+    const val PARAM_DOTCOVER_OVERRIDING_TEMP_DIR_WITH_EMPTY_VALUE_ENABLED = "teamcity.internal.dotnet.dotCover.overridingTempDirWithEmptyValueEnabled"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
     // true or false (false by default)
