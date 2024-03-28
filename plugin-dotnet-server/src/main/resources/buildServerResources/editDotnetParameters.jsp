@@ -413,7 +413,7 @@
     <td>
       <props:textProperty name="${params.testMaxRetriesKey}" className="longField"/>
       <span class="error" id="error_${params.testMaxRetriesKey}"></span>
-      <span class="smallNote">Rerun failed tests until they pass or until the maximum number of attempts is reached. <bs:help file="${paramHelpUrl}vstest"/></span>
+      <span class="smallNote">Rerun failed tests until they pass or until the maximum number of attempts is reached. <bs:help file="${paramHelpUrl}test-retry"/></span>
     </td>
   </tr>
 </c:if>
