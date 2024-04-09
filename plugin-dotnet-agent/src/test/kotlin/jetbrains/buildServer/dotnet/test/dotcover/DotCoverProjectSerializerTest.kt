@@ -164,11 +164,11 @@ class DotCoverProjectSerializerTest {
             DotCoverCommandType.Merge,
             mergeCommandData = MergeCommandData(
                 listOf(
-                    File(tempDir, "1.dcvr"),
-                    File(tempDir, "2.dcvr"),
-                    File(tempDir, "3.dcvr")
+                    Path(File(tempDir, "1.dcvr").absolutePath),
+                    Path(File(tempDir, "2.dcvr").absolutePath),
+                    Path(File(tempDir, "3.dcvr").absolutePath)
                 ),
-                File(tempDir, "outputSnapshot_BuildStep1.dcvr")
+                Path(File(tempDir, "outputSnapshot_BuildStep1.dcvr").absolutePath)
             )
         )
 
@@ -215,8 +215,8 @@ class DotCoverProjectSerializerTest {
         val dotCoverProject = DotCoverProject(
             DotCoverCommandType.Report,
             reportCommandData = ReportCommandData(
-                File(tempDir, "outputSnapshot_BuildStep1.dcvr"),
-                File(tempDir, "CoverageReport_BuildStep1.xml")
+                Path(File(tempDir, "outputSnapshot_BuildStep1.dcvr").absolutePath),
+                Path(File(tempDir, "CoverageReport_BuildStep1.xml").absolutePath)
             )
         )
 

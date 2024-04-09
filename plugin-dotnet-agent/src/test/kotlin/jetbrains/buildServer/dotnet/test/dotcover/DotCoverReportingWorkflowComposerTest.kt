@@ -150,7 +150,7 @@ class DotCoverReportingWorkflowComposerTest {
 
         val snapshots = createSnapshots(0)
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Merge, coverCommandData = null,
-            MergeCommandData(sourceFiles = snapshots, outputFile = outputSnapshotFile))
+            MergeCommandData(sourceFiles = snapshots, outputFile = Path(outputSnapshotFile.path)))
         every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
 
         val composer = createInstance(fileSystemService)
@@ -181,7 +181,7 @@ class DotCoverReportingWorkflowComposerTest {
 
         val snapshots = createSnapshots(1)
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Merge, coverCommandData = null,
-            MergeCommandData(sourceFiles = snapshots, outputFile = outputSnapshotFile))
+            MergeCommandData(sourceFiles = snapshots, outputFile = Path(outputSnapshotFile.path)))
         every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
 
         val composer = createInstance(fileSystemService)
@@ -193,7 +193,7 @@ class DotCoverReportingWorkflowComposerTest {
         Assert.assertTrue(actualCommandLines.isEmpty())
         verify(exactly = 1) { _loggerService.writeDebug("""
                 No need to execute merge command: there is a single snapshot file.
-                Renaming it: from=${snapshots.first().absolutePath} to=${outputSnapshotFile.absolutePath}
+                Renaming it: from=${snapshots.first().path} to=${outputSnapshotFile.absolutePath}
             """.trimIndent()) }
         val actualSnapshots = virtualAgentTmp.listFiles()?.toList() ?: emptyList()
         Assert.assertTrue(actualSnapshots.size == 1)
@@ -231,7 +231,7 @@ class DotCoverReportingWorkflowComposerTest {
                     baseCommandLine = null,
                     target = TargetType.CodeCoverageProfiler,
                     executableFile = dotCoverExecutableVirtualPath,
-                    workingDirectory = Path(virtualWorkingDir.absolutePath),
+                    workingDirectory = Path(workingDir.absolutePath),
                     arguments = listOf(
                         CommandLineArgument("merge", CommandLineArgumentType.Mandatory),
                         CommandLineArgument(dotCoverMergeProjectFile.absolutePath, CommandLineArgumentType.Target)
@@ -337,11 +337,12 @@ class DotCoverReportingWorkflowComposerTest {
         every { _pathService.getTempFileName("report_${DOTCOVER_CONFIG_EXTENSION}") } returns dotCoverReportProjectFile
         every { _virtualContext.resolvePath(dotCoverReportProjectFile.path) } returns dotCoverReportProjectFile.path
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Report, coverCommandData = null, mergeCommandData  = null,
-            ReportCommandData(sourceFile = outputSnapshotFile, outputFile = outputReportFile)
+            ReportCommandData(sourceFile = Path(outputSnapshotFile.path), outputFile = Path(outputReportFile.path))
         )
         every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
         every { _virtualContext.resolvePath(dotCoverResultsDir.path) } returns dotCoverResultsDir.path
-        every { _virtualContext.resolvePath(outputReportFile.path) } returns outputReportFile.path
+        every { _virtualContext.resolvePath(outputSnapshotFile.absolutePath) } returns outputSnapshotFile.absolutePath
+        every { _virtualContext.resolvePath(outputReportFile.absolutePath) } returns outputReportFile.absolutePath
 
         val expectedWorkflow = Workflow(
             sequenceOf(
@@ -349,7 +350,7 @@ class DotCoverReportingWorkflowComposerTest {
                     baseCommandLine = null,
                     target = TargetType.CodeCoverageProfiler,
                     executableFile = dotCoverExecutableVirtualPath,
-                    workingDirectory = Path(virtualWorkingDir.absolutePath),
+                    workingDirectory = Path(workingDir.absolutePath),
                     arguments = listOf(
                         CommandLineArgument("report", CommandLineArgumentType.Mandatory),
                         CommandLineArgument(dotCoverReportProjectFile.absolutePath, CommandLineArgumentType.Target)
@@ -366,12 +367,13 @@ class DotCoverReportingWorkflowComposerTest {
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
-    private fun createSnapshots(numberOfFiles: Int = 1, snapshotsDirectory: File = virtualAgentTmp): List<File> {
-        val result = ArrayList<File>()
+    private fun createSnapshots(numberOfFiles: Int = 1, snapshotsDirectory: File = virtualAgentTmp): List<Path> {
+        val result = ArrayList<Path>()
         for (i in 1..numberOfFiles) {
             val file = File(snapshotsDirectory, "$i.dcvr")
             file.createNewFile()
-            result.add(file)
+            result.add(Path(file.path))
+            every { _virtualContext.resolvePath(file.absolutePath) } returns file.absolutePath
         }
         return result
     }

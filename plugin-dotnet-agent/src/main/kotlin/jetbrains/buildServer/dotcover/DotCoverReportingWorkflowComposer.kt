@@ -14,6 +14,7 @@ import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
 import jetbrains.buildServer.util.FileUtil.resolvePath
 import jetbrains.buildServer.util.FileUtil
 import java.io.File
+import kotlin.streams.toList
 
 class DotCoverReportingWorkflowComposer(
     private val _pathsService: PathsService,
@@ -68,7 +69,7 @@ class DotCoverReportingWorkflowComposer(
     )
 
     private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
-        val outputSnapshotFile = File(_virtualContext.resolvePath(File(virtualTempDirectory, outputSnapshotFilename).canonicalPath))
+        val outputSnapshotFile = File(virtualTempDirectory, outputSnapshotFilename)
         if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
             _loggerService.writeDebug("The merge command has already been performed for this build step; outputSnapshotFile=${outputSnapshotFile.absolutePath}")
             return
@@ -90,7 +91,10 @@ class DotCoverReportingWorkflowComposer(
         }
 
         val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(mergeConfigFilename).path))
-        val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge, mergeCommandData = MergeCommandData(snapshots, outputSnapshotFile))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge,
+            mergeCommandData = MergeCommandData(
+                snapshots.stream().map { Path(_virtualContext.resolvePath(it.absolutePath)) }.toList(),
+                Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))))
         _fileSystemService.write(File(virtualConfigFilePath.path)) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
@@ -106,9 +110,9 @@ class DotCoverReportingWorkflowComposer(
     }
 
     private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, virtualTempDirectory: File) {
-        val virtualReportResultsDirectory = File(_virtualContext.resolvePath(File(virtualTempDirectory, "dotCoverResults").canonicalPath))
+        val virtualReportResultsDirectory = File(virtualTempDirectory, "dotCoverResults")
         _fileSystemService.createDirectory(virtualReportResultsDirectory)
-        val outputReportFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputReportFilename).canonicalPath))
+        val outputReportFile = File(virtualReportResultsDirectory, outputReportFilename)
 
         val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
         if (outputSnapshotFile == null) {
@@ -121,7 +125,10 @@ class DotCoverReportingWorkflowComposer(
         }
 
         val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(reportConfigFilename).path))
-        val dotCoverProject = DotCoverProject(DotCoverCommandType.Report, reportCommandData = ReportCommandData(outputSnapshotFile, outputReportFile))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Report,
+            reportCommandData = ReportCommandData(
+                Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath)),
+                Path(_virtualContext.resolvePath(outputReportFile.absolutePath))))
         _fileSystemService.write(File(virtualConfigFilePath.path)) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
