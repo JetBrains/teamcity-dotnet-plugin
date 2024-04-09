@@ -86,10 +86,10 @@ class DotCoverProjectSerializerImpl(
         doc.appendChild(mergeParamsElement)
 
         for (source in mergeCommandData.sourceFiles) {
-            mergeParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, source.absolutePath))
+            mergeParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, source.path))
         }
 
-        mergeParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, mergeCommandData.outputFile.absolutePath))
+        mergeParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, mergeCommandData.outputFile.path))
 
         return doc
     }
@@ -101,8 +101,8 @@ class DotCoverProjectSerializerImpl(
         reportParamsElement.setAttributeNS(HTTP_WWW_W3_NS_URI, XMLNS_XSI_NS, XMLNS_XSI_NS_URI)
         doc.appendChild(reportParamsElement)
 
-        reportParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, reportCommandData.sourceFile.absolutePath))
-        reportParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, reportCommandData.outputFile.absolutePath))
+        reportParamsElement.appendChild(createSimpleElement(doc, SOURCE_ELEMENT, reportCommandData.sourceFile.path))
+        reportParamsElement.appendChild(createSimpleElement(doc, OUTPUT_ELEMENT, reportCommandData.outputFile.path))
         reportParamsElement.appendChild(createSimpleElement(doc, REPORT_TYPE_ELEMENT, "TeamCityXML"))
 
         return doc

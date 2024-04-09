@@ -16,7 +16,7 @@ abstract class DotCoverCommandLineBuilderBase(
 ) : DotCoverCommandLineBuilder {
 
     protected val workingDirectory get() =
-        Path(_virtualContext.resolvePath(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath))
+        Path(_pathsService.getPath(PathType.WorkingDirectory).canonicalPath)
 
     protected val argumentPrefix get() = when(_virtualContext.targetOSType) {
         OSType.WINDOWS -> "/"

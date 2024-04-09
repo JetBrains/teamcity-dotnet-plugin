@@ -18,12 +18,12 @@ data class DotCoverProject(
         )
 
         data class MergeCommandData(
-                val sourceFiles: List<File>,
-                val outputFile: File
+                val sourceFiles: List<Path>,
+                val outputFile: Path
         )
 
         data class ReportCommandData(
-                val sourceFile: File,
-                val outputFile: File
+                val sourceFile: Path,
+                val outputFile: Path
         )
 }
