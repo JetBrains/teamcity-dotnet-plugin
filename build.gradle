@@ -1,6 +1,18 @@
+import java.nio.file.Paths
+
+initializeWorkspace()
+
+def localRepo = anyParamPath('TC_LOCAL_REPO')
+
 allprojects {
     repositories {
         mavenCentral()
+        if (localRepo) {
+            maven {
+                name = "local-teamcity-artifacts"
+                url "file:///${localRepo}"
+            }
+        }
         maven {
             url = uri("https://download.jetbrains.com/teamcity-repository")
         }
@@ -11,7 +23,44 @@ ext {
     def correctVersion = project.hasProperty('versionNumber') && property('versionNumber') ==~ /\d+(\.\d+\.\d+.*)?/
     def versionNumber = correctVersion ? property('versionNumber') : 'SNAPSHOT-' + new Date().format('yyyyMMddHHmmss')
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet']
-    teamcityVersion = project.hasProperty('teamcityVersion') ? property('teamcityVersion') : '2024.01-SNAPSHOT'
-
+    teamcityVersion = anyParam('teamcityVersion') ?: '2024.01-SNAPSHOT'
     isDotnetTasksDisabled = project.hasProperty('dotnetTasks') && project.property('dotnetTasks').toString().toLowerCase() == 'disabled'
+}
+
+def anyParamPath(String... names) {
+    def param = anyParam(names);
+    if (param == null || param.isEmpty())
+        return null
+    return (Paths.get(param).isAbsolute()) ?
+           Paths.get(param) : getRootDir().toPath().resolve(param)
+}
+
+def anyParam(String... names) {
+    def param
+    try {
+        param = names.findResult {
+            project.hasProperty(it) ? project.getProperty(it) : System.getProperty(it) ?: System.getenv(it) ?: null
+        }
+        if (param == null || param.isEmpty())
+            param = null
+    } finally {
+        println("AnyParam: $names -> $param")
+    }
+    return param
+}
+
+
+def initializeWorkspace() {
+    if (System.getProperty("idea.active") != null) {
+        println "Attempt to configure workspace in IDEA"
+        def coreVersionProperties = project.projectDir.toPath().parent.parent.resolve(".version.properties")
+        if (coreVersionProperties.toFile().exists()) {
+            def p = new Properties().tap {
+                it.load(new FileInputStream(coreVersionProperties.toFile()))
+            }
+            p.forEach { k,v ->
+                System.setProperty(k, v);
+            }
+        }
+    }
 }
