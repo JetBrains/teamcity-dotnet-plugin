@@ -1,7 +1,7 @@
 
 
 plugins {
-    id 'com.github.rodm.teamcity-agent' version '1.4.1'
+    id 'io.github.rodm.teamcity-agent' version '1.5.2'
     id 'de.undercouch.download' version '5.2.1'
     id 'plugin.conventions'
 }

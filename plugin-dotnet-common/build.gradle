@@ -1,7 +1,7 @@
 
 
 plugins{
-    id 'com.github.rodm.teamcity-common' version '1.4.1'
+    id 'io.github.rodm.teamcity-common' version '1.5.2'
     id 'plugin.conventions'
 }
 
