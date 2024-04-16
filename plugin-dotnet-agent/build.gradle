@@ -25,7 +25,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
     implementation 'commons-io:commons-io:2.11.0'
-    implementation "org.jetbrains.intellij.deps:coverage-report:1.0.15"
+    compileOnly "org.jetbrains.intellij.deps:coverage-report:1.0.15"
     implementation fileTree(dir: "$project.projectDir.parentFile/lib/compile", include: ['coverage-report*.jar'])
 
     testImplementation 'org.testng:testng:7.5'
