@@ -19,7 +19,7 @@ class TestRetryFilterProviderImpl : TestRetryFilterProvider {
         filteredTests.isEmpty() -> ""
         else -> TestsFilterBuilder.buildFilter(
             filterProperty = "FullyQualifiedName",
-            filterOperation = "=",
+            filterOperation = "~",
             filterValues = filteredTests.map { TestsFilterBuilder.escapeSpecialCharacters(it) },
             filterCombineOperator = " | "
         )
