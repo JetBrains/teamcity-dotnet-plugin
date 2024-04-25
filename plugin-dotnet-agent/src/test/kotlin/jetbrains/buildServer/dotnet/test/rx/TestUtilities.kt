@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.rx
 
 import jetbrains.buildServer.rx.Observable

@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME

@@ -1,16 +1,14 @@
-
-
 package jetbrains.buildServer.dotnet.test.inspect
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.verify
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
+import jetbrains.buildServer.dotnet.ToolState
+import jetbrains.buildServer.dotnet.test.rx.assertEquals
 import jetbrains.buildServer.inspect.*
 import jetbrains.buildServer.rx.*
+import jetbrains.buildServer.serverSide.impl.agent.PollingRemoteAgentConnection.Command
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -21,47 +19,20 @@ import java.io.File
 import java.io.OutputStream
 
 class InspectionWorkflowComposerTest {
-    @MockK
-    private lateinit var _toolPathResolver: ToolStartInfoResolver
-
-    @MockK
-    private lateinit var _argumentsProvider: ArgumentsProvider
-
-    @MockK
-    private lateinit var _environmentProvider: EnvironmentProvider
-
-    @MockK
-    private lateinit var _outputObserver: OutputObserver
-
-    @MockK
-    private lateinit var _configurationFile: ConfigurationFile
-
-    @MockK
-    private lateinit var _buildInfo: BuildInfo
-
-    @MockK
-    private lateinit var _fileSystemService: FileSystemService
-
-    @MockK
-    private lateinit var _pathsService: PathsService
-
-    @MockK
-    private lateinit var _loggerService: LoggerService
-
-    @MockK
-    private lateinit var _artifacts: ArtifactService
-
-    @MockK
-    private lateinit var _virtualContext: VirtualContext
-
-    @MockK
-    private lateinit var _context: WorkflowContext
-
-    @MockK
-    private lateinit var _stateWorkflowComposer: InspectionToolStateWorkflowComposer
-
-    @MockK
-    private lateinit var _pluginDescriptorsProvider: PluginDescriptorsProvider
+    @MockK private lateinit var _toolPathResolver: ToolStartInfoResolver
+    @MockK private lateinit var _argumentsProvider: ArgumentsProvider
+    @MockK private lateinit var _environmentProvider: EnvironmentProvider
+    @MockK private lateinit var _outputObserver: OutputObserver
+    @MockK private lateinit var _configurationFile: ConfigurationFile
+    @MockK private lateinit var _buildInfo: BuildInfo
+    @MockK private lateinit var _fileSystemService: FileSystemService
+    @MockK private lateinit var _pathsService: PathsService
+    @MockK private lateinit var _loggerService: LoggerService
+    @MockK private lateinit var _artifacts: ArtifactService
+    @MockK private lateinit var _virtualContext: VirtualContext
+    @MockK private lateinit var _context: WorkflowContext
+    @MockK private lateinit var _stateWorkflowComposer: InspectionToolStateWorkflowComposer
+    @MockK private lateinit var _pluginDescriptorsProvider: PluginDescriptorsProvider
 
     private val _process = ToolStartInfo(Path("inspection"), InspectionToolPlatform.CrossPlatform, listOf(CommandLineArgument("exec"), CommandLineArgument("--")))
     private val _workingDirectory = Path("wd")
@@ -227,8 +198,8 @@ class InspectionWorkflowComposerTest {
     }
 
     @Test(dataProvider = "composeCases")
-    fun shouldCompose(args: InspectionArguments, exitCode: Int, expectedCommandLines: List<CommandLine>) {
-        // Given
+    fun `should compose`(args: InspectionArguments, exitCode: Int, expectedCommandLines: List<CommandLine>) {
+        // arrange
         val composer = createInstance(InspectionTool.Inspectcode) {
             _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
             _events.add(CommandResultExitCode(exitCode, it.Id))
@@ -236,10 +207,10 @@ class InspectionWorkflowComposerTest {
         }
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
 
-        // When
+        // act
         val actualCommandLines = composer.compose(_context, Unit).commandLines.toList()
 
-        // Then
+        // assert
         Assert.assertEquals(actualCommandLines, expectedCommandLines)
         verify { _fileSystemService.write(args.configFile, any()) }
         verify { _configurationFile.create(_outputStream, Path("v_" + args.outputFile.absolutePath), Path("v_" + args.cachesHome.absolutePath), args.debug) }
@@ -258,8 +229,8 @@ class InspectionWorkflowComposerTest {
     }
 
     @Test
-    fun shouldFailBuildWhenCannotFindOutputFile() {
-        // Given
+    fun `should fail build when cannot find output file`() {
+        // arrange
         val args = InspectionArguments(
             File("Config.xml"),
             File("Output.xml"),
@@ -276,19 +247,19 @@ class InspectionWorkflowComposerTest {
             it
         }
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
-
-        // When
         every { _artifacts.publish(any(), any(), any()) } returns false
+
+        // act
         composer.compose(_context, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verify { _loggerService.buildFailureDescription("Output xml from ${InspectionTool.Inspectcode.displayName} is not found or empty on path ${args.outputFile.canonicalPath}.") }
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 
     @Test
-    fun shouldFailBuildWhenHasSomeStdErrors() {
-        // Given
+    fun `should fail build when has some std errors`() {
+        // arrange
         val composer = createInstance(InspectionTool.Inspectcode) {
             _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
             _events.add(CommandResultError("Some error", mutableListOf(), it.Id))
@@ -306,18 +277,18 @@ class InspectionWorkflowComposerTest {
         )
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
 
-        // When
+        // act
         composer.compose(_context, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 
     // https://youtrack.jetbrains.com/issue/TW-71049
     // https://youtrack.jetbrains.com/issue/TW-71048
     @Test
-    fun shouldFailBuildWithWarningAboutNanoServerWhenNegativeExitCodeAndIInWindowsDockerContainer() {
-        // Given
+    fun `should fail build with warning about NanoServer when negative exit code and In windows docker container`() {
+        // arrange
         val composer = createInstance(InspectionTool.Inspectcode) {
             _events.add(CommandResultExitCode(-532462766, it.Id))
             it
@@ -333,103 +304,78 @@ class InspectionWorkflowComposerTest {
         )
         every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
 
-        // When
+        // act
         every { _virtualContext.isVirtual } returns true
         every { _virtualContext.targetOSType } returns OSType.WINDOWS
         composer.compose(_context, Unit).commandLines.toList()
 
-        // Then
+        // assert
         verify { _loggerService.writeWarning("Windows Nano Server is not supported.") }
         verify { _context.abort(BuildFinishedStatus.FINISHED_FAILED) }
     }
 
     @DataProvider
-    fun versionComposeCases(): Array<Array<out Any?>> {
-        return arrayOf(
-            arrayOf(
-                InspectionArguments(
-                    File("Config.xml"),
-                    File("Output.xml"),
-                    File("Log.txt"),
-                    File("Cache"),
-                    false,
-                    null,
-                    listOf(CommandLineArgument("--arg1"))
-                ),
-                InspectionTool.Dupfinder,
-                true,
-                listOf(
-                    CommandLine(
-                        null,
-                        TargetType.Tool,
-                        _process.executable,
-                        _workingDirectory,
-                        listOf(
-                            CommandLineArgument("exec"),
-                            CommandLineArgument("--"),
-                            CommandLineArgument("--config=v_${File("Config.xml").absolutePath}"),
-                            CommandLineArgument("--arg1")
-                        ),
-                        listOf(_envVar)
-                    )
-                )
-            ),
-            arrayOf(
-                InspectionArguments(
-                    File("Config.xml"),
-                    File("Output.xml"),
-                    File("Log.txt"),
-                    File("Cache"),
-                    false,
-                    null,
-                    listOf(CommandLineArgument("--arg1"))
-                ),
-                InspectionTool.Inspectcode,
-                false,
-                listOf(
-                    CommandLine(
-                        null,
-                        TargetType.Tool,
-                        _process.executable,
-                        _workingDirectory,
-                        listOf(
-                            CommandLineArgument("exec"),
-                            CommandLineArgument("--"),
-                            CommandLineArgument("--config=v_${File("Config.xml").absolutePath}"),
-                            CommandLineArgument("--arg1")
-                        ),
-                        listOf(_envVar)
-                    )
-                )
-            )
-        )
-    }
+    fun versionComposeCases() = arrayOf(
+        arrayOf(InspectionTool.Dupfinder, false),
+        arrayOf(InspectionTool.Inspectcode, true)
+    )
 
     @Test(dataProvider = "versionComposeCases")
-    fun `should not request version for tool other than inspectcode and when no plugins are specified`(
-        args: InspectionArguments,
+    fun `should not request version for tool other than inspectcode`(
         inspectionTool: InspectionTool,
-        hasPluginParameters: Boolean,
-        expectedCommandLines: List<CommandLine>
+        hasVersionCheckCommandLine: Boolean
     ) {
-        // Given
+        // arrange
         val composer = createInstance(inspectionTool) {
             _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
             _events.add(CommandResultExitCode(0, it.Id))
             it
         }
         every { _buildInfo.runType } returns inspectionTool.runnerType
-        every { _argumentsProvider.getArguments(InspectionTool.Inspectcode, any()) } returns args
-        every { _pluginDescriptorsProvider.hasPluginDescriptors() } answers { hasPluginParameters }
         every { _toolPathResolver.resolve(inspectionTool) } returns _process
-        every { _argumentsProvider.getArguments(inspectionTool, any()) } returns args
+        every { _argumentsProvider.getArguments(inspectionTool, any()) } returns mockk(relaxed = true)
 
-        // When
+        // act
         val actualCommandLines = composer.compose(_context, Unit).commandLines.toList()
 
-        // Then
-        Assert.assertEquals(actualCommandLines, expectedCommandLines)
-        verify(exactly = 0) { _stateWorkflowComposer.compose(any(), any()) }
+        // assert
+        Assert.assertEquals(actualCommandLines.size, if (hasVersionCheckCommandLine) 2 else 1 )
+        verify(exactly = if (hasVersionCheckCommandLine) 1 else 0) { _stateWorkflowComposer.compose(any(), any()) }
+    }
+
+    @DataProvider
+    fun `tool version and whether to specify the format`() = arrayOf(
+        arrayOf(Version(2024, 1, 1), true),
+        arrayOf(Version(2024, 1, 0), true),
+        arrayOf(Version(2024, 0), false),
+        arrayOf(Version(2023, 1, 1), false),
+        arrayOf(Version(2023, 1, 0), false),
+    )
+    @Test(dataProvider = "tool version and whether to specify the format")
+    fun `should specify XML as an output format explictly when the InspetCode tool version is higher or equal than 2024_1_0`(
+        toolVersion: Version,
+        shouldSpecifyTheOutputFormat: Boolean
+    ) {
+        // arrange
+        val composer = createInstance(InspectionTool.Inspectcode) {
+            _events.add(CommandResultOutput("Line 1", mutableListOf(), it.Id))
+            _events.add(CommandResultExitCode(0, it.Id))
+            it
+        }
+        every { _buildInfo.runType } returns InspectionTool.Inspectcode.runnerType
+        every { _toolPathResolver.resolve(any()) } returns _process
+        every { _argumentsProvider.getArguments(any(), any()) } returns mockk(relaxed = true)
+        every { _stateWorkflowComposer.compose(any(), any()) } answers {
+            arg<InspectionToolState>(1).versionObserver.onNext(toolVersion)
+            Workflow(mockk<CommandLine>())
+        }
+
+        // act
+        val commandLines = composer.compose(_context, Unit).commandLines.toList()
+
+        // assert
+        verify(exactly = 1) { _stateWorkflowComposer.compose(any(), any()) }
+        Assert.assertEquals(shouldSpecifyTheOutputFormat, commandLines[1].arguments.contains(CommandLineArgument("--format=Xml")))
     }
 
     private fun createInstance(inspectionTool: InspectionTool, onNewCommandLine: (CommandLine) -> CommandLine) =

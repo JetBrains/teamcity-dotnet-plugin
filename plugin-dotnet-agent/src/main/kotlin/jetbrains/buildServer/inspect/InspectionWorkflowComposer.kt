@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.inspect
 
 import jetbrains.buildServer.agent.*
@@ -33,7 +31,7 @@ open class InspectionWorkflowComposer(
         val toolStartInfo = _toolStartInfoResolver.resolve(_tool)
 
         var toolVersion: Version = Version.Empty
-        if (_tool == InspectionTool.Inspectcode && _pluginDescriptorsProvider.hasPluginDescriptors()) {
+        if (_tool == InspectionTool.Inspectcode) {
             val toolState = InspectionToolState(
                 toolStartInfo,
                 observer { toolVersion = it }
@@ -71,12 +69,20 @@ open class InspectionWorkflowComposer(
     ): CommandLine {
         val cmdArgs = sequence {
             yieldAll(toolStartInfo.arguments)
+
             yield(CommandLineArgument("--config=${_virtualContext.resolvePath(args.configFile.absolutePath)}"))
+
             if (args.debug) {
                 yield(CommandLineArgument("--logFile=${_virtualContext.resolvePath(args.logFile.absolutePath)}"))
             }
+
             args.extensions?.let {
                 yield(CommandLineArgument("--eXtensions=$it"))
+            }
+
+            // since R# CLT 2024.1 the default format of output was changed from XML to SARIF, but here XML is required
+            if (toolVersion >= InspectCodeWithDefaultSARIFOutput) {
+                yield(CommandLineArgument("--format=Xml"))
             }
 
             yieldAll(args.customArguments)
@@ -125,5 +131,9 @@ open class InspectionWorkflowComposer(
                 context.abort(BuildFinishedStatus.FINISHED_FAILED)
             }
         }
+    }
+
+    companion object {
+        private val InspectCodeWithDefaultSARIFOutput = Version(2024, 1)
     }
 }
