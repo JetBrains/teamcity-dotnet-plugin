@@ -24,10 +24,6 @@ class PluginDescriptorsProviderImpl(
             }
     }
 
-    override fun hasPluginDescriptors(): Boolean {
-        return getPluginLines().isNotEmpty()
-    }
-
     private fun getPluginLines(): List<String> {
         val plugins = _parametersService.tryGetParameter(ParameterType.Runner, InspectCodeConstants.RUNNER_SETTING_CLT_PLUGINS)
         if (!plugins.isNullOrBlank()) {

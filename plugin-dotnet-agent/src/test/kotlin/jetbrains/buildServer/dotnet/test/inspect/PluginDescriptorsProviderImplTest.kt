@@ -103,19 +103,5 @@ class PluginDescriptorsProviderImplTest {
         )
     }
 
-    @Test(dataProvider = "hasPluginParametersData")
-    fun `should answer true when non blank plugin parameters exist`(pluginParameters: String?, expectedResult: Boolean) {
-        // arrange
-        val provider = createInstance()
-        every { _parametersService.tryGetParameter(ParameterType.Runner, InspectCodeConstants.RUNNER_SETTING_CLT_PLUGINS) } answers { pluginParameters }
-
-        // act
-        val hasPluginParameters = provider.hasPluginDescriptors()
-
-        // assert
-        assertEquals(hasPluginParameters, expectedResult)
-        verify(exactly = 1) { _parametersService.tryGetParameter(any(), any()) }
-    }
-
     fun createInstance() = PluginDescriptorsProviderImpl(_parametersService, _loggerService)
 }

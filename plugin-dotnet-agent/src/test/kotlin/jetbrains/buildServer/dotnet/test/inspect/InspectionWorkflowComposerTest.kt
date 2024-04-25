@@ -32,7 +32,6 @@ class InspectionWorkflowComposerTest {
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _context: WorkflowContext
     @MockK private lateinit var _stateWorkflowComposer: InspectionToolStateWorkflowComposer
-    @MockK private lateinit var _pluginDescriptorsProvider: PluginDescriptorsProvider
 
     private val _process = ToolStartInfo(Path("inspection"), InspectionToolPlatform.CrossPlatform, listOf(CommandLineArgument("exec"), CommandLineArgument("--")))
     private val _workingDirectory = Path("wd")
@@ -59,7 +58,6 @@ class InspectionWorkflowComposerTest {
         every { _loggerService.writeWarning(any()) } returns Unit
         every { _environmentProvider.getEnvironmentVariables(any(), any()) } returns sequenceOf(_envVar)
         every { _stateWorkflowComposer.compose(any(), any()) } returns Workflow(sequenceOf(_toolStateCommandLine))
-        every { _pluginDescriptorsProvider.hasPluginDescriptors() } returns true
 
         every { _context.subscribe(any()) } answers {
             val observer = arg<Observer<CommandResultEvent>>(0)
@@ -393,7 +391,6 @@ class InspectionWorkflowComposerTest {
             _artifacts,
             _virtualContext,
             _stateWorkflowComposer,
-            _pluginDescriptorsProvider
         ) {
             override fun createCommandLine(toolStartInfo: ToolStartInfo, args: InspectionArguments, virtualOutputPath: Path, toolVersion: Version): CommandLine {
                 return onNewCommandLine(super.createCommandLine(toolStartInfo, args, virtualOutputPath, toolVersion))

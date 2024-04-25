@@ -19,7 +19,6 @@ open class InspectionWorkflowComposer(
     private val _artifacts: ArtifactService,
     private val _virtualContext: VirtualContext,
     private val _inspectionToolStateWorkflowComposer: InspectionToolStateWorkflowComposer,
-    private val _pluginDescriptorsProvider: PluginDescriptorsProvider
 ) : SimpleWorkflowComposer {
 
     override val target: TargetType = TargetType.Tool
