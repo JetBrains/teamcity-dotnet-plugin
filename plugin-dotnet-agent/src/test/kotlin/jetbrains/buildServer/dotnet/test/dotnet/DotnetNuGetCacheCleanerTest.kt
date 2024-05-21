@@ -8,6 +8,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.CleanType
 import jetbrains.buildServer.agent.runner.PathType
@@ -16,6 +17,9 @@ import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.dotnet.DotnetNugetCacheCleaner
 import jetbrains.buildServer.dotnet.EnvironmentVariables
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.ParameterType
+import jetbrains.buildServer.agent.runner.ParametersService
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_NUGET_CACHE_CLEAN_TIMEOUT
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -27,9 +31,11 @@ class DotnetNuGetCacheCleanerTest {
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
     @MockK private lateinit var _commandLineExecutor: CommandLineExecutor
+    @MockK private lateinit var _parametersService: ParametersService
     private val _dotnetExecutable = "Dotnet.exe"
     private val _workingDirectory = File("wd")
     private val _envVars = sequenceOf(CommandLineEnvironmentVariable("name`", "val"))
+    private val _cleanTimeout = 300
 
     @BeforeMethod
     fun setUp() {
@@ -39,6 +45,10 @@ class DotnetNuGetCacheCleanerTest {
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } returns _dotnetExecutable
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns _workingDirectory
         every { _environmentVariables.getVariables(Version.Empty) } returns _envVars
+        every { _parametersService.tryGetParameter(
+            ParameterType.Configuration,
+            PARAM_NUGET_CACHE_CLEAN_TIMEOUT,
+        )} returns _cleanTimeout.toString()
     }
 
     @DataProvider
@@ -57,7 +67,7 @@ class DotnetNuGetCacheCleanerTest {
     }
 
     @Test(dataProvider = "targetsTestData")
-    fun shouldProvideTargets(stdOut: List<String>, expectedTargets: List<File>) {
+    fun `should provide targets`(stdOut: List<String>, expectedTargets: List<File>) {
         // Given
         val instance = createInstance()
 
@@ -70,7 +80,7 @@ class DotnetNuGetCacheCleanerTest {
     }
 
     @Test
-    fun shouldNotProvideTargetsWhenHasNoDotnetTool() {
+    fun `should not provide targets when has no dotnet tool`() {
         // Given
         val instance = createInstance()
 
@@ -84,7 +94,7 @@ class DotnetNuGetCacheCleanerTest {
     }
 
     @Test
-    fun shouldNotProvideTargetsWhenTryExecuteThrowsException() {
+    fun `should not provide targets when tryExecute throws exception`() {
         // Given
         val instance = createInstance()
 
@@ -99,7 +109,7 @@ class DotnetNuGetCacheCleanerTest {
     }
 
     @Test
-    fun shouldNotProvideTargetsWhenExitCodeIsNotZero() {
+    fun `should not provide targets when exit code is not zero`() {
         // Given
         val instance = createInstance()
 
@@ -112,19 +122,57 @@ class DotnetNuGetCacheCleanerTest {
     }
 
     @Test
-    fun shouldDoCleanup() {
+    fun `should do cleanup`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList<String>(), emptyList<String>())
+        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(createComandLine(listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.CLEAR_ARG))) }
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), _cleanTimeout) }
     }
 
-    private fun createComandLine(args: List<CommandLineArgument> = listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.LIST_ARG)) = CommandLine(
+    @Test
+    fun `should do cleanup with default timeout when configuration parameter is null`() {
+        // Given
+        val instance = createInstance()
+        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} returns null
+
+        // When
+        instance.clean(File("target"))
+
+        // Then
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600)}
+    }
+
+    @Test
+    fun `should do cleanup with default timeout when configuration parameter cannot be obtained`() {
+        // Given
+        val instance = createInstance()
+        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} throws RunBuildException("Runner session was not started")
+
+        // When
+        instance.clean(File("target"))
+
+        // Then
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600)}
+    }
+
+    private fun someNugetCleanCommandLine() =
+        createComandLine(
+            listOf(
+                DotnetNugetCacheCleaner.NUGET_ARG,
+                DotnetNugetCacheCleaner.LOCALS_ARG,
+                CommandLineArgument("type"),
+                DotnetNugetCacheCleaner.CLEAR_ARG,
+            )
+        )
+
+  private fun createComandLine(args: List<CommandLineArgument> = listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.LIST_ARG)) = CommandLine(
             null,
             TargetType.SystemDiagnostics,
             Path(_dotnetExecutable),
@@ -139,5 +187,7 @@ class DotnetNuGetCacheCleanerTest {
             _toolProvider,
             _pathsService,
             _environmentVariables,
-            _commandLineExecutor)
+            _commandLineExecutor,
+            _parametersService,
+      )
 }

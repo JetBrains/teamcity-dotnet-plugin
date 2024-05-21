@@ -76,6 +76,8 @@ object DotnetConstants {
     const val PARAM_TEST_RETRY_ENABLED = "teamcity.internal.dotnet.test.retry.enabled"
     // Integer maximum count of failed tests to retry
     const val PARAM_TEST_RETRY_MAX_FAILURES = "teamcity.internal.dotnet.test.retry.maxFailures"
+    // Integer max NuGet cache clean time in seconds
+    const val PARAM_NUGET_CACHE_CLEAN_TIMEOUT = "teamcity.internal.dotnet.nuget.cache.clean.timeoutSec"
 
     // Internal properties
     // true or false (true by default)
