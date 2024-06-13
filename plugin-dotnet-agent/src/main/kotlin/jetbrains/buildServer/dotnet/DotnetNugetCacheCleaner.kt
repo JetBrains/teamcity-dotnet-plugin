@@ -33,6 +33,16 @@ class DotnetNugetCacheCleaner(
                 .let { it?.trim()?.toInt() ?: DEFAULT_NUGET_CACHE_CLEAN_TIMEOUT_IN_SECONDS }
         }.getOrDefault(DEFAULT_NUGET_CACHE_CLEAN_TIMEOUT_IN_SECONDS)
 
+    private val _overrideCacheCleanIdleTimeout
+        get() = runCatching {
+            _parametersService
+                .tryGetParameter(
+                    ParameterType.Configuration,
+                    DotnetConstants.PARAM_NUGET_CACHE_CLEAN_IDLE_TIMEOUT_OVERRIDE,
+                )
+                .let { it?.trim()?.toBoolean() ?: true }
+        }.getOrDefault(true)
+
     override val targets: Sequence<File>
         get() = sequence {
             runDotnet(
@@ -41,6 +51,7 @@ class DotnetNugetCacheCleaner(
                 _commandArg,
                 LIST_ARG,
                 executionTimeoutSeconds = DEFAULT_NUGET_CACHE_LIST_TIMEOUT_IN_SECONDS,
+                overrideIdleTimeout = false,
             )?.let {
                 if (it.exitCode == 0) {
                     val pathPattern = Regex("^.*$command:\\s*(.+)\$", RegexOption.IGNORE_CASE)
@@ -59,10 +70,14 @@ class DotnetNugetCacheCleaner(
         _commandArg,
         CLEAR_ARG,
         executionTimeoutSeconds = _cleanTimeout,
+        overrideIdleTimeout = _overrideCacheCleanIdleTimeout,
     )?.exitCode ?: -1)  == 0
 
-    private fun runDotnet(vararg args: CommandLineArgument, executionTimeoutSeconds: Int) =
-            dotnet?.let {
+    private fun runDotnet(
+        vararg args: CommandLineArgument,
+        executionTimeoutSeconds: Int,
+        overrideIdleTimeout: Boolean,
+    ) = dotnet?.let {
                 try {
                     _commandLineExecutor.tryExecute(
                             CommandLine(
@@ -74,6 +89,7 @@ class DotnetNugetCacheCleaner(
                                     _environmentVariables.getVariables(Version.Empty).toList(),
                             ),
                             executionTimeoutSeconds,
+                            overrideIdleTimeout,
                     )
                 }
                 catch (ex: Exception) {

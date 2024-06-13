@@ -125,41 +125,41 @@ class DotnetNuGetCacheCleanerTest {
     fun `should do cleanup`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), _cleanTimeout) }
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), _cleanTimeout, true) }
     }
 
     @Test
     fun `should do cleanup with default timeout when configuration parameter is null`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
         every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} returns null
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600)}
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, true)}
     }
 
     @Test
     fun `should do cleanup with default timeout when configuration parameter cannot be obtained`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
         every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} throws RunBuildException("Runner session was not started")
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600)}
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, true)}
     }
 
     private fun someNugetCleanCommandLine() =

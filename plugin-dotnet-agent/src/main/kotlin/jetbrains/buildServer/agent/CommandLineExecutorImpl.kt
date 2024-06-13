@@ -6,7 +6,12 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import java.io.File
 
 class CommandLineExecutorImpl : CommandLineExecutor {
-    override fun tryExecute(commandLine: CommandLine, executionTimeoutSeconds: Int): CommandLineResult? {
+
+    override fun tryExecute(
+        commandLine: CommandLine,
+        executionTimeoutSeconds: Int,
+        overrideIdleTimeout: Boolean,
+    ): CommandLineResult? {
         val cmd = GeneralCommandLine()
         cmd.exePath = commandLine.executableFile.path
         cmd.setWorkingDirectory(File(commandLine.workingDirectory.path))
@@ -21,7 +26,12 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         cmd.envParams = currentEnvironment
 
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
-        return executor.runProcess(executionTimeoutSeconds)?.let {
+        val execResult = if (overrideIdleTimeout) {
+            executor.runProcess(null, executionTimeoutSeconds)
+        } else {
+            executor.runProcess(executionTimeoutSeconds)
+        }
+        return execResult?.let {
             if (LOG.isDebugEnabled) {
                 LOG.debug("---> \"${cmd.commandLineString}\"}")
             }
