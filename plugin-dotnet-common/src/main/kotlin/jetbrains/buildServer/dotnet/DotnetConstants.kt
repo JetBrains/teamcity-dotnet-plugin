@@ -78,7 +78,6 @@ object DotnetConstants {
     const val PARAM_TEST_RETRY_MAX_FAILURES = "teamcity.internal.dotnet.test.retry.maxFailures"
     // Integer max NuGet cache clean time in seconds
     const val PARAM_NUGET_CACHE_CLEAN_TIMEOUT = "teamcity.internal.dotnet.nuget.cache.clean.timeoutSec"
-    const val PARAM_NUGET_CACHE_CLEAN_IDLE_TIMEOUT_OVERRIDE = "teamcity.internal.dotnet.nuget.cache.clean.idleTimeoutOverrideEnabled"
 
     // Internal properties
     // true or false (true by default)

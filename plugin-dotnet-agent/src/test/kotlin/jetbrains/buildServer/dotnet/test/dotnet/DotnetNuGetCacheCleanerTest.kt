@@ -36,6 +36,7 @@ class DotnetNuGetCacheCleanerTest {
     private val _workingDirectory = File("wd")
     private val _envVars = sequenceOf(CommandLineEnvironmentVariable("name`", "val"))
     private val _cleanTimeout = 300
+    private val _listTargetsTimeout = 60
 
     @BeforeMethod
     fun setUp() {
@@ -72,7 +73,13 @@ class DotnetNuGetCacheCleanerTest {
         val instance = createInstance()
 
         // When
-        every {  _commandLineExecutor.tryExecute(createComandLine()) } returns CommandLineResult(0, stdOut, emptyList())
+        every {
+            _commandLineExecutor.tryExecute(
+                createCommandLine(),
+                _listTargetsTimeout,
+                _listTargetsTimeout,
+            )
+        } returns CommandLineResult(0, stdOut, emptyList())
         val actualTargets = instance.targets.toList()
 
         // Then
@@ -86,7 +93,13 @@ class DotnetNuGetCacheCleanerTest {
 
         // When
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } throws ToolCannotBeFoundException(DotnetConstants.EXECUTABLE)
-        every {  _commandLineExecutor.tryExecute(createComandLine()) } returns CommandLineResult(0, listOf("info : type: .nuget/packages/"), emptyList())
+        every {
+            _commandLineExecutor.tryExecute(
+                createCommandLine(),
+                _listTargetsTimeout,
+                _listTargetsTimeout,
+            )
+        } returns CommandLineResult(0, listOf("info : type: .nuget/packages/"), emptyList())
         val actualTargets = instance.targets.toList()
 
         // Then
@@ -100,7 +113,13 @@ class DotnetNuGetCacheCleanerTest {
 
         // When
         every { _toolProvider.getPath(DotnetConstants.EXECUTABLE) } throws ToolCannotBeFoundException(DotnetConstants.EXECUTABLE)
-        every {  _commandLineExecutor.tryExecute(createComandLine()) } throws ExecutionException("Cannot execute.")
+        every {
+            _commandLineExecutor.tryExecute(
+                createCommandLine(),
+                _listTargetsTimeout,
+                _listTargetsTimeout,
+            )
+        } throws ExecutionException("Cannot execute.")
 
         val actualTargets = instance.targets.toList()
 
@@ -114,7 +133,13 @@ class DotnetNuGetCacheCleanerTest {
         val instance = createInstance()
 
         // When
-        every {  _commandLineExecutor.tryExecute(createComandLine()) } returns CommandLineResult(23, listOf("info : type: .nuget/packages/"), emptyList())
+        every {
+            _commandLineExecutor.tryExecute(
+                createCommandLine(),
+                _listTargetsTimeout,
+                _listTargetsTimeout,
+            )
+        } returns CommandLineResult(23, listOf("info : type: .nuget/packages/"), emptyList())
         val actualTargets = instance.targets.toList()
 
         // Then
@@ -125,45 +150,67 @@ class DotnetNuGetCacheCleanerTest {
     fun `should do cleanup`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(
+            0,
+            emptyList(),
+            emptyList(),
+        )
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), _cleanTimeout, true) }
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), _cleanTimeout, _cleanTimeout) }
     }
 
     @Test
     fun `should do cleanup with default timeout when configuration parameter is null`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} returns null
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(
+            0,
+            emptyList(),
+            emptyList(),
+        )
+        every {
+            _parametersService.tryGetParameter(
+                ParameterType.Configuration,
+                PARAM_NUGET_CACHE_CLEAN_TIMEOUT,
+            )
+        } returns null
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, true)}
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, 600) }
     }
 
     @Test
     fun `should do cleanup with default timeout when configuration parameter cannot be obtained`() {
         // Given
         val instance = createInstance()
-        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(0, emptyList(), emptyList())
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, PARAM_NUGET_CACHE_CLEAN_TIMEOUT)} throws RunBuildException("Runner session was not started")
+        every { _commandLineExecutor.tryExecute(any(), any(), any()) } returns CommandLineResult(
+            0,
+            emptyList(),
+            emptyList(),
+        )
+        every {
+            _parametersService.tryGetParameter(
+                ParameterType.Configuration,
+                PARAM_NUGET_CACHE_CLEAN_TIMEOUT
+            )
+        } throws RunBuildException("Runner session was not started")
 
         // When
         instance.clean(File("target"))
 
         // Then
-        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, true)}
+        verify { _commandLineExecutor.tryExecute(someNugetCleanCommandLine(), 600, 600) }
     }
 
     private fun someNugetCleanCommandLine() =
-        createComandLine(
+        createCommandLine(
             listOf(
                 DotnetNugetCacheCleaner.NUGET_ARG,
                 DotnetNugetCacheCleaner.LOCALS_ARG,
@@ -172,13 +219,21 @@ class DotnetNuGetCacheCleanerTest {
             )
         )
 
-  private fun createComandLine(args: List<CommandLineArgument> = listOf(DotnetNugetCacheCleaner.NUGET_ARG, DotnetNugetCacheCleaner.LOCALS_ARG, CommandLineArgument("type"), DotnetNugetCacheCleaner.LIST_ARG)) = CommandLine(
-            null,
-            TargetType.SystemDiagnostics,
-            Path(_dotnetExecutable),
-            Path(_workingDirectory.path),
-            args,
-            _envVars.toList())
+    private fun createCommandLine(
+        args: List<CommandLineArgument> = listOf(
+            DotnetNugetCacheCleaner.NUGET_ARG,
+            DotnetNugetCacheCleaner.LOCALS_ARG,
+            CommandLineArgument("type"),
+            DotnetNugetCacheCleaner.LIST_ARG,
+        )
+    ) = CommandLine(
+        null,
+        TargetType.SystemDiagnostics,
+        Path(_dotnetExecutable),
+        Path(_workingDirectory.path),
+        args,
+        _envVars.toList(),
+    )
 
     private fun createInstance() = DotnetNugetCacheCleaner(
             "type",

@@ -4,6 +4,6 @@ interface CommandLineExecutor {
     fun tryExecute(
         commandLine: CommandLine,
         executionTimeoutSeconds: Int = 60,
-        overrideIdleTimeout: Boolean = false,
+        idleTimeoutSeconds: Int = 90,
     ): CommandLineResult?
 }

@@ -10,7 +10,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
     override fun tryExecute(
         commandLine: CommandLine,
         executionTimeoutSeconds: Int,
-        overrideIdleTimeout: Boolean,
+        idleTimeoutSeconds: Int,
     ): CommandLineResult? {
         val cmd = GeneralCommandLine()
         cmd.exePath = commandLine.executableFile.path
@@ -26,12 +26,7 @@ class CommandLineExecutorImpl : CommandLineExecutor {
         cmd.envParams = currentEnvironment
 
         val executor = jetbrains.buildServer.CommandLineExecutor(cmd)
-        val execResult = if (overrideIdleTimeout) {
-            executor.runProcess(null, executionTimeoutSeconds)
-        } else {
-            executor.runProcess(executionTimeoutSeconds)
-        }
-        return execResult?.let {
+        return executor.runProcess(executionTimeoutSeconds, idleTimeoutSeconds)?.let {
             if (LOG.isDebugEnabled) {
                 LOG.debug("---> \"${cmd.commandLineString}\"}")
             }
