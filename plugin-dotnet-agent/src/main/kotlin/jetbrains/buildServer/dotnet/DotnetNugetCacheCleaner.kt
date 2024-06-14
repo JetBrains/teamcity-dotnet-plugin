@@ -40,7 +40,7 @@ class DotnetNugetCacheCleaner(
                 LOCALS_ARG,
                 _commandArg,
                 LIST_ARG,
-                executionTimeoutSeconds = DEFAULT_NUGET_CACHE_LIST_TIMEOUT_IN_SECONDS,
+                timeoutSeconds = DEFAULT_NUGET_CACHE_LIST_TIMEOUT_IN_SECONDS,
             )?.let {
                 if (it.exitCode == 0) {
                     val pathPattern = Regex("^.*$command:\\s*(.+)\$", RegexOption.IGNORE_CASE)
@@ -58,10 +58,10 @@ class DotnetNugetCacheCleaner(
         LOCALS_ARG,
         _commandArg,
         CLEAR_ARG,
-        executionTimeoutSeconds = _cleanTimeout,
+        timeoutSeconds = _cleanTimeout,
     )?.exitCode ?: -1)  == 0
 
-    private fun runDotnet(vararg args: CommandLineArgument, executionTimeoutSeconds: Int) =
+    private fun runDotnet(vararg args: CommandLineArgument, timeoutSeconds: Int) =
             dotnet?.let {
                 try {
                     _commandLineExecutor.tryExecute(
@@ -73,7 +73,10 @@ class DotnetNugetCacheCleaner(
                                     args.toList(),
                                     _environmentVariables.getVariables(Version.Empty).toList(),
                             ),
-                            executionTimeoutSeconds,
+                            executionTimeoutSeconds = timeoutSeconds,
+                            // we use the same value for the idle timeout because the cache clean command
+                            // might run for a long time without any output
+                            idleTimeoutSeconds = timeoutSeconds,
                     )
                 }
                 catch (ex: Exception) {
