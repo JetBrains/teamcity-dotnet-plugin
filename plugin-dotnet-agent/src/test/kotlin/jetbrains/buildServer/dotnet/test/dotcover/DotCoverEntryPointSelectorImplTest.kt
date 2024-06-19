@@ -8,9 +8,6 @@ import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.dotcover.DotCoverEntryPointSelectorImpl
 import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
 import jetbrains.buildServer.dotcover.tool.DotCoverToolType
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.dotnet.test.StringExtensions.toPlatformPath
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert

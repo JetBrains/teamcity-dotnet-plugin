@@ -1,8 +1,8 @@
 package jetbrains.buildServer.dotcover
 
-import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.nunit.NUnitRunnerConstants
 
 class DotCoverModeDetector {
     fun detectMode(runnerType: String, runParameters: Map<String, String>) = when(runnerType) {
@@ -10,7 +10,7 @@ class DotCoverModeDetector {
         CoverageConstants.DOTCOVER_RUNNER_TYPE -> DotCoverMode.Runner
 
         // .NET runner
-        DotnetConstants.RUNNER_TYPE ->  when {
+        DotnetConstants.RUNNER_TYPE, NUnitRunnerConstants.NUNIT_RUN_TYPE ->  when {
             isDotCoverWrapperEnabled(runParameters) -> DotCoverMode.Wrapper
             else -> DotCoverMode.Disabled
         }

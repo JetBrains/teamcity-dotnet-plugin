@@ -9,7 +9,7 @@ enum class CommandLineArgumentType {
     // targets
     Target,
 
-    // additinal arguments
+    // additional arguments
     Secondary,
 
     // user custom arguments

@@ -111,7 +111,7 @@ class DotNetSourceCodeProviderTest {
     @Throws(IOException::class)
     fun testSourcesMapping_mapped_rel() {
         _configurationParameters["dotNetCoverage.dotCover.source.mapping"] =
-            _foreignDir.toString() + "/../aaa/../" + _foreignDir!!.name + "=>" + _checkoutDir + "/"
+            _foreignDir.toString() + "/../aaa/../" + _foreignDir.name + "=>" + _checkoutDir + "/"
         addForeignFile(1, "foo.txt")
         _provider.preprocessFoundFiles(_logger, _configurationParameters, setOf(1))
         Assert.assertNotNull(_provider.getFileContentLines(1))

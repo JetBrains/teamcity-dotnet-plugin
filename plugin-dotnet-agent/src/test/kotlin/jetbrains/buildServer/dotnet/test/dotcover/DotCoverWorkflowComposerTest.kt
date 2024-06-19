@@ -15,6 +15,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
+import jetbrains.buildServer.mono.MonoToolProvider
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -35,6 +36,8 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _entryPointSelector: DotCoverEntryPointSelector
     @MockK private lateinit var _blockToken: Disposable
     @MockK private lateinit var _dotCoverSettings: DotCoverSettings
+    @MockK private lateinit var _monoToolProvider: MonoToolProvider
+    @MockK private lateinit var _buildStepContext: BuildStepContext
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
 
     @BeforeMethod
@@ -611,7 +614,7 @@ class DotCoverWorkflowComposerTest {
             _entryPointSelector,
             _dotCoverSettings,
             listOf(
-                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService),
+                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
                 DotCoverReportCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService)
             ))

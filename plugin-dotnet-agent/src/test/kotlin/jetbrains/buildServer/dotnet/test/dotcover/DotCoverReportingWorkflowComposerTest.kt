@@ -18,6 +18,7 @@ import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublish
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
+import jetbrains.buildServer.mono.MonoToolProvider
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -37,6 +38,8 @@ class DotCoverReportingWorkflowComposerTest {
     @MockK private lateinit var _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator
     @MockK private lateinit var _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher
     @MockK private lateinit var _uploader: ArtifactsUploader
+    @MockK private lateinit var _monoToolProvider: MonoToolProvider
+    @MockK private lateinit var _buildStepContext: BuildStepContext
 
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
     private val tempFiles = TempFiles()
@@ -390,7 +393,7 @@ class DotCoverReportingWorkflowComposerTest {
             _entryPointSelector,
             _dotCoverSettings,
             listOf(
-                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService),
+                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
                 DotCoverReportCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService)
             ),

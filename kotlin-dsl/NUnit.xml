@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsl-extension kind="buildStep" type="nunit-console" generateDslJar="true">
+  <class name="NUnitStep">
+    <description>
+      A [build step](https://www.jetbrains.com/help/teamcity/?NUnit) running NUnit tests
+    </description>
+  </class>
+  <function name="nunit">
+    <description>
+      Adds a [build step](https://www.jetbrains.com/help/teamcity/?NUnit) running NUnit tests
+      @see NUnitStep
+    </description>
+  </function>
+  <params>
+    <param name="teamcity.build.workingDir" dslName="workingDir">
+      <description>
+        [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
+        script,
+        specify it if it is different from the [checkout
+        directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).
+      </description>
+    </param>
+    <param name="toolPath" dslName="nunitPath">
+      <description>
+        A path to NUnit console tool including the file name
+      </description>
+    </param>
+    <param name="includeTests" mandatory="true">
+      <description>
+        Comma- or newline-separated list of .NET assemblies where the NUnit tests are specified
+        relative to the checkout directory. Wildcards are supported.
+      </description>
+    </param>
+    <param name="excludeTests">
+      <description>
+        Comma- or newline-separated list of .NET assemblies which should be excluded
+        from the list of found assemblies to test.
+      </description>
+    </param>
+    <param name="includeCategories">
+      <description>
+        Comma- or newline-separated list of NUnit categories.
+        [Category expressions](https://www.jetbrains.com/help/teamcity/?TeamCity+NUnit+Test+Launcher#TeamCityNUnitTestLauncher-CategoryExpression) are supported as well.
+      </description>
+    </param>
+    <param name="excludeCategories">
+      <description>
+        Comma- or newline-separated list of NUnit categories which should be excluded.
+        [Category expressions](https://www.jetbrains.com/help/teamcity/?TeamCity+NUnit+Test+Launcher#TeamCityNUnitTestLauncher-CategoryExpression) are supported as well.
+      </description>
+    </param>
+    <param name="teamcity.tests.runRiskGroupTestsFirst" dslName="reduceTestFeedback" type="boolean" trueValue="recentlyFailed" falseValue="">
+      <description>
+        Whether TeamCity should run recently failed tests first to reduce test feedback
+      </description>
+    </param>
+    <param name="useProjectFile" type="boolean" trueValue="true" falseValue="">
+      <description>
+        Whether TeamCity should create *.nunit test project files for each test assemblies location
+      </description>
+    </param>
+    <param name="arguments" dslName="args">
+      <description>Enter additional command line parameters for nunit console.</description>
+    </param>
+    <param name="configFile">
+      <description>Path to nunit configuration file.</description>
+    </param>
+  </params>
+  <examples>
+    <example>
+      <description>
+        Runs [NUnit](https://nunit.org/) tests with help of the default NUnit console tool installed on the TeamCity server.
+        Collects сode coverage with help of [JetBrains DotCover](https://www.jetbrains.com/dotcover/) and reports it to the TeamCity server together with the test results.
+      </description>
+      <code>
+        nunit {
+          nunitPath = "%teamcity.tool.NUnit.Console.DEFAULT%"
+          includeTests = """tests\*.dll"""
+          coverage = dotcover {
+            assemblyFilters = "+:*"
+          }
+        }
+      </code>
+    </example>
+  </examples>
+</dsl-extension>

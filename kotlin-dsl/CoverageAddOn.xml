@@ -8,6 +8,7 @@
     <dsl type="dotnet" applicable="params['command'] == 'vstest'" />
     <dsl type="dotnet" applicable="params['command'] == 'custom'" />
     <dsl type="dotnet" applicable="params['command'] == 'devenv'" />
+    <dsl type="nunit-console" />
   </extends>
   <params>
     <param name="dotNetCoverage.tool" dslName="coverage" type="compound">

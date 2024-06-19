@@ -61,5 +61,5 @@ class PathsServiceImpl(
         uniqueName(getPath(PathType.AgentTemp), extension)
 
     override fun resolvePath(pathType: PathType, relativePath: String) =
-        getPath(PathType.Plugin).toPath().resolve(relativePath).toAbsolutePath()
+        getPath(pathType).toPath().resolve(relativePath).toAbsolutePath()
 }

@@ -737,4 +737,38 @@
   <bean class="jetbrains.buildServer.script.ToolVersionResolverImpl"/>
   <bean class="jetbrains.buildServer.script.RspContentFactoryImpl"/>
 
+  <!--NUnit composers-->
+  <bean class="jetbrains.buildServer.agent.runner.WorkflowBuildServiceFactory" id="nunit">
+    <constructor-arg value="nunit-console"/>
+  </bean>
+  <bean class="jetbrains.buildServer.nunit.NUnitWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitViaCommandLineWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitViaProjectFileWorkflowComposer" id="nUnitViaProjectFileComposer"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitReorderingWorkflowComposer">
+    <constructor-arg ref="nUnitViaProjectFileComposer"/>
+  </bean>
+  <bean class="jetbrains.buildServer.nunit.NUnitToolStateWorkflowComposer"/>
+  <bean class="jetbrains.buildServer.nunit.MonoExecutableWorkflowComposer">
+    <constructor-arg ref="simpleStateWorkflowComposer"/>
+  </bean>
+  <bean class="jetbrains.buildServer.nunit.NUnitSettingsImpl"/>
+
+  <!--NUnit tool state -->
+  <bean class="jetbrains.buildServer.nunit.toolState.NUnitToolStateVerifier"/>
+  <bean class="jetbrains.buildServer.nunit.toolState.NUnitToolStateParser"/>
+
+  <!--NUnit arguments -->
+  <bean class="jetbrains.buildServer.nunit.arguments.NUnitConsoleRunnerPathProvider"/>
+  <bean class="jetbrains.buildServer.nunit.arguments.NUnitTestFilterProvider"/>
+  <bean class="jetbrains.buildServer.nunit.arguments.NUnitArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.nunit.arguments.NUnitTestingAssembliesProvider"/>
+
+  <!--NUnit XML project -->
+  <bean class="jetbrains.buildServer.nunit.nUnitProject.NUnitProjectGenerator"/>
+  <bean class="jetbrains.buildServer.nunit.nUnitProject.NUnitProjectSerializer"/>
+
+  <!--NUnit test reordering -->
+  <bean class="jetbrains.buildServer.nunit.testReordering.RunnerConfigVarTestInfoParser"/>
+  <bean class="jetbrains.buildServer.nunit.testReordering.NUnitXmlTestInfoParser"/>
+  <bean class="jetbrains.buildServer.nunit.testReordering.NUnitReorderingTestsSplitService"/>
 </beans>

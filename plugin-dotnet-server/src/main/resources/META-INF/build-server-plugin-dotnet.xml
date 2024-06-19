@@ -122,4 +122,17 @@
 
   <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionReport" />
   <bean class="jetbrains.buildServer.healthStatus.reports.DupFinderWithIncompatibleCltVersionPageExtension" />
+
+  <!--NUnit-->
+  <bean class="jetbrains.buildServer.nunit.NUnitRunType">
+    <constructor-arg ref="nUnitRequirementsProvider"/>
+  </bean>
+  <bean class="jetbrains.buildServer.nunit.NUnitRequirementsProvider" id="nUnitRequirementsProvider">
+    <constructor-arg ref="dotCoverRequirementsProvider" />
+  </bean>
+  <bean class="jetbrains.buildServer.nunit.ToolsParserImpl"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitAvailableToolsFetcher" id="nUnitAvailableToolsFetcher"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitToolProvider">
+    <constructor-arg ref="nUnitAvailableToolsFetcher"/>
+  </bean>
 </beans>

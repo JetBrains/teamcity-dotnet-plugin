@@ -123,19 +123,12 @@ object DotnetConstants {
     // Tool providers
     const val PACKAGE_NUGET_EXTENSION = "nupkg"
 
-    // Cross-platform dotCover
-    const val DOTCOVER_PACKAGE_TYPE = "jetbrains.dotcover.dotnetclitool"
-    const val DOTCOVER_WIN_PACKAGE_TYPE = "jetbrains.dotcover.commandlinetools"
-    const val DOTCOVER_PACKAGE_TOOL_TYPE_NAME = "Cross-platform dotCover"
-    const val DOTCOVER_PACKAGE_SHORT_TOOL_TYPE_NAME = "Cross-platform dotCover"
-    const val DOTCOVER_PACKAGE_TARGET_FILE_DISPLAY_NAME = "DotCover Home Directory"
-
     // Requirements
     const val CONFIG_PREFIX_DOTNET_FRAMEWORK_SDK = "DotNetFrameworkSDK"
     const val CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK = "DotNetFrameworkTargetingPack"
     const val CONFIG_PREFIX_CORE_SDK = "DotNetCoreSDK"
     const val CONFIG_PREFIX_CORE_RUNTIME = "DotNetCoreRuntime"
-    const val CONFIG_PREFIX_DOTNET_FAMEWORK = "DotNetFramework"
+    const val CONFIG_PREFIX_DOTNET_FRAMEWORK = "DotNetFramework"
     const val CONFIG_PREFIX_MSBUILD_TOOLS = "MSBuildTools"
     const val CONFIG_PREFIX_DOTNET_MSTEST = "teamcity.dotnet.mstest"
     const val CONFIG_PREFIX_DOTNET_VSTEST = "teamcity.dotnet.vstest"

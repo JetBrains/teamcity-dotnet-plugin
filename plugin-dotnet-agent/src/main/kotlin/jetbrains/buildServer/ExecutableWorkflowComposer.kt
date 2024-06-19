@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer
 
 import jetbrains.buildServer.agent.*

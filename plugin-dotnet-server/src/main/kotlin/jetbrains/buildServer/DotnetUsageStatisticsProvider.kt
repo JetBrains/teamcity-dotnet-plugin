@@ -7,6 +7,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_COMMAND
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_MSBUILD_VERSION
 import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_VISUAL_STUDIO_VERSION
 import jetbrains.buildServer.dotnet.Tool
+import jetbrains.buildServer.nunit.NUnitRunnerConstants
 import jetbrains.buildServer.serverSide.SBuildRunnerDescriptor
 import jetbrains.buildServer.serverSide.SBuildServer
 import jetbrains.buildServer.usageStatistics.UsageStatisticsPublisher
@@ -35,6 +36,7 @@ class DotnetUsageStatisticsProvider(
                 .map {
                     when (it.key) {
                         DotnetConstants.RUNNER_TYPE -> it.value.toDotnetStat()
+                        NUnitRunnerConstants.NUNIT_RUN_TYPE -> it.value.toStat { NUnitToolDesc }
                         "MSBuild" -> it.value.toMSBuildStat()
                         "VS.Solution" -> it.value.toVSStat()
                         "VisualStudioTest" -> it.value.toVSTestStat()
@@ -202,5 +204,6 @@ class DotnetUsageStatisticsProvider(
         private val NugetInstallerToolDesc = sequenceOf(ToolDescriptor("nuget.installer", "NuGet: Installer"))
         private val NugetPublishToolDesc = sequenceOf(ToolDescriptor("nuget.publish", "NuGet: Publish"))
         private val NugetPackToolDesc = sequenceOf(ToolDescriptor("nuget.pack", "NuGet: Pack"))
+        private val NUnitToolDesc = sequenceOf(ToolDescriptor(NUnitRunnerConstants.NUNIT_RUN_TYPE, "NUnit Console"))
     }
 }

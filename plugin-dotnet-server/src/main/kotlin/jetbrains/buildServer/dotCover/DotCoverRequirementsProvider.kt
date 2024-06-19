@@ -1,7 +1,6 @@
 package jetbrains.buildServer.dotCover
 
 import jetbrains.buildServer.RequirementsProvider
-import jetbrains.buildServer.dotNet.DotNetConstants
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.requirements.Requirement
 import jetbrains.buildServer.requirements.RequirementQualifier
@@ -55,9 +54,14 @@ class DotCoverRequirementsProvider(
     }
 
     companion object {
-        internal const val DOTNET_FRAMEWORK_472_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(7\\.([2-9]|[\\d]{2,})|[8-9]|[\\d]{2,})[\\d\\.]*_.+"
-        internal const val DOTNET_FRAMEWORK_461_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
-        internal val DOTNET_FRAMEWORK_35_OR_40_PATTERN = DotNetConstants.DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DotNetConstants.DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
+        internal const val DOTNET_FRAMEWORK = "DotNetFramework";
+        internal const val V4 = "4"
+        internal const val V3_5 = "3.5"
+        internal const val DOTNET_FRAMEWORK_4 = DOTNET_FRAMEWORK + V4
+        internal const val DOTNET_FRAMEWORK_3_5 = DOTNET_FRAMEWORK + V3_5
+        internal const val DOTNET_FRAMEWORK_472_PATTERN = DOTNET_FRAMEWORK_4 + "\\.(7\\.([2-9]|[\\d]{2,})|[8-9]|[\\d]{2,})[\\d\\.]*_.+"
+        internal const val DOTNET_FRAMEWORK_461_PATTERN = DOTNET_FRAMEWORK_4 + "\\.(6\\.(?!0)|[7-9]|[\\d]{2,})[\\d\\.]*_.+"
+        internal val DOTNET_FRAMEWORK_35_OR_40_PATTERN = DOTNET_FRAMEWORK_3_5.replace(".", "\\.") + "_.+|" + DOTNET_FRAMEWORK_4 + "\\.[\\d\\.]+_.+"
 
         private val DOTNET_FRAMEWORK_472_REQUIREMENT =
             Requirement("${RequirementQualifier.EXISTS_QUALIFIER}($DOTNET_FRAMEWORK_472_PATTERN)", null, RequirementType.EXISTS)

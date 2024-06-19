@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet.requirements
 
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_SDK
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.dotnet.SdkType
@@ -35,7 +35,7 @@ class SDKBasedRequirementFactoryImpl(
                     .firstOrNull { it.versionType == SdkVersionType.Default && (it.sdkType == SdkType.FullDotnetTargetingPack || it.sdkType == SdkType.DotnetFramework) }
                     ?.let { when (it.sdkType) {
                         SdkType.FullDotnetTargetingPack -> "$CONFIG_PREFIX_DOTNET_FRAMEWORK_TARGETING_PACK${it.version}$CONFIG_SUFFIX_PATH"
-                        else ->  "$CONFIG_PREFIX_DOTNET_FAMEWORK${it.version}[\\.\\d]*_x[\\d]{2}"
+                        else ->  "$CONFIG_PREFIX_DOTNET_FRAMEWORK${it.version}[\\.\\d]*_x[\\d]{2}"
                     }}
                     ?.let { createRequirement(it) }
             }

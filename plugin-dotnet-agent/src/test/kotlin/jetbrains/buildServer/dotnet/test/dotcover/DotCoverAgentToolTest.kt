@@ -10,7 +10,7 @@ import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
 import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER_HOME
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME
-import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK
+import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
@@ -119,11 +119,11 @@ class DotCoverAgentToolTest {
     @DataProvider(name = "dotnet framework runtime detected params")
     fun `dotnet framework runtime detected params`(): Array<Array<Any>> {
         return arrayOf(
-            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FAMEWORK}4.7.2${CONFIG_SUFFIX_PATH}"), true),
-            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FAMEWORK}4.8${CONFIG_SUFFIX_PATH}"), true),
-            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FAMEWORK}4.6.1${CONFIG_SUFFIX_PATH}"), false),
-            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FAMEWORK}4.5${CONFIG_SUFFIX_PATH}"), false),
-            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FAMEWORK}4.0${CONFIG_SUFFIX_PATH}"), false),
+            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FRAMEWORK}4.7.2${CONFIG_SUFFIX_PATH}"), true),
+            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FRAMEWORK}4.8${CONFIG_SUFFIX_PATH}"), true),
+            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FRAMEWORK}4.6.1${CONFIG_SUFFIX_PATH}"), false),
+            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FRAMEWORK}4.5${CONFIG_SUFFIX_PATH}"), false),
+            arrayOf(sequenceOf("${CONFIG_PREFIX_DOTNET_FRAMEWORK}4.0${CONFIG_SUFFIX_PATH}"), false),
             arrayOf(emptySequence<String>(), false),
         )
     }

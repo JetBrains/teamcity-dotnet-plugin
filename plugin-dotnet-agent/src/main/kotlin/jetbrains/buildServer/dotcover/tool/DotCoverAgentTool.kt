@@ -82,7 +82,7 @@ class DotCoverAgentTool(
         val requirementName: String
     ) {
         DotnetFramework472(
-            DotnetConstants.CONFIG_PREFIX_DOTNET_FAMEWORK,
+            DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK,
             Version.MinDotNetFrameworkVersionForDotCover,
             DotnetConstants.CONFIG_SUFFIX_PATH,
             ".NET Framework 4.7.2+"
