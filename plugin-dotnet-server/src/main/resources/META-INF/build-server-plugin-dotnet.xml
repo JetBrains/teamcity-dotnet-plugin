@@ -132,7 +132,7 @@
   </bean>
   <bean class="jetbrains.buildServer.nunit.ToolsParserImpl"/>
   <bean class="jetbrains.buildServer.nunit.NUnitAvailableToolsFetcher" id="nUnitAvailableToolsFetcher"/>
-  <bean class="jetbrains.buildServer.nunit.NUnitToolProvider">
+  <bean class="jetbrains.buildServer.nunit.NUnitToolProviderInitializer">
     <constructor-arg ref="nUnitAvailableToolsFetcher"/>
   </bean>
 </beans>

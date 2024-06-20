@@ -7,7 +7,7 @@ import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.tools.available.*
 import jetbrains.buildServer.util.ArchiveUtil
 import jetbrains.buildServer.util.TimeService
-import java.io.*
+import java.io.File
 import java.net.URL
 
 class NUnitToolProvider(
