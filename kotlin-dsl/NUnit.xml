@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dsl-extension kind="buildStep" type="nunit-console" generateDslJar="true">
-  <class name="NUnitStep">
+  <class name="NUnitConsoleStep">
     <description>
       A [build step](https://www.jetbrains.com/help/teamcity/?NUnit) running NUnit tests
     </description>
   </class>
-  <function name="nunit">
+  <function name="nunitConsole">
     <description>
       Adds a [build step](https://www.jetbrains.com/help/teamcity/?NUnit) running NUnit tests
-      @see NUnitStep
+      @see NUnitConsoleStep
     </description>
   </function>
   <params>
@@ -73,7 +73,7 @@
         Collects сode coverage with help of [JetBrains DotCover](https://www.jetbrains.com/dotcover/) and reports it to the TeamCity server together with the test results.
       </description>
       <code>
-        nunit {
+        nunitConsole {
           nunitPath = "%teamcity.tool.NUnit.Console.DEFAULT%"
           includeTests = """tests\*.dll"""
           coverage = dotcover {
