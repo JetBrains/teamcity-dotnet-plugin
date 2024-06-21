@@ -117,15 +117,19 @@
       /></td>
 </tr>
 
+<c:set var="runRiskGroupTestsFirstName" value="teamcity.tests.runRiskGroupTestsFirst"/>
+<c:set var="runRiskGroupTestsFirstValue" value="recentlyFailed"/>
 <tr class="advancedSetting">
-  <th><label for="${bean.NUnitUseProjectFileKey}">Create *.nunit test project file:</label></th>
-  <td><props:checkboxProperty name="${bean.NUnitUseProjectFileKey}" />
-    <span class="smallNote">*.nunit project file will be created for each test assembly location.</span>
-    <span class="error" id="error_${bean.NUnitUseProjectFileKey}"></span>
+  <th>Options:</th>
+  <td>
+    <props:checkboxProperty name="${runRiskGroupTestsFirstName}" value="${runRiskGroupTestsFirstValue}"/>
+    <label for="${runRiskGroupTestsFirstName}">Run recently failed tests first</label>
+    <br/>
+    <props:checkboxProperty name="${bean.NUnitUseProjectFileKey}"/>
+    <label for="${bean.NUnitUseProjectFileKey}">Create *.nunit project</label>
+    <span class="smallNote">*.nunit test project file will be created for each test assembly location.</span>
   </td>
 </tr>
-
-<props:reduceTestFailureFeedback showRecentlyFailed="true" showRunNewAndModified="false"/>
 
 <tbody id="dotnet-coverage">
 <l:settingsGroup title=".NET Coverage">
