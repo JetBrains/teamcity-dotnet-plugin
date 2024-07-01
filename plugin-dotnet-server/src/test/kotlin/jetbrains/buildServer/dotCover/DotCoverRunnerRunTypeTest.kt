@@ -128,8 +128,9 @@ class DotCoverRunnerRunTypeTest {
         val properties = _instance.defaultRunnerProperties
 
         // assert
-        assertEquals(properties.size, 1)
+        assertEquals(properties.size, 2)
         assertEquals(properties.get(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT), "true")
+        assertEquals(properties.get(CoverageConstants.PARAM_DOTCOVER_HOME), "%teamcity.tool.${CoverageConstants.DOTCOVER_PACKAGE_ID}.DEFAULT%")
     }
 
     @Test
