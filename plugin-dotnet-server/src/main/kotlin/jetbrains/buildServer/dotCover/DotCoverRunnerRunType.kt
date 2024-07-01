@@ -38,9 +38,8 @@ class DotCoverRunnerRunType(
     override fun getIconUrl() =
         _pluginDescriptor.getPluginResourcesPath("dotcover.svg");
 
-    override fun getDefaultRunnerProperties() = mapOf(
-        CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT to "true",
-    )
+    override fun getDefaultRunnerProperties() = mapOf(CoverageConstants.PARAM_DOTCOVER_GENERATE_REPORT to "true")
+        .plus(DotCoverRunnerProperties.getDefaultRunnerProperties())
 
     override fun supports(runTypeExtension: RunTypeExtension) = when {
         runTypeExtension.isContainerWrapper()-> true
