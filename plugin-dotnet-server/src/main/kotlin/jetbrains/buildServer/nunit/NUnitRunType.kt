@@ -1,6 +1,7 @@
 package jetbrains.buildServer.nunit
 
 import jetbrains.buildServer.RequirementsProvider
+import jetbrains.buildServer.dotCover.DotCoverRunnerProperties
 import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.util.positioning.PositionAware
 import jetbrains.buildServer.web.functions.InternalProperties
@@ -66,7 +67,7 @@ class NUnitRunType(
     override fun getViewRunnerParamsJspFilePath() =
         _descriptor.getPluginResourcesPath("nunit/viewNUnitParameters.jsp")
 
-    override fun getDefaultRunnerProperties() = emptyMap<String, String>()
+    override fun getDefaultRunnerProperties(): Map<String, String> = DotCoverRunnerProperties.getDefaultRunnerProperties()
 
     override fun getTags() = setOf(".NET")
 

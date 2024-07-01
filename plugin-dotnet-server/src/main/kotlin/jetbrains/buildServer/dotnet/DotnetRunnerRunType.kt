@@ -3,6 +3,7 @@
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.RequirementsProvider
+import jetbrains.buildServer.dotCover.DotCoverRunnerProperties
 import jetbrains.buildServer.serverSide.InvalidProperty
 import jetbrains.buildServer.serverSide.PropertiesProcessor
 import jetbrains.buildServer.serverSide.RunType
@@ -66,7 +67,7 @@ class DotnetRunnerRunType(
         return _pluginDescriptor.getPluginResourcesPath("viewDotnetParameters.jsp")
     }
 
-    override fun getDefaultRunnerProperties() = emptyMap<String, String>()
+    override fun getDefaultRunnerProperties(): Map<String, String> = DotCoverRunnerProperties.getDefaultRunnerProperties()
 
     override fun describeParameters(parameters: Map<String, String>): String {
         val paths = (parameters[DotnetConstants.PARAM_PATHS] ?: "").trim()
