@@ -42,7 +42,7 @@ class NUnitSettingsTest {
             every { it.tryGetParameter(Runner, ReduceTestFailureFeedbackParameters.RECENTLY_FAILED_TESTS_PARAM) } returns
                     "TeamCity.NUnit.Category.STest.C_Test103_c1"
 
-            every { it.tryGetParameter(Configuration, NUnitRunnerConstants.NUNIT_USES_PROJECT_FILE) } returns "false"
+            every { it.tryGetParameter(Configuration, NUnitRunnerConstants.NUNIT_USES_PROJECT_FILE) } returns "true"
         }
 
         // act, assert
@@ -58,7 +58,7 @@ class NUnitSettingsTest {
                 it.testReorderingRecentlyFailedTests,
                 listOf(TestInfo("TeamCity.NUnit.Category.STest.C_Test103_c1"))
             )
-            assertFalse(it.useProjectFile)
+            assertTrue(it.useProjectFile)
             assertTrue(it.testReorderingEnabled)
         }
     }
