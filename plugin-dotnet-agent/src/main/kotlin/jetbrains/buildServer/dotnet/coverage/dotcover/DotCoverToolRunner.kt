@@ -1,6 +1,6 @@
 package jetbrains.buildServer.dotnet.coverage.dotcover
 
-import org.jdom.Document
+import org.jdom2.Document
 import java.io.IOException
 
 @Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
