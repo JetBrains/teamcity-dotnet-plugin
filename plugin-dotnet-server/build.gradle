@@ -23,15 +23,15 @@ teamcity {
 dependencies {
   implementation project(':plugin-dotnet-common')
   implementation 'com.google.code.gson:gson:2.9.1'
-  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
   provided "org.jetbrains.teamcity.internal:server-tools:${teamcityVersion}"
   provided "org.jetbrains.teamcity.internal:server:${teamcityVersion}"
   testImplementation 'org.testng:testng:7.5'
   testImplementation 'org.jmock:jmock-junit4:2.12.0'
   testImplementation 'io.mockk:mockk:1.13.2'
   testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
-  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+  testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
   agent project(path: ':plugin-dotnet-agent', configuration: 'plugin')
 
   constraints {
