@@ -25,7 +25,4 @@ class NUnitBean {
 
     val nUnitCategoryExcludeKey: String
         get() = NUnitRunnerConstants.NUNIT_CATEGORY_EXCLUDE
-
-    val nUnitUseProjectFileKey: String
-        get() = NUnitRunnerConstants.NUNIT_USES_PROJECT_FILE
 }

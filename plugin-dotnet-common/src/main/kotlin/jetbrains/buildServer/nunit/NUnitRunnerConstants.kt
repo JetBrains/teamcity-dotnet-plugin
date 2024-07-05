@@ -14,7 +14,9 @@ object NUnitRunnerConstants {
     const val NUNIT_PATH = "toolPath"
     const val NUNIT_COMMAND_LINE = "arguments"
     const val NUNIT_APP_CONFIG_FILE = "configFile"
-    const val NUNIT_USES_PROJECT_FILE = "useProjectFile"
+
+    // configuration parameter (false by default)
+    const val NUNIT_USES_PROJECT_FILE = "nunit_use_project_file"
 
     // internal properties
     // true or false (false by default)
