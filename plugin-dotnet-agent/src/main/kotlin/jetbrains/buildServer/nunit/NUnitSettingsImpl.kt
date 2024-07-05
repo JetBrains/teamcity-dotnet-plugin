@@ -52,8 +52,12 @@ class NUnitSettingsImpl(
         get() = getRunnerParameter(NUNIT_PATH)
 
     override val useProjectFile: Boolean
-        get() = getRunnerParameter(NUNIT_USES_PROJECT_FILE)?.let { it.toBoolean() } ?: false
+        get() = getConfigurationParameter(NUNIT_USES_PROJECT_FILE)?.let { it.toBoolean() } ?: false
 
     private fun getRunnerParameter(parameterName: String) =
         _parametersService.tryGetParameter(ParameterType.Runner, parameterName)
+
+    @Suppress("SameParameterValue")
+    private fun getConfigurationParameter(parameterName: String) =
+        _parametersService.tryGetParameter(ParameterType.Configuration, parameterName)
 }

@@ -124,10 +124,6 @@
   <td>
     <props:checkboxProperty name="${runRiskGroupTestsFirstName}" value="${runRiskGroupTestsFirstValue}"/>
     <label for="${runRiskGroupTestsFirstName}">Run recently failed tests first</label>
-    <br/>
-    <props:checkboxProperty name="${bean.NUnitUseProjectFileKey}"/>
-    <label for="${bean.NUnitUseProjectFileKey}">Create *.nunit project</label>
-    <span class="smallNote">*.nunit test project file will be created for each test assembly location.</span>
   </td>
 </tr>
 
