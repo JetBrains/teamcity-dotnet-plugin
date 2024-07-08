@@ -6,13 +6,13 @@ def localRepo = anyParamPath('TC_LOCAL_REPO')
 
 allprojects {
     repositories {
-        mavenCentral()
         if (localRepo) {
             maven {
                 name = "local-teamcity-artifacts"
                 url "file:///${localRepo}"
             }
         }
+        mavenCentral()
         maven {
             url = uri("https://download.jetbrains.com/teamcity-repository")
         }
