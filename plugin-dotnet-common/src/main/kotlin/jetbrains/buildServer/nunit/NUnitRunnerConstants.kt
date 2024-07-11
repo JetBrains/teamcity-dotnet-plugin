@@ -19,7 +19,7 @@ object NUnitRunnerConstants {
     const val NUNIT_USES_PROJECT_FILE = "nunit_use_project_file"
 
     // internal properties
-    // true or false (false by default)
+    // true or false (true by default)
     const val NUNIT_RUNNER_ENABLED = "teamcity.internal.dotnet.nunit.runner.enabled"
 }
 

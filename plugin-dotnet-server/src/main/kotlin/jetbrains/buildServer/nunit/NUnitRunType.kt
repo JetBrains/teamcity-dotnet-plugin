@@ -13,7 +13,7 @@ class NUnitRunType(
     runTypeRegistry: RunTypeRegistry
 ) : RunType() {
     init {
-        if (InternalProperties.getBoolean(NUnitRunnerConstants.NUNIT_RUNNER_ENABLED) == true) {
+        if (InternalProperties.getBooleanOrTrue(NUnitRunnerConstants.NUNIT_RUNNER_ENABLED)) {
             runTypeRegistry.registerRunType(this)
         }
     }

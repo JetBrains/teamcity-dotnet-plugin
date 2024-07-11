@@ -16,7 +16,7 @@ class NUnitToolProviderInitializer(
     extensionHolder: ExtensionHolder
 ) {
     init {
-        if (InternalProperties.getBoolean(NUnitRunnerConstants.NUNIT_RUNNER_ENABLED) == true) {
+        if (InternalProperties.getBooleanOrTrue(NUnitRunnerConstants.NUNIT_RUNNER_ENABLED)) {
             val provider = NUnitToolProvider(timeService, availableToolsFetcher, httpDownloader, fileSystem)
             extensionHolder.registerExtension(ServerToolProvider::class.java, javaClass.name, provider)
         }
