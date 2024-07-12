@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.coverage.utils
+package jetbrains.buildServer.dotcover.utils
 
 object Distances {
 

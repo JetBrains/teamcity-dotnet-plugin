@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.coverage
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.util.FileUtil
@@ -18,6 +19,7 @@ import kotlin.Comparator
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class GenerateIndexPagePostProcessor : ReportFilesProcessor {
 
     @Throws(IOException::class)
@@ -104,7 +106,8 @@ class GenerateIndexPagePostProcessor : ReportFilesProcessor {
     }
 
     override fun processFiles(build: DotnetCoverageParameters,
-                              result: DotnetCoverageGenerationResult) {
+                              result: DotnetCoverageGenerationResult
+    ) {
 
         val report: File? = result.htmlReport
         if (report != null && report.isDirectory) {

@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.BuildProgressLogger
@@ -6,7 +6,8 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PUBLISH_SNAPSHOT_PARAM
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_FILE_EXTENSION
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.*
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGeneratorInput
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGenerator
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
@@ -18,6 +19,7 @@ import jetbrains.coverage.report.CoverageStatistics
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverReportGenerator(
     private val _factory: DotCoverParametersFactory,
     private val _htmlReporter: DotCoverTeamCityReportGenerator,
@@ -120,7 +122,8 @@ class DotCoverReportGenerator(
     private fun publishSnapshot(params: DotnetCoverageParameters,
                                 merged: File,
                                 result: DotCoverCoverageGenerationResult,
-                                zipTool: DotCoverReporterZipTool) {
+                                zipTool: DotCoverReporterZipTool
+    ) {
 
         val check: String? = params.getConfigurationParameter(DOTCOVER_PUBLISH_SNAPSHOT_PARAM)
         if ("false".equals(check, ignoreCase = true)) {
@@ -147,7 +150,8 @@ class DotCoverReportGenerator(
 
     @Throws(IOException::class)
     override fun getCoverageStatisticsValue(params: DotnetCoverageParameters,
-                                            result: DotnetCoverageGenerationResult): CoverageStatistics? {
+                                            result: DotnetCoverageGenerationResult
+    ): CoverageStatistics? {
         val dotResult = result as DotCoverCoverageGenerationResult
         val entry = _htmlReporter.parseStatementCoverage(dotResult.mergedReportFile)
         entry?.let {
@@ -202,7 +206,8 @@ class DotCoverReportGenerator(
 
     private inner class DotCoverInfo(parameters: DotnetCoverageParameters,
                                      generatorRunner: DotnetCoverageReportGeneratorRunner,
-                                     fetcher: DotCoverVersionFetcher) {
+                                     fetcher: DotCoverVersionFetcher
+    ) {
         val versionString: String?
         private val myParameters: DotnetCoverageParameters
         val myGeneratorRunner: DotnetCoverageReportGeneratorRunner

@@ -2,7 +2,7 @@ package jetbrains.buildServer.dotnet.test.dotnet.coverage
 
 import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotnet.coverage.GenerateIndexPagePostProcessor
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.test.utils.TestUtils
@@ -15,6 +15,7 @@ import org.testng.annotations.Test
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 @Test
 class IndexGeneratorProcessorTest {
 

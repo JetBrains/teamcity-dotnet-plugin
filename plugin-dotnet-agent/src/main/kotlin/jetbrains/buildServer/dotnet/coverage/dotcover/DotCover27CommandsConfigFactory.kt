@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import org.jdom.Content
@@ -6,6 +6,7 @@ import org.jdom.Document
 import org.jdom.Element
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 open class DotCover27CommandsConfigFactory(
     coverageParameters: DotnetCoverageParameters
 ) : DotCover26CommandsConfigFactory(coverageParameters) {

@@ -1,5 +1,6 @@
-package jetbrains.buildServer.dotnet.coverage
+package jetbrains.buildServer.dotcover.report.artifacts
 
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_HTML_REPORT_ZIP
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_REPORT_EXT
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_REPORT_HOME
@@ -12,14 +13,16 @@ class ArtifactsUploaderImpl(private val _artifactsPublisher: DotnetCoverageArtif
 
     override fun processFiles(tempDirectory: File,
                               publishPath: String?,
-                              result: DotnetCoverageGenerationResult) {
+                              result: DotnetCoverageGenerationResult
+    ) {
         publishReportDataFiles(tempDirectory, result)
         publishExtraFiles(tempDirectory, publishPath, result)
         publishHtmlReport(tempDirectory, result)
     }
 
     private fun publishHtmlReport(tempDirectory: File,
-                                  result: DotnetCoverageGenerationResult) {
+                                  result: DotnetCoverageGenerationResult
+    ) {
         val report: File? = result.htmlReport
         report?.let {
             if (it.isDirectory) {
@@ -37,7 +40,8 @@ class ArtifactsUploaderImpl(private val _artifactsPublisher: DotnetCoverageArtif
 
     private fun publishExtraFiles(tempDirectory: File,
                                   publishPath: String?,
-                                  result: DotnetCoverageGenerationResult) {
+                                  result: DotnetCoverageGenerationResult
+    ) {
 
         val filesToPublish: Set<Map.Entry<String, File>> = result.getFilesToPublish().entries
         if (filesToPublish.isEmpty()) {

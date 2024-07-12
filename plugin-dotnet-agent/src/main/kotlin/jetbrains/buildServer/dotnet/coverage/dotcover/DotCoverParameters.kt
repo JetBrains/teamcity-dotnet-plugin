@@ -1,7 +1,8 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import jetbrains.buildServer.dotnet.CoverageConstants
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 abstract class DotCoverParameters {
 
     protected abstract fun getValue(key: String): String?

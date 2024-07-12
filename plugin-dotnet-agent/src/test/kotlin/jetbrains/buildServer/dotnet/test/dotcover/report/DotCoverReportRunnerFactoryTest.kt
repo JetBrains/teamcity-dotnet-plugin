@@ -8,7 +8,7 @@ import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
 import jetbrains.buildServer.dotcover.DotCoverEntryPointSelector
-import jetbrains.buildServer.dotcover.report.DotCoverReportRunnerFactory
+import jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverReportRunnerFactory
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
 import org.testng.Assert

@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.coverage
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.BuildProgressLogger
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
@@ -12,6 +13,7 @@ import jetbrains.coverage.report.StatEntry
 import java.io.File
 import java.text.MessageFormat
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageProcessor(
     private val _generators: DotnetCoverageReportsMerger,
     private val _reportPublisher: DotnetCoverageProcessorReportPublisher,
@@ -19,7 +21,7 @@ class DotnetCoverageProcessor(
     private val _holder: DotnetCoverageParametersHolder) {
 
     private val _pendingReports: MultiMap<String, DotnetCoverageReportRequest> = MultiMap<String, DotnetCoverageReportRequest>()
-    private val _reportEvents: EventDispatcher<CoverageEventListener> = EventDispatcher.create(CoverageEventListener::class.java)
+    private val _reportEvents: EventDispatcher<DotnetCoverageEventListener> = EventDispatcher.create(DotnetCoverageEventListener::class.java)
 
     @Synchronized
     fun cleanupState() {
@@ -96,7 +98,8 @@ class DotnetCoverageProcessor(
 
     private fun publishStats(gen: DotnetCoverageReportGenerator,
                              build: DotnetCoverageParameters,
-                             result: DotnetCoverageGenerationResult) {
+                             result: DotnetCoverageGenerationResult
+    ) {
 
         val value: CoverageStatistics? = try {
             gen.getCoverageStatisticsValue(build, result)

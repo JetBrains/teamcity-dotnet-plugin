@@ -4,6 +4,7 @@ import jetbrains.buildServer.dotnet.coverage.Sequencer
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class TempFactoryImpl(
     private val _fileService: FileService,
     private val _sequencer: Sequencer<String>) : TempFactory {

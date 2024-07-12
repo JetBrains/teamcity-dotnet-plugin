@@ -7,7 +7,7 @@ import jetbrains.buildServer.dotcover.report.model.ClassHolder
 import jetbrains.buildServer.dotcover.report.model.DotCoverClass
 import jetbrains.buildServer.dotcover.report.model.DotCoverData
 import jetbrains.buildServer.dotcover.report.model.NamespaceInfo
-import jetbrains.buildServer.dotnet.coverage.utils.XmlXppAbstractParser
+import jetbrains.buildServer.dotcover.utils.XmlXppAbstractParser
 import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.WatchDog
 import jetbrains.coverage.report.CoverageData

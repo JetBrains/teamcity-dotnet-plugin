@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageReportsMerger(private val _generators: DotnetCoverageReportGeneratorsHolder) {
 
     fun prepareReports(type: String, files: List<DotnetCoverageReportRequest>): DotnetCoverageGeneratorInput? {

@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
@@ -11,6 +11,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverToolRunnerImpl(
     private val _runner: DotnetCoverageReportGeneratorRunner,
     private val _coverageParameters: DotnetCoverageParameters,

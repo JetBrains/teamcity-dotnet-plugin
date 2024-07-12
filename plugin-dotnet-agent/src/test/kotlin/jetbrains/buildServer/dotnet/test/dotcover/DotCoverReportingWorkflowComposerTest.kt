@@ -16,9 +16,10 @@ import jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder
 import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
+import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploader
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.mono.MonoToolProvider
+import jetbrains.buildServer.rx.Disposable
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -40,6 +41,7 @@ class DotCoverReportingWorkflowComposerTest {
     @MockK private lateinit var _uploader: ArtifactsUploader
     @MockK private lateinit var _monoToolProvider: MonoToolProvider
     @MockK private lateinit var _buildStepContext: BuildStepContext
+    @MockK private lateinit var _blockToken: Disposable
 
     private val _defaultVariables = sequenceOf(CommandLineEnvironmentVariable("Abc", "C"))
     private val tempFiles = TempFiles()
@@ -77,6 +79,9 @@ class DotCoverReportingWorkflowComposerTest {
         every { _virtualContext.resolvePath(workingDir.absolutePath) } returns virtualWorkingDir.absolutePath
         every { _pathService.getPath(PathType.Checkout) } returns checkoutDir
         every { _virtualContext.resolvePath(checkoutDir.absolutePath) } returns virtualCheckoutDir.absolutePath
+        every { _blockToken.dispose() } returns Unit
+        every { _loggerService.writeTraceBlock(any()) } returns _blockToken
+        every { _loggerService.writeTrace(any()) } returns Unit
         every { _loggerService.writeDebug(any()) } returns Unit
         every { _loggerService.writeWarning(any()) } returns Unit
     }

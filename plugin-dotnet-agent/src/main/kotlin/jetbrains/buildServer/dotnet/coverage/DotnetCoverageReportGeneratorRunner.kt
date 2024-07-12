@@ -8,6 +8,7 @@ import jetbrains.buildServer.agent.Path
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageReportGeneratorRunner(
     private val _params: DotnetCoverageParameters,
     private val _toolName: String,

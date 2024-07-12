@@ -2,9 +2,9 @@ package jetbrains.buildServer.dotnet.test.dotnet.coverage
 
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_PUBLISH_PATH_PARAM
-import jetbrains.buildServer.dotnet.coverage.ArtifactsUploaderImpl
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageArtifactsPublisher
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploaderImpl
+import jetbrains.buildServer.dotcover.report.artifacts.DotnetCoverageArtifactsPublisher
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.test.utils.TestUtils
 import org.jmock.Expectations

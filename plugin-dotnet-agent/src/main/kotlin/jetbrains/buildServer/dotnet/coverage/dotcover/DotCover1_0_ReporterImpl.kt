@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_REPORT_EXT
 import jetbrains.buildServer.dotnet.CoverageConstants.COVERAGE_REPORT_NAME
@@ -10,6 +10,7 @@ import org.jdom.Element
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCover1_0_ReporterImpl(
     private val _runner: DotCoverToolRunner,
     private val _coverageParameters: DotnetCoverageParameters,

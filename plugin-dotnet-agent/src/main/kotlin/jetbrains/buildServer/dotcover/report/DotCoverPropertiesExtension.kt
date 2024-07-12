@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.AgentLifeCycleListener
 import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.agent.config.AgentParametersSupplier
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.tools.ToolVersionReference
 import jetbrains.buildServer.util.EventDispatcher
 import jetbrains.buildServer.util.positioning.PositionAware
@@ -28,7 +27,7 @@ class DotCoverPropertiesExtension(private val _bundle: BundledDotCover,
     }
 
     override fun getConstraint(): PositionConstraint {
-        return PositionConstraint.before(DotnetCoverageParametersHolder.AGENT_LISTENER_ID)
+        return PositionConstraint.before(AGENT_LISTENER_ID)
     }
 
     override fun beforeRunnerStart(runner: BuildRunnerContext) {
@@ -57,5 +56,6 @@ class DotCoverPropertiesExtension(private val _bundle: BundledDotCover,
 
     companion object {
         private const val ORDER_ID = "dotNetCoverageDotnetRunner.dotCoverBundledPathSetter"
+        const val AGENT_LISTENER_ID = "dotNetCoverageDotnetRunner.ParametersHolder"
     }
 }

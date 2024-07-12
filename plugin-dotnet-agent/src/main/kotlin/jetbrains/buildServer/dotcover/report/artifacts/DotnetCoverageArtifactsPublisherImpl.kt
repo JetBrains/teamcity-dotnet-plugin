@@ -1,13 +1,9 @@
-package jetbrains.buildServer.dotnet.coverage
+package jetbrains.buildServer.dotcover.report.artifacts
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.artifacts.ArtifactsWatcher
 import jetbrains.buildServer.dotnet.CoverageConstants
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
-import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_ARTIFACTS_DIR
-import jetbrains.buildServer.dotnet.coverage.utils.FileService
-import jetbrains.buildServer.dotnet.coverage.utils.TempFactory
 import jetbrains.buildServer.util.FileUtil
 import java.io.File
 import java.io.IOException

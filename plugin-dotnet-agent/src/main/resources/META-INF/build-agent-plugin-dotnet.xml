@@ -567,12 +567,12 @@
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorsHolderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessorReportPublisherImpl"/>
   <bean class="jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisherImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.coverage.ArtifactsUploaderImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploaderImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.utils.FileServiceImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.utils.TempFactoryImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.GenerateIndexPagePostProcessor"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.SequencerImpl"/>
-  <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageArtifactsPublisherImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.report.artifacts.DotnetCoverageArtifactsPublisherImpl"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportsMerger"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageProcessor"/>
   <bean class="jetbrains.buildServer.dotnet.coverage.DotnetCoverageDataProcessor"/>
@@ -580,14 +580,14 @@
   <bean class="jetbrains.buildServer.dotnet.CoverageConstants$ServiceMessageSetup"/>
 
   <!-- dotCover reports -->
-  <bean class="jetbrains.buildServer.dotcover.report.DotCoverVersionFetcher"/>
-  <bean class="jetbrains.buildServer.dotcover.report.DotCoverReportGenerator"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverVersionFetcher"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverReportGenerator"/>
   <bean class="jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator"/>
-  <bean class="jetbrains.buildServer.dotcover.report.DotCoverParametersFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverParametersFactory"/>
   <bean class="jetbrains.buildServer.dotcover.report.DotCoverPropertiesExtension"/>
   <bean class="jetbrains.buildServer.dotcover.report.BundledDotCover"/>
-  <bean class="jetbrains.buildServer.dotcover.report.DotCoverReportRunnerFactory"/>
-  <bean class="jetbrains.buildServer.dotcover.report.DotCoverVersionChecker"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverReportRunnerFactory"/>
+  <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverVersionChecker"/>
 
   <!-- dotCover workflow composer -->
   <bean class="jetbrains.buildServer.dotcover.tool.DotCoverAgentTool" />

@@ -15,6 +15,7 @@ import jetbrains.buildServer.util.StringUtil
 import jetbrains.buildServer.util.positioning.PositionAware
 import java.util.concurrent.ConcurrentHashMap
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageParametersHolderImpl(
     reg: ServiceMessagesRegister,
     events: EventDispatcher<AgentLifeCycleListener?>

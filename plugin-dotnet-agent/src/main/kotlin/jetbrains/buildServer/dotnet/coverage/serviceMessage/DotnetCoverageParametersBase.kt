@@ -6,6 +6,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.utils.PathUtil
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 abstract class DotnetCoverageParametersBase(protected val runningBuild: AgentRunningBuild) : DotnetCoverageParameters {
 
     abstract override fun getRunnerParameter(key: String): String?

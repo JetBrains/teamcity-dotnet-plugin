@@ -1,5 +1,6 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 enum class DotCoverVersion(private val myVersionNumber: Int, val displayVersion: String) {
 
     DotCover_1_0(1, "DotCover 1.0.x"),

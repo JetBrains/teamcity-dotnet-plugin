@@ -4,6 +4,7 @@ import jetbrains.buildServer.util.FileUtil
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class FileServiceImpl : FileService {
 
     override fun exists(path: File): Boolean {

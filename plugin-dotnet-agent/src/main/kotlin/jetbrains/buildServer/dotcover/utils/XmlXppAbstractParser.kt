@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotnet.coverage.utils
+package jetbrains.buildServer.dotcover.utils
 
 import jetbrains.buildServer.util.CloseAwareInputStream
 import jetbrains.buildServer.util.StringUtil

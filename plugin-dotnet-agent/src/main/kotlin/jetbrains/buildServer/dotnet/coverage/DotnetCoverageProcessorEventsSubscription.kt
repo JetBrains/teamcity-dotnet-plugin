@@ -6,6 +6,7 @@ import jetbrains.buildServer.agent.AgentRunningBuild
 import jetbrains.buildServer.agent.BuildFinishedStatus
 import jetbrains.buildServer.util.EventDispatcher
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageProcessorEventsSubscription(
     events: EventDispatcher<AgentLifeCycleListener?>,
     processor: DotnetCoverageProcessor) {

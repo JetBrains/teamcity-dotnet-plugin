@@ -16,6 +16,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageReportsMergerTest {
 
     private lateinit var _mockery: Mockery

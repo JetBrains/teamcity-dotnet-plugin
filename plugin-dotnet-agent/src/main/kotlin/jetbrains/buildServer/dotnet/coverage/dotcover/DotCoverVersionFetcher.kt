@@ -1,14 +1,15 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
-import jetbrains.buildServer.dotnet.coverage.utils.XmlXppAbstractParser
+import jetbrains.buildServer.dotcover.utils.XmlXppAbstractParser
 import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.util.VersionComparatorUtil
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverVersionFetcher {
 
     @Throws(IOException::class)

@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.DataProcessor
 import jetbrains.buildServer.agent.DataProcessorContext
 import jetbrains.buildServer.dotnet.CoverageConstants
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageDataProcessor(private val myProcessor: DotnetCoverageProcessor) : DataProcessor {
 
     override fun getType(): String {

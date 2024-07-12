@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotcover
 
 import jetbrains.buildServer.agent.Path

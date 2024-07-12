@@ -4,6 +4,7 @@ import jetbrains.buildServer.agent.AgentRunningBuild
 import jetbrains.buildServer.util.FileUtil
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 object PathUtil {
 
     fun resolvePath(build: AgentRunningBuild,

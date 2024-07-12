@@ -1,6 +1,6 @@
-package jetbrains.buildServer.dotnet.coverage
+package jetbrains.buildServer.dotcover.report.artifacts
 
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import java.io.File
 
 interface ArtifactsUploader {

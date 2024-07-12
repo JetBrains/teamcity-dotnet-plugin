@@ -2,6 +2,7 @@ package jetbrains.buildServer.dotnet.coverage
 
 import jetbrains.buildServer.util.StringUtil
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class SequencerImpl : Sequencer<String> {
 
     override fun nextFrom(value: String): String {

@@ -1,10 +1,12 @@
 package jetbrains.buildServer.dotnet.coverage
 
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploader
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.util.MultiMap
-import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageProcessorReportPublisherImpl(
     private val _uploader: ArtifactsUploader,
     private val _reportProcessors: Array<ReportFilesProcessor>
@@ -14,7 +16,8 @@ class DotnetCoverageProcessorReportPublisherImpl(
 
     override fun publishReport(build: DotnetCoverageParameters,
                                type: String,
-                               result: DotnetCoverageGenerationResult) {
+                               result: DotnetCoverageGenerationResult
+    ) {
 
         if (!result.publishReportFiles()) return
 

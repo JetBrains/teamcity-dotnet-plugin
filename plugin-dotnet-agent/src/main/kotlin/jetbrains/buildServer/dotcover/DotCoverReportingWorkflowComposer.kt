@@ -6,14 +6,17 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverProject.*
 import jetbrains.buildServer.dotcover.command.*
 import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
-import jetbrains.buildServer.dotnet.coverage.ArtifactsUploader
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploader
 import jetbrains.buildServer.util.FileUtil.resolvePath
 import jetbrains.buildServer.util.FileUtil
+import jetbrains.buildServer.rx.use
 import java.io.File
+import java.util.stream.Collectors
+import kotlin.math.log
 import kotlin.streams.toList
 
 class DotCoverReportingWorkflowComposer(
@@ -91,13 +94,14 @@ class DotCoverReportingWorkflowComposer(
         }
 
         val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(mergeConfigFilename).path))
-        val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge,
-            mergeCommandData = MergeCommandData(
-                snapshots.stream().map { Path(_virtualContext.resolvePath(it.absolutePath)) }.toList(),
-                Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))))
+        val sources = snapshots.stream().map { Path(_virtualContext.resolvePath(it.absolutePath)) }.toList()
+        val output = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge, mergeCommandData = MergeCommandData(sources, output))
         _fileSystemService.write(File(virtualConfigFilePath.path)) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
+
+        logSettings("dotCover merge command settings", sources, output)
 
         yield(
             _dotCoverCommandLineBuilders.get(DotCoverCommandType.Merge)!!.buildCommand(
@@ -125,13 +129,14 @@ class DotCoverReportingWorkflowComposer(
         }
 
         val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(reportConfigFilename).path))
-        val dotCoverProject = DotCoverProject(DotCoverCommandType.Report,
-            reportCommandData = ReportCommandData(
-                Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath)),
-                Path(_virtualContext.resolvePath(outputReportFile.absolutePath))))
+        val source = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
+        val output = Path(_virtualContext.resolvePath(outputReportFile.absolutePath))
+        val dotCoverProject = DotCoverProject(DotCoverCommandType.Report, reportCommandData = ReportCommandData(source, output))
         _fileSystemService.write(File(virtualConfigFilePath.path)) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
+
+        logSettings("dotCover report command settings", listOf(source), output)
 
         yield(
             _dotCoverCommandLineBuilders.get(DotCoverCommandType.Report)!!.buildCommand(
@@ -180,6 +185,17 @@ class DotCoverReportingWorkflowComposer(
                 files + directories.flatMap { _fileSystemService.list(it).filter { it.extension == DOTCOVER_SNAPSHOT_EXTENSION } }
             }
             .also { _loggerService.writeDebug("Found ${it.size} snapshots") }
+    }
+
+    private fun logSettings(blockName: String, sources: List<Path>, output: Path) {
+        val message = """
+            |Sources:
+            |  ${sources.joinToString("\n  ")}
+            |Output:
+            |  ${output.toString()}""".trimMargin()
+        _loggerService.writeTraceBlock(blockName).use {
+            _loggerService.writeTrace(message)
+        }
     }
 
     private fun findOutputSnapshot(snapshotDirectory: File) =

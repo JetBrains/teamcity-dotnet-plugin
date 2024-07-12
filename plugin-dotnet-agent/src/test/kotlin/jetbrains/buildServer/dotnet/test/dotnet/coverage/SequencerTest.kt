@@ -5,6 +5,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class SequencerTest {
 
     @DataProvider

@@ -1,8 +1,9 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import org.jdom.Document
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 interface DotCoverCommandsConfigFactory {
 
     fun createMergeCommandConfig(sources: Collection<File>, output: File): Document

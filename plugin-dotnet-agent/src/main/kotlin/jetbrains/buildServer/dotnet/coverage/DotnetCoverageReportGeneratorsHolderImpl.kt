@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.coverage
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageReportGeneratorsHolderImpl(
     private val _generators: List<DotnetCoverageReportGenerator>) : DotnetCoverageReportGeneratorsHolder {
 

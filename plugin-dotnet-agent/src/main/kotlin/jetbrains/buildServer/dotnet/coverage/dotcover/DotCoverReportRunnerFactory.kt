@@ -1,16 +1,15 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.agent.ToolCannotBeFoundException
-import jetbrains.buildServer.agent.runner.Workflow
 import jetbrains.buildServer.dotcover.DotCoverEntryPointSelector
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.coverage.DotnetCoverageReportGeneratorRunner
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolver
-import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverReportRunnerFactory(
     private val _dotnetToolResolver: DotnetToolResolver,
     private val _entryPointSelector: DotCoverEntryPointSelector

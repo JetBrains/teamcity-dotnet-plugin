@@ -15,6 +15,7 @@ import org.testng.annotations.Test
 import java.io.File
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class TempFactoryTest {
 
     private lateinit var _ctx: Mockery

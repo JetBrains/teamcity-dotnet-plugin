@@ -1,9 +1,10 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
-import jetbrains.buildServer.dotnet.coverage.DotnetCoverageGenerationResult
+import jetbrains.buildServer.dotcover.report.DotnetCoverageGenerationResult
 import jetbrains.coverage.report.CoverageStatistics
 import java.io.File
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverCoverageGenerationResult(
     private val _mergedReportFile: File,
     reportDir: File,

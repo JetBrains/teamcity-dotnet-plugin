@@ -61,7 +61,7 @@ object CoverageConstants {
     const val DOTCOVER_TOOL_NAME = "dotCover"
     const val DOTCOVER_BUNDLED_TOOL_ID = "${DOTCOVER_PACKAGE_ID}.bundled"
 
-
+    @Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
     class ServiceMessageSetup(setup: CoverageServiceMessageSetup) {
         init {
             setup.addPropertyMapping(

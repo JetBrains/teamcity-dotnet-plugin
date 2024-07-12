@@ -1,4 +1,4 @@
-package jetbrains.buildServer.dotcover.report
+package jetbrains.buildServer.dotnet.coverage.dotcover
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.agent.AgentLifeCycleAdapter
@@ -13,6 +13,7 @@ import jetbrains.buildServer.util.positioning.PositionAware
 import jetbrains.buildServer.util.positioning.PositionConstraint
 import java.io.IOException
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverVersionChecker(
     events: EventDispatcher<AgentLifeCycleListener?>,
     private val _holder: DotnetCoverageParametersHolder,

@@ -6,6 +6,10 @@ import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.BuildProgressLogger
 import jetbrains.buildServer.dotcover.report.*
 import jetbrains.buildServer.dotnet.coverage.SequencerImpl
+import jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverParametersFactory
+import jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverReportGenerator
+import jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverReportRunnerFactory
+import jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverVersionFetcher
 import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParameters
 import jetbrains.buildServer.dotnet.coverage.utils.FileServiceImpl
 import jetbrains.buildServer.dotnet.coverage.utils.TempFactoryImpl
@@ -15,6 +19,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 
+@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotCoverReportGeneratorTest {
     @MockK private lateinit var _dotCoverReportRunnerFactory: DotCoverReportRunnerFactory;
     private lateinit var _generator: DotCoverReportGenerator
