@@ -16,6 +16,9 @@ class NUnitConsoleRunnerPathProvider(
     private val _pathsService: PathsService,
     private val _loggerService: LoggerService
 ) {
+    private val supportedNetFrameworkVersions = listOf("net462", "net35", "net20")
+    private val nUnitConsoleExecutablePath = "nunit3-console.exe"
+
     val consoleRunnerPath: Path
         get() {
             val nUnitPathStr = _nUnitSettings.nUnitPath
@@ -47,11 +50,9 @@ class NUnitConsoleRunnerPathProvider(
         add(nUnitPath)
         if (_fileSystem.isDirectory(nUnitPath.toFile())) {
             val binPath = nUnitPath.resolve("bin")
-            val executable = "nunit3-console.exe"
-            add(binPath.resolve("net35").resolve(executable))
-            add(binPath.resolve("net20").resolve(executable))
-            // for NUnit.Console since 3.16.0
-            add(binPath.resolve(executable))
+            addAll(supportedNetFrameworkVersions.map { binPath.resolve(it).resolve(nUnitConsoleExecutablePath) })
+            // for NUnit.Console 3.16.0 (broken package structure)
+            add(binPath.resolve(nUnitConsoleExecutablePath))
         }
     }
 }
