@@ -150,7 +150,11 @@ class ToolServiceImplTests {
     }
 
     @DataProvider
-    fun getAllowedPackageFilesExtensions() = arrayOf(arrayOf("zip"), arrayOf("nupkg"))
+    fun getAllowedPackageFilesExtensions() = arrayOf(
+        arrayOf(".nupkg"),
+        arrayOf(".zip"),
+        arrayOf(".tar.gz"),
+    )
 
     @Test(dataProvider = "getAllowedPackageFilesExtensions")
     fun `should resolve package version from file`(packageFileExtension: String) {
@@ -239,7 +243,7 @@ class ToolServiceImplTests {
     }
 
     @Test
-    fun `should throw exception while unpacking invalid tool package contect`()
+    fun `should throw exception while unpacking invalid tool package content`()
     {
         // arrange
         val packageId = "package"

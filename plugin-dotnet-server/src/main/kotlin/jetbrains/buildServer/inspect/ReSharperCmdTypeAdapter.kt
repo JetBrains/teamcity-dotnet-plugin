@@ -24,8 +24,8 @@ class ReSharperCmdTypeAdapter : ToolTypeAdapter() {
     override fun getToolLicenseUrl() = "https://www.jetbrains.com/legal/docs/resharper/resharper_clt_license.html"
 
     override fun getValidPackageDescription() =
-        "Specify the path to a ReSharper Command Line Tools package (.zip or .nupkg).<br/>" +
+        "Specify the path to a ReSharper Command Line Tools package (.nupkg, .tar.gz, or .zip).<br/>" +
         "<br/>Download <em>JetBrains.ReSharper.CommandLineTools.&lt;VERSION&gt;.zip</em> from " +
-        "<a href=\"https://www.jetbrains.com/resharper/download/index.html#section=resharper-clt\" target=\"_blank\" rel=\"noreferrer\">jetbrains.com/resharper</a><br/>" +
+        "<a href=\"https://www.jetbrains.com/resharper/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">jetbrains.com/resharper</a><br/>" +
         "<br/>Download <em>JetBrains.ReSharper.CommandLineTools.&lt;VERSION&gt;.nupkg</em> from <a href=\"https://www.nuget.org/packages/JetBrains.ReSharper.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">www.nuget.org</a>"
 }

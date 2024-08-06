@@ -12,7 +12,7 @@ class SemanticVersionParserImpl : SemanticVersionParser {
 
     companion object {
         private val VersionRegex = Regex(
-            """^([a-z\.-]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?(\.[A-Za-z][\w\d]*)?${'$'}""",
+            """^([a-z\.-]+\.)?(\d+)\.(\d+)\.(\d+)(-([\w\d-\.]+?))?((\.[A-Za-z][\w\d]*){1,2})?${'$'}""",
             RegexOption.IGNORE_CASE
         )
     }

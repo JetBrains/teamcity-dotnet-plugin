@@ -25,8 +25,8 @@ class DotCoverToolTypeAdapter : ToolTypeAdapter() {
 
     override fun getTeamCityHelpFile() = "JetBrains+dotCover"
 
-    override fun getValidPackageDescription() = "Specify the path to a " + displayName +  " (.zip or .nupkg).\n" +
+    override fun getValidPackageDescription() = "Specify the path to a " + displayName +  " (.nupkg, .tar.gz, or .zip).\n" +
             "<br/><br/>Supported tools:" +
-            "<br/><a href=\"https://www.jetbrains.com/dotcover/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.zip</a>" +
+            "<br/><a href=\"https://www.jetbrains.com/dotcover/download/#section=commandline\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.tar.gz</a>" +
             "<br/><a href=\"https://www.nuget.org/packages/JetBrains.dotCover.CommandLineTools/\" target=\"_blank\" rel=\"noreferrer\">JetBrains.dotCover.CommandLineTools.&lt;VERSION&gt;.nupkg</a>"
 }

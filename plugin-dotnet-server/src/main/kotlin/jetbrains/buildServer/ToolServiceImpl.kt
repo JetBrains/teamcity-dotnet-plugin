@@ -114,14 +114,18 @@ class ToolServiceImpl(
     private fun File.isPackageFileValid(packageIds: Array<out String>) =
         FileFilter { packageFile ->
             packageFile.isFile
-                && packageIds.toSet().any { packageFile.nameWithoutExtension.startsWith(it, true) }
-                && AllowedPackageExtensions.any { it.equals(packageFile.extension, true) }
+                && packageIds.toSet().any { packageFile.name.startsWith(it, true) }
+                && AllowedPackageExtensions.any { packageFile.name.lowercase().endsWith(it) }
         }.accept(this)
 
     private fun isPackageVersionValid(toolPackage: File) = _packageVersionParser.tryParse(toolPackage.name) != null
 
     companion object {
         private val LOG: Logger = Logger.getInstance(ToolServiceImpl::class.java.name)
-        private val AllowedPackageExtensions = arrayOf(DotnetConstants.PACKAGE_NUGET_EXTENSION, "zip")
+        private val AllowedPackageExtensions = arrayOf(
+            ".${DotnetConstants.PACKAGE_NUGET_EXTENSION}",
+            ".zip",
+            ".tar.gz",
+        )
     }
 }
