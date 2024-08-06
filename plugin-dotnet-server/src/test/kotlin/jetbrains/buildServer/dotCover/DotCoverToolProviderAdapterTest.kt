@@ -3,12 +3,15 @@ package jetbrains.buildServer.dotCover
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.*
+import jetbrains.buildServer.dotnet.CoverageConstants.BUNDLED_TOOL_VERSION
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
 import jetbrains.buildServer.dotnet.SemanticVersion
+import jetbrains.buildServer.tools.ToolException
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.web.openapi.PluginDescriptor
 import org.testng.Assert
+import org.testng.Assert.assertTrue
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -145,6 +148,32 @@ class DotCoverToolProviderAdapterTest {
                     File(targetDirectory, "teamcity-plugin.xml")
                 )
             }
+        }
+    }
+
+    @Test
+    fun `should return link to the bundled dotCover in the error message`() {
+        // arrange
+        every { _toolService.getPackages(*DOT_COVER_PACKAGES) } throws ToolException("")
+        every { _toolFilter.accept(any()) } returns true
+        every { _toolComparator.compare(any(), any()) } answers { callOriginal() }
+        every { _toolComparator.reversed() } answers { callOriginal() }
+        val toolVersion = DotCoverToolVersion(DotCoverToolTypeAdapter(), BUNDLED_TOOL_VERSION, DOTCOVER_PACKAGE_ID)
+        val toolPackage = File("testToolPackage")
+        val assertionError = "Expected ToolException with proper link"
+
+        try {
+            // act
+            createInstance().fetchToolPackage(toolVersion, toolPackage)
+            Assert.fail(assertionError)
+        } catch (e: Exception) {
+            if (e !is ToolException) {
+                Assert.fail(assertionError)
+            }
+
+            // assert
+            Assert.assertNotNull(e.message)
+            assertTrue(e.message!!.contains("https://www.nuget.org/api/v2/package/JetBrains.dotCover.CommandLineTools/$BUNDLED_TOOL_VERSION"))
         }
     }
 
