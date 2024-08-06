@@ -75,7 +75,17 @@ class NUnitConsoleRunnerPathProviderTest {
                 "/checkout/dir/bin/nunit3-console.exe",
                 "/checkout/dir/bin/nunit42-console.exe"
             )
-        )
+        ),
+        TestCase(
+            expectedPath = "/checkout/dir/bin/net462/nunit3-console.exe",
+            nunitPathParameter = "/checkout/dir/",
+            existingFileSystemPaths = listOf(
+                "/checkout/dir/bin/nunit3-console.exe",
+                "/checkout/dir/bin/net20/nunit3-console.exe",
+                "/checkout/dir/bin/net35/nunit3-console.exe",
+                "/checkout/dir/bin/net462/nunit3-console.exe",
+            )
+        ),
     )
 
     @Test(dataProvider = "testCases")
