@@ -5,6 +5,7 @@ import io.mockk.mockk
 import jetbrains.buildServer.*
 import jetbrains.buildServer.inspect.CltConstants.JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID
 import jetbrains.buildServer.tools.GetPackageVersionResult.version
+import jetbrains.buildServer.tools.ToolException
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
 import jetbrains.buildServer.web.openapi.PluginDescriptor
@@ -165,6 +166,29 @@ class ReSharperCmdToolProviderTest {
         assertEquals(downloadableTool.size, 1)
 
         assertToolIsBundled(downloadableTool.first())
+    }
+
+    @Test
+    fun `should return link to the bundled ReSharper in the error message`() {
+        // arrange
+        every { _toolService.getTools(_toolType, packageId) } throws ToolException("")
+        val toolVersion = ReSharperToolVersion(_toolType, ReSharperToolVersion.BUNDLED_VERSION)
+        val toolPackage = File("testToolPackage")
+        val assertionError = "Expected ToolException with proper link"
+
+        try {
+            // act
+            createToolProvider().fetchToolPackage(toolVersion, toolPackage)
+            fail(assertionError)
+        } catch (e: Exception) {
+            if (e !is ToolException) {
+                fail(assertionError)
+            }
+
+            // assert
+            assertNotNull(e.message)
+            assertTrue(e.message!!.contains("https://www.nuget.org/api/v2/package/JetBrains.ReSharper.CommandLineTools/${ReSharperToolVersion.BUNDLED_VERSION}"))
+        }
     }
 
     private fun assertToolIsBundled(tool: ToolVersion) {

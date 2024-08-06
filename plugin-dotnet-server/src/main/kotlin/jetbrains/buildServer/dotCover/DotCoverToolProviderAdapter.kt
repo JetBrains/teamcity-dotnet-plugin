@@ -48,9 +48,23 @@ class DotCoverToolProviderAdapter(
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File): File {
         LOG.debug("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val dotCoverToolVersion = getPackages()
-            .firstOrNull { it.version == toolVersion.version }
-            ?: throw ToolException("Failed to find package $toolVersion")
+        val dotCoverToolVersion = try {
+            getPackages().firstOrNull { it.version == toolVersion.version }
+        } catch (e: ToolException) {
+            if (toolVersion.isBundled) {
+                LOG.warn("Failed to fetch dotCover ${toolVersion.version}. " + e.message)
+                throw ToolException(
+                    "Failed to fetch bundled dotCover ${toolVersion.version}. " +
+                            "In case of limited internet access you can manually download the tool from " +
+                            "https://www.nuget.org/api/v2/package/JetBrains.dotCover.CommandLineTools/${toolVersion.version.substringBefore(" ")} " +
+                            "and then upload the archive with the tool on the 'Administration | Tools' page", e
+                )
+            }
+            throw e
+        }
+        if (dotCoverToolVersion == null) {
+            throw ToolException("Failed to find dotCover package $toolVersion")
+        }
 
         val downloadUrl = dotCoverToolVersion.downloadUrl
         val destinationFileName = dotCoverToolVersion.destinationFileName

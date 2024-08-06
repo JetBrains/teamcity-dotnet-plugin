@@ -45,9 +45,24 @@ class ReSharperCmdToolProvider(
     override fun fetchToolPackage(toolVersion: ToolVersion, targetDirectory: File): File {
         LOG.debug("Fetch package for version \"${toolVersion.version}\" to directory \"$targetDirectory\"")
 
-        val tool = _toolService.getTools(type, _packageId)
-            .firstOrNull { it.version == toolVersion.version }
-            ?: throw ToolException("Failed to find tool ${toolVersion.id}")
+        val tool = try {
+            _toolService.getTools(type, _packageId).firstOrNull { it.version == toolVersion.version }
+        } catch (e: ToolException) {
+            if (toolVersion.isBundled) {
+                LOG.warn("Failed to fetch ReSharper ${toolVersion.version}. " + e.message)
+                throw ToolException(
+                    "Failed to fetch bundled ReSharper ${toolVersion.version}. " +
+                            "In case of limited internet access you can manually download the tool from " +
+                            "https://www.nuget.org/api/v2/package/JetBrains.ReSharper.CommandLineTools/${toolVersion.version} " +
+                            "and then upload the archive with the tool on the 'Administration | Tools' page", e
+                )
+            }
+            throw e
+        }
+
+        if (tool == null) {
+            throw ToolException("Failed to find ReSharper package $toolVersion")
+        }
 
         return _toolService.fetchToolPackage(tool, targetDirectory, tool.downloadUrl, tool.destinationFileName)
     }
