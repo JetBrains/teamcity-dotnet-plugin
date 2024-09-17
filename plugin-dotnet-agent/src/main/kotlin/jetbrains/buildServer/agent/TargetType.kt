@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent
 
 enum class TargetType(val priority: Int) { // Examples:

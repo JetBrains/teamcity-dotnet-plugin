@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 enum class DotnetCommandType(val id: String) {
@@ -12,6 +10,8 @@ enum class DotnetCommandType(val id: String) {
     Run("run"),
     NuGetPush("nuget-push"),
     NuGetDelete("nuget-delete"),
+    NuGetLocals("nuget-locals"),
+    ListPackage("list-package"),
     Clean("clean"),
     MSBuild("msbuild"),
     VSTest("vstest"),

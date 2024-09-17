@@ -379,6 +379,7 @@
         <ref bean="rootTestsSplittingCommandsTransformer"/>
         <ref bean="testRetryCommandsTransformer"/>
         <ref bean="composedDotnetCommandsTransformer"/>
+        <ref bean="depCacheRestorationCommandTransformer"/>
       </list>
     </constructor-arg>
   </bean>
@@ -771,4 +772,11 @@
   <bean class="jetbrains.buildServer.nunit.testReordering.RunnerConfigVarTestInfoParser"/>
   <bean class="jetbrains.buildServer.nunit.testReordering.NUnitXmlTestInfoParser"/>
   <bean class="jetbrains.buildServer.nunit.testReordering.NUnitReorderingTestsSplitService"/>
+
+  <!--Dependency Cache -->
+  <bean class="jetbrains.buildServer.depcache.DotnetDependencyCacheManager"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDependencyCacheSettingsProvider" init-method="register" destroy-method="unregister"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.NugetLocalsCommand" id="dotnetNugetLocalsCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.ListPackageCommand" id="dotnetListPackageCommand"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.DepCacheRestorationCommandTransformer" id="depCacheRestorationCommandTransformer"/>
 </beans>

@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.BuildFinishedStatus
@@ -9,8 +7,8 @@ import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(
         private val _workflowComposer: SimpleWorkflowComposer,
-        private val _commandExecutionFactory: CommandExecutionFactory)
-    : MultiCommandBuildSession, WorkflowContext {
+        private val _commandExecutionFactory: CommandExecutionFactory
+) : MultiCommandBuildSession, WorkflowContext {
 
     private val _commandLinesIterator = lazy { _workflowComposer.compose(this, Unit).commandLines.iterator() }
     private val _eventSubject = subjectOf<CommandResultEvent>()
