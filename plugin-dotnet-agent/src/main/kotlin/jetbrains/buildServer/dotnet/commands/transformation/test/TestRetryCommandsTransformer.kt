@@ -20,18 +20,18 @@ class TestRetryCommandsTransformer(
 ) : DotnetCommandsTransformer {
     override val stage = DotnetCommandsTransformationStage.Retry
 
-    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) =
-        _testRetrySettings.isEnabled && commands.any {
-            it.commandType == DotnetCommandType.Test || it.commandType == DotnetCommandType.VSTest
+    override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream): DotnetCommandsStream {
+        if (!_testRetrySettings.isEnabled) {
+            return commands
         }
 
-    override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream): DotnetCommandsStream =
-        commands.flatMap {
+        return commands.flatMap {
             when (it.commandType) {
                 DotnetCommandType.Test, DotnetCommandType.VSTest -> transform(it)
                 else -> sequenceOf(it)
             }
         }
+    }
 
     private fun transform(command: DotnetCommand) = sequence {
         _loggerService.writeMessage(TestRetrySupportServiceMessage(enabled = true))

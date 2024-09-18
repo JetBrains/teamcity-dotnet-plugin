@@ -8,15 +8,10 @@ class RootDotnetCommandTransformer(
 ) : DotnetCommandsTransformer {
     override val stage = DotnetCommandsTransformationStage.Initial
 
-    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) = true
-
     override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream) =
         _dotnetCommandsTransformers
             .sortedBy { it.stage.ordinal }
             .fold(commands) { stream, transformer ->
-                when {
-                    transformer.shouldBeApplied(context, stream) -> transformer.apply(context, stream)
-                    else -> stream
-                }
+                transformer.apply(context, stream)
             }
 }

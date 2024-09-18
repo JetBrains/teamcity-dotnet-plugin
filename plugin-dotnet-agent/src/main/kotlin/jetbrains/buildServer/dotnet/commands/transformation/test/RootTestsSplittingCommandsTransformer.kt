@@ -16,20 +16,23 @@ class RootTestsSplittingCommandsTransformer(
     private val _testsSplittingCommandsTransformers: List<TestsSplittingCommandTransformer>
 ) : DotnetCommandsTransformer {
     override val stage = DotnetCommandsTransformationStage.Splitting
-    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) =
-        commands.any { it.commandType == DotnetCommandType.Test }
-                && _testsSplittingSettings.testsClassesFilePath != null
 
     override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream): DotnetCommandsStream {
+        if (_testsSplittingSettings.testsClassesFilePath == null) {
+            return commands
+        }
+
         val mode = _testsSplittingModeProvider.getMode(context.toolVersion)
         val testCommandTransformer = _testsSplittingCommandsTransformers
             .firstOrNull { it.mode == mode } ?: return commands
-        _loggerService.writeTrace("$mode test split strategy was chosen")
 
         return commands
             .flatMap {
                 when (it.commandType) {
-                    DotnetCommandType.Test -> testCommandTransformer.transform(it)
+                    DotnetCommandType.Test -> {
+                        _loggerService.writeTrace("$mode test split strategy was chosen")
+                        testCommandTransformer.transform(it)
+                    }
                     else -> sequenceOf(it)
                 }
             }

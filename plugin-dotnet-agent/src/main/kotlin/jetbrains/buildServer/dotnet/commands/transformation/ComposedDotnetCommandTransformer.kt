@@ -4,13 +4,11 @@ package jetbrains.buildServer.dotnet.commands.transformation
 
 import jetbrains.buildServer.agent.CommandLineArgument
 import jetbrains.buildServer.agent.CommandLineArgumentType
-import jetbrains.buildServer.dotnet.DotnetCommandContext
 import jetbrains.buildServer.dotnet.DotnetCommand
+import jetbrains.buildServer.dotnet.DotnetCommandContext
 
 class ComposedDotnetCommandTransformer : DotnetCommandsTransformer {
     override val stage: DotnetCommandsTransformationStage = DotnetCommandsTransformationStage.FinalComposition
-
-    override fun shouldBeApplied(context: DotnetCommandContext, commands: DotnetCommandsStream) = true
 
     override fun apply(context: DotnetCommandContext, commands: DotnetCommandsStream) = commands.map { ComposedDotnetCommand(it) }
 

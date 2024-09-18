@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotnet.commands.transformation
 
 import io.mockk.MockKAnnotations
@@ -36,20 +34,6 @@ class MultiTargetDotnetCommandTransformerTest {
     }
 
     @Test
-    fun `should not be applied if target arguments less then 2`() {
-        // arrange
-        val commandMock = mockk<DotnetCommand>()
-        every { commandMock.targetArguments } answers { sequenceOf(mockk()) }
-        val transformer = create()
-
-        // act
-        val result = transformer.shouldBeApplied(mockk<DotnetCommandContext>(), sequenceOf(commandMock))
-
-        // assert
-        Assert.assertFalse(result)
-    }
-
-    @Test
     fun `should resolve one command to multiple if it has target arguments more then 1`() {
         // arrange
         val (commandMock1, commandMock2) = Pair(mockk<DotnetCommand>(), mockk<DotnetCommand>())
@@ -63,11 +47,9 @@ class MultiTargetDotnetCommandTransformerTest {
         val commands = sequenceOf(commandMock1, commandMock2)
 
         // act
-        val shouldBeApplied = transformer.shouldBeApplied(mockk<DotnetCommandContext>(), commands)
         val result = transformer.apply(mockk<DotnetCommandContext>(), commands).toList()
 
         // assert
-        Assert.assertTrue(shouldBeApplied)
         Assert.assertEquals(result.size, 3)
         result.forEach {
             Assert.assertTrue(it is MultiTargetDotnetCommandTransformer.SpecificTargetDotnetCommand)
