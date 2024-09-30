@@ -74,12 +74,13 @@ class DotnetRunnersDeprecatedPluginInstaller(
 
         if (!hasDeprecatedDotnetRunnerUsages()) {
             LOG.info("Skipping deprecated dotNetRunners installation: corresponding build configurations are not found")
+            removePluginFile(pluginFile)
             return
         }
 
         _plugins.install(DOTNET_RUNNERS_PLUGIN_FILE_NAME, pluginFile)
 
-        // TODO drop plugin zip
+        removePluginFile(pluginFile)
     }
 
     private fun isEnabled(): Boolean {
@@ -103,9 +104,14 @@ class DotnetRunnersDeprecatedPluginInstaller(
     }
 
     private fun getPluginFile(): File {
-        // return File("/Users/Vladislav.Ma-iu-shan/Downloads/dotNetRunners2.zip")
-        val pluginRoot = _pluginDescriptor.pluginRoot;
+        val pluginRoot = _pluginDescriptor.pluginRoot
         return File(pluginRoot, "server/dotNetRunners/dotNetRunners.zip")
+    }
+
+    private fun removePluginFile(pluginFile: File) {
+        if (pluginFile.exists()) {
+            pluginFile.delete()
+        }
     }
 
     private fun hasDeprecatedDotnetRunnerUsages(): Boolean {
