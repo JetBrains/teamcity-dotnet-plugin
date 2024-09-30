@@ -1,11 +1,7 @@
 package jetbrains.buildServer
 
 import com.intellij.openapi.diagnostic.Logger
-import jetbrains.buildServer.log.Loggers
-import jetbrains.buildServer.serverSide.BuildServerAdapter
-import jetbrains.buildServer.serverSide.BuildServerListener
-import jetbrains.buildServer.serverSide.CurrentNodeInfo
-import jetbrains.buildServer.serverSide.SBuildServer
+import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.serverSide.executors.ExecutorServices
 import jetbrains.buildServer.util.EventDispatcher
 import jetbrains.buildServer.web.plugins.web.ModifiedPlugins
@@ -32,9 +28,11 @@ class DotnetRunnersDeprecatedPluginInstaller(
                     _executors.lowPriorityExecutorService.submit {
                         try {
                             installPluginIfNeeded()
-                        }
-                        catch (e: Throwable) {
-                            LOG.warnAndDebugDetails("An error occurred during changing parameters in SonarQube runner plugin", e);
+                        } catch (e: Throwable) {
+                            LOG.warnAndDebugDetails(
+                                "An error occurred during changing parameters in SonarQube runner plugin",
+                                e
+                            );
                         }
                     }
                 } catch (e: RejectedExecutionException) {
@@ -48,6 +46,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
     }
 
     fun installPluginIfNeeded() {
+        // runtypes are already installed
         if (_server.runTypeRegistry.registeredRunTypes.any { _deprecatedRunTypes.contains(it.type.lowercase()) }) {
             return
         }
@@ -72,9 +71,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
             return false
         }
 
-        // add feature toggle
-
-        return true
+        return TeamCityProperties.getBooleanOrTrue(DOTNET_RUNNERS_INSTALL_ENABLED)
     }
 
     private fun hasDeprecatedDotnetRunnerUsages(): Boolean = _server.projectManager
@@ -84,5 +81,6 @@ class DotnetRunnersDeprecatedPluginInstaller(
 
     companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnersDeprecatedPluginInstaller::class.java.name)
+        const val DOTNET_RUNNERS_INSTALL_ENABLED = "teamcity.internal.dotnet.runners.deprecated.install.enabled"
     }
 }
