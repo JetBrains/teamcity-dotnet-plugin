@@ -43,6 +43,7 @@
   <bean class="jetbrains.buildServer.dotnet.DotnetParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.SdkTypeResolverImpl"/>
   <bean class="jetbrains.buildServer.dotnet.SdkWizardImpl"/>
+  <bean class="jetbrains.buildServer.DeprecatedPlugin"/>
 
   <!--Discovery-->
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildProjectDeserializer" id="msBuildProjectDeserializer"/>
