@@ -14,8 +14,20 @@ class DotnetRunnersDeprecatedPluginInstaller(
     private val _executors: ExecutorServices,
     eventDispatcher: EventDispatcher<BuildServerListener>
 ) {
-    private val _deprecatedRunTypes = listOf("nunit")
-    private val _pluginFileName = "dotNetRunners2.zip"
+    companion object {
+        private val LOG: Logger = Logger.getInstance(DotnetRunnersDeprecatedPluginInstaller::class.java.name)
+        const val DOTNET_RUNNERS_INSTALL_ENABLED = "teamcity.internal.dotnet.runners.deprecated.install.enabled"
+        const val DOTNET_RUNNERS_PLUGIN_FILE_NAME = "dotNetRunners2.zip"
+        private val DEPRECATED_RUN_TYPES = listOf(
+            "jetbrains.dotNetGenericRunner",
+            "nunit",
+            "NAnt",
+            "VS.Solution",
+            "jetbrains.mspec",
+            "MSBuild",
+            "sln2003"
+        )
+    }
 
     init {
         eventDispatcher.addListener(object : BuildServerAdapter() {
@@ -47,7 +59,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
 
     fun installPluginIfNeeded() {
         // runtypes are already installed
-        if (_server.runTypeRegistry.registeredRunTypes.any { _deprecatedRunTypes.contains(it.type.lowercase()) }) {
+        if (_server.runTypeRegistry.registeredRunTypes.any { DEPRECATED_RUN_TYPES.contains(it.type.lowercase()) }) {
             return
         }
 
@@ -61,7 +73,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
             return
         }
 
-        _plugins.install(_pluginFileName, pluginFile)
+        _plugins.install(DOTNET_RUNNERS_PLUGIN_FILE_NAME, pluginFile)
 
         // drop plugin zip
     }
@@ -77,10 +89,5 @@ class DotnetRunnersDeprecatedPluginInstaller(
     private fun hasDeprecatedDotnetRunnerUsages(): Boolean = _server.projectManager
         .activeBuildTypes
         .flatMap { it.resolvedSettings.buildRunners }
-        .any { _deprecatedRunTypes.contains(it.type.lowercase()) }
-
-    companion object {
-        private val LOG: Logger = Logger.getInstance(DotnetRunnersDeprecatedPluginInstaller::class.java.name)
-        const val DOTNET_RUNNERS_INSTALL_ENABLED = "teamcity.internal.dotnet.runners.deprecated.install.enabled"
-    }
+        .any { DEPRECATED_RUN_TYPES.contains(it.type.lowercase()) }
 }
