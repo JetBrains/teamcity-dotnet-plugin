@@ -61,7 +61,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
 
     fun installPluginIfNeeded() {
         // runtypes are already installed
-        if (_server.runTypeRegistry.registeredRunTypes.any { DEPRECATED_RUN_TYPES.contains(it.type.lowercase()) }) {
+        if (isAlreadyInstalled()) {
             LOG.info("Skipping deprecated dotNetRunners installation: deprecated runtypes are already registered")
             return
         }
@@ -94,6 +94,12 @@ class DotnetRunnersDeprecatedPluginInstaller(
         }
 
         return true
+    }
+
+    private fun isAlreadyInstalled(): Boolean {
+        return _server.runTypeRegistry.registeredRunTypes.any { r ->
+            DEPRECATED_RUN_TYPES.any { it.equals(r.type, ignoreCase = true) }
+        }
     }
 
     private fun getPluginFile(): File {
