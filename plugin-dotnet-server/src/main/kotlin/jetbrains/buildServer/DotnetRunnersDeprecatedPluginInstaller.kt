@@ -17,15 +17,15 @@ class DotnetRunnersDeprecatedPluginInstaller(
     companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnersDeprecatedPluginInstaller::class.java.name)
         const val DOTNET_RUNNERS_INSTALL_ENABLED = "teamcity.internal.dotnet.runners.deprecated.install.enabled"
-        const val DOTNET_RUNNERS_PLUGIN_FILE_NAME = "dotNetRunners2.zip"
+        const val DOTNET_RUNNERS_PLUGIN_FILE_NAME = "dotNetRunners.zip"
         private val DEPRECATED_RUN_TYPES = listOf(
-            "jetbrains.dotNetGenericRunner",
             "nunit",
             "NAnt",
-            "VS.Solution",
+            "jetbrains.dotNetGenericRunner",
             "jetbrains.mspec",
             "MSBuild",
-            "sln2003"
+            "sln2003",
+            "VS.Solution"
         )
     }
 
@@ -42,14 +42,14 @@ class DotnetRunnersDeprecatedPluginInstaller(
                             installPluginIfNeeded()
                         } catch (e: Throwable) {
                             LOG.warnAndDebugDetails(
-                                "An error occurred during changing parameters in SonarQube runner plugin",
+                                "An error occurred during deprecated dotNetRunners plugin installation",
                                 e
                             );
                         }
                     }
                 } catch (e: RejectedExecutionException) {
-                    LOG.infoAndDebugDetails(
-                        "Failed to start task to install deprecated DotnetRunners plugin: ${e.message}",
+                    LOG.warnAndDebugDetails(
+                        "Failed to start task to install deprecated dotNetRunners plugin: ${e.message}",
                         e
                     )
                 }
@@ -60,34 +60,57 @@ class DotnetRunnersDeprecatedPluginInstaller(
     fun installPluginIfNeeded() {
         // runtypes are already installed
         if (_server.runTypeRegistry.registeredRunTypes.any { DEPRECATED_RUN_TYPES.contains(it.type.lowercase()) }) {
+            LOG.info("Skipping deprecated dotNetRunners installation: deprecated runtypes are already registered")
             return
         }
 
-        //DeprecatedPlugin::class.java.getResource("")
-        val pluginFile = File("/Users/Vladislav.Ma-iu-shan/Downloads/dotNetRunners2.zip")
-        if (!pluginFile.exists()) {
+        val pluginFile = getPluginFile()
+        if (pluginFile == null || !pluginFile.exists()) {
+            LOG.info("Skipping deprecated dotNetRunners installation: resource was not found")
             return
         }
 
         if (!hasDeprecatedDotnetRunnerUsages()) {
+            LOG.info("Skipping deprecated dotNetRunners installation: corresponding build configurations are not found")
             return
         }
 
         _plugins.install(DOTNET_RUNNERS_PLUGIN_FILE_NAME, pluginFile)
 
-        // drop plugin zip
+        // TODO drop plugin zip
     }
 
     private fun isEnabled(): Boolean {
         if (!CurrentNodeInfo.isMainNode()) {
+            LOG.info("Skipping deprecated dotNetRunners installation: not main node")
             return false
         }
 
-        return TeamCityProperties.getBooleanOrTrue(DOTNET_RUNNERS_INSTALL_ENABLED)
+        if (!TeamCityProperties.getBooleanOrTrue(DOTNET_RUNNERS_INSTALL_ENABLED)) {
+            LOG.info("Skipping deprecated dotNetRunners installation: installation is disabled")
+            return false
+        }
+
+        return true
     }
 
-    private fun hasDeprecatedDotnetRunnerUsages(): Boolean = _server.projectManager
-        .activeBuildTypes
-        .flatMap { it.resolvedSettings.buildRunners }
-        .any { DEPRECATED_RUN_TYPES.contains(it.type.lowercase()) }
+    private fun getPluginFile(): File? {
+        // return File("/Users/Vladislav.Ma-iu-shan/Downloads/dotNetRunners2.zip")
+        return DotnetRunnersDeprecatedPluginInstaller::class.java.getResource("dotNetRunners.zip")
+            ?.let { File(it.toURI()) }
+    }
+
+    private fun hasDeprecatedDotnetRunnerUsages(): Boolean {
+        val buildRunner = _server.projectManager
+            .activeBuildTypes
+            .flatMap { it.resolvedSettings.buildRunners }
+            .firstOrNull { r -> DEPRECATED_RUN_TYPES.any { it.equals(r.type, ignoreCase = true) } }
+
+        if (buildRunner != null) {
+            LOG.info("Will install deprecated dotNetRunners installation, found ${buildRunner.name} configuration with type ${buildRunner.type}")
+            return true
+        }
+
+        return false
+    }
 }
