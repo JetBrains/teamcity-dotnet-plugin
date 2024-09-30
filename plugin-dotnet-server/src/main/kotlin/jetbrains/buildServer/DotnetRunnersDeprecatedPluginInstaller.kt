@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.serverSide.*
 import jetbrains.buildServer.serverSide.executors.ExecutorServices
 import jetbrains.buildServer.util.EventDispatcher
+import jetbrains.buildServer.web.openapi.PluginDescriptor
 import jetbrains.buildServer.web.plugins.web.ModifiedPlugins
 import java.io.File
 import java.util.concurrent.RejectedExecutionException
@@ -12,12 +13,13 @@ class DotnetRunnersDeprecatedPluginInstaller(
     private val _server: SBuildServer,
     private val _plugins: ModifiedPlugins,
     private val _executors: ExecutorServices,
+    private val _pluginDescriptor: PluginDescriptor,
     eventDispatcher: EventDispatcher<BuildServerListener>
 ) {
     companion object {
         private val LOG: Logger = Logger.getInstance(DotnetRunnersDeprecatedPluginInstaller::class.java.name)
         const val DOTNET_RUNNERS_INSTALL_ENABLED = "teamcity.internal.dotnet.runners.deprecated.install.enabled"
-        const val DOTNET_RUNNERS_PLUGIN_FILE_NAME = "dotNetRunners.zip"
+        const val DOTNET_RUNNERS_PLUGIN_FILE_NAME = "dotNetRunners/dotNetRunners.zip"
         private val DEPRECATED_RUN_TYPES = listOf(
             "nunit",
             "NAnt",
@@ -65,7 +67,7 @@ class DotnetRunnersDeprecatedPluginInstaller(
         }
 
         val pluginFile = getPluginFile()
-        if (pluginFile == null || !pluginFile.exists()) {
+        if (!pluginFile.exists()) {
             LOG.info("Skipping deprecated dotNetRunners installation: resource was not found")
             return
         }
@@ -94,10 +96,10 @@ class DotnetRunnersDeprecatedPluginInstaller(
         return true
     }
 
-    private fun getPluginFile(): File? {
+    private fun getPluginFile(): File {
         // return File("/Users/Vladislav.Ma-iu-shan/Downloads/dotNetRunners2.zip")
-        return DotnetRunnersDeprecatedPluginInstaller::class.java.getResource("dotNetRunners.zip")
-            ?.let { File(it.toURI()) }
+        val pluginRoot = _pluginDescriptor.pluginRoot;
+        return File(pluginRoot, "server/dotNetRunners/dotNetRunners.zip")
     }
 
     private fun hasDeprecatedDotnetRunnerUsages(): Boolean {

@@ -16,6 +16,9 @@ teamcity {
       into('server/tool-descriptors') {
         from('tool-descriptors')
       }
+      into('server/dotNetRunners') {
+        from('dotNetRunners')
+      }
     }
   }
 }
