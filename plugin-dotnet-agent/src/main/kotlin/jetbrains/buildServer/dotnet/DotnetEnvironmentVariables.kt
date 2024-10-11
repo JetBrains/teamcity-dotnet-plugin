@@ -3,6 +3,8 @@ package jetbrains.buildServer.dotnet
 import jetbrains.buildServer.agent.CommandLineEnvironmentVariable
 import jetbrains.buildServer.agent.Environment
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.impl.operationModes.AgentOperationModeHolder
+import jetbrains.buildServer.agent.impl.operationModes.BaseExecutorMode
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathType
@@ -16,7 +18,8 @@ class DotnetEnvironmentVariables(
     private val _parametersService: ParametersService,
     private val _pathsService: PathsService,
     private val _additionalEnvironmentVariables: List<EnvironmentVariables>,
-    private val _loggerResolver: LoggerResolver
+    private val _loggerResolver: LoggerResolver,
+    private val agentOperationModeHolder: AgentOperationModeHolder
 ) : EnvironmentVariables {
     override fun getVariables(sdkVersion: Version): Sequence<CommandLineEnvironmentVariable> = sequence {
         yieldAll(sequenceOf(
@@ -52,6 +55,13 @@ class DotnetEnvironmentVariables(
         if (allowMessageGuard) {
             yield("TEAMCITY_SERVICE_MESSAGES_PATH" to _pathsService.getPath(PathType.AgentTemp).canonicalPath)
         }
+
+        // if the build is being executed by an executor, it is not expected that the user will have the same permissions to access directories
+        // https://youtrack.jetbrains.com/issue/TW-90039
+        if (_environment.tryGetVariable(dotNetCliHome).isNullOrBlank() &&
+            agentOperationModeHolder.operationMode is BaseExecutorMode){
+            yield(dotNetCliHome to "/tmp/DOTNET_CLI_HOME")
+        }
     }
         .map { CommandLineEnvironmentVariable(it.first, it.second) }
         .let { it + _additionalEnvironmentVariables.flatMap { it.getVariables(sdkVersion) }}
@@ -71,5 +81,6 @@ class DotnetEnvironmentVariables(
 
     companion object {
         private val Dotnet8Version = Version(8,0,0)
+        const val dotNetCliHome = "DOTNET_CLI_HOME"
     }
 }

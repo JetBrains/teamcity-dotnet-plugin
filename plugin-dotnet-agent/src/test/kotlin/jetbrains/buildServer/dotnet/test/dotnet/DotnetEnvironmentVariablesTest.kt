@@ -6,6 +6,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.*
+import jetbrains.buildServer.agent.impl.operationModes.AgentOperationModeHolder
+import jetbrains.buildServer.agent.impl.operationModes.ExecutorStartMode
 import jetbrains.buildServer.agent.runner.PathsService
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
@@ -25,6 +27,7 @@ class DotnetEnvironmentVariablesTest {
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _pathsService: PathsService
     @MockK private lateinit var _loggerResolver: LoggerResolver
+    @MockK private lateinit var _agentOperationModeHolder: AgentOperationModeHolder
     private lateinit var _additionalEnvVars: MutableList<EnvironmentVariables>
     private lateinit var _environmentVariables: EnvironmentVariables
 
@@ -36,9 +39,10 @@ class DotnetEnvironmentVariablesTest {
         _parametersService = mockk(relaxed = true)
         _pathsService = mockk(relaxed = true)
         _loggerResolver = mockk(relaxed = true)
+        _agentOperationModeHolder = mockk(relaxed = true)
         _additionalEnvVars = mutableListOf()
         _environmentVariables = DotnetEnvironmentVariables(
-            _environment, _parametersService, _pathsService, _additionalEnvVars, _loggerResolver)
+            _environment, _parametersService, _pathsService, _additionalEnvVars, _loggerResolver, _agentOperationModeHolder)
     }
 
     @DataProvider(name = "common env vars")
@@ -233,5 +237,35 @@ class DotnetEnvironmentVariablesTest {
         assertTrue(result.any { it.name == "VAR2" && it.value == "VAL2" })
         assertTrue(result.any { it.name == "VAR3" && it.value == "VAL3" })
         assertEquals(result.count(), 10)
+    }
+
+    @Test
+    fun `should modify cli home for executors`(){
+        // arrange
+        every {
+            _agentOperationModeHolder.operationMode
+        } returns mockk<ExecutorStartMode>(relaxed = true)
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertTrue(result.any { it.name == DotnetEnvironmentVariables.dotNetCliHome })
+    }
+
+    @Test
+    fun `shouldn't modify cli home for executors if it has already been set`(){
+        // arrange
+        every {
+            _agentOperationModeHolder.operationMode
+        } returns mockk<ExecutorStartMode>(relaxed = true)
+        every {
+            _environment.tryGetVariable(DotnetEnvironmentVariables.dotNetCliHome) } returns "customCliHome"
+
+        // act
+        val result = _environmentVariables.getVariables(mockk<Version>(relaxed = true))
+
+        // assert
+        assertTrue(result.none { it.name == DotnetEnvironmentVariables.dotNetCliHome })
     }
 }
