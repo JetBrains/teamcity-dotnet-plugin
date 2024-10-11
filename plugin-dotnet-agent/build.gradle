@@ -23,7 +23,8 @@ dependencies {
     implementation project(':plugin-dotnet-common')
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
-    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
+    provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}",
+             "org.jetbrains.teamcity.internal:dependency-cache-agent:${teamcityVersion}"
     implementation 'commons-io:commons-io:2.11.0'
     compileOnly "org.jetbrains.intellij.deps:coverage-report:1.0.15"
     implementation fileTree(dir: "$project.projectDir.parentFile/lib/compile", include: ['coverage-report*.jar'])

@@ -44,9 +44,10 @@ class TestMethodNameFilterTestSplittingCommandTransformer(
     private class ObservingListTestsDotnetCommand(
         private val _originalCommand: DotnetCommand,
         resultObserver: Observer<CommandResultEvent>,
-        override val targetArguments: Sequence<TargetArguments>,
+        private val _targetArguments: Sequence<TargetArguments>,
     ) : DotnetCommand by _originalCommand {
         override val resultsObserver = resultObserver
+        override val targetArguments get() = _targetArguments
     }
 
     private class ExactMatchListTestsCommandResultHandler(

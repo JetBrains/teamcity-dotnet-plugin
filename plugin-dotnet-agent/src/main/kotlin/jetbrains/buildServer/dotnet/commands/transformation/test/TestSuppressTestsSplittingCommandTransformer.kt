@@ -90,10 +90,10 @@ class TestSuppressTestsSplittingCommandTransformer(
     private class BuildWithBinaryLogCommand(
         private val _originalBuildCommand: DotnetCommand,
         private val _binlogPath: String,
-        targetPath: String
+        private val _targetPath: String
     ) : DotnetCommand by _originalBuildCommand {
-        override val targetArguments =
-            sequenceOf(TargetArguments(sequenceOf(CommandLineArgument(targetPath, CommandLineArgumentType.Target))))
+        override val targetArguments
+            get() = sequenceOf(TargetArguments(sequenceOf(CommandLineArgument(_targetPath, CommandLineArgumentType.Target))))
 
         override fun getArguments(context: DotnetCommandContext) = sequence {
             // generates MSBuild binary log file (.binlog)
