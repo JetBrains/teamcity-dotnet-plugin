@@ -141,4 +141,5 @@
         init-method="register"
         destroy-method="unregister"/>
   <bean id="dotnetBuildStartContextProcessor" class="jetbrains.buildServer.depcache.DotnetBuildStartContextProcessor"/>
+  <bean id="nugetDependencyCacheBuildFeature" class="jetbrains.buildServer.depcache.NugetDependencyCacheBuildFeature"/>
 </beans>

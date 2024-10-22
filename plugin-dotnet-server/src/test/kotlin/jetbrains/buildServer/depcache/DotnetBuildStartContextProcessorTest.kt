@@ -40,7 +40,7 @@ class DotnetBuildStartContextProcessorTest {
     @Test(dataProvider = "getInternalPropertyValues")
     fun `should add feature flag config parameter when internal property exists and no config parameter present`(propertyValue: String) {
         // arrange
-        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED) } returns propertyValue
+        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE) } returns propertyValue
 
         val buildTypeMock: SBuildType = mockk<SBuildType>()
         every { buildTypeMock.configParameters } returns emptyMap()
@@ -55,7 +55,7 @@ class DotnetBuildStartContextProcessorTest {
         instance.updateParameters(contextMock)
 
         // assert
-        verify { contextMock.addSharedParameter(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED, addedParamSlot.captured) }
+        verify { contextMock.addSharedParameter(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE, addedParamSlot.captured) }
         val actualPropertyValue = addedParamSlot.captured
         assertEquals(actualPropertyValue, propertyValue)
     }
@@ -63,7 +63,7 @@ class DotnetBuildStartContextProcessorTest {
     @Test
     fun `should not add feature flag config parameter when no internal property exists`() {
         // arrange
-        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED) } returns null
+        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE) } returns null
         val contextMock = mockk<BuildStartContext>()
 
         // act
@@ -76,10 +76,10 @@ class DotnetBuildStartContextProcessorTest {
     @Test
     fun `should not add feature flag config parameter when internal property exists and config parameter already present`() {
         // arrange
-        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED) } returns "abc"
+        every { TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE) } returns "abc"
 
         val buildTypeMock: SBuildType = mockk<SBuildType>()
-        every { buildTypeMock.configParameters } returns mapOf(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED to "def")
+        every { buildTypeMock.configParameters } returns mapOf(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE to "def")
         val buildMock: SRunningBuild = mockk<SRunningBuild>()
         every { buildMock.buildType } returns buildTypeMock
         val contextMock = mockk<BuildStartContext>()

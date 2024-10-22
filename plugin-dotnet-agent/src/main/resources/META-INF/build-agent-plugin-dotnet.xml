@@ -591,8 +591,8 @@
   <bean class="jetbrains.buildServer.dotnet.coverage.dotcover.DotCoverVersionChecker"/>
 
   <!-- dotCover workflow composer -->
-  <bean class="jetbrains.buildServer.dotcover.tool.DotCoverAgentTool" />
-  <bean class="jetbrains.buildServer.dotcover.DotCoverEntryPointSelectorImpl" />
+  <bean class="jetbrains.buildServer.dotcover.tool.DotCoverAgentTool"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverEntryPointSelectorImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverReportingWorkflowComposer" id="dotCoverReportingWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProfiledProcessWorkflowComposer"/>
@@ -775,7 +775,7 @@
 
   <!--Dependency Cache -->
   <bean class="jetbrains.buildServer.depcache.DotnetDependencyCacheManager"/>
-  <bean class="jetbrains.buildServer.depcache.DotnetDependencyCacheSettingsProvider" init-method="register" destroy-method="unregister"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDependencyCacheSettingsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.commands.NugetLocalsCommand" id="dotnetNugetLocalsCommand"/>
   <bean class="jetbrains.buildServer.dotnet.commands.ListPackageCommand" id="dotnetListPackageCommand"/>
   <bean class="jetbrains.buildServer.dotnet.commands.transformation.DepCacheRestorationCommandTransformer" id="depCacheRestorationCommandTransformer"/>

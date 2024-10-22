@@ -36,6 +36,8 @@ class DepCacheRestorationCommandTransformerTest {
     private lateinit var _dotnetDepCacheManager: DotnetDependencyCacheManager
     @MockK
     private lateinit var _buildStepContext: BuildStepContext
+    @MockK(relaxed = true)
+    private lateinit var _dependencyCache: DependencyCache
 
     @BeforeMethod
     fun setup(){
@@ -49,6 +51,7 @@ class DepCacheRestorationCommandTransformerTest {
         every { runnerContext.build } returns build
         val buildFeature = mockk<AgentBuildFeature>()
         every { build.getBuildFeaturesOfType(any()) } returns listOf(buildFeature)
+        every { _dotnetDepCacheManager.cache } returns _dependencyCache
     }
 
     @Test
@@ -66,8 +69,6 @@ class DepCacheRestorationCommandTransformerTest {
     @Test
     fun `should wrap initial commands into auxiliary ones for dependency cache`() {
         // arrange
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, "teamcity.internal.depcache.buildFeature.dotnet.enabled") } returns "true"
-
         val context = mockk<DotnetCommandContext>()
         every { context.toolVersion } returns MinDotNetSdkVersionForDepCache
 
@@ -105,8 +106,6 @@ class DepCacheRestorationCommandTransformerTest {
     @Test(dataProvider = "incompatibleDotnetCommandTypes")
     fun `should return initial command when command is not dep cache compatible`(incompatibleCommandType: DotnetCommandType) {
         // arrange
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, "teamcity.internal.depcache.buildFeature.dotnet.enabled") } returns "true"
-
         val context = mockk<DotnetCommandContext>()
         every { context.toolVersion } returns MinDotNetSdkVersionForDepCache
 
@@ -134,8 +133,6 @@ class DepCacheRestorationCommandTransformerTest {
     @Test(dataProvider = "incompatibleTargets")
     fun `should return initial command when target arguments are not dep cache compatible`(incompatibleTarget: String) {
         // arrange
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, "teamcity.internal.depcache.buildFeature.dotnet.enabled") } returns "true"
-
         val context = mockk<DotnetCommandContext>()
         every { context.toolVersion } returns MinDotNetSdkVersionForDepCache
 
@@ -157,7 +154,7 @@ class DepCacheRestorationCommandTransformerTest {
     @Test
     fun `should return initial commands when dotnet dependency cache feature is disabled`() {
         // arrange
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, "teamcity.internal.depcache.buildFeature.dotnet.enabled") } returns "false"
+        every { _dotnetDepCacheManager.cache } returns null
         val context = mockk<DotnetCommandContext>()
         every { context.toolVersion } returns MinDotNetSdkVersionForDepCache
         val (command1, command2) = Pair(mockk<DotnetCommand>(), mockk<DotnetCommand>())
@@ -175,11 +172,8 @@ class DepCacheRestorationCommandTransformerTest {
     @Test
     fun `should return initial commands when tool version is less that minimal required`() {
         // arrange
-        every { _parametersService.tryGetParameter(ParameterType.Configuration, "teamcity.internal.depcache.buildFeature.dotnet.enabled") } returns "true"
         val context = mockk<DotnetCommandContext>()
         every { context.toolVersion } returns Version(2, 1, 105)
-        val dependencyCache = mockk<DependencyCache>(relaxed = true)
-        every { _dotnetDepCacheManager.cache } returns dependencyCache
         val (command1, command2) = Pair(mockk<DotnetCommand>(), mockk<DotnetCommand>())
         val transformer = create()
 

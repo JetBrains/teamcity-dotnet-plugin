@@ -6,8 +6,6 @@ import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
-import jetbrains.buildServer.cache.depcache.buildFeature.DependencyCacheBuildFeatureConstants
-import jetbrains.buildServer.cache.depcache.buildFeature.DependencyCacheBuildFeatureConstants.DEPENDENCY_CACHE_BUILD_FEATURE_TYPE
 import jetbrains.buildServer.depcache.DependencyCacheDotnetStepContext
 import jetbrains.buildServer.depcache.DotnetDependencyCacheConstants
 import jetbrains.buildServer.depcache.DotnetDependencyCacheManager
@@ -85,25 +83,18 @@ class DepCacheRestorationCommandTransformer(
         }
     }
 
-    private val dotnetDepCacheEnabled: Boolean
-        get() = _parametersService.tryGetParameter(ParameterType.Configuration, DotnetDependencyCacheConstants.DEP_CACHE_ENABLED)
-            ?.lowercase()
-            ?.toBooleanStrictOrNull()
-            ?: DotnetDependencyCacheConstants.DEP_CACHE_ENABLED_DEFAULT
-
-    private val depCacheBuildFeatureEnabled: Boolean
-        get() = _buildStepContext.runnerContext.build.getBuildFeaturesOfType(DEPENDENCY_CACHE_BUILD_FEATURE_TYPE).isNotEmpty()
-
     private fun shouldBeApplied(toolVersion: Version): Boolean {
-        if (!dotnetDepCacheEnabled || !depCacheBuildFeatureEnabled) {
+        if (_dotnetDepCacheManager.cache == null) { // not null when cache is enabled and configured for dotnet runner
             return false
         }
         if (!versionCompatible(toolVersion)) {
-            _dotnetDepCacheManager.cache?.logWarning("""the dependency cache is enabled but couldn't be used.
+            _dotnetDepCacheManager.cache?.logWarning(
+                """the dependency cache is enabled but couldn't be used.
                 Please update the .NET version.
                 The minimum required .NET version for the dependency cache: ${MinDotNetSdkVersionForDepCache.toString()}.
                 The version used for the build: ${toolVersion.toString()}.
-                 """.trimIndent())
+                 """.trimIndent()
+            )
             return false
         }
         return true

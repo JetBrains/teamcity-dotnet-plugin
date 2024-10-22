@@ -14,11 +14,11 @@ class DotnetBuildStartContextProcessor : BuildStartContextProcessor {
      * Allows enabling/disabling agent-side of the .NET dependency cache via an internal server property.
      */
     private fun mapDotnetDependencyCacheEnabledInternalProperty(context: BuildStartContext) {
-        val propertyValue = TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED) ?: return
+        val propertyValue = TeamCityProperties.getPropertyOrNull(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE) ?: return
         val buildType = context.build.buildType ?: return
 
-        if (!buildType.configParameters.containsKey(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED)) {
-            context.addSharedParameter(DotnetDependencyCacheConstants.DEP_CACHE_ENABLED, propertyValue)
+        if (!buildType.configParameters.containsKey(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE)) {
+            context.addSharedParameter(DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE, propertyValue)
         }
     }
 }
