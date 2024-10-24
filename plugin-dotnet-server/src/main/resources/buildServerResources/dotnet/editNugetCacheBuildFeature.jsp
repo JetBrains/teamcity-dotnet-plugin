@@ -15,7 +15,8 @@
     </div>
     <div class="attentionComment">
       <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
-      Currently, NuGet caching is only performed on ephemeral agents (agents terminated after their first build). Builds running on non-ephemeral agents neither cache nor reuse previously cached dependencies.
+      Currently, NuGet caching is only performed on <bs:helpLink file="predefined-build-parameters" anchor="Predefined+Agent+Environment+Parameters">ephemeral agents</bs:helpLink>
+      (cloud agents terminated after their first build). Builds running on a non-ephemeral agents neither cache nor reuse previously cached dependencies.
     </div>
   </td>
 </tr>
