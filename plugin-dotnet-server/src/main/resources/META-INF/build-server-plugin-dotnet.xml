@@ -84,6 +84,7 @@
     <constructor-arg ref="dotCoverToolType"/>
   </bean>
   <bean class="jetbrains.buildServer.dotCover.DotCoverParametersPreprocessor"/>
+  <bean class="jetbrains.buildServer.dotCover.DotCoverReportTab"/>
 
   <!--Resharper-->
   <bean class="jetbrains.buildServer.inspect.RequirementsResolverImpl" />
