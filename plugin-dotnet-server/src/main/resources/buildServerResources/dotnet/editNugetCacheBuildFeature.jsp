@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
+<%@ page import="jetbrains.buildServer.serverSide.TeamCityProperties" %>
+<%@ page import="jetbrains.buildServer.cache.depcache.DependencyCacheConstants" %>
 
 <tr>
   <td colspan="2" height="5">
@@ -13,10 +15,16 @@
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
       <b>NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.</b>.
     </div>
-    <div class="attentionComment">
-      <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
-      Currently, NuGet caching is only performed on <bs:helpLink file="predefined-build-parameters" anchor="Predefined+Agent+Environment+Parameters">ephemeral agents</bs:helpLink>
-      (cloud agents terminated after their first build). Builds running on a non-ephemeral agents neither cache nor reuse previously cached dependencies.
-    </div>
+    <c:set var="showEphemeralAgentsRestrictionWarning"
+           value='<%= TeamCityProperties.getBoolean(DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY, DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY_DEFAULT) %>'/>
+    <c:if test="${showEphemeralAgentsRestrictionWarning}">
+      <div class="attentionComment">
+        <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
+        Currently, NuGet caching is only performed on
+        <a href="<bs:helpUrlPrefix/>predefined-build-parameters#Predefined+Agent+Environment+Parameters" target="_blank" rel="noreferrer noopener"
+           showdiscardchangesmessage="false">ephemeral agents</a>
+        (cloud agents terminated after their first build). Builds running on non-ephemeral agents neither cache nor reuse previously cached dependencies.
+      </div>
+    </c:if>
   </td>
 </tr>
