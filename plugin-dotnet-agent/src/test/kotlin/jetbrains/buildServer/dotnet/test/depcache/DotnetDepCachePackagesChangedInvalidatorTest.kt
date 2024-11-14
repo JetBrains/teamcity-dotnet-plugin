@@ -17,16 +17,16 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class DotnetPackagesChangedInvalidatorTest {
+class DotnetDepCachePackagesChangedInvalidatorTest {
 
-    private lateinit var instance: DotnetPackagesChangedInvalidator
+    private lateinit var instance: DotnetDepCachePackagesChangedInvalidator
     @MockK private lateinit var invalidationMetadataMock: InvalidationMetadata
 
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         clearAllMocks()
-        instance = DotnetPackagesChangedInvalidator()
+        instance = DotnetDepCachePackagesChangedInvalidator()
     }
 
     @DataProvider
@@ -63,7 +63,7 @@ class DotnetPackagesChangedInvalidatorTest {
                     )
                 ),
                 mapOf(
-                    Paths.get("/nuget/.packages1") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages1") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -95,7 +95,7 @@ class DotnetPackagesChangedInvalidatorTest {
                             )
                         )
                     ),
-                    Paths.get("/nuget/.packages2") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages2") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -125,11 +125,11 @@ class DotnetPackagesChangedInvalidatorTest {
     fun `should not invalidate cache when package sets not changed`(
         cachedPackagesJson: String,
         newCacheRoots: List<CacheRoot>,
-        repoPathToPackages: Map<Path, DotnetListPackagesResult>
+        repoPathToPackages: Map<Path, DotnetDepCacheListPackagesResult>
     ) {
         // arrange
         val parameterName = "nugetPackages"
-        val cachedPackages: NugetPackages = prepareNugetPackagesMetadata(cachedPackagesJson)
+        val cachedPackages: DotnetDepCacheNugetPackages = prepareNugetPackagesMetadata(cachedPackagesJson)
         every { invalidationMetadataMock.getObjectParameter(any(), any<Deserializer<Serializable>>()) } returns cachedPackages
         val serializableArgumentSlot = slot<Serializable>()
 
@@ -144,7 +144,7 @@ class DotnetPackagesChangedInvalidatorTest {
         Assert.assertNull(invalidationResult.invalidationReason)
         verify { invalidationMetadataMock.getObjectParameter(parameterName, any<Deserializer<Serializable>>()) }
         verify { invalidationMetadataMock.publishObjectParameter(parameterName, capture(serializableArgumentSlot)) }
-        val capturedPackagesToPublish: NugetPackages = serializableArgumentSlot.captured as NugetPackages
+        val capturedPackagesToPublish: DotnetDepCacheNugetPackages = serializableArgumentSlot.captured as DotnetDepCacheNugetPackages
         Assert.assertEquals(capturedPackagesToPublish, cachedPackages) // we publish the same package sets
     }
 
@@ -183,7 +183,7 @@ class DotnetPackagesChangedInvalidatorTest {
                     )
                 ),
                 mapOf(
-                    Paths.get("/nuget/.packages1") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages1") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -204,7 +204,7 @@ class DotnetPackagesChangedInvalidatorTest {
                             )
                         )
                     ),
-                    Paths.get("/nuget/.packages2") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages2") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -260,7 +260,7 @@ class DotnetPackagesChangedInvalidatorTest {
                     )
                 ),
                 mapOf(
-                    Paths.get("/nuget/.packages1") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages1") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -281,7 +281,7 @@ class DotnetPackagesChangedInvalidatorTest {
                             )
                         )
                     ),
-                    Paths.get("/nuget/.packages2") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages2") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -338,7 +338,7 @@ class DotnetPackagesChangedInvalidatorTest {
                     )
                 ),
                 mapOf(
-                    Paths.get("/nuget/.packages1") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages1") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -358,7 +358,7 @@ class DotnetPackagesChangedInvalidatorTest {
                             )
                         )
                     ),
-                    Paths.get("/nuget/.packages2") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages2") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -414,7 +414,7 @@ class DotnetPackagesChangedInvalidatorTest {
                     )
                 ),
                 mapOf(
-                    Paths.get("/nuget/.packages1") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages1") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -434,7 +434,7 @@ class DotnetPackagesChangedInvalidatorTest {
                             )
                         )
                     ),
-                    Paths.get("/nuget/.packages2") to DotnetListPackagesResult(
+                    Paths.get("/nuget/.packages2") to DotnetDepCacheListPackagesResult(
                         version = 1,
                         parameters = "--include-transitive",
                         problems = emptyList(),
@@ -465,11 +465,11 @@ class DotnetPackagesChangedInvalidatorTest {
     fun `should invalidate cache when package sets changed`(
         cachedPackagesJson: String,
         newCacheRoots: List<CacheRoot>,
-        repoPathToPakages: Map<Path, DotnetListPackagesResult>
+        repoPathToPakages: Map<Path, DotnetDepCacheListPackagesResult>
     ) {
         // arrange
         val parameterName = "nugetPackages"
-        var cachedPackages: NugetPackages = prepareNugetPackagesMetadata(cachedPackagesJson)
+        var cachedPackages: DotnetDepCacheNugetPackages = prepareNugetPackagesMetadata(cachedPackagesJson)
         every { invalidationMetadataMock.getObjectParameter(any(), any<Deserializer<Serializable>>()) } returns cachedPackages
         val serializableArgumentSlot = slot<Serializable>()
 
@@ -484,12 +484,12 @@ class DotnetPackagesChangedInvalidatorTest {
         Assert.assertNotNull(invalidationResult.invalidationReason)
         verify { invalidationMetadataMock.getObjectParameter(parameterName, any<Deserializer<Serializable>>()) }
         verify { invalidationMetadataMock.publishObjectParameter(parameterName, capture(serializableArgumentSlot)) }
-        var capturedPackagesToPublish: NugetPackages? = serializableArgumentSlot.captured as NugetPackages?
+        var capturedPackagesToPublish: DotnetDepCacheNugetPackages? = serializableArgumentSlot.captured as DotnetDepCacheNugetPackages?
         Assert.assertNotEquals(capturedPackagesToPublish, cachedPackages) // we publish changed package sets
     }
 
 
-    private fun prepareNugetPackagesMetadata(json: String): NugetPackages {
-        return NugetPackages.deserialize(json.toByteArray(StandardCharsets.UTF_8))
+    private fun prepareNugetPackagesMetadata(json: String): DotnetDepCacheNugetPackages {
+        return DotnetDepCacheNugetPackages.deserialize(json.toByteArray(StandardCharsets.UTF_8))
     }
 }

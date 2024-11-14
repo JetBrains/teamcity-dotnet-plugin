@@ -8,8 +8,8 @@ import jetbrains.buildServer.agent.cache.depcache.DependencyCacheSettings
 import jetbrains.buildServer.agent.cache.depcache.DependencyCacheSettingsProviderRegistry
 import jetbrains.buildServer.cache.depcache.DependencyCacheConstants.*
 import jetbrains.buildServer.depcache.DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE
-import jetbrains.buildServer.depcache.DotnetDependencyCacheSettingsProvider
-import jetbrains.buildServer.depcache.DotnetPackagesChangedInvalidator
+import jetbrains.buildServer.depcache.DotnetDepCacheSettingsProvider
+import jetbrains.buildServer.depcache.DotnetDepCachePackagesChangedInvalidator
 import jetbrains.buildServer.dotnet.DotnetConstants.RUNNER_TYPE
 import jetbrains.buildServer.util.EventDispatcher
 import org.testng.Assert
@@ -17,13 +17,13 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class DotnetDependencyCacheSettingsProviderTest {
+class DotnetDepCacheSettingsProviderTest {
 
     @MockK private lateinit var eventDispatcherMock: EventDispatcher<AgentLifeCycleListener>
     @MockK private lateinit var cacheSettingsProviderRegistryMock: DependencyCacheSettingsProviderRegistry
     @MockK private lateinit var buildMock: AgentRunningBuild
     private lateinit var sharedBuildConfig: MutableMap<String, String?>
-    private lateinit var instance: DotnetDependencyCacheSettingsProvider
+    private lateinit var instance: DotnetDepCacheSettingsProvider
 
     @BeforeMethod
     fun setUp() {
@@ -35,7 +35,7 @@ class DotnetDependencyCacheSettingsProviderTest {
         )
         every { buildMock.getSharedConfigParameters() } returns sharedBuildConfig
 
-        instance = DotnetDependencyCacheSettingsProvider(
+        instance = DotnetDepCacheSettingsProvider(
             eventDispatcherMock, cacheSettingsProviderRegistryMock, mockk<DependencyCacheProvider>()
         )
     }
@@ -53,7 +53,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertFalse(cacheSettings.isEmpty())
@@ -73,7 +73,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertFalse(cacheSettings.isEmpty())
@@ -96,7 +96,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertTrue(cacheSettings.isEmpty())
@@ -119,7 +119,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertTrue(cacheSettings.isEmpty())
@@ -140,7 +140,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertTrue(cacheSettings.isEmpty())
@@ -161,7 +161,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertTrue(cacheSettings.isEmpty())
@@ -183,7 +183,7 @@ class DotnetDependencyCacheSettingsProviderTest {
 
         // act
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertTrue(cacheSettings.isEmpty())
@@ -204,14 +204,14 @@ class DotnetDependencyCacheSettingsProviderTest {
         // act
         instance.register()
         val cacheSettings: List<DependencyCacheSettings?> = instance.getSettings(buildMock)
-        val invalidator: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidator: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
         val listenerSlot = slot<AgentLifeCycleListener>()
 
         verify { eventDispatcherMock.addListener(capture(listenerSlot)) }
         val actualListener = listenerSlot.captured
         Assert.assertNotNull(actualListener)
         actualListener.buildFinished(buildMock, BuildFinishedStatus.FINISHED_SUCCESS)
-        val invalidatorAfterBuildFinished: DotnetPackagesChangedInvalidator? = instance.postBuildInvalidator
+        val invalidatorAfterBuildFinished: DotnetDepCachePackagesChangedInvalidator? = instance.postBuildInvalidator
 
         // assert
         Assert.assertNotNull(cacheSettings)

@@ -1,10 +1,10 @@
 package jetbrains.buildServer.dotnet.test.depcache
 
-import jetbrains.buildServer.depcache.utils.NugetProjectPackagesJsonParser
+import jetbrains.buildServer.depcache.utils.DotnetDepCacheProjectPackagesJsonParser
 import org.testng.Assert
 import org.testng.annotations.Test
 
-class NugetProjectPackagesJsonParserTest {
+class DotnetDepCacheProjectPackagesJsonParserTest {
 
     @Test
     fun `should parse from JSON string`() {
@@ -40,7 +40,7 @@ class NugetProjectPackagesJsonParserTest {
         """.trimIndent()
 
         // act
-        val result = NugetProjectPackagesJsonParser.fromCommandLineOutput(output)
+        val result = DotnetDepCacheProjectPackagesJsonParser.fromCommandLineOutput(output)
 
         // assert
         Assert.assertTrue(result.isSuccess)
@@ -84,7 +84,7 @@ class NugetProjectPackagesJsonParserTest {
         """.trimIndent()
 
         // act
-        val result = NugetProjectPackagesJsonParser.fromCommandLineOutput(output)
+        val result = DotnetDepCacheProjectPackagesJsonParser.fromCommandLineOutput(output)
 
         // assert
         Assert.assertTrue(result.isSuccess)
@@ -100,7 +100,7 @@ class NugetProjectPackagesJsonParserTest {
         val output = "invalid JSON"
 
         // act
-        val result = NugetProjectPackagesJsonParser.fromCommandLineOutput(output)
+        val result = DotnetDepCacheProjectPackagesJsonParser.fromCommandLineOutput(output)
 
         // assert
         Assert.assertTrue(result.isFailure)

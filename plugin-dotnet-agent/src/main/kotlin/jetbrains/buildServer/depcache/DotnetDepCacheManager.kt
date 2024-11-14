@@ -4,23 +4,46 @@ import jetbrains.buildServer.agent.CommandLineOutputAccumulationObserver
 import jetbrains.buildServer.agent.cache.depcache.DependencyCache
 import jetbrains.buildServer.agent.runner.BuildInfo
 import jetbrains.buildServer.agent.runner.LoggerService
-import jetbrains.buildServer.depcache.utils.NugetGlobalPackagesLocationParser
-import jetbrains.buildServer.depcache.utils.NugetProjectPackagesJsonParser
+import jetbrains.buildServer.depcache.utils.DotnetDepCacheGlobalPackagesLocationParser
+import jetbrains.buildServer.depcache.utils.DotnetDepCacheProjectPackagesJsonParser
 import java.io.File
-import java.util.stream.Collectors
 
-class DotnetDependencyCacheManager(
+class DotnetDepCacheManager(
     private val _loggerService: LoggerService,
-    private val _dotnetDependencyCacheSettingsProvider: DotnetDependencyCacheSettingsProvider,
+    private val _dotnetDepCacheSettingsProvider: DotnetDepCacheSettingsProvider,
     private val _buildInfo: BuildInfo
 ) {
 
     val cache: DependencyCache?
-        get() = _dotnetDependencyCacheSettingsProvider.cache
+        get() = _dotnetDepCacheSettingsProvider.cache
+
+    val cacheEnabled: Boolean
+        get() = cache != null // not null when cache is enabled and configured for dotnet runner
 
     fun registerAndRestoreCache(
-        depCacheContext: DependencyCacheDotnetStepContext,
+        depCacheContext: DotnetDepCacheStepContext,
         nugetPackagesGlobalDirObserver: CommandLineOutputAccumulationObserver
+    ) {
+        val packagesRawOutput = nugetPackagesGlobalDirObserver.output
+        if (packagesRawOutput.isNullOrEmpty()) {
+            cache?.logWarning("Failed to detect global nuget packages location for the current .NET execution, it will not be cached")
+            return
+        }
+        val globalNugetPackagesLocation = DotnetDepCacheGlobalPackagesLocationParser.fromCommandLineOutput(packagesRawOutput)
+        if (globalNugetPackagesLocation == null) {
+            cache?.logWarning("""
+                Failed to parse global nuget packages location from: $packagesRawOutput.
+                The current .NET execution will not be cached
+            """.trimIndent())
+            return
+        }
+
+        registerAndRestoreCache(depCacheContext, File(globalNugetPackagesLocation))
+    }
+
+    fun registerAndRestoreCache(
+        depCacheContext: DotnetDepCacheStepContext,
+        nugetPackagesLocation: File
     ) {
         val cache = cache
         if (cache == null) {
@@ -29,21 +52,6 @@ class DotnetDependencyCacheManager(
             return
         }
 
-        val packagesRawOutput = nugetPackagesGlobalDirObserver.output
-        if (packagesRawOutput.isNullOrEmpty()) {
-            cache.logWarning("Failed to detect global nuget packages location for the current .NET execution, it will not be cached")
-            return
-        }
-        val globalNugetPackagesLocation = NugetGlobalPackagesLocationParser.fromCommandLineOutput(packagesRawOutput)
-        if (globalNugetPackagesLocation == null) {
-            cache.logWarning("""
-                Failed to parse global nuget packages location from output: $packagesRawOutput.
-                The current .NET execution will not be cached
-            """.trimIndent())
-            return
-        }
-
-        val nugetPackagesLocation = File(globalNugetPackagesLocation)
         if (!nugetPackagesLocation.exists()) {
             _loggerService.writeDebug("Nuget packages location doesn't exist, creating it: ${nugetPackagesLocation.absolutePath}")
             nugetPackagesLocation.mkdirs()
@@ -61,11 +69,11 @@ class DotnetDependencyCacheManager(
      * Must be invoked after [registerAndRestoreCache]
      */
     fun updateInvalidationData(
-        depCacheContext: DependencyCacheDotnetStepContext,
+        depCacheContext: DotnetDepCacheStepContext,
         nugetPackagesGlobalDirObserver: CommandLineOutputAccumulationObserver
     ) {
         val cache = cache
-        val invalidator = _dotnetDependencyCacheSettingsProvider.postBuildInvalidator
+        val invalidator = _dotnetDepCacheSettingsProvider.postBuildInvalidator
         if (cache == null || invalidator == null) {
             // this is not an expected case, something is wrong
             _loggerService.writeWarning(".NET dependency cache is enabled but failed to initialize, it will not be used at the current execution")
@@ -78,7 +86,7 @@ class DotnetDependencyCacheManager(
             return
         }
 
-        val projectPackages = NugetProjectPackagesJsonParser.fromCommandLineOutput(projectPackagesRawOutput).fold(
+        val projectPackages = DotnetDepCacheProjectPackagesJsonParser.fromCommandLineOutput(projectPackagesRawOutput).fold(
             onSuccess = { it },
             onFailure = { e ->
                 cache.logWarning("Failed to parse .NET project's packages, this execution will not be cached: ${e.message}")

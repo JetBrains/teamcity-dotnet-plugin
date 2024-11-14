@@ -9,7 +9,7 @@ import jetbrains.buildServer.agent.cache.depcache.cacheroot.CacheRootUsage
 import jetbrains.buildServer.agent.runner.BuildInfo
 import jetbrains.buildServer.agent.runner.LoggerService
 import jetbrains.buildServer.depcache.*
-import jetbrains.buildServer.depcache.utils.NugetProjectPackagesJsonParser
+import jetbrains.buildServer.depcache.utils.DotnetDepCacheProjectPackagesJsonParser
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -17,17 +17,17 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.random.Random
 
-class DotnetDependencyCacheManagerTest {
+class DotnetDepCacheManagerTest {
     @MockK
     private lateinit var _loggerService: LoggerService
     @MockK
-    private lateinit var _dotnetDependencyCacheSettingsProvider: DotnetDependencyCacheSettingsProvider
+    private lateinit var _dotnetDepCacheSettingsProvider: DotnetDepCacheSettingsProvider
     @MockK
     private lateinit var _buildInfo: BuildInfo
     @MockK
     private lateinit var _cache: DependencyCache
     @MockK
-    private lateinit var _invalidator: DotnetPackagesChangedInvalidator
+    private lateinit var _invalidator: DotnetDepCachePackagesChangedInvalidator
 
     private lateinit var tempFiles: TempFiles
     private lateinit var cachesDir: File
@@ -70,8 +70,8 @@ class DotnetDependencyCacheManagerTest {
         cachesDir = File(tempFiles.createTempDir(), "packages")
         stepId = "dotnet_${Random.nextInt()}"
 
-        every { _dotnetDependencyCacheSettingsProvider.cache } returns _cache
-        every { _dotnetDependencyCacheSettingsProvider.postBuildInvalidator } returns _invalidator
+        every { _dotnetDepCacheSettingsProvider.cache } returns _cache
+        every { _dotnetDepCacheSettingsProvider.postBuildInvalidator } returns _invalidator
         every { _buildInfo.id } returns stepId
     }
 
@@ -79,7 +79,7 @@ class DotnetDependencyCacheManagerTest {
     fun `should register and restore cache`() {
         // arrange
         val cacheRootUsage = cacheRootUsage()
-        val context = mockk<DependencyCacheDotnetStepContext>(relaxed = true)
+        val context = mockk<DotnetDepCacheStepContext>(relaxed = true)
         val nugetPackagesGlobalDirObserver = mockk<CommandLineOutputAccumulationObserver>()
         every { nugetPackagesGlobalDirObserver.output } returns "global-packages: ${cachesDir.absolutePath}"
         every { context.newCacheRootUsage(any(), any()) } returns cacheRootUsage
@@ -95,12 +95,30 @@ class DotnetDependencyCacheManagerTest {
     }
 
     @Test
+    fun `should register and restore cache by exact location`() {
+        // arrange
+        val cacheRootUsage = cacheRootUsage()
+        val context = mockk<DotnetDepCacheStepContext>(relaxed = true)
+        every { context.newCacheRootUsage(any(), any()) } returns cacheRootUsage
+        val manager = create()
+
+        // act
+        manager.registerAndRestoreCache(context, cachesDir)
+
+        // assert
+        verify(exactly = 1) { context.newCacheRootUsage(cachesDir.toPath(), stepId) }
+        verify(exactly = 1) { _cache.registerAndRestore(cacheRootUsage) }
+        verify(exactly = 1) { context.nugetPackagesLocation = cachesDir.toPath() }
+    }
+
+    @Test
     fun `should not register and restore cache when cache is disabled`() {
         // arrange
-        val context = mockk<DependencyCacheDotnetStepContext>()
+        val context = mockk<DotnetDepCacheStepContext>()
         val nugetPackagesGlobalDirObserver = mockk<CommandLineOutputAccumulationObserver>()
         val manager = create()
-        every { _dotnetDependencyCacheSettingsProvider.cache } returns null
+        every { _dotnetDepCacheSettingsProvider.cache } returns null
+        every { nugetPackagesGlobalDirObserver.output } returns ""
 
         // act
         manager.registerAndRestoreCache(context, nugetPackagesGlobalDirObserver)
@@ -114,12 +132,12 @@ class DotnetDependencyCacheManagerTest {
     @Test
     fun `should update invalidation data`() {
         // arrange
-        val context = mockk<DependencyCacheDotnetStepContext>(relaxed = true)
+        val context = mockk<DotnetDepCacheStepContext>(relaxed = true)
         val nugetPackagesGlobalDirObserver = mockk<CommandLineOutputAccumulationObserver>()
         every { nugetPackagesGlobalDirObserver.output } returns projectPackages
         every { context.nugetPackagesLocation } returns cachesDir.toPath()
         val pathSlot = slot<Path>()
-        val packagesSlot = slot<DotnetListPackagesResult>()
+        val packagesSlot = slot<DotnetDepCacheListPackagesResult>()
         val manager = create()
 
         // act
@@ -134,10 +152,10 @@ class DotnetDependencyCacheManagerTest {
     @Test
     fun `should not update invalidation data when cache is disabled`() {
         // arrange
-        val context = mockk<DependencyCacheDotnetStepContext>()
+        val context = mockk<DotnetDepCacheStepContext>()
         val nugetPackagesGlobalDirObserver = mockk<CommandLineOutputAccumulationObserver>()
         val manager = create()
-        every { _dotnetDependencyCacheSettingsProvider.cache } returns null
+        every { _dotnetDepCacheSettingsProvider.cache } returns null
 
         // act
         manager.updateInvalidationData(context, nugetPackagesGlobalDirObserver)
@@ -146,7 +164,7 @@ class DotnetDependencyCacheManagerTest {
         verify(exactly = 0) { _invalidator.addPackagesToCachesLocation(any(), any()) }
     }
 
-    private fun create() = DotnetDependencyCacheManager(_loggerService, _dotnetDependencyCacheSettingsProvider, _buildInfo)
+    private fun create() = DotnetDepCacheManager(_loggerService, _dotnetDepCacheSettingsProvider, _buildInfo)
 
     private fun cacheRootUsage() = CacheRootUsage(
         DotnetDependencyCacheConstants.CACHE_ROOT_TYPE,
@@ -154,5 +172,5 @@ class DotnetDependencyCacheManagerTest {
         stepId
     )
 
-    private fun packages(): DotnetListPackagesResult = NugetProjectPackagesJsonParser.fromCommandLineOutput(projectPackages).getOrThrow()
+    private fun packages(): DotnetDepCacheListPackagesResult = DotnetDepCacheProjectPackagesJsonParser.fromCommandLineOutput(projectPackages).getOrThrow()
 }

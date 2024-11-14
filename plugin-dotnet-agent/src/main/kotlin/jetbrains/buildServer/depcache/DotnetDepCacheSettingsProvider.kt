@@ -9,7 +9,7 @@ import jetbrains.buildServer.agent.cache.depcache.buildFeature.BuildRunnerDepend
 import jetbrains.buildServer.dotnet.DotnetConstants
 import jetbrains.buildServer.util.EventDispatcher
 
-class DotnetDependencyCacheSettingsProvider(
+class DotnetDepCacheSettingsProvider(
     private val eventDispatcher: EventDispatcher<AgentLifeCycleListener>,
     private val cacheSettingsProviderRegistry: DependencyCacheSettingsProviderRegistry,
     private val cacheProvider: DependencyCacheProvider
@@ -21,11 +21,11 @@ class DotnetDependencyCacheSettingsProvider(
     DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE,
     DotnetDependencyCacheConstants.FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE_DEFAULT
 ) {
-    var postBuildInvalidator: DotnetPackagesChangedInvalidator? = null
+    var postBuildInvalidator: DotnetDepCachePackagesChangedInvalidator? = null
         private set
 
-    protected override fun createPostBuildInvalidators(): List<DotnetPackagesChangedInvalidator> {
-        postBuildInvalidator = DotnetPackagesChangedInvalidator()
+    protected override fun createPostBuildInvalidators(): List<DotnetDepCachePackagesChangedInvalidator> {
+        postBuildInvalidator = DotnetDepCachePackagesChangedInvalidator()
         return listOf(postBuildInvalidator!!)
     }
 

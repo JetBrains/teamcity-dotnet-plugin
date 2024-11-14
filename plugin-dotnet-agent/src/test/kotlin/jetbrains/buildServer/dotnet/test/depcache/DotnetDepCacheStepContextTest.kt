@@ -1,16 +1,16 @@
 package jetbrains.buildServer.dotnet.test.depcache
 
-import jetbrains.buildServer.depcache.DependencyCacheDotnetStepContext
+import jetbrains.buildServer.depcache.DotnetDepCacheStepContext
 import org.testng.Assert
 import org.testng.annotations.Test
 import java.nio.file.Paths
 
-class DependencyCacheDotnetStepContextTest {
+class DotnetDepCacheStepContextTest {
 
     @Test
     fun `should increment execution number` () {
         // arrange
-        val context = DependencyCacheDotnetStepContext.newContext()
+        val context = DotnetDepCacheStepContext.newContext()
         var commandsCounter = 0
 
         // act
