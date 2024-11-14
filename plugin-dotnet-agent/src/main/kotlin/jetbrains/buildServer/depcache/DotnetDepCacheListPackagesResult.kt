@@ -1,6 +1,6 @@
 package jetbrains.buildServer.depcache
 
-data class DotnetListPackagesResult(
+data class DotnetDepCacheListPackagesResult(
     val version: Int?,
     val parameters: String?,
     val problems: List<Problem>?,

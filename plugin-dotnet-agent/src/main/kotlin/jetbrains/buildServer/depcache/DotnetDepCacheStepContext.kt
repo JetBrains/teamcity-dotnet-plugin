@@ -3,7 +3,7 @@ package jetbrains.buildServer.depcache
 import jetbrains.buildServer.agent.cache.depcache.cacheroot.CacheRootUsage
 import java.nio.file.Path
 
-class DependencyCacheDotnetStepContext {
+class DotnetDepCacheStepContext {
 
     private var executionNumber = 0
     var nugetPackagesLocation: Path? = null
@@ -17,6 +17,6 @@ class DependencyCacheDotnetStepContext {
     }
 
     companion object {
-        fun newContext(): DependencyCacheDotnetStepContext = DependencyCacheDotnetStepContext()
+        fun newContext(): DotnetDepCacheStepContext = DotnetDepCacheStepContext()
     }
 }

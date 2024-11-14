@@ -1,6 +1,6 @@
 package jetbrains.buildServer.depcache.utils
 
-object NugetGlobalPackagesLocationParser {
+object DotnetDepCacheGlobalPackagesLocationParser {
 
     private val GLOBAL_PACKAGES_REGEX = Regex("""global-packages:\s*(.*)""")
 

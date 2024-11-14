@@ -78,6 +78,8 @@ object DotnetConstants {
     const val PARAM_TEST_RETRY_MAX_FAILURES = "teamcity.internal.dotnet.test.retry.maxFailures"
     // Integer max NuGet cache clean time in seconds
     const val PARAM_NUGET_CACHE_CLEAN_TIMEOUT = "teamcity.internal.dotnet.nuget.cache.clean.timeoutSec"
+    // true or false (true by default) - is the overriding of RestorePackagesPath MSBuild property by TC enabled
+    const val RESTORE_PACKAGES_PATH_OVERRIDE_ENABLED = "teamcity.internal.dotnet.restorePackagesPathOverrideByTcEnabled"
 
     // Internal properties
     // true or false (true by default)

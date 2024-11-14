@@ -7,7 +7,7 @@ import jetbrains.buildServer.agent.cache.depcache.invalidation.InvalidationMetad
 import jetbrains.buildServer.agent.cache.depcache.invalidation.InvalidationResult
 import java.nio.file.Path
 
-class DotnetPackagesChangedInvalidator : DependencyCacheInvalidator {
+class DotnetDepCachePackagesChangedInvalidator : DependencyCacheInvalidator {
 
     private val absolutePackagesPathToProjectPathToPackages: MutableMap<String, MutableMap<String, MutableList<Framework>>> = HashMap()
 
@@ -26,12 +26,12 @@ class DotnetPackagesChangedInvalidator : DependencyCacheInvalidator {
             }
         }.toMap()
 
-        val newPackages = NugetPackages(newCacheRootIdToPackagesSet)
+        val newPackages = DotnetDepCacheNugetPackages(newCacheRootIdToPackagesSet)
         val cachedPackages = invalidationMetadata.getObjectParameter("nugetPackages") {
-            NugetPackages.deserialize(it)
+            DotnetDepCacheNugetPackages.deserialize(it)
         }
 
-        invalidationMetadata.publishObjectParameter<NugetPackages>("nugetPackages", newPackages)
+        invalidationMetadata.publishObjectParameter<DotnetDepCacheNugetPackages>("nugetPackages", newPackages)
 
         return if (newPackages == cachedPackages) InvalidationResult.validated()
         else InvalidationResult.invalidated("Nuget packages have changed")
@@ -49,7 +49,7 @@ class DotnetPackagesChangedInvalidator : DependencyCacheInvalidator {
 
     override fun shouldRunIfCacheInvalidated(): Boolean = true
 
-    fun addPackagesToCachesLocation(nugetPackagesPath: Path, nugetPackages: DotnetListPackagesResult) {
+    fun addPackagesToCachesLocation(nugetPackagesPath: Path, nugetPackages: DotnetDepCacheListPackagesResult) {
         nugetPackages.projects?.forEach { project ->
             if (project.path != null && !project.frameworks.isNullOrEmpty()) {
                 absolutePackagesPathToProjectPathToPackages.getOrPut(nugetPackagesPath.toAbsolutePath().toString()) {

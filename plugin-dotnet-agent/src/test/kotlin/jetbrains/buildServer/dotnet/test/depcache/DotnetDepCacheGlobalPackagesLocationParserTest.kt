@@ -1,12 +1,11 @@
 package jetbrains.buildServer.dotnet.test.depcache
 
-import jetbrains.buildServer.depcache.utils.NugetGlobalPackagesLocationParser
+import jetbrains.buildServer.depcache.utils.DotnetDepCacheGlobalPackagesLocationParser
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import kotlin.math.exp
 
-class NugetGlobalPackagesLocationParserTest {
+class DotnetDepCacheGlobalPackagesLocationParserTest {
 
     @DataProvider
     fun getCommandLineOutputTestData(): Array<Array<Any?>> {
@@ -29,7 +28,7 @@ class NugetGlobalPackagesLocationParserTest {
     @Test(dataProvider = "getCommandLineOutputTestData")
     fun `should parse nuget packages location from command line output`(commandLineOutput: String, expected: String?) {
         // arrange, act
-        val result = NugetGlobalPackagesLocationParser.fromCommandLineOutput(commandLineOutput)
+        val result = DotnetDepCacheGlobalPackagesLocationParser.fromCommandLineOutput(commandLineOutput)
 
         // assert
         Assert.assertEquals(result, expected)
