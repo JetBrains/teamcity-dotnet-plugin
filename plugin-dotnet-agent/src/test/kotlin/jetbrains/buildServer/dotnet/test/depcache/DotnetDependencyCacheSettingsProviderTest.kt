@@ -31,7 +31,7 @@ class DotnetDependencyCacheSettingsProviderTest {
         clearAllMocks()
         sharedBuildConfig = mutableMapOf(
             FEATURE_TOGGLE_DOTNET_DEPENDENCY_CACHE to "true",
-            EPHEMERAL_AGENT_PARAMETER to "true"
+            EPHEMERAL_AGENT_PARAMETER to "false"
         )
         every { buildMock.getSharedConfigParameters() } returns sharedBuildConfig
 
@@ -104,12 +104,13 @@ class DotnetDependencyCacheSettingsProviderTest {
     }
 
     @Test
-    fun `should not return settings and create invalidator when agent is not ephemeral`() {
+    fun `should not return settings and create invalidator when agent is not ephemeral and restriction is enabled`() {
         // arrange
         val buildFeatureMock = mockk<AgentBuildFeature>()
         every { buildFeatureMock.type } returns BUILD_FEATURE_TYPE
         every { buildMock.getBuildFeaturesOfType(any()) } returns listOf(buildFeatureMock)
         sharedBuildConfig[DEPENDENCY_CACHE_ENABLE_ALL_RUNNERS_PARAM] = "true"
+        sharedBuildConfig[DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY] = "true"
         sharedBuildConfig[EPHEMERAL_AGENT_PARAMETER] = "false"
         val buildRunnerMock = mockk<BuildRunnerSettings>()
         every { buildRunnerMock.isEnabled } returns true
