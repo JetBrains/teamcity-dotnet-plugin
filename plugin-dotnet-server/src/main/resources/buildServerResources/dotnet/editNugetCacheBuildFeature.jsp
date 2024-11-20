@@ -13,7 +13,7 @@
       The feature tracks NuGet <a href="https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders">global-packages</a>
       directories used by the <code>dotnet</code> command and caches packages in the artifact storage.
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
-      <b>NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.</b>.
+      <b>NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.</b>
     </div>
     <c:set var="restrictedToEphemeralAgents"
            value='<%= TeamCityProperties.getBoolean(DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY, DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY_DEFAULT) %>'/>
