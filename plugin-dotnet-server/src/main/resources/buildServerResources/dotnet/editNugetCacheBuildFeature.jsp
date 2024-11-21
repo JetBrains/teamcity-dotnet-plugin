@@ -15,6 +15,10 @@
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
       <b>NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.</b>
     </div>
+    <div class="attentionComment">
+      <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
+      This feature is not recommended for builds that require a clean environment, such as release builds.
+    </div>
     <c:set var="restrictedToEphemeralAgents"
            value='<%= TeamCityProperties.getBoolean(DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY, DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY_DEFAULT) %>'/>
     <c:choose>
