@@ -4,6 +4,7 @@ package jetbrains.buildServer.dotnet.commands.test.splitting
 
 import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterBuilder
+import jetbrains.buildServer.dotnet.commands.test.TestsFilterItem
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesReader
@@ -40,7 +41,8 @@ class TestsSplittingFilterProvider(
             .map { processTestClassParameters(it) }
             .distinct()
             .map { if (testClassContainsParameters(it)) it else "$it." } // to avoid collisions with overlapping test class names prefixes
-            .let { TestsFilterBuilder.buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
+            .map { TestsFilterItem(property = "FullyQualifiedName", value = it, operation = filterOperation) }
+            .let { TestsFilterBuilder.buildFilter(filterItems = it, filterCombineOperator = filterCombineOperator) }
     }
 
     private fun processTestClassParameters(testClass: String): String {
@@ -60,8 +62,10 @@ class TestsSplittingFilterProvider(
     private fun buildExactMatchFilter(): String {
         val (filterOperation, filterCombineOperator) = Pair("=", " | ")
 
-        return _testsNamesReader.read().toList()
-            .let { TestsFilterBuilder.buildFilter("FullyQualifiedName", filterOperation, it, filterCombineOperator) }
+        return _testsNamesReader.read()
+            .map { TestsFilterItem(property = "FullyQualifiedName", value = it, operation = filterOperation) }
+            .toList()
+            .let { TestsFilterBuilder.buildFilter(filterItems = it, filterCombineOperator) }
     }
 
     companion object {
