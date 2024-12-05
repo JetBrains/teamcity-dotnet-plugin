@@ -19,7 +19,7 @@ class TestRetryFilterProviderImpl : TestRetryFilterProvider {
     override fun getFilterExpression(mode: TestsSplittingMode): String = when {
         filteredTests.isEmpty() -> ""
         else -> TestsFilterBuilder.buildFilter(
-            filterItems = filteredTests.map { createTestFilterItem(it) },
+            filterItems = filteredTests.map { createTestFilterItem(TestsFilterBuilder.escapeSpecialCharacters(it)) },
             filterCombineOperator = " | "
         )
     }
