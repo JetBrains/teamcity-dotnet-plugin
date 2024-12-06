@@ -19,25 +19,20 @@ class TestRetryFilterProviderImpl : TestRetryFilterProvider {
     override fun getFilterExpression(mode: TestsSplittingMode): String = when {
         filteredTests.isEmpty() -> ""
         else -> TestsFilterBuilder.buildFilter(
-            filterItems = filteredTests.map { createTestFilterItem(TestsFilterBuilder.escapeSpecialCharacters(it)) },
+            filterItems = filteredTests.map { createTestFilterItem(it) },
             filterCombineOperator = " | "
         )
     }
 
     private fun createTestFilterItem(testName: String): TestsFilterItem {
-        val argumentsIndex = testName.indexOfAny(charArrayOf('<', '('))
-        return when {
-            argumentsIndex >= 0 -> TestsFilterItem(
-                property = "FullyQualifiedName",
-                value = testName.substring(0, argumentsIndex),
-                operation = "~"
-            )
+        val testParametersIndex = testName.indexOfAny(charArrayOf('<', '('))
+        val hasParameters = testParametersIndex >= 0
+        val testNameWithoutParameters = if (hasParameters) testName.substring(0, testParametersIndex) else testName
 
-            else -> TestsFilterItem(
-                property = "FullyQualifiedName",
-                value = testName,
-                operation = "="
-            )
-        }
+        return TestsFilterItem(
+            property = TestsFilterItem.Property.FullyQualifiedName,
+            operation = if (hasParameters) TestsFilterItem.Operation.Contains else TestsFilterItem.Operation.Equals,
+            value = TestsFilterBuilder.escapeSpecialCharacters(testNameWithoutParameters)
+        )
     }
 }

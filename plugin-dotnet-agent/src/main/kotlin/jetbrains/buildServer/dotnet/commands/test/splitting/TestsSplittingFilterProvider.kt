@@ -3,9 +3,7 @@
 package jetbrains.buildServer.dotnet.commands.test.splitting
 
 import jetbrains.buildServer.agent.Logger
-import jetbrains.buildServer.dotnet.commands.test.TestsFilterBuilder
-import jetbrains.buildServer.dotnet.commands.test.TestsFilterItem
-import jetbrains.buildServer.dotnet.commands.test.TestsFilterProvider
+import jetbrains.buildServer.dotnet.commands.test.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestClassParametersProcessingMode.*
 import jetbrains.buildServer.dotnet.commands.test.splitting.byTestName.TestsSplittingByNamesReader
 
@@ -33,15 +31,15 @@ class TestsSplittingFilterProvider(
     // FullyQualifiedName!~Namespace.TestClass0. & FullyQualifiedName!~Namespace.TestClass1. & ...
     private fun buildDefaultFilter(): String {
         val (filterOperation, filterCombineOperator) = when (_settings.filterType) {
-            TestsSplittingFilterType.Includes -> Pair("~", " | ")
-            TestsSplittingFilterType.Excludes -> Pair("!~", " & ")
+            TestsSplittingFilterType.Includes -> Pair(TestsFilterItem.Operation.Contains, " | ")
+            TestsSplittingFilterType.Excludes -> Pair(TestsFilterItem.Operation.NotContains, " & ")
         }
 
         return _settings.testClasses.toList()
             .map { processTestClassParameters(it) }
             .distinct()
             .map { if (testClassContainsParameters(it)) it else "$it." } // to avoid collisions with overlapping test class names prefixes
-            .map { TestsFilterItem(property = "FullyQualifiedName", value = it, operation = filterOperation) }
+            .map { TestsFilterItem(property = TestsFilterItem.Property.FullyQualifiedName, operation = filterOperation, value = it) }
             .let { TestsFilterBuilder.buildFilter(filterItems = it, filterCombineOperator = filterCombineOperator) }
     }
 
@@ -60,10 +58,10 @@ class TestsSplittingFilterProvider(
 
     // FullyQualifiedName=Namespace.TestClass0.Test000 | FullyQualifiedName=Namespace.TestClass0.Test001 | ...
     private fun buildExactMatchFilter(): String {
-        val (filterOperation, filterCombineOperator) = Pair("=", " | ")
+        val (filterOperation, filterCombineOperator) = Pair(TestsFilterItem.Operation.Equals, " | ")
 
         return _testsNamesReader.read()
-            .map { TestsFilterItem(property = "FullyQualifiedName", value = it, operation = filterOperation) }
+            .map { TestsFilterItem(property = TestsFilterItem.Property.FullyQualifiedName, operation = filterOperation, value = it) }
             .toList()
             .let { TestsFilterBuilder.buildFilter(filterItems = it, filterCombineOperator) }
     }
