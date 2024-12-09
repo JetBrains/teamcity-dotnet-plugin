@@ -60,7 +60,7 @@ class CSharpScriptRunType(
     }
 
     override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET", "C#", "script")
+        return mutableSetOf(".NET", "dotnet", "C#", "csharp", "script")
     }
 
     private fun customScriptDescription(scriptContent: String?):String {

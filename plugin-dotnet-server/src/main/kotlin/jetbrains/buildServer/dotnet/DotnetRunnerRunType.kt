@@ -87,7 +87,7 @@ class DotnetRunnerRunType(
         _dotnetRunnerRequirementsProvider.getRequirements(runParameters).toList()
 
     override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET", "MSBuild", "VSTest", "VS", "Visual Studio", "NuGet", "devenv")
+        return mutableSetOf(".NET", "dotnet", "MSBuild", "VSTest", "VS", "Visual Studio", "NuGet", "devenv")
     }
 
     override fun getIconUrl(): String {

@@ -33,7 +33,7 @@ class DotCoverRunnerRunType(
         _pluginDescriptor.getPluginResourcesPath("viewDotCoverRunnerParameters.jsp")
 
     override fun getTags() =
-        mutableSetOf("dotCover", "coverage", "tests", "code", "unit", ".NET", "profiler", "JetBrains")
+        mutableSetOf("dotCover", "coverage", "tests", "code", "unit", ".NET", "dotnet", "profiler", "JetBrains")
 
     override fun getIconUrl() =
         _pluginDescriptor.getPluginResourcesPath("dotcover.svg");

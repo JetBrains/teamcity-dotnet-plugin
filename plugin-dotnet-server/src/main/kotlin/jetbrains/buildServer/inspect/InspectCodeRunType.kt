@@ -68,7 +68,7 @@ class InspectCodeRunType(
     }
 
     override fun getTags(): MutableSet<String> {
-        return mutableSetOf(".NET", "code analysis", "ReSharper")
+        return mutableSetOf(".NET", "dotnet", "code analysis", "ReSharper")
     }
 
     override fun getIconUrl(): String {

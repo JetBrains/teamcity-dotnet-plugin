@@ -69,7 +69,7 @@ class NUnitRunType(
 
     override fun getDefaultRunnerProperties(): Map<String, String> = DotCoverRunnerProperties.getDefaultRunnerProperties()
 
-    override fun getTags() = setOf(".NET")
+    override fun getTags() = setOf(".NET", "dotnet")
 
     override fun getIconUrl() = _descriptor.getPluginResourcesPath("nunit/nunit-runner.svg")
 
