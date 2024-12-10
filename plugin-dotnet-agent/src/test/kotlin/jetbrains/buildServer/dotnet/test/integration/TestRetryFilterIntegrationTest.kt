@@ -7,53 +7,41 @@ import jetbrains.buildServer.dotnet.commands.test.retry.TestRetryFilterProviderI
 import jetbrains.buildServer.dotnet.commands.test.retry.TestRetryReportReader
 import jetbrains.buildServer.dotnet.commands.test.retry.TestRetrySettings
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
-import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.Container
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.MountableFile
+import org.testng.Assert
 import org.testng.Assert.assertEquals
 import org.testng.annotations.AfterClass
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectory
-import kotlin.io.path.createTempDirectory
-
-class DotnetSdkContainer : GenericContainer<DotnetSdkContainer>("mcr.microsoft.com/dotnet/sdk:9.0")
 
 class TestRetryFilterIntegrationTest {
     enum class TestFramework { MsTest, NUnit, XUnit }
     data class TestCase(val sourceCode: String, val framework: TestFramework, val expectedFilter: String)
 
+    private var containers: List<DotnetSdkContainer> = listOf(
+        DotnetSdkContainer("mcr.microsoft.com/dotnet/sdk:8.0"),
+        DotnetSdkContainer("mcr.microsoft.com/dotnet/sdk:latest"),
+    )
+
     private val retrySettings = mockk<TestRetrySettings>()
     private val retryReportReader = TestRetryReportReader(retrySettings, FileSystemServiceImpl())
-
-    private lateinit var container: DotnetSdkContainer
-    private lateinit var containerMount: Path
-    private val filterProvider = TestRetryFilterProviderImpl()
+    private val retryFilterProvider = TestRetryFilterProviderImpl()
 
     @BeforeClass
-    fun setUp() {
-        containerMount = createTempDirectory()
-        container = DotnetSdkContainer()
-            .withWorkingDirectory("/app")
-            .withEnv(mapOf("TEAMCITY_VERSION" to "2024.11"))
-            // container volume to get test retry reports
-            .withFileSystemBind(
-                containerMount.absolutePathString(),
-                containerMount.absolutePathString(),
-                BindMode.READ_WRITE
-            )
-            // keep the container running for the test
-            .withCommand("tail", "-f", "/dev/null")
-            .also { it.start() }
+    fun setUp() = containers.forEach {
+        it.start()
+        it.generateTestProjectFile()
     }
 
     @AfterClass
-    fun tearDown() = container.stop()
+    fun tearDown() = containers.forEach {
+        it.stop()
+    }
 
     @DataProvider
     fun testData(): Iterator<TestCase> = listOf(
@@ -199,59 +187,43 @@ class TestRetryFilterIntegrationTest {
     ).iterator()
 
     @Test(dataProvider = "testData")
-    fun `should build correct test filter for different retry scenarios`(testCase: TestCase) {
-        // arrange
-        createTestProjectInContainer(testCase)
-        copyTestAdapter() // temp solution
+    fun `should build correct test filter for different retry scenarios`(testCase: TestCase) =
+        containers.forEach { container ->
+            // arrange
+            container.createFileInContainer("/app/Test.cs", testCase.sourceCode)
+            container.copyTestAdapter() // temp solution
 
-        // act, step 1: run dotnet test for the first time
-        val testResult = runDotnetTest()
-        assertEquals(testResult.exitCode, 1, "dotnet test is expected to fail: ${testResult.stdout}")
+            // act, step 1: run dotnet test for the first time
+            val testResult = container.runDotnetTest()
+            assertEquals(testResult.exitCode, 1, "dotnet test is expected to fail: $testResult")
 
-        val failedTests = retryReportReader.readFailedTestNames().also { retryReportReader.cleanup() }
-        assertEquals(failedTests.size, 1, "one test is expected to fail: ${testResult.stdout}")
+            val failedTests = retryReportReader.readFailedTestNames().also { retryReportReader.cleanup() }
+            assertEquals(failedTests.size, 1, "one test is expected to fail: $testResult")
 
-        // act, step 2: build test filter
-        filterProvider.setTestNames(failedTests)
-        val filter = filterProvider.getFilterExpression(TestsSplittingMode.Disabled)
-        assertEquals(filter, testCase.expectedFilter)
+            // act, step 2: build test filter
+            retryFilterProvider.setTestNames(failedTests)
+            val filter = retryFilterProvider.getFilterExpression(TestsSplittingMode.Disabled)
+            assertEquals(filter, testCase.expectedFilter)
 
-        // act, step 3: retry dotnet test with filter
-        val testRetryResult = runDotnetTest(filter)
-        assertEquals(testRetryResult.exitCode, 1, "dotnet test is expected to fail: ${testRetryResult.stdout}")
+            // act, step 3: retry dotnet test with filter
+            val testRetryResult = container.runDotnetTest(filter)
+            assertEquals(testRetryResult.exitCode, 1, "dotnet test is expected to fail: $testRetryResult")
 
-        val retryFailedTests = retryReportReader.readFailedTestNames().also { retryReportReader.cleanup() }
-        assertEquals(retryFailedTests.size, 1, "one test is expected to fail after retry: ${testRetryResult.stdout}")
-        assertEquals(retryFailedTests[0], failedTests[0], "the same test should fail after retry")
-    }
-
-    private fun createTestProjectInContainer(testCase: TestCase) {
-        val projectFile = generateProjectFile(testCase.framework)
-        createFileInContainer("Tests", ".csproj", projectFile, "/app/Tests.csproj")
-        createFileInContainer("Test", ".cs", testCase.sourceCode, "/app/Test.cs")
-    }
-
-    private fun createFileInContainer(prefix: String, suffix: String, content: String, containerPath: String) {
-        val file = File.createTempFile(prefix, suffix)
-        try {
-            file.writeText(content)
-            container.copyFileToContainer(MountableFile.forHostPath(file.absolutePath), containerPath)
-        } finally {
-            file.delete()
+            val retryFailedTests = retryReportReader.readFailedTestNames().also { retryReportReader.cleanup() }
+            assertEquals(retryFailedTests.size, 1, "one test is expected to fail after retry: $testRetryResult")
         }
-    }
 
-    private fun copyTestAdapter() {
+    private fun DotnetSdkContainer.copyTestAdapter() {
         val fs = FileSystemServiceImpl()
         val adapterPath = File("src/test/kotlin/jetbrains/buildServer/dotnet/test/integration/test-adapter")
         for (file in fs.list(adapterPath)) {
-            container.copyFileToContainer(
+            copyFileToContainer(
                 MountableFile.forHostPath(file.absolutePath), "/app/test-adapter/" + file.name
             )
         }
     }
 
-    private fun runDotnetTest(filter: String? = null): Container.ExecResult {
+    private fun DotnetSdkContainer.runDotnetTest(filter: String? = null): Container.ExecResult {
         initRetryReportPath()
         val filterArgs = filter?.let { listOf("--filter", it) } ?: emptyList()
         val args = listOf(
@@ -266,11 +238,11 @@ class TestRetryFilterIntegrationTest {
             "TEAMCITY_FAILED_TESTS_REPORTING_PATH=${retrySettings.reportPath}"
         )
 
-        return container.execInContainer(*(args + filterArgs).toTypedArray())
+        return execInContainer(*(args + filterArgs).toTypedArray())
     }
 
-    private fun initRetryReportPath() {
-        val retryReportTempFolder = containerMount.resolve(java.util.UUID.randomUUID().toString())
+    private fun DotnetSdkContainer.initRetryReportPath() {
+        val retryReportTempFolder = tempMount.resolve(java.util.UUID.randomUUID().toString())
             .createDirectory()
             .absolutePathString()
 
@@ -278,45 +250,33 @@ class TestRetryFilterIntegrationTest {
         every { retrySettings.maxFailures } returns 10
     }
 
-    private fun generateProjectFile(framework: TestFramework) = buildString {
-        append(
-            """
-            <Project Sdk="Microsoft.NET.Sdk">
-                <PropertyGroup>
-                    <TargetFramework>net9.0</TargetFramework>
-                    <IsTestProject>true</IsTestProject>
-                </PropertyGroup>
-                <ItemGroup>
-                    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        """.trimIndent()
+    private fun DotnetSdkContainer.generateTestProjectFile() {
+        val packages = listOf(
+            "Microsoft.NET.Test.Sdk" to "17.12.0",
+            "MSTest.TestAdapter" to "3.6.2",
+            "MSTest.TestFramework" to "3.6.2",
+            "NUnit" to "4.2.2",
+            "NUnit3TestAdapter" to "4.6.0",
+            "xunit" to "2.9.2",
+            "xunit.runner.visualstudio" to "2.8.2"
         )
 
-        append(
-            when (framework) {
-                TestFramework.MsTest -> """
-                        <PackageReference Include="MSTest.TestAdapter" Version="3.6.2"/>
-                        <PackageReference Include="MSTest.TestFramework" Version="3.6.2"/>
-                    </ItemGroup>
-                </Project>
-                """.trimIndent()
-
-                TestFramework.NUnit -> """
-                        <PackageReference Include="NUnit" Version="4.2.2"/>
-                        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
-                    </ItemGroup>
-                </Project>
-                """.trimIndent()
-
-                TestFramework.XUnit -> """
-                        <PackageReference Include="xunit" Version="2.9.2"/>
-                        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
-                            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-                            <PrivateAssets>all</PrivateAssets>
-                        </PackageReference>
-                    </ItemGroup>
-                </Project>
-                """.trimIndent()
-            }
+        execOrFail(
+            command = listOf("dotnet", "new", "classlib", "-n", "Tests", "-o", "."),
+            errorMessage = "Failed to create project"
         )
+        packages.forEach { (packageName, version) ->
+            execOrFail(
+                command = listOf("dotnet", "add", "package", packageName, "-v", version, "--no-restore"),
+                errorMessage = "Failed to install package $packageName"
+            )
+        }
+    }
+
+    private fun DotnetSdkContainer.execOrFail(command: List<String>, errorMessage: String) {
+        val execResult = execInContainer(*command.toTypedArray())
+        if (execResult.exitCode != 0) {
+            Assert.fail("$errorMessage: $execResult")
+        }
     }
 }
