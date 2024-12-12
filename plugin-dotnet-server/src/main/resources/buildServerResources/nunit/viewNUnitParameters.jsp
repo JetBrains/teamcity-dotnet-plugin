@@ -12,6 +12,7 @@
   <div class="parameter">
     Path to NUnit console tool: <strong><props:displayValue name="${bean.NUnitPathKey}"/></strong>
   </div>
+</c:if>
 
 <c:if test="${not empty propertiesBean.properties[bean.NUnitConfigFileKey]}">
   <div class="parameter">
