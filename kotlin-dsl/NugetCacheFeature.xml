@@ -7,8 +7,10 @@
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
       **NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.**
       <p/>
-      Package caching is most effective on **short-lived agents**. For long-lived or permanent cloud agents, periodically review hidden
+      Package caching is most effective on **short-lived agents**. For permanent or long-lived cloud agents, periodically review hidden
       `.teamcity.build_cache` build artifacts to monitor cache size and contents. This helps prevent redundant dependencies and unnecessary cache bloat.
+      <p/>
+      This feature is not recommended for builds that require a clean environment, such as release builds.
     </description>
   </class>
   <function name="nugetCache">
@@ -18,8 +20,10 @@
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
       **NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.**
       <p/>
-      Package caching is most effective on **short-lived agents**. For long-lived or permanent cloud agents, periodically review hidden
+      Package caching is most effective on **short-lived agents**. For permanent or long-lived cloud agents, periodically review hidden
       `.teamcity.build_cache` build artifacts to monitor cache size and contents. This helps prevent redundant dependencies and unnecessary cache bloat.
+      <p/>
+      This feature is not recommended for builds that require a clean environment, such as release builds.
     </description>
   </function>
   <params>

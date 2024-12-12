@@ -9,11 +9,10 @@
     <em>
       Caches NuGet packages downloaded by .NET steps to speed up the builds.<bs:help file="Dependency+Caches"/>
     </em>
-    <div style="margin-top: 10px;">
+    <div style="margin-top: 1em;">
       The feature tracks NuGet <a href="https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders">global-packages</a>
       directories used by the <code>dotnet</code> command and caches packages in the artifact storage.
       The cache is automatically updated when dependencies of the corresponding .NET projects change.
-      <b>NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.</b>
     </div>
     <c:set var="restrictedToEphemeralAgents"
            value='<%= TeamCityProperties.getBoolean(DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY, DependencyCacheConstants.DEPENDENCY_CACHE_EPHEMERAL_AGENTS_ONLY_DEFAULT) %>'/>
@@ -28,12 +27,19 @@
         </div>
       </c:when>
       <c:otherwise>
-        <div class="attentionComment">
-          <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
-          Package caching is most effective on short-lived agents. For long-lived or permanent cloud agents, periodically review hidden
+        <div style="margin-top: 0.5em;">
+          Package caching is most effective on short-lived agents. For permanent or long-lived cloud agents, periodically review hidden
           <code>.teamcity.build_cache</code> build artifacts to monitor cache size and contents. This helps prevent redundant dependencies and unnecessary cache bloat.
         </div>
       </c:otherwise>
     </c:choose>
+    <div class="attentionComment">
+      <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
+      NuGet package caching is supported when the build command uses .NET SDK 7.0.200 or higher.
+    </div>
+    <div class="attentionComment">
+      <bs:buildStatusIcon type="red-sign" className="warningIcon"/>
+      This feature is not recommended for builds that require a clean environment, such as release builds.
+    </div>
   </td>
 </tr>
