@@ -4,11 +4,10 @@ object TestsFilterBuilder {
     private const val FilterExpressionChunkSize = 1000;
     private val charactersToEscape = listOf("\\", "\"", "(", ")", "&", "|", "=", "!", "~")
 
-    @Suppress("SameParameterValue")
-    fun buildFilter(filterProperty: String, filterOperation: String, filterValues: List<String>, filterCombineOperator: String) =
+    fun buildFilter(filterItems: List<TestsFilterItem>, filterCombineOperator: String) =
         // https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
-        filterValues
-            .map { filterValue -> "${filterProperty}${filterOperation}${filterValue}" }
+        filterItems
+            .map { it.filterExpression }
             .let { filterElements ->
                 when {
                     filterElements.size > FilterExpressionChunkSize -> {
