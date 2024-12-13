@@ -25,6 +25,8 @@ class TestRetryFilterProviderImplTest {
             arrayOf(emptyList<String>(), ""),
             arrayOf(listOf("testName1", "testName2"), "FullyQualifiedName=testName1 | FullyQualifiedName=testName2"),
             arrayOf(listOf("special&!chars"), """FullyQualifiedName=special\&\!chars"""),
+            arrayOf(listOf("testWithParameters(a=1)"), """FullyQualifiedName~testWithParameters"""),
+            arrayOf(listOf("genericTest<String>"), """FullyQualifiedName~genericTest"""),
         )
     }
 
