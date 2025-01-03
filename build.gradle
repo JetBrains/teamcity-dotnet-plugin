@@ -1,4 +1,10 @@
 import java.nio.file.Paths
+import com.github.jk1.license.render.JsonReportRenderer
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+
+plugins {
+    id "com.github.jk1.dependency-license-report" version "1.17"
+}
 
 initializeWorkspace()
 
@@ -25,6 +31,12 @@ ext {
     projectIds = ['group': 'teamcity-dotnet-plugin', 'version': versionNumber, 'artifact': 'dotnet']
     teamcityVersion = anyParam('teamcityVersion') ?: '2024.11-SNAPSHOT'
     isDotnetTasksDisabled = project.hasProperty('dotnetTasks') && project.property('dotnetTasks').toString().toLowerCase() == 'disabled'
+}
+
+licenseReport {
+    renderers = [new JsonReportRenderer('third-party-libraries.json')]
+    excludes = ["org.jetbrains.*", "com.jetbrains.*"]
+    filters = [new LicenseBundleNormalizer(bundlePath: "${project.rootDir}/license-third-party-normalizer.json", createDefaultTransformationRules: false)]
 }
 
 def anyParamPath(String... names) {
