@@ -1,12 +1,15 @@
 package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
-import io.mockk.mockk
+import io.mockk.impl.annotations.MockK
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFramework
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFrameworksEnvironment
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetSetupRegistryVisitor
 import org.testng.Assert
+import org.testng.annotations.BeforeClass
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
@@ -15,9 +18,19 @@ class DotnetSetupRegistryVisitorTest {
     private val _key = DotnetSetupRegistryVisitor.Keys.first { it.bitness == WindowsRegistryBitness.Bitness64 }
     private val _dotnetFrameworkRoot = File("Framework")
     private val _dotnetFrameworkArm64Root = File("FrameworkArm64")
-    private val _envWithDotnetFramework = createEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot)
-    private val _envWithArmDotnetFramework = createEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot, frameworkArm64Root = _dotnetFrameworkArm64Root)
-    private val _envWithoutFrameworks = createEnvironmentMock()
+    @MockK private lateinit var _envWithDotnetFramework: DotnetFrameworksEnvironment
+    @MockK private lateinit var _envWithArmDotnetFramework: DotnetFrameworksEnvironment
+    @MockK private lateinit var _envWithoutFrameworks: DotnetFrameworksEnvironment
+
+    @BeforeClass
+    fun setUp() {
+        MockKAnnotations.init(this)
+        clearAllMocks()
+
+        _envWithDotnetFramework.setupEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot)
+        _envWithArmDotnetFramework.setupEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot, frameworkArm64Root = _dotnetFrameworkArm64Root)
+        _envWithoutFrameworks.setupEnvironmentMock()
+    }
 
     @DataProvider
     fun testData(): Array<Array<out Any?>> = arrayOf(
@@ -358,12 +371,11 @@ class DotnetSetupRegistryVisitorTest {
         Assert.assertEquals(actualKeys.size, 2)
     }
 
-    private fun createEnvironmentMock(frameworkRoot: File? = null, frameworkArm64Root: File? = null): DotnetFrameworksEnvironment =
-        mockk<DotnetFrameworksEnvironment> {
-            every { tryGetRoot(_key.bitness) } returns frameworkRoot
-            every { tryGetRoot(_key.bitness, isArm = false) } returns frameworkRoot
-            every { tryGetRoot(_key.bitness, isArm = true) } returns frameworkArm64Root
-        }
+    private fun DotnetFrameworksEnvironment.setupEnvironmentMock(frameworkRoot: File? = null, frameworkArm64Root: File? = null) {
+        every { tryGetRoot(any()) } returns frameworkRoot
+        every { tryGetRoot(any(), isArm = false) } returns frameworkRoot
+        every { tryGetRoot(any(), isArm = true) } returns frameworkArm64Root
+    }
 
     private fun createInstance(environment: DotnetFrameworksEnvironment) =
         DotnetSetupRegistryVisitor(environment)
