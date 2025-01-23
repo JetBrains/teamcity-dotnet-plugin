@@ -61,12 +61,18 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .filter { _fileSystemService.isDirectory(it) }
                 // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe
                 // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\amd64\MSBuild.exe
-                .flatMap {
-                    msbuildPath -> sequence {
+                // C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\arm64\MSBuild.exe
+                .flatMap { msbuildPath ->
+                    sequence {
                         yield(MSBuildInfo(File(msbuildPath, "MSBuild.exe"), Platform.x86))
-                        val amd64Directory = File(msbuildPath, "amd64")
-                        if(_fileSystemService.isExists(amd64Directory) && _fileSystemService.isDirectory(amd64Directory)) {
-                            yield(MSBuildInfo(File(amd64Directory, "MSBuild.exe"), Platform.x64))
+                        listOf(
+                            "amd64" to Platform.x64,
+                            "arm64" to Platform.ARM64
+                        ).forEach { (subDir, platform) ->
+                            val directory = File(msbuildPath, subDir)
+                            if (_fileSystemService.isExists(directory) && _fileSystemService.isDirectory(directory)) {
+                                yield(MSBuildInfo(File(directory, "MSBuild.exe"), platform))
+                            }
                         }
                     }
                 }

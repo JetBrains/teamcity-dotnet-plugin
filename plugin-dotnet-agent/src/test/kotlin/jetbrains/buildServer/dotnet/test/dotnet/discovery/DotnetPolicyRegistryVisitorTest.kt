@@ -36,7 +36,7 @@ class DotnetPolicyRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v2.0" + "50727", WindowsRegistryValueType.Str, "50727-50727")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(2, 0, 50727), File(_root, "v2.0.50727"))
+                                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(2, 0, 50727), File(_root, "v2.0.50727"))
                         )
                 ),
                 arrayOf(
@@ -45,7 +45,7 @@ class DotnetPolicyRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v2.0" + "050727", WindowsRegistryValueType.Str, "050727-50727")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version.parse("2.0.050727"), File(_root, "v2.0.050727"))
+                                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version.parse("2.0.050727"), File(_root, "v2.0.050727"))
                         )
                 ),
                 arrayOf(
@@ -55,8 +55,8 @@ class DotnetPolicyRegistryVisitorTest {
                                 WindowsRegistryValue(_key + "v4.0" + "50727", WindowsRegistryValueType.Str, "50727-50727")
                         ),
                         sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(2, 0, 50727), File(_root, "v2.0.50727")),
-                                DotnetFramework(_key.bitness.platform, Version(4, 0, 50727), File(_root, "v4.0.50727"))
+                                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(2, 0, 50727), File(_root, "v2.0.50727")),
+                                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 0, 50727), File(_root, "v4.0.50727"))
                         )
                 ),
                 arrayOf(

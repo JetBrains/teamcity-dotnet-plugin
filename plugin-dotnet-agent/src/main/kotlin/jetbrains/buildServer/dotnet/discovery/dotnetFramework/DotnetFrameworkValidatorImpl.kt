@@ -4,6 +4,7 @@ package jetbrains.buildServer.dotnet.discovery.dotnetFramework
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Logger
+import jetbrains.buildServer.dotnet.Platform
 
 class DotnetFrameworkValidatorImpl(
         private val _fileSystemService: FileSystemService)
@@ -36,6 +37,10 @@ class DotnetFrameworkValidatorImpl(
         }
 
         if (framework.version.major == 1 && framework.version.minor == 1) {
+            return true
+        }
+        // ARM version of .NET Framework 4.8.1 does not contain msbuild.exe
+        if (framework.platform == Platform.ARM64) {
             return true
         }
 

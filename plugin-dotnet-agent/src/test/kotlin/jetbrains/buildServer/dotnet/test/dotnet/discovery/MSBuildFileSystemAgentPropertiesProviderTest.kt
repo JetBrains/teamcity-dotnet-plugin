@@ -38,14 +38,16 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
                 arrayOf(
                         VirtualFileSystemService()
                                 .addFile(File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/MSBuild.exe"))
-                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe")),
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64/MSBuild.exe"))
+                                .addFile(File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/arm64/MSBuild.exe")),
                         listOf(
                                 ToolInstance(ToolInstanceType.VisualStudio, File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/Common7/IDE"), Version.Empty, Version.Empty, Platform.Default),
                                 ToolInstance(ToolInstanceType.VisualStudio, File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/Common7/IDE"), Version.Empty, Version.Empty, Platform.Default)
                         ),
                         listOf(
                                 AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools16.0_x86_Path", File("Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin").path),
-                                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path)
+                                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools16.0_x64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/amd64").path),
+                                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools16.0_ARM64_Path", File("Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/16.0/Bin/arm64").path)
                         )
                 ),
                 arrayOf(

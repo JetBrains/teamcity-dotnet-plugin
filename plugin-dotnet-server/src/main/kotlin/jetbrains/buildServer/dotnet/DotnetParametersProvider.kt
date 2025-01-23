@@ -131,8 +131,8 @@ class DotnetParametersProvider {
     val vstestVersions: List<Tool>
         get() = Tool.values().filter { it.type == ToolType.VSTest }
 
-    val vstestPlatforms: List<Platform>
-        get() = Platform.values().toList()
+    val vstestPlatforms: List<VsTestPlatform>
+        get() = VsTestPlatform.values().toList()
 
     val vstestInIsolation: String
         get() = DotnetConstants.PARAM_VSTEST_IN_ISOLATION

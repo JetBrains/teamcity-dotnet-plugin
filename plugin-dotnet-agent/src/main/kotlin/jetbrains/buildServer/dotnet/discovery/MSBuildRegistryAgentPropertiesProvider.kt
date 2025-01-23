@@ -37,7 +37,9 @@ class MSBuildRegistryAgentPropertiesProvider(
                                     val path = File(value.text)
                                     LOG.debug("Path: $path")
                                     if (_msuildValidator.isValid(path)) {
-                                        var property = AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version}_${value.key.bitness.platform.id}_Path", path.path)
+                                        // non arm msbuild is detected in this class
+                                        val platform = value.key.bitness.getPlatform(isArm = false)
+                                        val property = AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version}_${platform.id}_Path", path.path)
                                         props.add(property)
                                         LOG.debug("Add property: $path")
                                     } else {

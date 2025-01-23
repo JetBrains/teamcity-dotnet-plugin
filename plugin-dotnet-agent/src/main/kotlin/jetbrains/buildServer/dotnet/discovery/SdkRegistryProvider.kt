@@ -6,7 +6,6 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceFactory
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
-import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.Platform
 import org.springframework.cache.annotation.Cacheable
 import java.io.File
@@ -45,8 +44,7 @@ class SdkRegistryProvider(
                                         toolInstanceType = ToolInstanceType.WindowsSDK
                                         baseVersion = Version.parse(versionStr)
                                         platform = Platform.Default
-                                        key = "${minorKey}_${regKey.bitness.platform.id}"
-
+                                        key = "${minorKey}_${regKey.bitness.getPlatform(isArm = false).id}" // there is no separate arm version of windows sdk
                                     }
                                 }
 
@@ -100,7 +98,6 @@ class SdkRegistryProvider(
 
 
     companion object {
-        private val LOG = Logger.getLogger(SdkRegistryProvider::class.java)
         private val DotnetFrameworkSdkRegex = Regex("^WinSDK-NetFx(\\d)(\\d)Tools-(x86|x64)\$", RegexOption.IGNORE_CASE)
         private val WinSdkVersionRegex = Regex("^v(\\d+\\.\\d+)(\\w*)\$", RegexOption.IGNORE_CASE)
         private const val InstallationFolderName = "installationfolder"

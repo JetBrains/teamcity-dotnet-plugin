@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.discovery.dotnetFramework
 
 import WindowsRegistryValueType
@@ -7,9 +5,8 @@ import jetbrains.buildServer.agent.*
 import java.io.File
 
 class DotnetSetupRegistryVisitor(
-        private val _environment: DotnetFrameworksEnvironment
-)
-    : DotnetFrameworksWindowsRegistryVisitor {
+    private val _environment: DotnetFrameworksEnvironment
+) : DotnetFrameworksWindowsRegistryVisitor {
 
     private val _frameworks = mutableMapOf<String, Framework>()
 
@@ -20,10 +17,12 @@ class DotnetSetupRegistryVisitor(
             val frameworkBasePath = framework.path
             if (frameworkBasePath != null) {
                 var version: Version
-                if (framework.release.major == framework.version.major && framework.release.minor == framework.version.minor && (framework.release.patch == framework.version.patch || framework.release.patch == 0)) {
+                if (framework.release.major == framework.version.major
+                    && framework.release.minor == framework.version.minor
+                    && (framework.release.patch == framework.version.patch || framework.release.patch == 0)
+                ) {
                     version = framework.version
-                }
-                else {
+                } else {
                     version = framework.release
                     if (version == Version.Empty) {
                         version = framework.version
@@ -31,12 +30,35 @@ class DotnetSetupRegistryVisitor(
                 }
 
                 if (version != Version.Empty) {
-                    yield(DotnetFramework(framework.bitness.platform, version, frameworkBasePath))
+                    yield(DotnetFramework(framework.bitness.getPlatform(isArm = false), version, frameworkBasePath))
+
+                    val armFrameworkPath = getArmFrameworkPath(framework, frameworkBasePath)
+                    if(armFrameworkPath != null) {
+                        yield(DotnetFramework(framework.bitness.getPlatform(isArm = true), version, armFrameworkPath))
+                    }
                 }
             }
         }
 
         _frameworks.clear()
+    }
+
+    private fun getArmFrameworkPath(
+        framework: Framework,
+        frameworkBasePath: File
+    ): File? {
+        if (framework.release < ArmSupportSince) return null
+
+        return _environment.tryGetRoot(framework.bitness, isArm = true)?.let { installRootArm64 ->
+            // installRootArm64 provides the base path to the ARM installation
+            // Example: C:\Windows\Microsoft.NET\FrameworkArm64
+            // It does not include the specific framework version directory
+            // Example of full path: C:\Windows\Microsoft.NET\FrameworkArm64\v4.0.30319
+
+            // Extract the CLR Runtime version from the provided x64 installation path (frameworkBasePath)
+            val clrRuntimeVersion = frameworkBasePath.name // e.g. v4.0.30319
+            return installRootArm64.resolve(clrRuntimeVersion)
+        }
     }
 
     override fun visit(key: WindowsRegistryKey) = true
@@ -121,9 +143,11 @@ class DotnetSetupRegistryVisitor(
         val InstallPathName = "installpath"
         val VersionName = "version"
         val ReleaseName = "release"
+        val ArmSupportSince = Version(4, 8, 1)
 
-        val Keys: Sequence<WindowsRegistryKey> get()  =
-            WindowsRegistryBitness
+        val Keys: Sequence<WindowsRegistryKey>
+            get() =
+                WindowsRegistryBitness
                     .values()
                     .asSequence()
                     .map {
@@ -141,7 +165,7 @@ class DotnetSetupRegistryVisitor(
 
         // https://learn.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed#minimum-version
         private fun getFrameworkVersion(releaseKey: Long) = when {
-            releaseKey >= 533325 -> Version(4, 8, 1)
+            releaseKey >= 533320 -> Version(4, 8, 1)
             releaseKey >= 528040 -> Version(4, 8)
             releaseKey >= 461808 -> Version(4, 7, 2)
             releaseKey >= 461308 -> Version(4, 7, 1)
@@ -160,7 +184,8 @@ class DotnetSetupRegistryVisitor(
         val bitness: WindowsRegistryBitness,
         var version: Version = Version.Empty,
         var release: Version = Version.Empty,
-        var path: File? = null) {
+        var path: File? = null
+    ) {
         val isEmpty get() = !((version != Version.Empty || release != Version.Empty) && path != null)
     }
 }

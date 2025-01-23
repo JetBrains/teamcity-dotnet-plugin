@@ -33,8 +33,10 @@ class DotnetPolicyRegistryVisitor(
                     val subVersion = Version.parse(subKey[1])
                     if (subVersion != Version.Empty) {
                         val version = Version.parse("${majorVersion.major}${Version.Separator}${majorVersion.minor}${Version.Separator}${subVersion}")
+                        // this class does not detect frameworks 4.0 and higher, ARM framework detection is not possible here
+                        val platform = value.key.bitness.getPlatform(isArm = false)
                         _environment.tryGetRoot(value.key.bitness)?.let {
-                            installRoot -> _frameworks.add(DotnetFramework(value.key.bitness.platform, version, File(installRoot, "v$version")))
+                            installRoot -> _frameworks.add(DotnetFramework(platform, version, File(installRoot, "v$version")))
                         }
                     }
                 }

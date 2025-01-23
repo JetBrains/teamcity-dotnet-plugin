@@ -1,294 +1,324 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
-import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFramework
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetFrameworksEnvironment
 import jetbrains.buildServer.dotnet.discovery.dotnetFramework.DotnetSetupRegistryVisitor
 import org.testng.Assert
-import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import java.io.File
 
 class DotnetSetupRegistryVisitorTest {
-    @MockK private lateinit var _environment: DotnetFrameworksEnvironment
-    private val _key = DotnetSetupRegistryVisitor.Keys.first()
-    private val _root = File("root")
-
-    @BeforeMethod
-    fun setUp() {
-        MockKAnnotations.init(this)
-        clearAllMocks()
-    }
+    private val _key = DotnetSetupRegistryVisitor.Keys.first { it.bitness == WindowsRegistryBitness.Bitness64 }
+    private val _dotnetFrameworkRoot = File("Framework")
+    private val _dotnetFrameworkArm64Root = File("FrameworkArm64")
+    private val _envWithDotnetFramework = createEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot)
+    private val _envWithArmDotnetFramework = createEnvironmentMock(frameworkRoot = _dotnetFrameworkRoot, frameworkArm64Root = _dotnetFrameworkArm64Root)
+    private val _envWithoutFrameworks = createEnvironmentMock()
 
     @DataProvider
-    fun testData(): Array<Array<out Any?>> {
-        return arrayOf(
-                // v3.0 & v3.5
-                // Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "abc")
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "")
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        null,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
-                        ),
-                        emptySequence<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
-                        ),
-                        emptySequence<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Int, 3L)
-                        ),
-                        emptySequence<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "V3.0" + "VersioN", WindowsRegistryValueType.Str, "3.0.30729.4926")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File(_root, "v3.5"))
-                        )
-                ),
-                arrayOf(
-                        null,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926")
-                        ),
-                        emptySequence<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "   ")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Int, 1L)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926),  File(_root, "v3.5"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "V3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926"),
-                                WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(3, 0, 30729, 4926), File(_root, "v3.0")),
-                                DotnetFramework(_key.bitness.platform, Version(3, 5, 30729, 4926), File("abc"))
-                        )
-                ),
-                // v4
-                // Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version.parse("4.8.04084"), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Str, "528040")
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "FULL" + "VersioN", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "V4" + "Full" + "InstallPatH", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version.parse("4.8.04084"), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, ""),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "  "),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, " "),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.09037"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x8234d)
-                        ),
-                        sequenceOf(
-                                DotnetFramework(_key.bitness.platform, Version(4, 8, 1), File("abc"))
-                        )
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
-                        ),
-                        sequenceOf<DotnetFramework>()
-                ),
-                arrayOf(
-                        _root,
-                        sequenceOf(
-                                WindowsRegistryValue(_key + "v4" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
-                                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
-                                WindowsRegistryValue(_key + "v4" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
-                        ),
-                        sequenceOf<DotnetFramework>()
-                )
+    fun testData(): Array<Array<out Any?>> = arrayOf(
+        // v3.0 & v3.5
+        // Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 0, 30729, 4926), File(_dotnetFrameworkRoot, "v3.0"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "abc")
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "")
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithoutFrameworks,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
+            ),
+            emptySequence<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926")
+            ),
+            emptySequence<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Int, 3L)
+            ),
+            emptySequence<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "V3.0" + "VersioN", WindowsRegistryValueType.Str, "3.0.30729.4926")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 0, 30729, 4926), File(_dotnetFrameworkRoot, "v3.0"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File(_dotnetFrameworkRoot, "v3.5"))
+            )
+        ),
+        arrayOf(
+            _envWithoutFrameworks,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926")
+            ),
+            emptySequence<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File(_dotnetFrameworkRoot, "v3.5"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "   ")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File(_dotnetFrameworkRoot, "v3.5"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "Version", WindowsRegistryValueType.Str, "3.5.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Int, 1L)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File(_dotnetFrameworkRoot, "v3.5"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.5" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "V3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "versioN", WindowsRegistryValueType.Str, "3.5.30729.4926"),
+                WindowsRegistryValue(_key + "v3.5" + "InstallPATH", WindowsRegistryValueType.Str, "abc")
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 0, 30729, 4926), File(_dotnetFrameworkRoot, "v3.0")),
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(3, 5, 30729, 4926), File("abc"))
+            )
+        ),
+        // v4
+        // Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version.parse("4.8.04084"), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Str, "528040")
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "FULL" + "VersioN", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "V4" + "Full" + "InstallPatH", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version.parse("4.8.04084"), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, ""),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "  "),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff4)
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, " "),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.09037"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x8234d)
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8, 1), File("abc"))
+            )
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Version", WindowsRegistryValueType.Str, "4.8.04084"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, "abc"),
+                WindowsRegistryValue(_key + "v4" + "Release", WindowsRegistryValueType.Int, 0x80ff3)
+            ),
+            sequenceOf<DotnetFramework>()
+        ),
+        // 4.8.1 Framework with ARM64 support
+        arrayOf(
+            _envWithArmDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.09032"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, File("Framework", "v4.0.30319").toString()),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 533320) // 4.8.1
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = true), Version(4, 8, 1), File("FrameworkArm64", "v4.0.30319")),
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8, 1), File("Framework", "v4.0.30319"))
+            )
+        ),
+        // 4.8.1 Framework without ARM64 support
+        arrayOf(
+            _envWithDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.09032"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, File("Framework", "v4.0.30319").toString()),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 533320) // 4.8.1
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8, 1), File("Framework", "v4.0.30319"))
+            )
+        ),
+        // 4.8.0 should not check for ARM support
+        arrayOf(
+            _envWithArmDotnetFramework,
+            sequenceOf(
+                WindowsRegistryValue(_key + "v4" + "Full" + "Version", WindowsRegistryValueType.Str, "4.8.0"),
+                WindowsRegistryValue(_key + "v4" + "Full" + "InstallPath", WindowsRegistryValueType.Str, File("Framework", "v4.0.30319").toString()),
+                WindowsRegistryValue(_key + "v4" + "Full" + "Release", WindowsRegistryValueType.Int, 528040) // 4.8.0
+            ),
+            sequenceOf(
+                DotnetFramework(_key.bitness.getPlatform(isArm = false), Version(4, 8, 0), File("Framework", "v4.0.30319"))
+            )
         )
-    }
+    )
 
     @Test(dataProvider = "testData")
-    fun shouldProvideFrameworks(root: File?, values: Sequence<WindowsRegistryValue>, expectedFrameworks: Sequence<DotnetFramework>) {
+    fun shouldProvideFrameworks(
+        environment: DotnetFrameworksEnvironment,
+        values: Sequence<WindowsRegistryValue>,
+        expectedFrameworks: Sequence<DotnetFramework>
+    ) {
         // Given
-        val visitor = createInstance()
-        every {_environment.tryGetRoot(_key.bitness)} returns root
+        val visitor = createInstance(environment)
 
         // When
         val accepted = values.fold(true) {
@@ -305,8 +335,7 @@ class DotnetSetupRegistryVisitorTest {
     @Test
     fun shouldClearFrameworksAfterGet() {
         // Given
-        val visitor = createInstance()
-        every {_environment.tryGetRoot(_key.bitness)} returns _root
+        val visitor = createInstance(_envWithDotnetFramework)
         visitor.visit(WindowsRegistryValue(_key + "v3.0" + "Version", WindowsRegistryValueType.Str, "3.0.30729.4926"))
 
         // When
@@ -320,7 +349,7 @@ class DotnetSetupRegistryVisitorTest {
     @Test
     fun shouldProvide2Keys() {
         // Given
-        val visitor = createInstance()
+        val visitor = createInstance(_envWithDotnetFramework)
 
         // When
         val actualKeys = visitor.keys.toList()
@@ -329,6 +358,13 @@ class DotnetSetupRegistryVisitorTest {
         Assert.assertEquals(actualKeys.size, 2)
     }
 
-    private fun createInstance() =
-            DotnetSetupRegistryVisitor(_environment)
+    private fun createEnvironmentMock(frameworkRoot: File? = null, frameworkArm64Root: File? = null): DotnetFrameworksEnvironment =
+        mockk<DotnetFrameworksEnvironment> {
+            every { tryGetRoot(_key.bitness) } returns frameworkRoot
+            every { tryGetRoot(_key.bitness, isArm = false) } returns frameworkRoot
+            every { tryGetRoot(_key.bitness, isArm = true) } returns frameworkArm64Root
+        }
+
+    private fun createInstance(environment: DotnetFrameworksEnvironment) =
+        DotnetSetupRegistryVisitor(environment)
 }
