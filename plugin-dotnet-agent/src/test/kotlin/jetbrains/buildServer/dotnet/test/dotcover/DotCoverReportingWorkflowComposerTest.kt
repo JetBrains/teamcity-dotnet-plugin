@@ -49,7 +49,6 @@ class DotCoverReportingWorkflowComposerTest {
     private val dotCoverExecutableFile = File(dotCoverPath, "dotCover.exe")
     private val dotCoverExecutableVirtualPath = Path("v_dotCover")
     private lateinit var agentTmp: File
-    private lateinit var virtualAgentTmp: File
     private lateinit var workingDir: File
     private lateinit var virtualWorkingDir: File
     private lateinit var checkoutDir: File
@@ -65,8 +64,7 @@ class DotCoverReportingWorkflowComposerTest {
         val testTempDirectory = tempFiles.createTempDir()
 
         agentTmp = File(testTempDirectory, "agentTmp")
-        virtualAgentTmp = File(agentTmp, "v_agentTmp")
-        virtualAgentTmp.mkdirs()
+        agentTmp.mkdirs()
         workingDir = File(testTempDirectory, "workingDir")
         virtualWorkingDir = File(workingDir, "v_workingDir")
         virtualWorkingDir.mkdirs()
@@ -74,7 +72,6 @@ class DotCoverReportingWorkflowComposerTest {
         virtualCheckoutDir = File(checkoutDir, "v_checkoutDir")
         virtualCheckoutDir.mkdirs()
         every { _pathService.getPath(PathType.AgentTemp) } returns agentTmp
-        every { _virtualContext.resolvePath(agentTmp.absolutePath) } returns virtualAgentTmp.absolutePath
         every { _pathService.getPath(PathType.WorkingDirectory) } returns workingDir
         every { _virtualContext.resolvePath(workingDir.absolutePath) } returns virtualWorkingDir.absolutePath
         every { _pathService.getPath(PathType.Checkout) } returns checkoutDir
@@ -151,7 +148,7 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(false, "")
 
         val buildStepId = "buildStep"
-        val outputSnapshotFile = File(virtualAgentTmp, "outputSnapshot_$buildStepId.dcvr")
+        val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
         every { _virtualContext.resolvePath(outputSnapshotFile.path) } returns outputSnapshotFile.path
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
@@ -182,7 +179,7 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(false, "")
 
         val buildStepId = "buildStep"
-        val outputSnapshotFile = File(virtualAgentTmp, "outputSnapshot_$buildStepId.dcvr")
+        val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
         every { _virtualContext.resolvePath(outputSnapshotFile.path) } returns outputSnapshotFile.path
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
@@ -203,7 +200,7 @@ class DotCoverReportingWorkflowComposerTest {
                 No need to execute merge command: there is a single snapshot file.
                 Renaming it: from=${snapshots.first().path} to=${outputSnapshotFile.absolutePath}
             """.trimIndent()) }
-        val actualSnapshots = virtualAgentTmp.listFiles()?.toList() ?: emptyList()
+        val actualSnapshots = agentTmp.listFiles()?.toList() ?: emptyList()
         Assert.assertTrue(actualSnapshots.size == 1)
         Assert.assertEquals(actualSnapshots.first().absolutePath, outputSnapshotFile.absolutePath)
     }
@@ -222,8 +219,8 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(false, "")
 
         val buildStepId = "buildStep"
-        val outputSnapshotFile = File(virtualAgentTmp, "outputSnapshot_$buildStepId.dcvr")
-        val dotCoverMergeProjectFile = File(virtualAgentTmp,"merge_$DOTCOVER_CONFIG_EXTENSION")
+        val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
+        val dotCoverMergeProjectFile = File(agentTmp,"merge_$DOTCOVER_CONFIG_EXTENSION")
         every { _virtualContext.resolvePath(outputSnapshotFile.path) } returns outputSnapshotFile.path
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
@@ -270,7 +267,7 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(true, "")
 
         val buildStepId = "buildStep"
-        val dotCoverResultsDir = File(virtualAgentTmp, "dotCoverResults")
+        val dotCoverResultsDir = File(agentTmp, "dotCoverResults")
         val outputReportFile = File(dotCoverResultsDir, "CoverageReport_${buildStepId}.xml")
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _virtualContext.resolvePath(dotCoverResultsDir.path) } returns dotCoverResultsDir.path
@@ -300,11 +297,11 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(true, "")
 
         val buildStepId = "buildStep"
-        val dotCoverResultsDir = File(virtualAgentTmp, "dotCoverResults")
+        val dotCoverResultsDir = File(agentTmp, "dotCoverResults")
         val outputReportFile = File(dotCoverResultsDir, "CoverageReport_${buildStepId}.xml")
         dotCoverResultsDir.mkdirs()
         outputReportFile.createNewFile()
-        val outputSnapshotFile = File(virtualAgentTmp, "outputSnapshot_$buildStepId.dcvr")
+        val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
         outputSnapshotFile.createNewFile()
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _virtualContext.resolvePath(dotCoverResultsDir.path) } returns dotCoverResultsDir.path
@@ -335,11 +332,11 @@ class DotCoverReportingWorkflowComposerTest {
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(true, "")
 
         val buildStepId = "buildStep"
-        val outputSnapshotFile = File(virtualAgentTmp, "outputSnapshot_$buildStepId.dcvr")
+        val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
         outputSnapshotFile.createNewFile()
-        val dotCoverResultsDir = File(virtualAgentTmp, "dotCoverResults")
+        val dotCoverResultsDir = File(agentTmp, "dotCoverResults")
         val outputReportFile = File(dotCoverResultsDir, "CoverageReport_${buildStepId}.xml")
-        val dotCoverReportProjectFile = File(virtualAgentTmp,"report_$DOTCOVER_CONFIG_EXTENSION")
+        val dotCoverReportProjectFile = File(agentTmp,"report_$DOTCOVER_CONFIG_EXTENSION")
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
         every { _pathService.getTempFileName("report_${DOTCOVER_CONFIG_EXTENSION}") } returns dotCoverReportProjectFile
@@ -375,7 +372,7 @@ class DotCoverReportingWorkflowComposerTest {
         Assert.assertEquals(actualCommandLines, expectedWorkflow.commandLines.toList())
     }
 
-    private fun createSnapshots(numberOfFiles: Int = 1, snapshotsDirectory: File = virtualAgentTmp): List<Path> {
+    private fun createSnapshots(numberOfFiles: Int = 1, snapshotsDirectory: File = agentTmp): List<Path> {
         val result = ArrayList<Path>()
         for (i in 1..numberOfFiles) {
             val file = File(snapshotsDirectory, "$i.dcvr")

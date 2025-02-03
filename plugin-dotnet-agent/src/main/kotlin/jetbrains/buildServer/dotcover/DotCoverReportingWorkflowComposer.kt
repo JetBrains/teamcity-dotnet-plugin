@@ -50,17 +50,17 @@ class DotCoverReportingWorkflowComposer(
 
         return sequence {
             val executablePath = getDotCoverExecutablePath()
-            val virtualTempDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.AgentTemp).canonicalPath))
+            val tempDirectory = _pathsService.getPath(PathType.AgentTemp)
 
             // merge
             _dotCoverSettings.shouldMergeSnapshots().let { (shouldMergeSnapshots, logMessage) -> when {
-                shouldMergeSnapshots -> merge(executablePath, virtualTempDirectory)
+                shouldMergeSnapshots -> merge(executablePath, tempDirectory)
                 else -> _loggerService.writeDebug(logMessage)
             }}
 
             // report
             _dotCoverSettings.shouldGenerateReport().let { (shouldGenerateReport, logMessage) -> when {
-                shouldGenerateReport -> report(executablePath, virtualTempDirectory)
+                shouldGenerateReport -> report(executablePath, tempDirectory)
                 else -> _loggerService.writeDebug(logMessage)
             }}
         }.let(::Workflow)
@@ -71,14 +71,14 @@ class DotCoverReportingWorkflowComposer(
         onFailure = { throw RunBuildException("dotCover run failed: " + it.message).let { e -> e.isLogStacktrace = false; e } }
     )
 
-    private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, virtualTempDirectory: File) {
-        val outputSnapshotFile = File(virtualTempDirectory, outputSnapshotFilename)
+    private suspend fun SequenceScope<CommandLine>.merge(executableFile: Path, tempDirectory: File) {
+        val outputSnapshotFile = File(tempDirectory, outputSnapshotFilename)
         if (outputSnapshotFile.isFile && outputSnapshotFile.exists()) {
             _loggerService.writeDebug("The merge command has already been performed for this build step; outputSnapshotFile=${outputSnapshotFile.absolutePath}")
             return
         }
 
-        val snapshotPaths = _dotCoverSettings.additionalSnapshotPaths.map { File(it.path) } + virtualTempDirectory
+        val snapshotPaths = _dotCoverSettings.additionalSnapshotPaths.map { File(it.path) } + tempDirectory
         val snapshots = collectSnapshots(snapshotPaths)
         if (snapshots.isEmpty()) {
             _loggerService.writeDebug("Snapshot files not found; skipping merge stage")
@@ -93,11 +93,12 @@ class DotCoverReportingWorkflowComposer(
             return
         }
 
-        val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(mergeConfigFilename).path))
+        val configFile = _pathsService.getTempFileName(mergeConfigFilename)
+        val virtualConfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
         val sources = snapshots.stream().map { Path(_virtualContext.resolvePath(it.absolutePath)) }.toList()
         val output = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
         val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge, mergeCommandData = MergeCommandData(sources, output))
-        _fileSystemService.write(File(virtualConfigFilePath.path)) {
+        _fileSystemService.write(configFile) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
 
@@ -113,12 +114,12 @@ class DotCoverReportingWorkflowComposer(
         snapshots.forEach { _fileSystemService.remove(it) }
     }
 
-    private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, virtualTempDirectory: File) {
-        val virtualReportResultsDirectory = File(virtualTempDirectory, "dotCoverResults")
-        _fileSystemService.createDirectory(virtualReportResultsDirectory)
-        val outputReportFile = File(virtualReportResultsDirectory, outputReportFilename)
+    private suspend fun SequenceScope<CommandLine>.report(executableFile: Path, tempDirectory: File) {
+        val reportResultsDirectory = File(tempDirectory, "dotCoverResults")
+        _fileSystemService.createDirectory(reportResultsDirectory)
+        val outputReportFile = File(reportResultsDirectory, outputReportFilename)
 
-        val outputSnapshotFile = findOutputSnapshot(virtualTempDirectory)
+        val outputSnapshotFile = findOutputSnapshot(tempDirectory)
         if (outputSnapshotFile == null) {
             _loggerService.writeWarning("The dotCover report was not generated. Snapshot file not found")
             return
@@ -128,11 +129,12 @@ class DotCoverReportingWorkflowComposer(
             return
         }
 
-        val virtualConfigFilePath = Path(_virtualContext.resolvePath(_pathsService.getTempFileName(reportConfigFilename).path))
+        val configFile = _pathsService.getTempFileName(reportConfigFilename)
+        val virtualConfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
         val source = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
         val output = Path(_virtualContext.resolvePath(outputReportFile.absolutePath))
         val dotCoverProject = DotCoverProject(DotCoverCommandType.Report, reportCommandData = ReportCommandData(source, output))
-        _fileSystemService.write(File(virtualConfigFilePath.path)) {
+        _fileSystemService.write(configFile) {
             _dotCoverProjectSerializer.serialize(dotCoverProject, it)
         }
 
@@ -146,35 +148,41 @@ class DotCoverReportingWorkflowComposer(
             )
         )
 
-        publishDotCoverArtifacts(outputReportFile, outputSnapshotFile, virtualReportResultsDirectory)
+        publishDotCoverArtifacts(outputReportFile, outputSnapshotFile, reportResultsDirectory)
     }
 
-    private fun publishDotCoverArtifacts(outputReportFile: File, outputSnapshotFile: File, virtualReportResultsDirectory: File) {
+    private fun publishDotCoverArtifacts(outputReportFile: File, outputSnapshotFile: File, reportResultsDirectory: File) {
         if (!outputReportFile.isFile || !outputReportFile.exists()) {
             _loggerService.writeDebug("Nothing to publish: the report file doesn't exist; outputReportFile=${outputReportFile.absolutePath}")
             return
         }
 
-        val virtualCheckoutDirectory = File(_virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath))
-        val reportZipFile = File(_virtualContext.resolvePath(File(virtualReportResultsDirectory, outputHtmlReportFilename).canonicalPath))
+        val checkoutDirectory = _pathsService.getPath(PathType.Checkout)
+        val reportZipFile = File(reportResultsDirectory, outputHtmlReportFilename)
 
         _dotCoverTeamCityReportGenerator.parseStatementCoverage(outputReportFile)?.let {
             _loggerService.writeStandardOutput("DotCover statement coverage was: ${it.covered} of ${it.total} (${it.percent}%)")
         }
-        _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(_dotCoverSettings.buildLogger, _dotCoverSettings.configParameters,
-            virtualCheckoutDirectory, outputReportFile, reportZipFile)?.let {
+
+        val configParams = _dotCoverSettings.configParameters.toMutableMap()
+        val virtualCheckoutDir = _virtualContext.resolvePath(_pathsService.getPath(PathType.Checkout).canonicalPath)
+        if (!configParams.containsKey("dotNetCoverage.dotCover.source.mapping") && virtualCheckoutDir.first() != checkoutDirectory.canonicalPath.first()) {
+            configParams["dotNetCoverage.dotCover.source.mapping"] = "$virtualCheckoutDir=>${checkoutDirectory.canonicalPath}"
+        }
+        _dotCoverTeamCityReportGenerator.generateReportHTMLandStats(_dotCoverSettings.buildLogger, configParams,
+            checkoutDirectory, outputReportFile, reportZipFile)?.let {
             _dotnetCoverageStatisticsPublisher.publishCoverageStatistics(it)
         }
 
         val result = DotnetCoverageGenerationResult(outputReportFile, emptyList(), reportZipFile)
         _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH)?.let {
-            val logsFolder = resolvePath(virtualCheckoutDirectory, it)
+            val logsFolder = resolvePath(checkoutDirectory, it)
             result.addFileToPublish(CoverageConstants.DOTCOVER_LOGS, logsFolder)
         }
         result.addFileToPublish(DOTCOVER_SNAPSHOT_DCVR, outputSnapshotFile)
         val publishPath = _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.COVERAGE_PUBLISH_PATH_PARAM)
 
-        _uploader.processFiles(virtualReportResultsDirectory, publishPath, result)
+        _uploader.processFiles(reportResultsDirectory, publishPath, result)
     }
 
     private fun collectSnapshots(snapshotPaths: Sequence<File>) : List<File> {
