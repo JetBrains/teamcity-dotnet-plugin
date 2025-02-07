@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.Environment
@@ -14,25 +12,25 @@ class DotnetToolEnvironment(
         private val _parametersService: ParametersService)
     : ToolEnvironment {
 
-    override val homePaths: Sequence<Path>
-        get() = when(_buildStepContext.isAvailable) {
-            false -> _environment.tryGetVariable(DotnetConstants.TOOL_HOME)?.let { sequenceOf(Path(it)) } ?: emptySequence()
-            true -> _parametersService.tryGetParameter(ParameterType.Environment, DotnetConstants.TOOL_HOME)?.let { sequenceOf(Path(it)) } ?: emptySequence()
-        }
+    override val homePaths get() = when(_buildStepContext.isAvailable) {
+        false -> _environment.tryGetVariable(DotnetConstants.TOOL_HOME)?.let { sequenceOf(Path(it)) } ?: emptySequence()
+        true -> _parametersService.tryGetParameter(ParameterType.Environment, DotnetConstants.TOOL_HOME)?.let { sequenceOf(Path(it)) } ?: emptySequence()
+    }
 
-    override val defaultPaths: Sequence<Path>
-        get() = sequenceOf(
-                when(_environment.os) {
-                    OSType.WINDOWS -> _environment.tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
-                            ?.let {
-                                Path("$it\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
-                            }
-                            ?: Path("C:\\Program Files\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
-                    OSType.UNIX -> Path("/usr/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
-                    OSType.MAC -> Path("/usr/local/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
-                }
+    override val defaultPaths get() = when(_environment.os) {
+        OSType.WINDOWS -> sequenceOf(
+            _environment.tryGetVariable(DotnetConstants.PROGRAM_FILES_ENV_VAR)
+                ?.let { Path("$it\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}") }
+                ?: Path("C:\\Program Files\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
         )
+        OSType.UNIX -> sequenceOf(
+            Path("/usr/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"),
+            Path("/usr/lib/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
+        )
+        OSType.MAC -> sequenceOf(
+            Path("/usr/local/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}")
+        )
+    }
 
-    override val environmentPaths: Sequence<Path>
-        get() = _environment.paths
+    override val environmentPaths get() = _environment.paths
 }
