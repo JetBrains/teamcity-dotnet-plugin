@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotnet
 
 import io.mockk.MockKAnnotations
@@ -67,7 +65,7 @@ class DotnetToolEnvironmentTest {
         return arrayOf(
                 arrayOf(OSType.WINDOWS, null, listOf(Path("C:\\Program Files\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"))),
                 arrayOf(OSType.WINDOWS, "D:\\Program", listOf(Path("D:\\Program\\${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"))),
-                arrayOf(OSType.UNIX, null, listOf(Path("/usr/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"))),
+                arrayOf(OSType.UNIX, null, listOf(Path("/usr/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"), Path("/usr/lib/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"))),
                 arrayOf(OSType.MAC, null, listOf(Path("/usr/local/share/${DotnetConstants.DOTNET_DEFAULT_DIRECTORY}"))))
     }
 
