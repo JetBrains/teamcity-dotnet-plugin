@@ -7,4 +7,5 @@ object CltConstants {
     const val JETBRAINS_RESHARPER_CLT_TOOL_TYPE_NAME = "JetBrains ReSharper Command Line Tools"
     const val CLT_PATH_PARAMETER = JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID + ".clt-path"
     const val RUNNER_SETTING_CLT_PLATFORM = "jetbrains.resharper-clt.platform"
+    const val CLT_AGENT_REQUIREMENTS_ENABLED = "teamcity.internal.dotnet.resharperClt.requirements.enabled" // true by default
 }
