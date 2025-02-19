@@ -8,7 +8,7 @@ import jetbrains.buildServer.rx.subjectOf
 class WorkflowSessionImpl(
         private val _workflowComposer: SimpleWorkflowComposer,
         private val _commandExecutionFactory: CommandExecutionFactory,
-        private val _workflowSessionEventManager: WorkflowSessionEventManager
+        private val _workflowSessionEventDispatcher: WorkflowSessionEventDispatcher
 ) : MultiCommandBuildSession, WorkflowContext {
 
     private val _commandLinesIterator = lazy { _workflowComposer.compose(this, Unit).commandLines.iterator() }
@@ -45,12 +45,12 @@ class WorkflowSessionImpl(
         _buildFinishedStatus = buildFinishedStatus
     }
 
-    override fun sessionStarted() = _workflowSessionEventManager.notifySessionStarted()
+    override fun sessionStarted() = _workflowSessionEventDispatcher.notifySessionStarted()
 
     override fun sessionFinished(): BuildFinishedStatus {
         _eventSubject.onComplete()
         val status = _buildFinishedStatus ?: BuildFinishedStatus.FINISHED_SUCCESS
-        _workflowSessionEventManager.notifySessionFinished(status)
+        _workflowSessionEventDispatcher.notifySessionFinished(status)
         return status
     }
 }

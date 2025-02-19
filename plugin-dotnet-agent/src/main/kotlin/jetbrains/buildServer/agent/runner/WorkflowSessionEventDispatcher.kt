@@ -2,10 +2,10 @@ package jetbrains.buildServer.agent.runner
 
 import jetbrains.buildServer.agent.BuildFinishedStatus
 
-class WorkflowSessionEventManager(
-    private val _initialListeners: List<WorkflowSessionEventListener>
+class WorkflowSessionEventDispatcher(
+    initialListeners: List<WorkflowSessionEventListener>
 ) {
-    private val _listeners: MutableList<WorkflowSessionEventListener> = _initialListeners.toMutableList()
+    private val _listeners: MutableList<WorkflowSessionEventListener> = initialListeners.toMutableList()
 
     fun addListener(listener: WorkflowSessionEventListener) {
         _listeners.add(listener)

@@ -15,7 +15,7 @@ class WorkflowSessionTest {
     private var _subscriptionToken = emptyDisposable()
     @MockK private lateinit var _workflowComposer: SimpleWorkflowComposer
     @MockK private lateinit var _commandExecutionFactory: CommandExecutionFactory
-    @MockK private lateinit var _workflowSessionEventManager: WorkflowSessionEventManager
+    @MockK private lateinit var _workflowSessionEventDispatcher: WorkflowSessionEventDispatcher
     private val _commandLine1 = CommandLine(null, TargetType.Tool, Path("dotnet 1"), Path("wd1"))
     private val _commandLine2 = CommandLine(null, TargetType.CodeCoverageProfiler, Path("dotnet 2"), Path("wd2"))
     @MockK private lateinit var _commandExecution1: CommandExecution
@@ -28,7 +28,7 @@ class WorkflowSessionTest {
         _events.clear()
         every { _commandExecutionFactory.create(_commandLine1, any()) } returns _commandExecution1
         every { _commandExecutionFactory.create(_commandLine2, any()) } returns _commandExecution2
-        every { _workflowSessionEventManager.notifySessionFinished(any()) } just Runs
+        every { _workflowSessionEventDispatcher.notifySessionFinished(any()) } just Runs
     }
 
     @AfterMethod
@@ -110,7 +110,7 @@ class WorkflowSessionTest {
     }
 
     private fun createInstance(): WorkflowSessionImpl {
-        val session =  WorkflowSessionImpl(_workflowComposer, _commandExecutionFactory, _workflowSessionEventManager)
+        val session =  WorkflowSessionImpl(_workflowComposer, _commandExecutionFactory, _workflowSessionEventDispatcher)
         _subscriptionToken = session.materialize().subscribe { _events.add(it) }
         return session
     }

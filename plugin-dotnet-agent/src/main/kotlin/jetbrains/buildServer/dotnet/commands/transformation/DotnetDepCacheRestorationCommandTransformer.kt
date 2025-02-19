@@ -138,7 +138,10 @@ class DotnetDepCacheRestorationCommandTransformer(
     }
 
     companion object {
-        val MinDotNetSdkVersionForDepCache = Version(6, 0, 0)
+        // It is currently limited by the 'nuget locals' command, which we use to obtain a location with packages.
+        // This command is only available starting from version .NET Core 3.1.
+        // see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-locals
+        val MinDotNetSdkVersionForDepCache = Version(3, 1)
 
         private val UnsupportedCommands = setOf(
             DotnetCommandType.VisualStudio,
