@@ -14,27 +14,27 @@ class RequirementsResolverTest {
             arrayOf(
                 Version(2018, 1),
                 InspectionToolPlatform.WindowsX64,
-                listOf(RequirementsResolverImpl.DotnetFrameworkX64Requirement)
+                listOf(RequirementsResolverImpl.DotnetFrameworkAnyX64Requirement)
             ),
             arrayOf(
                 Version(2018, 1),
                 InspectionToolPlatform.WindowsX86,
-                listOf(RequirementsResolverImpl.DotnetFrameworkX86Requirement)
+                listOf(RequirementsResolverImpl.DotnetFrameworkAnyX86Requirement)
             ),
             arrayOf(
                 Version(2018, 2),
                 InspectionToolPlatform.WindowsX64,
-                listOf(RequirementsResolverImpl.DotnetFramework461X64Requirement)
+                listOf(RequirementsResolverImpl.DotnetFramework461AndAboveX64Requirement)
             ),
             arrayOf(
                 Version(2018, 2),
                 InspectionToolPlatform.WindowsX86,
-                listOf(RequirementsResolverImpl.DotnetFramework461X86Requirement)
+                listOf(RequirementsResolverImpl.DotnetFramework461AndAboveX86Requirement)
             ),
             arrayOf(
                 Version(2020, 2, 1),
                 InspectionToolPlatform.CrossPlatform,
-                listOf(RequirementsResolverImpl.DotnetCoreRuntime31Requirement)
+                listOf(RequirementsResolverImpl.DotnetCoreRuntime31AndAboveRequirement)
             )
         )
     }
@@ -156,7 +156,7 @@ class RequirementsResolverTest {
     @Test(dataProvider = "dotnetCoreRuntime31PathTestData")
     fun `should match dotnet core runtime path version 3_1 and above except 4_x`(string: String, expectedMatches: Boolean) {
         // act
-        val actualMatches = Regex(RequirementsResolverImpl.DotnetCoreRuntime31PathRegexp).matches(string)
+        val actualMatches = Regex(RequirementsResolverImpl.DotnetCoreRuntime31AndAbovePathRegex).matches(string)
 
         // assert
         Assert.assertEquals(actualMatches, expectedMatches)
