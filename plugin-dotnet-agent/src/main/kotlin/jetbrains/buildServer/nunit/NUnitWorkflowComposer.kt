@@ -21,7 +21,8 @@ class NUnitWorkflowComposer(
     private val _nUnitViaCommandLineComposer: NUnitViaCommandLineWorkflowComposer,
     private val _nUnitViaProjectFileComposer: NUnitViaProjectFileWorkflowComposer,
     private val _nUnitTestReorderingComposer: NUnitReorderingWorkflowComposer,
-    private val _monoExecutableWorkflowComposer: MonoExecutableWorkflowComposer
+    private val _monoExecutableWorkflowComposer: MonoExecutableWorkflowComposer,
+    private val _teamCityEventListenerExtensionPreparer: NUnitTeamCityEventListenerExtensionPreparer
 ) : SimpleWorkflowComposer {
     override val target: TargetType = TargetType.Tool
 
@@ -38,6 +39,7 @@ class NUnitWorkflowComposer(
 
             if (nUnitToolState == null) {
                 yieldAll(_nUnitToolStateComposer.compose(context, observer { nUnitToolState = it }, workflow).commandLines)
+                nUnitToolState?.let { _teamCityEventListenerExtensionPreparer.ensureExtensionPresent(it) }
                 nUnitToolState?.let { _nUnitToolStateVerifier.verify(it) }
             }
 

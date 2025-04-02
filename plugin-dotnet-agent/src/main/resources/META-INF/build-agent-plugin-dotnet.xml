@@ -757,6 +757,7 @@
     <constructor-arg ref="simpleStateWorkflowComposer"/>
   </bean>
   <bean class="jetbrains.buildServer.nunit.NUnitSettingsImpl"/>
+  <bean class="jetbrains.buildServer.nunit.NUnitTeamCityEventListenerExtensionPreparer"/>
 
   <!--NUnit tool state -->
   <bean class="jetbrains.buildServer.nunit.toolState.NUnitToolStateVerifier"/>

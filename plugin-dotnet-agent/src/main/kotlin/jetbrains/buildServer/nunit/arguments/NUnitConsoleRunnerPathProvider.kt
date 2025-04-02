@@ -17,7 +17,10 @@ class NUnitConsoleRunnerPathProvider(
     private val _loggerService: LoggerService
 ) {
     private val supportedNetFrameworkVersions = listOf("net462", "net35", "net20")
-    private val nUnitConsoleExecutablePath = "nunit3-console.exe"
+    // this naming for the executable file is used in NUnit 3.x.x
+    private val nUnit3ConsoleExecutablePath = "nunit3-console.exe"
+    // this naming for the executable file is used in NUnit 4.x.x
+    private val nUnitConsoleExecutablePath = "nunit-console.exe"
 
     val consoleRunnerPath: Path
         get() {
@@ -49,10 +52,16 @@ class NUnitConsoleRunnerPathProvider(
     private fun getConsoleSearchPaths(nUnitPath: Path) = buildList {
         add(nUnitPath)
         if (_fileSystem.isDirectory(nUnitPath.toFile())) {
+            // for NUnit.Console 4.x.x, the executable file name is different
+            // and is located in the "tools" directory because it is installed from a .nupkg file.
+            add(nUnitPath.resolve("tools").resolve(nUnitConsoleExecutablePath))
+
+            // for NUnit.Console 3.x.x, which is distributed as a .zip archive
             val binPath = nUnitPath.resolve("bin")
-            addAll(supportedNetFrameworkVersions.map { binPath.resolve(it).resolve(nUnitConsoleExecutablePath) })
+            addAll(supportedNetFrameworkVersions.map { binPath.resolve(it).resolve(nUnit3ConsoleExecutablePath) })
+
             // for NUnit.Console 3.16.0 (broken package structure)
-            add(binPath.resolve(nUnitConsoleExecutablePath))
+            add(binPath.resolve(nUnit3ConsoleExecutablePath))
         }
     }
 }

@@ -58,7 +58,7 @@ class PreparePackagesTask extends DefaultTask {
         ant.delete(dir: toolsDir)
         ant.mkdir(dir: toolsDir)
 
-        def integrationPackageVersion = '1.0.34'
+        def integrationPackageVersion = '1.0.35'
         def integrationPackageId = 'TeamCity.Dotnet.Integration/' + integrationPackageVersion
 
         println 'Processing ' + integrationPackageId

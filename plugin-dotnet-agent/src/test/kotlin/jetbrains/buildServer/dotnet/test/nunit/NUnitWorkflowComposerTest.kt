@@ -46,6 +46,9 @@ class NUnitWorkflowComposerTest {
     @MockK
     private lateinit var _monoExecutableWorkflowComposer: MonoExecutableWorkflowComposer
 
+    @MockK
+    private lateinit var _teamCityEventListenerExtensionPreparer: NUnitTeamCityEventListenerExtensionPreparer
+
     @BeforeMethod
     fun setUp() {
         MockKAnnotations.init(this)
@@ -53,7 +56,7 @@ class NUnitWorkflowComposerTest {
 
         every { _buildStepContext.runnerContext.runType } returns NUnitRunnerConstants.NUNIT_RUN_TYPE
 
-        val nUnitToolState = NUnitToolState("3.0.0", listOf())
+        val nUnitToolState = NUnitToolState("3.0.0", mutableListOf())
         justRun { _nUnitToolStateVerifier.verify(nUnitToolState) }
 
         every { _nUnitToolStateWorkflowComposer.compose(any(), any(), any()) } answers {
@@ -66,6 +69,7 @@ class NUnitWorkflowComposerTest {
         }
 
         every { _monoExecutableWorkflowComposer.compose(any(), Unit, any()) } answers { lastArg<Workflow>() }
+        every { _teamCityEventListenerExtensionPreparer.ensureExtensionPresent(any()) } just Runs
     }
 
     @Test
@@ -204,6 +208,7 @@ class NUnitWorkflowComposerTest {
         _nUnitViaCommandLineComposer,
         _nUnitViaProjectFileComposer,
         _nUnitTestReorderingComposer,
-        _monoExecutableWorkflowComposer
+        _monoExecutableWorkflowComposer,
+        _teamCityEventListenerExtensionPreparer
     )
 }

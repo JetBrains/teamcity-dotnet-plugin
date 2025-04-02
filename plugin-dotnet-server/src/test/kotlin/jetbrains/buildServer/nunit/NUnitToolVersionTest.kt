@@ -15,7 +15,7 @@ class NUnitToolVersionTest {
         TestCase("NUnit.Console-3.6.1.zip", true, "3.6.1"),
         TestCase("NUnit.Console-3.6.zip", true, "3.6"),
         TestCase("NUnit.Console-3.zip", true, "3"),
-        TestCase("NUnit.Console-10.20.300.zip", true, "10.20.300"),
+        TestCase("NUnit.ConsoleRunner.10.20.300.nupkg", true, "10.20.300"),
         TestCase("NUnit.Console-3.6.1-beta.zip", false, ""),
         TestCase("nunit.console-3.6.1.zip", true, "3.6.1"),
         TestCase("NUNIT.CoNsolE-3.6.1.ZiP", true, "3.6.1"),

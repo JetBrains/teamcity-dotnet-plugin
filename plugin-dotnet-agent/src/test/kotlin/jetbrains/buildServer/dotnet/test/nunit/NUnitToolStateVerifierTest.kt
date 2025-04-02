@@ -190,7 +190,7 @@ class NUnitToolStateVerifierTest {
         val service = NUnitToolStateVerifier(_loggerService, _nUnitSettings)
         val nUnitToolState = NUnitToolState(
             nUnitVersion = "3.5.0",
-            extensions = listOf("NUnit.Engine.Listeners.TeamCityEventListener")
+            extensions = mutableListOf("NUnit.Engine.Listeners.TeamCityEventListener")
         )
 
         // act

@@ -57,7 +57,7 @@ class NUnitToolStateParserTest {
                   Format: nunit2
             """.trimIndent(),
             NUnitToolState(
-                "3.17.0", listOf(
+                "3.17.0", mutableListOf(
                     "NUnit.Engine.Drivers.NUnit2FrameworkDriver",
                     "NUnit.Engine.Listeners.TeamCityEventListener",
                     "NUnit.Engine.Services.ProjectLoaders.NUnitProjectLoader",
@@ -71,7 +71,7 @@ class NUnitToolStateParserTest {
             Copyright (c) 2022 Charlie Poole, Rob Prouse
             Friday, June 7, 2024 2:48:47 PM
             """.trimIndent(),
-            NUnitToolState("3.15.4", emptyList())
+            NUnitToolState("3.15.4", mutableListOf())
         ),
         TestCase(
             """
@@ -83,7 +83,7 @@ class NUnitToolStateParserTest {
                OS Version: MacOSX 23.4.0.0
                Runtime: .NET Framework CLR v4.0.30319.42000
             """.trimIndent(),
-            NUnitToolState("3.13.2", emptyList())
+            NUnitToolState("3.13.2", mutableListOf())
         ),
         TestCase(
             """NUnit Console Runner 3.4.1

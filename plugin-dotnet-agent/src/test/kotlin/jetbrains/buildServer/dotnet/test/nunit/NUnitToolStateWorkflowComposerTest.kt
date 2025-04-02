@@ -40,7 +40,7 @@ class NUnitToolStateWorkflowComposerTest {
     @Test
     fun `should call nunit console to check version and extensions`() {
         // arrange
-        val expectedNUnitToolState = NUnitToolState("nunit-version", listOf("ext1", "ext2"))
+        val expectedNUnitToolState = NUnitToolState("nunit-version", mutableListOf("ext1", "ext2"))
 
         every { _nUnitConsoleRunnerPathProvider.consoleRunnerPath } returns Paths.get("nunit3-console.exe")
         every { _pathsService.getPath(PathType.WorkingDirectory) } returns File("work-dir")
