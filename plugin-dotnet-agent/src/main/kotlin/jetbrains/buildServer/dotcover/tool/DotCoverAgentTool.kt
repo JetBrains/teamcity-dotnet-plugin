@@ -2,16 +2,19 @@ package jetbrains.buildServer.dotcover.tool
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
+import jetbrains.buildServer.tools.ToolVersionReference
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class DotCoverAgentTool(
     private val _parametersService: ParametersService,
     private val _fileSystemService: FileSystemService,
+    private val _buildStepContext: BuildStepContext,
 ) {
     val dotCoverExeFile get() = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverHomePath)
 
@@ -19,12 +22,17 @@ class DotCoverAgentTool(
 
     val dotCoverShFile get() = EntryPointType.UsingBundledDotnetRuntime.getEntryPointFile(dotCoverHomePath)
 
-    val dotCoverHomePath get() =
-        _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
-            .let { when (it.isNullOrBlank()) {
-                true -> ""
-                false -> it
-            }}
+    val dotCoverHomePath
+        get() =
+            listOf(
+                _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME),
+                defaultDotCoverToolPathOrNull,
+            ).firstNotNullOfOrNull {
+                when (it.isNullOrBlank()) {
+                    true -> null
+                    false -> it
+                }
+            } ?: ""
 
     val type get() = when {
         // cross-platform version using bundled runtime
@@ -61,6 +69,25 @@ class DotCoverAgentTool(
         val buildParametersNames = _parametersService.getParameterNames(ParameterType.Configuration)
         return MinRequirement.values().filter { req -> buildParametersNames.any { req.isSatisfiedBy(it) } }
     }
+
+    private val defaultDotCoverToolPathOrNull: String?
+        get() {
+            val isFallbackToDefaultEnabled = _parametersService
+                .tryGetParameter(
+                    ParameterType.Configuration,
+                    DotnetConstants.PARAM_DOTCOVER_USE_DEFAULT_REF_WHEN_DOTCOVER_HOME_EMPTY,
+                )
+                ?.let { !it.trim().equals("false", true) }
+                ?: true
+            if (!isFallbackToDefaultEnabled) {
+                return null
+            }
+            return runCatching {
+                val sharedConfigParams = _buildStepContext.runnerContext.build.sharedConfigParameters
+                val toolRef = ToolVersionReference.getDefaultToolReference(CoverageConstants.DOTCOVER_PACKAGE_ID)
+                sharedConfigParams[toolRef.propertyName]
+            }.getOrNull()
+        }
 
     private enum class EntryPointType(private val entryPointFileName: String) {
         // dotCover.exe ... – simple run of Windows executable file

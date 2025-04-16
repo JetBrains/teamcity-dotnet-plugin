@@ -1,9 +1,11 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.FileSystemService
+import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
@@ -22,11 +24,13 @@ import java.io.File
 class DotCoverAgentToolTest {
     @MockK private val _parametersService = mockk<ParametersService>(relaxed = true)
     @MockK private val _fileSystemService = mockk<FileSystemService>(relaxed = true)
+    @MockK private val _buildStepContext = mockk<BuildStepContext>(relaxed = true)
     private lateinit var _tool: DotCoverAgentTool
 
     @BeforeMethod
     fun setUp() {
-        _tool = DotCoverAgentTool(_parametersService, _fileSystemService)
+        _tool = DotCoverAgentTool(_parametersService, _fileSystemService, _buildStepContext)
+        clearAllMocks()
     }
 
     @Test
@@ -44,12 +48,27 @@ class DotCoverAgentToolTest {
     fun `should return empty dotCover home path when value is null or blank`() {
         // assert
         every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
+        every { _buildStepContext.runnerContext.build.sharedConfigParameters } returns emptyMap()
 
         // act
         val result = _tool.dotCoverHomePath
 
         // assert
         Assert.assertEquals(result, "")
+    }
+
+    @Test
+    fun `should return correct dotCover home path when it is available as default tool reference`() {
+        every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
+        every { _buildStepContext.runnerContext.build.sharedConfigParameters } returns mapOf(
+            "teamcity.tool.JetBrains.dotCover.CommandLineTools.DEFAULT" to "somePath"
+        )
+
+        // act
+        val result = _tool.dotCoverHomePath
+
+        // assert
+        Assert.assertEquals(result, "somePath")
     }
 
     @Test
