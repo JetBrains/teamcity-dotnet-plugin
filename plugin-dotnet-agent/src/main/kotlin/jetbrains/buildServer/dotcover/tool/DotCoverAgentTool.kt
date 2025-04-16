@@ -2,19 +2,18 @@ package jetbrains.buildServer.dotcover.tool
 
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.Version
-import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.tools.ToolVersionReference
+import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class DotCoverAgentTool(
     private val _parametersService: ParametersService,
     private val _fileSystemService: FileSystemService,
-    private val _buildStepContext: BuildStepContext,
+    private val _coverageParametersHolder: DotnetCoverageParametersHolder,
 ) {
     val dotCoverExeFile get() = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverHomePath)
 
@@ -24,9 +23,9 @@ class DotCoverAgentTool(
 
     val dotCoverHomePath
         get() =
-            listOf(
+            sequenceOf(
                 _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME),
-                defaultDotCoverToolPathOrNull,
+                tryGetDotCoverHomePathFromParameterHolder,
             ).firstNotNullOfOrNull {
                 when (it.isNullOrBlank()) {
                     true -> null
@@ -70,22 +69,25 @@ class DotCoverAgentTool(
         return MinRequirement.values().filter { req -> buildParametersNames.any { req.isSatisfiedBy(it) } }
     }
 
-    private val defaultDotCoverToolPathOrNull: String?
+    // When the "##teamcity[dotNetCoverageDotnetRunner  dotcover_home='/custom/path/to/dotcover']" service message
+    // is used, the dotcover_home is saved as "dotNetCoverage.dotCover.home.path" in "DotnetCoverageParametersHolder",
+    // and we check the holder here when the "dotNetCoverage.dotCover.home.path" is not available in runner parameters
+    private val tryGetDotCoverHomePathFromParameterHolder: String?
         get() {
-            val isFallbackToDefaultEnabled = _parametersService
+            val isParameterHolderFallbackEnabled = _parametersService
                 .tryGetParameter(
                     ParameterType.Configuration,
-                    DotnetConstants.PARAM_DOTCOVER_USE_DEFAULT_REF_WHEN_DOTCOVER_HOME_EMPTY,
+                    DotnetConstants.PARAM_DOTCOVER_PARAMETER_HOLDER_FALLBACK_ENABLED,
                 )
                 ?.let { !it.trim().equals("false", true) }
                 ?: true
-            if (!isFallbackToDefaultEnabled) {
+            if (!isParameterHolderFallbackEnabled) {
                 return null
             }
             return runCatching {
-                val sharedConfigParams = _buildStepContext.runnerContext.build.sharedConfigParameters
-                val toolRef = ToolVersionReference.getDefaultToolReference(CoverageConstants.DOTCOVER_PACKAGE_ID)
-                sharedConfigParams[toolRef.propertyName]
+                _coverageParametersHolder
+                    .getCoverageParameters()
+                    .getRunnerParameter(CoverageConstants.PARAM_DOTCOVER_HOME)
             }.getOrNull()
         }
 

@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.runner.BuildStepContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
@@ -14,6 +13,7 @@ import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER_HOME
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
+import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -24,12 +24,12 @@ import java.io.File
 class DotCoverAgentToolTest {
     @MockK private val _parametersService = mockk<ParametersService>(relaxed = true)
     @MockK private val _fileSystemService = mockk<FileSystemService>(relaxed = true)
-    @MockK private val _buildStepContext = mockk<BuildStepContext>(relaxed = true)
+    @MockK private val _coverageParametersHolder = mockk<DotnetCoverageParametersHolder>(relaxed = true)
     private lateinit var _tool: DotCoverAgentTool
 
     @BeforeMethod
     fun setUp() {
-        _tool = DotCoverAgentTool(_parametersService, _fileSystemService, _buildStepContext)
+        _tool = DotCoverAgentTool(_parametersService, _fileSystemService, _coverageParametersHolder)
         clearAllMocks()
     }
 
@@ -48,7 +48,7 @@ class DotCoverAgentToolTest {
     fun `should return empty dotCover home path when value is null or blank`() {
         // assert
         every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
-        every { _buildStepContext.runnerContext.build.sharedConfigParameters } returns emptyMap()
+        every { _coverageParametersHolder.getCoverageParameters().getRunnerParameter(PARAM_DOTCOVER_HOME) } returns null
 
         // act
         val result = _tool.dotCoverHomePath
@@ -58,11 +58,9 @@ class DotCoverAgentToolTest {
     }
 
     @Test
-    fun `should return correct dotCover home path when it is available as default tool reference`() {
+    fun `should return correct dotCover home path when it is available in coverage parameters holder`() {
         every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
-        every { _buildStepContext.runnerContext.build.sharedConfigParameters } returns mapOf(
-            "teamcity.tool.JetBrains.dotCover.CommandLineTools.DEFAULT" to "somePath"
-        )
+        every { _coverageParametersHolder.getCoverageParameters().getRunnerParameter(PARAM_DOTCOVER_HOME) } returns "somePath"
 
         // act
         val result = _tool.dotCoverHomePath
