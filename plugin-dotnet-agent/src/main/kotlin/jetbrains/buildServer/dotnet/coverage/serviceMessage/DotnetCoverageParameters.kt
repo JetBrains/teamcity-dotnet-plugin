@@ -3,7 +3,6 @@ package jetbrains.buildServer.dotnet.coverage.serviceMessage
 import jetbrains.buildServer.agent.BuildProgressLogger
 import java.io.File
 
-@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 interface DotnetCoverageParameters {
 
     /**

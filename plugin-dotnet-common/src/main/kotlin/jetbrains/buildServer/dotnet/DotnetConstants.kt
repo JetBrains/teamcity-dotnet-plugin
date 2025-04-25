@@ -72,6 +72,8 @@ object DotnetConstants {
     const val PARAM_DOTCOVER_OVERRIDING_TEMP_DIR_WITH_EMPTY_VALUE_ENABLED = "teamcity.internal.dotnet.dotCover.overridingTempDirWithEmptyValueEnabled"
     // true or false (true by default)
     const val PARAM_DOTCOVER_TEMP_DIR_OVERRIDE = "teamcity.internal.dotcover.temp.directory.override"
+    // true or false (true by default)
+    const val PARAM_DOTCOVER_PARAMETER_HOLDER_FALLBACK_ENABLED = "teamcity.internal.dotcover.parameter.holder.fallback.enabled"
     // true or false (false by default)
     const val PARAM_TEST_RETRY_ENABLED = "teamcity.internal.dotnet.test.retry.enabled"
     // Integer maximum count of failed tests to retry

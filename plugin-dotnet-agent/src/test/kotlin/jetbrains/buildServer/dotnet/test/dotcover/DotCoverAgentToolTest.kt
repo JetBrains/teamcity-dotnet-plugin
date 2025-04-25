@@ -1,5 +1,6 @@
 package jetbrains.buildServer.dotnet.test.dotcover
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -12,6 +13,8 @@ import jetbrains.buildServer.dotnet.CoverageConstants.PARAM_DOTCOVER_HOME
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_CORE_RUNTIME
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWORK
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_SUFFIX_PATH
+import jetbrains.buildServer.dotnet.DotnetConstants.PARAM_DOTCOVER_PARAMETER_HOLDER_FALLBACK_ENABLED
+import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.util.OSType
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -22,11 +25,13 @@ import java.io.File
 class DotCoverAgentToolTest {
     @MockK private val _parametersService = mockk<ParametersService>(relaxed = true)
     @MockK private val _fileSystemService = mockk<FileSystemService>(relaxed = true)
+    @MockK private val _coverageParametersHolder = mockk<DotnetCoverageParametersHolder>(relaxed = true)
     private lateinit var _tool: DotCoverAgentTool
 
     @BeforeMethod
     fun setUp() {
-        _tool = DotCoverAgentTool(_parametersService, _fileSystemService)
+        _tool = DotCoverAgentTool(_parametersService, _fileSystemService, _coverageParametersHolder)
+        clearAllMocks()
     }
 
     @Test
@@ -44,12 +49,45 @@ class DotCoverAgentToolTest {
     fun `should return empty dotCover home path when value is null or blank`() {
         // assert
         every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
+        every { _coverageParametersHolder.getCoverageParameters().getRunnerParameter(PARAM_DOTCOVER_HOME) } returns null
 
         // act
         val result = _tool.dotCoverHomePath
 
         // assert
         Assert.assertEquals(result, "")
+    }
+
+    @Test
+    fun `should return correct dotCover home path when it is available in coverage parameters holder`() {
+        // arrange
+        every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
+        every { _coverageParametersHolder.getCoverageParameters().getRunnerParameter(PARAM_DOTCOVER_HOME) } returns "somePath"
+
+        // act
+        val result = _tool.dotCoverHomePath
+
+        // assert
+        Assert.assertEquals(result, "somePath")
+    }
+
+    @DataProvider
+    fun toggleStates(): Array<Array<Boolean>> = arrayOf(arrayOf(false), arrayOf(true))
+
+    @Test(dataProvider = "toggleStates")
+    fun `should respect fallback toggle in dotCoverHomePath`(fallbackEnabled: Boolean) {
+        // arrange
+        val toggle = PARAM_DOTCOVER_PARAMETER_HOLDER_FALLBACK_ENABLED
+        every { _parametersService.tryGetParameter(ParameterType.Configuration, toggle) } returns fallbackEnabled.toString()
+        every { _parametersService.tryGetParameter(ParameterType.Runner, PARAM_DOTCOVER_HOME) } returns null
+        every { _coverageParametersHolder.getCoverageParameters().getRunnerParameter(PARAM_DOTCOVER_HOME) } returns "somePath"
+
+        // act
+        val result = _tool.dotCoverHomePath
+
+        // assert
+        val expected = if (fallbackEnabled) "somePath" else ""
+        Assert.assertEquals(result, expected)
     }
 
     @Test
