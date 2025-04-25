@@ -4,7 +4,6 @@ import jetbrains.buildServer.agent.BuildRunnerContext
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentHashMap
 
-@Deprecated("Deprecated after task TW-85039. Needed for backward compatibility")
 class DotnetCoverageParametersImpl(private val _runnerContext: BuildRunnerContext) :
     DotnetCoverageParametersBase(_runnerContext.build) {
 
