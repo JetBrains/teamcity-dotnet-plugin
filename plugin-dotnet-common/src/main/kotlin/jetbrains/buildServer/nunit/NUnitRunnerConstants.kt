@@ -18,8 +18,8 @@ object NUnitRunnerConstants {
     const val NUNIT_APP_CONFIG_FILE = "configFile"
 
     // configuration parameters
-    // (false by default)
-    const val NUNIT_USES_PROJECT_FILE = "nunit_use_project_file"
+    // true or false  (false by default)
+    const val NUNIT_USES_PROJECT_FILE = "teamcity.internal.dotnet.nunit.useProjectFile"
     // true or false (false by default)
     // always overwrite the listener in the tool's directory every time if it's already present
     const val OVERWRITE_TEAMCITY_EVENT_LISTENER = "teamcity.internal.dotnet.nunit.alwaysOverwriteTeamCityEventListener"
