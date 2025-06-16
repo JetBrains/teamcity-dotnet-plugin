@@ -6,14 +6,12 @@ import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.coverage.serviceMessage.DotnetCoverageParametersHolder
 import jetbrains.buildServer.util.OSType
 import java.io.File
 
 class DotCoverAgentTool(
     private val _parametersService: ParametersService,
     private val _fileSystemService: FileSystemService,
-    private val _coverageParametersHolder: DotnetCoverageParametersHolder,
 ) {
     val dotCoverExeFile get() = EntryPointType.WindowsExecutable.getEntryPointFile(dotCoverHomePath)
 
@@ -24,7 +22,6 @@ class DotCoverAgentTool(
     val dotCoverHomePath
         get() = _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME)
             ?.takeUnless { it.isBlank() }
-            ?: tryGetDotCoverHomePathFromParameterHolder()
             ?: ""
 
     val type get() = when {
@@ -61,20 +58,6 @@ class DotCoverAgentTool(
     private val satisfiedRequirements : List<MinRequirement> get() {
         val buildParametersNames = _parametersService.getParameterNames(ParameterType.Configuration)
         return MinRequirement.values().filter { req -> buildParametersNames.any { req.isSatisfiedBy(it) } }
-    }
-
-    // When the dotCover path is set via the "##teamcity[dotNetCoverageDotnetRunner dotcover_home='/path/to/dotcover']"
-    // from outside the runner, the path is saved as "dotNetCoverage.dotCover.home.path" in "DotnetCoverageParametersHolder",
-    // so we check the holder here when the "dotNetCoverage.dotCover.home.path" is not available in runner parameters
-    private fun tryGetDotCoverHomePathFromParameterHolder(): String? {
-        if (!isParameterHolderFallbackEnabled) {
-            return null
-        }
-        return runCatching {
-            _coverageParametersHolder
-                .getCoverageParameters()
-                .getRunnerParameter(CoverageConstants.PARAM_DOTCOVER_HOME)
-        }.getOrNull()
     }
 
     private val isParameterHolderFallbackEnabled: Boolean

@@ -10,7 +10,7 @@ import jetbrains.buildServer.coverage.agent.serviceMessage.CoverageServiceMessag
  */
 object CoverageConstants {
     const val PARAM_TYPE = "dotNetCoverage.tool"
-    const val COVERAGE_TYPE = "dotNetCoverageDotnetRunner"
+    const val COVERAGE_TYPE = "dotNetCoverage"
     const val COVERAGE_REPORT_HOME = ArtifactsConstants.TEAMCITY_ARTIFACTS_DIR + "/.NETCoverage"
     const val COVERAGE_REPORT_MULTIPLE = "$COVERAGE_REPORT_HOME/results"
     // Those constants are required to have Coverage tab added and THE PART OF CONTRACT
