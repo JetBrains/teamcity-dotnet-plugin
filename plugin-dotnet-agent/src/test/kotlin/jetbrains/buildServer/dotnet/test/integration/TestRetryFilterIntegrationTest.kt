@@ -28,7 +28,7 @@ class TestRetryFilterIntegrationTest {
 
     private val retrySettings = mockk<TestRetrySettings>()
     private val retryReportReader = TestRetryReportReader(retrySettings, FileSystemServiceImpl())
-    private val retryFilterProvider = TestRetryFilterProviderImpl()
+    private val retryFilterProvider = TestRetryFilterProviderImpl(mockk(relaxed = true))
 
     @BeforeClass(alwaysRun = true)
     fun setUp() = containers.forEach {

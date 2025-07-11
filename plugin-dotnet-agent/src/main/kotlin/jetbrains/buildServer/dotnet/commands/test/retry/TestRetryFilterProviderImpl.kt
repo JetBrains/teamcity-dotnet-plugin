@@ -1,13 +1,27 @@
 package jetbrains.buildServer.dotnet.commands.test.retry
 
+import jetbrains.buildServer.agent.AgentLifeCycleAdapter
+import jetbrains.buildServer.agent.AgentLifeCycleListener
+import jetbrains.buildServer.agent.BuildRunnerContext
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterBuilder
 import jetbrains.buildServer.dotnet.commands.test.TestsFilterItem
 import jetbrains.buildServer.dotnet.commands.test.splitting.TestsSplittingMode
 import jetbrains.buildServer.rx.Disposable
 import jetbrains.buildServer.rx.disposableOf
+import jetbrains.buildServer.util.EventDispatcher
 
-class TestRetryFilterProviderImpl : TestRetryFilterProvider {
+class TestRetryFilterProviderImpl(events: EventDispatcher<AgentLifeCycleListener>) : TestRetryFilterProvider {
     private var filteredTests: List<String> = emptyList()
+
+    init {
+        events.addListener(object : AgentLifeCycleAdapter() {
+            override fun beforeRunnerStart(runner: BuildRunnerContext) {
+                if (filteredTests.isNotEmpty()) {
+                    filteredTests = emptyList()
+                }
+            }
+        })
+    }
 
     override fun setTestNames(tests: List<String>): Disposable {
         filteredTests = tests
