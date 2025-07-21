@@ -26,8 +26,7 @@ dependencies {
   implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
   provided "org.jetbrains.teamcity.internal:server-tools:${teamcityVersion}"
-  provided "org.jetbrains.teamcity.internal:server:${teamcityVersion}",
-           "org.jetbrains.teamcity.internal:dependency-cache-server:${teamcityVersion}"
+  provided "org.jetbrains.teamcity.internal:server:${teamcityVersion}"
   testImplementation 'org.testng:testng:7.5'
   testImplementation 'org.jmock:jmock-junit4:2.12.0'
   testImplementation 'io.mockk:mockk:1.13.2'
