@@ -136,4 +136,11 @@
   <bean class="jetbrains.buildServer.nunit.NUnitToolProviderInitializer">
     <constructor-arg ref="nUnitAvailableToolsFetcher"/>
   </bean>
+
+  <!--Dependency Cache-->
+  <bean id="dotnetDepCacheRegistrator" class="jetbrains.buildServer.depcache.DotnetDepCacheRegistrator"
+        init-method="register"
+        destroy-method="unregister"/>
+  <bean id="dotnetBuildStartContextProcessor" class="jetbrains.buildServer.depcache.DotnetBuildStartContextProcessor"/>
+  <bean id="nugetDependencyCacheBuildFeature" class="jetbrains.buildServer.depcache.NugetDependencyCacheBuildFeature"/>
 </beans>

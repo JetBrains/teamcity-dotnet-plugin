@@ -251,6 +251,8 @@
   <bean class="jetbrains.buildServer.dotnet.commands.msbuild.MSBuildParameterConverterImpl"/>
   <bean class="jetbrains.buildServer.dotnet.FileBasedDotnetWorkloadProvider" id="fileBasedDotnetWorkloadProvider"/>
   <bean class="jetbrains.buildServer.dotnet.RegistryBasedDotnetWorkloadProvider" id="registryBasedDotnetWorkloadProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.RestorePackagesPathManager" id="restorePackagesPathManager"/>
+  <bean class="jetbrains.buildServer.dotnet.DotnetRunnerCacheDirectoryProvider" id="dotnetRunnerCacheDirectoryProvider"/>
 
   <!--Dotnet agent properties providers-->
   <bean class="jetbrains.buildServer.dotnet.discovery.DotnetRuntimeAgentPropertiesProvider" id="dotnetRuntimeAgentPropertiesProvider"/>
@@ -380,6 +382,7 @@
         <ref bean="rootTestsSplittingCommandsTransformer"/>
         <ref bean="testRetryCommandsTransformer"/>
         <ref bean="composedDotnetCommandsTransformer"/>
+        <ref bean="dotnetDepCacheRestorationCommandTransformer"/>
       </list>
     </constructor-arg>
   </bean>
@@ -387,6 +390,7 @@
   <bean class="jetbrains.buildServer.dotnet.commands.targeting.TargetArgumentsProviderByType"/>
   <bean class="jetbrains.buildServer.dotnet.SystemParametersProvider" id="systemParametersProvider"/>
   <bean class="jetbrains.buildServer.dotnet.CustomArgumentsProvider" id="dotnetCustomArgumentsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.RestorePackagesPathArgumentsProvider" id="restorePackagesPathArgumentsProvider"/>
   <bean class="jetbrains.buildServer.dotnet.toolResolvers.DotnetToolResolverImpl" id="dotnetToolResolver">
     <constructor-arg ref="dotnetToolEnvironment"/>
     <constructor-arg ref="dotnetStateWorkflowComposer"/>
@@ -773,4 +777,17 @@
   <bean class="jetbrains.buildServer.nunit.testReordering.RunnerConfigVarTestInfoParser"/>
   <bean class="jetbrains.buildServer.nunit.testReordering.NUnitXmlTestInfoParser"/>
   <bean class="jetbrains.buildServer.nunit.testReordering.NUnitReorderingTestsSplitService"/>
+
+  <!--Dependency Cache -->
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheWorkflowSessionEventListener"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheBuildStepContextHolder"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheManager"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheSettingsProvider"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.NugetLocalsCommand" id="dotnetNugetLocalsCommand"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheCoroutineScope" id="dotnetDepCacheCoroutineScope"/>
+  <bean class="jetbrains.buildServer.depcache.DotnetDepCacheChecksumBuilder"/>
+  <bean class="jetbrains.buildServer.dotnet.commands.transformation.DotnetDepCacheRestorationCommandTransformer" id="dotnetDepCacheRestorationCommandTransformer">
+    <constructor-arg ref="restorePackagesPathArgumentsProvider"/>
+  </bean>
+  <bean name="dotnetCacheDirectoryAllowedListAdder" class="jetbrains.buildServer.depcache.DotnetCacheDirectoryAllowedListAdder" init-method="register" destroy-method="unregister"/>
 </beans>
