@@ -12,12 +12,16 @@ class DotCoverPackageFilter : Filter<NuGetPackage> {
 
         val isCrossPlatformPackage: Boolean = DOTCOVER_DEPRECATED_PACKAGE_ID.equals(data.packageId, ignoreCase = true)
         val isValidCrossPlatformPackage = isCrossPlatformPackage && version.compareTo(OUR_VALID_CROSS_PLATFORM) >= 0
+        val isSupported = version.compareTo(FIRST_NOT_SUPPORTED_VERSION) < 0
 
-        return isValidCrossPlatformPackage || !isCrossPlatformPackage
+        return isSupported && (isValidCrossPlatformPackage || !isCrossPlatformPackage)
     }
 
     companion object {
         private val OUR_VALID_CROSS_PLATFORM = SemanticVersion.valueOf("2019.2.3")
+
+        // TODO: https://youtrack.jetbrains.com/issue/TW-95680
+        private val FIRST_NOT_SUPPORTED_VERSION = SemanticVersion.valueOf("2025.2.1")
     }
 }
 
