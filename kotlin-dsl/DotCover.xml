@@ -5,7 +5,7 @@
             A [dotCover build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run dotCover – .NET code coverage tool
         </description>
     </class>
-    <function name="dotCover">
+    <function name="dotCover" yaml-name="dotcover">
         <description>
             Adds a [dotCover build step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run dotCover coverage tool
             @see DotnetBuildStep

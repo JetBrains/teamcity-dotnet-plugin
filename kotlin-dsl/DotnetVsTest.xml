@@ -7,7 +7,7 @@
             A [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
         </description>
     </class>
-    <function name="dotnetVsTest">
+    <function name="dotnetVsTest" yaml-name="dotnet-vstest">
         <description>
             Adds a [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
             @see DotnetVsTestStep
