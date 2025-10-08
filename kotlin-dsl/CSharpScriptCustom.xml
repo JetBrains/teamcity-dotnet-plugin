@@ -18,7 +18,7 @@
     <param name="csharpToolPath" value="%teamcity.tool.TeamCity.csi.DEFAULT%"/>
   </init>
   <params>
-    <param name="teamcity.build.workingDir" dslName="workingDir">
+    <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
       <description>
         [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for the script,
         specify it if it is different from the [checkout directory](https://www.jetbrains.com/help/teamcity/?Build+Checkout+Directory).

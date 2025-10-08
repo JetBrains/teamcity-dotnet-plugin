@@ -23,7 +23,7 @@
         <param name="excludedPaths" dslName="excludedAssemblies">
             <description>Specify paths to excluded test assemblies. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
