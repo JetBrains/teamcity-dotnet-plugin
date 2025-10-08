@@ -20,7 +20,7 @@
         <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
@@ -34,7 +34,7 @@
         <param name="runtime">
             <description>Target runtime to pack for.</description>
         </param>
-        <param name="outputDir">
+        <param name="outputDir" yaml-name="output-directory">
             <description>The directory where to place outputs.</description>
         </param>
         <param name="versionSuffix">

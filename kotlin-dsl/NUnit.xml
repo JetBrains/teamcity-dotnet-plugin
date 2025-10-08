@@ -12,7 +12,7 @@
     </description>
   </function>
   <params>
-    <param name="teamcity.build.workingDir" dslName="workingDir">
+    <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
       <description>
         [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
         script,
