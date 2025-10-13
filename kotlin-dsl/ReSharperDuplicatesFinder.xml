@@ -11,7 +11,7 @@
             to find C# and VB duplicate code.
         </description>
     </class>
-    <function name="reSharperDuplicates">
+    <function name="reSharperDuplicates" yaml-name="resharper-duplicates">
         <description>
             Adds a [Duplicates finder (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?duplicates-finder-resharper)
             to find C# and VB duplicate code.

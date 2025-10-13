@@ -7,7 +7,7 @@
             A [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
         </description>
     </class>
-    <function name="dotnetMsBuild">
+    <function name="dotnetMsBuild" yaml-name="dotnet-msbuild">
         <description>
             Adds a [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
             @see DotnetMsBuildStep
