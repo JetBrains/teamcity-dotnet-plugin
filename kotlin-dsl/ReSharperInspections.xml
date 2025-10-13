@@ -8,7 +8,7 @@
             for gathering JetBrains ReSharper inspection results.
         </description>
     </class>
-    <function name="reSharperInspections">
+    <function name="reSharperInspections" yaml-name="resharper-inspections">
         <description>
             Adds an [Inspections (ReSharper) build step](https://www.jetbrains.com/help/teamcity/?inspections-resharper)
             for gathering JetBrains ReSharper inspection results.
