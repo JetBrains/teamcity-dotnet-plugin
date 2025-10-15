@@ -19,7 +19,7 @@ class ReSharperToolVersion(
 ) {
 
     companion object {
-        const val BUNDLED_VERSION = "2023.1.1"
+        const val BUNDLED_VERSION = "2025.2.3"
         private val BUNDLED_TOOL_ID = getToolId(JETBRAINS_RESHARPER_CLT_TOOL_TYPE_ID, "bundled")
         private const val MIN_REQUIRED_FREE_DISK_SPACE_HINT = 400L * 1024L * 1024L // 400 MB
 
