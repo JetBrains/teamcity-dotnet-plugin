@@ -37,7 +37,7 @@
                 @see VSTestVersion
             </description>
         </param>
-        <param name="test.filter" dslName="filter" type="compound">
+        <param name="test.filter" dslName="filter" type="compound" yaml-name="test-filter">
             <description>
                 The filter type used while test run
             </description>
