@@ -1,0 +1,86 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "Projects",
+      "scope": "#/properties/projects",
+      "options": {
+        "onlyDirectories": false,
+        "placeholder": "e.g. App.sln Tests.csproj"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Configuration",
+      "scope": "#/properties/configuration",
+      "options": {
+        "placeholder": "e.g. Release or Debug"
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "Control",
+          "label": "Framework",
+          "scope": "#/properties/framework",
+          "options": {
+            "placeholder": "e.g. net9.0"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Runtime",
+          "scope": "#/properties/runtime",
+          "options": {
+            "placeholder": "runtime identifier e.g. linux-x64 or win-arm64"
+          }
+        },
+        {
+          "type": "InputPathControl",
+          "label": "Output directory",
+          "scope": "#/properties/output-directory",
+          "options": {
+            "onlyDirectories": true,
+            "placeholder": "built binaries directory"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Logging verbosity",
+          "scope": "#/properties/logging"
+        },
+        {
+          "type": "Control",
+          "label": "Command line parameters",
+          "scope": "#/properties/args",
+          "options": {
+            "placeholder": "additional command line parameters"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "e.g. 8.0 or 4.8.1"
+          }
+        }
+      ]
+    }
+  ]
+}

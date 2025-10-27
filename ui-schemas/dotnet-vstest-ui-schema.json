@@ -1,0 +1,112 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "Test assemblies",
+      "scope": "#/properties/assemblies",
+      "options": {
+        "onlyDirectories": false,
+        "placeholder": "e.g. UnitTests.dll IntegrationTests.dll"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "VSTest version",
+      "scope": "#/properties/version"
+    },
+    {
+      "type": "Control",
+      "label": "Platform",
+      "scope": "#/properties/platform"
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "InputPathControl",
+          "label": "Excluded test assemblies",
+          "scope": "#/properties/excluded-assemblies",
+          "options": {
+            "onlyDirectories": false,
+            "placeholder": "test assemblies to ignore"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Framework",
+          "scope": "#/properties/framework",
+          "options": {
+            "placeholder": "e.g. net9.0"
+          }
+        },
+        {
+          "type": "InputPathControl",
+          "label": "Settings file",
+          "scope": "#/properties/settings-file",
+          "options": {
+            "onlyDirectories": false,
+            "placeholder": ".runsettings file"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Test case filter",
+          "scope": "#/properties/test-filter"
+        },
+        {
+          "type": "Control",
+          "label": "Test retry count",
+          "scope": "#/properties/max-retries",
+          "options": {
+            "placeholder": "3"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Run in isolation",
+          "scope": "#/properties/run-in-isolation"
+        },
+        {
+          "type": "Control",
+          "label": "Run tests in a single session",
+          "scope": "#/properties/single-session"
+        },
+        {
+          "type": "Control",
+          "label": "Logging verbosity",
+          "scope": "#/properties/logging"
+        },
+        {
+          "type": "Control",
+          "label": "Command line parameters",
+          "scope": "#/properties/args",
+          "options": {
+            "placeholder": "additional command line parameters"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "e.g. 8.0 or 4.8.1"
+          }
+        }
+      ]
+    }
+  ]
+}

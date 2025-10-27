@@ -1,0 +1,64 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "Projects",
+      "scope": "#/properties/projects",
+      "options": {
+        "onlyDirectories": false,
+        "placeholder": "e.g. App.sln Tests.csproj"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Visual Studio version",
+      "scope": "#/properties/version"
+    },
+    {
+      "type": "Control",
+      "label": "Build action",
+      "scope": "#/properties/action",
+      "options": {
+        "placeholder": "clean, rebuild, build, or deploy"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Configuration",
+      "scope": "#/properties/configuration",
+      "options": {
+        "placeholder": "e.g. Release or Debug"
+      }
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "Control",
+          "label": "Command line parameters",
+          "scope": "#/properties/args",
+          "options": {
+            "placeholder": "additional command line parameters"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "e.g. 8.0 or 4.8.1"
+          }
+        }
+      ]
+    }
+  ]
+}
