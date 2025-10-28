@@ -15,7 +15,15 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Targets",
+      "scope": "#/properties/targets",
+      "options": {
+        "placeholder": "Clean Build Publish"
       }
     },
     {
@@ -28,7 +36,15 @@
       "label": "Configuration",
       "scope": "#/properties/configuration",
       "options": {
-        "placeholder": "e.g. Release or Debug"
+        "placeholder": "Debug"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Runtime",
+      "scope": "#/properties/runtime",
+      "options": {
+        "placeholder": "win-arm64"
       }
     },
     {
@@ -41,18 +57,10 @@
       "elements": [
         {
           "type": "Control",
-          "label": "Targets",
-          "scope": "#/properties/targets",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "e.g. Build, Rebuild, Clean, Publish"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Runtime",
-          "scope": "#/properties/runtime",
-          "options": {
-            "placeholder": "runtime identifier e.g. linux-x64 or win-arm64"
+            "placeholder": "8.0 4.8.1"
           }
         },
         {
@@ -63,18 +71,7 @@
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

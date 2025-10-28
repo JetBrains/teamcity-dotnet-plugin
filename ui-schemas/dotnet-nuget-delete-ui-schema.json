@@ -32,24 +32,21 @@
       "elements": [
         {
           "type": "Control",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "8.0 4.8.1"
+          }
+        },
+        {
+          "type": "Control",
           "label": "Logging verbosity",
           "scope": "#/properties/logging"
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

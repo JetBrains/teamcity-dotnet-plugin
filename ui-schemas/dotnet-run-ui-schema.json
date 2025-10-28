@@ -15,7 +15,7 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj"
       }
     },
     {
@@ -23,7 +23,15 @@
       "label": "Configuration",
       "scope": "#/properties/configuration",
       "options": {
-        "placeholder": "e.g. Release or Debug"
+        "placeholder": "Debug"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Runtime",
+      "scope": "#/properties/runtime",
+      "options": {
+        "placeholder": "win-arm64"
       }
     },
     {
@@ -39,15 +47,15 @@
           "label": "Framework",
           "scope": "#/properties/framework",
           "options": {
-            "placeholder": "e.g. net9.0"
+            "placeholder": "net9.0"
           }
         },
         {
           "type": "Control",
-          "label": "Runtime",
-          "scope": "#/properties/runtime",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "runtime identifier e.g. linux-x64 or win-arm64"
+            "placeholder": "8.0 4.8.1"
           }
         },
         {
@@ -63,18 +71,7 @@
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

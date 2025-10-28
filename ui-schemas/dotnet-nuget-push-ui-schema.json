@@ -7,7 +7,7 @@
       "scope": "#/properties/packages",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. MyPackage.1.0.0.nupkg"
+        "placeholder": "MyPackage.1.0.0.nupkg"
       }
     },
     {
@@ -33,6 +33,14 @@
       "elements": [
         {
           "type": "Control",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "8.0 4.8.1"
+          }
+        },
+        {
+          "type": "Control",
           "label": "Do not publish symbol packages",
           "scope": "#/properties/no-symbols"
         },
@@ -44,18 +52,7 @@
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

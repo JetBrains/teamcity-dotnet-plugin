@@ -15,13 +15,8 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj"
       }
-    },
-    {
-      "type": "Control",
-      "label": "Visual Studio version",
-      "scope": "#/properties/version"
     },
     {
       "type": "Control",
@@ -33,10 +28,15 @@
     },
     {
       "type": "Control",
+      "label": "Visual Studio version",
+      "scope": "#/properties/version"
+    },
+    {
+      "type": "Control",
       "label": "Configuration",
       "scope": "#/properties/configuration",
       "options": {
-        "placeholder": "e.g. Release or Debug"
+        "placeholder": "Debug"
       }
     },
     {
@@ -44,19 +44,16 @@
       "elements": [
         {
           "type": "Control",
-          "label": "Command line parameters",
-          "scope": "#/properties/args",
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "additional command line parameters"
+            "placeholder": "8.0 4.8.1"
           }
         },
         {
           "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "label": "Command line parameters",
+          "scope": "#/properties/args"
         }
       ]
     }

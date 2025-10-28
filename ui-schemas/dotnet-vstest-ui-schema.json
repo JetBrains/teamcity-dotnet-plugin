@@ -15,7 +15,7 @@
       "scope": "#/properties/assemblies",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. UnitTests.dll IntegrationTests.dll"
+        "placeholder": "UnitTests.dll IntegrationTests.dll"
       }
     },
     {
@@ -42,26 +42,20 @@
           "scope": "#/properties/excluded-assemblies",
           "options": {
             "onlyDirectories": false,
-            "placeholder": "test assemblies to ignore"
+            "placeholder": "ExcludedTests.csproj"
           }
         },
         {
           "type": "Control",
-          "label": "Framework",
-          "scope": "#/properties/framework",
-          "options": {
-            "placeholder": "e.g. net9.0"
-          }
+          "label": "Run in isolation",
+          "scope": "#/properties/run-in-isolation"
         },
         {
-          "type": "InputPathControl",
-          "label": "Settings file",
-          "scope": "#/properties/settings-file",
-          "options": {
-            "onlyDirectories": false,
-            "placeholder": ".runsettings file"
-          }
+          "type": "Control",
+          "label": "Run tests in a single session",
+          "scope": "#/properties/single-session"
         },
+
         {
           "type": "Control",
           "label": "Test case filter",
@@ -77,13 +71,28 @@
         },
         {
           "type": "Control",
-          "label": "Run in isolation",
-          "scope": "#/properties/run-in-isolation"
+          "label": "Framework",
+          "scope": "#/properties/framework",
+          "options": {
+            "placeholder": "net9.0"
+          }
         },
         {
           "type": "Control",
-          "label": "Run tests in a single session",
-          "scope": "#/properties/single-session"
+          "label": "Required SDK",
+          "scope": "#/properties/sdk",
+          "options": {
+            "placeholder": "8.0 4.8.1"
+          }
+        },
+        {
+          "type": "InputPathControl",
+          "label": "Settings file",
+          "scope": "#/properties/settings-file",
+          "options": {
+            "onlyDirectories": false,
+            "placeholder": "./Project/.runsettings"
+          }
         },
         {
           "type": "Control",
@@ -93,18 +102,7 @@
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
-        },
-        {
-          "type": "Control",
-          "label": "Required SDK",
-          "scope": "#/properties/sdk",
-          "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

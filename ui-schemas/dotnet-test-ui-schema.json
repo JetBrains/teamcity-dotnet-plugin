@@ -15,7 +15,7 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e.g. App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj"
       }
     },
     {
@@ -23,7 +23,7 @@
       "label": "Configuration",
       "scope": "#/properties/configuration",
       "options": {
-        "placeholder": "e.g. Release or Debug"
+        "placeholder": "Debug"
       }
     },
     {
@@ -64,7 +64,7 @@
           "label": "Framework",
           "scope": "#/properties/framework",
           "options": {
-            "placeholder": "e.g. net9.0"
+            "placeholder": "net9.0"
           }
         },
         {
@@ -72,7 +72,7 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "e.g. 8.0 or 4.8.1"
+            "placeholder": "8.0 4.8.1"
           }
         },
         {
@@ -91,7 +91,7 @@
           "scope": "#/properties/output-directory",
           "options": {
             "onlyDirectories": true,
-            "placeholder": "built binaries directory"
+            "placeholder": "./bin/Debug"
           }
         },
         {
@@ -100,7 +100,7 @@
           "scope": "#/properties/settings-file",
           "options": {
             "onlyDirectories": false,
-            "placeholder": ".runsettings file"
+            "placeholder": "./Project/.runsettings"
           }
         },
         {
@@ -111,10 +111,7 @@
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args",
-          "options": {
-            "placeholder": "additional command line parameters"
-          }
+          "scope": "#/properties/args"
         }
       ]
     }

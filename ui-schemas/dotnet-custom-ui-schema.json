@@ -15,20 +15,7 @@
       "scope": "#/properties/executables",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "e. g. tool install <toolname>"
-      }
-    },
-    {
-      "type": "DockerImageControl",
-      "label": "Docker image",
-      "scope": "#/properties/docker-image"
-    },
-    {
-      "type": "Control",
-      "label": "Command line parameters",
-      "scope": "#/properties/args",
-      "options": {
-        "placeholder": "additional command line parameters"
+        "placeholder": "tool install <toolname>"
       }
     },
     {
@@ -36,8 +23,18 @@
       "label": "Required SDK",
       "scope": "#/properties/sdk",
       "options": {
-        "placeholder": "e.g. 8.0 or 4.8.1"
+        "placeholder": "8.0 4.8.1"
       }
+    },
+    {
+      "type": "Control",
+      "label": "Command line parameters",
+      "scope": "#/properties/args"
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
     }
   ]
 }
