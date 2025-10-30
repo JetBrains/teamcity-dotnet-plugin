@@ -7,7 +7,7 @@
             A [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
         </description>
     </class>
-    <function name="dotnetVsTest" yaml-name="dotnet-vstest">
+    <function name="dotnetVsTest" yamlName="dotnet-vstest">
         <description>
             Adds a [.NET vstest step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET VSTest
             @see DotnetVsTestStep
@@ -23,7 +23,7 @@
         <param name="excludedPaths" dslName="excludedAssemblies">
             <description>Specify paths to excluded test assemblies. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yamlName="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
@@ -37,7 +37,7 @@
                 @see VSTestVersion
             </description>
         </param>
-        <param name="test.filter" dslName="filter" type="compound" yaml-name="test-filter">
+        <param name="test.filter" dslName="filter" type="compound" yamlName="test-filter">
             <description>
                 The filter type used while test run
             </description>

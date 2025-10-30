@@ -20,7 +20,7 @@
         <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yamlName="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,

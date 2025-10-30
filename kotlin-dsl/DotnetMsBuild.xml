@@ -7,7 +7,7 @@
             A [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
         </description>
     </class>
-    <function name="dotnetMsBuild" yaml-name="dotnet-msbuild">
+    <function name="dotnetMsBuild" yamlName="dotnet-msbuild">
         <description>
             Adds a [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild
             @see DotnetMsBuildStep
@@ -20,7 +20,7 @@
         <param name="paths" dslName="projects">
             <description>Specify paths to projects and solutions. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yamlName="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,

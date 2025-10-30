@@ -23,7 +23,7 @@
         <param name="excludedPaths" dslName="excludedProjects">
             <description>Specify paths to excluded projects. Wildcards are supported.</description>
         </param>
-        <param name="teamcity.build.workingDir" dslName="workingDir" yaml-name="working-directory">
+        <param name="teamcity.build.workingDir" dslName="workingDir" yamlName="working-directory">
             <description>
                 [Build working directory](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory) for
                 script,
@@ -40,7 +40,7 @@
         <param name="configuration">
             <description>Target configuration to test for.</description>
         </param>
-        <param name="outputDir" yaml-name="output-directory">
+        <param name="outputDir" yamlName="output-directory">
             <description>The directory where to find the binaries to be run.</description>
         </param>
         <param name="skipBuild" type="boolean" trueValue="true" falseValue="">
