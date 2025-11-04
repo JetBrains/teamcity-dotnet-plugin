@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.agent
 
 import jetbrains.buildServer.JsonParserImpl
@@ -24,6 +22,7 @@ class JsonParserTest {
                 Assert.assertEquals(state?.installationPath, "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional")
                 Assert.assertEquals(state?.catalogInfo?.productDisplayVersion, "16.5.4")
                 Assert.assertEquals(state?.catalogInfo?.productLineVersion, "2019")
+                Assert.assertEquals(state?.catalogInfo?.productSemanticVersion, "16.5.4+30011.22")
             }
         }
     }

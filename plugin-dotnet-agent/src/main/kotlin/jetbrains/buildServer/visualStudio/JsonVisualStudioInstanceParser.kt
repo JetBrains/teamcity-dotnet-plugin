@@ -1,13 +1,11 @@
-
-
 package jetbrains.buildServer.visualStudio
 
 import jetbrains.buildServer.JsonParser
+import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.Version
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.dotnet.Platform
-import jetbrains.buildServer.agent.Logger
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
@@ -16,13 +14,16 @@ import java.io.InputStreamReader
 class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : VisualStudioInstanceParser {
     override fun tryParse(stream: InputStream): ToolInstance? {
         BufferedReader(InputStreamReader(stream)).use {
-            val state = _jsonParser.tryParse<VisualStudioState>(it, VisualStudioState::class.java)
+            val state = _jsonParser.tryParse(it, VisualStudioState::class.java)
             val installationPath = state?.installationPath;
-            val displayVersion = state?.catalogInfo?.productDisplayVersion ?: state?.installationVersion
+            val detailedVersion = getDetailedVersion(state)
             val productLineVersion = state?.catalogInfo?.productLineVersion
-            if (installationPath.isNullOrBlank() || displayVersion.isNullOrBlank() || productLineVersion.isNullOrBlank()) {
-                LOG.debug("Invalid Visual Studio state.")
+            if (installationPath.isNullOrBlank() || detailedVersion == null || productLineVersion.isNullOrBlank()) {
+                LOG.info("Invalid Visual Studio state: $state")
                 return null
+            }
+            if (LOG.isDebugEnabled) {
+                LOG.debug("VisualStudio state: $state")
             }
 
             val productId = state.product?.id;
@@ -34,9 +35,38 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
             return ToolInstance(
                     ToolInstanceType.VisualStudio,
                     File(installationPath, DefaultDevenvPath),
-                    Version.parse(displayVersion.replace(' ', '-')),
+                    detailedVersion,
                     Version.parse(productLineVersion),
                     Platform.Default)
+        }
+    }
+
+    private fun getDetailedVersion(state: VisualStudioState?): Version? {
+        val semanticVersion = state?.catalogInfo?.productSemanticVersion
+        if (semanticVersion != null) {
+            val parsed = Version.parse(semanticVersion)
+            if (!parsed.isEmpty()) {
+                return semanticVersionWithoutMetadata(parsed)
+            }
+        }
+        val fallbackVersion = state?.catalogInfo?.productDisplayVersion ?: state?.installationVersion
+        if (fallbackVersion.isNullOrBlank()) {
+            return null
+        }
+        return Version.parse(fallbackVersion.replace(' ', '-'))
+    }
+
+    private fun semanticVersionWithoutMetadata(version: Version): Version {
+        return if (version.release != null) {
+            Version(major = version.major, minor = version.minor, patch = version.patch, release = version.release)
+        } else {
+            Version(
+                major = version.major,
+                minor = version.minor,
+                patch = version.patch,
+                build = version.build,
+                minorBuild = version.minorBuild,
+            )
         }
     }
 
@@ -45,9 +75,20 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
         var installationVersion: String? = null
         var catalogInfo: CatalogInfo? = null
         var product: ProductInfo? = null
+
+        override fun toString(): String = """
+        [
+            productId=${product?.id},
+            installationPath=${installationPath},
+            installationVersion=${installationVersion},
+            productSemanticVersion=${catalogInfo?.productSemanticVersion},
+            productDisplayVersion=${catalogInfo?.productDisplayVersion},
+            productLineVersion=${catalogInfo?.productLineVersion},
+        ]""".trimIndent()
     }
 
     class CatalogInfo {
+        var productSemanticVersion: String? = null
         var productDisplayVersion: String? = null
         var productLineVersion: String? = null
     }
