@@ -146,7 +146,41 @@ class VisualStudioInstanceParserTest {
                 arrayOf(
                         VisualStudioState(),
                         null
-                )
+                ),
+                arrayOf(
+                        VisualStudioState().let {
+                            it.installationPath = "path"
+                            it.catalogInfo = CatalogInfo()
+                            it.catalogInfo!!.productDisplayVersion = "17.14.18 (October 2025)"
+                            it.catalogInfo!!.productSemanticVersion = "17.14.18+36616.10.-october.2025-"
+                            it.catalogInfo!!.productLineVersion = "2022"
+                            it
+                        },
+                        ToolInstance(
+                            toolType = ToolInstanceType.VisualStudio,
+                            installationPath = _path,
+                            detailedVersion = Version(17, 14, 18),
+                            baseVersion = Version(2022),
+                            platform = Platform.Default,
+                        )
+                ),
+                arrayOf(
+                        VisualStudioState().let {
+                            it.installationPath = "path"
+                            it.catalogInfo = CatalogInfo()
+                            it.catalogInfo!!.productDisplayVersion = "17.14.14"
+                            it.catalogInfo!!.productSemanticVersion = "17.14.14+36429.23"
+                            it.catalogInfo!!.productLineVersion = "2022"
+                            it
+                        },
+                        ToolInstance(
+                            toolType = ToolInstanceType.VisualStudio,
+                            installationPath = _path,
+                            detailedVersion = Version(17, 14, 14),
+                            baseVersion = Version(2022),
+                            platform = Platform.Default,
+                        )
+                ),
         )
     }
 
