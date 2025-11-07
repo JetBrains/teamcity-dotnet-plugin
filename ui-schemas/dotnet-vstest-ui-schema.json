@@ -15,18 +15,25 @@
       "scope": "#/properties/assemblies",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "UnitTests.dll IntegrationTests.dll"
+        "placeholder": "UnitTests.dll IntegrationTests.dll",
+        "description": "Specify paths to test assemblies. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
       }
     },
     {
       "type": "Control",
       "label": "VSTest version",
-      "scope": "#/properties/version"
+      "scope": "#/properties/version",
+      "options": {
+        "description": "The version of VSTest to use. See the [Agent Requirements](https://www.jetbrains.com/help/teamcity/net.html?net#Agent+Requirements) section for more information."
+      }
     },
     {
       "type": "Control",
       "label": "Platform",
-      "scope": "#/properties/platform"
+      "scope": "#/properties/platform",
+      "options": {
+        "description": "Change the [target platform](https://www.jetbrains.com/help/teamcity/net.html?net#vstest-platform) for testing if necessary. Leave 'Auto' to use the platform selected by VSTest."
+      }
     },
     {
       "type": "DockerImageControl",
@@ -42,31 +49,69 @@
           "scope": "#/properties/excluded-assemblies",
           "options": {
             "onlyDirectories": false,
-            "placeholder": "ExcludedTests.csproj"
+            "placeholder": "ExcludedTests.csproj",
+            "description": "Specify paths to excluded test assemblies. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
           }
         },
         {
           "type": "Control",
           "label": "Run in isolation",
-          "scope": "#/properties/run-in-isolation"
+          "scope": "#/properties/run-in-isolation",
+          "options": {
+            "description": "Whether TeamCity should run tests in an [isolated process](https://www.jetbrains.com/help/teamcity/net.html?net#vstest-isolation)"
+          }
         },
         {
           "type": "Control",
           "label": "Run tests in a single session",
-          "scope": "#/properties/single-session"
+          "scope": "#/properties/single-session",
+          "options": {
+            "description": "A test session must include assemblies related to a single target framework."
+          }
         },
 
         {
           "type": "Control",
           "label": "Test case filter",
-          "scope": "#/properties/test-filter"
+          "scope": "#/properties/test-filter",
+          "options": {
+            "branches": {
+              "test-name": {
+                "type": "VerticalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/names",
+                    "options": {
+                      "multi": true,
+                      "description": "Run tests with [names](https://learn.microsoft.com/en-us/visualstudio/test/vstest-console-options) that match the values in the provided newline-separated list."
+                    }
+                  }
+                ]
+              },
+              "test-case-filter": {
+                "type": "VerticalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/filter",
+                    "options": {
+                      "multi": true,
+                      "description": "Run tests that match the [given expression](https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests)."
+                    }
+                  }
+                ]
+              }
+            }
+          }
         },
         {
           "type": "Control",
           "label": "Test retry count",
           "scope": "#/properties/max-retries",
           "options": {
-            "placeholder": "3"
+            "placeholder": "3",
+            "description": "[Rerun failed tests](https://www.jetbrains.com/help/teamcity/net.html?net#test-retry) until they pass or until the maximum number of attempts is reached."
           }
         },
         {
@@ -82,7 +127,8 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "8.0 4.8.1"
+            "placeholder": "8.0 4.8.1",
+            "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
           }
         },
         {
@@ -91,18 +137,25 @@
           "scope": "#/properties/settings-file",
           "options": {
             "onlyDirectories": false,
-            "placeholder": "./Project/.runsettings"
+            "placeholder": "./Project/.runsettings",
+            "description": "The path to the run settings configuration file."
           }
         },
         {
           "type": "Control",
           "label": "Logging verbosity",
-          "scope": "#/properties/logging"
+          "scope": "#/properties/logging",
+          "options": {
+            "description": ""
+          }
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args"
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters for [dotnet vstest](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-vstest)."
+          }
         }
       ]
     }

@@ -15,7 +15,8 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj",
+        "description": "Specify paths to projects and solutions. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
       }
     },
     {
@@ -39,7 +40,8 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "8.0 4.8.1"
+            "placeholder": "8.0 4.8.1",
+            "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
           }
         },
         {
@@ -47,7 +49,8 @@
           "label": "Package sources",
           "scope": "#/properties/sources",
           "options": {
-            "multi": true
+            "multi": true,
+            "description": "Leave blank to use NuGet.org. To use a [TeamCity NuGet feed](https://www.jetbrains.com/help/teamcity/using-teamcity-as-nuget-feed.html?using-teamcity-as-nuget-feed), specify the URL from the NuGet feed project settings page. For feeds with authentication, configure the [NuGet Feed Credentials](https://www.jetbrains.com/help/teamcity/nuget-feed-credentials.html?NuGet+Feed+Credentials) build feature"
           }
         },
         {
@@ -56,7 +59,8 @@
           "scope": "#/properties/packages-dir",
           "options": {
             "onlyDirectories": true,
-            "placeholder": "./Packages/"
+            "placeholder": "./Packages/",
+            "description": "Directory to install packages in."
           }
         },
         {
@@ -71,12 +75,18 @@
         {
           "type": "Control",
           "label": "Logging verbosity",
-          "scope": "#/properties/logging"
+          "scope": "#/properties/logging",
+          "options": {
+            "description": ""
+          }
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args"
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters for [dotnet restore](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-restore)."
+          }
         }
       ]
     }

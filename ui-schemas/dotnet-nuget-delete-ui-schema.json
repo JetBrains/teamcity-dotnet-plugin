@@ -6,7 +6,8 @@
       "label": "NuGet server URL",
       "scope": "#/properties/server-url",
       "options": {
-        "placeholder": "https://api.nuget.org/v3/index.json"
+        "placeholder": "https://api.nuget.org/v3/index.json",
+        "description": "Specify the NuGet feed URL. To use a [TeamCity NuGet feed](https://www.jetbrains.com/help/teamcity/using-teamcity-as-nuget-feed.html?using-teamcity-as-nuget-feed), specify the URL from the NuGet feed project settings page. For feeds with authentication, configure the [NuGet Feed Credentials](https://www.jetbrains.com/help/teamcity/nuget-feed-credentials.html?NuGet+Feed+Credentials) build feature"
       }
     },
     {
@@ -20,7 +21,10 @@
     {
       "type": "Control",
       "label": "API key",
-      "scope": "#/properties/api-key"
+      "scope": "#/properties/api-key",
+      "options": {
+        "description": "Specify the API key to access the NuGet packages feed. For the built-in [TeamCity NuGet feeds](https://www.jetbrains.com/help/teamcity/using-teamcity-as-nuget-feed.html?Using+TeamCity+as+NuGet+Feed) use the %teamcity.nuget.feed.api.key%."
+      }
     },
     {
       "type": "DockerImageControl",
@@ -35,18 +39,25 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "8.0 4.8.1"
+            "placeholder": "8.0 4.8.1",
+            "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
           }
         },
         {
           "type": "Control",
           "label": "Logging verbosity",
-          "scope": "#/properties/logging"
+          "scope": "#/properties/logging",
+          "options": {
+            "description": ""
+          }
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args"
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters for [dotnet nuget delete](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-delete)."
+          }
         }
       ]
     }

@@ -15,7 +15,8 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj",
+        "description": "Specify paths to projects, solutions, and (since .NET SDK 3.1) test assemblies. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
       }
     },
     {
@@ -40,7 +41,8 @@
           "scope": "#/properties/excluded-projects",
           "options": {
             "onlyDirectories": false,
-            "placeholder": "ExcludedTests.csproj"
+            "placeholder": "ExcludedTests.csproj",
+            "description": "Specify paths to excluded projects, solutions, and (since .NET SDK 3.1) test assemblies. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
           }
         },
         {
@@ -48,7 +50,8 @@
           "label": "Test case filter",
           "scope": "#/properties/filter",
           "options": {
-            "placeholder": "FullyQualifiedName~MyApp.Tests.CalculatorTests"
+            "placeholder": "FullyQualifiedName~MyApp.Tests.CalculatorTests",
+            "description": "Run tests that match the [given expression](https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests)."
           }
         },
         {
@@ -56,7 +59,8 @@
           "label": "Test retry count",
           "scope": "#/properties/max-retries",
           "options": {
-            "placeholder": "3"
+            "placeholder": "3",
+            "description": "[Rerun failed tests](https://www.jetbrains.com/help/teamcity/net.html?net#test-retry) until they pass or until the maximum number of attempts is reached."
           }
         },
         {
@@ -72,7 +76,8 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "8.0 4.8.1"
+            "placeholder": "8.0 4.8.1",
+            "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
           }
         },
         {
@@ -83,7 +88,10 @@
         {
           "type": "Control",
           "label": "Run tests in a single session",
-          "scope": "#/properties/single-session"
+          "scope": "#/properties/single-session",
+          "options": {
+            "description": "Runs tests for assembly files in a single test session. A test session must include assemblies related to a single target framework."
+          }
         },
         {
           "type": "InputPathControl",
@@ -91,7 +99,8 @@
           "scope": "#/properties/output-directory",
           "options": {
             "onlyDirectories": true,
-            "placeholder": "./bin/Debug"
+            "placeholder": "./bin/Debug",
+            "description": "The directory where to place outputs."
           }
         },
         {
@@ -100,18 +109,25 @@
           "scope": "#/properties/settings-file",
           "options": {
             "onlyDirectories": false,
-            "placeholder": "./Project/.runsettings"
+            "placeholder": "./Project/.runsettings",
+            "description": "The path to the run settings configuration file."
           }
         },
         {
           "type": "Control",
           "label": "Logging verbosity",
-          "scope": "#/properties/logging"
+          "scope": "#/properties/logging",
+          "options": {
+            "description": ""
+          }
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args"
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters for [dotnet test](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test)."
+          }
         }
       ]
     }

@@ -15,7 +15,8 @@
       "scope": "#/properties/executables",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "tool install <toolname>"
+        "placeholder": "tool install <toolname>",
+        "description": "Specify paths to executable files (\"dotnet\" by default). [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
       }
     },
     {
@@ -23,13 +24,17 @@
       "label": "Required SDK",
       "scope": "#/properties/sdk",
       "options": {
-        "placeholder": "8.0 4.8.1"
+        "placeholder": "8.0 4.8.1",
+        "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
       }
     },
     {
       "type": "Control",
       "label": "Command line parameters",
-      "scope": "#/properties/args"
+      "scope": "#/properties/args",
+      "options": {
+        "description": "Enter additional command line parameters for [custom command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet)."
+      }
     },
     {
       "type": "DockerImageControl",

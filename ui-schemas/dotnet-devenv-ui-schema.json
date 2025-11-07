@@ -15,7 +15,8 @@
       "scope": "#/properties/projects",
       "options": {
         "onlyDirectories": false,
-        "placeholder": "App.sln Tests.csproj"
+        "placeholder": "App.sln Tests.csproj",
+        "description": "Specify paths to projects and solutions. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
       }
     },
     {
@@ -23,13 +24,17 @@
       "label": "Build action",
       "scope": "#/properties/action",
       "options": {
-        "placeholder": "clean, rebuild, build, or deploy"
+        "placeholder": "clean, rebuild, build, or deploy",
+        "description": "Select a [devenv command](https://www.jetbrains.com/help/teamcity/net.html?net#devenv-build-action)."
       }
     },
     {
       "type": "Control",
       "label": "Visual Studio version",
-      "scope": "#/properties/version"
+      "scope": "#/properties/version",
+      "options": {
+        "description": "Select a version of Visual Studio to run. Leave 'Any' to use the latest installed version."
+      }
     },
     {
       "type": "Control",
@@ -47,13 +52,17 @@
           "label": "Required SDK",
           "scope": "#/properties/sdk",
           "options": {
-            "placeholder": "8.0 4.8.1"
+            "placeholder": "8.0 4.8.1",
+            "description": "Enter [space-separated SDK](https://www.jetbrains.com/help/teamcity/net.html?net#requiredNetSDK) or targeting pack versions to be required on build agents."
           }
         },
         {
           "type": "Control",
           "label": "Command line parameters",
-          "scope": "#/properties/args"
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters for [Visual Studio](https://learn.microsoft.com/en-us/visualstudio/ide/reference/devenv-command-line-switches)."
+          }
         }
       ]
     }
