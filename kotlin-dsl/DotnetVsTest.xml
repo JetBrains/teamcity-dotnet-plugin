@@ -102,9 +102,9 @@
             <option name="Diagnostic" value="Diagnostic"/>
         </enum>
         <enum name="VSTestVersion">
-            <description>MSBuild version</description>
+            <description>VSTest version</description>
             <option name="CrossPlatform" value="VSTest_CrossPlatform">
-                <description>Cross-platform MSBuild</description>
+                <description>Cross-platform VSTest</description>
             </option>
             <option name="V17" value="VSTest_17_Windows">
                 <description>VSTest 2022</description>
