@@ -44,7 +44,7 @@
             <description>Specifies the project configuration to build or deploy.</description>
         </param>
         <param name="args">
-            <description>Enter additional command line parameters for .NET MSBuild.</description>
+            <description>Enter additional command line parameters for .NET VisualStudio.</description>
         </param>
         <param name="required.sdk" dslName="sdk">
             <description>.NET SDK versions separated by semicolon to be required on agents.</description>
@@ -54,7 +54,7 @@
         <enum name="VSVersion">
             <description>Visual Studio version</description>
             <option name="Any" value="VisualStudio_Windows">
-                <description>Visual Studio 2019</description>
+                <description>Latest installed Visual Studio</description>
             </option>
             <option name="V17" value="VisualStudio_17_Windows">
                 <description>Visual Studio 2022</description>
@@ -79,7 +79,7 @@
             </option>
         </enum>
         <enum name="VSAction">
-            <description>MSBuild action</description>
+            <description>Build action</description>
             <option name="Clean" value="clean">
                 <description>Deletes any files created by the build command, without affecting source files</description>
             </option>
