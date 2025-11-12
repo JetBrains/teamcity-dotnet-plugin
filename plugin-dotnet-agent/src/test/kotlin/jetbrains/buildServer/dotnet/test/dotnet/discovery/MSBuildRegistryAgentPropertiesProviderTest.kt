@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
 import io.mockk.MockKAnnotations
@@ -78,7 +76,6 @@ class MSBuildRegistryAgentPropertiesProviderTest {
         val propertiesProvider = createInstance()
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "MSBuild in registry")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(

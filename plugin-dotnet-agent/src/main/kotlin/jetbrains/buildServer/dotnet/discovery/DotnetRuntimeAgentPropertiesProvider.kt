@@ -15,7 +15,7 @@ class DotnetRuntimeAgentPropertiesProvider(
 )
     : AgentPropertiesProvider {
 
-    override val desription = ".NET Runtime"
+    override val description = ".NET Runtime"
 
     override val properties: Sequence<AgentProperty>
         get() = sequence {

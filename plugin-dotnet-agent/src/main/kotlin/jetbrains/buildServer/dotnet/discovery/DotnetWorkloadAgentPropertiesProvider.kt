@@ -15,7 +15,7 @@ class DotnetWorkloadAgentPropertiesProvider(
     private val _registryBasedDotnetWorkloadProvider: DotnetWorkloadProvider,
 ) : AgentPropertiesProvider {
 
-    override val desription = ".NET Workload"
+    override val description = ".NET Workload"
 
     override val properties: Sequence<AgentProperty>
         get() {

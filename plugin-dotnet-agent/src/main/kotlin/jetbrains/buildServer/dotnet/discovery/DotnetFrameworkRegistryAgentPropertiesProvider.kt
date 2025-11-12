@@ -14,7 +14,7 @@ class DotnetFrameworkRegistryAgentPropertiesProvider(
         private val _dotnetFrameworksProvider: DotnetFrameworksProvider
 )
     : AgentPropertiesProvider {
-    override val desription = "Dotnet Framework in registry"
+    override val description = "Dotnet Framework in registry"
 
     override val properties: Sequence<AgentProperty> get() =
         _dotnetFrameworksProvider

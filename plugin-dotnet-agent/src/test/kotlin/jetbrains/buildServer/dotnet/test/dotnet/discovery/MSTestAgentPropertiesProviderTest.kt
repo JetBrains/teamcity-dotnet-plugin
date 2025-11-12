@@ -39,7 +39,7 @@ class MSTestAgentPropertiesProviderTest {
                 ToolInstance(ToolInstanceType.VisualStudioTest, File("path2"), Version(16, 0, 18362), Version(16, 2, 4), Platform.Default))
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "MSTest Console")
+        Assert.assertEquals(propertiesProvider.description, "MSTest Console")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(AgentProperty(ToolInstanceType.MSTest, "teamcity.dotnet.mstest.16.2", "path"))

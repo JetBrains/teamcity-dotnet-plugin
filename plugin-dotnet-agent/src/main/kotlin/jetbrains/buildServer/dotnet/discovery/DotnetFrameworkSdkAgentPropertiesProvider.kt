@@ -11,7 +11,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_FRAMEWO
 class DotnetFrameworkSdkAgentPropertiesProvider(
         private val _sdkInstanceProviders: List<ToolInstanceProvider>)
     : AgentPropertiesProvider {
-    override val desription = "Dotnet Framework SDK"
+    override val description = "Dotnet Framework SDK"
 
     override val properties: Sequence<AgentProperty> get() =
         _sdkInstanceProviders

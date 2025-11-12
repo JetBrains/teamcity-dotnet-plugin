@@ -61,7 +61,7 @@ class DotneRuntimeAgentPropertiesProviderTest {
         }
 
         val propertiesProvider = createInstance()
-        val actualDescription = propertiesProvider.desription
+        val actualDescription = propertiesProvider.description
         val actualProperties = propertiesProvider.properties.toList()
 
         // When

@@ -1,20 +1,14 @@
-
-
 package jetbrains.buildServer.dotnet.test.dotnet.discovery
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.PEReader
-import jetbrains.buildServer.agent.ToolInstanceType
-import jetbrains.buildServer.dotnet.discovery.MSBuildFileSystemAgentPropertiesProvider
-import jetbrains.buildServer.agent.Version
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstance
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.Platform
+import jetbrains.buildServer.dotnet.discovery.MSBuildFileSystemAgentPropertiesProvider
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod

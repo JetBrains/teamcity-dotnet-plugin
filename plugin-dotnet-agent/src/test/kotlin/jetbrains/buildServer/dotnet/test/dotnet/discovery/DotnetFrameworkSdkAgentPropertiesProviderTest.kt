@@ -44,7 +44,7 @@ class DotnetFrameworkSdkAgentPropertiesProviderTest {
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path4"), Version(8, 1, 345), Version(8, 1, 0, "A"), Platform.Default))
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "Dotnet Framework SDK")
+        Assert.assertEquals(propertiesProvider.description, "Dotnet Framework SDK")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(

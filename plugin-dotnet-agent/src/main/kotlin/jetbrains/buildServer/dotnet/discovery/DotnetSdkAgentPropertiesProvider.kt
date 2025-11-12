@@ -25,7 +25,7 @@ class DotnetSdkAgentPropertiesProvider(
 )
     : AgentPropertiesProvider {
 
-    override val desription = ".NET SDK"
+    override val description = ".NET SDK"
 
     override val properties: Sequence<AgentProperty>
         get() = sequence {

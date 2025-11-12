@@ -15,7 +15,7 @@ class TargetingPackAgentPropertiesProvider(
 )
     : AgentPropertiesProvider {
 
-    override val desription = "Dotnet Framework targeting pack"
+    override val description = "Dotnet Framework targeting pack"
 
     override val properties: Sequence<AgentProperty> get() =
         _frameworksProvider

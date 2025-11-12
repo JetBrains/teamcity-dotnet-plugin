@@ -100,7 +100,7 @@ class DotnetFrameworkRegistryAgentPropertiesProviderTest {
         every { _dotnetFrameworksProvider.getFrameworks() } returns frameworks
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "Dotnet Framework in registry")
+        Assert.assertEquals(propertiesProvider.description, "Dotnet Framework in registry")
         Assert.assertEquals(propertiesProvider.properties.sortedBy { it.name }.toList(), expectedProperties.sortedBy { it.name }.toList())
     }
 

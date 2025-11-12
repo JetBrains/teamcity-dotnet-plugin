@@ -11,7 +11,7 @@ import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 class WindowsSdkAgentPropertiesProvider(
         private val _sdkInstanceProvider: ToolInstanceProvider)
     : AgentPropertiesProvider {
-    override val desription = "Windows SDK"
+    override val description = "Windows SDK"
 
     override val properties: Sequence<AgentProperty> get() =
         _sdkInstanceProvider
