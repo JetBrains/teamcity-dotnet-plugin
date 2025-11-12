@@ -8,7 +8,6 @@ import jetbrains.buildServer.ExtensionHolder
 import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.ToolInstanceType
 import jetbrains.buildServer.agent.config.AgentParametersSupplier
-import jetbrains.buildServer.rx.subjectOf
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -43,10 +42,10 @@ class PropertiesExtensionTest {
     @Test
     fun shouldAddOrUpdateConfigParams() {
         // Given
-        every { _agentPropertiesProvider1.desription } returns "1"
+        every { _agentPropertiesProvider1.description } returns "1"
         every { _agentPropertiesProvider1.properties } returns sequenceOf(AgentProperty(ToolInstanceType.DotNetCLI, "prop1", "val1"), AgentProperty(ToolInstanceType.DotNetCLI, "prop", "val"))
 
-        every { _agentPropertiesProvider2.desription } returns "2"
+        every { _agentPropertiesProvider2.description } returns "2"
         every { _agentPropertiesProvider2.properties } returns sequenceOf(AgentProperty(ToolInstanceType.DotNetCLI, "prop", "val"), AgentProperty(ToolInstanceType.DotNetCLI, "prop2", "val2"))
 
         val propertiesExtension = createInstance()

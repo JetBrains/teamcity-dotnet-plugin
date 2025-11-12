@@ -257,6 +257,7 @@
   <bean class="jetbrains.buildServer.dotnet.discovery.DotnetSdkAgentPropertiesProvider" id="dotnetSdkAgentPropertiesProvider">
     <constructor-arg ref="dotnetToolProvider"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildAgentPropertiesProvider" id="msBuildAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildRegistryAgentPropertiesProvider" id="msBuildRegistryAgentPropertiesProvider"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildFileSystemAgentPropertiesProvider" id="msBuildFileSystemAgentPropertiesProvider">
     <constructor-arg>

@@ -40,7 +40,7 @@ class DotnetWorkloadAgentPropertiesProviderTest {
     @Test
     fun `should have correct description`() {
         // Then
-        assertEquals(createInstance().desription, ".NET Workload")
+        assertEquals(createInstance().description, ".NET Workload")
     }
 
     @DataProvider

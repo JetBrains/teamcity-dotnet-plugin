@@ -12,7 +12,7 @@ class VisualStudioAgentPropertiesProvider(
         private val _fileSystemService: FileSystemService)
     : AgentPropertiesProvider {
 
-    override val desription = "Visual Studio"
+    override val description = "Visual Studio"
 
     override val properties =
             _visualStudioProviders

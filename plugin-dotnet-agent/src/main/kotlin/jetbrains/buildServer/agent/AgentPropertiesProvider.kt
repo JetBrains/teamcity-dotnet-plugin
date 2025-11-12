@@ -3,7 +3,7 @@
 package jetbrains.buildServer.agent
 
 interface AgentPropertiesProvider {
-    val desription: String
+    val description: String
 
     val properties: Sequence<AgentProperty>
 }

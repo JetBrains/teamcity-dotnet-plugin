@@ -46,7 +46,7 @@ class VisualStudioAgentPropertiesProviderTest {
         )
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "Visual Studio")
+        Assert.assertEquals(propertiesProvider.description, "Visual Studio")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(
@@ -73,7 +73,7 @@ class VisualStudioAgentPropertiesProviderTest {
         )
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "Visual Studio")
+        Assert.assertEquals(propertiesProvider.description, "Visual Studio")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(

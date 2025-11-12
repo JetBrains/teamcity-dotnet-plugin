@@ -39,7 +39,7 @@ class WindowsSdkAgentPropertiesProviderTest {
                 ToolInstance(ToolInstanceType.WindowsSDK, File("path3"), Version(8, 1, 345), Version(8, 1, 0, "A"), Platform.Default))
 
         // Then
-        Assert.assertEquals(propertiesProvider.desription, "Windows SDK")
+        Assert.assertEquals(propertiesProvider.description, "Windows SDK")
         Assert.assertEquals(
                 propertiesProvider.properties.toList(),
                 listOf(

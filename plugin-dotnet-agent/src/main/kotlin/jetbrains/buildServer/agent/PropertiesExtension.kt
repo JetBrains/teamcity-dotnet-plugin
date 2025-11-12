@@ -37,7 +37,7 @@ class PropertiesExtension(
     override fun getParameters(): MutableMap<String, String> = dotNetParameters
 
     private fun fetchProperties(agentPropertiesProvider: AgentPropertiesProvider, parameters: MutableMap<String, String>) {
-        LOG.debugBlock("Fetching agent properties for ${agentPropertiesProvider.desription}").use {
+        LOG.debugBlock("Fetching agent properties for ${agentPropertiesProvider.description}").use {
             try {
                 for (property in agentPropertiesProvider.properties) {
                     var name = property.name
@@ -53,7 +53,7 @@ class PropertiesExtension(
                     }
                 }
             } catch (e: Exception) {
-                LOG.debug("Error while fetching the agent properties for ${agentPropertiesProvider.desription}", e)
+                LOG.debug("Error while fetching the agent properties for ${agentPropertiesProvider.description}", e)
             }
         }
     }

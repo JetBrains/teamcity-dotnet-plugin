@@ -12,12 +12,9 @@ import java.io.File
 class MSBuildRegistryAgentPropertiesProvider(
         private val _windowsRegistry: WindowsRegistry,
         private val _msuildValidator: MSBuildValidator
-)
-    : AgentPropertiesProvider {
+) {
 
-    override val desription = "MSBuild in registry"
-
-    override val properties: Sequence<AgentProperty> get()  {
+    val properties: Sequence<AgentProperty> get()  {
         val props = mutableListOf<AgentProperty>()
 
         for (key in RegKeys) {

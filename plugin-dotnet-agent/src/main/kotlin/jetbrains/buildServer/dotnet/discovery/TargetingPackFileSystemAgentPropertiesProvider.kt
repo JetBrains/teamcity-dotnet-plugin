@@ -14,7 +14,7 @@ class TargetingPackFileSystemAgentPropertiesProvider(
         private val _fileSystemService: FileSystemService)
     : AgentPropertiesProvider {
 
-    override val desription = "Dotnet Framework targeting pack in file system"
+    override val description = "Dotnet Framework targeting pack in file system"
 
     override val properties get() =
         ProgramFilesEnvVars

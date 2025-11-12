@@ -2,7 +2,6 @@
 
 package jetbrains.buildServer.dotnet.discovery
 
-import jetbrains.buildServer.agent.AgentPropertiesProvider
 import jetbrains.buildServer.agent.AgentProperty
 import jetbrains.buildServer.agent.FileSystemService
 import jetbrains.buildServer.agent.PEReader
@@ -16,12 +15,9 @@ import java.io.File
 class MSBuildFileSystemAgentPropertiesProvider(
         private val _visualStudioProviders: List<ToolInstanceProvider>,
         private val _fileSystemService: FileSystemService,
-        private val _peReader: PEReader)
-    : AgentPropertiesProvider {
+        private val _peReader: PEReader) {
 
-    override val desription = "MSBuild in file system"
-
-    override val properties get() =
+    val properties get() =
         _visualStudioProviders
                 .asSequence()
                 .flatMap { it.getInstances().asSequence() }

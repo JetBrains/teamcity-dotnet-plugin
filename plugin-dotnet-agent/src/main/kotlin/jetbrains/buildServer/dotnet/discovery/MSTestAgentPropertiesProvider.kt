@@ -12,7 +12,7 @@ import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_DOTNET_MSTEST
 class MSTestAgentPropertiesProvider(
         private val _visualStudioTestInstanceProvider: ToolInstanceProvider)
     : AgentPropertiesProvider {
-    override val desription = "MSTest Console"
+    override val description = "MSTest Console"
 
     override val properties: Sequence<AgentProperty> get() =
         _visualStudioTestInstanceProvider
