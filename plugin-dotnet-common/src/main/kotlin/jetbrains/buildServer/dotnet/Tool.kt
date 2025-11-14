@@ -5,6 +5,7 @@ package jetbrains.buildServer.dotnet
 enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform, val bitness: ToolBitness, val description: String, val vsVersion: Int = 0) {
     // Visual Studio
     VisualStudioAny(0, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, ToolBitness.Any.description, 0),
+    VisualStudio2026(18, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2026", 2026),
     VisualStudio2022(17, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2022", 2022),
     VisualStudio2019(16, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2019", 2019),
     VisualStudio2017(15, ToolType.VisualStudio, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VisualStudio.description} 2017", 2017),
@@ -16,6 +17,10 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
     // MSBuild
     MSBuildCrossPlatform(0, ToolType.MSBuild, ToolPlatform.CrossPlatform, ToolBitness.Any, "${ToolPlatform.CrossPlatform.description} ${ToolType.MSBuild.description}"),
     MSBuildMono(0, ToolType.MSBuild, ToolPlatform.Mono, ToolBitness.Any, "${ToolPlatform.Mono.description} ${ToolType.MSBuild.description}"),
+
+    MSBuild18Windows(18, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2026", 2026),
+    MSBuild18WindowsX64(18, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2026 ${ToolBitness.X64.description}", 2026),
+    MSBuild18WindowsX86(18, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X86, "${ToolType.MSBuild.description} Tools 2026 ${ToolBitness.X86.description}", 2026),
 
     MSBuild17Windows(17, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.MSBuild.description} Tools 2022", 2022),
     MSBuild17WindowsX64(17, ToolType.MSBuild, ToolPlatform.Windows, ToolBitness.X64, "${ToolType.MSBuild.description} Tools 2022 ${ToolBitness.X64.description}", 2022),
@@ -43,6 +48,7 @@ enum class Tool(val version: Int, val type: ToolType, val platform: ToolPlatform
 
     // VSTest
     VSTestCrossPlatform(0, ToolType.VSTest, ToolPlatform.CrossPlatform, ToolBitness.Any, "${ToolPlatform.CrossPlatform.description} ${ToolType.VSTest.description}"),
+    VSTest18Windows(18, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2026", 2026),
     VSTest17Windows(17, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2022", 2022),
     VSTest16Windows(16, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2019", 2019),
     VSTest15Windows(15, ToolType.VSTest, ToolPlatform.Windows, ToolBitness.Any, "${ToolType.VSTest.description} 2017", 2017),
