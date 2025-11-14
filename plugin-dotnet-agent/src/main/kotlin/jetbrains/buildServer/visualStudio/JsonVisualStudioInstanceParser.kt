@@ -31,12 +31,18 @@ class JsonVisualStudioInstanceParser(private val _jsonParser: JsonParser) : Visu
                 LOG.debug("Ignore Team Explorer installation.")
                 return null
             }
-
+            var baseVersion = Version.parse(productLineVersion)
+            // starting from Visual Studio 2026 there is no base version in "YYYY" format in the "state.json"
+            // we replace "18" with "2026" to keep the "VS2026" agent parameter name consistent with "VS2022" and others
+            // maybe there are other reasons for this replacement, not sure...
+            if (baseVersion.major == 18) {
+                baseVersion = Version.parse("2026")
+            }
             return ToolInstance(
                     ToolInstanceType.VisualStudio,
                     File(installationPath, DefaultDevenvPath),
                     detailedVersion,
-                    Version.parse(productLineVersion),
+                    baseVersion,
                     Platform.Default)
         }
     }
