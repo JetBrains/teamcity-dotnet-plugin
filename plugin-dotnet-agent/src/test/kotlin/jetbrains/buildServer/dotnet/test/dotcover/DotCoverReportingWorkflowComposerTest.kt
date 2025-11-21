@@ -322,6 +322,8 @@ class DotCoverReportingWorkflowComposerTest {
     fun `should compose report command when merge is disabled`(dotCoverMode: DotCoverMode) {
         // Arrange
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
+        every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns "--HideAutoProperties"
+        every { _argumentsService.split("--HideAutoProperties") } returns sequenceOf("--HideAutoProperties")
         every { _environmentVariables.getVariables() } returns _defaultVariables
         every { _dotCoverSettings.dotCoverMode } returns dotCoverMode
         every { _dotCoverSettings.dotCoverHomePath } returns "dotCover"
@@ -358,7 +360,8 @@ class DotCoverReportingWorkflowComposerTest {
                     workingDirectory = Path(workingDir.absolutePath),
                     arguments = listOf(
                         CommandLineArgument("report", CommandLineArgumentType.Mandatory),
-                        CommandLineArgument(dotCoverReportProjectFile.absolutePath, CommandLineArgumentType.Target)
+                        CommandLineArgument(dotCoverReportProjectFile.absolutePath, CommandLineArgumentType.Target),
+                        CommandLineArgument("--HideAutoProperties", CommandLineArgumentType.Custom),
                     ),
                     environmentVariables = _defaultVariables.toList(),
                     title = "dotCover report")
@@ -397,7 +400,7 @@ class DotCoverReportingWorkflowComposerTest {
             listOf(
                 DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
-                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService)
+                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _parametersService, _argumentsService)
             ),
             _dotCoverTeamCityReportGenerator,
             _dotnetCoverageStatisticsPublisher,
