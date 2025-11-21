@@ -616,7 +616,7 @@ class DotCoverWorkflowComposerTest {
             listOf(
                 DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
                 DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
-                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService)
+                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _parametersService, _argumentsService)
             ))
     }
 }
