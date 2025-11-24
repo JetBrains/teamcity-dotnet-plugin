@@ -5,9 +5,15 @@
 <jsp:useBean id="params" class="jetbrains.buildServer.dotCover.DotCoverRunnerParametersProvider"/>
 <jsp:useBean id="teamcityPluginResourcesPath" scope="request" type="java.lang.String"/>
 
-<c:if test="${not empty propertiesBean.properties[params.dotCoverCommandLineKey]}">
+<c:if test="${not empty propertiesBean.properties[params.dotCoverCoveredProcessExecutableKey]}">
   <div class="parameter">
-    Cover command line: <props:displayValue name="${params.dotCoverCommandLineKey}"/>
+    Executable: <props:displayValue name="${params.dotCoverCoveredProcessExecutableKey}"/>
+  </div>
+</c:if>
+
+<c:if test="${not empty propertiesBean.properties[params.dotCoverCoveredProcessArgumentsKey]}">
+  <div class="parameter">
+    Command line arguments: <props:displayValue name="${params.dotCoverCoveredProcessArgumentsKey}"/>
   </div>
 </c:if>
 
