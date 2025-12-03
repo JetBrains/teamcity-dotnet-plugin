@@ -1,16 +1,14 @@
-
-
 package jetbrains.buildServer.dotnet.discovery
 
-import jetbrains.buildServer.agent.AgentProperty
-import jetbrains.buildServer.agent.FileSystemService
-import jetbrains.buildServer.agent.PEReader
-import jetbrains.buildServer.agent.ToolInstanceType
+import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.ToolInstanceProvider
 import jetbrains.buildServer.dotnet.DotnetConstants.CONFIG_PREFIX_MSBUILD_TOOLS
-import jetbrains.buildServer.agent.Logger
 import jetbrains.buildServer.dotnet.Platform
+import jetbrains.buildServer.util.FileUtil
+import jetbrains.buildServer.util.PEReader.PEVersion
 import java.io.File
+import java.io.RandomAccessFile
+import jetbrains.buildServer.util.PEReader.PEReader as TmpPEReader
 
 class MSBuildFileSystemAgentPropertiesProvider(
         private val _visualStudioProviders: List<ToolInstanceProvider>,
@@ -79,10 +77,33 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .filter { _fileSystemService.isFile(it.path) }
                 .mapNotNull {
                     LOG.debug("Getting a product version for \"${it.path}\".")
-                    _peReader.tryGetVersion(it.path).let { version ->
+                    tmpTryGetVersion(it.path).let { version ->
+                        if (version == Version.Empty) {
+                            LOG.warn("Got empty product version for \"${it.path}\".")
+                        } else {
+                            LOG.debug("Product version for \"${it.path}\" is $version.")
+                        }
                         AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version.major}.0_${it.platform.id}_Path", it.path.parent ?: "")
                     }
                 }
+
+    private fun tmpTryGetVersion(file: File) =
+        tmpGetProductVersion(file)?.let {
+            Version(it.p1, it.p2, it.p3, it.p4)
+        } ?: Version.Empty
+
+    private fun tmpGetProductVersion(peFile: File): PEVersion? {
+        var raf: RandomAccessFile? = null
+        try {
+            raf = RandomAccessFile(peFile, "r")
+            return TmpPEReader(raf).productVersion
+        } catch (e: Exception) {
+            LOG.warn("Got exception while reading product version: " + e.message, e)
+            return null
+        } finally {
+            FileUtil.close(raf)
+        }
+    }
 
     data class MSBuildInfo(val path: File, val platform: Platform)
 
