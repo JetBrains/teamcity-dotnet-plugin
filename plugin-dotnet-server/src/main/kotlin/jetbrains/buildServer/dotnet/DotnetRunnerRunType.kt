@@ -79,8 +79,11 @@ class DotnetRunnerRunType(
         return when {
             commandName == DotnetCommandType.Custom.id -> "$paths\nCommand line parameters: $args"
             commandName == DotnetCommandType.VisualStudio.id -> {
-                val action = (parameters[DotnetConstants.PARAM_VISUAL_STUDIO_ACTION] ?: "")
-                "$commandName $action $paths"
+                listOf(
+                    commandName,
+                    parameters[DotnetConstants.PARAM_VISUAL_STUDIO_ACTION],
+                    paths
+                ).filterNot { it.isNullOrEmpty() }.joinToString(" ")
             }
             !commandName.isNullOrBlank() -> "$commandName $paths"
             else -> args
