@@ -56,6 +56,9 @@
             <option name="Any" value="VisualStudio_Windows">
                 <description>Latest installed Visual Studio</description>
             </option>
+            <option name="V18" value="VisualStudio_18_Windows">
+                <description>Visual Studio 2026</description>
+            </option>
             <option name="V17" value="VisualStudio_17_Windows">
                 <description>Visual Studio 2022</description>
             </option>

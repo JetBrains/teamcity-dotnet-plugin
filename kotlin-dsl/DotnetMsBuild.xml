@@ -72,6 +72,9 @@
             <option name="CrossPlatform" value="MSBuild_CrossPlatform">
                 <description>Cross-platform MSBuild</description>
             </option>
+            <option name="V18" value="MSBuild_18_Windows">
+                <description>MSBuild 2026</description>
+            </option>
             <option name="V17" value="MSBuild_17_Windows">
                 <description>MSBuild 2022</description>
             </option>

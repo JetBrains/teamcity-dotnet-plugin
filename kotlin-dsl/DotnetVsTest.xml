@@ -106,6 +106,9 @@
             <option name="CrossPlatform" value="VSTest_CrossPlatform">
                 <description>Cross-platform VSTest</description>
             </option>
+            <option name="V18" value="VSTest_18_Windows">
+                <description>VSTest 2026</description>
+            </option>
             <option name="V17" value="VSTest_17_Windows">
                 <description>VSTest 2022</description>
             </option>
