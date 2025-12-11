@@ -49,6 +49,9 @@
   <bean class="jetbrains.buildServer.dotnet.discovery.MSBuildSolutionDeserializer" id="msBuildSolutionDeserializer">
     <constructor-arg ref="msBuildProjectDeserializer"/>
   </bean>
+  <bean class="jetbrains.buildServer.dotnet.discovery.SlnxSolutionDeserializer" id="slnxSolutionDeserializer">
+    <constructor-arg ref="msBuildProjectDeserializer"/>
+  </bean>
   <bean class="jetbrains.buildServer.dotnet.discovery.JsonProjectDeserializer" id="jsonProjectDeserializer"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.ReaderFactoryImpl"/>
   <bean class="jetbrains.buildServer.dotnet.discovery.DefaultDiscoveredTargetNameFactory" id="defaultDiscoveredTargetNameFactory"/>

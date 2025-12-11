@@ -59,6 +59,7 @@ class MSBuildSolutionDeserializerTest {
                 arrayOf("abc122.sLn", true),
                 arrayOf("ab c.sLn", true),
                 arrayOf("abcPsln", false),
+                arrayOf("abc.slnx", false),
                 arrayOf("abc.", false),
                 arrayOf("abc", false),
                 arrayOf("abc.proj", false),
@@ -95,13 +96,8 @@ class MSBuildSolutionDeserializerTest {
 
     @Test(dataProvider = "testNormalizePathData")
     fun shouldNormalizePath(basePath: String, path: String, expectedPath: String) {
-        // Given
-        val ctx = Mockery()
-        val msBuildProjectDeserializer = ctx.mock(SolutionDeserializer::class.java)
-        val deserializer = MSBuildSolutionDeserializer(ReaderFactoryImpl(), msBuildProjectDeserializer)
-
         // When
-        val actualPath = deserializer.normalizePath(basePath, path)
+        val actualPath = MSBuildSolutionDeserializer.normalizePath(basePath, path)
 
         // Then
         Assert.assertEquals(actualPath, expectedPath)

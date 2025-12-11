@@ -38,18 +38,18 @@ class MSBuildSolutionDeserializer(
                 }
             } ?: Solution(emptyList())
 
-    fun normalizePath(basePath: String, path: String): String {
-        val baseParent = basePath.replace('\\', '/').split('/').reversed().drop(1).reversed().joinToString("/")
-        val normalizedPath = path.replace('\\', '/')
-        if (baseParent.isBlank()) {
-            return normalizedPath
-        }
-
-        return "$baseParent/$normalizedPath"
-    }
-
-    private companion object {
+    companion object {
         private val ProjectPathPattern = Pattern.compile("^Project\\(.+\\)\\s*=\\s*\".+\"\\s*,\\s*\"(.+)\"\\s*,\\s*\".+\"\\s*\$", Pattern.CASE_INSENSITIVE)
         private val PathPattern: Pattern = Pattern.compile("^.+\\.sln$", Pattern.CASE_INSENSITIVE)
+
+        fun normalizePath(basePath: String, path: String): String {
+            val baseParent = basePath.replace('\\', '/').split('/').reversed().drop(1).reversed().joinToString("/")
+            val normalizedPath = path.replace('\\', '/')
+            if (baseParent.isBlank()) {
+                return normalizedPath
+            }
+
+            return "$baseParent/$normalizedPath"
+        }
     }
 }
