@@ -1,5 +1,5 @@
 plugins {
-  id 'io.github.rodm.teamcity-server' version '1.5.2'
+  id 'io.github.rodm.teamcity-server' version '1.5.6'
   id 'plugin.conventions'
 }
 
@@ -26,7 +26,7 @@ teamcity {
 dependencies {
   implementation project(':plugin-dotnet-common')
   implementation 'com.google.code.gson:gson:2.9.1'
-  implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
   provided "org.jetbrains.teamcity.internal:server-tools:${teamcityVersion}"
   provided "org.jetbrains.teamcity.internal:server:${teamcityVersion}"
@@ -60,6 +60,4 @@ class PrepareToolDescriptorsTask extends DefaultTask {
 tasks.register('prepareToolDescriptorsTask', PrepareToolDescriptorsTask)
 
 serverPlugin.dependsOn(prepareToolDescriptorsTask)
-
-serverPlugin.version = null
-serverPlugin.baseName = projectIds.artifact
+serverPlugin.archiveFileName = "dotnet.zip"
