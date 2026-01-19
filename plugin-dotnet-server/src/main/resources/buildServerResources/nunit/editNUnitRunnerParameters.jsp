@@ -18,7 +18,7 @@
 </tr>
 
 <tr id="nUnitPathContainer">
-  <th><label for="${bean.NUnitPathKey}">NUnit Console:<l:star/><bs:help file="NUnit" anchor="pathToNUnitConsoleTool"/></label></th>
+  <th><label for="${bean.NUnitPathKey}">NUnit Console:<l:star/><bs:help file="NUnit#pathToNUnitConsoleTool"/></label></th>
   <td>
     <jsp:include page="/tools/selector.html?toolType=${bean.NUnitToolNameKey}&versionParameterName=${bean.NUnitPathKey}&class=${clazz}"/>
   </td>
@@ -27,7 +27,7 @@
 <props:workingDirectory/>
 
 <tr class="advancedSetting" id="nUnitConfigFileContainer">
-  <th><label for="${bean.NUnitConfigFileKey}">Path to application configuration file:<bs:help file="NUnit" anchor="appConfigFile"/></label></th>
+  <th><label for="${bean.NUnitConfigFileKey}">Path to application configuration file:<bs:help file="NUnit#appConfigFile"/></label></th>
   <td>
     <div class="posRel">
       <props:textProperty name="${bean.NUnitConfigFileKey}" className="longField">

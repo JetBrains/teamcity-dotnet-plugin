@@ -47,7 +47,7 @@
 <jsp:include page="/tools/editToolUsage.html?toolType=${constants.cltToolTypeName}&versionParameterName=${constants.cltPathKey}&class=longField"/>
 
 <tr>
-  <th><label for="${constants.cltPlatformKey}">dupFinder Platform:  <bs:help file="inspections-resharper#ReSharperDupFinderPlatform" anchor=""/></label></th>
+  <th><label for="${constants.cltPlatformKey}">dupFinder Platform:  <bs:help file="duplicates-finder-resharper#ReSharperDupFinderPlatform" anchor=""/></label></th>
   <td>
     <props:selectProperty name="${constants.cltPlatformKey}" enableFilter="true" className="mediumField">
       <c:forEach var="item" items="${constants.runPlatforms}">
