@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'msbuild'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'msbuild'" pipelineCompatible="true">
     <class name="DotnetMsBuildStep">
         <description>
             A [.NET msbuild step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET MSBuild

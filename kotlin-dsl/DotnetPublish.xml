@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'publish'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'publish'" pipelineCompatible="true">
     <class name="DotnetPublishStep">
         <description>
             A [dotnet publish step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'restore'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'restore'" pipelineCompatible="true">
     <class name="DotnetRestoreStep">
         <description>
             A [dotnet restore step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command

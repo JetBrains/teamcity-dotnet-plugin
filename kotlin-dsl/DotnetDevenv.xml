@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'devenv'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'devenv'" pipelineCompatible="true">
     <class name="DevenvBuildStep">
         <description>
             A [Visual Studio IDE step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run Visual Studio IDE command

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'run'">
+<dsl-extension kind="buildStep" type="dotnet" generateDslJar="true" applicable="params['command'] == 'run'" pipelineCompatible="true">
     <class name="DotnetRunStep">
         <description>
             A [dotnet run step](https://github.com/JetBrains/teamcity-dotnet-plugin) to run .NET CLI command
