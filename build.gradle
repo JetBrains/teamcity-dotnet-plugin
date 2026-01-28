@@ -1,9 +1,10 @@
-import java.nio.file.Paths
-import com.github.jk1.license.render.JsonReportRenderer
 import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.render.JsonReportRenderer
+
+import java.nio.file.Paths
 
 plugins {
-    id "com.github.jk1.dependency-license-report" version "1.17"
+    id "com.github.jk1.dependency-license-report" version "2.9"
 }
 
 initializeWorkspace()
@@ -23,6 +24,19 @@ allprojects {
             url = uri("https://download.jetbrains.com/teamcity-repository")
         }
     }
+  def javaVersionVal = JavaVersion.VERSION_1_8
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+      jvmTarget = "1.8"
+    }
+  }
+
+  tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = javaVersionVal.toString()
+    targetCompatibility = javaVersionVal.toString()
+  }
+
 }
 
 ext {
