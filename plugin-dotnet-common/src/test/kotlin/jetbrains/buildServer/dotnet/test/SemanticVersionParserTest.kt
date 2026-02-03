@@ -1,15 +1,13 @@
-
-
 package jetbrains.buildServer.dotnet.test
 
 import jetbrains.buildServer.dotnet.SemanticVersion
-import jetbrains.buildServer.dotnet.SemanticVersionParser
 import jetbrains.buildServer.dotnet.SemanticVersionParserImpl
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 class SemanticVersionParserTest {
+
     @DataProvider
     fun getProjectFiles() = arrayOf(
         arrayOf("3.2.4", SemanticVersion(3, 2, 4)),
@@ -25,8 +23,8 @@ class SemanticVersionParserTest {
         arrayOf("TeamCity.Dotnet.Integration.41.30.18.nupkg", SemanticVersion(41, 30, 18)),
         arrayOf("Integration.41.30.18.nupkg", SemanticVersion(41, 30, 18)),
         arrayOf("TeamCity.csi.1.23.4-beta1.nupkg", SemanticVersion(1, 23, 4, "beta1")),
-        arrayOf("TeamCity.Dotnet.Integration.41.30.18.33.nupkg", null),
-        arrayOf("TeamCity.Dotnet.Integration.41.30.18.33-rc.nupkg", null),
+        arrayOf("TeamCity.Dotnet.Integration.41.30.18.33.nupkg", SemanticVersion(41, 30, 18, 33)),
+        arrayOf("TeamCity.Dotnet.Integration.41.30.18.33-rc.nupkg", SemanticVersion(41, 30, 18, 33, "rc")),
         arrayOf("TeamCity.Dotnet.Integration.41.30.nupkg", null),
         arrayOf("TeamCity.Dotnet.Integration.41.30-Beta.nupkg", null),
         arrayOf("TeamCity.Dotnet.Integration.41.nupkg", null),
@@ -41,7 +39,7 @@ class SemanticVersionParserTest {
         arrayOf("3-abc", null),
         arrayOf("3.4", null),
         arrayOf("3.4-ddd", null),
-        arrayOf("3.2.4.6", null),
+        arrayOf("3.2.4.6", SemanticVersion(3, 2, 4, 6)),
         arrayOf("1.0.4", SemanticVersion(1, 0, 4)),
         arrayOf("NuGetFallbackFolder", null),
         arrayOf("TeamCity.Dotnet.Integration.2022.10.03-alpha.zip", SemanticVersion(2022, 10, 3, "alpha")),
@@ -50,7 +48,7 @@ class SemanticVersionParserTest {
         arrayOf("TeamCity.Dotnet.Integration.2022.10.0", SemanticVersion(2022, 10, 0)),
         arrayOf("TeamCity.Dotnet.Integration.2022.10.1.g4", SemanticVersion(2022, 10, 1)),
         arrayOf("TeamCity.Dotnet.Integration.2022.10.1.a", SemanticVersion(2022, 10, 1)),
-        arrayOf("TeamCity.Dotnet.Integration.2022.10.1.0", null),
+        arrayOf("TeamCity.Dotnet.Integration.2022.10.1.0", SemanticVersion(2022, 10, 1, 0)),
         arrayOf("TeamCity.Dotnet.Integration.2022.10.1.", null),
         arrayOf("JetBrains.dotCover.CommandLineTools.2023.1.0", SemanticVersion(2023, 1, 0)),
         arrayOf("JetBrains.dotCover.CommandLineTools.2023.1.0.zip", SemanticVersion(2023, 1, 0)),
@@ -61,18 +59,14 @@ class SemanticVersionParserTest {
     )
 
     @Test(dataProvider = "getProjectFiles")
-    fun shouldParsePackageVersion(versionString: String, expectedPackageVersion: SemanticVersion?) {
-        // Given
-        val parser = createInstance()
+    fun `should parse package version`(versionString: String, expectedPackageVersion: SemanticVersion?) {
+        // arrange
+        val parser = SemanticVersionParserImpl()
 
-        // When
+        // act
         val actualPackageVersion = parser.tryParse(versionString)
 
-        // Then
+        // assert
         Assert.assertEquals(actualPackageVersion, expectedPackageVersion)
-    }
-
-    private fun createInstance(): SemanticVersionParser {
-        return SemanticVersionParserImpl()
     }
 }
