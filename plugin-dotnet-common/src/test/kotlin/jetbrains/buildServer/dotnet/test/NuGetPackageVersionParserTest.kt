@@ -6,7 +6,7 @@ import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
-class SemanticVersionParserTest {
+class NuGetPackageVersionParserTest {
 
     @DataProvider
     fun getProjectFiles() = arrayOf(
