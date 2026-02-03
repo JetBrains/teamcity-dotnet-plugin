@@ -1,4 +1,6 @@
 {
+  "title": ".NET Devenv",
+  "description": "Runs Visual Studio IDE command.",
   "type": "VerticalLayout",
   "elements": [
     {

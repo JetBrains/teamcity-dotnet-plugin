@@ -1,4 +1,6 @@
 {
+  "title": ".NET Custom Command",
+  "description": "Runs a custom .NET CLI command.",
   "type": "VerticalLayout",
   "elements": [
     {

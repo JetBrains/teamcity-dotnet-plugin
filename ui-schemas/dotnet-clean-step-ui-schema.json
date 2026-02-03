@@ -1,4 +1,6 @@
 {
+  "title": ".NET Clean",
+  "description": "Runs .NET CLI clean command.",
   "type": "VerticalLayout",
   "elements": [
     {

@@ -1,4 +1,6 @@
 {
+  "title": ".NET Publish",
+  "description": "Runs .NET CLI publish command.",
   "type": "VerticalLayout",
   "elements": [
     {

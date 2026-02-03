@@ -1,4 +1,6 @@
 {
+  "title": ".NET NuGet Delete",
+  "description": "Runs .NET CLI nuget delete command.",
   "type": "VerticalLayout",
   "elements": [
     {

@@ -1,4 +1,6 @@
 {
+  "title": ".NET VSTest",
+  "description": "Runs .NET VSTest.",
   "type": "VerticalLayout",
   "elements": [
     {

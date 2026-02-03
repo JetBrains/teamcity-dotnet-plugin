@@ -1,4 +1,6 @@
 {
+  "title": ".NET MSBuild",
+  "description": "Runs .NET MSBuild.",
   "type": "VerticalLayout",
   "elements": [
     {

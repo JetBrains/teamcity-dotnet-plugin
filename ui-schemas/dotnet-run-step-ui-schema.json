@@ -1,4 +1,6 @@
 {
+  "title": ".NET Run",
+  "description": "Runs .NET CLI run command.",
   "type": "VerticalLayout",
   "elements": [
     {

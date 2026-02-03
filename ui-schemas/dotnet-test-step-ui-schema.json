@@ -1,4 +1,6 @@
 {
+  "title": ".NET Test",
+  "description": "Runs .NET CLI test command.",
   "type": "VerticalLayout",
   "elements": [
     {
