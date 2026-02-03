@@ -4,8 +4,8 @@ package jetbrains.buildServer
 
 import com.intellij.openapi.diagnostic.Logger
 import jetbrains.buildServer.dotnet.DotnetConstants
-import jetbrains.buildServer.dotnet.SemanticVersion
-import jetbrains.buildServer.dotnet.SemanticVersionParser
+import jetbrains.buildServer.dotnet.NuGetPackageVersion
+import jetbrains.buildServer.dotnet.NuGetPackageVersionParser
 import jetbrains.buildServer.tools.*
 import jetbrains.buildServer.util.ArchiveUtil
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.FileFilter
 import java.net.URL
 
 class ToolServiceImpl(
-    private val _packageVersionParser: SemanticVersionParser,
+    private val _packageVersionParser: NuGetPackageVersionParser,
     private val _httpDownloader: HttpDownloader,
     private val _nuGetService: NuGetService,
     private val _fileSystemService: FileSystemService
@@ -64,7 +64,7 @@ class ToolServiceImpl(
         return versionResult
     }
 
-    override fun getPackageVersion(toolPackage: File, vararg packageIds: String): SemanticVersion? {
+    override fun getPackageVersion(toolPackage: File, vararg packageIds: String): NuGetPackageVersion? {
         if (!toolPackage.isPackageFileValid(packageIds)) {
             return null
         }

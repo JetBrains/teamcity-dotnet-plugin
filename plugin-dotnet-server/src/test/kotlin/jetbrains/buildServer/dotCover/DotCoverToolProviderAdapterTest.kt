@@ -6,7 +6,7 @@ import jetbrains.buildServer.*
 import jetbrains.buildServer.dotnet.CoverageConstants.BUNDLED_TOOL_VERSION
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_DEPRECATED_PACKAGE_ID
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_PACKAGE_ID
-import jetbrains.buildServer.dotnet.SemanticVersion
+import jetbrains.buildServer.dotnet.NuGetPackageVersion
 import jetbrains.buildServer.tools.ToolException
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.web.openapi.PluginDescriptor
@@ -98,24 +98,24 @@ class DotCoverToolProviderAdapterTest {
     @DataProvider
     fun testDataUnpackToolPackage(): Array<Array<Any>> {
         return arrayOf(
-            arrayOf(SemanticVersion(2023, 2, 9), DOTCOVER_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 2, 9), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 3, 0, "eap09"), DOTCOVER_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 3, 0, "eap09"), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 3, 0, "tc09"), DOTCOVER_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 3, 0, "tc09"), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
-            arrayOf(SemanticVersion(2023, 3, 0), DOTCOVER_PACKAGE_ID, true),
-            arrayOf(SemanticVersion(2023, 3, 0), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
-            arrayOf(SemanticVersion(2023, 3, 1), DOTCOVER_PACKAGE_ID, true),
-            arrayOf(SemanticVersion(2023, 3, 1), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
-            arrayOf(SemanticVersion(2023, 4, 0), DOTCOVER_PACKAGE_ID, true),
-            arrayOf(SemanticVersion(2023, 4, 0), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 2, 9), DOTCOVER_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 2, 9), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 3, 0, "eap09"), DOTCOVER_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 3, 0, "eap09"), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 3, 0, "tc09"), DOTCOVER_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 3, 0, "tc09"), DOTCOVER_DEPRECATED_PACKAGE_ID, false),
+            arrayOf(NuGetPackageVersion(2023, 3, 0), DOTCOVER_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 3, 0), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 3, 1), DOTCOVER_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 3, 1), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 4, 0), DOTCOVER_PACKAGE_ID, true),
+            arrayOf(NuGetPackageVersion(2023, 4, 0), DOTCOVER_DEPRECATED_PACKAGE_ID, true),
         )
     }
 
     @Test(dataProvider = "testDataUnpackToolPackage")
     fun `should unpack tool package preserving the teamcity plugin xml descriptor when needed`(
-        version: SemanticVersion,
+        version: NuGetPackageVersion,
         packageId: String,
         shouldPreserveDescriptor: Boolean,
     ) {

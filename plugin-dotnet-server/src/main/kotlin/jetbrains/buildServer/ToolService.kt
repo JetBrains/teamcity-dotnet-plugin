@@ -2,7 +2,7 @@
 
 package jetbrains.buildServer
 
-import jetbrains.buildServer.dotnet.SemanticVersion
+import jetbrains.buildServer.dotnet.NuGetPackageVersion
 import jetbrains.buildServer.tools.GetPackageVersionResult
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
@@ -15,7 +15,7 @@ interface ToolService {
 
     fun tryGetPackageVersion(toolType: ToolType, toolPackage: File, vararg packageIds: String): GetPackageVersionResult?
 
-    fun getPackageVersion(toolPackage: File, vararg packageIds: String): SemanticVersion?
+    fun getPackageVersion(toolPackage: File, vararg packageIds: String): NuGetPackageVersion?
 
     fun fetchToolPackage(toolType: ToolType, toolVersion: ToolVersion, targetDirectory: File, vararg packageIds: String): File
 

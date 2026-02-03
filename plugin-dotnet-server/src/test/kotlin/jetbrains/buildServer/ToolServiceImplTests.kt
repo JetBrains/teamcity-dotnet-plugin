@@ -4,7 +4,7 @@ package jetbrains.buildServer
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import jetbrains.buildServer.dotnet.SemanticVersionParser
+import jetbrains.buildServer.dotnet.NuGetPackageVersionParser
 import jetbrains.buildServer.tools.ToolException
 import jetbrains.buildServer.tools.ToolType
 import jetbrains.buildServer.tools.ToolVersion
@@ -17,7 +17,7 @@ import java.io.File
 
 class ToolServiceImplTests {
     @MockK
-    private lateinit var _packageVersionParserMock: SemanticVersionParser
+    private lateinit var _packageVersionParserMock: NuGetPackageVersionParser
 
     @MockK
     private lateinit var _httpDownloaderMock: HttpDownloader

@@ -1,7 +1,7 @@
 package jetbrains.buildServer.dotnet
 
 // https://learn.microsoft.com/en-us/nuget/concepts/package-versioning?tabs=semver20sort#where-nugetversion-diverges-from-semantic-versioning
-data class SemanticVersion(
+data class NuGetPackageVersion(
     val major: Int,
     val minor: Int,
     val patch: Int,
