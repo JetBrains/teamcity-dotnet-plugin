@@ -19,28 +19,18 @@ teamcity {
 
 dependencies {
     implementation project(':plugin-dotnet-common')
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
     provided "org.jetbrains.teamcity.internal:agent:${teamcityVersion}"
-    implementation 'commons-io:commons-io:2.11.0'
     compileOnly "org.jetbrains.intellij.deps:coverage-report:1.0.15"
     implementation fileTree(dir: "$project.projectDir.parentFile/lib/compile", include: ['coverage-report*.jar'])
 
-    testImplementation 'org.testng:testng:7.5'
-    testImplementation 'org.jmock:jmock:2.12.0'
+    testImplementation 'org.jmock:jmock'
+    testImplementation 'io.mockk:mockk'
     testImplementation 'org.hamcrest:hamcrest-all:1.3'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
-    testImplementation 'io.mockk:mockk:1.13.2'
     testImplementation "org.jetbrains.teamcity:tests-support:${teamcityVersion}"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
     testImplementation 'org.testcontainers:testcontainers:1.20.4'
     testImplementation fileTree(dir: "$project.projectDir.parentFile/lib/test", include: ['freemarker*.jar'])
-
-    constraints {
-        implementation('xom:xom:1.3.7') {
-            because 'Pinning transitive dependency of TeamCity Open API which causes compilation error'
-        }
-    }
 }
 
 test.useTestNG() { excludeGroups("integration") }

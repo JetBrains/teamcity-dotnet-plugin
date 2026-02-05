@@ -11,3 +11,29 @@ group = project.projectIds.group
 version = project.projectIds.version
 
 test.useTestNG()
+
+dependencies {
+  api(platform("org.jetbrains.teamcity:bom:${project.teamcityVersion}"))
+  testImplementation 'org.testng:testng:7.5'
+  compileOnly 'org.jetbrains.kotlin:kotlin-stdlib'
+
+  constraints {
+    implementation('xom:xom:1.3.7') {
+      because 'Pinning transitive dependency of TeamCity Open API which causes compilation error'
+    }
+    testImplementation("net.bytebuddy:byte-buddy-agent:1.17.5") {
+      because("MockK pulls too old byte-buddy-agent, breaks on 9+ JDKs")
+    }
+    testImplementation("net.bytebuddy:byte-buddy:1.17.5")
+
+    testImplementation 'io.mockk:mockk:1.13.2'
+  }
+}
+
+tasks.withType(Test).configureEach {
+  if (JavaVersion.current().isJava9Compatible()) {
+    jvmArgs += [
+            "--add-opens", "java.xml/org.w3c.dom=ALL-UNNAMED"
+    ]
+  }
+}
