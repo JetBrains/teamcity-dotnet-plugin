@@ -597,7 +597,8 @@
   <bean class="jetbrains.buildServer.dotcover.DotCoverWorkflowComposer" id="dotCoverWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverReportingWorkflowComposer" id="dotCoverReportingWorkflowComposer"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverProfiledProcessWorkflowComposer"/>
-  <bean class="jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverRunConfigFileSerializerImpl"/>
+  <bean class="jetbrains.buildServer.dotcover.DotCoverResponseFileSerializerImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterConverterImpl"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverFilterProvider"/>
   <bean class="jetbrains.buildServer.dotcover.DotCoverEnvironmentVariables"/>

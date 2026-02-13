@@ -11,6 +11,8 @@ import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder
 import jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder
 import jetbrains.buildServer.dotcover.command.DotCoverReportCommandLineBuilder
+import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
+import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.Verbosity
 import jetbrains.buildServer.dotnet.test.agent.VirtualFileSystemService
@@ -28,7 +30,9 @@ class DotCoverWorkflowComposerTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _argumentsService: ArgumentsService
-    @MockK private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
+    @MockK private lateinit var _dotCoverRunConfigFileSerializer: DotCoverRunConfigFileSerializer
+    @MockK private lateinit var _dotCoverResponseFileSerializer: DotCoverResponseFileSerializer
+    @MockK private lateinit var _dotCoverAgentTool: DotCoverAgentTool
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _coverageFilterProvider: CoverageFilterProvider
     @MockK private lateinit var _virtualContext: VirtualContext
@@ -54,6 +58,7 @@ class DotCoverWorkflowComposerTest {
         every { _dotCoverSettings.dotCoverMode } returns DotCoverMode.Disabled
         every { _loggerService.writeDebug(any()) } returns Unit
         every { _loggerService.writeStandardOutput(text = any(), any()) } returns Unit
+        every { _dotCoverAgentTool.type } returns DotCoverToolType.CrossPlatform
     }
 
     @Test
@@ -138,9 +143,9 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns "--ProcessFilters=-:process1;-:process2"
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
-        every { _pathService.getTempFileName(DotCoverWorkflowComposer.DOTCOVER_CONFIG_EXTENSION) } returns File(dotCoverProjectUniqueName.path)
+        every { _pathService.getTempFileName("dotCover.xml") } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(".${DotCoverWorkflowComposer.DOTCOVER_SNAPSHOT_EXTENSION}") } returns File(dotCoverSnapshotUniqueName.path)
-        every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path(dotCoverPath!!))) } returns Unit
         every { _loggerService.importData(DotCoverWorkflowComposer.DOTCOVER_DATA_PROCESSOR_TYPE, Path("v_snap"), DotCoverWorkflowComposer.DOTCOVER_TOOL_NAME) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
@@ -301,9 +306,9 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
-        every { _pathService.getTempFileName(DotCoverWorkflowComposer.DOTCOVER_CONFIG_EXTENSION) } returns File(dotCoverProjectUniqueName.path)
+        every { _pathService.getTempFileName("dotCover.xml") } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(".${DotCoverWorkflowComposer.DOTCOVER_SNAPSHOT_EXTENSION}") } returns File(dotCoverSnapshotUniqueName.path)
-        every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.importData(DotCoverWorkflowComposer.DOTCOVER_TOOL_NAME, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
@@ -388,9 +393,9 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
-        every { _pathService.getTempFileName(DotCoverWorkflowComposer.DOTCOVER_CONFIG_EXTENSION) } returns File(dotCoverProjectUniqueName.path)
+        every { _pathService.getTempFileName("dotCover.xml") } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(".${DotCoverWorkflowComposer.DOTCOVER_SNAPSHOT_EXTENSION}") } returns File(dotCoverSnapshotUniqueName.path)
-        every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
         every { _virtualContext.resolvePath(dotCoverProjectUniqueName.path) } returns "v_proj"
         every { _virtualContext.resolvePath(dotCoverSnapshotUniqueName.path) } returns "v_snap"
@@ -467,9 +472,9 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns "/ProcessFilters=-:sqlservr.exe /arg"
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns null
-        every { _pathService.getTempFileName(DotCoverWorkflowComposer.DOTCOVER_CONFIG_EXTENSION) } returns File(dotCoverProjectUniqueName.path)
+        every { _pathService.getTempFileName("dotCover.xml") } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(".${DotCoverWorkflowComposer.DOTCOVER_SNAPSHOT_EXTENSION}") } returns File(dotCoverSnapshotUniqueName.path)
-        every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.importData(DotCoverWorkflowComposer.DOTCOVER_TOOL_NAME, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
@@ -544,9 +549,9 @@ class DotCoverWorkflowComposerTest {
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_HOME) } returns "dotCover"
         every { _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS) } returns null
         every { _parametersService.tryGetParameter(ParameterType.Configuration, CoverageConstants.PARAM_DOTCOVER_LOG_PATH) } returns "logPath"
-        every { _pathService.getTempFileName(DotCoverWorkflowComposer.DOTCOVER_CONFIG_EXTENSION) } returns File(dotCoverProjectUniqueName.path)
+        every { _pathService.getTempFileName("dotCover.xml") } returns File(dotCoverProjectUniqueName.path)
         every { _pathService.getTempFileName(".${DotCoverWorkflowComposer.DOTCOVER_SNAPSHOT_EXTENSION}") } returns File(dotCoverSnapshotUniqueName.path)
-        every { _dotCoverProjectSerializer.serialize(dotCoverProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverProject, any()) } returns Unit
         every { _loggerService.writeMessage(DotCoverServiceMessage(Path("dotCover"))) } returns Unit
         every { _loggerService.importData(DotCoverWorkflowComposer.DOTCOVER_TOOL_NAME, Path("v_snap")) } returns Unit
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns "v_dotCover"
@@ -562,6 +567,7 @@ class DotCoverWorkflowComposerTest {
         every { _loggerService.writeTrace(any()) } returns Unit
         every { _dotCoverSettings.dotCoverMode } returns DotCoverMode.Wrapper
         every { _dotCoverSettings.dotCoverHomePath } returns "dotCover"
+        every { _dotCoverAgentTool.type } returns DotCoverToolType.CrossPlatform
 
         val actualCommandLines = composer.compose(WorkflowContextStub(WorkflowStatus.Running, CommandResultExitCode(0)), Unit, Workflow(sequenceOf(commandLine))).commandLines.toList()
 
@@ -605,7 +611,8 @@ class DotCoverWorkflowComposerTest {
         return DotCoverWorkflowComposer(
             _pathService,
             fileSystemService,
-            _dotCoverProjectSerializer,
+            _dotCoverRunConfigFileSerializer,
+            _dotCoverResponseFileSerializer,
             _loggerService,
             _argumentsService,
             _coverageFilterProvider,
@@ -613,10 +620,21 @@ class DotCoverWorkflowComposerTest {
             _environmentVariables,
             _entryPointSelector,
             _dotCoverSettings,
+            _dotCoverAgentTool,
             listOf(
-                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
-                DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
-                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _parametersService, _argumentsService)
-            ))
+                DotCoverCoverCommandLineBuilder(
+                    _pathService,
+                    _virtualContext,
+                    _dotCoverAgentTool,
+                    _parametersService,
+                    fileSystemService,
+                    _argumentsService,
+                    _buildStepContext,
+                    _monoToolProvider
+                ),
+                DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _dotCoverAgentTool),
+                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _dotCoverAgentTool, _parametersService, _argumentsService)
+            )
+        )
     }
 }

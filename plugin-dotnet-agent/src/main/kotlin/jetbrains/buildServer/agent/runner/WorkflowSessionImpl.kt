@@ -6,9 +6,9 @@ import jetbrains.buildServer.rx.Observer
 import jetbrains.buildServer.rx.subjectOf
 
 class WorkflowSessionImpl(
-        private val _workflowComposer: SimpleWorkflowComposer,
-        private val _commandExecutionFactory: CommandExecutionFactory,
-        private val _workflowSessionEventDispatcher: WorkflowSessionEventDispatcher
+    private val _workflowComposer: SimpleWorkflowComposer,
+    private val _commandExecutionFactory: CommandExecutionFactory,
+    private val _workflowSessionEventDispatcher: WorkflowSessionEventDispatcher
 ) : MultiCommandBuildSession, WorkflowContext {
 
     private val _commandLinesIterator = lazy { _workflowComposer.compose(this, Unit).commandLines.iterator() }

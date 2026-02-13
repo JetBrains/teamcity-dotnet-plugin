@@ -12,6 +12,8 @@ import jetbrains.buildServer.agent.VirtualContext
 import jetbrains.buildServer.agent.runner.ParameterType
 import jetbrains.buildServer.agent.runner.ParametersService
 import jetbrains.buildServer.agent.runner.PathsService
+import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
+import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.dotnet.CoverageConstants
 import kotlin.sequences.forEach
 
@@ -19,16 +21,17 @@ class DotCoverReportCommandLineBuilder(
     pathsService: PathsService,
     virtualContext: VirtualContext,
     fileSystemService: FileSystemService,
+    private val _dotCoverAgentTool: DotCoverAgentTool,
     private val _parametersService: ParametersService,
     private val _argumentsService: ArgumentsService,
-) : DotCoverCommandLineBuilderBase(pathsService, virtualContext, _parametersService, fileSystemService) {
+) : DotCoverCommandLineBuilderBase(pathsService, virtualContext, _parametersService, fileSystemService, _dotCoverAgentTool) {
 
     override val type: DotCoverCommandType get() = DotCoverCommandType.Report
 
     override fun buildCommand(
         executableFile: Path,
         environmentVariables: List<CommandLineEnvironmentVariable>,
-        configFilePath: String,
+        commandLineParamsFilePath: String,
         baseCommandLine: CommandLine?
     ): CommandLine {
         return CommandLine(
@@ -36,7 +39,7 @@ class DotCoverReportCommandLineBuilder(
             target = TargetType.CodeCoverageProfiler,
             executableFile = executableFile,
             workingDirectory = workingDirectory,
-            arguments = createArguments(configFilePath).toList(),
+            arguments = createArguments(commandLineParamsFilePath).toList(),
             environmentVariables = environmentVariables,
             title = "dotCover report"
         )
@@ -44,9 +47,18 @@ class DotCoverReportCommandLineBuilder(
 
     private fun createArguments(configFilePath: String): Sequence<CommandLineArgument> = sequence {
         yield(CommandLineArgument("report", CommandLineArgumentType.Mandatory))
-        yield(CommandLineArgument(configFilePath, CommandLineArgumentType.Target))
+        yield(CommandLineArgument(commandLineParametersFilePrefix + configFilePath, CommandLineArgumentType.Target))
 
-        logFileName?.let { yield(CommandLineArgument("${argumentPrefix}LogFile=${it}", CommandLineArgumentType.Infrastructural)) }
+        if (_dotCoverAgentTool.type == DotCoverToolType.CrossPlatformV3) {
+            logFileName?.let { logFileName ->
+                yield(CommandLineArgument("${argumentPrefix}log-file", CommandLineArgumentType.Infrastructural))
+                yield(CommandLineArgument(logFileName, CommandLineArgumentType.Infrastructural))
+            }
+        } else {
+            logFileName?.let {
+                yield(CommandLineArgument("${argumentPrefix}LogFile=${it}", CommandLineArgumentType.Infrastructural))
+            }
+        }
 
         _parametersService.tryGetParameter(ParameterType.Runner, CoverageConstants.PARAM_DOTCOVER_ARGUMENTS)?.let {
             _argumentsService.split(it).forEach {
