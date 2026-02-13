@@ -55,6 +55,7 @@ class DotCoverEntryPointSelectorImpl(
                         "installed to run the \"dotCover Cross-Platform\" tool"
                     ))
                 }
+                DotCoverToolType.CrossPlatformV3 -> Result.success(_tool.dotCoverDllFile)
                 DotCoverToolType.Unknown -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Windows, however " +
                     "${_tool.dotCoverDllFile.name} or ${_tool.dotCoverExeFile.name} " +
@@ -73,6 +74,7 @@ class DotCoverEntryPointSelectorImpl(
                         "installed to run the \"dotCover Cross-Platform\" tool"
                     ))
                 }
+                DotCoverToolType.CrossPlatformV3 -> Result.success(_tool.dotCoverDllFile)
                 DotCoverToolType.WindowsOnly -> Result.failure(UnsatisfiedRequirementError(
                     "dotCover has been run on Linux or macOS agent, however it's using a tool designed for Windows"
                 ))
@@ -88,7 +90,7 @@ class DotCoverEntryPointSelectorImpl(
     private class UnsatisfiedRequirementError(message: String) : Error(message)
 
     private val crossPlatformToolRequirementsText get() =
-        _tool.getCrossPlatformVersionMinRequirement(_virtualContext.targetOSType).joinToString(" or ")
+        _tool.getCrossPlatformVersionMinRequirement(_virtualContext.targetOSType, _tool.type).joinToString(" or ")
 
     companion object {
         internal const val DOTCOVER_REQUIREMENTS_BUILD_PROBLEM = "dotCover_requirements_have_not_been_met"

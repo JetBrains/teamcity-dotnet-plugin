@@ -8,7 +8,6 @@ import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.*
 import jetbrains.buildServer.dotcover.DotCoverProject.MergeCommandData
 import jetbrains.buildServer.dotcover.DotCoverProject.ReportCommandData
-import jetbrains.buildServer.dotcover.DotCoverReportingWorkflowComposer.Companion.DOTCOVER_CONFIG_EXTENSION
 import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import jetbrains.buildServer.dotcover.command.DotCoverCoverCommandLineBuilder
 import jetbrains.buildServer.dotcover.command.DotCoverMergeCommandLineBuilder
@@ -17,6 +16,8 @@ import jetbrains.buildServer.dotcover.report.DotCoverTeamCityReportGenerator
 import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublisher
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploader
+import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
+import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.dotnet.test.agent.runner.WorkflowContextStub
 import jetbrains.buildServer.mono.MonoToolProvider
 import jetbrains.buildServer.rx.Disposable
@@ -30,7 +31,9 @@ class DotCoverReportingWorkflowComposerTest {
     @MockK private lateinit var _pathService: PathsService
     @MockK private lateinit var _parametersService: ParametersService
     @MockK private lateinit var _argumentsService: ArgumentsService
-    @MockK private lateinit var _dotCoverProjectSerializer: DotCoverProjectSerializer
+    @MockK private lateinit var _dotCoverRunConfigFileSerializer: DotCoverRunConfigFileSerializer
+    @MockK private lateinit var _dotCoverResponseFileSerializer: DotCoverResponseFileSerializer
+    @MockK private lateinit var _dotCoverAgentTool: DotCoverAgentTool
     @MockK private lateinit var _loggerService: LoggerService
     @MockK private lateinit var _virtualContext: VirtualContext
     @MockK private lateinit var _environmentVariables: EnvironmentVariables
@@ -156,7 +159,7 @@ class DotCoverReportingWorkflowComposerTest {
         val snapshots = createSnapshots(0)
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Merge, coverCommandData = null,
             MergeCommandData(sourceFiles = snapshots, outputFile = Path(outputSnapshotFile.path)))
-        every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
 
         val composer = createInstance(fileSystemService)
 
@@ -187,7 +190,7 @@ class DotCoverReportingWorkflowComposerTest {
         val snapshots = createSnapshots(1)
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Merge, coverCommandData = null,
             MergeCommandData(sourceFiles = snapshots, outputFile = Path(outputSnapshotFile.path)))
-        every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
 
         val composer = createInstance(fileSystemService)
 
@@ -217,18 +220,19 @@ class DotCoverReportingWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns dotCoverExecutableVirtualPath.path
         every { _dotCoverSettings.shouldMergeSnapshots() } returns Pair(true, "")
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(false, "")
+        every { _dotCoverAgentTool.type } returns DotCoverToolType.CrossPlatform
 
         val buildStepId = "buildStep"
         val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
-        val dotCoverMergeProjectFile = File(agentTmp,"merge_$DOTCOVER_CONFIG_EXTENSION")
+        val dotCoverMergeProjectFile = File(agentTmp,"merge_dotCover.xml")
         every { _virtualContext.resolvePath(outputSnapshotFile.path) } returns outputSnapshotFile.path
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
-        every { _pathService.getTempFileName("merge_${DOTCOVER_CONFIG_EXTENSION}") } returns dotCoverMergeProjectFile
+        every { _pathService.getTempFileName("merge_dotCover.xml") } returns dotCoverMergeProjectFile
         every { _virtualContext.resolvePath(dotCoverMergeProjectFile.path) } returns dotCoverMergeProjectFile.path
 
         createSnapshots(2)
-        every { _dotCoverProjectSerializer.serialize(any(), any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(any(), any()) } returns Unit
 
         val expectedWorkflow = Workflow(
             sequenceOf(
@@ -332,21 +336,22 @@ class DotCoverReportingWorkflowComposerTest {
         every { _virtualContext.resolvePath(dotCoverExecutableFile.path) } returns dotCoverExecutableVirtualPath.path
         every { _dotCoverSettings.shouldMergeSnapshots() } returns Pair(false, "")
         every { _dotCoverSettings.shouldGenerateReport() } returns Pair(true, "")
+        every { _dotCoverAgentTool.type } returns DotCoverToolType.CrossPlatform
 
         val buildStepId = "buildStep"
         val outputSnapshotFile = File(agentTmp, "outputSnapshot_$buildStepId.dcvr")
         outputSnapshotFile.createNewFile()
         val dotCoverResultsDir = File(agentTmp, "dotCoverResults")
         val outputReportFile = File(dotCoverResultsDir, "CoverageReport_${buildStepId}.xml")
-        val dotCoverReportProjectFile = File(agentTmp,"report_$DOTCOVER_CONFIG_EXTENSION")
+        val dotCoverReportProjectFile = File(agentTmp,"report_dotCover.xml")
         every { _dotCoverSettings.buildStepId } returns buildStepId
         every { _dotCoverSettings.additionalSnapshotPaths } returns emptySequence()
-        every { _pathService.getTempFileName("report_${DOTCOVER_CONFIG_EXTENSION}") } returns dotCoverReportProjectFile
+        every { _pathService.getTempFileName("report_dotCover.xml") } returns dotCoverReportProjectFile
         every { _virtualContext.resolvePath(dotCoverReportProjectFile.path) } returns dotCoverReportProjectFile.path
         val dotCoverMergeProject = DotCoverProject(DotCoverCommandType.Report, coverCommandData = null, mergeCommandData  = null,
             ReportCommandData(sourceFile = Path(outputSnapshotFile.path), outputFile = Path(outputReportFile.path))
         )
-        every { _dotCoverProjectSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
+        every { _dotCoverRunConfigFileSerializer.serialize(dotCoverMergeProject, any()) } returns Unit
         every { _virtualContext.resolvePath(dotCoverResultsDir.path) } returns dotCoverResultsDir.path
         every { _virtualContext.resolvePath(outputSnapshotFile.absolutePath) } returns outputSnapshotFile.absolutePath
         every { _virtualContext.resolvePath(outputReportFile.absolutePath) } returns outputReportFile.absolutePath
@@ -391,19 +396,22 @@ class DotCoverReportingWorkflowComposerTest {
             _pathService,
             _parametersService,
             fileSystemService,
-            _dotCoverProjectSerializer,
+            _dotCoverRunConfigFileSerializer,
+            _dotCoverResponseFileSerializer,
             _loggerService,
             _virtualContext,
             _environmentVariables,
             _entryPointSelector,
             _dotCoverSettings,
-            listOf(
-                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
-                DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService),
-                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _parametersService, _argumentsService)
-            ),
             _dotCoverTeamCityReportGenerator,
             _dotnetCoverageStatisticsPublisher,
-            _uploader)
+            _uploader,
+            _dotCoverAgentTool,
+            listOf(
+                DotCoverCoverCommandLineBuilder(_pathService, _virtualContext, _dotCoverAgentTool, _parametersService, fileSystemService, _argumentsService, _buildStepContext, _monoToolProvider),
+                DotCoverMergeCommandLineBuilder(_pathService, _virtualContext, _parametersService, fileSystemService, _dotCoverAgentTool),
+                DotCoverReportCommandLineBuilder(_pathService, _virtualContext, fileSystemService, _dotCoverAgentTool, _parametersService, _argumentsService)
+            ),
+        )
     }
 }
