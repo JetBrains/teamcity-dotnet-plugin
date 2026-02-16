@@ -40,6 +40,8 @@ class DotCoverAgentTool(
     val apiVersion get(): Int? = readPluginDescriptorParameter("dotCoverApiVersion")?.toIntOrNull()
 
     val type get() = when {
+        apiVersion == 3 -> DotCoverToolType.CrossPlatformV3
+
         // cross-platform version using bundled runtime
         _fileSystemService.isExists(dotCoverShFile) ->
             DotCoverToolType.DeprecatedCrossPlatform
@@ -51,8 +53,6 @@ class DotCoverAgentTool(
         // cross-platform version using agent runtime
         _fileSystemService.isExists(dotCoverDllFile) && !_fileSystemService.isExists(dotCoverShFile) ->
             DotCoverToolType.CrossPlatform
-
-        apiVersion == 3 -> DotCoverToolType.CrossPlatformV3
 
         else -> DotCoverToolType.Unknown
     }
