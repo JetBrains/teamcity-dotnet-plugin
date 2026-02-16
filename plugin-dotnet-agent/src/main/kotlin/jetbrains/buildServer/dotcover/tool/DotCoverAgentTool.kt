@@ -54,6 +54,8 @@ class DotCoverAgentTool(
         _fileSystemService.isExists(dotCoverDllFile) && !_fileSystemService.isExists(dotCoverShFile) ->
             DotCoverToolType.CrossPlatform
 
+        apiVersion == 3 -> DotCoverToolType.CrossPlatformV3
+
         else -> DotCoverToolType.Unknown
     }
 
