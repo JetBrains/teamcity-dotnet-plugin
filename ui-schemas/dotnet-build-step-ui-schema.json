@@ -1,6 +1,6 @@
 {
   "title": ".NET Build",
-  "description": "Runs .NET CLI build command.",
+  "description": "Runs the .NET CLI build command.",
   "type": "VerticalLayout",
   "elements": [
     {

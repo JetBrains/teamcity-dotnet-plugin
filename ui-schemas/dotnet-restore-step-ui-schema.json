@@ -1,6 +1,6 @@
 {
   "title": ".NET Restore",
-  "description": "Runs .NET CLI restore command.",
+  "description": "Runs the .NET CLI restore command.",
   "type": "VerticalLayout",
   "elements": [
     {

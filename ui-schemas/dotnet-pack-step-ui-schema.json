@@ -1,6 +1,6 @@
 {
   "title": ".NET Pack",
-  "description": "Runs .NET CLI pack command.",
+  "description": "Runs the .NET CLI pack command.",
   "type": "VerticalLayout",
   "elements": [
     {

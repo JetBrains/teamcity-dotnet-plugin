@@ -1,6 +1,6 @@
 {
   "title": ".NET VSTest",
-  "description": "Runs .NET VSTest.",
+  "description": "Runs the .NET VSTest command.",
   "type": "VerticalLayout",
   "elements": [
     {

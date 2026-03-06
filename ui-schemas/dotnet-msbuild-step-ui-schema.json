@@ -1,6 +1,6 @@
 {
   "title": ".NET MSBuild",
-  "description": "Runs .NET MSBuild.",
+  "description": "Runs the .NET MSBuild command.",
   "type": "VerticalLayout",
   "elements": [
     {

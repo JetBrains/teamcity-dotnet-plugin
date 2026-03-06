@@ -1,6 +1,6 @@
 {
   "title": ".NET Clean",
-  "description": "Runs .NET CLI clean command.",
+  "description": "Runs the .NET CLI clean command.",
   "type": "VerticalLayout",
   "elements": [
     {

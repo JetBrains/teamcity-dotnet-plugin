@@ -1,6 +1,6 @@
 {
   "title": ".NET NuGet Push",
-  "description": "Runs .NET CLI nuget push command.",
+  "description": "Runs the .NET CLI nuget push command.",
   "type": "VerticalLayout",
   "elements": [
     {
