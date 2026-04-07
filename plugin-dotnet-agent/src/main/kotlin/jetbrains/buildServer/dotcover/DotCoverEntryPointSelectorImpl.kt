@@ -55,7 +55,13 @@ class DotCoverEntryPointSelectorImpl(
                         "installed to run the \"dotCover Cross-Platform\" tool"
                     ))
                 }
-                DotCoverToolType.CrossPlatformV3 -> Result.success(_tool.dotCoverDllFile)
+                DotCoverToolType.CrossPlatformV3 -> when {
+                    _virtualContext.isVirtual or _tool.canUseDotNetRuntime -> Result.success(_tool.dotCoverDllFile)
+                    else -> Result.failure(UnsatisfiedRequirementError(
+                        "Windows agents must have $crossPlatformToolRequirementsText " +
+                        "installed to run the \"dotCover Cross-Platform\" tool"
+                    ))
+                }
                 DotCoverToolType.Unknown -> Result.failure(ToolCannotBeFoundException(
                     "dotCover has been run on Windows, however " +
                     "${_tool.dotCoverDllFile.name} or ${_tool.dotCoverExeFile.name} " +
@@ -74,7 +80,13 @@ class DotCoverEntryPointSelectorImpl(
                         "installed to run the \"dotCover Cross-Platform\" tool"
                     ))
                 }
-                DotCoverToolType.CrossPlatformV3 -> Result.success(_tool.dotCoverDllFile)
+                DotCoverToolType.CrossPlatformV3 -> when {
+                    _virtualContext.isVirtual or _tool.canUseDotNetRuntime -> Result.success(_tool.dotCoverDllFile)
+                    else -> Result.failure(UnsatisfiedRequirementError(
+                        "Windows agents must have $crossPlatformToolRequirementsText " +
+                                "installed to run the \"dotCover Cross-Platform\" tool"
+                    ))
+                }
                 DotCoverToolType.WindowsOnly -> Result.failure(UnsatisfiedRequirementError(
                     "dotCover has been run on Linux or macOS agent, however it's using a tool designed for Windows"
                 ))

@@ -54,8 +54,6 @@ class DotCoverAgentTool(
         _fileSystemService.isExists(dotCoverDllFile) && !_fileSystemService.isExists(dotCoverShFile) ->
             DotCoverToolType.CrossPlatform
 
-        apiVersion == 3 -> DotCoverToolType.CrossPlatformV3
-
         else -> DotCoverToolType.Unknown
     }
 
@@ -163,8 +161,12 @@ class DotCoverAgentTool(
     }
 
     private fun readPluginDescriptorParameter(parameterName: String): String? {
-        val inputStream = pluginDescriptorFile.inputStream()
-        val doc = SAXBuilder().build(inputStream)
+        if (!_fileSystemService.isExists(pluginDescriptorFile)) {
+            return null
+        }
+        val doc = pluginDescriptorFile.inputStream().use { stream ->
+            SAXBuilder().build(stream)
+        }
         val root = doc.rootElement
         val params = root.getChild("parameters") ?: return null
         return params.getChildren("parameter")
