@@ -232,14 +232,14 @@ class ToolServiceImplTests {
         every { _nuGetServiceMock.getPackagesById(any()) } answers { sequenceOf(packageMock1, packageMock2) }
         justRun { _fileSystemServiceMock.write(any(), any()) }
         mockkStatic(ArchiveUtil::class)
-        every { ArchiveUtil.unpackZip(any(), any(), any()) } answers { true }
+        every { ArchiveUtil.unpackZip(any(), any<String>(), any()) } answers { true }
         val toolService = createInstance()
 
         // act
         toolService.unpackToolPackage(toolPackageMock, "./", targetDirMock, packageId)
 
         // assert
-        verify (exactly = 0) { ArchiveUtil.unpackZip(any(), any(), any()) }
+        verify (exactly = 0) { ArchiveUtil.unpackZip(any(), any<String>(), any()) }
     }
 
     @Test
@@ -253,12 +253,12 @@ class ToolServiceImplTests {
         }
         val targetDirMock = File("./")
         mockkStatic(ArchiveUtil::class)
-        every { ArchiveUtil.unpackZip(any(), any(), any()) } answers { false }
+        every { ArchiveUtil.unpackZip(any(), any<String>(), any()) } answers { false }
         val toolService = createInstance()
 
         // act, assert
         Assert.assertThrows { toolService.unpackToolPackage(toolPackageMock, "./", targetDirMock, packageId) }
-        verify (exactly = 1) { ArchiveUtil.unpackZip(any(), any(), any()) }
+        verify (exactly = 1) { ArchiveUtil.unpackZip(any(), any<String>(), any()) }
     }
 
     @Test(dataProvider = "getAllowedPackageFilesExtensions")
@@ -272,14 +272,14 @@ class ToolServiceImplTests {
         }
         val targetDirMock = File("./")
         mockkStatic(ArchiveUtil::class)
-        every { ArchiveUtil.unpackZip(any(), any(), any()) } answers { true }
+        every { ArchiveUtil.unpackZip(any(), any<String>(), any()) } answers { true }
         val toolService = createInstance()
 
         // act
         toolService.unpackToolPackage(toolPackageMock, "./", targetDirMock, packageId)
 
         // assert
-        verify (exactly = 1) { ArchiveUtil.unpackZip(any(), any(), any()) }
+        verify (exactly = 1) { ArchiveUtil.unpackZip(any(), any<String>(), any()) }
     }
 
     private fun createInstance() = ToolServiceImpl(_packageVersionParserMock, _httpDownloaderMock, _nuGetServiceMock, _fileSystemServiceMock)
