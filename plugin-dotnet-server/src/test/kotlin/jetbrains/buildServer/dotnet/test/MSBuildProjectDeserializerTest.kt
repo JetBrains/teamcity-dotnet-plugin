@@ -2,12 +2,14 @@
 
 package jetbrains.buildServer.dotnet.test
 
+import jetbrains.buildServer.RunBuildException
 import jetbrains.buildServer.XmlDocumentServiceImpl
 import jetbrains.buildServer.dotnet.discovery.*
 import jetbrains.buildServer.dotnet.discovery.Target
 import org.testng.Assert
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import java.io.File
 
 class MSBuildProjectDeserializerTest {
     @DataProvider
@@ -89,5 +91,51 @@ class MSBuildProjectDeserializerTest {
 
         // Then
         Assert.assertEquals(actualAccepted, expectedAccepted)
+    }
+
+    @DataProvider
+    fun testMaliciousXmlData(): Array<Array<Any>> {
+        val canaryContent = "TW-101822-CANARY-SHOULD-NOT-BE-READ"
+        val canaryFile = File.createTempFile("tw-101822-canary", ".txt").apply {
+            deleteOnExit()
+            writeText(canaryContent)
+        }
+
+        return arrayOf(
+                arrayOf(
+                        "xxe",
+                        """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project [<!ENTITY xxe SYSTEM "${canaryFile.toURI()}">]>
+<Project><PropertyGroup><AssemblyName>&xxe;</AssemblyName></PropertyGroup></Project>""",
+                        canaryContent),
+                arrayOf(
+                        "xml-bomb",
+                        """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project [
+  <!ENTITY a0 "lol">
+  <!ENTITY a1 "&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;">
+  <!ENTITY a2 "&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;">
+  <!ENTITY a3 "&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;">
+]>
+<Project><PropertyGroup><AssemblyName>&a3;</AssemblyName></PropertyGroup></Project>""",
+                        "lollollollol"))
+    }
+
+    @Test(dataProvider = "testMaliciousXmlData")
+    fun shouldNotResolveMaliciousXml(caseName: String, maliciousXml: String, unsafeContentMarker: String) {
+        val path = "projectPath"
+        val streamFactory = StreamFactoryStub().add(path, maliciousXml.byteInputStream())
+        val deserializer = MSBuildProjectDeserializer(XmlDocumentServiceImpl())
+
+        val solution = try {
+            deserializer.deserialize(path, streamFactory)
+        } catch (ex: RunBuildException) {
+            null // rejected - nothing could have been resolved or expanded
+        }
+
+        val resolved = solution?.projects.orEmpty()
+                .flatMap { it.properties }
+                .any { it.value.contains(unsafeContentMarker) }
+        Assert.assertFalse(resolved, "Malicious XML must never be resolved/expanded into discovered build step properties: $solution")
     }
 }
