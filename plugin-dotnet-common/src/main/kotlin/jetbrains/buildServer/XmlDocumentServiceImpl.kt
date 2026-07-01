@@ -6,6 +6,7 @@ import org.w3c.dom.Document
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -31,6 +32,8 @@ class XmlDocumentServiceImpl : XmlDocumentService {
     override fun deserialize(inputStream: InputStream): Document {
         val factory = DocumentBuilderFactory.newInstance()
         try {
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
             val builder = factory.newDocumentBuilder()
             return builder.parse(inputStream)
         } catch (ex: Exception) {
