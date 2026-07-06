@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotcover
 
 data class CoverageFilter(
@@ -7,17 +5,17 @@ data class CoverageFilter(
         var defaultMask: String = Any,
         var moduleMask: String = Any,
         val classMask: String = Any,
-        val functionMask: String = Any) {
-
+        val functionMask: String = Any
+) {
     override fun toString(): String {
         return "$typeStr:$defaultMask;module=$moduleMask;class=$classMask;function=$functionMask"
     }
 
     private val typeStr: String
         get() = when (type) {
-            CoverageFilter.CoverageFilterType.Undefined -> UnspecifiedSymbol
-            CoverageFilter.CoverageFilterType.Include -> IncludeSymbol
-            CoverageFilter.CoverageFilterType.Exclude -> ExcludeSymbol
+            CoverageFilterType.Undefined -> UnspecifiedSymbol
+            CoverageFilterType.Include -> IncludeSymbol
+            CoverageFilterType.Exclude -> ExcludeSymbol
         }
 
     companion object {

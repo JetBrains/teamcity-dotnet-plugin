@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent
 
 interface ArgumentsService {

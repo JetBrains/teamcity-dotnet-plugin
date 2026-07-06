@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.agent
 
 import jetbrains.buildServer.util.StringUtil

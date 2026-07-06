@@ -8,11 +8,11 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
 
-class DotCoverProjectSerializerImpl(
+class DotCoverRunConfigFileSerializerImpl(
         private val _xmlDocumentService: XmlDocumentService,
         private val _argumentsService: ArgumentsService,
         private val _coverageFilterProvider: CoverageFilterProvider)
-    : DotCoverProjectSerializer {
+    : DotCoverRunConfigFileSerializer {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun serialize(project: DotCoverProject, outputStream: OutputStream) {
