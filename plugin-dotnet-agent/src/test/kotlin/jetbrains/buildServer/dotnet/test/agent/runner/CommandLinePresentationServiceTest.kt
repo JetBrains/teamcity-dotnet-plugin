@@ -55,7 +55,9 @@ class CommandLinePresentationServiceTest {
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Secondary)), listOf(StdOutText(" \"Arg1\""))),
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\""))),
                 arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Infrastructural)), listOf(StdOutText(" \"Arg1\""))),
-                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory), CommandLineArgument("Arg2", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\""), StdOutText(" \"Arg2\""))))
+                arrayOf(listOf(CommandLineArgument("Arg1", CommandLineArgumentType.Mandatory), CommandLineArgument("Arg2", CommandLineArgumentType.Custom)), listOf(StdOutText(" \"Arg1\""), StdOutText(" \"Arg2\""))),
+                arrayOf(listOf(CommandLineArgument("secretApiKey", CommandLineArgumentType.Secondary, isSensitive = true)), listOf(StdOutText(" ${CommandLinePresentationServiceImpl.SECRET_ARGUMENT_MASK}"))),
+                arrayOf(listOf(CommandLineArgument("--api-key"), CommandLineArgument("secretApiKey", CommandLineArgumentType.Secondary, isSensitive = true)), listOf(StdOutText(" \"--api-key\""), StdOutText(" ${CommandLinePresentationServiceImpl.SECRET_ARGUMENT_MASK}"))))
     }
 
     @Test(dataProvider = "testArgsPresentation")

@@ -78,6 +78,33 @@ class NugetPushCommandTest {
         Assert.assertEquals(actualArguments, expectedArguments)
     }
 
+    @Test
+    fun shouldMarkNugetApiKeyValueAsSensitive() {
+        // Given
+        val command = createCommand(
+            parameters = mapOf(
+                DotnetConstants.PARAM_PATHS to "package.nupkg",
+                DotnetConstants.PARAM_NUGET_API_KEY to "secret",
+                DotnetConstants.PARAM_NUGET_PACKAGE_SOURCE to "http://jb.com"),
+            targets = sequenceOf("my.csproj")
+        )
+        val context = DotnetCommandContext(
+            workingDirectory = ToolPath(Path("wd")),
+            command = command,
+            toolVersion = Version.Empty
+        )
+
+        // When
+        val arguments = command.getArguments(context).toList()
+
+        // Then
+        val apiKeyFlagIndex = arguments.indexOfFirst { it.value == "--api-key" }
+        Assert.assertTrue(apiKeyFlagIndex >= 0, "The --api-key argument is expected")
+        val apiKeyValue = arguments[apiKeyFlagIndex + 1]
+        Assert.assertEquals(apiKeyValue.value, "secret")
+        Assert.assertTrue(apiKeyValue.isSensitive, "The NuGet API key value must be marked as sensitive")
+    }
+
     @DataProvider
     fun projectsArgumentsData(): Array<Array<Any>> {
         return arrayOf(
