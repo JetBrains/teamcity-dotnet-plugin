@@ -27,7 +27,7 @@ class CommandLinePresentationServiceImpl(
     override fun buildArgsPresentation(arguments: List<CommandLineArgument>): List<StdOutText> =
             arguments.map {
                 StdOutText(
-                        " ${_argumentsService.normalize(it.value)}",
+                        " ${if (it.isSensitive) SECRET_ARGUMENT_MASK else _argumentsService.normalize(it.value)}",
                         when (it.argumentType) {
                             CommandLineArgumentType.Mandatory -> Color.Default
                             CommandLineArgumentType.Target -> Color.Default
@@ -42,5 +42,10 @@ class CommandLinePresentationServiceImpl(
         _environment.os == _virtualContext.targetOSType -> File.separatorChar
         _virtualContext.targetOSType == OSType.WINDOWS -> '\\'
         else -> '/'
+    }
+
+    companion object {
+        // Placeholder shown in the build log instead of a sensitive argument value.
+        internal const val SECRET_ARGUMENT_MASK = "*******"
     }
 }

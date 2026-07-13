@@ -36,7 +36,7 @@ class NugetDeleteCommand(
         parameters(DotnetConstants.PARAM_NUGET_API_KEY)?.trim()?.let {
             if (it.isNotBlank()) {
                 yield(CommandLineArgument("--api-key"))
-                yield(CommandLineArgument(it))
+                yield(CommandLineArgument(it, isSensitive = true))
             }
         }
 
