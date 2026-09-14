@@ -147,6 +147,69 @@ class MSBuildFileSystemAgentPropertiesProviderTest {
         Assert.assertEquals(actualProperties, expectedProperties)
     }
 
+    @Test
+    fun shouldNotPublishPropertyWhenMSBuildVersionCannotBeRead() {
+        // Given
+        val msBuildPath = File("Program Files (x86)/Microsoft Visual Studio/2026/BuildTools/MSBuild/Current/Bin/MSBuild.exe")
+        val propertiesProvider = createInstance(VirtualFileSystemService().addFile(msBuildPath))
+        every { _visualStudioLocator.getInstances() } returns listOf(
+            ToolInstance(
+                ToolInstanceType.VisualStudio,
+                File("Program Files (x86)/Microsoft Visual Studio/2026/BuildTools/Common7/IDE"),
+                Version(18, 10, 1),
+                Version(2026),
+                Platform.Default,
+            )
+        )
+        every { _peReader.tryGetVersion(msBuildPath) } returns Version.Empty
+        every { _peReader.tryGetFileVersion(msBuildPath) } returns Version.Empty
+
+        // When
+        val actualProperties = propertiesProvider.properties.toList()
+
+        // Then
+        Assert.assertEquals(actualProperties, emptyList<AgentProperty>())
+    }
+
+    @Test
+    fun shouldUseFileVersionWhenProductVersionCannotBeRead() {
+        // Given
+        val basePath = File("Program Files (x86)/Microsoft Visual Studio/2026/BuildTools")
+        val msBuildX86Path = File(basePath, "MSBuild/Current/Bin/MSBuild.exe")
+        val msBuildX64Path = File(basePath, "MSBuild/Current/Bin/amd64/MSBuild.exe")
+        val msBuildArm64Path = File(basePath, "MSBuild/Current/Bin/arm64/MSBuild.exe")
+        val propertiesProvider = createInstance(
+            VirtualFileSystemService()
+                .addFile(msBuildX86Path)
+                .addFile(msBuildX64Path)
+                .addFile(msBuildArm64Path)
+        )
+        every { _visualStudioLocator.getInstances() } returns listOf(
+            ToolInstance(
+                ToolInstanceType.VisualStudio,
+                File(basePath, "Common7/IDE"),
+                Version(18, 10, 1),
+                Version(2026),
+                Platform.Default,
+            )
+        )
+        every { _peReader.tryGetVersion(any()) } returns Version.Empty
+        every { _peReader.tryGetFileVersion(any()) } returns Version(18, 10, 1, 42706)
+
+        // When
+        val actualProperties = propertiesProvider.properties.toList()
+
+        // Then
+        Assert.assertEquals(
+            actualProperties,
+            listOf(
+                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools18.0_x86_Path", msBuildX86Path.parent),
+                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools18.0_x64_Path", msBuildX64Path.parent),
+                AgentProperty(ToolInstanceType.MSBuildTool, "MSBuildTools18.0_ARM64_Path", msBuildArm64Path.parent),
+            )
+        )
+    }
+
     private fun createInstance(fileSystemService: FileSystemService) =
             MSBuildFileSystemAgentPropertiesProvider(listOf(_visualStudioLocator), fileSystemService, _peReader)
 }
