@@ -79,7 +79,18 @@ class MSBuildFileSystemAgentPropertiesProvider(
                 .filter { _fileSystemService.isFile(it.path) }
                 .mapNotNull {
                     LOG.debug("Getting a product version for \"${it.path}\".")
-                    _peReader.tryGetVersion(it.path).let { version ->
+                    val productVersion = _peReader.tryGetVersion(it.path)
+                    val version = if (productVersion.isEmpty()) {
+                        LOG.debug("Cannot get a product version for \"${it.path}\". Getting a file version.")
+                        _peReader.tryGetFileVersion(it.path)
+                    } else {
+                        productVersion
+                    }
+
+                    if (version.isEmpty()) {
+                        LOG.warn("Cannot get a product or file version for \"${it.path}\". Skipping MSBuild.")
+                        null
+                    } else {
                         AgentProperty(ToolInstanceType.MSBuildTool, "$CONFIG_PREFIX_MSBUILD_TOOLS${version.major}.0_${it.platform.id}_Path", it.path.parent ?: "")
                     }
                 }
