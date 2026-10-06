@@ -14,7 +14,7 @@ def localRepo = anyParamPath('TC_LOCAL_REPO')
 allprojects {
     repositories {
         if (localRepo) {
-            maven {
+            mavenLocal {
                 name = "local-teamcity-artifacts"
                 url "file:///${localRepo}"
             }
