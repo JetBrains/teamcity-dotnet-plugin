@@ -5,7 +5,7 @@ plugins{
 
 dependencies {
     compileOnly("com.google.code.gson:gson")
-    api('org.jetbrains.kotlinx:kotlinx-coroutines-core') {
+    api('org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm') {
       transitive = false
     }
 }
