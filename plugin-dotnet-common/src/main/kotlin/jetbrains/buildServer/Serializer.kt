@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer
 
 import java.io.OutputStream

@@ -174,5 +174,6 @@ class Version private constructor(
         val MinDotnetVersionForTestSuppressor: Version = Version(6)
         val MinDotNetFrameworkVersionForDotCover = Version(4, 7, 2)
         val MinDotNetSdkVersionForDotCover = Version(3, 1)
+        val MinDotNetSdkVersionForDotCoverV3 = Version(8, 0)
     }
 }

@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet.commands.responseFile
 
 import jetbrains.buildServer.agent.CommandLineArgument

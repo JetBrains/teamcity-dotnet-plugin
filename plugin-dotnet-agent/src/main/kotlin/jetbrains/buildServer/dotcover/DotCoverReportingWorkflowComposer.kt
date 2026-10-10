@@ -11,28 +11,30 @@ import jetbrains.buildServer.dotcover.statistics.DotnetCoverageStatisticsPublish
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.dotnet.CoverageConstants.DOTCOVER_SNAPSHOT_DCVR
 import jetbrains.buildServer.dotcover.report.artifacts.ArtifactsUploader
+import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
+import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.util.FileUtil.resolvePath
 import jetbrains.buildServer.util.FileUtil
 import jetbrains.buildServer.rx.use
 import java.io.File
-import java.util.stream.Collectors
-import kotlin.math.log
 import kotlin.streams.toList
 
 class DotCoverReportingWorkflowComposer(
     private val _pathsService: PathsService,
     private val _parametersService: ParametersService,
     private val _fileSystemService: FileSystemService,
-    private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
+    private val _dotCoverRunConfigFileSerializer: DotCoverRunConfigFileSerializer,
+    private val _dotCoverResponseFileSerializer: DotCoverResponseFileSerializer,
     private val _loggerService: LoggerService,
     private val _virtualContext: VirtualContext,
     private val _environmentVariables: EnvironmentVariables,
     private val _entryPointSelector: DotCoverEntryPointSelector,
     private val _dotCoverSettings: DotCoverSettings,
-    dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>,
     private val _dotCoverTeamCityReportGenerator: DotCoverTeamCityReportGenerator,
     private val _dotnetCoverageStatisticsPublisher: DotnetCoverageStatisticsPublisher,
-    private val _uploader: ArtifactsUploader
+    private val _uploader: ArtifactsUploader,
+    private val _dotCoverAgentTool : DotCoverAgentTool,
+    dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>
 ) : BuildStepPostProcessingWorkflowComposer {
 
     private val _dotCoverCommandLineBuilders: Map<DotCoverCommandType, DotCoverCommandLineBuilder> =
@@ -98,8 +100,9 @@ class DotCoverReportingWorkflowComposer(
         val sources = snapshots.stream().map { Path(_virtualContext.resolvePath(it.absolutePath)) }.toList()
         val output = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
         val dotCoverProject = DotCoverProject(DotCoverCommandType.Merge, mergeCommandData = MergeCommandData(sources, output))
+        val cliParamsSerializer = selectCommandLineParamsSerializer(_dotCoverAgentTool.type)
         _fileSystemService.write(configFile) {
-            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+            cliParamsSerializer.serialize(dotCoverProject, it)
         }
 
         logSettings("dotCover merge command settings", sources, output)
@@ -134,8 +137,9 @@ class DotCoverReportingWorkflowComposer(
         val source = Path(_virtualContext.resolvePath(outputSnapshotFile.absolutePath))
         val output = Path(_virtualContext.resolvePath(outputReportFile.absolutePath))
         val dotCoverProject = DotCoverProject(DotCoverCommandType.Report, reportCommandData = ReportCommandData(source, output))
+        val cliParamsSerializer = selectCommandLineParamsSerializer(_dotCoverAgentTool.type)
         _fileSystemService.write(configFile) {
-            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+            cliParamsSerializer.serialize(dotCoverProject, it)
         }
 
         logSettings("dotCover report command settings", listOf(source), output)
@@ -206,15 +210,25 @@ class DotCoverReportingWorkflowComposer(
         }
     }
 
+    private fun selectCommandLineParamsFileName(toolType: DotCoverToolType) = when (toolType) {
+        DotCoverToolType.CrossPlatformV3 -> "dotCover.rsp"
+        else -> "dotCover.xml"
+    }
+
+    private fun selectCommandLineParamsSerializer(toolType: DotCoverToolType) = when (toolType) {
+        DotCoverToolType.CrossPlatformV3 -> _dotCoverResponseFileSerializer
+        else -> _dotCoverRunConfigFileSerializer
+    }
+
     private fun findOutputSnapshot(snapshotDirectory: File) =
         _fileSystemService.list(snapshotDirectory)
             .firstOrNull { it.name.startsWith(MERGED_SNAPSHOT_PREFIX) && it.extension == DOTCOVER_SNAPSHOT_EXTENSION }
 
     private fun List<File>.hasSingleSnapshot(): Boolean = this.size == 1
 
-    private val mergeConfigFilename get() = "merge_$DOTCOVER_CONFIG_EXTENSION"
+    private val mergeConfigFilename get() = "merge_${selectCommandLineParamsFileName(_dotCoverAgentTool.type)}"
 
-    private val reportConfigFilename get() = "report_$DOTCOVER_CONFIG_EXTENSION"
+    private val reportConfigFilename get() = "report_${selectCommandLineParamsFileName(_dotCoverAgentTool.type)}"
 
     private val outputSnapshotFilename get() = "${MERGED_SNAPSHOT_PREFIX}_${_dotCoverSettings.buildStepId}.dcvr"
 
@@ -223,7 +237,6 @@ class DotCoverReportingWorkflowComposer(
     private val outputHtmlReportFilename get() = "coverage_${_dotCoverSettings.buildStepId}.zip"
 
     companion object {
-        internal const val DOTCOVER_CONFIG_EXTENSION = "dotCover.xml"
         internal const val DOTCOVER_SNAPSHOT_EXTENSION = "dcvr"
         private const val MERGED_SNAPSHOT_PREFIX = "outputSnapshot"
     }

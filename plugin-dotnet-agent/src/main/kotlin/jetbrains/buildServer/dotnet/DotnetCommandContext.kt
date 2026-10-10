@@ -1,5 +1,3 @@
-
-
 package jetbrains.buildServer.dotnet
 
 import jetbrains.buildServer.agent.ToolPath

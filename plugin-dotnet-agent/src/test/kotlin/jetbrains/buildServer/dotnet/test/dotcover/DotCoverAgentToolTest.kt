@@ -185,7 +185,7 @@ class DotCoverAgentToolTest {
     @Test
     fun `should get correct cross-platform version min requirement for windows`() {
         // act
-        val result = _tool.getCrossPlatformVersionMinRequirement(OSType.WINDOWS).toList()
+        val result = _tool.getCrossPlatformVersionMinRequirement(OSType.WINDOWS, DotCoverToolType.CrossPlatform).toList()
 
         // assert
         Assert.assertEquals(result.count(), 2)
@@ -195,7 +195,7 @@ class DotCoverAgentToolTest {
     @Test
     fun `should get correct cross-platform version min requirement for non-windows`() {
         // act
-        val result = _tool.getCrossPlatformVersionMinRequirement(OSType.UNIX).toList()
+        val result = _tool.getCrossPlatformVersionMinRequirement(OSType.UNIX, DotCoverToolType.CrossPlatform).toList()
 
         // assert
         Assert.assertEquals(result.count(), 1)
