@@ -1,0 +1,148 @@
+{
+  "title": "NUnit",
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "ToolVersionControl",
+      "label": "NUnit Console",
+      "scope": "#/properties/nunit-path",
+      "options": {
+        "toolType": "NUnit.Console"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "Test assemblies",
+      "scope": "#/properties/include-tests",
+      "options": {
+        "onlyDirectories": false,
+        "placeholder": "UnitTests.dll, IntegrationTests.dll",
+        "description": "Enter comma- or newline-separated paths to assembly files relative to the checkout directory. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Code coverage",
+      "scope": "#/properties/coverage",
+      "options": {
+        "branches": {
+          "dotcover": {
+            "type": "VerticalLayout",
+            "elements": [
+              {
+                "type": "ToolVersionControl",
+                "label": "dotCover CLT home directory",
+                "scope": "#/properties/tool-path",
+                "options": {
+                  "toolType": "JetBrains.dotCover.CommandLineTools"
+                }
+              },
+              {
+                "type": "Control",
+                "label": "Assembly filters",
+                "scope": "#/properties/assembly-filters",
+                "options": {
+                  "multi": true,
+                  "description": "Type \"+:assemblyName\" to include or \"-:assemblyName\" to exclude assemblies to/from the code coverage. Each rule should start from a new line. Use asterisk (*) as a wildcard for any string."
+                }
+              },
+              {
+                "type": "Control",
+                "label": "Attribute filters",
+                "scope": "#/properties/attribute-filters",
+                "options": {
+                  "multi": true,
+                  "description": "Type \"-:attributeName\" to exclude any code marked with this attribute from the code coverage. Each rule should start from a new line. Use asterisk (*) as a wildcard for any string. Applicable to dotCover 2.0 or higher."
+                }
+              },
+              {
+                "type": "Control",
+                "label": "Additional arguments",
+                "scope": "#/properties/args",
+                "options": {
+                  "multi": true,
+                  "description": "Additional new-line separated command line parameters for dotCover."
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "InputPathControl",
+          "label": "Path to application configuration file",
+          "scope": "#/properties/config-file",
+          "options": {
+            "onlyDirectories": false,
+            "description": "Specify the path to the application configuration file to be used by NUnit tests. Paths relative to the checkout directory are supported."
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Command line parameters",
+          "scope": "#/properties/args",
+          "options": {
+            "description": "Enter additional command line parameters to the NUnit console tool"
+          }
+        },
+        {
+          "type": "InputPathControl",
+          "label": "Excluded test assemblies",
+          "scope": "#/properties/exclude-tests",
+          "options": {
+            "onlyDirectories": false,
+            "placeholder": "ExcludedTests.dll",
+            "description": "Enter comma- or newline-separated paths to assembly files relative to the checkout directory. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Include categories",
+          "scope": "#/properties/include-categories",
+          "options": {
+            "multi": true,
+            "description": "Enter comma- or newline-separated names of NUnit categories."
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Exclude categories",
+          "scope": "#/properties/exclude-categories",
+          "options": {
+            "multi": true,
+            "description": "Enter comma- or newline-separated names of NUnit categories."
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Run recently failed tests first",
+          "scope": "#/properties/reduce-test-feedback"
+        },
+        {
+          "type": "Control",
+          "scope": "#/properties/use-project-file",
+          "options": {
+            "hide": true
+          }
+        }
+      ]
+    }
+  ]
+}
