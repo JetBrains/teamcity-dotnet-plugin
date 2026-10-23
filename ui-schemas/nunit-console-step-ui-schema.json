@@ -23,6 +23,7 @@
       "label": "Test assemblies",
       "scope": "#/properties/include-tests",
       "options": {
+        "multi": true,
         "onlyDirectories": false,
         "placeholder": "UnitTests.dll, IntegrationTests.dll",
         "description": "Enter comma- or newline-separated paths to assembly files relative to the checkout directory. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
@@ -107,6 +108,7 @@
           "label": "Excluded test assemblies",
           "scope": "#/properties/exclude-tests",
           "options": {
+            "multi": true,
             "onlyDirectories": false,
             "placeholder": "ExcludedTests.dll",
             "description": "Enter comma- or newline-separated paths to assembly files relative to the checkout directory. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported."
