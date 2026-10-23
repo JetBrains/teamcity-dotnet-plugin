@@ -1,0 +1,55 @@
+{
+  "title": "C# Script - Custom Script",
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "C# script",
+      "scope": "#/properties/content",
+      "options": {
+        "multi": true,
+        "description": "Enter a C# script code"
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "ToolVersionControl",
+          "label": "TeamCity C# script tool",
+          "scope": "#/properties/tool",
+          "options": {
+            "toolType": "TeamCity.csi"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Script parameters",
+          "scope": "#/properties/arguments"
+        },
+        {
+          "type": "Control",
+          "label": "Package sources",
+          "scope": "#/properties/sources",
+          "options": {
+            "multi": true,
+            "description": "Leave blank to use NuGet.org. To use a [TeamCity NuGet feed](https://www.jetbrains.com/help/teamcity/using-teamcity-as-nuget-feed.html?using-teamcity-as-nuget-feed), specify the URL from the NuGet feed project settings page. For feeds with authentication, configure the [NuGet Feed Credentials](https://www.jetbrains.com/help/teamcity/nuget-feed-credentials.html?NuGet+Feed+Credentials) build feature"
+          }
+        }
+      ]
+    }
+  ]
+}

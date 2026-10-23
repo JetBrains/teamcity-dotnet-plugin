@@ -1,0 +1,85 @@
+{
+  "title": "dotCover",
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "ToolVersionControl",
+      "label": "dotCover tool",
+      "scope": "#/properties/tool-path",
+      "options": {
+        "toolType": "JetBrains.dotCover.CommandLineTools"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Executable (optional)",
+      "scope": "#/properties/executable",
+      "options": {
+        "description": "Specify path to an executable file to run the process under dotCover coverage profile and produce a dotCover snapshot file"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Command line arguments",
+      "scope": "#/properties/command-line-arguments",
+      "options": {
+        "multi": true,
+        "description": "Space or new-line separated command line parameters for covering process"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Generate coverage report",
+      "scope": "#/properties/generate-report",
+      "options": {
+        "description": "Generates a TeamCity coverage report that will be displayed on the Code Coverage tab after the build is complete"
+      }
+    },
+    {
+      "type": "Control",
+      "label": "Include additional dotCover snapshots to the report",
+      "scope": "#/properties/snapshot-paths",
+      "options": {
+        "multi": true,
+        "description": "Specify dotCover snapshot (.dcvr) files paths separated by spaces or new lines. [Wildcards](https://www.jetbrains.com/help/teamcity/wildcards.html?Wildcards) are supported. Note that you can merge snapshots generated only by the selected or earlier version of dotCover tool"
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "Control",
+          "label": "Assembly filters",
+          "scope": "#/properties/assembly-filters",
+          "options": {
+            "multi": true,
+            "description": "Type \"+:assemblyName\" to include or \"-:assemblyName\" to exclude assemblies to/from the code coverage. Each rule should start from a new line. Use asterisk (*) as a wildcard for any string"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Attribute filters",
+          "scope": "#/properties/attribute-filters",
+          "options": {
+            "multi": true,
+            "description": "Type \"-:attributeName\" to exclude any code marked with this attribute from the code coverage. Each rule should start from a new line. Use asterisk (*) as a wildcard for any string. Applicable to dotCover 2.0 or higher"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Additional arguments",
+          "scope": "#/properties/cover-arguments",
+          "options": {
+            "multi": true,
+            "description": "New-line separated command line parameters for dotCover cover command"
+          }
+        }
+      ]
+    }
+  ]
+}
