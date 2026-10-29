@@ -30,6 +30,7 @@
       "scope": "#/properties/clt-path",
       "options": {
         "toolType": "jetbrains.resharper-clt",
+        "required": true,
         "placeholder": "/opt/agent/resharper-clt"
       }
     },

@@ -8,6 +8,7 @@
       "scope": "#/properties/nunit-path",
       "options": {
         "toolType": "NUnit.Console",
+        "required": true,
         "placeholder": "/opt/agent/nunit3-console.exe"
       }
     },
