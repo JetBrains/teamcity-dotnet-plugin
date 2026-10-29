@@ -11,6 +11,15 @@
       }
     },
     {
+      "type": "ToolVersionControl",
+      "label": "TeamCity C# script tool",
+      "scope": "#/properties/tool",
+      "options": {
+        "toolType": "TeamCity.csi",
+        "placeholder": "/opt/agent/TeamCity.csi"
+      }
+    },
+    {
       "type": "InputPathControl",
       "label": "C# script file",
       "scope": "#/properties/path",
@@ -27,14 +36,6 @@
     {
       "type": "AdvancedSettingsSection",
       "elements": [
-        {
-          "type": "ToolVersionControl",
-          "label": "TeamCity C# script tool",
-          "scope": "#/properties/tool",
-          "options": {
-            "toolType": "TeamCity.csi"
-          }
-        },
         {
           "type": "Control",
           "label": "Script parameters",

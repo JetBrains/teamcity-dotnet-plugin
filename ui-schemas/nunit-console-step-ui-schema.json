@@ -7,7 +7,8 @@
       "label": "NUnit Console",
       "scope": "#/properties/nunit-path",
       "options": {
-        "toolType": "NUnit.Console"
+        "toolType": "NUnit.Console",
+        "placeholder": "/opt/agent/nunit3-console.exe"
       }
     },
     {
@@ -43,7 +44,8 @@
                 "label": "dotCover CLT home directory",
                 "scope": "#/properties/tool-path",
                 "options": {
-                  "toolType": "JetBrains.dotCover.CommandLineTools"
+                  "toolType": "JetBrains.dotCover.CommandLineTools",
+                  "placeholder": "/opt/agent/dotCover"
                 }
               },
               {

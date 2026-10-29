@@ -25,6 +25,15 @@
       "scope": "#/properties/docker-image"
     },
     {
+      "type": "ToolVersionControl",
+      "label": "R# CLT Home Directory",
+      "scope": "#/properties/clt-path",
+      "options": {
+        "toolType": "jetbrains.resharper-clt",
+        "placeholder": "/opt/agent/resharper-clt"
+      }
+    },
+    {
       "type": "AdvancedSettingsSection",
       "elements": [
         {
@@ -113,14 +122,6 @@
           "type": "Control",
           "label": ".NET Framework 4.8.1",
           "scope": "#/properties/targetdotnetframework-4-8-1"
-        },
-        {
-          "type": "ToolVersionControl",
-          "label": "R# CLT Home Directory",
-          "scope": "#/properties/clt-path",
-          "options": {
-            "toolType": "jetbrains.resharper-clt"
-          }
         },
         {
           "type": "Control",
