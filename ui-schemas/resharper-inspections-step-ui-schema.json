@@ -1,0 +1,162 @@
+{
+  "title": "Inspections (ReSharper)",
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Solution file path",
+      "scope": "#/properties/solution-path",
+      "options": {
+        "onlyDirectories": false,
+        "description": "Specified path should be relative to the checkout directory."
+      }
+    },
+    {
+      "type": "Control",
+      "label": "InspectCode Platform",
+      "scope": "#/properties/clt-platform",
+      "options": {
+        "description": "To find code issues in C++ projects, use the x86 platform."
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "ToolVersionControl",
+      "label": "R# CLT Home Directory",
+      "scope": "#/properties/clt-path",
+      "options": {
+        "toolType": "jetbrains.resharper-clt",
+        "required": true,
+        "placeholder": "/opt/agent/resharper-clt"
+      }
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "Control",
+          "label": "Projects filter",
+          "scope": "#/properties/project-filter",
+          "options": {
+            "multi": true,
+            "description": "Analyze only projects selected by provided wildcards separated by new lines. Leave blank to analyze whole solution. Example: JetBrains.CommandLine.Tests.*"
+          }
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 2.0",
+          "scope": "#/properties/targetdotnetframework-2-0",
+          "options": {
+            "description": "Specify all versions of .NET Framework Target Pack which are required to build your project."
+          }
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 3.0",
+          "scope": "#/properties/targetdotnetframework-3-0"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 3.5",
+          "scope": "#/properties/targetdotnetframework-3-5"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.0",
+          "scope": "#/properties/targetdotnetframework-4-0"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.5",
+          "scope": "#/properties/targetdotnetframework-4-5"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.5.1",
+          "scope": "#/properties/targetdotnetframework-4-5-1"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.5.2",
+          "scope": "#/properties/targetdotnetframework-4-5-2"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.6",
+          "scope": "#/properties/targetdotnetframework-4-6"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.6.1",
+          "scope": "#/properties/targetdotnetframework-4-6-1"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.6.2",
+          "scope": "#/properties/targetdotnetframework-4-6-2"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.7",
+          "scope": "#/properties/targetdotnetframework-4-7"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.7.1",
+          "scope": "#/properties/targetdotnetframework-4-7-1"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.7.2",
+          "scope": "#/properties/targetdotnetframework-4-7-2"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.8",
+          "scope": "#/properties/targetdotnetframework-4-8"
+        },
+        {
+          "type": "Control",
+          "label": ".NET Framework 4.8.1",
+          "scope": "#/properties/targetdotnetframework-4-8-1"
+        },
+        {
+          "type": "Control",
+          "label": "R# CLT Plugins",
+          "scope": "#/properties/clt-plugins",
+          "options": {
+            "multi": true,
+            "description": "Newline-delimited list of [ReSharper plugins](https://resharper-plugins.jetbrains.com/) required for InspectCode in the following format: `%pluginId%[/%version%]`. If you want InspectCode to obtain plugin .nupkg files from a local storage directory rather than JetBrains Marketplace, set the [source option](https://www.jetbrains.com/help/resharper/InspectCode.html#auxiliary-parameters) in the **Additional InspectCode parameters** field: `--source=%pluginsDirectoryPath%`."
+          }
+        },
+        {
+          "type": "InputPathControl",
+          "label": "Custom settings profile path",
+          "scope": "#/properties/custom-settings-profile-path",
+          "options": {
+            "onlyDirectories": false,
+            "description": "Leave blank to use build-in [JetBrains ReSharper](http://www.jetbrains.com/resharper/) settings. Specified path should be relative to the checkout directory."
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Enable debug output",
+          "scope": "#/properties/debug-output"
+        },
+        {
+          "type": "Control",
+          "label": "Additional InspectCode parameters",
+          "scope": "#/properties/custom-cmd-args",
+          "options": {
+            "multi": true,
+            "description": "Additional command line parameters for InspectCode separated by new lines."
+          }
+        }
+      ]
+    }
+  ]
+}
