@@ -7,7 +7,8 @@
       "label": "Working directory",
       "scope": "#/properties/working-directory",
       "options": {
-        "placeholder": "repository root"
+        "placeholder": "repository root",
+        "description": "Optional, set if differs from the checkout directory. [Learn more](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory)."
       }
     },
     {
@@ -25,7 +26,7 @@
       "scope": "#/properties/content",
       "options": {
         "multi": true,
-        "description": "Enter a C# script code"
+        "description": "Enter a C# script code. [Learn more](https://www.jetbrains.com/help/teamcity/?csharp+script)."
       }
     },
     {
@@ -43,7 +44,7 @@
         },
         {
           "type": "Control",
-          "label": "Package sources",
+          "label": "NuGet package sources",
           "scope": "#/properties/sources",
           "options": {
             "multi": true,

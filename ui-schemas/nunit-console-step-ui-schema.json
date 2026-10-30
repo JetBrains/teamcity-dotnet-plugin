@@ -3,6 +3,15 @@
   "type": "VerticalLayout",
   "elements": [
     {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root",
+        "description": "Optional, set if differs from the checkout directory. [Learn more](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory)."
+      }
+    },
+    {
       "type": "ToolVersionControl",
       "label": "NUnit Console",
       "scope": "#/properties/nunit-path",
@@ -10,14 +19,6 @@
         "toolType": "NUnit.Console",
         "required": true,
         "placeholder": "/opt/agent/nunit3-console.exe"
-      }
-    },
-    {
-      "type": "InputPathControl",
-      "label": "Working directory",
-      "scope": "#/properties/working-directory",
-      "options": {
-        "placeholder": "repository root"
       }
     },
     {
