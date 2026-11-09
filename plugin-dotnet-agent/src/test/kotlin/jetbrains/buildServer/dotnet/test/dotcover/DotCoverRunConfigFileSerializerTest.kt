@@ -9,7 +9,7 @@ import jetbrains.buildServer.dotcover.CoverageFilter
 import jetbrains.buildServer.dotcover.CoverageFilterProvider
 import jetbrains.buildServer.dotcover.DotCoverProject
 import jetbrains.buildServer.dotcover.DotCoverProject.*
-import jetbrains.buildServer.dotcover.DotCoverProjectSerializerImpl
+import jetbrains.buildServer.dotcover.DotCoverRunConfigFileSerializerImpl
 import jetbrains.buildServer.dotcover.command.DotCoverCommandType
 import jetbrains.buildServer.dotnet.test.agent.ArgumentsServiceStub
 import org.jmock.Expectations
@@ -24,7 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
 
-class DotCoverProjectSerializerTest {
+class DotCoverRunConfigFileSerializerTest {
     private val _realXmlDocumentService: XmlDocumentService = XmlDocumentServiceImpl()
     private val _argumentsService: ArgumentsService = ArgumentsServiceStub()
     private lateinit var _ctx: Mockery
@@ -96,7 +96,6 @@ class DotCoverProjectSerializerTest {
                         CoverageFilter(CoverageFilter.CoverageFilterType.Exclude, CoverageFilter.Any, CoverageFilter.Any, "bbb", CoverageFilter.Any),
                         CoverageFilter(CoverageFilter.CoverageFilterType.Include, CoverageFilter.Any, CoverageFilter.Any, "ccc", CoverageFilter.Any)
                 )))
-
 
                 oneOf<XmlDocumentService>(_xmlDocumentService).serialize(document, outputStream)
                 will(object : CustomAction("doc") {
@@ -287,10 +286,11 @@ class DotCoverProjectSerializerTest {
     }
 
     private fun createInstance(): Serializer<DotCoverProject> {
-        return DotCoverProjectSerializerImpl(
+        return DotCoverRunConfigFileSerializerImpl(
                 _xmlDocumentService,
                 _argumentsService,
-                _coverageFilterProvider)
+                _coverageFilterProvider
+        )
     }
 
     private fun String.trimXml(): String {

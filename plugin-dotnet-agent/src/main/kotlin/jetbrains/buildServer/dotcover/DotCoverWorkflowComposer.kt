@@ -5,6 +5,8 @@ import jetbrains.buildServer.agent.*
 import jetbrains.buildServer.agent.runner.*
 import jetbrains.buildServer.dotcover.DotCoverProject.*
 import jetbrains.buildServer.dotcover.command.*
+import jetbrains.buildServer.dotcover.tool.DotCoverAgentTool
+import jetbrains.buildServer.dotcover.tool.DotCoverToolType
 import jetbrains.buildServer.dotnet.CoverageConstants
 import jetbrains.buildServer.rx.subscribe
 import jetbrains.buildServer.rx.use
@@ -12,7 +14,8 @@ import jetbrains.buildServer.rx.use
 class DotCoverWorkflowComposer(
     private val _pathsService: PathsService,
     private val _fileSystemService: FileSystemService,
-    private val _dotCoverProjectSerializer: DotCoverProjectSerializer,
+    private val _dotCoverRunConfigFileSerializer: DotCoverRunConfigFileSerializer,
+    private val _dotCoverResponseFileSerializer: DotCoverResponseFileSerializer,
     private val _loggerService: LoggerService,
     private val _argumentsService: ArgumentsService,
     private val _coverageFilterProvider: CoverageFilterProvider,
@@ -20,6 +23,7 @@ class DotCoverWorkflowComposer(
     private val _environmentVariables: EnvironmentVariables,
     private val _entryPointSelector: DotCoverEntryPointSelector,
     private val _dotCoverSettings: DotCoverSettings,
+    private val _dotCoverAgentTool : DotCoverAgentTool,
     dotCoverCommandLineBuildersList: List<DotCoverCommandLineBuilder>
 ) : SimpleWorkflowComposer {
 
@@ -32,7 +36,7 @@ class DotCoverWorkflowComposer(
             return workflow
         }
         if (_dotCoverSettings.dotCoverHomePath.isNullOrBlank()) {
-            _loggerService.writeWarning("Skip code coverage: dotCover is enabled however tool home path has not been set")
+            _loggerService.writeWarning("Skip code coverage: dotCover is enabled, but tool home path has not been set")
             return workflow
         }
 
@@ -84,10 +88,12 @@ class DotCoverWorkflowComposer(
             return
         }
 
-        val configFile = _pathsService.getTempFileName(DOTCOVER_CONFIG_EXTENSION)
+        val commandLineParamsFile = _pathsService.getTempFileName(
+            selectCommandLineParamsFileName(_dotCoverAgentTool.type)
+        )
         val snapshotFile = _pathsService.getTempFileName(".${DOTCOVER_SNAPSHOT_EXTENSION}")
         val virtualWorkingDirectory = Path(_virtualContext.resolvePath(baseCommandLine.workingDirectory.path))
-        val virtualConfigFilePath = Path(_virtualContext.resolvePath(configFile.path))
+        val virtualCommandLineParamsFilePath = Path(_virtualContext.resolvePath(commandLineParamsFile.path))
         val virtualSnapshotFilePath = Path(_virtualContext.resolvePath(snapshotFile.path))
 
         val dotCoverProject = DotCoverProject(
@@ -103,30 +109,17 @@ class DotCoverWorkflowComposer(
                     baseCommandLine.title,
                     baseCommandLine.description
                 ),
-                virtualConfigFilePath,
+                virtualCommandLineParamsFilePath,
                 virtualSnapshotFilePath
             )
         )
 
-        _fileSystemService.write(configFile) {
-            _dotCoverProjectSerializer.serialize(dotCoverProject, it)
+        val cliParamsSerializer = selectCommandLineParamsSerializer(_dotCoverAgentTool.type)
+        _fileSystemService.write(commandLineParamsFile) {
+            cliParamsSerializer.serialize(dotCoverProject, it)
         }
 
-        _loggerService.writeTraceBlock("dotCover settings").use {
-            val args = _argumentsService.combine(baseCommandLine.arguments.map { it.value }.asSequence())
-            _loggerService.writeTrace("Command line:")
-            _loggerService.writeTrace("  \"${baseCommandLine.executableFile.path}\" $args")
-
-            _loggerService.writeTrace("Filters:")
-            for (filter in _coverageFilterProvider.filters) {
-                _loggerService.writeTrace("  $filter")
-            }
-
-            _loggerService.writeTrace("Attribute Filters:")
-            for (filter in _coverageFilterProvider.attributeFilters) {
-                _loggerService.writeTrace("  $filter")
-            }
-        }
+        logSettings(baseCommandLine)
 
         context.toExitCodes().subscribe {
             if (_fileSystemService.isExists(snapshotFile)) {
@@ -143,10 +136,38 @@ class DotCoverWorkflowComposer(
                 _dotCoverCommandLineBuilders.get(DotCoverCommandType.Cover)!!.buildCommand(
                     executableFile = executableFile,
                     environmentVariables = baseCommandLine.environmentVariables + _environmentVariables.getVariables(),
-                    virtualConfigFilePath.path,
+                    virtualCommandLineParamsFilePath.path,
                     baseCommandLine
                 )
             )
+        }
+    }
+
+    private fun selectCommandLineParamsFileName(toolType: DotCoverToolType) = when (toolType) {
+        DotCoverToolType.CrossPlatformV3 -> "dotCover.rsp"
+        else -> "dotCover.xml"
+    }
+
+    private fun selectCommandLineParamsSerializer(toolType: DotCoverToolType) = when (toolType) {
+        DotCoverToolType.CrossPlatformV3 -> _dotCoverResponseFileSerializer
+        else -> _dotCoverRunConfigFileSerializer
+    }
+
+    private fun logSettings(commandLine: CommandLine) {
+        _loggerService.writeTraceBlock("dotCover settings").use {
+            val args = _argumentsService.combine(commandLine.arguments.map { it.value }.asSequence())
+            _loggerService.writeTrace("Command line:")
+            _loggerService.writeTrace("  \"${commandLine.executableFile.path}\" $args")
+
+            _loggerService.writeTrace("Filters:")
+            for (filter in _coverageFilterProvider.filters) {
+                _loggerService.writeTrace("  $filter")
+            }
+
+            _loggerService.writeTrace("Attribute Filters:")
+            for (filter in _coverageFilterProvider.attributeFilters) {
+                _loggerService.writeTrace("  $filter")
+            }
         }
     }
 
@@ -156,7 +177,6 @@ class DotCoverWorkflowComposer(
     companion object {
         internal const val DOTCOVER_DATA_PROCESSOR_TYPE = CoverageConstants.COVERAGE_TYPE
         internal const val DOTCOVER_TOOL_NAME = "dotcover"
-        internal const val DOTCOVER_CONFIG_EXTENSION = "dotCover.xml"
         internal const val DOTCOVER_SNAPSHOT_EXTENSION = "dcvr"
     }
 }
