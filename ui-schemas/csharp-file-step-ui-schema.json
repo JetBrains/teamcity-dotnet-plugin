@@ -1,0 +1,57 @@
+{
+  "title": "C# Script - Script File",
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "InputPathControl",
+      "label": "Working directory",
+      "scope": "#/properties/working-directory",
+      "options": {
+        "placeholder": "repository root",
+        "description": "Optional, set if differs from the checkout directory. [Learn more](https://www.jetbrains.com/help/teamcity/?Build+Working+Directory)."
+      }
+    },
+    {
+      "type": "ToolVersionControl",
+      "label": "TeamCity C# script tool",
+      "scope": "#/properties/tool",
+      "options": {
+        "toolType": "TeamCity.csi",
+        "placeholder": "/opt/agent/TeamCity.csi"
+      }
+    },
+    {
+      "type": "InputPathControl",
+      "label": "C# script file",
+      "scope": "#/properties/path",
+      "options": {
+        "onlyDirectories": false,
+        "description": "Specify a path to a C# script file, relative to the checkout directory. [Learn more](https://www.jetbrains.com/help/teamcity/?csharp+script)."
+      }
+    },
+    {
+      "type": "DockerImageControl",
+      "label": "Docker image",
+      "scope": "#/properties/docker-image"
+    },
+    {
+      "type": "AdvancedSettingsSection",
+      "elements": [
+        {
+          "type": "Control",
+          "label": "Script parameters",
+          "scope": "#/properties/arguments"
+        },
+        {
+          "type": "Control",
+          "label": "NuGet package sources",
+          "scope": "#/properties/sources",
+          "options": {
+            "multi": true,
+            "description": "Leave blank to use NuGet.org. To use a [TeamCity NuGet feed](https://www.jetbrains.com/help/teamcity/using-teamcity-as-nuget-feed.html?using-teamcity-as-nuget-feed), specify the URL from the NuGet feed project settings page. For feeds with authentication, configure the [NuGet Feed Credentials](https://www.jetbrains.com/help/teamcity/nuget-feed-credentials.html?NuGet+Feed+Credentials) build feature"
+          }
+        }
+      ]
+    }
+  ]
+}
